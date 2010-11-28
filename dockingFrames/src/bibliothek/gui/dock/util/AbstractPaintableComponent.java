@@ -39,6 +39,9 @@ public abstract class AbstractPaintableComponent implements PaintableComponent {
 	
 	private boolean backgroundPainted = false;
 	private boolean foregroundPainted = false;
+	private boolean borderPainted = false;
+	private boolean childrenPainted = false;
+	private boolean overlayPainted = false;
 	
 	/**
 	 * Creates a new paintable component.
@@ -76,6 +79,15 @@ public abstract class AbstractPaintableComponent implements PaintableComponent {
 		if( !foregroundPainted ){
 			foreground( g );
 		}
+		if( !borderPainted ){
+			border( g );
+		}
+		if( !childrenPainted ){
+			children( g );
+		}
+		if( !overlayPainted ){
+			overlay( g );
+		}
 	}
 	
 	public void paintBackground( Graphics g ){
@@ -92,6 +104,27 @@ public abstract class AbstractPaintableComponent implements PaintableComponent {
 		}
 	}
 	
+	public void paintBorder( Graphics g ){
+		borderPainted = true;
+		if( g != null ){
+			border( g );
+		}
+	}
+	
+	public void paintChildren( Graphics g ){
+		childrenPainted = true;
+		if( g != null ){
+			children( g );
+		}
+	}
+	
+	public void paintOverlay( Graphics g ){
+		overlayPainted = true;
+		if( g != null ){
+			overlay( g );
+		}
+	}
+	
 	/**
 	 * Paints the background of the component.
 	 * @param g the graphics context to use
@@ -103,4 +136,22 @@ public abstract class AbstractPaintableComponent implements PaintableComponent {
 	 * @param g the graphics context to use
 	 */
 	protected abstract void foreground( Graphics g );
+
+	/**
+	 * Paints the overlay of this component.
+	 * @param g the graphics context to use
+	 */
+	protected abstract void border( Graphics g );
+	
+	/**
+	 * Paints the children of this component.
+	 * @param g the graphics context to use
+	 */
+	protected abstract void children( Graphics g );
+
+	/**
+	 * Paints an overlay over the children of this component.
+	 * @param g the graphics context to use
+	 */
+	protected abstract void overlay( Graphics g );
 }

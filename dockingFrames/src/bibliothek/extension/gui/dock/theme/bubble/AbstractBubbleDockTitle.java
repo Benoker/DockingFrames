@@ -135,6 +135,8 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
      * Sets up the animation such that it can be started at any time.
      */
     private void initAnimation(){
+    	setSolid( false );
+    	
         animation = new BubbleColorAnimation();
 
         updateAnimation();
@@ -211,12 +213,43 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
             default: return super.getInnerInsets();
         }
     }
-
+    
     @Override
-    public void paint( Graphics g ) {
-        super.paint( g );
+    protected void paintBackground( Graphics g, JComponent component ) {
+        Graphics2D g2 = (Graphics2D)g.create();
+        g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 
-        // draw horizon
+        Insets insets = getInsets();
+        int x = 0, y = 0;
+        int w = component.getWidth();
+        int h = component.getHeight();
+        if( insets != null ){
+            x = insets.left;
+            y = insets.top;
+            w -= insets.left + insets.right;
+            h -= insets.top + insets.bottom;
+        }
+
+        // set color
+        Color top = animation.getColor( ANIMATION_KEY_BACKGROUND_TOP );
+        Color bottom = animation.getColor( ANIMATION_KEY_BACKGROUND_BOTTOM );
+
+        if( top != null && bottom != null ){
+            if( getOrientation().isHorizontal() )
+                g2.setPaint( new GradientPaint( 0, 0, top, 0, h, bottom ));
+            else
+                g2.setPaint( new GradientPaint( 0, 0, top, w, 0, bottom ));
+
+            // draw
+            drawRoundRect( g2, x, y, w, h );
+        }
+
+        g2.dispose();
+    }
+    
+    @Override
+    public void paintOverlay( Graphics g ){
+    	 // draw horizon
         Graphics2D g2 = (Graphics2D)g.create();
 
         Insets insets = getInsets();
@@ -252,39 +285,6 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
         }
 
         drawRoundRect( g2, x, y, w, h );
-        g2.dispose();
-    }
-
-    @Override
-    protected void paintBackground( Graphics g, JComponent component ) {
-        Graphics2D g2 = (Graphics2D)g.create();
-        g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-
-        Insets insets = getInsets();
-        int x = 0, y = 0;
-        int w = component.getWidth();
-        int h = component.getHeight();
-        if( insets != null ){
-            x = insets.left;
-            y = insets.top;
-            w -= insets.left + insets.right;
-            h -= insets.top + insets.bottom;
-        }
-
-        // set color
-        Color top = animation.getColor( ANIMATION_KEY_BACKGROUND_TOP );
-        Color bottom = animation.getColor( ANIMATION_KEY_BACKGROUND_BOTTOM );
-
-        if( top != null && bottom != null ){
-            if( getOrientation().isHorizontal() )
-                g2.setPaint( new GradientPaint( 0, 0, top, 0, h, bottom ));
-            else
-                g2.setPaint( new GradientPaint( 0, 0, top, w, 0, bottom ));
-
-            // draw
-            drawRoundRect( g2, x, y, w, h );
-        }
-
         g2.dispose();
     }
 

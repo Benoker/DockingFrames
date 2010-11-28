@@ -1512,7 +1512,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	 * Creates a new panel
     	 */
         public Background(){
-        	content = new BackgroundPanel();
+        	content = new BackgroundPanel( true, false );
         	content.setBackground( panelBackground );
         	
         	setContentPane( content );

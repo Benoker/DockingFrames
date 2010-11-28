@@ -39,19 +39,31 @@ import javax.swing.JPanel;
 public class BackgroundPanel extends JPanel implements PaintableComponent{
 	private BackgroundAlgorithm background;
 	
+	/** whether all pixels of this panel are painted */
+	private boolean solid;
+	/** whether no pixels of this panel are painted */
+	private boolean transparent;
+	
 	/**
-	 * Default constructor
+	 * Creates a new panel.
+	 * @param solid whether all pixels of this panel are painted
+	 * @param transparent whether no pixels of this panel are painted
 	 */
-	public BackgroundPanel(){
-		// nothing
+	public BackgroundPanel( boolean solid, boolean transparent ){
+		this.solid = solid;
+		this.transparent = transparent;
 	}
 	
 	/**
 	 * Creates a new panel setting a default {@link LayoutManager}.
 	 * @param layout the layout manager, can be <code>null</code>
+	 * @param solid whether all pixels of this panel are painted
+	 * @param transparent whether no pixels of this panel are painted
 	 */
-	public BackgroundPanel( LayoutManager layout ){
+	public BackgroundPanel( LayoutManager layout, boolean solid, boolean transparent ){
 		super( layout );
+		this.solid = solid;
+		this.transparent = transparent;
 	}
 	
 	/**
@@ -69,24 +81,45 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	public BackgroundAlgorithm getBackgroundAlgorithm(){
 		return background;
 	}
-
-	protected void paintComponent( Graphics g ){
-		doPaint( g );
-	}
 	
-	/**
-	 * This method paints the background and foreground of this panel. Usually it is
-	 * called by the {@link #paintComponent(Graphics)} method.
-	 * @param g the graphcis context to use
-	 */
-	protected void doPaint( Graphics g ){
-		if( background == null ){
-			paintBackground( g );
-			paintForeground( g );
+	@Override
+	public void paint( Graphics g ){
+		if( background == null || background.getPaint() == null ){
+			super.paint( g );
+			paintOverlay( g );
 		}
 		else{
 			background.paint( this, g );
 		}
+	}
+
+	protected void paintComponent( Graphics g ){
+		paintBackground( g );
+		paintForeground( g );
+	}
+
+	/**
+	 * Sets whether this panel paints every pixel or not.
+	 * @param solid <code>true</code> if every pixel is painted
+	 */
+	public void setSolid( boolean solid ){
+		this.solid = solid;
+	}
+	
+	public boolean isSolid(){
+		return solid;
+	}
+	
+	/**
+	 * Sets whether this panel is completely transparent or not.
+	 * @param transparent <code>true</code> if this panel does not paint any pixel
+	 */
+	public void setTransparent( boolean transparent ){
+		this.transparent = transparent;
+	}
+	
+	public boolean isTransparent(){
+		return transparent;
 	}
 	
 	public Component getComponent(){
@@ -99,5 +132,19 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	
 	public void paintForeground( Graphics g ){
 		// ignore	
+	}
+	
+	@Override
+	public void paintBorder( Graphics g ){
+		super.paintBorder( g );
+	}
+	
+	@Override
+	public void paintChildren( Graphics g ){
+		super.paintChildren( g );
+	}
+	
+	public void paintOverlay( Graphics g ){
+		// ignore
 	}
 }

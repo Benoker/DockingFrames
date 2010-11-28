@@ -135,7 +135,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     private boolean singleTabShowing;
     
     /** the panel that shows the content of this displayer */
-    private BackgroundPanel content = new BackgroundPanel( null ){
+    private BackgroundPanel content = new BackgroundPanel( null, true, false ){
     	@Override
     	public void doLayout(){
 	    	BasicDockableDisplayer.this.doLayout( content );
@@ -173,7 +173,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
      * @param location the location of the title, can be <code>null</code>
      */
     public BasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, Location location ){
-        super( new GridLayout( 1, 1 ) );
+        super( new GridLayout( 1, 1 ), true, false );
         init( station, dockable, title, location );
     }
    
@@ -188,7 +188,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
      * will be called.
      */
     protected BasicDockableDisplayer( DockStation station, boolean initialize ){
-    	super( new GridLayout( 1, 1 ) );
+    	super( new GridLayout( 1, 1 ), true, false );
     	if( initialize ){
     		init( station, null, null, Location.TOP );
     	}

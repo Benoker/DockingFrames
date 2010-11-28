@@ -168,19 +168,38 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		BackgroundComponent component = model.getBackgroundComponent();
 		
 		AbstractPaintableComponent paintable = new AbstractPaintableComponent( component, this, paint ){
+			protected void background( Graphics g ){
+				// ignore
+			}
+			
 			protected void foreground( Graphics g ){
 				doPaintForeground( g );
 			}
 			
-			protected void background( Graphics g ){
+			protected void border( Graphics g ){
+				doPaintBorder( g );
+			}
+			
+			protected void children( Graphics g ){
+				// ignore	
+			}
+			
+			protected void overlay( Graphics g ){
 				// ignore
+			}
+			
+			public boolean isSolid(){
+				return false;
+			}
+			
+			public boolean isTransparent(){
+				return false;
 			}
 		};
 		paintable.paint( g );
 	}
 	
 	private void doPaintForeground( Graphics g ){
-		Border border = getBorder();
 		Icon icon = getModel().getPaintIcon();
 		Insets insets = getMaxBorderInsets();
 		
@@ -198,14 +217,6 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			double sum = insets.left + iconWidth + insets.right + dropWidth + insets.right;
 			double factor = getWidth() / sum;
 			
-			if( border != null ){
-				border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );
-				
-				if( getModel().isMouseOverDropDown() ){
-					border.paintBorder( this, g, 0, 0, (int)(factor * (insets.left + insets.right + iconWidth )), getHeight() );
-				}
-			}
-			
 			if( icon != null )
 				icon.paintIcon( this, g, (int)(factor * (insets.left + iconWidth/2) - iconWidth/2), 
 						insets.top+(getHeight()-insets.top-insets.bottom-icon.getIconHeight()) / 2 );
@@ -220,14 +231,6 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			double sum = insets.top + iconHeight + insets.bottom + dropHeight + insets.bottom;
 			double factor = getHeight() / sum;
 			
-			if( border != null ){
-				border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );
-				
-				if( getModel().isMouseOverDropDown() ){
-					border.paintBorder( this, g, 0, 0, getWidth(), (int)(factor * (insets.top + insets.bottom + iconHeight )) );
-				}
-			}
-			
 			if( icon != null )
 				icon.paintIcon( this, g, insets.left+(getWidth()-insets.left-insets.right-icon.getIconWidth()) / 2,
 						(int)(factor * (insets.top + iconHeight/2) - iconHeight/2 ));
@@ -238,6 +241,40 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		
 		if( isFocusOwner() && isFocusable() && isEnabled() ){
 		    paintFocus( g );
+		}
+	}
+	
+	private void doPaintBorder( Graphics g ){
+		Border border = getBorder();
+		
+		if( border != null ){
+			Insets insets = getMaxBorderInsets();
+			Icon icon = getModel().getPaintIcon();
+			
+			if( getModel().getOrientation().isHorizontal() ){
+				int iconWidth = icon == null ? 16 : icon.getIconWidth();
+				int dropWidth = dropIcon.getIconWidth();
+				
+				double sum = insets.left + iconWidth + insets.right + dropWidth + insets.right;
+				double factor = getWidth() / sum;
+				
+				border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );
+				
+				if( getModel().isMouseOverDropDown() ){
+					border.paintBorder( this, g, 0, 0, (int)(factor * (insets.left + insets.right + iconWidth )), getHeight() );
+				}
+			}
+			else{
+				int iconHeight = icon == null ? 16 : icon.getIconHeight();
+				int dropHeight = dropIcon.getIconHeight();
+				
+				double sum = insets.top + iconHeight + insets.bottom + dropHeight + insets.bottom;
+				double factor = getHeight() / sum;
+				
+				if( getModel().isMouseOverDropDown() ){
+					border.paintBorder( this, g, 0, 0, getWidth(), (int)(factor * (insets.top + insets.bottom + iconHeight )) );
+				}
+			}
 		}
 	}
 	

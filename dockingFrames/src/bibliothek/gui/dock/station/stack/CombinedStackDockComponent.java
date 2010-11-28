@@ -78,7 +78,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	private BackgroundAlgorithm background;
 	
 	/** The panel which displays one of the children of this pane */
-	private BackgroundPanel componentPanel = new BackgroundPanel( null ){
+	private BackgroundPanel componentPanel = new BackgroundPanel( null, true, false ){
 		@Override
 		public void doLayout(){
 			int w = getWidth();

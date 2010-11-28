@@ -257,8 +257,6 @@ public class ArchGradientPainter extends BaseTabComponent {
 	
 	@Override
 	public void paintBackground( Graphics g ){
-		super.paintComponent(g);
-
 		int x = 0;
 		int y = 0;
 		int w = getWidth();

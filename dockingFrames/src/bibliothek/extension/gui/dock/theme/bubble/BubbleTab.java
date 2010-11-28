@@ -184,6 +184,7 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 	 * @param dockable the element whose title will be shown on this tab
 	 */
 	public BubbleTab( BubbleStackDockComponent parent, Dockable dockable ){
+		super( false, false );
 		this.dockable = dockable;
 		this.parent = parent;
 		label.setHorizontal( orientation.isHorizontal() );
@@ -421,20 +422,11 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 				break;
 		}
 	}
-
-	@Override
-	public void paint( Graphics g ){
-		Graphics2D g2 = (Graphics2D)g.create();
-		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-
-		doPaint( g2 );
-
-		g2.dispose();
-	}
 	
 	@Override
 	public void paintBackground( Graphics g ){
-		Graphics2D g2 = (Graphics2D)g;
+		Graphics2D g2 = (Graphics2D)g.create();
+		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 		
 		Color bottom = animation.getColor( "bottom" );
 		Color top = animation.getColor( "top" );
@@ -482,20 +474,25 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 				g2.fillRoundRect( -arc, borderSize, w+arc-borderSize, h-2*borderSize, 2*arc, 2*arc );
 				break;
 		}
+		g2.dispose();
 	}
 
 	@Override
 	public void paintForeground( Graphics g ){
-		Graphics2D g2 = (Graphics2D) g;
-		
-		int w = getWidth();
-		int h = getHeight();
-		
 		// draw text and icon
 		Graphics child = g.create( label.getX(), label.getY(), label.getWidth(), label.getHeight() );
 		label.paint( child );
 		child.dispose();
+	}
+	
+	@Override
+	public void paintOverlay( Graphics g ){
+		Graphics2D g2 = (Graphics2D)g.create();
+		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 
+		int w = getWidth();
+		int h = getHeight();
+				
 		// draw horizon
 		if( orientation.isHorizontal() ){
 			g2.setPaint( new GradientPaint( 0, 0, new Color( 150, 150, 150 ), 0, h/2, Color.WHITE ));
@@ -528,11 +525,12 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 			g2.fillRect( 0, 0, w/2, h );
 		}
 
+		g2.dispose();
 	}
-
+	
 	@Override
-	protected void paintChildren( Graphics g ){
-		// stop
+	public void paintChildren( Graphics g ){
+		// do nothing
 	}
 
 	public JComponent getComponent(){

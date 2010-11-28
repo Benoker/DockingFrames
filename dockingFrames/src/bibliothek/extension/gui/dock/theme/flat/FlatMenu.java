@@ -103,6 +103,7 @@ public class FlatMenu extends AbstractCombinedMenu{
 		 * Creates a new button.
 		 */
 		public Button(){
+			super( true, false );
 			setBackground( FlatMenu.this.getBackground() );
 			addMouseListener( new MouseAdapter(){
 				@Override

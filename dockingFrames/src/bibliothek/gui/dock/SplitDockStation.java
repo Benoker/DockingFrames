@@ -2515,6 +2515,10 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * @author Benjamin Sigg
 	 */
 	private class Content extends BackgroundPanel {
+		public Content(){
+			super( true, false );
+		}
+		
 		@Override
 		public void doLayout(){
 			updateBounds();

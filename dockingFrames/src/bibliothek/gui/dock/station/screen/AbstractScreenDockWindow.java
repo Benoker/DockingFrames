@@ -429,7 +429,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * @return the new content pane
      */
     protected OverpaintablePanel createContent(){
-    	contentBackground = new BackgroundPanel();
+    	contentBackground = new BackgroundPanel( true, false );
     	contentBackground.setBackground( background );
     	
         OverpaintablePanel panel = new OverpaintablePanel(){

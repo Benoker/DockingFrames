@@ -167,6 +167,7 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 		 * Creates a new button.
 		 */
 		public Button(){
+			super( false, false );
 			setOpaque( false );
 			setBackground( BubbleTabMenu.this.getBackground() );
 			animation.addTask( this );

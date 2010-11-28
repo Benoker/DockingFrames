@@ -239,6 +239,26 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
 			protected void background( Graphics g ){
 				doPaintBackground( g );
 			}
+			
+			protected void border( Graphics g ){
+				// ignore	
+			}
+			
+			protected void children( Graphics g ){
+				// ignore	
+			}
+			
+			protected void overlay( Graphics g ){
+				// ignore
+			}
+			
+			public boolean isSolid(){
+				return false;
+			}
+			
+			public boolean isTransparent(){
+				return false;
+			}
 		};
 		
 		Graphics2D g2 = (Graphics2D)g.create();

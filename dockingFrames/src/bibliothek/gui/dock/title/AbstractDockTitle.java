@@ -182,6 +182,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
      * should be shown, <code>false</code> if they should not be visible
      */
     public AbstractDockTitle( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
+    	super( true, false );
         init( dockable, origin, showMiniButtons );
     }
     
@@ -191,7 +192,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
      * the title.
      */
     protected AbstractDockTitle(){
-       // nothing 
+       super( true, false ); 
     }
     
     /**

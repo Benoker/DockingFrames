@@ -45,6 +45,7 @@ public class OrientedLabel extends BackgroundPanel{
      * Creates a new label with no text
      */
     public OrientedLabel(){
+    	super( false, false );
         setOpaque( false );
         label.setOpaque( false );
         label.setAlignmentX( 0 );

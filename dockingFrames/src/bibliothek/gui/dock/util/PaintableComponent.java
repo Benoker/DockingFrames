@@ -31,10 +31,15 @@ import java.awt.Graphics;
 /**
  * A wrapper around a {@link Component} whose paint algorithm may be
  * modified by a {@link BackgroundPaint}. This provider of this method may
- * paint background and foreground automatically if {@link #paintBackground(Graphics)}
- * or {@link #paintForeground(Graphics)} is not called.<br>
- * Whether the foreground is painted over or under the children of {@link #getComponent()}
- * depends on the implementation of this interface. Both versions are valid.
+ * paint some parts automatically if the appropriate method is not called. The usual
+ * order in which the paint methods should be executed is:
+ * <ol>
+ * 	<li> {@link #paintBackground(Graphics)} </li>
+ *  <li> {@link #paintForeground(Graphics)} </li>
+ *  <li> {@link #paintBorder(Graphics)} </li>
+ *  <li> {@link #paintChildren(Graphics)} </li>
+ *  <li> {@link #paintOverlay(Graphics)} </li>
+ * </ol>
  * @author Benjamin Sigg
  */
 public interface PaintableComponent {
@@ -45,9 +50,20 @@ public interface PaintableComponent {
 	public Component getComponent();
 	
 	/**
+	 * If a component is transparent, then it does not paint anything (except the border).
+	 * @return whether the component paints at least one pixel
+	 */
+	public boolean isTransparent();
+	
+	/**
+	 * If a component is solid, then it paints every pixel with a non-transparent color.
+	 * @return whether every pixel is painted
+	 */
+	public boolean isSolid();
+	
+	/**
 	 * Invokes the standard algorithm that paints the background
-	 * of the component. This method should be called at most
-	 * once. 
+	 * of the component. This method should be called at most once. 
 	 * @param g the graphics context to use, <code>null</code> to just inform
 	 * this component that the background should not be painted automatically
 	 */
@@ -56,11 +72,32 @@ public interface PaintableComponent {
 	/**
 	 * Invokes the standard algorithm that paints the foreground
 	 * of the component. This method should be called at most once.
-	 * If this method is not called by a {@link BackgroundPaint}, then
-	 * it may be called automatically. A typical operation of this
-	 * method would be to paint an icon on a button.
 	 * @param g the graphics context to use, <code>null</code> to just inform
 	 * this component that the foreground should not be painted automatically
 	 */
 	public void paintForeground( Graphics g );
+
+	/**
+	 * Invokes the standard algorithm that paints the border
+	 * of the component. This method should be called at most once. 
+	 * @param g the graphics context to use, <code>null</code> to just inform
+	 * this component that the background should not be painted automatically
+	 */
+	public void paintBorder( Graphics g );
+	
+	/**
+	 * Invokes the standard algorithm that paints the children
+	 * of the component. This method should be called at most once. 
+	 * @param g the graphics context to use, <code>null</code> to just inform
+	 * this component that the background should not be painted automatically
+	 */
+	public void paintChildren( Graphics g );
+	
+	/**
+	 * Invokes the standard algorithm that paints an overlay over the children
+	 * of the component. This method should be called at most once. 
+	 * @param g the graphics context to use, <code>null</code> to just inform
+	 * this component that the background should not be painted automatically
+	 */
+	public void paintOverlay( Graphics g );
 }

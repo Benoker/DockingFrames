@@ -130,7 +130,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			}
 		};
 		
-		BackgroundPanel content = new BackgroundPanel();
+		BackgroundPanel content = new BackgroundPanel( true, false );
 		content.setBackground( background );
 		panel.getBasePane().setLayout( new BorderLayout() );
 		panel.getBasePane().add( content, BorderLayout.CENTER );

@@ -303,9 +303,9 @@ public class ButtonPane extends OverpaintablePanel{
          * Creates a new panel
          */
         public Content(){
-        	setLayout( null );
+        	super( null, false, true );
         }
-        
+       
         @Override
         public void doLayout() {
             Insets insets = getInsets();

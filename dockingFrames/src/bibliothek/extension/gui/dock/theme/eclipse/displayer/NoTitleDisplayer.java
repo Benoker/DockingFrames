@@ -93,6 +93,7 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 	private Background background = new Background();
 	
 	public NoTitleDisplayer( DockStation station, Dockable dockable, TitleBar bar ){
+		super( false, true );
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
 		setOpaque( false );
 		setBackground( background );
@@ -229,7 +230,7 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
         super.paint(g);
         paintBorder(g);
     }
-	
+    
 	public Component getComponent(){
 		return this;
 	}

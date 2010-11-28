@@ -149,7 +149,7 @@ public abstract class BaseTabComponent extends BackgroundPanel implements TabCom
      * @param colorPostfix a string that will be added to any key for a color, can be <code>null</code>
      */    
     public BaseTabComponent( EclipseTabPane pane, Dockable dockable, String colorPostfix ){
-    	super( null );
+    	super( null, false, false );
     	
     	if( pane == null )
     		throw new IllegalArgumentException( "pane must not be null" );

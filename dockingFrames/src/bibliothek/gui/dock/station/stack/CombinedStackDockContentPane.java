@@ -49,7 +49,7 @@ public class CombinedStackDockContentPane extends BackgroundPanel{
 	 * @param parent the owner of this pane, not <code>null</code>
 	 */
 	public CombinedStackDockContentPane( CombinedStackDockComponent<?, ?, ?> parent ){
-		setLayout( null );
+		super( null, false, true );
 		if( parent == null )
 			throw new IllegalArgumentException( "parent must not be null" );
 		this.parent = parent;
@@ -64,6 +64,7 @@ public class CombinedStackDockContentPane extends BackgroundPanel{
 	 */
 	public void setPaintBackground( boolean paintBackground ){
 		this.paintBackground = paintBackground;
+		setTransparent( !paintBackground );
 	}
 	
 	/**

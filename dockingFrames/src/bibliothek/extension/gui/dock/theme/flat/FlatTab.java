@@ -120,6 +120,7 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
      * @param dockable the Dockable for which this tab is displayed
      */
     public FlatTab( FlatTabPane pane, Dockable dockable ){
+    	super( true, false );
     	this.pane = pane;
     	this.dockable = dockable;
     	            
@@ -174,7 +175,7 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
         fontUnselected = new FlatTabFont( DockFont.ID_TAB_UNSELECTED, dockable );
         
         setController( pane.getController() );
-        setOpaque( false );
+//        setOpaque( false );
         setFocusable( true );
         
         addMouseListener( new MouseAdapter(){

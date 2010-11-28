@@ -267,24 +267,42 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         BackgroundComponent component = model.getBackgroundComponent();
         	
         AbstractPaintableComponent paintable = new AbstractPaintableComponent( component, this, paint ){
+			protected void background( Graphics g ){
+				// ignore
+			}
+			
 			protected void foreground( Graphics g ){
 				doPaintForeground( g );
 			}
 			
-			protected void background( Graphics g ){
+			@Override
+			protected void border( Graphics g ){
+				doPaintBorder( g );	
+			}
+			
+			@Override
+			protected void children( Graphics g ){
+				// ignore	
+			}
+			
+			@Override
+			protected void overlay( Graphics g ){
 				// ignore
+			}
+			
+			public boolean isSolid(){
+				return false;
+			}
+			
+			public boolean isTransparent(){
+				return false;
 			}
 		};
         paintable.paint( g );
     }
     
     private void doPaintForeground( Graphics g ){
-    	// border
-        Border border = getBorder();
-        if( border != null )
-            border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );
-        
-        // icon
+    	// icon
         Icon icon = model.getPaintIcon();
         if( icon != null ){
             paintIcon( icon, g );
@@ -293,7 +311,14 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         // focus
         if( isFocusOwner() && isFocusable() && isEnabled() ){
             paintFocus( g );
-        }	
+        }
+    }
+    
+    private void doPaintBorder( Graphics g ){
+    	// border
+        Border border = getBorder();
+        if( border != null )
+            border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );	
     }
     
     /**

@@ -154,6 +154,26 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
 				protected void background( Graphics g ){
 					doPaintBackground( g );	
 				}
+				
+				protected void border( Graphics g ){
+					// ignore
+				}
+				
+				protected void children( Graphics g ){
+					// ignore
+				}
+				
+				protected void overlay( Graphics g ){
+					// ignore
+				}
+				
+				public boolean isSolid(){
+					return false;
+				}
+				
+				public boolean isTransparent(){
+					return false;
+				}
 			};
 			paintable.paint( g );
     	}

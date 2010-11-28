@@ -25,13 +25,12 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.stack;
 
-import java.awt.Component;
 import java.awt.Graphics;
+
+import javax.swing.border.Border;
 
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
 import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
-import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.PaintableComponent;
 
 /**
  * The panel painting the background of a {@link EclipseTabPane}.
@@ -55,42 +54,23 @@ public class EclipseTabPaneContent extends CombinedStackDockContentPane{
 	}
 	
 	@Override
-	public void paint( Graphics g ){
-		BackgroundAlgorithm background = getBackgroundAlgorithm();
-		final TabPanePainter painter = pane.getPainter();
-		
-		if( background == null ){
-			painter.paintBackground( g );
-			super.paint( g );
-			painter.paintForeground( g );
-			paintBorder( g );
-		}
-		else{
-			PaintableComponent paint = new PaintableComponent(){
-				public Component getComponent(){
-					return EclipseTabPaneContent.this;
-				}
-				
-				public void paintBackground( Graphics g ){
-					if( painter != null ){
-						painter.paintBackground( g );
-					}
-				}
-	
-				public void paintForeground( Graphics g ){
-					doPaintContent( g );
-					if( painter != null ){
-						painter.paintForeground( g );
-					}
-				}
-			};
-			
-			background.paint( paint, g );
-			paintBorder( g );
-		}		
+	public void paintBackground( Graphics g ){
+		getPane().getPainter().paintBackground( g );
 	}
 	
-	private void doPaintContent( Graphics g ){
-		super.paint( g );
+	@Override
+	public void paintBorder( Graphics g ){
+		// ignore
+	}
+	
+	@Override
+	public void paintOverlay( Graphics g ){
+		TabPanePainter painter = getPane().getPainter();
+		painter.paintForeground( g );
+		
+		Border border = getBorder();
+		if( border != null ){
+			border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );
+		}
 	}
 }

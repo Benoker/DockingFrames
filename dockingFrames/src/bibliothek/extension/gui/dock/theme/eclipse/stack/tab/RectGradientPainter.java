@@ -202,10 +202,9 @@ public class RectGradientPainter extends BaseTabComponent {
 	    	}
 	    }
 	}
-
+	
 	@Override
 	public void paintBackground( Graphics g ){
-		super.paintComponent(g);
 		int height = getHeight(), width = getWidth();
 		Graphics2D g2d = (Graphics2D) g;
 		Color lineColor = colorStackBorder.value();

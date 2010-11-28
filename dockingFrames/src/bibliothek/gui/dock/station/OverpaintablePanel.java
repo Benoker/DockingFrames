@@ -64,6 +64,7 @@ public class OverpaintablePanel extends JLayeredPane {
      */
     public OverpaintablePanel(){
     	base = content;
+    	content.setOpaque( false );
     	
         setLayer( base, DEFAULT_LAYER );
         setLayer( overlay, DRAG_LAYER );

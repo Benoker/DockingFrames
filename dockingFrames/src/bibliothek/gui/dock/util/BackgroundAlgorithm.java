@@ -106,6 +106,9 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 		if( paint == null ){
 			component.paintBackground( g );
 			component.paintForeground( g );
+			component.paintBorder( g );
+			component.paintChildren( g );
+			component.paintOverlay( g );
 		}
 		else{
 			Paintable paintable = new Paintable( component );
@@ -120,8 +123,11 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 	private class Paintable implements PaintableComponent{
 		private PaintableComponent delegate;
 		
-		private boolean foregroundPainted = false;
 		private boolean backgroundPainted = false;
+		private boolean foregroundPainted = false;
+		private boolean borderPainted = false;
+		private boolean childrenPainted = false;
+		private boolean overlayPainted = false;
 		
 		/**
 		 * Creates a new wrapper.
@@ -149,6 +155,35 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 			}
 		}
 		
+		public void paintBorder( Graphics g ){
+			borderPainted = true;
+			if( g != null ){
+				delegate.paintBorder( g );
+			}
+		}
+		
+		public void paintChildren( Graphics g ){
+			childrenPainted = true;
+			if( g != null ){
+				delegate.paintChildren( g );
+			}
+		}
+		
+		public void paintOverlay( Graphics g ){
+			overlayPainted = true;
+			if( g != null ){
+				delegate.paintOverlay( g );
+			}
+		}
+		
+		public boolean isSolid(){
+			return delegate.isSolid();
+		}
+		
+		public boolean isTransparent(){
+			return delegate.isTransparent();
+		}
+		
 		/**
 		 * Paints this {@link Paintable} using the graphics context.
 		 * @param g the graphics context to paint
@@ -160,6 +195,15 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 			}
 			if( !foregroundPainted ){
 				paintForeground( g );
+			}
+			if( !borderPainted ){
+				paintBorder( g );
+			}
+			if( !childrenPainted ){
+				paintChildren( g );
+			}
+			if( !overlayPainted ){
+				paintOverlay( g );
 			}
 		}
 	}
