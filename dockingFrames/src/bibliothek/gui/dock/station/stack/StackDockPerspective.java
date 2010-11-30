@@ -98,7 +98,7 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		});
 		
 		this.dockables = dockables;
-		selection = children.get( selection );
+		selection = children.get( selected );
 	}
 	
 	public void setPlaceholders( PlaceholderMap placeholders ){
