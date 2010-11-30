@@ -2294,7 +2294,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	public void removePlaceholder( Path placeholder ){
 		Set<Path> placeholders = new HashSet<Path>();
 		placeholders.add(placeholder);
-		removePlaceholder(placeholder);
+		removePlaceholders(placeholders);
 	}
 
 	/**
