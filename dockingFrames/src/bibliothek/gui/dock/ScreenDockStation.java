@@ -260,18 +260,17 @@ public class ScreenDockStation extends AbstractDockStation {
 		}
 		
 		public boolean process( Dockable dockable, MouseEvent event ){
-			if( dockable != ScreenDockStation.this ){
-				DockStation parent = dockable.getDockParent();
-				while( parent != null && parent != ScreenDockStation.this ){
-					dockable = parent.asDockable();
-					parent = dockable == null ? null : dockable.getDockParent();
-				}
-				if( parent == ScreenDockStation.this ){
-					boolean state = isFullscreen( dockable );
-					setFullscreen( dockable, !state );
-					return true;
-				}
+			DockStation parent = dockable.getDockParent();
+			while( parent != null && parent != ScreenDockStation.this ){
+				dockable = parent.asDockable();
+				parent = dockable == null ? null : dockable.getDockParent();
 			}
+			if( parent == ScreenDockStation.this ){
+				boolean state = isFullscreen( dockable );
+				setFullscreen( dockable, !state );
+				return true;
+			}
+			
 			return false;
 		}
 	};

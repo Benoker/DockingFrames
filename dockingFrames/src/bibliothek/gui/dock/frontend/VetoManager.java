@@ -58,6 +58,8 @@ public class VetoManager {
         if( frontend == null )
             throw new IllegalArgumentException( "Frontend must not be null" );
         
+        this.frontend = frontend;
+        
         frontend.addFrontendListener( new DockFrontendAdapter(){
             @Override
             public void shown( DockFrontend frontend, Dockable dockable ) {

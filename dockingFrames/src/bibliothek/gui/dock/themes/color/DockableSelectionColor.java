@@ -51,6 +51,7 @@ public abstract class DockableSelectionColor extends AbstractDockColor {
      */
     public DockableSelectionColor( DockableSelection selection, String id, Path kind, Color backup ){
         super( id, kind, backup );
+        this.selection = selection;
     }
     
     /**
@@ -61,6 +62,7 @@ public abstract class DockableSelectionColor extends AbstractDockColor {
      */
     public DockableSelectionColor( DockableSelection selection, String id, Color backup ){
         super( id, KIND_DOCKABLE_SELECTION_COLOR, backup );
+        this.selection = selection;
     }
     
     /**
