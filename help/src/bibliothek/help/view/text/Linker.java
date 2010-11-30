@@ -102,12 +102,10 @@ public abstract class Linker {
             Rectangle bounds = (begin instanceof Rectangle) ? 
                         (Rectangle)begin : begin.getBounds();
             
-            Shape end = ui.modelToView( editor, element.getEndOffset(),
+            Rectangle end = ui.modelToView( editor, element.getEndOffset(),
                                           Position.Bias.Backward);
             if (end != null) {
-                Rectangle endBounds = (end instanceof Rectangle) ? 
-                        (Rectangle)end : end.getBounds();
-                bounds.add( endBounds );
+                bounds.add( end );
             }
             
             return bounds.contains( location.x, location.y );

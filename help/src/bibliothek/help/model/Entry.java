@@ -46,10 +46,11 @@ public class Entry {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.details = details;
         
         if( details == null || details.length == 0 )
             details = EMPTY;
+        
+        this.details = details;
     }
     
     /**
