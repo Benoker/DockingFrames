@@ -303,7 +303,7 @@ public class ButtonPane extends OverpaintablePanel{
          * Creates a new panel
          */
         public Content(){
-        	super( null, false, true );
+        	super( null, true, false );
         }
        
         @Override

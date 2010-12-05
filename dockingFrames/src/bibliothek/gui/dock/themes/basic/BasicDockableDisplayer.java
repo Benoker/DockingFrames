@@ -135,7 +135,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     private boolean singleTabShowing;
     
     /** the panel that shows the content of this displayer */
-    private BackgroundPanel content = new BackgroundPanel( null, true, false ){
+    private BackgroundPanel content = new BackgroundPanel( null, false, true ){
     	@Override
     	public void doLayout(){
 	    	BasicDockableDisplayer.this.doLayout( content );

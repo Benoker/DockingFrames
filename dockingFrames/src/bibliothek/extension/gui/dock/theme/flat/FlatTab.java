@@ -547,7 +547,7 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
         
         g2.setPaint( oldPaint );
         
-        super.paintComponent( g );
+        super.paintBackground( g2 );
     }
     
     /**

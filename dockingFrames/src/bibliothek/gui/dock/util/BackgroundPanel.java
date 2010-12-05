@@ -39,8 +39,6 @@ import javax.swing.JPanel;
 public class BackgroundPanel extends JPanel implements PaintableComponent{
 	private BackgroundAlgorithm background;
 	
-	/** whether all pixels of this panel are painted */
-	private boolean solid;
 	/** whether no pixels of this panel are painted */
 	private boolean transparent;
 	
@@ -50,7 +48,7 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	 * @param transparent whether no pixels of this panel are painted
 	 */
 	public BackgroundPanel( boolean solid, boolean transparent ){
-		this.solid = solid;
+		setSolid( solid );
 		this.transparent = transparent;
 	}
 	
@@ -62,7 +60,7 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	 */
 	public BackgroundPanel( LayoutManager layout, boolean solid, boolean transparent ){
 		super( layout );
-		this.solid = solid;
+		setSolid( solid );
 		this.transparent = transparent;
 	}
 	
@@ -103,11 +101,11 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	 * @param solid <code>true</code> if every pixel is painted
 	 */
 	public void setSolid( boolean solid ){
-		this.solid = solid;
+		setOpaque( solid );
 	}
 	
 	public boolean isSolid(){
-		return solid;
+		return isOpaque();
 	}
 	
 	/**

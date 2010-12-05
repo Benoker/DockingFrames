@@ -185,7 +185,7 @@ public class CodePanel {
 							if( i+1 < length && code.charAt( i+1 ) == '*' ){
 								inMultiLineComment = true;
 							}
-							else{
+							else if( i+1 < length && code.charAt( i+1 ) == '/' ){
 								inSingleLineComment = true;
 							}
 						}

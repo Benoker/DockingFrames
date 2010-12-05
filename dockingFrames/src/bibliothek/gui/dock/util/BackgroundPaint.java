@@ -28,6 +28,8 @@ package bibliothek.gui.dock.util;
 import java.awt.Component;
 import java.awt.Graphics;
 
+import javax.swing.JComponent;
+
 import bibliothek.gui.DockTheme;
 
 /**
@@ -59,6 +61,13 @@ public interface BackgroundPaint {
 	 * 	<li>If these methods are not called, then they will be executed automatically.</li>
 	 * 	<li>If these methods are called with an argument of <code>null</code> then they will neither paint nor be executed automatically.</li>
 	 * 	<li>If these methods are called with an argument not <code>null</code> then they paint but will not be executed automatically.</li>
+	 * </ul>
+	 * Further more implementations should follow these guide lines to prevent artifacts while painting:
+	 * <ul>
+	 * 	<li>If <code>paintable</code> is solid, then the entire background must be painted (every pixel must be filled).</li>
+	 *  <li>Painting over children ({@link Component}s) will almost certainly not work. The framework uses special transparent panels to do that.</li>
+	 *  <li>Painting semi-transparent children will almost certainly not work because the children may not be marked as transparent (see {@link JComponent#isOpaque()}.</li>
+	 *  <li>In general painting should not require much time (a few milliseconds at most) because painting can happen often.</li>
 	 * </ul>
 	 * @param background the component to paint, is installed on this paint, not <code>null</code>
 	 * @param paintable the part of the component that is to be painted, may be a child-{@link Component}
