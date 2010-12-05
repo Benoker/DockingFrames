@@ -273,7 +273,7 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	/**
 	 * One entry of this menu. 
 	 */
-	private class Entry{
+	private static class Entry{
 		/** the element of this entry */
 		public Dockable dockable;
 		/** the title */

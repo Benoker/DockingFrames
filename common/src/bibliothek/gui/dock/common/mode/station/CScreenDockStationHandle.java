@@ -36,6 +36,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.location.CExternalizedLocation;
+import bibliothek.gui.dock.common.location.CMaximalExternalizedLocation;
 import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -61,9 +63,6 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Benjamin Sigg
  */
 public class CScreenDockStationHandle {
-	/** base location */
-	private CLocation location;
-	
 	/** the station handled by this handle */
 	private CStation<ScreenDockStation> station;
 	
@@ -145,22 +144,44 @@ public class CScreenDockStationHandle {
 	 */
 	public CLocation getCLocation( Dockable dockable ){
 		DockableProperty property = DockUtilities.getPropertyChain( station.getStation(), dockable );
-		return location.expandProperty( property );
+		return expand( property );
 	}
 
 	/**
-	 * Assuming dockable would be at location location if it would be a child of this station, 
-	 * returns the CLocation that matches location.
+	 * Assuming dockable would be at location <code>location</code> if it would be a child of this station, 
+	 * returns the CLocation that matches <code>location</code>.
 	 * @param dockable some element which may or may not be a child of this station
 	 * @param location the location dockable would have if it would be a child of this station
-	 * @return the location
+	 * @return the location or <code>null</code> if <code>location.getLocation()</code> is not valid
 	 */
 	public CLocation getCLocation( Dockable dockable, Location location ){
 		DockableProperty property = location.getLocation();
 		if( property == null )
-			return this.location;
+			return null;
 		
-		return this.location.expandProperty( property );
+		return expand( property );
+	}
+	
+	private CLocation expand( DockableProperty property ){
+		if( property instanceof ScreenDockProperty ){
+			ScreenDockProperty screen = (ScreenDockProperty)property;
+			
+			CLocation result;
+			if( screen.isFullscreen() ){
+				result = new CMaximalExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+			}
+			else{
+				result = new CExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
+			}
+			
+			if( property.getSuccessor() != null ){
+				return result.expandProperty( property.getSuccessor() );
+			}
+			else{
+				return result;
+			}
+		}
+		return null;
 	}
 	
 	/**

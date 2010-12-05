@@ -316,7 +316,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      * Generator to create views for {@link ButtonDockAction button-actions}.
      * @author Benjamin Sigg
      */
-    private class ButtonGenerator implements ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>{
+    private static class ButtonGenerator implements ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ) {
             BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
             RoundButton button = new RoundButton( handler, dockable, action );
@@ -329,7 +329,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      * Generator to create views for {@link SelectableDockAction check-actions}.
      * @author Benjamin Sigg
      */
-    private class CheckGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
+    private static class CheckGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
             BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
             RoundButton button = new RoundButton( handler, dockable, action );
@@ -342,7 +342,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      * Generator to create views for {@link SelectableDockAction radio-actions}.
      * @author Benjamin Sigg
      */
-    private class RadioGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
+    private static class RadioGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
             BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
             RoundButton button = new RoundButton( handler, dockable, action );
@@ -355,7 +355,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      * Generator to create views for {@link DropDownAction dropdown-actions}.
      * @author Benjamin Sigg
      */
-    private class DropDownGenerator implements ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>{
+    private static class DropDownGenerator implements ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ) {
             BasicDropDownButtonHandler handler = new BasicDropDownButtonHandler( action, dockable );
             RoundDropDownButton button = new RoundDropDownButton( handler, dockable, action );
@@ -368,7 +368,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      * Generator to create views for {@link MenuDockAction menus}.
      * @author Benjamin Sigg
      */
-    private class MenuGenerator implements ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>{
+    private static class MenuGenerator implements ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
             BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
             RoundButton button = new RoundButton( handler, dockable, action );

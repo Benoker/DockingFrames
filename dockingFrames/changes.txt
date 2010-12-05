@@ -366,4 +366,5 @@
  - API: DockTheme is now managed by a specialized class ThemeManager and no longer by DockController.
  ! API: While the interface DockTheme was not changed, many of its methods should no longer be invoked directly. Instead the ThemeManager and the DockProperties should be used.
  - Bugfix: DefaultCControlRegister, adding a CContentArea did not have any effect.
- - Bugfix: changing properties like maximizeable of a CDockable did not update the actions 
+ - Bugfix: changing properties like maximizeable of a CDockable did not update the actions
+ - Bugfix: run FindBug and found some bugs of lesser importance

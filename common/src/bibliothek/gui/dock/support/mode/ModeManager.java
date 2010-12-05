@@ -1325,7 +1325,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		            history.add( id );
 		            properties.put( id, mode.mode.current( dockable ) );
 		            rebuild( dockable );
-		            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode == null ? null : mode.mode );
+		            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode.mode );
 	            }
 	            else{
 	            	rebuild( dockable );

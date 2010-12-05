@@ -213,6 +213,9 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 			else if( dockables.length > 1 ){
 				dockable = combine( dockables, tree.getSelected( key ) );
 			}
+			else{
+				throw new IllegalArgumentException( "dockables.length == " + dockables.length );
+			}
 			
 			DockUtilities.ensureTreeValidity( this, dockable );
 

@@ -67,9 +67,7 @@ public class Triple<A, B, C> extends Tuple<A, B>{
 	public boolean equals( Object o ){
 		if( o instanceof Triple ){
 			Triple s = (Triple)o;
-			return super.equals( o ) && ( 
-				(s.c == null && c == null) ||
-				s.c.equals( c ));
+			return super.equals( o ) && ( (s.c == null && c == null) || (s.c != null && s.c.equals( c )));
 		}
 		return false;
 	}

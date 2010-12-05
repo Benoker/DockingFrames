@@ -147,7 +147,7 @@ public class IconManager {
      * A set of icons with different priority and a set of listeners.
      * @author Benjamin Sigg
      */
-    private class Entry extends PriorityValue<Icon>{
+    private static class Entry extends PriorityValue<Icon>{
         private String key;
         private List<IconManagerListener> listeners = new ArrayList<IconManagerListener>();
         

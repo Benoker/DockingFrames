@@ -225,13 +225,15 @@ public class BasicTheme implements DockTheme{
      * can now be created lazily and automatically in exactly the moment when they are needed.
      */
     protected void updateColors(){
-    	ColorScheme scheme = colorScheme.getValue();
-    	
-        if( controller != null && scheme != null ){
-        	scheme = new ExtendingColorScheme( scheme, controller );
-        }
-        
-        controller.getColors().setScheme( Priority.THEME, scheme );
+    	if( controller != null ){
+    		ColorScheme scheme = colorScheme.getValue();
+    		
+	        if( scheme != null ){
+	        	scheme = new ExtendingColorScheme( scheme, controller );
+	        }
+	        
+	        controller.getColors().setScheme( Priority.THEME, scheme );
+    	}
     }
 
     /**

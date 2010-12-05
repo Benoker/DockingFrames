@@ -67,9 +67,8 @@ public class Single<A> implements Cloneable{
 	@Override
 	public boolean equals( Object o ){
 		if( o instanceof Single ){
-			Single s = (Single)o;
-			return (s.a == null && a == null) ||
-				s.a.equals( a );
+			Single s = (Single)o; 
+			return (s.a == null && a == null) || (s.a != null && s.a.equals( a ) );
 		}
 		return false;
 	}

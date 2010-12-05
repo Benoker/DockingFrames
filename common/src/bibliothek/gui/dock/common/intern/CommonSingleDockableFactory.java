@@ -317,7 +317,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     /**
      * One backup factory of a {@link CommonSingleDockableFactory}
      */
-    private class Entry{
+    private static class Entry{
     	/** the filter to apply before {@link #factory} can be used */
     	public final Filter<String> filter;
     	/** the factory represented by this entry */

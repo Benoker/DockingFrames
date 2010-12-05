@@ -172,7 +172,7 @@ public class SplitCombiner extends BasicCombiner{
 	 * at one side of a {@link Dockable}.
 	 * @author Benjamin Sigg
 	 */
-	private class Target implements CombinerTarget{
+	private static class Target implements CombinerTarget{
 		private DockStation station;
 		private SplitDockPathProperty.Location side;
 		private double space;

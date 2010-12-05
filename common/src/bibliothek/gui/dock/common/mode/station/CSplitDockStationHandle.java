@@ -154,7 +154,7 @@ public class CSplitDockStationHandle{
 	 * is a child of this station.
 	 */
 	public void dropAside( Dockable dockable ){
-		if( dockable.getDockParent() == station )
+		if( dockable.getDockParent() == station.getStation() )
 			throw new IllegalStateException( "dockable already a child" );
 		
 		DockableSplitDockTree tree = getStation().createTree();
@@ -170,7 +170,7 @@ public class CSplitDockStationHandle{
 	 * A wrapper for a {@link ModeAreaListener}.
 	 * @author Benjamin Sigg
 	 */
-	private class ModeAreaListenerWrapper{
+	private static class ModeAreaListenerWrapper{
 		/** the listener */
 		private ModeAreaListener listener;
 		/** the area */

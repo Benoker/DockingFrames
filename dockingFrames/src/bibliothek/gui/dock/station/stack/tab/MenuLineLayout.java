@@ -376,13 +376,10 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 			 * @return <code>true</code> if this layout is a preferred layout
 			 */
 			public boolean isPreferred(){
-				if( !tabSize.isPreferred() || !tabSize.isAllTabs() )
+				if( tabSize == null || !tabSize.isPreferred() || !tabSize.isAllTabs() )
 					return false;
 				
 				if( menuSize != null )
-					return false;
-				
-				if( tabSize != null && !tabSize.isPreferred() )
 					return false;
 				
 				return true;

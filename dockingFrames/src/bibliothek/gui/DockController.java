@@ -669,18 +669,16 @@ public class DockController {
         DockControllerRepresentativeListener[] listeners = componentToDockElementsListeners
                 .toArray( new DockControllerRepresentativeListener[componentToDockElementsListeners.size()] );
         
-        DockElementRepresentative old = componentToDockElements.put(
-                representative.getComponent(), representative );
+        DockElementRepresentative old = componentToDockElements.put( representative.getComponent(), representative );
     	
     	if( old != null ){
     	    for( DockControllerRepresentativeListener listener : listeners ){
     	        listener.representativeRemoved( this, old );
     	    }
     	}
-    	if( representative != null ){
-    	    for( DockControllerRepresentativeListener listener : listeners ){
-    	        listener.representativeAdded( this, representative );
-    	    }
+    	
+    	for( DockControllerRepresentativeListener listener : listeners ){
+    		listener.representativeAdded( this, representative );
     	}
     }
     

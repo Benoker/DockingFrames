@@ -63,11 +63,9 @@ public class Tuple<A, B> extends Single<A>{
     @SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object o ){
-		if( o instanceof Tuple ){
+    	if( o instanceof Tuple ){
 			Tuple s = (Tuple)o;
-			return super.equals( o ) && ( 
-				(s.b == null && b == null) ||
-				s.b.equals( b ));
+			return super.equals( o ) && ( (s.b == null && b == null) || (s.b != null && s.b.equals( b )));
 		}
 		return false;
 	}

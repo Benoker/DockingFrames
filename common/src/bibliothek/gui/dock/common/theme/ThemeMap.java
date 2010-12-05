@@ -542,7 +542,7 @@ public class ThemeMap {
      * An entry of this map.
      * @author Benjamin Sigg
      */
-    private class Entry{
+    private static class Entry{
         /** the unique name of the entry */
         public String key;
         /** the factory associated to {@link #key} */

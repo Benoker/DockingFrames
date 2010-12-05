@@ -68,9 +68,7 @@ public class Quartuple<A,B,C,D> extends Triple<A,B,C>{
 	public boolean equals( Object o ){
 		if( o instanceof Quartuple ){
 			Quartuple s = (Quartuple)o;
-			return super.equals( o ) && ( 
-				(s.d == null && d == null) ||
-				s.d.equals( d ));
+			return super.equals( o ) && ( (s.d == null && d == null) || (s.d != null && s.d.equals( d )));
 		}
 		return false;
 	}

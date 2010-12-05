@@ -111,7 +111,7 @@ public class RetroScreenDockStationLayout extends ScreenDockStationLayout {
      * An entry of this layout
      * @author Benjamin Sigg
      */
-    private class Entry{
+    private static class Entry{
         /** the id of the entry */
         public int id;
         

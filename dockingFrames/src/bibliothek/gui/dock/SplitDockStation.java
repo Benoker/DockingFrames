@@ -1506,9 +1506,6 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 				long id = node.getId();
 				if( id != -1 ) {
 					start = getNode(id);
-					if( start != null ) {
-						break;
-					}
 				}
 			}
 		}

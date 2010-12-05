@@ -324,6 +324,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 				switch( reaction ){
 					case BREAK_CONSUMED:
 						e.consume();
+						// fall through
 					case BREAK:
 						mouseTarget = null;
 						break;
@@ -387,6 +388,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 				switch( reaction ){
 					case BREAK_CONSUMED:
 						e.consume();
+						// fall through
 					case BREAK:
 						mouseTarget = null;
 						break;

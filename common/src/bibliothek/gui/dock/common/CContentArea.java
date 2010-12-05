@@ -460,7 +460,7 @@ public class CContentArea extends JPanel{
 	 * areas.
 	 * @author Benjamin Sigg
 	 */
-	private class MinimizeStation extends AbstractCStation<FlapDockStation>{
+	private static class MinimizeStation extends AbstractCStation<FlapDockStation>{
 		private ResizeRequestListener handler;
 		private CFlapDockStationHandle modeManagerHandle;
 		

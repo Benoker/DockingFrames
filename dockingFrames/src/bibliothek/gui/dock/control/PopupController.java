@@ -94,7 +94,7 @@ public class PopupController implements DockControllerRepresentativeListener{
      * A mouse listener opening a popup menu when necessary.
      * @author Benjamin Sigg
      */
-    private class ComponentObserver extends ActionPopup{
+    private static class ComponentObserver extends ActionPopup{
         /** the representation of the element for which this might open a popup */
     	private DockElementRepresentative representative;
         
