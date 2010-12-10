@@ -25,7 +25,11 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
@@ -83,6 +87,9 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
      */
     private Listener listener = new Listener();
     
+    /** The border of this displayer */
+    private DisplayerBorder openBorder;
+    
     /**
      * Creates a new displayer
      * @param station the station for which this displayer will be used
@@ -93,6 +100,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
         super( station, dockable, title );
         
         this.dockable.setOpaque( false );
+        openBorder = new DisplayerBorder( this.dockable, "bubble" );
         animation = new BubbleColorAnimation();
         animation.addTask( new Runnable(){
             public void run() {
@@ -158,6 +166,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             super.setController( controller );
         }
         
+        openBorder.setController( controller );
         borderHighActive.connect( controller );
         borderHighActiveMouse.connect( controller );
         borderHighInactive.connect( controller );
@@ -313,7 +322,7 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
      * The border which will be painted around the {@link BubbleDisplayer#dockable dockable}.
      * @author Benjamin Sigg
      */
-    private class OpenBorder implements Border{
+    public class OpenBorder implements Border{
         public Insets getBorderInsets( Component c ) {
             if( getTitle() == null )
                 return new Insets( borderSize, borderSize, borderSize, borderSize );

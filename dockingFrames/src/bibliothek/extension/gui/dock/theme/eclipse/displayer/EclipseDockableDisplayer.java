@@ -314,6 +314,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		
 		/**
 		 * Creates a new object
+		 * @param displayer the displayer which will be managed by this object
 		 */
 		public Background( EclipseDockableDisplayer displayer ){
 			super( DisplayerBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".displayer" );

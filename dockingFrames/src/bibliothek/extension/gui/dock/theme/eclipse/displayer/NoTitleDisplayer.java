@@ -47,11 +47,13 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
+import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
@@ -89,6 +91,9 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 	
 	private Border innerBorder;
 	private Border outerBorder;
+	
+	private DisplayerBorder innerBorderModifier = new DisplayerBorder( "in" );
+	private DisplayerBorder outerBorderModifier = new DisplayerBorder( "out" );
 	
 	private Background background = new Background();
 	
@@ -187,6 +192,9 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 	}
 	
 	private void updateBorder(){
+		Border innerBorder = innerBorderModifier.modify( this.innerBorder );
+		Border outerBorder = outerBorderModifier.modify( this.outerBorder );
+		
 		if( innerBorder == null && outerBorder == null )
 			setBorder( null );
 		else if( innerBorder == null )
@@ -276,6 +284,7 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 	}
 
 	public void setController( DockController controller ){
+		DockController oldController = this.controller;
 		this.controller = controller;
 		if( painter != null )
 		    painter.setProperties( controller == null ? null : controller.getProperties() );
@@ -287,6 +296,8 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 			invisibleTab.setController( controller );
 		
 		background.setController( controller );
+		innerBorderModifier.setController( oldController, controller );
+		outerBorderModifier.setController( oldController, controller );
 		
 		updateFullBorder();
 	}
@@ -350,6 +361,66 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 		
 		public DockableDisplayer getDisplayer(){
 			return NoTitleDisplayer.this;
+		}
+	}
+	
+	/**
+	 * A wrapper around a {@link BorderModifier} that is used by this {@link NoTitleDisplayer}.
+	 * @author Benjamin Sigg
+	 */
+	private class DisplayerBorder implements DisplayerDockBorder{
+		private String suffix;
+		private BorderModifier modifier;
+		
+		/**
+		 * Creates a new wrapper.
+		 * @param suffix the suffix of the identifier
+		 */
+		public DisplayerBorder( String suffix ){
+			this.suffix = suffix;
+		}
+		
+		public DockableDisplayer getDisplayer(){
+			return NoTitleDisplayer.this;
+		}
+
+		/**
+		 * Switches the controller which is to be monitored for a value.
+		 * @param oldController the old controller, can be <code>null</code>
+		 * @param newController the new controller, can be <code>null</code>
+		 */
+		public void setController( DockController oldController, DockController newController ){
+			if( oldController != null ){
+				oldController.getThemeManager().remove( this );
+			}
+			if( newController != null ){
+				String id = ThemeManager.BORDER_MODIFIER + ".displayer.no_title." + suffix;
+				newController.getThemeManager().add( id, DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER_TYPE, this );
+			}
+			else{
+				set( null );
+			}
+		}
+		
+		public void set( BorderModifier value ){
+			if( value != modifier ){
+				modifier = value;
+				updateBorder();
+			}
+		}
+		
+		/**
+		 * Modifies <code>border</code> and returns a new border.
+		 * @param border the border to modify, can be <code>null</code>
+		 * @return the new border, can be <code>null</code>
+		 */
+		public Border modify( Border border ){
+			if( modifier == null ){
+				return null;
+			}
+			else{
+				return modifier.modify( border );
+			}
 		}
 	}
 }

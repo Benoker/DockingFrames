@@ -107,12 +107,13 @@ public interface DockFactory<D extends DockElement, P extends PerspectiveElement
     
 	
 	/**
-	 * Gets the layout information that is associated with this element.
+	 * Gets the layout information that is associated with <code>element</code>.
 	 * The layout information can be any {@link Object}. The only restriction
 	 * of the object is, that the associated {@link DockFactory} understands
 	 * how to read that object.<br>
 	 * This method may return <code>null</code> if and only if {@link #layoutPerspective(Object, Map)} always returns
 	 * <code>null</code>.
+	 * @param element the element whose layout information is asked.
 	 * @param children a map providing identifiers for the children of this element. The
 	 * identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.), 
 	 * the exact same identifiers would be given to {@link DockConverter#getLayout(bibliothek.gui.dock.DockElement, Map)}.

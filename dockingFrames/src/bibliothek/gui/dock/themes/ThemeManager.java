@@ -42,6 +42,7 @@ import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockProperties;
@@ -65,25 +66,31 @@ public class ThemeManager extends TypedUIProperties{
 	public static final Type<StationPaint> STATION_PAINT_TYPE = new Type<StationPaint>( "StationPaint" );
 	
 	/** unique identifier for the basic {@link StationPaint} */
-	public static final String STATION_PAINT = "paint";
+	public static final String STATION_PAINT = "dock.paint";
 	
 	/** Identifier for the type {@link Combiner} */
 	public static final Type<Combiner> COMBINER_TYPE = new Type<Combiner>( "Combiner" );
 	
 	/** unique identifier for the basic {@link Combiner} */
-	public static final String COMBINER = "combiner";
+	public static final String COMBINER = "dock.combiner";
 	
 	/** Identifier for the type {@link DisplayerFactory} */
 	public static final Type<DisplayerFactory> DISPLAYER_FACTORY_TYPE = new Type<DisplayerFactory>( "DisplayerFactory" );
 	
 	/** unique identifier for the basic {@link DisplayerFactory} */
-	public static final String DISPLAYER_FACTORY = "displayer";
+	public static final String DISPLAYER_FACTORY = "dock.displayer";
 	
 	/** Identifier for the type {@link BackgroundPaint} */
 	public static final Type<BackgroundPaint> BACKGROUND_PAINT_TYPE = new Type<BackgroundPaint>( "BackgroundPaint" );
 	
 	/** unique identifier for the basic {@link BackgroundPaint} */
-	public static final String BACKGROUND_PAINT = "background";
+	public static final String BACKGROUND_PAINT = "dock.background";
+	
+	/** Identifier for the type {@link BorderModifier} */
+	public static final Type<BorderModifier> BORDER_MODIFIER_TYPE = new Type<BorderModifier>( "BorderModifier" );
+	
+	/** unique identifier for the basic {@link BorderModifier} */
+	public static final String BORDER_MODIFIER = "dock.border";
 	
 	/** the controller owning the manager */
 	private DockController controller;
@@ -137,6 +144,7 @@ public class ThemeManager extends TypedUIProperties{
     	registerType( COMBINER_TYPE );
     	registerType( DISPLAYER_FACTORY_TYPE );
     	registerType( BACKGROUND_PAINT_TYPE );
+    	registerType( BORDER_MODIFIER_TYPE );
     }
     
     private void link(){
@@ -144,6 +152,7 @@ public class ThemeManager extends TypedUIProperties{
     	link( DockTheme.COMBINER, COMBINER_TYPE, COMBINER );
     	link( DockTheme.DISPLAYER_FACTORY, DISPLAYER_FACTORY_TYPE, DISPLAYER_FACTORY );
     	link( DockTheme.BACKGROUND_PAINT, BACKGROUND_PAINT_TYPE, BACKGROUND_PAINT );
+    	link( DockTheme.BORDER_MODIFIER, BORDER_MODIFIER_TYPE, BORDER_MODIFIER );
     }
     
     /**
@@ -297,5 +306,22 @@ public class ThemeManager extends TypedUIProperties{
     @ClientOnly
     public void setBackgroundPaint( String id, BackgroundPaint value ){
     	put( Priority.CLIENT, id, BACKGROUND_PAINT_TYPE, value );
+    }
+    
+    /**
+     * Sets a strategy that is used to modify the border of various components.<br>
+     * Valid identifier can be, but are not restricted to:
+     * <ul>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.base</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.bubble</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.content</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.no_title.out</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.no_title.in</li>
+     * </ul>
+     * @param id the identifier of the items that should use <code>modifier</code>
+     * @param modifier the new strategy, can be <code>null</code>
+     */
+    public void setBorderModifier( String id, BorderModifier modifier ){
+    	put( Priority.CLIENT, id, BORDER_MODIFIER_TYPE, modifier );
     }
 }

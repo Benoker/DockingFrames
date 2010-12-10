@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
@@ -44,6 +45,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
+import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
@@ -54,10 +56,12 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.UIValue;
 
 
 /**
@@ -105,6 +109,12 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     
     /** the background algorithm of this panel */
     private Background background = new Background();
+    
+    /** the border strategy of this panel */
+    private DisplayerBorder baseBorder;
+    
+    /** the border strategy of the content panel of this displayer */
+    private DisplayerBorder contentBorder;
     
     /** this listener gets added to the current {@link SingleTabDecider} */
     private SingleTabDeciderListener singleTabListener = new SingleTabDeciderListener(){
@@ -216,9 +226,10 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
         setFocusable( true );
         
         setFocusCycleRoot( true );
-        setFocusTraversalPolicy( 
-                new DockFocusTraversalPolicy( 
-                        new DisplayerFocusTraversalPolicy( this ), true ));
+        setFocusTraversalPolicy( new DockFocusTraversalPolicy( new DisplayerFocusTraversalPolicy( this ), true ));
+        
+        baseBorder = new DisplayerBorder( this, "base" );
+        contentBorder = new DisplayerBorder( content, "content" );
     }
     
     /**
@@ -269,6 +280,9 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     	decider.setProperties( controller );
     	decorator.setController( controller );
     	background.setController( controller );
+    	baseBorder.setController( controller );
+    	contentBorder.setController( controller );
+    	
     	Component newComponent = decorator.getComponent();
     	
     	if( oldComponent != newComponent ){
@@ -285,15 +299,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     public DockController getController() {
         return controller;
     }
-    /*
-    @Override
-    public void setBorder( Border border ){
-    	if( content == null )
-    		super.setBorder( border );
-    	else
-    		content.setBorder( border );
-    }
-    */
+    
     public void addDockableDisplayerListener( DockableDisplayerListener listener ){
 	    listeners.add( listener );	
     }
@@ -695,40 +701,66 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
 		return singleTabShowOuterBorder;
 	}
     
+    @Override
+    public void updateUI(){
+    	super.updateUI();
+    	updateBorder();
+    }
+    
     /**
      * Called when the hint, whether a border should be shown or not, has changed. 
      */
     protected void updateBorder(){
     	if( singleTabShowing ){
     		if( singleTabShowInnerBorder )
-    			content.setBorder( getDefaultBorder() );
+    			setContentBorder( getDefaultBorder() );
     		else
-    			content.setBorder( null );
+    			setContentBorder( null );
     		
     		if( singleTabShowOuterBorder )
-    			setBorder( getDefaultBorder() );
+    			setBaseBorder( getDefaultBorder() );
     		else
-    			setBorder( null );
+    			setBaseBorder( null );
     	}
     	else{
-    		content.setBorder( null );
+    		setContentBorder( null );
     		
     		if( respectBorderHint ){
                 boolean show = hints.getShowBorderHint();
                 
                 if( show ){
-                    setBorder( getDefaultBorder() );
+                	setBaseBorder( getDefaultBorder() );
                 }
                 else{
-                    setBorder( null );
+                	setBaseBorder( null );
                 }
             }
     		else{
     			if( defaultBorderHint )
-    				setBorder( getDefaultBorder() );
+    				setBaseBorder( getDefaultBorder() );
     			else
-    				setBorder( null );
+    				setBaseBorder( null );
     		}
+    	}
+    }
+    
+    /**
+     * Sets the border that wraps around the entire displayer.
+     * @param border the new border, can be <code>null</code>
+     */
+    public void setBaseBorder( Border border ){
+    	if( baseBorder != null ){
+    		baseBorder.setBorder( border );
+    	}
+    }
+    
+    /**
+     * Sets the border that wraps around the content component.
+     * @param border the new border, can be <code>null</code>
+     */
+    public void setContentBorder( Border border ){
+    	if( contentBorder != null ){
+    		contentBorder.setBorder( border );
     	}
     }
     
@@ -789,5 +821,24 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     	public DockableDisplayer getDisplayer(){
     		return BasicDockableDisplayer.this;
     	}
+    }
+    
+    /**
+     * The border of this displayer.
+     * @author Benjamin Sigg
+     */
+    protected class DisplayerBorder extends BorderForwarder implements DisplayerDockBorder{
+    	/**
+    	 * Creates a new object.
+    	 * @param target the component whose border will be set
+    	 * @param idSuffix suffix for the identifier of this {@link UIValue}
+    	 */
+    	public DisplayerBorder( JComponent target, String idSuffix ){
+    		super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer." + idSuffix, target );
+    	}
+    	
+		public DockableDisplayer getDisplayer(){
+			return BasicDockableDisplayer.this;
+		}
     }
 }

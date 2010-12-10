@@ -42,6 +42,7 @@ import bibliothek.gui.dock.themes.ThemeDockableMovingImageFactory;
 import bibliothek.gui.dock.themes.ThemeDockableSelection;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.ThemeStationPaint;
+import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -70,6 +71,11 @@ public interface DockTheme {
 	 * A unique identifier for the {@link DockProperties} to access the current {@link BackgroundPaint}.
 	 */
 	public static final PropertyKey<BackgroundPaint> BACKGROUND_PAINT = new PropertyKey<BackgroundPaint>( "dock.background" );
+	
+	/**
+	 * A unique identifier for the {@link DockProperties} to access the current {@link BorderModifier}.
+	 */
+	public static final PropertyKey<BorderModifier> BORDER_MODIFIER = new PropertyKey<BorderModifier>( "dock.borderModifier" );
 	
 	/**
      * Install this theme at <code>controller</code>. The theme

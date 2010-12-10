@@ -25,7 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.displayer;
 
-import javax.swing.JComponent;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
@@ -59,7 +59,6 @@ public class EclipseDisplayerFactory implements DisplayerFactory {
 
 	public DockableDisplayer create(DockStation station, Dockable dockable, DockTitle title) {
 		TitleBar bar = theme.getThemeConnector( station.getController() ).getTitleBarKind( dockable );
-		DockableDisplayer displayer;
 		
 		switch( bar ){
 		    case NONE:
@@ -70,16 +69,10 @@ public class EclipseDisplayerFactory implements DisplayerFactory {
 		    case ECLIPSE:
 		        return new EclipseDockableDisplayer(theme, station, dockable);
 		    case BASIC_BORDERED:
-		        displayer = create( station, dockable, title, true, bar );
-                if( displayer.getComponent() instanceof JComponent )
-                    ((JComponent)displayer.getComponent()).setBorder( new LineBorder( RexSystemColor.getBorderColor() ) );
-                return displayer;
+		        return create( station, dockable, title, true, bar );
 		    case BASIC:
 		    default:
-		        displayer = create( station, dockable, title, false, bar );
-		        if( displayer.getComponent() instanceof JComponent )
-                    ((JComponent)displayer.getComponent()).setBorder(null);
-		        return displayer;
+		    	return create( station, dockable, title, false, bar );
 		}
 	}
 	
@@ -102,14 +95,18 @@ public class EclipseDisplayerFactory implements DisplayerFactory {
 		if( border ){
 		    displayer = new EclipseBasicDockableDisplayer( station, dockable, title, location, bar ){
 		        @Override
-		        public void updateUI() {
-		            super.updateUI();
-		            setBorder( new LineBorder( RexSystemColor.getBorderColor()) );
+		        protected Border getDefaultBorder(){
+			        return new LineBorder( RexSystemColor.getBorderColor());
 		        }
 		    };
 		}
 		else{
-			displayer = new EclipseBasicDockableDisplayer( station, dockable, title, location, bar );
+			displayer = new EclipseBasicDockableDisplayer( station, dockable, title, location, bar ){
+				@Override
+				protected Border getDefaultBorder(){
+					return null;
+				}
+			};
 		}
 		
 		return displayer;

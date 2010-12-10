@@ -123,8 +123,10 @@ import bibliothek.util.Todo.Version;
  * which owns the clicked title is shown in this window.
  * @author Benjamin Sigg
  */
+//@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
+//		description="Allow clients to tell whether a Dockable should be opened if dropped on this station")
 @Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
-		description="Allow clients to tell whether a Dockable should be opened if dropped on this station")
+		description="Alles nested CDockables / FlapDockStations")
 public class FlapDockStation extends AbstractDockableStation {
     /** 
      * The direction in which the window with the <code>Dockable</code> will popup,
@@ -786,13 +788,14 @@ public class FlapDockStation extends AbstractDockableStation {
         
         updateWindow( dockable, false );
         
-        if( oldFrontDockable != null ){
-            if( getController() != null ){
+        if( getController() != null ){
+        	if( oldFrontDockable != null ){
                 DockTitle[] titles = oldFrontDockable.listBoundTitles();
                 boolean active = getController().isFocused( oldFrontDockable );
                 for( DockTitle title : titles )
                     changed( oldFrontDockable, title, active );
             }
+        	
         }
         
         if( window != null ){
@@ -800,6 +803,15 @@ public class FlapDockStation extends AbstractDockableStation {
         		window.setWindowVisible( false );
         	else
         		window.repaint();
+        }
+        
+        if( getController() != null ){
+        	if( dockable != null ){
+        		DockTitle[] titles = dockable.listBoundTitles();
+                boolean active = getController().isFocused( dockable );
+                for( DockTitle title : titles )
+                    changed( dockable, title, active );
+            }
         }
         
         visibility.fire();
