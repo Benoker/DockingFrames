@@ -88,6 +88,9 @@ public class MediumBoundaryRestriction implements BoundaryRestriction{
 		
 		Rectangle result = new Rectangle( target );
 
+		result.width = Math.max( 100, result.width );
+		result.height = Math.max( 50, result.height );
+		
 		result.x = Math.max( screen.x - center.x, result.x );
 		result.y = Math.max( screen.y - center.y, result.y );
 		

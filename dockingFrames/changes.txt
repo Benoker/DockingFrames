@@ -373,3 +373,4 @@
  - API: CGridPerspective now initializes its grid with content and support placeholders
  - API: New border "ScreenDockWindowBorder" for windows of a ScreenDockStation. The new border gives a visual feedback to the user whether he currently is hovering or dragging the window. Colors can be replaced throught the ColorManager, and the entire border can be replaced as well.
  - API: New interface BorderModifier allows clients to replace most of the borders of the framework (see also ThemeManager)
+ - Bugfix: MediumBoundaryRestriction ensure that a window has a size of at least 100x50, this prevents a window from disappearing because it is too small
