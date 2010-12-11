@@ -312,11 +312,14 @@ public class ThemeManager extends TypedUIProperties{
      * Sets a strategy that is used to modify the border of various components.<br>
      * Valid identifier can be, but are not restricted to:
      * <ul>
-     * 	<li>{@value #BORDER_MODIFIER}.displayer.base</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.basic.base</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.basic.content</li>	
      * 	<li>{@value #BORDER_MODIFIER}.displayer.bubble</li>
-     * 	<li>{@value #BORDER_MODIFIER}.displayer.content</li>
-     * 	<li>{@value #BORDER_MODIFIER}.displayer.no_title.out</li>
-     * 	<li>{@value #BORDER_MODIFIER}.displayer.no_title.in</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse.no_title.out</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse.no_title.in</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse</li>
+     * 	<li>{@value #BORDER_MODIFIER}.stack.eclipse</li>
+     * 	<li>{@value #BORDER_MODIFIER}.screen.window</li>
      * </ul>
      * @param id the identifier of the items that should use <code>modifier</code>
      * @param modifier the new strategy, can be <code>null</code>

@@ -96,9 +96,11 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 				if( child != null ){
 					if( child.asLeaf() != null ){
 						PerspectiveDockable dockable = child.asLeaf().getDockable();
-						DockUtilities.ensureTreeValidity( SplitDockPerspective.this, dockable );
-						dockable.setParent( SplitDockPerspective.this );
-						children.add( dockable );
+						if( dockable != null ){
+							DockUtilities.ensureTreeValidity( SplitDockPerspective.this, dockable );
+							dockable.setParent( SplitDockPerspective.this );
+							children.add( dockable );
+						}
 					}
 					else{
 						add( child.asNode().getChildA() );
@@ -111,8 +113,10 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 				if( child != null ){
 					if( child.asLeaf() != null ){
 						PerspectiveDockable dockable = child.asLeaf().getDockable();
-						children.remove( dockable );
-						dockable.setParent( null );
+						if( dockable != null ){
+							children.remove( dockable );
+							dockable.setParent( null );
+						}
 					}
 					else{
 						remove( child.asNode().getChildA() );
@@ -213,18 +217,13 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 			else if( dockables.length > 1 ){
 				dockable = combine( dockables, tree.getSelected( key ) );
 			}
-			else{
-				throw new IllegalArgumentException( "dockables.length == " + dockables.length );
+			
+			if( dockable != null ){
+				DockUtilities.ensureTreeValidity( this, dockable );
+				dockable.setParent( this );
 			}
 			
-			DockUtilities.ensureTreeValidity( this, dockable );
-
-			dockable.setParent( this );
-			
 			return new Leaf( dockable, toSet( tree.getPlaceholders( key ) ), tree.getPlaceholderMap( key ), key.getNodeId() );
-		}
-		if( tree.isPlaceholder( key )){
-			return new Leaf( null, toSet( tree.getPlaceholders( key ) ), tree.getPlaceholderMap( key ), key.getNodeId() );
 		}
 		if( tree.isNode( key )){
 			Entry childA = convert( tree.getLeft( key ));

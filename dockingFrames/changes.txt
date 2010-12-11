@@ -368,3 +368,8 @@
  - Bugfix: DefaultCControlRegister, adding a CContentArea did not have any effect.
  - Bugfix: changing properties like maximizeable of a CDockable did not update the actions
  - Bugfix: run FindBug and found some bugs of lesser importance
+ - API: New interface BackgroundPaint allows clients to paint the background of the Components of this framework
+ - Bugfix: several bugs related to perspectives
+ - API: CGridPerspective now initializes its grid with content and support placeholders
+ - API: New border "ScreenDockWindowBorder" for windows of a ScreenDockStation. The new border gives a visual feedback to the user whether he currently is hovering or dragging the window. Colors can be replaced throught the ColorManager, and the entire border can be replaced as well.
+ - API: New interface BorderModifier allows clients to replace most of the borders of the framework (see also ThemeManager)

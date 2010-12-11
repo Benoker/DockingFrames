@@ -834,7 +834,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     	 * @param idSuffix suffix for the identifier of this {@link UIValue}
     	 */
     	public DisplayerBorder( JComponent target, String idSuffix ){
-    		super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer." + idSuffix, target );
+    		super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer.basic." + idSuffix, target );
     	}
     	
 		public DockableDisplayer getDisplayer(){

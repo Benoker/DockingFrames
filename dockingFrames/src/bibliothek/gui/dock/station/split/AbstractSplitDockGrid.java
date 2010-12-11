@@ -31,8 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.util.Path;
 
 
 /**
@@ -138,34 +141,100 @@ public abstract class AbstractSplitDockGrid<D> {
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
         
-        Node<D> node = null;
+        Node<D> node = nodeAt( x, y, width, height );
         int insert = 0;
         
-        for( Node<D> existingNode : nodes ){
-            if( existingNode.x == x && 
-                    existingNode.y == y && 
-                    existingNode.width == width && 
-                    existingNode.height == height){
-                
-                node = existingNode;
-                D[] oldDockables = node.dockables;
-                insert = oldDockables.length;
-                node.dockables = array( oldDockables.length + dockables.length );
-                System.arraycopy( oldDockables, 0, node.dockables, 0, oldDockables.length ); 
-                break;
-            }
-        } 
-        if( node == null ){
-            node = new Node<D>();
-            node.x = x;
-            node.y = y;
-            node.width = width;
-            node.height = height;
-            node.dockables = array( dockables.length );
-            nodes.add( node );
+        if( node.dockables == null ){
+        	node.dockables = array( dockables.length );
+        }
+        else{
+        	D[] oldDockables = node.dockables;
+            insert = oldDockables.length;
+            node.dockables = array( oldDockables.length + dockables.length );
+            System.arraycopy( oldDockables, 0, node.dockables, 0, oldDockables.length ); 
         }
         
         System.arraycopy( dockables, 0, node.dockables, insert, dockables.length );
+	}
+	
+	/**
+	 * Adds <code>placeholders</code> to the grid. The coordinates are not absolute,
+	 * only the relative location and size matters. If there are already items at the exact same location, then
+	 * the new placeholders are just added to them.
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @param width the width, more than 0
+	 * @param height the height, more than 0
+	 * @param placeholders the new placeholders to add
+	 */
+	public void addPlaceholders( double x, double y, double width, double height, Path... placeholders ){
+		if( placeholders == null )
+			throw new IllegalArgumentException( "Placeholders must not be null" );
+		
+        if( placeholders.length == 0 )
+            throw new IllegalArgumentException( "Placeholders must at least have one element" );
+        
+        for( Path placeholder : placeholders )
+            if( placeholder == null )
+                throw new IllegalArgumentException( "Entry of placeholders-array is null" );
+        
+        if( width < 0 )
+            throw new IllegalArgumentException( "width < 0" );
+        
+        if( height < 0 )
+            throw new IllegalArgumentException( "height < 0" );
+        
+        Node<D> node = nodeAt( x, y, width, height );
+        int insert = 0;
+        
+        if( node.placeholders == null ){
+        	node.placeholders = new Path[placeholders.length];
+        }
+        else{
+        	Path[] oldPlaceholders = node.placeholders;
+            insert = oldPlaceholders.length;
+            node.placeholders = new Path[ oldPlaceholders.length + placeholders.length ];
+            System.arraycopy( oldPlaceholders, 0, node.placeholders, 0, placeholders.length ); 
+        }
+        
+        System.arraycopy( placeholders, 0, node.placeholders, insert, placeholders.length );
+	}
+	
+	/**
+	 * Sets the {@link PlaceholderMap} <code>map</code> for the items at the given location. The map may be used
+	 * if a {@link DockStation} is creating during runtime at this location.
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @param width the width of the elements
+	 * @param height the height of the elements
+	 * @param map the map, can be <code>null</code>
+	 * @throws IllegalArgumentException if there is no node at <code>x/y/width/height</code>
+	 */
+	public void setPlaceholderMap( double x, double y, double width, double height, PlaceholderMap map ){
+		for( Node<D> node : nodes ){
+            if( node.x == x && node.y == y && node.width == width && node.height == height ){
+                node.placeholderMap = map;
+                return;
+            }
+        } 
+        
+        throw new IllegalArgumentException( "there are no dockables registered with the given coordinates" );
+	}
+	
+	private Node<D> nodeAt( double x, double y, double width, double height ){
+		for( Node<D> existingNode : nodes ){
+            if( existingNode.x == x && existingNode.y == y &&  existingNode.width == width && existingNode.height == height){
+                return existingNode;
+            }
+        } 
+        
+        Node<D> node = new Node<D>();
+        node.x = x;
+        node.y = y;
+        node.width = width;
+        node.height = height;
+        nodes.add( node );
+		return node;
 	}
 	
 	/**
@@ -535,6 +604,11 @@ public abstract class AbstractSplitDockGrid<D> {
 		public D[] dockables;
 		/** the element that is selected */
 		public D selected;
+		/** all the placeholders associated with this location */
+		public Path[] placeholders;
+		/** a map containing placeholder information for a {@link DockStation} that could be placed
+		 * as this location. */
+		public PlaceholderMap placeholderMap;
 		
 		/**
 		 * Writes the contents of this node into <code>tree</code>.
@@ -542,14 +616,14 @@ public abstract class AbstractSplitDockGrid<D> {
 		 * @return the key of the node
 		 */
 		public SplitDockTree<D>.Key put( SplitDockTree<D> tree ){
-			if( dockables != null ){
-				return tree.put( dockables, selected );
+			if( dockables != null || childA == null || childB == null ){
+				return tree.put( dockables, selected, placeholders, placeholderMap, -1 );
 			}
 			else if( horizontal ){
-				return tree.horizontal( childA.put( tree ), childB.put( tree ), divider );
+				return tree.horizontal( childA.put( tree ), childB.put( tree ), divider, placeholders, placeholderMap, -1 );
 			}
 			else{
-				return tree.vertical( childA.put( tree ), childB.put( tree ), divider );
+				return tree.vertical( childA.put( tree ), childB.put( tree ), divider, placeholders, placeholderMap, -1 );
 			}
 		}
 	}

@@ -394,7 +394,7 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 				oldController.getThemeManager().remove( this );
 			}
 			if( newController != null ){
-				String id = ThemeManager.BORDER_MODIFIER + ".displayer.no_title." + suffix;
+				String id = ThemeManager.BORDER_MODIFIER + ".displayer.eclipse.no_title." + suffix;
 				newController.getThemeManager().add( id, DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER_TYPE, this );
 			}
 			else{

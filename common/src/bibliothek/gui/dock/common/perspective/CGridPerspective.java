@@ -39,78 +39,87 @@ import bibliothek.gui.dock.common.perspective.mode.LocationModeManagerPerspectiv
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.split.PerspectiveSplitDockGrid;
+import bibliothek.gui.dock.station.split.PerspectiveSplitDockTree;
 import bibliothek.gui.dock.station.split.SplitDockPerspective;
+import bibliothek.gui.dock.station.split.SplitDockPerspective.Entry;
+import bibliothek.gui.dock.station.split.SplitDockPerspective.Node;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Root;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
 
 /**
- * A representation of a {@link CGridArea}.
+ * A representation of a {@link CGridArea}. If this perspective is loaded with content, then all the coordinates
+ * are in a range between 0 and 100.
  * @author Benjamin Sigg
  */
-@Todo(description="nested dockable/stations will not work due to ClassCastException")
-public class CGridPerspective extends SingleCDockablePerspective implements CStationPerspective{
+@Todo(description = "nested dockable/stations will not work due to ClassCastException")
+public class CGridPerspective extends SingleCDockablePerspective implements CStationPerspective {
 	/** the intern representation of this perspective */
 	private CommonSplitDockPerspective delegate;
-	
+
 	/** helper class to build up this perspective */
 	private PerspectiveSplitDockGrid grid;
-	
+
 	/** whether {@link #gridDeploy()} is called automatically */
 	private boolean autoDeploy = true;
-	
+
 	/** whether there are changes on {@link #grid} */
 	private boolean gridChanges = false;
-	
+
+	/** whether {@link #gridDeploy()} currently is executed */
+	private boolean onDeploy = false;
+
 	/** the owner of this object */
 	private CPerspective perspective;
-	
+
 	/** the mode the currently maximized element had before maximization, can be <code>null</code> */
 	private Path unmaximizeMode;
-	
+
 	/** the location the currently maximized element had before maximization, can be <code>null</code> */
 	private Location unmaximizeLocation;
-	
+
 	/** identifiers children that are in normal mode */
-	private CModeAreaPerspective normalMode = new CModeAreaPerspective() {
+	private CModeAreaPerspective normalMode = new CModeAreaPerspective(){
 		public String getUniqueId(){
 			return CGridPerspective.this.getUniqueId();
 		}
+
 		public boolean isChild( PerspectiveDockable dockable ){
-			if( dockable.getParent() == intern() ){
+			if( dockable.getParent() == intern() ) {
 				return delegate.getFullscreen() != dockable;
 			}
 			return false;
 		}
 	};
-	
+
 	/** identifies children that are in maximized mode */
-	private CMaximizedModeAreaPerspective maximalMode = new CMaximizedModeAreaPerspective() {
+	private CMaximizedModeAreaPerspective maximalMode = new CMaximizedModeAreaPerspective(){
 		public String getUniqueId(){
 			return CGridPerspective.this.getUniqueId();
 		}
+
 		public boolean isChild( PerspectiveDockable dockable ){
-			if( dockable.getParent() == intern() ){
+			if( dockable.getParent() == intern() ) {
 				return delegate.getFullscreen() == dockable;
 			}
 			return false;
 		}
-		
+
 		public void setUnmaximize( Path mode, Location location ){
 			unmaximizeLocation = location;
 			unmaximizeMode = mode;
 		}
-		
+
 		public Location getUnmaximizeLocation(){
 			return unmaximizeLocation;
 		}
-		
+
 		public Path getUnmaximizeMode(){
 			return unmaximizeMode;
 		}
 	};
-	
+
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
@@ -120,47 +129,47 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		delegate = new CommonSplitDockPerspective();
 		gridClear();
 	}
-	
+
 	@Override
 	protected CommonSplitDockPerspective create(){
 		return delegate;
 	}
-	
+
 	@Override
 	public CommonSplitDockPerspective intern(){
-		return (CommonSplitDockPerspective)super.intern();
+		return (CommonSplitDockPerspective) super.intern();
 	}
-	
+
 	public void setPerspective( CPerspective perspective ){
-		if( this.perspective != null ){	
-			((CNormalModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.NORMALIZED )).remove( normalMode );
-			((CMaximizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).remove( maximalMode );
+		if( this.perspective != null ) {
+			((CNormalModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.NORMALIZED )).remove( normalMode );
+			((CMaximizedModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).remove( maximalMode );
 		}
 		this.perspective = perspective;
-		if( this.perspective != null ){
-			((CNormalModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.NORMALIZED )).add( normalMode );
-			((CMaximizedModePerspective)this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).add( maximalMode );
+		if( this.perspective != null ) {
+			((CNormalModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.NORMALIZED )).add( normalMode );
+			((CMaximizedModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).add( maximalMode );
 		}
 	}
-	
+
 	/**
 	 * Calls {@link #gridDeploy()}, but only if {@link #isAutoDeploy()} returns <code>true</code> and
 	 * if {@link #grid() the grid} was accessed.
 	 */
 	protected void maybeDeploy(){
-		if( isAutoDeploy() && gridChanges ){
+		if( isAutoDeploy() && gridChanges ) {
 			gridDeploy();
 		}
 	}
-	
+
 	private PerspectiveDockable[] convert( CDockablePerspective[] dockables ){
-		PerspectiveDockable[] result = new PerspectiveDockable[ dockables.length ];
-		for( int i = 0; i < result.length; i++ ){
+		PerspectiveDockable[] result = new PerspectiveDockable[dockables.length];
+		for( int i = 0; i < result.length; i++ ) {
 			result[i] = dockables[i].intern().asDockable();
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Adds <code>dockables</code> at location <code>x/y</code> with size <code>width/height</code> to an internal 
 	 * list of pending commands to execute. This method does not change the layout of this area, but a call
@@ -177,9 +186,36 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 */
 	public void gridAdd( double x, double y, double width, double height, CDockablePerspective... dockables ){
 		gridChanges = true;
-		grid.addDockable( x, y, width, height, convert( dockables ));
+		grid.addDockable( x, y, width, height, convert( dockables ) );
 	}
 	
+	/**
+	 * Adds <code>dockables</code> as placeholder at location <code>x/y</code> with size <code>width/height</code> to 
+	 * an internal list of pending commands to execute. This method does not change the layout of this area, but a call
+	 * to {@link #gridDeploy()} will.<br>
+	 * Calling this method several times with the same location and size has the same effect as calling it once,
+	 * but with a bigger array that contains all the dockables that would otherwise be added through many calls.
+	 * @param x the x-coordinate of <code>dockables</code>, can be any number
+	 * @param y the y-coordinate of <code>dockables</code>, can be any number
+	 * @param width the width of <code>dockables</code>, can be any number greater than 0
+	 * @param height the height of <code>dockables</code>, can be any number greater than 0
+	 * @param dockables the elements whose placeholders to add, should contain at least one item
+	 * @see #gridClear()
+	 * @see #gridDeploy()
+	 * @throws IllegalArgumentException if not all dockables have a placeholder
+	 */
+	public void gridPlaceholder( double x, double y, double width, double height, CDockablePerspective... dockables ){
+		gridChanges = true;
+		Path[] placeholders = new Path[ dockables.length ];
+		for( int i = 0; i < dockables.length; i++ ){
+			placeholders[i] = dockables[i].intern().asDockable().getPlaceholder();
+			if( placeholders[i] == null ){
+				throw new IllegalArgumentException( "dockable '" + i + "' does not have a placeholder: " + dockables[i] );
+			}
+		}
+		grid.addPlaceholders( x, y, width, height, placeholders );
+	}
+
 	/**
 	 * Using location <code>x/y</code> and size <code>width/height</code> as key, this method set the selection
 	 * in a group of dockables. This method does not change the layout directly, but a call to {@link #gridDeploy()} will.
@@ -195,7 +231,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		gridChanges = true;
 		grid.setSelected( x, y, width, height, selection == null ? null : selection.intern().asDockable() );
 	}
-	
+
 	/**
 	 * Adds a constraint to the algorithm that is executed by {@link #gridDeploy()}, the constraint tells that
 	 * there should be a horizontal divider from <code>x1/y</code> to <code>x2/y</code>.
@@ -219,7 +255,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		gridChanges = true;
 		grid.addVerticalDivider( x, y1, y2 );
 	}
-	
+
 	/**
 	 * Deletes all pending commands that were collected by the <code>grid*</code> methods. A call to this
 	 * method does not change the current layout of this area, but a call to {@link #gridDeploy()} will.
@@ -228,7 +264,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public void gridClear(){
 		grid = new PerspectiveSplitDockGrid();
 	}
-	
+
 	/**
 	 * Removes all children of this area, then executes pending commands that add dockables at specified locations.<br>
 	 * In particular this method analyzes all the commands that were generated by calls to the <code>grid*</code> methods 
@@ -245,9 +281,47 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * @see #gridClear()  
 	 */
 	public void gridDeploy(){
-		if( gridChanges ){
+		if( gridChanges ) {
 			gridChanges = false;
-			delegate.read( grid.toTree(), null );
+			try {
+				onDeploy = true;
+				delegate.read( grid.toTree(), null );
+			}
+			finally {
+				onDeploy = false;
+			}
+		}
+	}
+
+	/**
+	 * Reads the contents of the {@link #getRoot() root} and resets the {@link #grid() grid} to reflect that
+	 * root. This method is called once during construction of this perspective, it can later be called
+	 * to reset the perspective.
+	 */
+	public void gridPrepare(){
+		gridChanges = false;
+		gridClear();
+		handle( delegate.getRoot().getChild(), 0, 0, 100, 100 );
+	}
+
+	private void handle( Entry entry, double x, double y, double width, double height ){
+		if( entry.asLeaf() != null ) {
+			PerspectiveDockable dockable = entry.asLeaf().getDockable();
+			if( dockable != null ) {
+				grid.addDockable( x, y, width, height, dockable );
+			}
+		}
+		else{
+			Node node = entry.asNode();
+			double divider = node.getDivider();
+			if( node.getOrientation() == Orientation.HORIZONTAL ){
+				handle( node.getChildA(), x, y, width*divider, height );
+				handle( node.getChildB(), x+width*divider, y, width*(1-divider), height );
+			}
+			else{
+				handle( node.getChildA(), x, y, width, height*divider );
+				handle( node.getChildB(), x, y+height*divider, width, height*(1-divider) );
+			}
 		}
 	}
 
@@ -272,8 +346,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public void setAutoDeploy( boolean autoDeploy ){
 		this.autoDeploy = autoDeploy;
 	}
-	
-	
+
 	/**
 	 * Tells whether {@link #gridDeploy()} will be called automatically before accessing the tree of {@link Dockable}s. 
 	 * @return whether automatic deployment is active
@@ -282,7 +355,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public boolean isAutoDeploy(){
 		return autoDeploy;
 	}
-	
+
 	/**
 	 * Gets access to the intern tree that represents the layout of this area. Clients may alter this tree in any
 	 * way they like. Please note that if {@link #isAutoDeploy() automatic deployment} is active, {@link #gridDeploy()}
@@ -292,7 +365,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public SplitDockPerspective.Root getRoot(){
 		return delegate.getRoot();
 	}
-	
+
 	/**
 	 * Maximized <code>dockable</code> on this station. Please read about the side effects in {@link #maximize(PerspectiveDockable)}.
 	 * @param dockable the element to maximize, not <code>null</code>
@@ -319,45 +392,45 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 */
 	public void maximize( PerspectiveDockable dockable ){
 		maybeDeploy();
-		
+
 		// find current location
 		LocationModeManagerPerspective manager = perspective.getLocationManager();
 		Location location = manager.getLocation( dockable );
 		Path mode = null;
-		if( location == null ){
+		if( location == null ) {
 			ExtendedMode eMode = manager.getMode( dockable );
-			if( eMode != null ){
+			if( eMode != null ) {
 				mode = eMode.getModeIdentifier();
 			}
 		}
-		else{
+		else {
 			mode = location.getMode();
 		}
-		
+
 		// reparent if necessary
-		if( dockable.getParent() != intern() ){
-			if( dockable.getParent() != null ){
+		if( dockable.getParent() != intern() ) {
+			if( dockable.getParent() != null ) {
 				dockable.getParent().remove( dockable );
 			}
-			
+
 			Root root = getRoot();
 			SplitDockPerspective.Leaf leaf = new SplitDockPerspective.Leaf( dockable, null, null, -1 );
-			
-			if( root.getChild() == null ){
+
+			if( root.getChild() == null ) {
 				root.setChild( leaf );
 			}
-			else{
-				root.setChild( new SplitDockPerspective.Node( Orientation.HORIZONTAL, 0.5, leaf, root.getChild(), null, null, -1 ));
+			else {
+				root.setChild( new SplitDockPerspective.Node( Orientation.HORIZONTAL, 0.5, leaf, root.getChild(), null, null, -1 ) );
 			}
 		}
-		
+
 		// store
 		delegate.setFullscreen( dockable );
-		
+
 		unmaximizeLocation = location;
 		unmaximizeMode = mode;
 	}
-	
+
 	/**
 	 * Gets the element that is maximized.
 	 * @return the maximized child or <code>null</code>
@@ -365,54 +438,63 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public PerspectiveDockable getMaximized(){
 		return delegate.getFullscreen();
 	}
-	
+
 	@Override
 	public CStationPerspective asStation(){
 		return this;
 	}
-	
+
 	public String getFactoryID(){
 		return delegate.getFactoryID();
 	}
-	
+
 	public PlaceholderMap getPlaceholders(){
 		return delegate.getPlaceholders();
 	}
-	
+
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		delegate.setPlaceholders( placeholders );	
+		delegate.setPlaceholders( placeholders );
 	}
-	
+
 	/**
 	 * The type of object that is used by a {@link CGridPerspective} as intern representation.
 	 * @author Benjamin Sigg
 	 */
-	public class CommonSplitDockPerspective extends SplitDockPerspective implements CommonElementPerspective{
+	public class CommonSplitDockPerspective extends SplitDockPerspective implements CommonElementPerspective {
 		public CElementPerspective getElement(){
 			return CGridPerspective.this;
 		}
-		
+
+		@Override
+		public void read( PerspectiveSplitDockTree tree, PerspectiveDockable fullscreen ){
+			super.read( tree, fullscreen );
+			if( !onDeploy ) {
+				gridPrepare();
+			}
+		}
+
 		@Override
 		protected PerspectiveDockable combine( PerspectiveDockable[] dockables, PerspectiveDockable selection ){
 			return new CStackPerspective( dockables, selection );
 		}
-		
+
 		@Override
 		public Path getPlaceholder(){
 			return CPlaceholderStrategy.getSingleDockablePlaceholder( getUniqueId() );
 		}
+
 		@Override
 		public Root getRoot(){
 			maybeDeploy();
 			return super.getRoot();
 		}
-		
+
 		@Override
 		public int getDockableCount(){
 			maybeDeploy();
 			return super.getDockableCount();
 		}
-		
+
 		@Override
 		public PerspectiveDockable getDockable( int index ){
 			maybeDeploy();

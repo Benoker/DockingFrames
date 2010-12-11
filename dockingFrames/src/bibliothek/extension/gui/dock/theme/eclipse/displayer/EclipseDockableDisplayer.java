@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
@@ -46,6 +47,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
+import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -58,6 +60,7 @@ import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -304,6 +307,11 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		this.location = location;
 	}
 	
+	@Override
+	protected BorderForwarder createBorderModifier( JComponent target ){
+		return new DisplayerBorder( target );
+	}
+	
 	/**
 	 * The {@link UIValue} responsible for painting the background of this displayer.
 	 * @author Benjamin Sigg
@@ -328,6 +336,19 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		public Component getComponent(){
 			return getDisplayer().getComponent();
 		}
+	}
+	
+	/**
+	 * Used by this {@link EclipseDockableDisplayer} to set the border.
+	 * @author Benjamin Sigg
+	 */
+	private class DisplayerBorder extends BorderForwarder implements DisplayerDockBorder{
+		public DisplayerBorder( JComponent target ){
+			super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer.eclipse", target );
+		}
 		
+		public DockableDisplayer getDisplayer(){
+			return EclipseDockableDisplayer.this;
+		}
 	}
 }

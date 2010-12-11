@@ -383,7 +383,7 @@ public abstract class SplitDockTree<D>{
 	 * @return <code>true</code> if there are placeholders
 	 */
 	public boolean isPlaceholder( Key key ){
-		return key.placeholders != null;
+		return key.placeholders != null && key.placeholders.length > 0;
 	}
 	
 	/**

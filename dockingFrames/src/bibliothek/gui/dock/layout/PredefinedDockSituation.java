@@ -767,7 +767,7 @@ public class PredefinedDockSituation extends DockSituation {
              	String factoryId = delegate.getDataLayout().getFactoryID();
                  DockFactory factory = getFactory( factoryId );
                  if( factory != null ){
-                 	factory.layoutPerspective( element, delegate.getDataLayout(), children );
+                 	factory.layoutPerspective( element, delegate.getDataLayout().getData(), children );
                  }
              }
         }

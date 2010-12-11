@@ -36,7 +36,6 @@ import java.util.Set;
 
 import bibliothek.gui.dock.themes.ColorBridgeFactory;
 import bibliothek.gui.dock.themes.ColorScheme;
-import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.UIProperties;
 import bibliothek.gui.dock.util.UIScheme;
 import bibliothek.gui.dock.util.UISchemeEvent;
@@ -187,23 +186,5 @@ public class DefaultColorScheme extends AbstractColorScheme{
         }
         
         return null;
-    }
-    
-    public void transmitAll( Priority priority, ColorManager manager ) {
-        try{
-            manager.lockUpdate();
-        
-            for( Map.Entry<String, Color> entry : colors.entrySet() )
-                manager.put( priority, entry.getKey(), entry.getValue() );
-            
-            for( Map.Entry<Path, ColorBridgeFactory> entry : bridges.entrySet() )
-                manager.publish( 
-                        priority, 
-                        entry.getKey(), 
-                        entry.getValue().create( manager ) );
-        }
-        finally{
-            manager.unlockUpdate();
-        }
     }
 }

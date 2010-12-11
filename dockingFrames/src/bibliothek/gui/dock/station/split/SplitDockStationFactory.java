@@ -178,6 +178,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     private Path[] toArray( Set<Path> placeholders ){
+    	if( placeholders == null ){
+    		return null;
+    	}
     	return placeholders.toArray( new Path[ placeholders.size() ] );
     }
     

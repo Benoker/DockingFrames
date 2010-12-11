@@ -94,6 +94,14 @@ public class CControlPerspective {
     }
 
     /**
+     * Gets the names of all the perspectives that are available.
+     * @return all the names
+     */
+    public String[] getNames(){
+    	return control.getOwner().layouts();
+    }
+    
+    /**
      * Gets the perspective which represents a layout that was stored using {@link CControl#save(String)}.
      * @param name the name of the stored layout
      * @return the perspective or <code>null</code> if <code>name</code> was not found
