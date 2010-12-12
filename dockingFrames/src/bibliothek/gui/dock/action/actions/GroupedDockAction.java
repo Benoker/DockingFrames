@@ -462,7 +462,9 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         set.add( dockable );
         fireActionEnabledChanged( set );
         fireActionIconChanged( set );
+        fireActionDisabledIconChanged( set );
         fireActionTextChanged( set );
+        fireActionTooltipTextChanged( set );
     }
     
     /**

@@ -42,6 +42,7 @@ import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.BackgroundPaint;
@@ -320,6 +321,12 @@ public class ThemeManager extends TypedUIProperties{
      * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse</li>
      * 	<li>{@value #BORDER_MODIFIER}.stack.eclipse</li>
      * 	<li>{@value #BORDER_MODIFIER}.screen.window</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_NORMAL}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_NORMAL_SELECTED}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER_SELECTED}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED_SELECTED}</li>
      * </ul>
      * @param id the identifier of the items that should use <code>modifier</code>
      * @param modifier the new strategy, can be <code>null</code>

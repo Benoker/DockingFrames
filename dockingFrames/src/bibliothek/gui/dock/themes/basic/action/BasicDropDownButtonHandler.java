@@ -54,15 +54,9 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * connect model and handler.
  * @author Benjamin Sigg
  */
-public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, BasicTitleViewItem<JComponent> {
-    /** the action to observe and to trigger */
-    private DropDownAction action;
+public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAction, BasicDropDownButtonModel> implements BasicDropDownButtonTrigger, BasicTitleViewItem<JComponent> {
     /** the current source of child-actions */
     private DockActionSource source;
-    /** the element for which the action is shown */
-    private Dockable dockable;
-    /** the model that links to the view */
-    private BasicDropDownButtonModel model;
     /** a listener to the model */
     private Listener listener = new Listener();
     
@@ -89,24 +83,13 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
      * @param dockable the element for which the <code>action</code> is shown
      */
     public BasicDropDownButtonHandler( DropDownAction action, Dockable dockable ){
-        this.action = action;
-        this.dockable = dockable;
-    }
-    
-    /**
-     * Sets the model to which this handler sends all properties
-     * of the {@link #getAction() action}.  
-     * @param model the model to inform about changes
-     */
-    public void setModel( BasicDropDownButtonModel model ) {
-        this.model = model;
-    }
-    
-    public void setOrientation( Orientation orientation ){
-        model.setOrientation( orientation );
+    	super( action, dockable );
     }
     
     public void bind(){
+    	DropDownAction action = getAction();
+    	Dockable dockable = getDockable();
+    	
         action.bind( dockable );
         filter = action.getFilter( dockable ).createView( action, dockable, buttonView );
         filter.bind();
@@ -127,10 +110,15 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
         action.addDockActionListener( listener );
         source.addDockActionSourceListener( listener );
         
-        model.setEnabled( action.isEnabled( dockable ) );
+        getModel().setEnabled( action.isEnabled( dockable ) );
+        
+        super.bind();
     }
     
     public void unbind(){
+    	DropDownAction action = getAction();
+    	Dockable dockable = getDockable();
+    	
         action.removeDockActionListener( listener );
         action.removeDropDownActionListener( listener );
         source.removeDockActionSourceListener( listener );
@@ -152,8 +140,13 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
         selection = null;
         items.clear();
         actions.clear();
+        
+        super.unbind();
     }
 
+    public void ensureBorder( String key ){
+    	addBorder( key );
+    }
     
     public void setBackground( Color background ) {
         Component item = getItem();
@@ -167,16 +160,21 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
             item.setForeground( foreground );
     }
     
+    public void setOrientation( Orientation orientation ){
+    	getModel().setOrientation( orientation );
+    }
+    
     /**
      * Adds an action into the list of all known actions.
      * @param index the location of the action
      * @param action the new action
      */
     private void add( int index, DockAction action ){
-        actions.add( action );
+    	Dockable dockable = getDockable();
+    	actions.add( action );
         DropDownViewItem item = action.createView( ViewTarget.DROP_DOWN, dockable.getController().getActionViewConverter(), dockable );
         if( item != null ){
-            DropDownItemHandle entry = new DropDownItemHandle( action, item, dockable, this.action );
+            DropDownItemHandle entry = new DropDownItemHandle( action, item, dockable, getAction() );
             entry.bind();
             items.put( action, entry );
             menu.add( item.getItem() );
@@ -196,19 +194,13 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
         }
     }
     
-    public DropDownAction getAction(){
-        return action;
-    }
-    
-    public Dockable getDockable(){
-        return dockable;
-    }
-    
     public JComponent getItem(){
-        return model.getOwner();
+        return getModel().getOwner();
     }
     
     public void triggered(){
+    	BasicDropDownButtonModel model = getModel();
+    	
         if( model.isMouseOverDropDown() )
             popupTriggered();
         else{
@@ -226,7 +218,8 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
      * Shows the popup menu
      */
     public void popupTriggered(){
-        JComponent button = model.getOwner();
+    	BasicDropDownButtonModel model = getModel();
+    	JComponent button = model.getOwner();
         
         if( model.getOrientation().isHorizontal() ){
             menu.show( button, 0, button.getHeight() );
@@ -257,7 +250,7 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
      * Sets all values of the {@link #filter} to <code>null</code>.
      */
     protected void reset(){
-        model.setSelectionEnabled( false );
+        getModel().setSelectionEnabled( false );
         if( filter != null ){
             filter.setDisabledIcon( null );
             filter.setEnabled( true );
@@ -283,7 +276,7 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
      */
     protected class SelectionView implements DropDownView{
         public void setEnabled( boolean enabled ){
-            model.setSelectionEnabled( enabled );
+            getModel().setSelectionEnabled( enabled );
             filter.setEnabled( enabled );
             update();
         }
@@ -320,19 +313,19 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
      */
     protected class ButtonView implements DropDownView{
         public void setDisabledIcon( Icon icon ){
-            model.setDisabledIcon( icon );
+            getModel().setDisabledIcon( icon );
         }
 
         public void setEnabled( boolean enabled ){
-            model.setSelectionEnabled( enabled );
+        	getModel().setSelectionEnabled( enabled );
         }
 
         public void setIcon( Icon icon ){
-            model.setIcon( icon );
+        	getModel().setIcon( icon );
         }
 
         public void setSelected( boolean selected ){
-            model.setSelected( selected );
+        	getModel().setSelected( selected );
         }
 
         public void setText( String text ){
@@ -340,7 +333,7 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
         }
 
         public void setTooltip( String tooltip ){
-            model.setToolTipText( tooltip );
+        	getModel().setToolTipText( tooltip );
         }
     }
     
@@ -350,27 +343,28 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
      */
     private class Listener implements StandardDockActionListener, DropDownActionListener, DockActionSourceListener{
         public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables ){
+        	Dockable dockable = getDockable();
             if( dockables.contains( dockable ))
-                model.setEnabled( action.isEnabled( dockable ) );
+            	getModel().setEnabled( action.isEnabled( dockable ) );
         }
 
         public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-            if( dockables.contains( dockable ))
+            if( dockables.contains( getDockable() ))
                 update();
         }
         
         public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-            if( dockables.contains( dockable ))
+            if( dockables.contains( getDockable() ))
                 update();
         }
 
         public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ){
-            if( dockables.contains( dockable ))
+            if( dockables.contains( getDockable() ))
                 update();
         }
 
         public void actionTooltipTextChanged( StandardDockAction action, Set<Dockable> dockables ){
-            if( dockables.contains( dockable ))
+            if( dockables.contains( getDockable() ))
                 update();
         }
         
@@ -384,7 +378,7 @@ public class BasicDropDownButtonHandler implements BasicDropDownButtonTrigger, B
             if( selection != null )
                 selection.getView().setView( selectionView );
             
-            model.changed();
+            getModel().changed();
         }
 
         public void actionsAdded( DockActionSource source, int firstIndex, int lastIndex ){

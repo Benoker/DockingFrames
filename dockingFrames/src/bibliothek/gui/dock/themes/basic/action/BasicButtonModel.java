@@ -34,7 +34,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -46,6 +48,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundComponent;
@@ -103,6 +106,9 @@ public class BasicButtonModel {
     
     /** listeners that were added to this model */
     private List<BasicButtonModelListener> listeners = new ArrayList<BasicButtonModelListener>();
+    
+    /** a list of borders to use by the associated button */
+    private Map<String, BorderModifier> borders = new HashMap<String, BorderModifier>();
     
     /**
      * Creates a new model.
@@ -263,6 +269,38 @@ public class BasicButtonModel {
     public BackgroundComponent getBackgroundComponent(){
 		return backgroundComponent;
 	}
+    
+    /**
+     * Sets the border for some state of the component that displays this model. Which identifiers
+     * for <code>key</code> are actually used depends on that component.
+     * @param key the key of the border
+     * @param border the new border or <code>null</code>
+     */
+    public void setBorder( String key, BorderModifier border ){
+        BorderModifier oldBorder = borders.get( key );
+        if( oldBorder != border ){
+        	if( border == null ){
+        		borders.remove( key );
+        	}
+        	else{
+        		borders.put( key, border );
+        	}
+        	for( BasicButtonModelListener listener : listeners() ){
+        		listener.borderChanged( this, key, oldBorder, border );
+        	}
+        }
+    }
+    
+    /**
+     * Gets the border which is used for the state <code>key</code>. The exact value of
+     * key depends on the component which shows this model.
+     * @param key the key for some border
+     * @return the border or <code>null</code> if not found
+     */
+    public BorderModifier getBorder( String key ){
+    	trigger.ensureBorder( key );
+    	return borders.get( key );
+    }
     
     /**
      * Sets the icon which is normally shown on the view.

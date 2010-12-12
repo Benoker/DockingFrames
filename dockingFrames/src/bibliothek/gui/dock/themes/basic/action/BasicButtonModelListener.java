@@ -27,6 +27,7 @@ package bibliothek.gui.dock.themes.basic.action;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundPaint;
 
@@ -121,6 +122,15 @@ public interface BasicButtonModelListener {
 	 */
 	public void backgroundChanged( BasicButtonModel model, BackgroundPaint oldBackground, BackgroundPaint newBackground );
 
+	/**
+	 * Called when a border has changed.
+	 * @param model the source of this event
+	 * @param key the identifier of the border
+	 * @param oldBorder the old border, can be <code>null</code>
+	 * @param newBorder the new border, can be <code>null</code>
+	 */
+	public void borderChanged( BasicButtonModel model, String key, BorderModifier oldBorder, BorderModifier newBorder );
+	
 	/**
 	 * Called if the user triggered the action.
 	 */

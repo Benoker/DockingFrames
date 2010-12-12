@@ -13,6 +13,7 @@ public class BasicCoreSet extends TutorialSet{
                 PersistentLayoutExample.class,
                 ActionsExample.class,
                 InternalExample.class,
-                BackgroundExample.class );
+                BackgroundExample.class,
+                BorderModifierExample.class );
 	}
 }

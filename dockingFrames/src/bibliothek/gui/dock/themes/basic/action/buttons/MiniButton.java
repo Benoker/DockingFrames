@@ -39,8 +39,10 @@ import javax.swing.JComponent;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
+import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
@@ -56,6 +58,19 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  */
 public class MiniButton<M extends BasicButtonModel> extends JComponent {
+	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the normal state. */
+	public static final String BORDER_KEY_NORMAL = ThemeManager.BORDER_MODIFIER + ".action.miniButton.normal";
+	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the selected state. */
+	public static final String BORDER_KEY_NORMAL_SELECTED = ThemeManager.BORDER_MODIFIER + ".action.miniButton.normal.selected";
+	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the mouse hover state. */
+	public static final String BORDER_KEY_MOUSE_OVER = ThemeManager.BORDER_MODIFIER + ".action.miniButton.mouseOver";
+	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the selected mouse hover state. */
+	public static final String BORDER_KEY_MOUSE_OVER_SELECTED = ThemeManager.BORDER_MODIFIER + ".action.miniButton.mouseOver.selected";
+	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the mouse pressed state. */
+	public static final String BORDER_KEY_MOUSE_PRESSED = ThemeManager.BORDER_MODIFIER + ".action.miniButton.mousePressed";
+	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the selected mouse pressed state. */
+	public static final String BORDER_KEY_MOUSE_PRESSED_SELECTED = ThemeManager.BORDER_MODIFIER + ".action.miniButton.mousePressed.selected";
+	
     /** the standard-border of this button */
     private Border normalBorder;
     /** the border if the mouse is over this button */
@@ -92,6 +107,11 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     	}
     	@Override
     	public void selectedStateChanged( BasicButtonModel model, boolean selected ){
+    		updateBorder();
+    	}
+    	
+    	@Override
+    	public void borderChanged( BasicButtonModel model, String key, BorderModifier oldBorder, BorderModifier newBorder ){
     		updateBorder();
     	}
     };
@@ -395,22 +415,22 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
 			Border border = null;
 			switch( i ){
 				case 0:
-					border = getNormalBorder();
+					border = getBorder( getNormalBorder(), BORDER_KEY_NORMAL );
 					break;
 				case 1:
-					border = getMouseOverBorder();
+					border = getBorder( getMouseOverBorder(), BORDER_KEY_MOUSE_OVER );
 					break;
 				case 2:
-					border = getMousePressedBorder();
+					border = getBorder( getMousePressedBorder(), BORDER_KEY_MOUSE_PRESSED );
 					break;
 				case 3:
-				    border = getNormalSelectedBorder();
+				    border = getBorder( getNormalSelectedBorder(), BORDER_KEY_NORMAL_SELECTED );
 				    break;
 				case 4:
-				    border = getMouseOverSelectedBorder();
+				    border = getBorder( getMouseOverSelectedBorder(), BORDER_KEY_MOUSE_OVER_SELECTED );
 				    break;
 				case 5:
-				    border = getMousePressedSelectedBorder();
+				    border = getBorder( getMousePressedSelectedBorder(), BORDER_KEY_MOUSE_PRESSED_SELECTED );
 				    break;
 			}
 			
@@ -432,21 +452,29 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     protected void updateBorder(){
         if( model.isEnabled() && model.isMousePressed() ){
             if( model.isSelected() )
-                setBorder( getMousePressedSelectedBorder() );
+                setBorder( getBorder( getMousePressedSelectedBorder(), BORDER_KEY_MOUSE_PRESSED_SELECTED ) );
             else
-                setBorder( getMousePressedBorder() );
+                setBorder( getBorder( getMousePressedBorder(), BORDER_KEY_MOUSE_PRESSED ) );
         }
         else if( model.isEnabled() && model.isMouseInside() ){
             if( model.isSelected() )
-                setBorder( getMouseOverSelectedBorder() );
+                setBorder( getBorder( getMouseOverSelectedBorder(), BORDER_KEY_MOUSE_OVER_SELECTED ) );
             else
-                setBorder( getMouseOverBorder() );
+                setBorder( getBorder( getMouseOverBorder(), BORDER_KEY_MOUSE_OVER ) );
         }
         else{
             if( model.isSelected() )
-                setBorder( getNormalSelectedBorder() );
+                setBorder( getBorder( getNormalSelectedBorder(), BORDER_KEY_NORMAL_SELECTED ) );
             else
-                setBorder( getNormalBorder() );
+                setBorder( getBorder( getNormalBorder(), BORDER_KEY_NORMAL ) );
         }
+    }
+    
+    private Border getBorder( Border defaultBorder, String key ){
+    	BorderModifier modifier = model.getBorder( key );
+    	if( modifier == null ){
+    		return defaultBorder;
+    	}
+    	return modifier.modify( defaultBorder );
     }
 }

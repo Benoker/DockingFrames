@@ -101,6 +101,9 @@ public class EclipseMenu extends AbstractCombinedMenu{
         	public void triggered(){
         		open();
         	}
+        	public void ensureBorder( String key ){
+        		// ignore
+        	}
         };
         
         button = new RoundRectButton( trigger );
