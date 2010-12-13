@@ -51,10 +51,12 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.TypedPropertyUIScheme;
 import bibliothek.gui.dock.util.TypedUIProperties;
+import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.ClientOnly;
 import bibliothek.util.FrameworkOnly;
+import bibliothek.util.Path;
 
 /**
  * The {@link ThemeManager} is responsible for collecting properties of the current {@link DockTheme} and redistribute them. The
@@ -285,6 +287,99 @@ public class ThemeManager extends TypedUIProperties{
 	}
     
     /**
+     * Sets an algorithm to paint in the overlay panel of {@link DockStation}s. Possible
+     * identifiers can be, but are not restricted to:
+     * <ul>
+     * 	<li>{@value #STATION_PAINT}.flap</li>
+     * 	<li>{@value #STATION_PAINT}.screen</li>
+     * 	<li>{@value #STATION_PAINT}.split</li>
+     * 	<li>{@value #STATION_PAINT}.stack</li>
+     * </ul>
+     * @param id the identifier of the stations that should use <code>vallue</code>
+     * @param value the new algorithm or <code>null</code>
+     */
+    public void setStationPaint( String id, StationPaint value ){
+    	put( Priority.CLIENT, id, STATION_PAINT_TYPE, value );
+    }
+    
+    /**
+     * Sets the {@link UIBridge} that will transfer properties to those {@link UIValue}s whose kind is either
+     * <code>kind</code> or a child of <code>kind</code>.
+     * @param kind the kind of {@link UIValue} <code>bridge</code> will handle
+     * @param bridge the new bridge or <code>null</code>
+     */
+    public void setStationPaintBridge( Path kind, UIBridge<StationPaint, UIValue<StationPaint>> bridge ){
+    	if( bridge == null ){
+    		unpublish( Priority.CLIENT, kind, STATION_PAINT_TYPE );
+    	}
+    	else{
+    		publish( Priority.CLIENT, kind, STATION_PAINT_TYPE, bridge );
+    	}
+    }
+    
+    /**
+     * Sets a strategy how two {@link Dockable}s can be merged into a new {@link Dockable}.
+     * Valid identifiers may be, but are not restricted to:
+     * <ul>
+     * 	<li>{@value #COMBINER}.flap</li>
+     * 	<li>{@value #COMBINER}.screen</li>
+     * 	<li>{@value #COMBINER}.split</li>
+     * 	<li>{@value #COMBINER}.stack</li>
+     * </ul>
+     * @param id the identifier of the item that uses <code>value</code>
+     * @param value the new strategy, can be <code>null</code>
+     */
+    public void setCombiner( String id, Combiner value ){
+    	put( Priority.CLIENT, id, COMBINER_TYPE, value );
+    }
+    
+    /**
+     * Sets the {@link UIBridge} that will transfer properties to those {@link UIValue}s whose kind is either
+     * <code>kind</code> or a child of <code>kind</code>.
+     * @param kind the kind of {@link UIValue} <code>bridge</code> will handle
+     * @param bridge the new bridge or <code>null</code>
+     */
+    public void setCombinerBridge( Path kind, UIBridge<Combiner, UIValue<Combiner>> bridge ){
+    	if( bridge == null ){
+    		unpublish( Priority.CLIENT, kind, COMBINER_TYPE );
+    	}
+    	else{
+    		publish( Priority.CLIENT, kind, COMBINER_TYPE, bridge );
+    	}
+    }
+    
+    /**
+     * Sets a strategy how to display {@link Dockable}s on a {@link DockStation}. Valid
+     * identifiers can be, but are not restricted to:
+     * <ul>
+     * 	<li>{@value #DISPLAYER_FACTORY}.flap</li>
+     * 	<li>{@value #DISPLAYER_FACTORY}.screen</li>
+     * 	<li>{@value #DISPLAYER_FACTORY}.split</li>
+     * 	<li>{@value #DISPLAYER_FACTORY}.stack</li>
+     * </ul>
+     * @param id the identifier of the item that uses <code>value</code>
+     * @param value the new strategy, can be <code>null</code>
+     */
+    public void setDisplayerFactory( String id, DisplayerFactory value ){
+    	put( Priority.CLIENT, id, DISPLAYER_FACTORY_TYPE, value );
+    }
+    
+    /**
+     * Sets the {@link UIBridge} that will transfer properties to those {@link UIValue}s whose kind is either
+     * <code>kind</code> or a child of <code>kind</code>.
+     * @param kind the kind of {@link UIValue} <code>bridge</code> will handle
+     * @param bridge the new bridge or <code>null</code>
+     */
+    public void setDisplayerFactoryBridge( Path kind, UIBridge<DisplayerFactory, UIValue<DisplayerFactory>> bridge ){
+    	if( bridge == null ){
+    		unpublish( Priority.CLIENT, kind, DISPLAYER_FACTORY_TYPE );
+    	}
+    	else{
+    		publish( Priority.CLIENT, kind, DISPLAYER_FACTORY_TYPE, bridge );
+    	}
+    }
+    
+    /**
      * Sets an algorithm that is used to paint the background of items which register an {@link UIValue} with
      * an identifier of <code>id</code>. Valid identifier can be, but are not restricted to:
      * <ul>
@@ -310,9 +405,30 @@ public class ThemeManager extends TypedUIProperties{
     }
     
     /**
+     * Sets the {@link UIBridge} that will transfer properties to those {@link UIValue}s whose kind is either
+     * <code>kind</code> or a child of <code>kind</code>.
+     * @param kind the kind of {@link UIValue} <code>bridge</code> will handle
+     * @param bridge the new bridge or <code>null</code>
+     */
+    public void setBackgroundPaintBridge( Path kind, UIBridge<BackgroundPaint, UIValue<BackgroundPaint>> bridge ){
+    	if( bridge == null ){
+    		unpublish( Priority.CLIENT, kind, BACKGROUND_PAINT_TYPE );
+    	}
+    	else{
+    		publish( Priority.CLIENT, kind, BACKGROUND_PAINT_TYPE, bridge );
+    	}
+    }
+    
+    /**
      * Sets a strategy that is used to modify the border of various components.<br>
      * Valid identifier can be, but are not restricted to:
      * <ul>
+     *  <li>{@value MiniButton#BORDER_KEY_NORMAL}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_NORMAL_SELECTED}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER_SELECTED}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED}</li>
+     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED_SELECTED}</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.basic.base</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.basic.content</li>	
      * 	<li>{@value #BORDER_MODIFIER}.displayer.bubble</li>
@@ -320,33 +436,42 @@ public class ThemeManager extends TypedUIProperties{
      * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse.no_title.in</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse.content</li>
+     * 	<li>{@value #BORDER_MODIFIER}.screen.window</li>
      * 	<li>{@value #BORDER_MODIFIER}.stack.eclipse</li>
      * 	<li>{@value #BORDER_MODIFIER}.stack.eclipse.content</li>
-     * 	<li>{@value #BORDER_MODIFIER}.screen.window</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_NORMAL}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_NORMAL_SELECTED}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER_SELECTED}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED_SELECTED}</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.selected.pressed</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.selected</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.pressed</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.button</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected.pressed</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected.hover</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.pressed</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.hover</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.button.flat</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.hover</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected.hover</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.selected</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.pressed</li>	
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.selected.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.flat</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.station.basic</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.tab</li>
-     * 	<li>{@value #BORDER_MODIFIER}.title.flat</li>
+     * 	
      * </ul>
      * @param id the identifier of the items that should use <code>modifier</code>
      * @param modifier the new strategy, can be <code>null</code>
      */
     public void setBorderModifier( String id, BorderModifier modifier ){
     	put( Priority.CLIENT, id, BORDER_MODIFIER_TYPE, modifier );
+    }
+    /**
+     * Sets the {@link UIBridge} that will transfer properties to those {@link UIValue}s whose kind is either
+     * <code>kind</code> or a child of <code>kind</code>.
+     * @param kind the kind of {@link UIValue} <code>bridge</code> will handle
+     * @param bridge the new bridge or <code>null</code>
+     */
+    public void setBorderModifierBridge( Path kind, UIBridge<BorderModifier, UIValue<BorderModifier>> bridge ){
+    	if( bridge == null ){
+    		unpublish( Priority.CLIENT, kind, BORDER_MODIFIER_TYPE );
+    	}
+    	else{
+    		publish( Priority.CLIENT, kind, BORDER_MODIFIER_TYPE, bridge );
+    	}
     }
 }

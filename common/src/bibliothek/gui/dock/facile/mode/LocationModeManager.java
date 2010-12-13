@@ -141,6 +141,22 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		}
 	};
 	
+	/** transfers focus if necessary to the moved dockable */
+	private LocationModeListener focusListener = new LocationModeListener(){
+		public void applyStarting( LocationModeEvent event ){
+			event.setClientObject( this, getController().getFocusedDockable() );
+		}
+		
+		public void applyDone( LocationModeEvent event ){
+			Dockable focused = (Dockable)event.getClientObject( this );
+			if( event.getDockable() == focused ){
+				if( event.getMode().shouldAutoFocus() ){
+					getController().setFocusedDockable( focused, false, true );
+				}
+			}
+		}
+	};
+	
 	/** tells which modes are available for which element */
 	private ExtendedModeEnablement enablement;
 
@@ -408,6 +424,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		public void modeAdded(	ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
 			mode.setManager( LocationModeManager.this );
 			mode.setController( getController() );
+			mode.addLocationModeListener( focusListener );
 			
 			List<LocationModeListener> list = listeners.get( mode.getUniqueIdentifier() );
 			if( list != null ){
@@ -420,6 +437,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		public void modeRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
 			mode.setManager( null );
 			mode.setController( null );
+			mode.removeLocationModeListener( focusListener );
 			
 			List<LocationModeListener> list = listeners.get( mode.getUniqueIdentifier() );
 			if( list != null ){

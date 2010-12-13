@@ -55,7 +55,7 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
      * initialization of this mode.
      */
     protected MinimizedMode(){
-    	// nothing
+    	setShouldAutoFocus( false );
     }
     
 	/**
@@ -64,6 +64,7 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
 	 */
 	public MinimizedMode( CControl control ){
 		setActionProvider( new DefaultLocationModeActionProvider( new CMinimizeAction( control ) ) );
+		setShouldAutoFocus( false );
 	}
 	
 	/**
@@ -75,6 +76,7 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
         icons.setIconDefault( "minimize", Resources.getIcon( "minimize" ) );
         
         setActionProvider( new DefaultLocationModeActionProvider( new MinimizedModeAction( controller, this ) ) );
+        setShouldAutoFocus( false );
 	}
 	
 	public Path getUniqueIdentifier(){

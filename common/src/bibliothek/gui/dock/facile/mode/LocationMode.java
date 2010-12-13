@@ -112,4 +112,11 @@ public interface LocationMode extends Mode<Location>{
 	 * @param dockable the element which must not be hidden
 	 */
 	public void ensureNotHidden( Dockable dockable );
+	
+	/**
+	 * Tells the {@link LocationModeManager} whether the focus should be transfered to
+	 * a {@link Dockable} that has this mode.
+	 * @return
+	 */
+	public boolean shouldAutoFocus();
 }

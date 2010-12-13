@@ -37,7 +37,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.common.mode.CModeArea;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 import bibliothek.gui.dock.support.mode.ModeManager;
@@ -80,6 +79,9 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	
 	/** provides actions for the {@link Dockable}s known to this mode */
 	private LocationModeActionProvider actionProvider = new DefaultLocationModeActionProvider();
+	
+	/** whether focus should be automatically transfered */
+	private boolean autoFocus = true;
 	
 	/**
 	 * Sets the {@link LocationModeActionProvider} for this mode.
@@ -154,6 +156,19 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 */
 	protected LocationModeListener[] listeners(){
 		return listeners.toArray( new LocationModeListener[ listeners.size() ] );
+	}
+	
+	public boolean shouldAutoFocus(){
+		return autoFocus;
+	}
+	
+	/**
+	 * Sets the result of {@link #shouldAutoFocus()}.
+	 * @param autoFocus whether automatic focus transfer to {@link Dockable} in this mode
+	 * should be allowed
+	 */
+	public void setShouldAutoFocus( boolean autoFocus ){
+		this.autoFocus = autoFocus;
 	}
 	
 	/**
@@ -339,9 +354,11 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 			runApply( dockable, history, set );
 			event.done();
 		}
+		
 		for( LocationModeListener listener : listeners() ){
 			listener.applyDone( event );
 		}
+		
 	}
 	
 	/**
