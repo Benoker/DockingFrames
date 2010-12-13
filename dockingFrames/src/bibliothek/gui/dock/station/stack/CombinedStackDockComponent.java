@@ -37,6 +37,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -52,9 +53,11 @@ import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneBackgroundComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * A {@link StackDockComponent} which is a combination of other components.<br>
@@ -76,7 +79,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 
 	/** the background of this component */
 	private BackgroundAlgorithm background;
-	
+
 	/** The panel which displays one of the children of this pane */
 	private BackgroundPanel componentPanel = new BackgroundPanel( null, true, false ){
 		@Override
@@ -236,7 +239,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	protected CombinedStackDockContentPane createContentPane( CombinedStackDockComponent<T, M, I> self ){
 		return new CombinedStackDockContentPane( self );
 	}
-	
+
 	/**
 	 * Creates the background algorithm that is used for <code>this</code> component. This method
 	 * may be called by the constructor.
@@ -284,6 +287,10 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 				for( T tab : tabs ) {
 					controller.addRepresentative( tab );
 				}
+			}
+			
+			for( Meta meta : components.values() ){
+				meta.setController( controller );
 			}
 
 			background.setController( controller );
@@ -434,6 +441,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		Dockable dockable = getDockable( index );
 		super.remove( index );
 		Meta meta = components.remove( dockable );
+		meta.setController( null );
 		componentPanel.remove( meta.component );
 		meta.component.setVisible( true );
 	}
@@ -443,6 +451,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		super.removeAll();
 		for( Meta meta : components.values() ) {
 			componentPanel.remove( meta.component );
+			meta.setController( null );
 			meta.component.setVisible( true );
 		}
 		components.clear();
@@ -495,7 +504,16 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	 * @return the layer between tab and dockable
 	 */
 	public Component getLayerAt( int index ){
-		return components.get( getDockable( index ) ).component;
+		return getContentAt( index ).component;
+	}
+
+	/**
+	 * Gets the meta information about the components at location <code>index</code>
+	 * @param index the index of a tab
+	 * @return information about that tab
+	 */
+	protected Meta getContentAt( int index ){
+		return components.get( getDockable( index ) );
 	}
 
 	public void setTitleAt( int index, String newTitle ){
@@ -560,21 +578,33 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	}
 
 	/**
+	 * Creates a {@link BorderForwarder} for the content component for the tab of <code>dockable</code>
+	 * @param dockable the item that is shown
+	 * @param component the component which is influenced
+	 * @return the forwarder or null
+	 */
+	protected BorderForwarder createContentBorderModifier( Dockable dockable, JComponent component ){
+		return null;
+	}
+
+	/**
 	 * Meta information about a {@link Dockable} that is shown on this 
 	 * {@link CombinedStackDockComponent}.
 	 * @author Benjamin Sigg
 	 */
-	private class Meta {
+	protected class Meta {
 		/** the element that is shown */
-		public Dockable dockable;
+		private Dockable dockable;
 		/** visual representation of {@link #dockable} */
-		public Component component;
+		private Component component;
 		/** text to be displayed on the tab of {@link #dockable} */
-		public String text;
+		private String text;
 		/** icon to be displayed on the tab of {@link #dockable} */
-		public Icon icon;
-		/** tooltib to be displayed on the tab of {@link #dockable} */
-		public String tooltip;
+		private Icon icon;
+		/** tooltip to be displayed on the tab of {@link #dockable} */
+		private String tooltip;
+		/** sets the border of {@link #component} */
+		private BorderForwarder border;
 
 		/**
 		 * Creates new meta information.
@@ -590,6 +620,52 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 			this.text = text;
 			this.icon = icon;
 			this.tooltip = tooltip;
+
+			if( component instanceof JComponent ) {
+				border = createContentBorderModifier( dockable, (JComponent) component );
+			}
+			
+			setController( getController() );
+		}
+		
+		/**
+		 * Sets the controller which is used to read values.
+		 * @param controller the new controller
+		 */
+		@FrameworkOnly
+		public void setController( DockController controller ){
+			if( border != null ){
+				border.setController( controller );
+			}
+		}
+
+		/**
+		 * Gets the element which is represented by this object
+		 * @return the dockable
+		 */
+		public Dockable getDockable(){
+			return dockable;
+		}
+
+		/**
+		 * Gets the component that is shown.
+		 * @return the component to show
+		 */
+		public Component getComponent(){
+			return component;
+		}
+
+		/**
+		 * Sets the border of the component. This method assumes that
+		 * {@link CombinedStackDockComponent#createContentBorderModifier(Dockable, JComponent)} returns
+		 * a non-<code>null</code> value.
+		 * @param border the new border, can be <code>null</code>
+		 */
+		public void setBorder( Border border ){
+			if( this.border == null ) {
+				throw new IllegalStateException( "there was no border-modifier created" );
+			}
+			this.border.setBorder( border );
 		}
 
 		/**
@@ -631,7 +707,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		public Background(){
 			super( TabPaneBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".tabPane" );
 		}
-		
+
 		public TabPane getPane(){
 			return CombinedStackDockComponent.this;
 		}

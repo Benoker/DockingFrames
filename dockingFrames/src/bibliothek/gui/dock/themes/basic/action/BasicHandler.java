@@ -68,10 +68,6 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
         return getModel().getOwner();
     }
     
-    public void ensureBorder( String key ){
-    	addBorder( key );
-    }
-    
     public void setBackground( Color background ) {
         Component item = getItem();
         if( item != null )

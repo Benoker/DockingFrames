@@ -38,6 +38,7 @@ import javax.swing.JComponent;
 import bibliothek.gui.dock.control.FocusAwareComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
+import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
@@ -56,9 +57,10 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
      * Creates a new roundrect button.
      * @param trigger a trigger which gets informed when the user clicks the
      * button
+     * @param initializer a strategy to lazily initialize resources, can be <code>null</code>
      */
-    public RoundRectButton( BasicTrigger trigger ){
-        model = new BasicButtonModel( this, trigger, true );
+    public RoundRectButton( BasicTrigger trigger, BasicResourceInitializer initializer ){
+        model = new BasicButtonModel( this, trigger, initializer, true );
         setOpaque( false );
         
         setFocusable( true );

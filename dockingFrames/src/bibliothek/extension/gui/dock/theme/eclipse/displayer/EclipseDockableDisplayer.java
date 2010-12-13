@@ -309,7 +309,12 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	
 	@Override
 	protected BorderForwarder createBorderModifier( JComponent target ){
-		return new DisplayerBorder( target );
+		return new DisplayerBorder( target, "eclipse" );
+	}
+	
+	@Override
+	protected BorderForwarder createContentBorderModifier( Dockable dockable, JComponent target ){
+		return new DisplayerBorder( target, "eclipse.content" );
 	}
 	
 	/**
@@ -322,7 +327,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		
 		/**
 		 * Creates a new object
-		 * @param displayer the displayer which will be managed by this object
+		 * @param displayer the displayer which will be managed by this object 
 		 */
 		public Background( EclipseDockableDisplayer displayer ){
 			super( DisplayerBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".displayer" );
@@ -343,8 +348,8 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	 * @author Benjamin Sigg
 	 */
 	private class DisplayerBorder extends BorderForwarder implements DisplayerDockBorder{
-		public DisplayerBorder( JComponent target ){
-			super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer.eclipse", target );
+		public DisplayerBorder( JComponent target, String suffix ){
+			super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer." + suffix, target );
 		}
 		
 		public DockableDisplayer getDisplayer(){

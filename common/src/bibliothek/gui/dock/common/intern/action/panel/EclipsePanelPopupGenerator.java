@@ -42,7 +42,7 @@ import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 public class EclipsePanelPopupGenerator  implements ViewGenerator<PanelPopup, BasicTitleViewItem<JComponent>>{
 	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, PanelPopup action, Dockable dockable ){
 		BasicPanelPopupHandler handler = new BasicPanelPopupHandler( action, dockable );
-		RoundRectButton button = new RoundRectButton( handler );
+		RoundRectButton button = new RoundRectButton( handler, handler );
 		handler.setModel( button.getModel() );
         
 		return handler;

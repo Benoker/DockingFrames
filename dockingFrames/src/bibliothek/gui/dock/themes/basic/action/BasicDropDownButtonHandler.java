@@ -144,10 +144,6 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         super.unbind();
     }
 
-    public void ensureBorder( String key ){
-    	addBorder( key );
-    }
-    
     public void setBackground( Color background ) {
         Component item = getItem();
         if( item != null )

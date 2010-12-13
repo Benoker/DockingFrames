@@ -34,6 +34,7 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.util.MouseOverListener;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicButtonDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -86,14 +87,23 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
     	boolean mouseover = isMouseover();
     	boolean mousePressed = isMousePressed();
     	
-        if( selected ^ mousePressed ){
-            setBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
-        }
-        else{
-            if( mouseover || mousePressed )
-                setBorder( BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ));
-            else
-                setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ));
-        }
+    	if( selected && mousePressed ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat.selected.pressed", BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ));	
+    	}
+    	else if( selected && mouseover ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat.selected.hover", BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
+    	}
+    	else if( selected ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat.selected", BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
+    	}
+    	else if( mousePressed ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat.pressed", BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
+    	}
+    	else if( mouseover ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat.hover", BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ));
+    	}
+    	else{
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat", BorderFactory.createEmptyBorder( 2, 2, 2, 2 ));
+    	}
     }
 }

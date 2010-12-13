@@ -33,7 +33,7 @@ public class NoteBubbleTheme extends BubbleTheme {
 
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, IconAction action, Dockable dockable ){
 				IconButtonHandler handler = new IconButtonHandler( action, dockable );
-				RoundButton button = new RoundButton( handler, dockable, action );
+				RoundButton button = new RoundButton( handler, handler, dockable, action );
 				handler.setModel( button.getModel() );
 				return new RoundButtonViewItem( dockable, handler, button );
 			}

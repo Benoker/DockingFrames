@@ -68,7 +68,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
         
         this.handler = handler;
         
-        BasicDropDownButtonModel model = new BasicDropDownButtonModel( this, handler ){
+        BasicDropDownButtonModel model = new BasicDropDownButtonModel( this, handler, handler ){
             @Override
             public void changed() {
                 updateBorder();

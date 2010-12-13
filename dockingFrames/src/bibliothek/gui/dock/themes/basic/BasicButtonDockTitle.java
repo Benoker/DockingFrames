@@ -38,6 +38,7 @@ import javax.swing.event.MouseInputAdapter;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.AbstractDockTitle;
@@ -92,7 +93,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
             behavior = origin.getController().getProperties().get( FlapDockStation.BUTTON_CONTENT );
         
         init( dockable, origin, behavior.showActions( true ) );
-        setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+        changeBorder();
         
         addMouseInputListener( new MouseInputAdapter(){
         	@Override
@@ -208,10 +209,18 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
      * Exchanges the current border.
      */
     protected void changeBorder(){
-    	if( selected ^ mousePressed )
-            setBorder( BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
-        else
-            setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+    	if( selected && mousePressed ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.selected.pressed", BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+    	}
+    	else if( selected ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.selected", BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
+    	}
+    	else if( mousePressed ){
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.pressed", BorderFactory.createBevelBorder( BevelBorder.LOWERED ));
+    	}
+    	else{
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button", BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+    	}
     }
     
     /**

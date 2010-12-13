@@ -30,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
@@ -58,7 +59,7 @@ public class FlatTitleFactory implements DockTitleFactory{
 		}
 		else{
 			AbstractDockTitle title = new AbstractDockTitle( dockable, request.getVersion() );
-	        title.setBorder( BorderFactory.createLineBorder( title.getBackground().darker() ));
+	        title.setBorder( ThemeManager.BORDER_MODIFIER + ".title.flat", BorderFactory.createLineBorder( title.getBackground().darker() ));
 	        request.answer( title );
 		}
 	}

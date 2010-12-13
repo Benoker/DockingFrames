@@ -37,6 +37,7 @@ import javax.swing.border.BevelBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -73,7 +74,7 @@ public class BasicStationTitle extends AbstractDockTitle {
      */
     public BasicStationTitle( Dockable dockable, DockTitleVersion origin ) {
         super(dockable, origin);
-        setBorder( BorderFactory.createBevelBorder( BevelBorder.RAISED ));
+        setBorder( ThemeManager.BORDER_MODIFIER + ".title.station.basic", BorderFactory.createBevelBorder( BevelBorder.RAISED ));
         setActive( false );
         
         addColor( activeColor );

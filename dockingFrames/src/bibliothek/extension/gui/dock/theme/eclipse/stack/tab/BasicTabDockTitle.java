@@ -37,6 +37,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
@@ -102,7 +103,7 @@ public class BasicTabDockTitle extends BasicDockTitle {
         super( dockable, origin, false );
         this.theme = theme;
         
-        setBorder( BorderFactory.createEmptyBorder( 0, 0, 1, 0 ) );
+        setBorder( ThemeManager.BORDER_MODIFIER + ".title.tab", BorderFactory.createEmptyBorder( 0, 0, 1, 0 ) );
         
         setActiveLeftColorId( "stack.tab.top.selected.focused" );
         setActiveRightColorId( "stack.tab.bottom.selected.focused" );

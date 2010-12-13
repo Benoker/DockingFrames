@@ -145,7 +145,7 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         this.handler = handler;
         dropIcon = createDropIcon();
         
-        model = new BasicDropDownButtonModel( this, handler ){
+        model = new BasicDropDownButtonModel( this, handler, handler ){
             @Override
             public void changed() {
                 updateColors();

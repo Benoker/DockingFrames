@@ -44,7 +44,7 @@ import bibliothek.gui.dock.util.UIValue;
  * Collection of methods that are interesting for classes that wrap around a {@link BasicButtonModel}.
  * @author Benjamin Sigg
  */
-public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonModel> {
+public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonModel> implements BasicResourceInitializer{
 	/** the action which is observed */
     private D action;
 	
@@ -99,6 +99,10 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
     public M getModel(){
 		return model;
 	}
+    
+    public void ensureBorder( BasicButtonModel model, String key ){
+	    addBorder( key );
+    }
     
     /**
      * Adds a connection between the {@link ThemeManager} and the model of this handler which transfers

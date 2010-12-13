@@ -32,7 +32,7 @@ public class NoteBasicTheme extends BasicTheme {
 
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, IconAction action, Dockable dockable ){
 				IconButtonHandler handler = new IconButtonHandler( action, dockable );
-				BasicMiniButton button = new BasicMiniButton( handler );
+				BasicMiniButton button = new BasicMiniButton( handler, handler );
 				handler.setModel( button.getModel() );
 				return handler;
 			}

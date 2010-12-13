@@ -141,7 +141,7 @@ public class ActionViewConverter {
 		putDefault( ActionType.BUTTON, ViewTarget.TITLE, new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
                 BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
-                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler );
+                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
 			}
@@ -150,7 +150,7 @@ public class ActionViewConverter {
 		putDefault( ActionType.CHECK, ViewTarget.TITLE, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
-                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler );
+                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
 			}
@@ -159,7 +159,7 @@ public class ActionViewConverter {
 		putDefault( ActionType.MENU, ViewTarget.TITLE, new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
                 BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
-                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler );
+                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;                
 			}
@@ -168,7 +168,7 @@ public class ActionViewConverter {
 		putDefault( ActionType.RADIO, ViewTarget.TITLE, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
 				BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
-                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler );
+                MiniButton<BasicButtonModel> button = new BasicMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
 			}

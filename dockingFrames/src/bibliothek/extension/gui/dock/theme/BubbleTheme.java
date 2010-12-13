@@ -319,7 +319,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     private static class ButtonGenerator implements ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ) {
             BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
-            RoundButton button = new RoundButton( handler, dockable, action );
+            RoundButton button = new RoundButton( handler, handler, dockable, action );
             handler.setModel( button.getModel() );
             return new RoundButtonViewItem( dockable, handler, button );
         }
@@ -332,7 +332,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     private static class CheckGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
             BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
-            RoundButton button = new RoundButton( handler, dockable, action );
+            RoundButton button = new RoundButton( handler, handler, dockable, action );
             handler.setModel( button.getModel() );
             return new RoundButtonViewItem( dockable, handler, button );
         }
@@ -345,7 +345,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     private static class RadioGenerator implements ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ) {
             BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
-            RoundButton button = new RoundButton( handler, dockable, action );
+            RoundButton button = new RoundButton( handler, handler, dockable, action );
             handler.setModel( button.getModel() );
             return new RoundButtonViewItem( dockable, handler, button );
         }
@@ -371,7 +371,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     private static class MenuGenerator implements ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>{
         public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
             BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
-            RoundButton button = new RoundButton( handler, dockable, action );
+            RoundButton button = new RoundButton( handler, handler, dockable, action );
             handler.setModel( button.getModel() );
             return new RoundButtonViewItem( dockable, handler, button );
         }

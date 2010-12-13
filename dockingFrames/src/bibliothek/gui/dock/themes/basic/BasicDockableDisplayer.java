@@ -228,8 +228,8 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
         setFocusCycleRoot( true );
         setFocusTraversalPolicy( new DockFocusTraversalPolicy( new DisplayerFocusTraversalPolicy( this ), true ));
         
-        baseBorder = new DisplayerBorder( this, "base" );
-        contentBorder = new DisplayerBorder( content, "content" );
+        baseBorder = new DisplayerBorder( this, "basic.base" );
+        contentBorder = new DisplayerBorder( content, "basic.content" );
     }
     
     /**
@@ -834,7 +834,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     	 * @param idSuffix suffix for the identifier of this {@link UIValue}
     	 */
     	public DisplayerBorder( JComponent target, String idSuffix ){
-    		super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer.basic." + idSuffix, target );
+    		super( DisplayerDockBorder.KIND, ThemeManager.BORDER_MODIFIER + ".displayer." + idSuffix, target );
     	}
     	
 		public DockableDisplayer getDisplayer(){

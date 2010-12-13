@@ -98,6 +98,9 @@ public class BasicButtonModel {
     /** a callback used when the user clicked on the view */
     private BasicTrigger trigger;
     
+    /** to initialize resources, can be <code>null</code> */
+    private BasicResourceInitializer initializer;
+    
     /** the algorithm that should be used to paint the background of a component */
     private BackgroundPaint background;
     
@@ -114,23 +117,26 @@ public class BasicButtonModel {
      * Creates a new model.
      * @param owner the view of this model
      * @param trigger the callback used when the user clicks on the view
+     * @param initializer a strategy to lazily initialize resources, can be <code>null</code>
      */
-    public BasicButtonModel( JComponent owner, BasicTrigger trigger ){
-        this( owner, trigger, true );
+    public BasicButtonModel( JComponent owner, BasicTrigger trigger, BasicResourceInitializer initializer ){
+        this( owner, trigger, initializer, true );
     }
 
     /**
      * Creates a new model.
      * @param owner the view of this model
      * @param trigger the callback used when the user clicks on the view
+     * @param initializer a strategy to lazily initialize resources, can be <code>null</code>
      * @param createListener whether to create and add a {@link MouseListener} and
      * a {@link MouseMotionListener} to <code>owner</code>. If this argument
      * is <code>false</code>, then the client is responsible to update all
      * properties of this model.
      */
-    public BasicButtonModel( JComponent owner, BasicTrigger trigger, boolean createListener ){
+    public BasicButtonModel( JComponent owner, BasicTrigger trigger, BasicResourceInitializer initializer, boolean createListener ){
         this.owner = owner;
         this.trigger = trigger;
+        this.initializer = initializer;
         
         if( createListener ){
             Listener listener = new Listener();
@@ -298,7 +304,9 @@ public class BasicButtonModel {
      * @return the border or <code>null</code> if not found
      */
     public BorderModifier getBorder( String key ){
-    	trigger.ensureBorder( key );
+    	if( initializer != null ){
+    		initializer.ensureBorder( this, key );
+    	}
     	return borders.get( key );
     }
     

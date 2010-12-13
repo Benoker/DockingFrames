@@ -30,7 +30,7 @@ public class NoteEclipseTheme extends EclipseTheme {
 
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, IconAction action, Dockable dockable ){
 				IconButtonHandler handler = new IconButtonHandler( action, dockable );
-				RoundRectButton button = new RoundRectButton( handler );
+				RoundRectButton button = new RoundRectButton( handler, handler );
 				handler.setModel( button.getModel() );
 				return handler;
 			}

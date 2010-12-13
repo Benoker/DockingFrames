@@ -223,7 +223,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
                 BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
-                RoundRectButton button = new RoundRectButton( handler );
+                RoundRectButton button = new RoundRectButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -233,7 +233,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
-                RoundRectButton button = new RoundRectButton( handler );
+                RoundRectButton button = new RoundRectButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -243,7 +243,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
                 BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
-                RoundRectButton button = new RoundRectButton( handler );
+                RoundRectButton button = new RoundRectButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -253,7 +253,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
-                RoundRectButton button = new RoundRectButton( handler );
+                RoundRectButton button = new RoundRectButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }

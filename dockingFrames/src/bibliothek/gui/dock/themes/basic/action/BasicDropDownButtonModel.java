@@ -51,21 +51,23 @@ public abstract class BasicDropDownButtonModel extends BasicButtonModel{
     /**
      * Creates a new model.
      * @param owner the view of this model
+     * @param initializer a strategy to lazily initialize resources
      * @param trigger the callback used when the user clicks on the view
      */
-    public BasicDropDownButtonModel( JComponent owner, BasicDropDownButtonTrigger trigger ) {
-        this( owner, trigger, true );
+    public BasicDropDownButtonModel( JComponent owner, BasicDropDownButtonTrigger trigger, BasicResourceInitializer initializer ) {
+        this( owner, trigger, initializer, true );
     }
     
     /**
      * Creates a new model.
      * @param owner the view of this model
      * @param trigger the callback used when the user clicks on the view
+     * @param initializer a strategy to lazily initialize resources
      * @param createListener whether the model should add a {@link MouseListener} and
      * a {@link MouseMotionListener} to the view or not.
      */
-    public BasicDropDownButtonModel( JComponent owner, BasicDropDownButtonTrigger trigger, boolean createListener ) {
-        super( owner, trigger, createListener );
+    public BasicDropDownButtonModel( JComponent owner, BasicDropDownButtonTrigger trigger, BasicResourceInitializer initializer, boolean createListener ) {
+        super( owner, trigger, initializer, createListener );
         this.trigger = trigger;
         if( createListener ){
             Listener listener = new Listener();

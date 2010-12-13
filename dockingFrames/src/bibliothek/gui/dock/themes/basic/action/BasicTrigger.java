@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.themes.basic.action;
 
-import bibliothek.gui.dock.themes.border.BorderModifier;
 
 /**
  * Used as a callback by a {@link BasicButtonModel} to ensure the availability of properties and to inform
@@ -38,11 +37,4 @@ public interface BasicTrigger {
      * by the model, is clicked.
      */
     public void triggered();
-    
-	/**
-	 * Ensures that the {@link BorderModifier} with the specified key is installed 
-	 * and ready to be accessed through {@link BasicButtonModel#getBorder(String)};
-	 * @param key the key of the border to check
-	 */
-	public void ensureBorder( String key );
 }

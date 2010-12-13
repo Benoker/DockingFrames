@@ -33,7 +33,7 @@ public class NoteFlatTheme extends FlatTheme {
 
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, IconAction action, Dockable dockable ){
 				IconButtonHandler handler = new IconButtonHandler( action, dockable );
-				MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+				MiniButton<BasicButtonModel> button = createTitleMiniButton( handler, handler );
 				handler.setModel( button.getModel() );
 				return handler;
 			}

@@ -319,7 +319,9 @@ public class ThemeManager extends TypedUIProperties{
      * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse.no_title.out</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse.no_title.in</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse</li>
+     * 	<li>{@value #BORDER_MODIFIER}.displayer.eclipse.content</li>
      * 	<li>{@value #BORDER_MODIFIER}.stack.eclipse</li>
+     * 	<li>{@value #BORDER_MODIFIER}.stack.eclipse.content</li>
      * 	<li>{@value #BORDER_MODIFIER}.screen.window</li>
      * 	<li>{@value MiniButton#BORDER_KEY_NORMAL}</li>
      * 	<li>{@value MiniButton#BORDER_KEY_NORMAL_SELECTED}</li>
@@ -327,6 +329,19 @@ public class ThemeManager extends TypedUIProperties{
      * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER_SELECTED}</li>
      * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED}</li>
      * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED_SELECTED}</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.selected.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.selected</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected.hover</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.selected</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat.hover</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.button.flat</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.station.basic</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.tab</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.flat</li>
      * </ul>
      * @param id the identifier of the items that should use <code>modifier</code>
      * @param modifier the new strategy, can be <code>null</code>

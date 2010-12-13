@@ -42,7 +42,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 public class BasicPanelPopupGenerator implements ViewGenerator<PanelPopup, BasicTitleViewItem<JComponent>>{
 	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, PanelPopup action, Dockable dockable ){
 		BasicPanelPopupHandler handler = new BasicPanelPopupHandler( action, dockable );
-		BasicMiniButton button = new BasicMiniButton( handler );
+		BasicMiniButton button = new BasicMiniButton( handler, handler );
 		handler.setModel( button.getModel() );
 		return handler;
 	}

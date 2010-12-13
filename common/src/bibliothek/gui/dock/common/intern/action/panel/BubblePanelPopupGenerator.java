@@ -43,7 +43,7 @@ import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 public class BubblePanelPopupGenerator implements ViewGenerator<PanelPopup, BasicTitleViewItem<JComponent>>{
 	public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, PanelPopup action, Dockable dockable ){
 		BasicPanelPopupHandler handler = new BasicPanelPopupHandler( action, dockable );
-		RoundButton button = new RoundButton( handler, dockable, action );
+		RoundButton button = new RoundButton( handler, handler, dockable, action );
 		handler.setModel( button.getModel() );
 		
 		return new RoundButtonViewItem( dockable, handler, button );

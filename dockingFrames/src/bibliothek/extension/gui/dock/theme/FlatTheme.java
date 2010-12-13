@@ -64,6 +64,7 @@ import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicMenuHandler;
+import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;
 import bibliothek.gui.dock.themes.basic.action.BasicSelectableHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
@@ -140,7 +141,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
                 BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -150,7 +151,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Check handler = new BasicSelectableHandler.Check( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -160,7 +161,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
                 BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -170,7 +171,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
             public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
                 BasicSelectableHandler.Radio handler = new BasicSelectableHandler.Radio( action, dockable );
-                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler );
+                MiniButton<BasicButtonModel> button = createTitleMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
                 return handler;
             }
@@ -191,10 +192,11 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     /**
      * Creates a {@link MiniButton} in a flat look.
      * @param trigger the trigger to invoke when the button has been clicked
+     * @param initializer a strategy to lazily initialize resources
      * @return the new button
      */
-    protected MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger ){
-        BasicMiniButton button = new BasicMiniButton( trigger );
+    protected MiniButton<BasicButtonModel> createTitleMiniButton( BasicTrigger trigger, BasicResourceInitializer initializer ){
+        BasicMiniButton button = new BasicMiniButton( trigger, initializer );
         button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
         button.setNormalSelectedBorder( BorderFactory.createEtchedBorder() );
 

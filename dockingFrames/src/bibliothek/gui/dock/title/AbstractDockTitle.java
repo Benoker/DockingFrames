@@ -40,6 +40,7 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
@@ -56,11 +57,13 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
+import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
@@ -137,6 +140,9 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     
     /** the background of this title */
     private Background background = new Background();
+    
+    /** the current border, can be <code>null</code> */
+    private TitleBorder border;
     
     /** tells how to paint the text on this title */
     private PropertyValue<OrientationToRotationStrategy> orientationConverter = new PropertyValue<OrientationToRotationStrategy>( DockTitle.ORIENTATION_STRATEGY ){
@@ -484,6 +490,32 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     }
     
     /**
+     * Sets the border and the {@link BorderModifier} that should be used by this title.
+     * @param key the identifier of the modifier or <code>null</code>
+     * @param border the default title, can be <code>null</code>
+     */
+    public void setBorder( String key, Border border ){
+    	if( this.border != null ){
+    		if( key == null || !this.border.id.equals( key )){
+    			this.border.setController( null );
+    			this.border = null;
+    		}
+    	}
+    	if( this.border == null && key != null ){
+    		this.border = new TitleBorder( key );
+    		if( bound ){
+    			this.border.setController( getOrigin().getController() );
+    		}
+    	}
+    	if( this.border == null ){
+    		setBorder( border );
+    	}
+    	else{
+    		this.border.setBorder( border );
+    	}
+    }
+    
+    /**
      * Gets the insets that have to be applied between the border and the 
      * content of this title.
      * @return the insets, not <code>null</code>
@@ -753,7 +785,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
         	itemPanel.set( dockable, getActionSourceFor( dockable ) );
         
         dockable.addDockableListener( listener );
-        DockController controller = dockable.getController();
+        DockController controller = getDockable().getController();
         if( controller != null ){
             for( AbstractDockColor color : colors )
                 color.connect( controller );
@@ -765,6 +797,10 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
         }
         
         background.setController( controller );
+        
+        if( border != null ){
+        	border.setController( controller );
+        }
         
         updateText();
         updateIcon();
@@ -790,6 +826,9 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
             font.connect( null );
         
         orientationConverter.setProperties( (DockProperties)null );
+        if( border != null ){
+        	border.setController( null );
+        }
         
         setText( "" );
         setIcon( null );
@@ -937,5 +976,76 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     	public Component getComponent(){
     		return getTitle().getComponent();
     	}
+    }
+    
+    /**
+     * Represents this title as {@link UIValue} to get a {@link BorderModifier}
+     * @author Benjamin Sigg
+     */
+    private class TitleBorder implements TitleDockBorder{
+    	/** the identifier of this border */
+    	private String id;
+    	/** the current modifier */
+    	private BorderModifier modifier;
+    	/** the source of all values */
+    	private DockController controller;
+    	/** the default border */
+    	private Border border;
+    	
+    	/**
+    	 * Creates a new wrapper
+    	 * @param id the identifier of this {@link UIValue}
+    	 */
+    	public TitleBorder( String id ){
+    		this.id = id;
+    	}
+    	
+		public DockTitle getTitle(){
+			return AbstractDockTitle.this;
+		}
+
+		public void set( BorderModifier value ){
+			if( value != modifier ){	
+				modifier = value;
+				update();
+			}
+		}
+		
+		/**
+		 * Sets the default border
+		 * @param border the default border, can be <code>null</code>
+		 */
+		public void setBorder( Border border ){
+			if( this.border != border ){
+				this.border = border;
+				update();
+			}
+		}
+		
+		private void update(){
+			if( modifier == null ){
+				AbstractDockTitle.this.setBorder( border );
+			}
+			else{
+				AbstractDockTitle.this.setBorder( modifier.modify( border ) );
+			}
+		}
+
+		/**
+		 * Sets the controller to observe for a value.
+		 * @param controller the controller, can be <code>null</code>
+		 */
+		public void setController( DockController controller ){
+			if( this.controller != null ){
+				this.controller.getThemeManager().remove( this );
+			}
+			this.controller = controller;
+			if( this.controller == null ){
+				set( null );
+			}
+			else{
+				this.controller.getThemeManager().add( id, TitleDockBorder.KIND, ThemeManager.BORDER_MODIFIER_TYPE, this );
+			}
+		}
     }
 }

@@ -250,10 +250,10 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     protected void updateBorder() {
         if( isRespectBorderHint() ){
             if( getHints().getShowBorderHint() || getTitle() != null ){
-                dockable.setBorder( getDefaultBorder() );
+            	openBorder.setBorder( getDefaultBorder() );
             }
             else{
-                dockable.setBorder( null );
+            	openBorder.setBorder( null );
             }
         }
     }

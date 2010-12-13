@@ -43,6 +43,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
+import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
@@ -85,10 +86,12 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
      * Creates a new round button.
      * @param trigger a trigger which gets informed when the user clicks the
      * button.
+     * @param initializer a strategy to lazily initialize resources, can be <code>null</code>
+     * 
      * @param dockable the dockable for which this button is used
      * @param action the action for which this button is used
      */
-	public RoundButton( BasicTrigger trigger, Dockable dockable, DockAction action ){
+	public RoundButton( BasicTrigger trigger, BasicResourceInitializer initializer, Dockable dockable, DockAction action ){
 		setFocusable( true );
 		
 		animation = new BubbleColorAnimation();
@@ -113,7 +116,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		        new RoundActionColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
 		};
 		
-        model = new BasicButtonModel( this, trigger ){
+        model = new BasicButtonModel( this, trigger, initializer ){
             @Override
             public void changed() {
                 updateColors();

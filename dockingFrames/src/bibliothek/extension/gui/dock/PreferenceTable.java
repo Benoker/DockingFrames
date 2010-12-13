@@ -432,10 +432,7 @@ public class PreferenceTable extends JPanel{
                         else
                             doOperation( operation );
                     }
-                    public void ensureBorder( String key ){
-	                    // ignore	
-                    }
-                });
+                }, null );
                 
                 getModel().setIcon( operation.getIcon() );
                 getModel().setToolTipText( operation.getDescription() );

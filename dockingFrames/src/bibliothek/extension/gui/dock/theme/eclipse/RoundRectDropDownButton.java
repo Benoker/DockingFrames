@@ -73,7 +73,7 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
      */
     public RoundRectDropDownButton( BasicDropDownButtonHandler handler ){
         this.handler = handler;
-        model = new BasicDropDownButtonModel( this, handler, true ){
+        model = new BasicDropDownButtonModel( this, handler, handler, true ){
             @Override
             protected boolean inDropDownArea( int x, int y ) {
                 return RoundRectDropDownButton.this.inDropDownArea( x, y );

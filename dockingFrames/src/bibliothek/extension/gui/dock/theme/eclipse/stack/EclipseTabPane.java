@@ -54,6 +54,7 @@ import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.CombinedStackDockContentPane;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentBorder;
+import bibliothek.gui.dock.station.stack.StackDockComponentContentBorder;
 import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneListener;
@@ -312,6 +313,11 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	protected BorderForwarder createBorderModifier( JComponent target ){
 		return new TabPaneBorder( target );
 	}
+	
+	@Override
+	protected BorderForwarder createContentBorderModifier( Dockable dockable, JComponent component ){
+		return new TabContentBorder( dockable, component );
+	}
 		
 	private void updatePaintIcons(){
 		boolean paintIconsWhenInactive = paintIcons.getValue();
@@ -374,8 +380,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	 * @param border the new border, may be <code>null</code>
 	 */
 	public void setContentBorderAt( int index, Border border ){
-		JComponent layer = getLayerAt( index );
-		layer.setBorder( border );
+		getContentAt( index ).setBorder( border );
 	}
 	
 	@Override
@@ -389,7 +394,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	public JComponent getLayerAt( int index ){
 		return (JComponent)super.getLayerAt( index );
 	}
-	
+
 	/**
 	 * Gets an estimate of the {@link Insets} between the selected
 	 * {@link Dockable} and this whole component.
@@ -441,6 +446,23 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 
 		public StackDockComponent getStackComponent(){
 			return EclipseTabPane.this;
+		}
+	}
+	
+	private class TabContentBorder extends BorderForwarder implements StackDockComponentContentBorder{
+		private Dockable dockable;
+		
+		public TabContentBorder( Dockable dockable, JComponent target ){
+			super( StackDockComponentContentBorder.KIND, ThemeManager.BORDER_MODIFIER + ".stack.eclipse.content", target );
+			this.dockable = dockable;
+		}
+		
+		public StackDockComponent getStackComponent(){
+			return EclipseTabPane.this;
+		}
+		
+		public Dockable getDockable(){
+			return dockable;
 		}
 	}
 }
