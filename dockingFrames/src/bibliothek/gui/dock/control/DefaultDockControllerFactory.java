@@ -59,8 +59,12 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
         return new DoubleClickController( setup );
     }
 
-    public DockRegisterListener createFocusController( DockController controller, ControllerSetupCollection setup ) {
-        return new FocusController( controller );
+    public DockRegisterListener createVisibilityFocusObserver( DockController controller, ControllerSetupCollection setup ){
+        return new VisibilityFocusObserver( controller );
+    }
+    
+    public FocusController createFocusController( DockController controller, ControllerSetupCollection setup ){
+	    return new DefaultFocusController( controller );
     }
 
     public DockableSelector createDockableSelector( DockController controller, ControllerSetupCollection setup ) {

@@ -4,7 +4,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
-import bibliothek.gui.dock.control.MouseFocusObserver;
+import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.FrameworkOnly;
@@ -46,11 +46,11 @@ public class ControlVetoFocusListener implements FocusVetoListener{
 		return FocusVeto.NONE;
 	}
 	
-	public FocusVeto vetoFocus( MouseFocusObserver controller, DockTitle title ){
+	public FocusVeto vetoFocus( FocusController controller, DockTitle title ){
 		return veto( title.getDockable() );
 	}
 
-	public FocusVeto vetoFocus( MouseFocusObserver controller, Dockable dockable ){
+	public FocusVeto vetoFocus( FocusController controller, Dockable dockable ){
 		return veto( dockable );
 	}
 }

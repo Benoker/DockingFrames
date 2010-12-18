@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.awt.Component;
 import java.awt.Dimension;
 
 import bibliothek.gui.DockTheme;
@@ -385,6 +386,12 @@ public interface CDockable {
      * <code>false</code> if not
      */
     public boolean isSingleTabShown();
+    
+    /**
+     * Gets the {@link Component} which should receive the focus once this <code>CDockable</code> is focused.
+     * @return the element which should receive the focus, can be <code>null</code>
+     */
+    public Component getFocusComponent();
     
 	/**
 	 * Gets the intern representation of this <code>CDockable</code>.

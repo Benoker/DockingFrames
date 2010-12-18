@@ -28,12 +28,8 @@ package bibliothek.gui;
 
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.EventQueue;
 import java.awt.Frame;
-import java.awt.KeyboardFocusManager;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -43,13 +39,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
-import javax.swing.FocusManager;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
@@ -71,6 +64,7 @@ import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.DoubleClickController;
+import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.control.SingleParentRemover;
@@ -154,21 +148,17 @@ public class DockController {
 	
 	/** selector allows to select {@link Dockable} using the mouse or the keyboard */
 	private DockableSelector dockableSelector;
-	
-    /** the Dockable which has currently the focus, can be <code>null</code> */
-    private Dockable focusedDockable = null;
     
-    /** Listeners observing the focused {@link Dockable} */
-    private List<DockableFocusListener> dockableFocusListeners = new ArrayList<DockableFocusListener>();
     /** Listeners observing the selected {@link Dockable}s */
     private List<DockableSelectionListener> dockableSelectionListeners = new ArrayList<DockableSelectionListener>();
     /** Listeners observing the bound-state of {@link DockTitle}s */
     private List<DockTitleBindingListener> dockTitleBindingListeners = new ArrayList<DockTitleBindingListener>();
     
-    /** <code>true</code> while the controller actively changes the focus */
-    private boolean onFocusing = false;
     /** a special controller listening to AWT-events and changing the focused dockable */
     private MouseFocusObserver focusObserver;
+    
+    /** class managing focus transfer between {@link Dockable}s */
+    private FocusController focusController;
     
     /** an observer of the bound {@link DockTitle}s */
     private DockTitleObserver dockTitleObserver = new DockTitleObserver();
@@ -299,7 +289,7 @@ public class DockController {
         this.factory = factory;
         
     	register = factory.createRegister( this, setup );
-    	DockRegisterListener focus = factory.createFocusController( this, setup );
+    	DockRegisterListener focus = factory.createVisibilityFocusObserver( this, setup );
     	if( focus != null )
     		register.addDockRegisterListener( focus );
     	
@@ -317,6 +307,7 @@ public class DockController {
         
         defaultActionOffer = factory.createDefaultActionOffer( this, setup );
         focusObserver = factory.createMouseFocusObserver( this, setup );
+        focusController = factory.createFocusController( this, setup );
         actionViewConverter = factory.createActionViewConverter( this, setup );
         doubleClickController = factory.createDoubleClickController( this, setup );
         keyboardController = factory.createKeyboardController( this, setup );
@@ -345,6 +336,7 @@ public class DockController {
         
         
         setSingleParentRemover( factory.createSingleParentRemover( this, setup ) );
+        focusController.addDockableFocusListener( new FocusControllerObserver() );
         
         for( ControllerSetupListener listener : setupListeners )
             listener.done( this );
@@ -384,12 +376,32 @@ public class DockController {
     }
     
     /**
-     * Gets the current focus-controller
+     * Gets the current focus manager that tracks the mouse.
      * @return the controller
      */
-    public MouseFocusObserver getFocusObserver() {
+    public MouseFocusObserver getMouseFocusObserver() {
         return focusObserver;
     }
+    
+    /**
+     * Gets the current focus manager that tracks the mouse.
+     * @return the controller
+     * @deprecated replaced by {@link #getMouseFocusObserver()}
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
+    		description="remove this method")
+    public MouseFocusObserver getFocusObserver(){
+		return getMouseFocusObserver();
+	}
+    
+    /**
+     * Gets the manager which is responsible for transfering focus between {@link Dockable}s.
+     * @return the manager, not <code>null</code>
+     */
+    public FocusController getFocusController(){
+		return focusController;
+	}
     
     /**
      * Gets the set of {@link Dockable Dockables} and {@link DockStation DockStations}
@@ -788,7 +800,7 @@ public class DockController {
      * @return <code>true</code> if the focus is currently changing
      */
     public boolean isOnFocusing() {
-        return onFocusing;
+        return focusController.isOnFocusing();
     }
     
     /**
@@ -798,10 +810,12 @@ public class DockController {
      * @see #isOnFocusing()
      */
     public void setAtLeastFocusedDockable( Dockable focusedDockable ) {
-        if( this.focusedDockable == null ){
+    	Dockable current = getFocusedDockable();
+    	
+        if( current == null ){
             setFocusedDockable( focusedDockable, false );
         }
-        else if( !DockUtilities.isAncestor( focusedDockable, this.focusedDockable )){
+        else if( !DockUtilities.isAncestor( focusedDockable, current )){
             setFocusedDockable( focusedDockable, false );
         }
     }
@@ -829,66 +843,7 @@ public class DockController {
      * or not.
      */
     public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
-    	// ignore more than one call
-    	if( onFocusing )
-    		return;
-    	
-    	try{
-	        onFocusing = true;
-	        
-	        if( force || this.focusedDockable != focusedDockable ){
-	            Dockable oldFocused = this.focusedDockable;
-	            this.focusedDockable = focusedDockable;
-	            
-	            for( Map.Entry<DockTitle, Dockable> title : activeTitles.entrySet() ){
-	                DockStation parent = title.getValue().getDockParent();
-	                if( parent != null )
-	                    parent.changed( title.getValue(), title.getKey(), false );
-	                else
-	                    title.getKey().changed( new DockTitleEvent( title.getValue(), false ));
-	            }
-	            
-	            activeTitles.clear();
-	            Dockable dockable = focusedDockable;
-	            
-	            while( dockable != null ){
-	                DockStation station = dockable.getDockParent();
-	                if( station != null ){
-	                    DockTitle[] titles = dockable.listBoundTitles();
-	                    
-	                    for( DockTitle title : titles ){
-	                        station.changed( dockable, title, true );
-	                        activeTitles.put( title, dockable );
-	                    }
-	                    
-	                    station.setFrontDockable( dockable );
-	                    dockable = station.asDockable();
-	                }
-	                else
-	                    dockable = null;
-	            }
-	            
-	            if( ensureFocusSet ){
-	                if( EventQueue.isDispatchThread() ){
-    	                SwingUtilities.invokeLater( new Runnable(){
-    	                    public void run() {
-    	                        ensureFocusSet();     
-    	                    }
-    	                });
-	                }
-	                else{
-	                    // we are in the wrong Thread, but we can try...
-	                    ensureFocusSet();
-	                }
-	            }
-	            
-	            if( oldFocused != focusedDockable )
-	                fireDockableFocused( oldFocused, focusedDockable );
-	        }
-    	}
-    	finally{
-    		onFocusing = false;
-    	}
+    	focusController.setFocusedDockable( focusedDockable, force, ensureFocusSet );
     }
     
     /**
@@ -899,7 +854,7 @@ public class DockController {
      * one of its children is focused
      */
     public boolean isFocused( Dockable dockable ){
-        Dockable temp = focusedDockable;
+        Dockable temp = getFocusedDockable();
         while( temp != null ){
             if( temp == dockable )
                 return true;
@@ -928,90 +883,15 @@ public class DockController {
      * has the focus.
      */
     public void ensureFocusSet(){
-        Dockable focusedDockable = this.focusedDockable;
-        if( focusedDockable != null ){
-            Stack<Dockable> front = new Stack<Dockable>();            
-            
-            Dockable temp = focusedDockable;
-            
-            while( temp != null ){
-                DockStation parent = temp.getDockParent();
-                if( parent != null )
-                    front.push( temp );
-                
-                temp = parent == null ? null : parent.asDockable();
-            }
-            
-            while( !front.isEmpty() ){
-                Dockable element = front.pop();
-                element.getDockParent().setFrontDockable( element );
-            }
-        
-            DockTitle[] titles = focusedDockable.listBoundTitles();
-            Component focused = FocusManager.getCurrentManager().getFocusOwner();
-            if( focused != null ){
-                if( SwingUtilities.isDescendingFrom( focused, focusedDockable.getComponent() ) )
-                    return;
-                
-                for( DockTitle title : titles )
-                    if( SwingUtilities.isDescendingFrom( focused, title.getComponent() ))
-                        return;
-            }
-            
-            Component component = focusedDockable.getComponent();
-            if( component.isFocusable() ){
-                component.requestFocus();
-                component.requestFocusInWindow();
-                focus( component, 10, 20 );
-            }
-            else{
-                KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent( component );
-            }
-        }
+    	focusController.ensureFocusSet();
     }
-    
-    /**
-     * Ensures that <code>component</code> has the focus and is on the 
-     * active window. This is done by waiting <code>delay</code> milliseconds
-     * and then checking the current focus owner. If the owner is not <code>component</code>,
-     * then the focus is transfered. Checking stops after <code>component</code>
-     * is found to be the focus owner, or <code>loops</code> failures were reported.<br>
-     * Note: this awkward method to change the focus is necessary because on some
-     * systems - like Linux - Java does not handle focus very well.
-     * @param component the component which should have the focus
-     * @param delay how much time to wait between two checks of the focus
-     * @param loops how many times to check
-     */
-    private void focus( final Component component, int delay, final int loops ){
-        final Timer timer = new Timer( delay, null );
-        timer.addActionListener( new ActionListener(){
-            private int remaining = loops;
-            
-            public void actionPerformed( ActionEvent e ) {
-                remaining--;
 
-                KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-                if( manager.getPermanentFocusOwner() != component ){
-                    manager.clearGlobalFocusOwner();
-                    component.requestFocus();
-                    
-                    if( remaining > 0 ){
-                        timer.restart();
-                    }
-                }
-            }
-        });
-        
-        timer.setRepeats( false );
-        timer.start();
-    }
-    
     /**
      * Gets the {@link Dockable} which is currently focused.
      * @return the focused element or <code>null</code>
      */
     public Dockable getFocusedDockable() {
-        return focusedDockable;
+        return focusController.getFocusedDockable();
     }
     
     /**
@@ -1266,27 +1146,15 @@ public class DockController {
      * @param listener the new listener
      */
     public void addDockableFocusListener( DockableFocusListener listener ){
-        if( listener == null )
-            throw new NullPointerException( "listener must not be null" );
-        dockableFocusListeners.add( listener );
+    	focusController.addDockableFocusListener( listener ); 
     }
     
-    /**
+    /**d
      * Removes a listener from this controller.
      * @param listener the listener to remove
      */
     public void removeDockableFocusListener( DockableFocusListener listener ){
-        if( listener == null )
-            throw new NullPointerException( "listener must not be null" );
-        dockableFocusListeners.remove( listener );
-    }
-    
-    /**
-     * Gets an array of currently registered {@link DockableFocusListener}s.
-     * @return the modifiable array
-     */
-    protected DockableFocusListener[] dockableFocusListeners(){
-        return dockableFocusListeners.toArray( new DockableFocusListener[ dockableFocusListeners.size() ] );
+        focusController.removeDockableFocusListener( listener );
     }
     
     /**
@@ -1337,19 +1205,6 @@ public class DockController {
     protected void fireTitleUnbound( DockTitle title, Dockable dockable ){
         for( DockTitleBindingListener listener : dockTitleBindingListeners() )
             listener.titleUnbound( this, title, dockable );
-    }
-    
-    /**
-     * Informs all listeners that <code>dockable</code> has gained
-     * the focus.
-     * @param oldFocused the old owner of the focus, may be <code>null</code>
-     * @param newFocused the owner of the focus, may be <code>null</code>
-     */
-    protected void fireDockableFocused( Dockable oldFocused, Dockable newFocused ){
-        DockableFocusEvent event = new DockableFocusEvent( this, oldFocused, newFocused );
-        
-        for( DockableFocusListener listener : dockableFocusListeners() )
-            listener.dockableFocused( event );
     }
     
     /**
@@ -1435,6 +1290,42 @@ public class DockController {
     }
     
     /**
+     * Added to the current {@link FocusController} to track the active titles.
+     */
+    private class FocusControllerObserver implements DockableFocusListener{
+		public void dockableFocused( DockableFocusEvent event ){
+			for( Map.Entry<DockTitle, Dockable> title : activeTitles.entrySet() ){
+                DockStation parent = title.getValue().getDockParent();
+                if( parent != null )
+                    parent.changed( title.getValue(), title.getKey(), false );
+                else
+                    title.getKey().changed( new DockTitleEvent( title.getValue(), false ));
+            }
+            
+            activeTitles.clear();
+            
+            Dockable dockable = event.getNewFocusOwner();
+            
+            while( dockable != null ){
+                DockStation station = dockable.getDockParent();
+                if( station != null ){
+                    DockTitle[] titles = dockable.listBoundTitles();
+                    
+                    for( DockTitle title : titles ){
+                        station.changed( dockable, title, true );
+                        activeTitles.put( title, dockable );
+                    }
+                    
+                    station.setFrontDockable( dockable );
+                    dockable = station.asDockable();
+                }
+                else
+                    dockable = null;
+            }
+		}    	
+    }
+    
+    /**
      * Observers the {@link DockRegister}, adds listeners to new {@link Dockable}s
      * and {@link DockTitle}s, and collects the components of these elements
      */
@@ -1453,7 +1344,7 @@ public class DockController {
                 
                 DockStation station = dockable.getDockParent();
                 boolean focused = false;
-                Dockable temp = focusedDockable;
+                Dockable temp = getFocusedDockable();
                 while( !focused && temp != null ){
                     focused = temp == dockable;
                     DockStation parent = temp.getDockParent();

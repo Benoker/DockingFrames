@@ -31,8 +31,6 @@ import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -42,7 +40,6 @@ import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
-import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -54,12 +51,9 @@ import bibliothek.gui.dock.util.DockUtilities;
  */
 public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, DockRelocatorListener{
     
-    /** A list of listeners which can cancel a call to the controller */
-    private List<FocusVetoListener> vetos = new ArrayList<FocusVetoListener>();
-    
     /** The controller to be informed about changes */
     private DockController controller;
-    
+
     /**
      * Creates a new FocusController.
      * @param controller the controller which will be informed about
@@ -92,56 +86,6 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
         return controller;
     }
     
-    /**
-     * Adds a listener to this controller which can cancel a call to
-     * the {@link DockController}.
-     * @param listener the new listener
-     */
-    public void addVetoListener( FocusVetoListener listener ){
-        vetos.add( listener );
-    }
-    
-    /**
-     * Removes a listener from this controller
-     * @param listener the listener to remove
-     */
-    public void removeVetoListener( FocusVetoListener listener ){
-        vetos.remove( listener );
-    }
-    
-    /**
-     * Asks all {@link FocusVetoListener} through their method
-     * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, DockTitle)}
-     * whether they want cancel a call to the {@link DockController}.
-     * @param title the title which was hit by the mouse
-     * @return the first veto
-     */
-    protected FocusVeto fireVetoTitle( DockTitle title ){
-        for( FocusVetoListener listener : vetos.toArray( new FocusVetoListener[ vetos.size() ] )){
-        	FocusVeto veto = listener.vetoFocus( this, title );
-        	if( veto != FocusVeto.NONE )
-        		return veto;
-        }
-        
-        return FocusVeto.NONE;
-    }
-    
-    /**
-     * Asks all {@link FocusVetoListener} through their method
-     * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, Dockable)}
-     * whether they want cancel a call to the {@link DockController}.
-     * @param dockable the Dockable which was hit by the mouse
-     * @return the first veto
-     */    
-    protected FocusVeto fireVetoDockable( Dockable dockable ){
-    	for( FocusVetoListener listener : vetos.toArray( new FocusVetoListener[ vetos.size() ] )){
-        	FocusVeto veto = listener.vetoFocus( this, dockable );
-        	if( veto != FocusVeto.NONE )
-        		return veto;
-        }
-        
-        return FocusVeto.NONE;
-    }
     
     public void check( MouseEvent event ){
     	if( interact( event )){
@@ -292,8 +236,7 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
      * parent of <code>component</code> as base Component.
      * @param component a Component
      * @param event the event that causes this check
-     * @return a Dockable or <code>null</code> if nothing was found or
-     * a {@link FocusVetoListener} doesn't want to inform the controller
+     * @return a Dockable or <code>null</code> if nothing was found
      */
     protected Dockable getDockable( Component component, AWTEvent event ){
         DockElementRepresentative element = controller.searchElement( component );
@@ -304,16 +247,9 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
         if( dockable == null )
             return null;
         
-        FocusVeto veto;
+        FocusVeto veto = controller.getFocusController().checkFocusedDockable( element );
         
-        if( element instanceof DockTitle ){
-            veto = fireVetoTitle( (DockTitle)element );
-        }
-        else{
-            veto = fireVetoDockable( dockable );
-        }
-        
-        if( veto != FocusVeto.NONE ){
+        if( veto != null && veto != FocusVeto.NONE ){
         	handleVeto( event, veto );
         	return null;
         }

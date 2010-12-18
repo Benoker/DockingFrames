@@ -32,7 +32,6 @@ import java.awt.event.MouseWheelEvent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
@@ -53,18 +52,6 @@ public interface MouseFocusObserver {
      * @return the controller
      */
     public DockController getController();
-    
-    /**
-     * Adds a listener to this controller which can cancel a call to the {@link DockController}.
-     * @param listener the new listener
-     */
-    public void addVetoListener( FocusVetoListener listener );
-    
-    /**
-     * Removes a listener from this controller
-     * @param listener the listener to remove
-     */
-    public void removeVetoListener( FocusVetoListener listener );
     
     /**
      * This method may be called at any time by any component that received 

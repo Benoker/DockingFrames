@@ -31,14 +31,14 @@ import java.awt.AWTEvent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DefaultMouseFocusObserver;
-import bibliothek.gui.dock.control.FocusController;
+import bibliothek.gui.dock.control.VisibilityFocusObserver;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
 
 /**
- * A {@link FocusController} which relies on {@link GlassedPane GlassedPanes}.
+ * A {@link VisibilityFocusObserver} which relies on {@link GlassedPane GlassedPanes}.
  * @author Benjamin Sigg
  * @deprecated this class is no longer necessary, a {@link DefaultMouseFocusObserver} can already do
  * everything this class does. Please do no longer use this class, it will be removed in a future release. Have a

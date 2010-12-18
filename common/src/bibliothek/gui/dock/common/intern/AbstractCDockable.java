@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.intern;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,6 +114,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** The default locations for the available {@link ExtendedMode}s. */
     private Map<ExtendedMode, CLocation> defaultLocations = new HashMap<ExtendedMode, CLocation>( 4 );
+    
+    /** The component which should be focused */
+    private Component focusComponent;
     
     /**
      * Creates a new dockable
@@ -696,6 +700,18 @@ public abstract class AbstractCDockable implements CDockable {
     public FontMap getFonts() {
         return fonts;
     }
+    
+    public Component getFocusComponent(){
+	    return focusComponent;
+    }
+    
+    /**
+     * Sets the {@link Component} which should receive the focus when this <code>CDockable</code> is focused.
+     * @param component the component to focus, can be <code>null</code>, should be a child of this <code>CDockable</code>
+     */
+    public void setFocusComponent( Component component ){
+		this.focusComponent = component;
+	}
     
     /**
      * Gets the control which is responsible for this dockable.

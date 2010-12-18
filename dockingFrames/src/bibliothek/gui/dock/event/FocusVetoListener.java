@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,13 +26,18 @@
 
 package bibliothek.gui.dock.event;
 
+import java.awt.Component;
+
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.control.MouseFocusObserver;
+import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * This listener is added to the {@link MouseFocusObserver} and allows to
- * interrupt a change of the focus.
+ * This listener is added to the {@link FocusController} and allows to
+ * interrupt a change of the focus. This listener stop focus transfer
+ * if the transfer is initialized by the framework itself. If the client calls
+ * a method like {@link Component#requestFocusInWindow()} then the framework
+ * may not be able to prevent the focus change from happening.
  * @author Benjamin Sigg
  */
 public interface FocusVetoListener {
@@ -67,7 +72,7 @@ public interface FocusVetoListener {
      * @param title the title from which the focus-change was initialized
      * @return whether to cancel the focus transfer, not <code>null</code>
      */
-    public FocusVeto vetoFocus( MouseFocusObserver controller, DockTitle title );
+    public FocusVeto vetoFocus( FocusController controller, DockTitle title );
     
     /**
      * Invoked when the focus should change because the user did something
@@ -76,5 +81,5 @@ public interface FocusVetoListener {
      * @param dockable the {@link Dockable} from which the focus-change was initialized
      * @return whether to cancel the focus transfer, not <code>null</code> 
      */
-    public FocusVeto vetoFocus( MouseFocusObserver controller, Dockable dockable );
+    public FocusVeto vetoFocus( FocusController controller, Dockable dockable );
 }

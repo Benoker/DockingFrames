@@ -56,6 +56,7 @@ import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockTitleEvent;
@@ -505,7 +506,7 @@ public class FlapDockStation extends AbstractDockableStation {
             if( remove ){
             	handles.unbind();
                 getController().removeDockableFocusListener( controllerListener );
-                getController().getFocusObserver().removeVetoListener( controllerListener );
+                getController().getFocusController().removeVetoListener( controllerListener );
                 
                 oldFrontDockable = getFrontDockable();
                 setFrontDockable( null );
@@ -574,7 +575,7 @@ public class FlapDockStation extends AbstractDockableStation {
                 }
                 
                 controller.addDockableFocusListener( controllerListener );
-                controller.getFocusObserver().addVetoListener( controllerListener );
+                controller.getFocusController().addVetoListener( controllerListener );
                 
                 if( isStationVisible() )
                     setFrontDockable( oldFrontDockable );
@@ -2069,12 +2070,12 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     private class ControllerListener implements FocusVetoListener, DockableFocusListener{
-        public FocusVeto vetoFocus( MouseFocusObserver controller, Dockable dockable ) {
+    	public FocusVeto vetoFocus( FocusController controller, Dockable dockable ){
             return FocusVeto.NONE;
         }
-        
-        public FocusVeto vetoFocus( MouseFocusObserver controller, DockTitle title ) {
-        	for( DockableHandle handle : handles.dockables() ){
+    	
+    	public FocusVeto vetoFocus( FocusController controller, DockTitle title ){
+    		for( DockableHandle handle : handles.dockables() ){
         		if( handle.getTitle() == title ){
         			return FocusVeto.VETO_NO_CONSUME;
         		}

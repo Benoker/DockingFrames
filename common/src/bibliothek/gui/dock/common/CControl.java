@@ -108,6 +108,7 @@ import bibliothek.gui.dock.common.perspective.CStackPerspective;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.common.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.control.FocusStrategy;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
@@ -456,8 +457,15 @@ public class CControl {
             }
         });
         
-        frontend.getController().getFocusObserver().addVetoListener( 
-        		new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
+        frontend.getController().getFocusController().addVetoListener( new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
+        frontend.getController().getFocusController().setStrategy( new FocusStrategy(){
+			public Component getFocusComponent( Dockable dockable ){
+				if( dockable instanceof CommonDockable ){
+					return ((CommonDockable)dockable).getDockable().getFocusComponent();
+				}
+				return null;
+			}
+		});
         
         frontend.addVetoableListener( new ControlVetoClosingListener( this, listenerCollection.getVetoClosingListener() ) );
 
