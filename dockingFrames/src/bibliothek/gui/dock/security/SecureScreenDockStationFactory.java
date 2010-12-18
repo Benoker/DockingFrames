@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -31,11 +31,19 @@ import java.awt.Window;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A factory which creates instances of {@link SecureScreenDockStation}.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary and will be removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class, make sure old layouts can still be loaded" )
 public class SecureScreenDockStationFactory extends ScreenDockStationFactory {
     /** The identifier of this factory */
     public static final String ID = "secure " + ScreenDockStationFactory.ID;

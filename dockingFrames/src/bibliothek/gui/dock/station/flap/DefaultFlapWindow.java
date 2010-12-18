@@ -57,9 +57,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
-import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -98,6 +98,9 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 
 	/** the window on which this {@link DefaultFlapWindow} is shown */
 	private Parent window;
+	
+	/** the parent of the {@link #contentPane} */
+	private SecureContainer contentContainer;
 
 	/** the background algorithm */
 	private Background background = new Background();
@@ -117,7 +120,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	}
 
 	private void init(){
-		OverpaintablePanel panel = new OverpaintablePanel(){
+		contentContainer = new SecureContainer(){
 			@Override
 			protected void paintOverlay( Graphics g ){
 				if( dropInfo != null && dropInfo.getCombineTarget() != null && dropInfo.isDraw() ) {
@@ -132,12 +135,12 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		
 		BackgroundPanel content = new BackgroundPanel( true, false );
 		content.setBackground( background );
-		panel.getBasePane().setLayout( new BorderLayout() );
-		panel.getBasePane().add( content, BorderLayout.CENTER );
-		panel.setContentPane( content );
+		contentContainer.getBasePane().setLayout( new BorderLayout() );
+		contentContainer.getBasePane().add( content, BorderLayout.CENTER );
+		contentContainer.setContentPane( content );
 		
-		window.setContentPane(panel);
-		contentPane = panel.getContentPane();
+		window.setContentPane(contentContainer);
+		contentPane = contentContainer.getContentPane();
 		contentPane.setOpaque( false );
 
 		contentPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
@@ -374,6 +377,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	
 	public void setController( DockController controller ){
 		background.setController( controller );
+		contentContainer.setController( controller );
 	}
 
 	/**

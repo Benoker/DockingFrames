@@ -28,61 +28,31 @@ package bibliothek.gui.dock.control;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.event.KeyboardListener;
-import bibliothek.gui.dock.event.LocatedListenerList;
+import bibliothek.util.FrameworkOnly;
 
 /**
- * An observer of all KeyEvents, forwarding them to registered listeners. The
- * listeners are only informed about events that occurred in a part of the 
- * dock-tree below them.
+ * An observer of all {@link KeyEvent}, forwarding them to registered listeners. The
+ * listeners are only informed about events that occurred in a part of the dock-tree below them.
  * @author Benjamin Sigg
  *
  */
-public abstract class KeyboardController {
-	/** the list of listeners */
-	private LocatedListenerList<KeyboardListener> keyListeners = 
-		new LocatedListenerList<KeyboardListener>();
-	
-	/** the listeners which will be informed about any events */
-	private List<KeyListener> globalListeners = new ArrayList<KeyListener>();
-	
-	/** the controller in whose realm this {@link KeyboardController} works */
-	private DockController controller;
-	
-	/**
-	 * Creates a new {@link KeyboardController}.
-	 * @param controller the controller in whose realm this <code>KeyBoardController</code>
-	 * will work.
-	 */
-	public KeyboardController( DockController controller ){
-		this.controller = controller;
-	}
-	
+public interface KeyboardController {
 	/**
 	 * Adds a global key listener to this controller. Global {@link KeyListener}s
 	 * will receive a notification for every event that this controller handles.
 	 * The listeners will also be informed about events that are consumed.
 	 * @param listener the new listener
 	 */
-	public void addGlobalListener( KeyListener listener ){
-	    if( listener == null )
-	        throw new IllegalArgumentException( "listener must not be null" );
-	    globalListeners.add( listener );
-	}
+	public void addGlobalListener( KeyListener listener );
 	
 	/**
 	 * Removes a listener from this controller.
 	 * @param listener the listener to remove
 	 */
-	public void removeGlobalListener( KeyListener listener ){
-	    globalListeners.remove( listener );
-	}
+	public void removeGlobalListener( KeyListener listener );
 	
 	/**
 	 * Adds a listener to this controller. The listener will be invoked
@@ -90,142 +60,25 @@ public abstract class KeyboardController {
 	 * the listeners {@link bibliothek.gui.dock.DockElement}.
 	 * @param listener the new listener
 	 */
-	public void addListener( KeyboardListener listener ){
-		if( listener == null )
-	        throw new IllegalArgumentException( "listener must not be null" );
-	    
-		keyListeners.addListener( listener );
-	}
+	public void addListener( KeyboardListener listener );
 	
 	/**
 	 * Removes a listener from this controller.
 	 * @param listener the listener to remove
 	 */
-	public void removeListener( KeyboardListener listener ){
-		keyListeners.removeListener( listener );
-	}
+	public void removeListener( KeyboardListener listener );
 	
 	/**
 	 * Gets the {@link DockController} in whose realm this {@link KeyboardController} works.
 	 * @return the owner of this controller
 	 */
-	public DockController getController() {
-        return controller;
-    }
+	public DockController getController();
 	
 	/**
 	 * Stops this controller. This controller has to remove any resources
-	 * it uses and has not to be useful any further.
+	 * it uses and has not to be useful any further.<br>
+	 * This method should no be called by clients
 	 */
+	@FrameworkOnly
 	public abstract void kill();
-	
-	/**
-	 * Forwards <code>event</code> to all listeners whose 
-	 * {@link bibliothek.gui.dock.DockElement} is above the component
-	 * on which the event occurred.
-	 * @param event the event to send
-	 */
-	protected void fireKeyPressed( KeyEvent event ){
-		if( !event.isConsumed() ){
-    		DockElementRepresentative representative = controller.searchElement( event.getComponent() );
-    		if( representative != null ){
-    		    DockElement element = representative.getElement();
-    		    
-        		List<KeyboardListener> list = keyListeners.affected( element );
-        		loop:for( KeyboardListener listener : list ){
-        			if( listener.keyPressed( element, event )){
-        				event.consume();
-        				break loop;
-        			}
-        		}
-    		}
-		}
-		
-		for( KeyListener listener : globalListeners.toArray( new KeyListener[ globalListeners.size() ] )){
-		    listener.keyPressed( event );
-		}
-	}
-	
-	/**
-	 * Forwards <code>event</code> to all listeners whose 
-	 * {@link bibliothek.gui.dock.DockElement} is above the component
-	 * on which the event occurred.
-	 * @param event the event to send
-	 */
-	protected void fireKeyReleased( KeyEvent event ){
-		if( !event.isConsumed() ){
-			DockElementRepresentative representative = controller.searchElement( event.getComponent() );
-    		if( representative != null ){
-    		    DockElement element = representative.getElement();
-    		    
-        		List<KeyboardListener> list = keyListeners.affected( element );
-        		loop:for( KeyboardListener listener : list ){
-        			if( listener.keyReleased( element, event )){
-        				event.consume();
-        				break loop;
-        			}
-        		}
-    		}
-		}
-
-		for( KeyListener listener : globalListeners.toArray( new KeyListener[ globalListeners.size() ] )){
-		    listener.keyReleased( event );
-		}
-	}
-	
-	/**
-	 * Forwards <code>event</code> to all listeners whose 
-	 * {@link bibliothek.gui.dock.DockElement} is above the component
-	 * on which the event occurred.
-	 * @param event the event to send
-	 */
-	protected void fireKeyTyped( KeyEvent event ){
-		if( !event.isConsumed() ){
-			DockElementRepresentative representative = controller.searchElement( event.getComponent() );
-    		if( representative != null ){
-    		    DockElement element = representative.getElement();
-        		List<KeyboardListener> list = keyListeners.affected( element );
-        		loop:for( KeyboardListener listener : list ){
-        			if( listener.keyTyped( element, event )){
-        				event.consume();
-        				break loop;
-        			}
-        		}
-    		}
-		}
-
-		for( KeyListener listener : globalListeners.toArray( new KeyListener[ globalListeners.size() ] )){
-		    listener.keyTyped( event );
-		}
-	}
-	
-
-	
-//		Does not make much sense, events could first travel up then down in the tree...	
-//    /**
-//     * Redispatches the given event <code>event</code> to the dockable components so they can also
-//     * do something with it.
-//     * 
-//     * @param element the source of the event
-//     * @param event the event that was detected
-//     */
-//    private void redispatchEvent( DockElement element, KeyEvent event ) {
-//    	if( !redispatching ){
-//    		try{
-//    			redispatching = true;
-//    			Dockable dockable = element.asDockable();
-//    			if( dockable != null ){
-//	    			Component component = dockable.getComponent();
-//	    			if( component instanceof Container ){
-//	    				for( Component childCompnent : ((Container)component).getComponents() ){
-//	    					childCompnent.dispatchEvent( event );
-//	    				}
-//	    			}
-//    			}
-//    		}
-//    		finally{
-//    			redispatching = false;
-//    		}
-//    	}
-//    }
 }

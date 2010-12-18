@@ -26,6 +26,7 @@
 
 package bibliothek.gui;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -34,6 +35,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -59,8 +62,8 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.BasicTheme;
-import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.ThemeProperties;
@@ -643,6 +646,34 @@ public class DockUI {
     		parent = parent.getParent();
     	}
     	return false;
+    }
+    
+    /**
+     * Tells whether this application runs in a restricted environment or not. This method
+     * only makes a guess and may return a false result.
+     * @return whether this is a restricted environment
+     */
+    public static boolean isSecureEnvironment(){
+        try{
+        	Toolkit toolkit = Toolkit.getDefaultToolkit();
+        	AWTEventListener listener = new AWTEventListener(){
+				public void eventDispatched( AWTEvent event ){
+					// ignore	
+				}
+			}; 
+        	toolkit.addAWTEventListener( listener, AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_WHEEL_EVENT_MASK );
+        	toolkit.removeAWTEventListener( listener );
+			
+//            SecurityManager security = System.getSecurityManager();
+//            if( security != null ){
+//                security.checkPermission(SecurityConstants.ALL_AWT_EVENTS_PERMISSION);
+//            }
+        }
+        catch( SecurityException ex ){
+            return true;
+        }
+        
+        return false;
     }
     
     private static Component firstOnPath( Container parent, Component child ){

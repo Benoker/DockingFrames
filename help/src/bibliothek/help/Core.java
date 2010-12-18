@@ -34,12 +34,6 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.security.SecureDockController;
-import bibliothek.gui.dock.security.SecureFlapDockStation;
-import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
-import bibliothek.gui.dock.security.SecureScreenDockStation;
-import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
-import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -179,13 +173,13 @@ public class Core implements ComponentCollector{
 	        buttonize( dockbar, viewContent );
 	        buttonize( dockbar, viewHierarchy );
 	        
-	        frontend.add( viewPackage, "packages" );
-	        frontend.add( viewClasses, "classes" );
-	        frontend.add( viewFields, "fields" );
-	        frontend.add( viewConstructors, "constructors" );
-	        frontend.add( viewMethods, "methods" );
-	        frontend.add( viewContent, "content" );
-	        frontend.add( viewHierarchy, "hierarchy" );
+	        frontend.addDockable( "packages", viewPackage );
+	        frontend.addDockable( "classes", viewClasses );
+	        frontend.addDockable( "fields", viewFields );
+	        frontend.addDockable( "constructors", viewConstructors );
+	        frontend.addDockable( "methods", viewMethods );
+	        frontend.addDockable( "content", viewContent );
+	        frontend.addDockable( "hierarchy", viewHierarchy );
 	        
 	        SplitDockGrid grid = new SplitDockGrid(  );
 	        grid.addDockable( 0, 0, 1.5, 1, viewPackage );
@@ -244,29 +238,15 @@ public class Core implements ComponentCollector{
         frame.setTitle( "Help - Demonstration of DockingFrames" );
         frame.setIconImage( ResourceSet.toImage( ResourceSet.ICONS.get( "application" ) ) );
         
-        if( secure ){
-        	SecureDockController controller = new SecureDockController();
-        	frontend = new DockFrontend( controller, frame );
-        	frontend.registerFactory( new SecureScreenDockStationFactory( frame ));
-        	frontend.registerFactory( new SecureFlapDockStationFactory() );
+        frontend = new DockFrontend( frame );
+        frontend.getController().setRestrictedEnvironment( secure );
         	
-        	north = new SecureFlapDockStation();
-        	south = new SecureFlapDockStation();
-        	east = new SecureFlapDockStation();
-        	west = new SecureFlapDockStation();
-        	screen = new SecureScreenDockStation( frame );
-        	station = new SecureSplitDockStation();
-        }
-        else{
-        	frontend = new DockFrontend( frame );
-        	
-        	north = new FlapDockStation();
-        	south = new FlapDockStation();
-        	east = new FlapDockStation();
-        	west = new FlapDockStation();
-        	screen = new ScreenDockStation( frame );
-        	station = new SplitDockStation();
-        }
+        north = new FlapDockStation();
+        south = new FlapDockStation();
+        east = new FlapDockStation();
+        west = new FlapDockStation();
+        screen = new ScreenDockStation( frame );
+        station = new SplitDockStation();
         
         frontend.setDefaultHideable( true );
         
@@ -304,12 +284,12 @@ public class Core implements ComponentCollector{
         	}
         });
         
-        frontend.addRoot( north, "north" );
-        frontend.addRoot( south, "south" );
-        frontend.addRoot( east, "east" );
-        frontend.addRoot( west, "west" );
-        frontend.addRoot( station, "root" );
-        frontend.addRoot( screen, "screen" );
+        frontend.addRoot( "north", north );
+        frontend.addRoot( "south", south );
+        frontend.addRoot( "east", east );
+        frontend.addRoot( "west", west );
+        frontend.addRoot( "root", station );
+        frontend.addRoot( "screen", screen );
 	}
 	
 	/**

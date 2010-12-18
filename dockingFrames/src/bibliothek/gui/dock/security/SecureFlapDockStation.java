@@ -26,56 +26,25 @@
 
 package bibliothek.gui.dock.security;
 
-import javax.swing.JComponent;
-
-import bibliothek.gui.DockController;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.FlapWindow;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link FlapDockStation} that uses {@link SecureFlapWindow} instead
  * of {@link FlapWindow}.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary and will be removed in a future release. Instead of this class,
+ * {@link FlapDockStation} should be used.
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class")
 public class SecureFlapDockStation extends FlapDockStation {
-	/** the panel monitoring mouse-events */
-	private GlassedPane glassedPane;
-	
-	/**
-	 * Creates a new station
-	 */
-	public SecureFlapDockStation(){
-		super( false );
-		init();
-	}
-	
 	@Override
-	public void setController( DockController controller ){
-		DockController old = getController();
-		if( old != null ){
-			((SecureDockController)old).getFocusObserver().removeGlassPane( glassedPane );
-		}
-		
-		super.setController( controller );
-		
-		if( controller != null ){
-			((SecureDockController)controller).getFocusObserver().addGlassPane( glassedPane );
-		}
-	}
-	
-	@Override
-	protected ButtonPane createButtonPane(){
-		glassedPane = new GlassedPane();
-		ButtonPane pane = new ButtonPane( this );
-		JComponent content = pane.getContentPane();
-		pane.setBasePane( glassedPane );
-		glassedPane.setContentPane( content );
-		pane.setContentPane( content );
-		return pane;
-	}
-	
-    @Override
     public String getFactoryID() {
         return SecureFlapDockStationFactory.ID;
     }

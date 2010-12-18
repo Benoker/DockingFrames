@@ -14,13 +14,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import bibliothek.extension.gui.dock.theme.FlatTheme;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.ActionPopupSuppressor;
-import bibliothek.gui.dock.security.SecureDockController;
-import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 
 /**
@@ -30,7 +30,7 @@ import bibliothek.gui.dock.station.split.DockableSplitDockTree;
  * @author Benjamin Sigg
  *
  */
-public class MainPanel extends SecureSplitDockStation {
+public class MainPanel extends SplitDockStation {
     /** the list of all {@link Demonstration}s */
 	private JList list = new JList();
 	/** the layout of {@link #panel} */
@@ -46,7 +46,8 @@ public class MainPanel extends SecureSplitDockStation {
 	 * be available to the user
 	 */
 	public MainPanel( Core core, List<Demonstration> demos ){
-		SecureDockController controller = new SecureDockController();
+		DockController controller = new DockController();
+		controller.setRestrictedEnvironment( true );
 		controller.addAcceptance( new DockAcceptance(){
 			public boolean accept( DockStation parent, Dockable child ){
 				return true;

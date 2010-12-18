@@ -3,11 +3,10 @@ package bibliothek.chess.view;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
+import bibliothek.gui.dock.control.DefaultDockControllerFactory;
 import bibliothek.gui.dock.control.DefaultDockRelocator;
 import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
-import bibliothek.gui.dock.security.SecureDockController;
-import bibliothek.gui.dock.security.SecureDockControllerFactory;
 
 /**
  * A controller which replaces its {@link DockRelocator} in order to start
@@ -16,19 +15,19 @@ import bibliothek.gui.dock.security.SecureDockControllerFactory;
  * @author Benjamin Sigg
  *
  */
-public class ChessDockController extends SecureDockController {
+public class ChessDockController extends DockController {
     /**
      * Creates a new controller
      */
     public ChessDockController() {
         super( null );
-        initiate( new SecureDockControllerFactory(){
+        initiate( new DefaultDockControllerFactory(){
             @Override
             public DockRelocator createRelocator( DockController controller,  ControllerSetupCollection setup ) {
                 return createChessRelocator( controller, setup );
             }
         }, null );
-        initiate();
+        setRestrictedEnvironment( true );
     }
     
     /**

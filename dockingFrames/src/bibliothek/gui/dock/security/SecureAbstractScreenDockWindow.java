@@ -25,15 +25,14 @@
  */
 package bibliothek.gui.dock.security;
 
-import java.awt.Container;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JComponent;
-
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.screen.AbstractScreenDockWindow;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * An {@link AbstractScreenDockWindow} that uses a {@link GlassedPane}
@@ -41,14 +40,13 @@ import bibliothek.gui.dock.station.screen.AbstractScreenDockWindow;
  * {@link SecureMouseFocusObserver}. Subclasses should call {@link #ensureSecure(boolean)}
  * whenever the visibility of the window changes.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer required and will be removed in a future release, use
+ * {@link AbstractScreenDockWindow} instead.
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class, no replacement required" )
 public abstract class SecureAbstractScreenDockWindow extends AbstractScreenDockWindow {
-    /** The panel on which the {@link DockableDisplayer} is added */
-    private JComponent content;
-    /** The panel used to catch MouseEvents */
-    private GlassedPane pane;
-    /** The observer to which the {@link #pane} of this dialog has been added */
-    private SecureMouseFocusObserver observer;
     
     /**
      * Creates a new window
@@ -56,38 +54,5 @@ public abstract class SecureAbstractScreenDockWindow extends AbstractScreenDockW
      */
     public SecureAbstractScreenDockWindow( ScreenDockStation station ){
         super( station );
-    }
-
-    @Override
-    protected OverpaintablePanel createContent() {
-        OverpaintablePanel overpaint = super.createContent();
-        
-        pane = new GlassedPane();
-        overpaint.setBasePane( pane );
-        content = pane.getContentPane();
-        
-        return overpaint;
-    }
-    
-    @Override
-    protected Container getDisplayerParent() {
-        return content;
-    }
-    
-    /**
-     * Ensures that this window is connected to the {@link SecureMouseFocusObserver}
-     * of this secure environment.
-     * @param visible whether the window is visible or not
-     */
-    protected void ensureSecure( boolean visible ){
-        if( observer != null ){
-            observer.removeGlassPane( pane );
-            observer = null;
-        }
-        
-        if( visible ){
-            observer = (SecureMouseFocusObserver)getController().getFocusObserver();
-            observer.addGlassPane( pane );
-        }
     }
 }

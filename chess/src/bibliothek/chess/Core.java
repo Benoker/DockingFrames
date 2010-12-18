@@ -91,7 +91,7 @@ public class Core implements ComponentCollector{
         theme.setShowTitles( false );
         controller.setTheme( theme );
         GlassedPane content = new GlassedPane();
-        controller.getFocusObserver().addGlassPane( content );
+        content.setController( controller );
         frame.setContentPane( content );
         
         pawn = new PawnReplaceDialog( frame );

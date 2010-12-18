@@ -35,7 +35,7 @@ import java.awt.Insets;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
-import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
@@ -43,7 +43,7 @@ import bibliothek.gui.dock.util.BackgroundPanel;
 /**
  * This panel is used by the {@link FlapDockStation} to display some button-titles.
  */
-public class ButtonPane extends OverpaintablePanel{
+public class ButtonPane extends SecureContainer{
     /** The owner of this panel */
     private FlapDockStation station;
     

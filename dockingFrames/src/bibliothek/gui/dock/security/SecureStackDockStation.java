@@ -25,19 +25,22 @@
  */
 package bibliothek.gui.dock.security;
 
-import javax.swing.JComponent;
-
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link StackDockStation} which can operate in a restricted environment.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary and will be removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="Remove this class, no replacement necessary" )
 public class SecureStackDockStation extends StackDockStation {
-	/** the element onto which this station has to lay its children */
-	private GlassedPane glassedPane;
 	
 	/**
 	 * Creates a new station
@@ -51,37 +54,11 @@ public class SecureStackDockStation extends StackDockStation {
 	 * @param theme the theme, can be <code>null</code>
 	 */
 	public SecureStackDockStation( DockTheme theme ){
-		super( theme, false );
-		init();
+		super( theme, true );
 	}
 	
 	@Override
 	public String getFactoryID(){
 		return SecureStackDockStationFactory.ID;
-	}
-	
-	@Override
-	protected Background createBackground(){
-		glassedPane = new GlassedPane();
-		Background back = new Background();
-		JComponent content = back.getContentPane();
-		back.setBasePane( glassedPane );
-		glassedPane.setContentPane( content );
-		back.setContentPane( content );
-		return back;
-	}
-	
-	@Override
-	public void setController( DockController controller ){
-		DockController old = getController();
-		if( old != null ){
-			((SecureDockController)old).getFocusObserver().removeGlassPane( glassedPane );
-		}
-		
-		super.setController( controller );
-		
-		if( controller != null ){
-			((SecureDockController)controller).getFocusObserver().addGlassPane( glassedPane );
-		}
 	}
 }

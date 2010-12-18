@@ -26,28 +26,29 @@
 package bibliothek.gui.dock.security;
 
 import java.awt.Component;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
+import bibliothek.gui.dock.control.DefaultKeyboardController;
 import bibliothek.gui.dock.control.KeyboardController;
-import bibliothek.gui.dock.event.ComponentHierarchyObserverEvent;
-import bibliothek.gui.dock.event.ComponentHierarchyObserverListener;
-import bibliothek.gui.dock.event.ControllerSetupListener;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link KeyboardController} which adds a {@link KeyListener} to each
  * {@link Component} that can be found on a {@link Dockable} in the realm
  * of one {@link DockController}.
  * @author Benjamin Sigg
+ * @deprecated this class has now the exact same behavior as {@link DefaultKeyboardController} and
+ * will be removed in a future release
  */
-public class SecureKeyboardController extends KeyboardController {
-    /** a listener forwarding {@link KeyEvent}s */
-    private Listener listener = new Listener();
-    
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class without replacement")
+public class SecureKeyboardController extends DefaultKeyboardController {
     /**
      * Creates a new {@link SecureKeyboardController}.
      * @param controller the owner of this controller
@@ -55,56 +56,6 @@ public class SecureKeyboardController extends KeyboardController {
      * is set up.
      */
     public SecureKeyboardController( DockController controller, ControllerSetupCollection setup ) {
-        super( controller );
-        setup.add( new ControllerSetupListener(){
-            public void done( DockController controller ) {
-                controller.getComponentHierarchyObserver().addListener( new ComponentHierarchyObserverListener(){
-                    public void added( ComponentHierarchyObserverEvent event ) {
-                        List<Component> components = event.getComponents();
-                        if( listener != null ){
-                            for( Component component : components ){
-                                component.addKeyListener( listener );
-                            }
-                        }
-                    }
-                    public void removed( ComponentHierarchyObserverEvent event ) {
-                        List<Component> components = event.getComponents();
-                        if( listener != null ){
-                            for( Component component : components ){
-                                component.removeKeyListener( listener );
-                            }
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
-    public void kill() {
-        if( listener != null ){
-            for( Component component : getController().getComponentHierarchyObserver().getComponents()){
-                component.removeKeyListener( listener );
-            }
-            listener = null;
-        }
-    }
-
-    /**
-     * A listener added to a {@link Component}, forwarding {@link KeyEvent}s
-     * @author Benjamin Sigg
-     */
-    private class Listener implements KeyListener{
-        public void keyPressed( KeyEvent e ) {
-            fireKeyPressed( e );
-        }
-
-        public void keyReleased( KeyEvent e ) {
-            fireKeyReleased( e );
-        }
-
-        public void keyTyped( KeyEvent e ) {
-            fireKeyTyped( e );
-        }
+        super( controller, setup );
     }
 }

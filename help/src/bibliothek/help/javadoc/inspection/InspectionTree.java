@@ -47,7 +47,7 @@ public class InspectionTree extends JTree{
         DockFrontend frontend = new DockFrontend();
         frontend.getController().setTheme( new NoStackTheme( new FlatTheme() ) );
         SplitDockStation station = new SplitDockStation();
-        frontend.addRoot( station, "station" );
+        frontend.addRoot( "station", station );
         
         final JFrame frame = new JFrame( "Inspect" );
         

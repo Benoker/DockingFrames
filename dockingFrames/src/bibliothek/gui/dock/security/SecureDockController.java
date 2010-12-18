@@ -26,14 +26,11 @@
 
 package bibliothek.gui.dock.security;
 
-import java.awt.Component;
-import java.awt.GridLayout;
-
-import javax.swing.JComponent;
-
-import sun.security.util.SecurityConstants;
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.control.DefaultDockControllerFactory;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * The DockingFrames normally uses some system-resources to handle global events.
@@ -50,38 +47,20 @@ import bibliothek.gui.dock.util.Priority;
  * will add a {@link GlassedPane} to their windows and dialogs automatically.
  * 
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary, {@link DockController} can now handle
+ * restricted environments as well. See {@link DockController#setRestrictedEnvironment(boolean)}.
+ * This class will be removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class, no replacement required")
 public class SecureDockController extends DockController {
-    /**
-     * Tells whether {@link SecureDockController} is preferred over a 
-     * {@link DockController} or not. The result is determined by
-     * a call to the SecurityManager.
-     * @return <code>true</code> if a {@link SecureDockController} should be
-     * used.
-     * @deprecated uses a proprietary implementation, currently no replacement available
-     */
-    @Deprecated
-    public static boolean isRequested(){
-        try{
-            SecurityManager security = System.getSecurityManager();
-            if( security != null ){
-                security.checkPermission(SecurityConstants.ALL_AWT_EVENTS_PERMISSION);
-            }
-        }
-        catch( SecurityException ex ){
-            return true;
-        }
-        
-        return false;
-    }
-    
-    
     /**
      * Creates a new controller
      */
     public SecureDockController() {
-        super( new SecureDockControllerFactory() );
-        initiate();
+        super( new DefaultDockControllerFactory() );
+        setRestrictedEnvironment( true );
     }
     
     /**
@@ -92,54 +71,6 @@ public class SecureDockController extends DockController {
      */
     public SecureDockController( SecureDockControllerFactory factory ) {
         super( factory );
-        if( factory != null ){
-        	initiate();
-        }
-    }
-    
-    /**
-     * To be called by subclasses if they use a <code>null</code> value when
-     * calling the constructor of this class.
-     */
-    protected void initiate(){
-    	getProperties().set( SecureFlapDockStation.WINDOW_FACTORY, new SecureFlapWindowFactory(), Priority.DEFAULT );
-    }
-
-    
-    @Override
-    public SecureMouseFocusObserver getFocusObserver() {
-        return (SecureMouseFocusObserver)super.getFocusObserver();
-    }
-    
-    @Override
-    public SecureKeyboardController getKeyboardController(){
-        return (SecureKeyboardController)super.getKeyboardController();
-    }
-    
-    /**
-     * Wraps <code>component</code> into a {@link GlassedPane} and registers
-     * the <code>GlassedPane</code>.
-     * @param component the component to envelope
-     * @return the replacement of <code>component</code>
-     */
-    public GlassedPane wrap( Component component ){
-    	GlassedPane pane = new GlassedPane();
-    	pane.getContentPane().setLayout( new GridLayout( 1, 1 ) );
-    	pane.getContentPane().add( component );
-    	getFocusObserver().addGlassPane( pane );
-    	return pane;
-    }
-
-    /**
-     * Wraps <code>component</code> into a {@link GlassedPane} and registers
-     * the <code>GlassedPane</code>.
-     * @param component the component to envelope
-     * @return the replacement of <code>component</code>
-     */
-    public GlassedPane wrap( JComponent component ){
-    	GlassedPane pane = new GlassedPane();
-    	pane.setContentPane( component );
-    	getFocusObserver().addGlassPane( pane );
-    	return pane;
+        setRestrictedEnvironment( true );
     }
 }

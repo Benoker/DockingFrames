@@ -367,7 +367,7 @@
  ! API: While the interface DockTheme was not changed, many of its methods should no longer be invoked directly. Instead the ThemeManager and the DockProperties should be used.
  - Bugfix: DefaultCControlRegister, adding a CContentArea did not have any effect.
  - Bugfix: changing properties like maximizeable of a CDockable did not update the actions
- - Bugfix: run FindBug and found some bugs of lesser importance
+ - Bugfix: did run FindBug and found some bugs of lesser importance
  - API: New interface BackgroundPaint allows clients to paint the background of the Components of this framework
  - Bugfix: several bugs related to perspectives
  - API: CGridPerspective now initializes its grid with content and support placeholders
@@ -375,3 +375,7 @@
  - API: New interface BorderModifier allows clients to replace most of the borders of the framework (see also ThemeManager)
  - Bugfix: MediumBoundaryRestriction ensure that a window has a size of at least 100x50, this prevents a window from disappearing because it is too small
  - Bugfix: CDockables keep focus when extended mode changes
+ 
+[v1.1.0p4]
+! API: There is a new property "restricted environment" in DockController. If that property is set to true, then the framework configures itself such that it can run in a restricted environment like an applet. All the Secure... classes have been rendered obsolete due to this new property. The obsolete classes will remain for this version in the framework to keep backwards compatibility, they will however be removed in the next version.
+! API: SplitDockStationFactory now stores whether the SplitDockStation did have a fullscreen-action or not. The method SplitDockStationFactory.createStation has been modified.

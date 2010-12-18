@@ -42,6 +42,8 @@ public class SplitDockStationLayout {
     private Entry root;
     /** the id of the element that is put into fullscreen-mode */
     private int fullscreen;
+    /** whether the station showed a fullscreen action */
+    private boolean hasFullscreenAction;
     
     /**
      * Creates a new layout
@@ -49,8 +51,20 @@ public class SplitDockStationLayout {
      * @param fullscreen the id of the element which is in fullscreen-mode
      */
     public SplitDockStationLayout( Entry root, int fullscreen ){
+    	this( root, fullscreen, true );
+    }
+    
+
+    /**
+     * Creates a new layout
+     * @param root the root of the tree, can be <code>null</code>
+     * @param fullscreen the id of the element which is in fullscreen-mode
+     * @param hasFullscreenAction whether the {@link SplitDockStation} did show a fullscreen-action
+     */
+    public SplitDockStationLayout( Entry root, int fullscreen, boolean hasFullscreenAction ){
         this.root = root;
         this.fullscreen = fullscreen;
+        this.hasFullscreenAction = hasFullscreenAction;
     }
     
     /**
@@ -69,6 +83,15 @@ public class SplitDockStationLayout {
     public int getFullscreen() {
         return fullscreen;
     }
+    
+    /**
+     * Tells whether the {@link SplitDockStation} did show a fullscreen-action or not. This property
+     * is only applied if a new {@link SplitDockStation} is created during loading.
+     * @return whether to show an action or not
+     */
+    public boolean hasFullscreenAction(){
+		return hasFullscreenAction;
+	}
     
     /**
      * An entry in a tree, either a node or a leaf.

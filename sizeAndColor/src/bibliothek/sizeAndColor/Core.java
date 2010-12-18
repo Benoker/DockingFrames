@@ -136,7 +136,7 @@ public class Core implements Demonstration{
             for( int i = 0; i < 3; i++ ){
                 for( int j = 0; j < 2; j++ ){
                     Frame f = new Frame();
-                    control.add( f );
+                    control.addDockable( f );
                     grid.add( i, j, 1, 1, f );
                 }
             }

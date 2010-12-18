@@ -30,7 +30,10 @@ import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import bibliothek.util.xml.XElement;
 
@@ -64,7 +67,6 @@ public class ShapeUtils {
      * @param out the stream to write into
      * @throws IOException if an I/O error occurs
      */
-    @SuppressWarnings("unchecked")
     public static void write( Shape shape, DataOutputStream out ) throws IOException{
         String key = shape.getClass().getCanonicalName();
         out.writeUTF( key );

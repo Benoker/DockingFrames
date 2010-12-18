@@ -88,7 +88,6 @@ import bibliothek.gui.dock.common.intern.ControlVetoClosingListener;
 import bibliothek.gui.dock.common.intern.ControlVetoFocusListener;
 import bibliothek.gui.dock.common.intern.EfficientControlFactory;
 import bibliothek.gui.dock.common.intern.MutableCControlRegister;
-import bibliothek.gui.dock.common.intern.SecureControlFactory;
 import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
@@ -324,7 +323,8 @@ public class CControl {
      * restricted environment and is not allowed to listen for global events.
      */
     public CControl( WindowProvider window, boolean restrictedEnvironment ){
-        this( window, restrictedEnvironment ? new SecureControlFactory() : new EfficientControlFactory() );
+        this( window, new EfficientControlFactory() );
+        getController().setRestrictedEnvironment( restrictedEnvironment );
     }
 
 
@@ -2304,6 +2304,14 @@ public class CControl {
      */
     public CDockFrontend intern(){
         return frontend;
+    }
+    
+    /**
+     * Gets the {@link DockController} which is used by this {@link CControl}. 
+     * @return the core system of the framework
+     */
+    public DockController getController(){
+    	return intern().getController();
     }
     
     /**

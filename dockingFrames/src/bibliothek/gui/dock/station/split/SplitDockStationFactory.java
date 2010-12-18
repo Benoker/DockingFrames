@@ -130,9 +130,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
             fullscreen = children.get( fullscreenDockable );
         
         if( fullscreen == null )
-            return new SplitDockStationLayout( root, -1 );
+            return new SplitDockStationLayout( root, -1, station.hasFullScreenAction() );
         else
-            return new SplitDockStationLayout( root, fullscreen );
+            return new SplitDockStationLayout( root, fullscreen, station.hasFullScreenAction() );
     }
     
     public SplitDockStationLayout getPerspectiveLayout( SplitDockPerspective element, Map<PerspectiveDockable, Integer> children ){
@@ -144,9 +144,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
              fullscreen = children.get( fullscreenDockable );
          
         if( fullscreen == null )
-            return new SplitDockStationLayout( root, -1 );
+            return new SplitDockStationLayout( root, -1, element.hasFullscreenAction() );
         else
-            return new SplitDockStationLayout( root, fullscreen );
+            return new SplitDockStationLayout( root, fullscreen, element.hasFullscreenAction() );
     }
 
     private Entry convert( SplitDockPerspective.Entry entry, Map<PerspectiveDockable, Integer> children ){
@@ -215,6 +215,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
 	    	tree.root( root );
 	    }
 	    perspective.read( tree, children.get( layout.getFullscreen() ) );
+	    perspective.setHasFullscreenAction( layout.hasFullscreenAction() );
     }
     
     /**
@@ -336,20 +337,19 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     public SplitDockStation layout( SplitDockStationLayout layout ) {
-        SplitDockStation station = createStation();
+        SplitDockStation station = createStation( layout.hasFullscreenAction() );
         setLayout( station, layout );
         return station;
     }
     
     public SplitDockStation layout( SplitDockStationLayout layout, Map<Integer, Dockable> children ) {
-        
-        SplitDockStation station = createStation();
+        SplitDockStation station = createStation( layout.hasFullscreenAction() );
         setLayout( station, layout, children );
         return station;
     }
     
     public void write( SplitDockStationLayout layout, DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_8a );
+        Version.write( out, Version.VERSION_1_1_0 );
         
         SplitDockStationLayout.Entry root = layout.getRoot();
         if( root == null ){
@@ -361,6 +361,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         }
         
         out.writeInt( layout.getFullscreen() );
+        out.writeBoolean( layout.hasFullscreenAction() );
     }
     
     /**
@@ -416,13 +417,18 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         
         boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
         boolean version8a = Version.VERSION_1_0_8a.compareTo( version ) <= 0;
+        boolean version110 = Version.VERSION_1_1_0.compareTo( version ) <= 0;
         
         SplitDockStationLayout.Entry root = null;
         if( in.readBoolean() ){
             root = readEntry( in, version8, version8a, placeholders );
         }
         int fullscreen = in.readInt();
-        return new SplitDockStationLayout( root, fullscreen );
+        boolean fullscreenAction = true;
+        if( version110 ){
+        	fullscreenAction = in.readBoolean();
+        }
+        return new SplitDockStationLayout( root, fullscreen, fullscreenAction );
     }
     
     /**
@@ -516,6 +522,8 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
             element.addElement( "fullscreen" ).addInt( "id", layout.getFullscreen() );
         }
         
+        element.addElement( "fullscreen-action" ).setBoolean( layout.hasFullscreenAction() );
+        
         if( layout.getRoot() != null ){
             writeEntry( layout.getRoot(), element );
         }
@@ -570,7 +578,13 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         if( xfullscreen != null )
             fullscreen = xfullscreen.getInt( "id" );
         
-        return new SplitDockStationLayout( root, fullscreen );
+        XElement xfullscreenAction = element.getElement( "fullscreen-action" );
+        boolean fullscreenAction = true;
+        if( xfullscreenAction != null ){
+        	fullscreenAction = xfullscreenAction.getBoolean();
+        }
+        
+        return new SplitDockStationLayout( root, fullscreen, fullscreenAction );
     }
     
     /**
@@ -634,9 +648,10 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     
     /**
      * Creates new objects of {@link SplitDockStation}
+     * @param hasFullscreenAction whether the station did have a fullscreen-action
      * @return the new instance
      */
-    protected SplitDockStation createStation(){
-        return new SplitDockStation();
+    protected SplitDockStation createStation( boolean hasFullscreenAction ){
+        return new SplitDockStation( hasFullscreenAction );
     }
 }

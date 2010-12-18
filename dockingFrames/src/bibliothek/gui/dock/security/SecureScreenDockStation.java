@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -30,15 +30,22 @@ import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
-import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link ScreenDockStation} that uses {@link SecureScreenDockDialog} 
  * instead of {@link ScreenDockDialog}.
  * @author Benjamin Sigg
- *
+ * @deprecated This class now behaves like {@link ScreenDockStation} and is no longer
+ * necessary. This class will be removed in a future release. 
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class")
 public class SecureScreenDockStation extends ScreenDockStation {
     /**
      * Creates a new station.
@@ -60,15 +67,5 @@ public class SecureScreenDockStation extends ScreenDockStation {
     @Override
     public String getFactoryID() {
         return SecureScreenDockStationFactory.ID;
-    }
-    
-    @Override
-    public ScreenDockWindowFactory getWindowFactory() {
-        if( getWindowFactoryProperty().isAnyValueSet() ){
-            return super.getWindowFactory();
-        }
-        else{
-            return new SecureScreenDockWindowFactory();
-        }
     }
 }

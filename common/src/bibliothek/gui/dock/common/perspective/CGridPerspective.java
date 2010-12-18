@@ -127,6 +127,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public CGridPerspective( String id ){
 		super( id );
 		delegate = new CommonSplitDockPerspective();
+		delegate.setHasFullscreenAction( false );
 		gridClear();
 	}
 

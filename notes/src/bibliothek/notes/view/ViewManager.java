@@ -8,9 +8,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.security.SecureFlapDockStation;
-import bibliothek.gui.dock.security.SecureScreenDockStation;
-import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.notes.model.Note;
 import bibliothek.notes.model.NoteModel;
@@ -68,29 +65,19 @@ public class ViewManager {
 		
 		frontend.addDockable( "list", list );
 		
-		if( secure ){
-			split = new SecureSplitDockStation();
-			east = new SecureFlapDockStation();
-			west = new SecureFlapDockStation();
-			south = new SecureFlapDockStation();
-			north = new SecureFlapDockStation();
-			screen = new SecureScreenDockStation( owner );
-		}
-		else{
-			split = new SplitDockStation();
-			east = new FlapDockStation();
-			west = new FlapDockStation();
-			south = new FlapDockStation();
-			north = new FlapDockStation();
-			screen = new ScreenDockStation( owner );
-		}
-
-		frontend.addRoot( screen, "screen" );
-		frontend.addRoot( split, "split" );
-		frontend.addRoot( east, "east" );
-		frontend.addRoot( west, "west" );
-		frontend.addRoot( south, "south" );
-		frontend.addRoot( north, "north" );
+		split = new SplitDockStation();
+		east = new FlapDockStation();
+		west = new FlapDockStation();
+		south = new FlapDockStation();
+		north = new FlapDockStation();
+		screen = new ScreenDockStation( owner );
+		
+		frontend.addRoot( "screen", screen );
+		frontend.addRoot( "split", split );
+		frontend.addRoot( "east", east );
+		frontend.addRoot( "west", west );
+		frontend.addRoot( "south", south );
+		frontend.addRoot( "north", north );
 
 		frontend.setDefaultStation( split );
 	}

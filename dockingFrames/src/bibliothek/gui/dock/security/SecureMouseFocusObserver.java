@@ -27,22 +27,27 @@
 package bibliothek.gui.dock.security;
 
 import java.awt.AWTEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
+import bibliothek.gui.dock.control.DefaultMouseFocusObserver;
 import bibliothek.gui.dock.control.FocusController;
-import bibliothek.gui.dock.control.MouseFocusObserver;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link FocusController} which relies on {@link GlassedPane GlassedPanes}.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary, a {@link DefaultMouseFocusObserver} can already do
+ * everything this class does. Please do no longer use this class, it will be removed in a future release. Have a
+ * look at {@link DockController#setRestrictedEnvironment(boolean)}.
  */
-public class SecureMouseFocusObserver extends MouseFocusObserver{
-    /** A list of GlassPanes which know this controller */
-    private List<GlassedPane> panes = new ArrayList<GlassedPane>();
-    
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class without replacement")
+public class SecureMouseFocusObserver extends DefaultMouseFocusObserver{
     /**
      * Creates a new FocusController for <code>controller</code>.
      * @param controller the owner of this FocusController
@@ -64,8 +69,7 @@ public class SecureMouseFocusObserver extends MouseFocusObserver{
      * @param pane the new pane
      */
     public void addGlassPane( GlassedPane pane ){
-        panes.add( pane );
-        pane.setFocusController( this );
+	    // ignore
     }
     
     /**
@@ -73,15 +77,6 @@ public class SecureMouseFocusObserver extends MouseFocusObserver{
      * @param pane the pane to remove
      */
     public void removeGlassPane( GlassedPane pane ){
-        panes.remove( pane );
-        pane.setFocusController( null );
-    }
-    
-    @Override
-    public void kill() {
-        for( GlassedPane pane : panes ){
-            pane.setFocusController( null );
-        }
-        panes.clear();
+        // ignore
     }
 }

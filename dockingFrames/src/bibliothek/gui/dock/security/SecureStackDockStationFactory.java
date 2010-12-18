@@ -27,12 +27,19 @@ package bibliothek.gui.dock.security;
 
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A factory creating instances of {@link SecureStackDockStation}.
  * @author Benjamin Sigg
- *
+ * @deprecated this class is no longer necessary and will be removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="Remove this class, no replacement necessary" )
 public class SecureStackDockStationFactory extends StackDockStationFactory {
     /** The id used for this factory */
     public static final String ID = "secure " + StackDockStationFactory.ID;

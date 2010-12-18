@@ -96,12 +96,14 @@ import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.WindowProviderListener;
 import bibliothek.gui.dock.util.WindowProviderWrapper;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.extension.ExtensionManager;
 import bibliothek.gui.dock.util.font.FontManager;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -133,6 +135,9 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  */
 public class DockController {
+	/** property telling whether this application runs in a restricted environment or not, the default value is the result of {@link DockUI#isSecureEnvironment()} */
+	public static final PropertyKey<Boolean> RESTRICTED_ENVIRONMENT = new PropertyKey<Boolean>( "dock.restricted_environment", new ConstantPropertyFactory<Boolean>( DockUI.isSecureEnvironment() ), true );
+	
 	/** the known dockables and DockStations */
 	private DockRegister register;
 	/** the known {@link Component}s in the realm of this controller */
@@ -357,6 +362,25 @@ public class DockController {
 	    theme.kill();
 	    extensions.kill();
 	    setRootWindowProvider( null );
+    }
+    
+    /**
+     * Tells this controller whether this application runs in a restricted environment or not. Calling this
+     * method is equivalent of setting the property {@link #RESTRICTED_ENVIRONMENT}.<br>
+     * Please note that setting this property to <code>false</code> in a restricted environment will lead
+     * to {@link SecurityException}s and ultimately to unspecified behavior.
+     * @param restricted whether restricted algorithms have to be used
+     */
+    public void setRestrictedEnvironment( boolean restricted ){
+    	getProperties().set( RESTRICTED_ENVIRONMENT, restricted );
+    }
+    
+    /**
+     * Tells whether this controller uses restricted algorithms for a restricted environment.
+     * @return whether restricted algorithms have to be used
+     */
+    public boolean isRestrictedEnvironment(){
+    	return getProperties().get( RESTRICTED_ENVIRONMENT );
     }
     
     /**

@@ -26,27 +26,27 @@
 
 package bibliothek.gui.dock.security;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-
-import javax.swing.JComponent;
-
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.DefaultFlapWindow;
 import bibliothek.gui.dock.station.flap.FlapWindow;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link FlapWindow} which inserts a {@link GlassedPane} between its
  * {@link Dockable} and the outer world. Adding and removing of the GlassPane
  * are handled automatically.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary and will be removed in a future release, use {@link DefaultFlapWindow} instead
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="Remove this class, no replacemenet required")
 public class SecureFlapWindow extends DefaultFlapWindow {
-    /** The pane between Dockable and outer world */
-    private GlassedPane pane;
-    
     /**
      * Creates a new window
      * @param station the station which will use this window
@@ -55,37 +55,5 @@ public class SecureFlapWindow extends DefaultFlapWindow {
      */
     public SecureFlapWindow( FlapDockStation station, ButtonPane buttonPane, Parent window ) {
         super( station, buttonPane, window );
-    
-        pane = new GlassedPane();
-        JComponent content = (JComponent)window.getContentPane();
-        window.setContentPane( pane );
-        pane.setContentPane( content );
-        
-        content.addComponentListener( new Listener() );
-    }
-    
-    /**
-     * A listener of the component. This listener adds or removes
-     * the GlassPane if the component is made visible/invisible. 
-     * @author Benjamin Sigg
-     */
-    private class Listener extends ComponentAdapter{
-        private SecureMouseFocusObserver controller;
-        
-        @Override
-        public void componentShown( ComponentEvent e ){
-            if( controller == null ){
-                controller = (SecureMouseFocusObserver)getStation().getController().getFocusObserver();
-                controller.addGlassPane( pane );
-            }
-        }
-        
-        @Override
-        public void componentHidden( ComponentEvent e ){
-            if( controller != null ){
-                controller.removeGlassPane( pane );
-                controller = null;
-            }
-        }
     }
 }

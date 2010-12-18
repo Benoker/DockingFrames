@@ -28,8 +28,6 @@ package bibliothek.gui.dock.security;
 
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JRootPane;
@@ -37,11 +35,19 @@ import javax.swing.JRootPane;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockDialog;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * The secure reimplementation of {@link ScreenDockDialog}.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary and will be removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class, no replacement required" )
 public class SecureScreenDockDialog extends SecureAbstractScreenDockWindow {
     private JDialog dialog;
     
@@ -78,8 +84,6 @@ public class SecureScreenDockDialog extends SecureAbstractScreenDockWindow {
     }
     
     private void init( boolean undecorated ){
-        dialog.addWindowListener( new Listener() );
-        
         if( undecorated ){
             dialog.setUndecorated( true );
             dialog.getRootPane().setWindowDecorationStyle( JRootPane.NONE );
@@ -112,22 +116,4 @@ public class SecureScreenDockDialog extends SecureAbstractScreenDockWindow {
     public JDialog getDialog() {
 		return dialog;
 	}
-    
-    /**
-     * A listener to the enclosing {@link SecureScreenDockDialog}. If the dialog
-     * is shown, this listener will register the GlassPane. If the dialog is
-     * disposed, then this listener will unregister the GlassPane.
-     * @author Benjamin Sigg
-     */
-    private class Listener extends WindowAdapter{
-        @Override
-        public void windowOpened( WindowEvent e ) {
-            ensureSecure( true );
-        }
-        
-        @Override
-        public void windowClosed( WindowEvent e ) {
-            ensureSecure( false );
-        }
-    }
 }

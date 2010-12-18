@@ -25,57 +25,31 @@
  */
 package bibliothek.gui.dock.security;
 
-import javax.swing.JComponent;
-
-import bibliothek.gui.DockController;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link SplitDockStation} which can work in a restricted environment.<br>
  * <b>Note:</b> This station can only work in the realm of a {@link SecureDockController}.
  * @author Benjamin Sigg
- *
+ * @deprecated this class is no longer necessary and will be removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="Remove this class, no replacement necessary" )
 public class SecureSplitDockStation extends SplitDockStation {
-	/** the panel enveloping the contents of this station */
-	private GlassedPane glassedPane;
-	
 	/**
 	 * Creates a new station.
 	 */
 	public SecureSplitDockStation(){
 		super();
-		glassedPane = new GlassedPane();
-		JComponent content = getContentPane();
-		setBasePane( glassedPane );
-		glassedPane.setContentPane( content );
-		setContentPane( content );
 	}
 	
 	@Override
 	public String getFactoryID(){
 		return SecureSplitDockStationFactory.ID;
-	}
-	
-	@Override
-	public void setController( DockController controller ){
-		DockController old = getController();
-		if( old != null ){
-			((SecureDockController)old).getFocusObserver().removeGlassPane( glassedPane );
-		}
-		
-		super.setController( controller );
-		
-		if( controller != null ){
-			((SecureDockController)controller).getFocusObserver().addGlassPane( glassedPane );
-		}
-	}
-	
-	/**
-	 * No asynchronous checking, the security manager would now allow it.
-	 */
-	@Override
-	protected void checkMousePositionAsync(){
-		// ignore
-	}
+	}	
 }

@@ -87,12 +87,12 @@ public class ViewManager {
         workingArea.setVisible( true );
         
         repositoryDockable = new PictureRepositoryDockable( this );
-        control.add( repositoryDockable );
+        control.addDockable( repositoryDockable );
         repositoryDockable.setLocation( CLocation.base().normalWest( 0.2 ) );
         repositoryDockable.setVisible( true );
         
         colorDockable = new ColorDockable( this );
-        control.add( colorDockable );
+        control.addDockable( colorDockable );
         colorDockable.setLocation( CLocation.base().normalSouth( 0.25 ) );
         colorDockable.setVisible( true );
         

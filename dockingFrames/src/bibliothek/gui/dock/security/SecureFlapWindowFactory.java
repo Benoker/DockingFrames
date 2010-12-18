@@ -36,11 +36,20 @@ import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.DefaultFlapWindow;
 import bibliothek.gui.dock.station.flap.DefaultFlapWindowFactory;
 import bibliothek.gui.dock.station.flap.FlapWindow;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This factory creates {@link SecureFlapWindow}s.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary and will be removed in a future release. Use
+ * {@link DefaultFlapWindowFactory} instead.
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class, no replacement required")
 public class SecureFlapWindowFactory extends DefaultFlapWindowFactory{
 	public FlapWindow create( FlapDockStation station, ButtonPane buttonPane ){
 		Window owner = SwingUtilities.getWindowAncestor( station.getComponent() );

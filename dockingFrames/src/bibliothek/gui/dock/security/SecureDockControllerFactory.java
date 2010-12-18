@@ -27,22 +27,19 @@
 package bibliothek.gui.dock.security;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DefaultDockControllerFactory;
-import bibliothek.gui.dock.control.KeyboardController;
-import bibliothek.gui.dock.control.MouseFocusObserver;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A factory creating secure versions of various elements of a {@link DockController}
  * @author Benjamin Sigg
+ * @deprecated this class is no longer necessary as it has now the exact same behavior as {@link DefaultDockControllerFactory}.
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="remove this class without replacement")
 public class SecureDockControllerFactory extends DefaultDockControllerFactory {
-    @Override
-    public MouseFocusObserver createMouseFocusObserver( DockController controller, ControllerSetupCollection setup ) {
-        return new SecureMouseFocusObserver( controller, setup );
-    }
-    @Override
-    public KeyboardController createKeyboardController( DockController controller, ControllerSetupCollection setup ) {
-        return new SecureKeyboardController( controller, setup );
-    }
+    // nothing
 }

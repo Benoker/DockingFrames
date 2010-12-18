@@ -427,6 +427,7 @@ public class FlapDockStation extends AbstractDockableStation {
         visibility = new DockableVisibilityManager( listeners );
         buttonPane = createButtonPane();
         buttonPane.setBackground( background );
+        buttonPane.setController( getController() );
         
         setDirection( Direction.SOUTH );
         
@@ -532,6 +533,7 @@ public class FlapDockStation extends AbstractDockableStation {
             if( window != null ){
             	window.setController( controller );
             }
+            buttonPane.setController( controller );
             FlapLayoutManager oldLayoutManager = layoutManager.getValue();
             layoutManager.setProperties( controller );
             FlapLayoutManager newLayoutManager = layoutManager.getValue();

@@ -27,12 +27,19 @@ package bibliothek.gui.dock.security;
 
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * Creates instances of {@link SecureSplitDockStation}.
  * @author Benjamin Sigg
- *
+ * @deprecated this class is no longer necessary and will be removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="Remove this class, no replacement necessary" )
 public class SecureSplitDockStationFactory extends SplitDockStationFactory {
     /** The id used for this factory */
     public static final String ID = "secure " + SplitDockStationFactory.ID;
@@ -43,7 +50,7 @@ public class SecureSplitDockStationFactory extends SplitDockStationFactory {
     }
     
     @Override
-    protected SplitDockStation createStation() {
+    protected SplitDockStation createStation( boolean hasFullscreenAction ) {
         return new SecureSplitDockStation();
     }
 }

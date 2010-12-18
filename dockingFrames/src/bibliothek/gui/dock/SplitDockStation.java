@@ -74,12 +74,12 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
-import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
@@ -147,7 +147,7 @@ import bibliothek.util.Todo.Version;
  * ID {@link #TITLE_ID}.
  * @author Benjamin Sigg
  */
-public class SplitDockStation extends OverpaintablePanel implements Dockable, DockStation {
+public class SplitDockStation extends SecureContainer implements Dockable, DockStation {
 	/** The ID under which this station tries to register a {@link DockTitleFactory} */
 	public static final String TITLE_ID = "split";
 
@@ -411,6 +411,14 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * Constructs a new {@link SplitDockStation}. 
 	 */
 	public SplitDockStation(){
+		this( true );
+	}
+
+	/**
+	 * Creates a new {@link SplitDockStation}. 
+	 * @param createFullScreenAction whether {@link #createFullScreenAction()} should be called or not
+	 */
+	public SplitDockStation( boolean createFullScreenAction ){
 		content = new Content();
 		content.setBackground( background );
 		setBasePane( content );
@@ -429,7 +437,9 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		});
 
 		dividerListener = new DividerListener();
-		fullScreenAction = createFullScreenAction();
+		if( createFullScreenAction ){
+			fullScreenAction = createFullScreenAction();
+		}
 		visibility = new DockableVisibilityManager(dockStationListeners);
 
 		getContentPane().addMouseListener(dividerListener);
@@ -612,6 +622,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	}
 
 	public void setController( DockController controller ){
+		super.setController( controller );
 		if( this.controller != controller ) {
 			if( this.controller != null ){
 				this.controller.getDoubleClickController().removeListener(fullScreenListener);
@@ -651,6 +662,7 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 		}
 	}
 
+	@Override
 	public DockController getController(){
 		return controller;
 	}
@@ -1188,6 +1200,15 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 */
 	public Dockable getFullScreen(){
 		return fullScreenDockable == null ? null : fullScreenDockable.getDockable();
+	}
+	
+	/**
+	 * Tells whether {@link #createFullScreenAction()} was called and returned a value other
+	 * than <code>null</code>.
+	 * @return <code>true</code> if this station shows a fullscreen-action
+	 */
+	public boolean hasFullScreenAction(){
+		return fullScreenAction != null;
 	}
 
 	/**
@@ -2475,18 +2496,21 @@ public class SplitDockStation extends OverpaintablePanel implements Dockable, Do
 	 * if necessary.
 	 */
 	protected void checkMousePositionAsync(){
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run(){
-				PointerInfo p = MouseInfo.getPointerInfo();
-				Point e = p.getLocation();
-				SwingUtilities.convertPointFromScreen(e, getContentPane());
-				dividerListener.current = root().getDividerNode(e.x, e.y);
-
-				if( dividerListener.current == null ) {
-					setCursor(null);
+		DockController controller = getController();
+		if( controller != null && !controller.isRestrictedEnvironment() ){
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run(){
+					PointerInfo p = MouseInfo.getPointerInfo();
+					Point e = p.getLocation();
+					SwingUtilities.convertPointFromScreen(e, getContentPane());
+					dividerListener.current = root().getDividerNode(e.x, e.y);
+	
+					if( dividerListener.current == null ) {
+						setCursor(null);
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	/**

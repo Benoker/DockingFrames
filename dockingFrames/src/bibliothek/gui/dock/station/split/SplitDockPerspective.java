@@ -67,6 +67,9 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	/** all the listeners of this perspective */
 	private List<EntryListener> listeners = new ArrayList<EntryListener>();
 	
+	/** whether the {@link SplitDockStation} has to show a fullscreen-action */
+	private boolean hasFullscreenAction = true;
+	
 	/**
 	 * Creates a new perspective
 	 */
@@ -189,6 +192,22 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 			throw new IllegalArgumentException( "fullscreen is not a child of this station" );
 		}
 		this.fullscreen = fullscreen;
+	}
+	
+	/**
+	 * Sets whether the {@link SplitDockStation} should create a fullscreen-action.
+	 * @param hasFullscreenAction whether to show a fullscreen action
+	 */
+	public void setHasFullscreenAction( boolean hasFullscreenAction ){
+		this.hasFullscreenAction = hasFullscreenAction;
+	}
+	
+	/**
+	 * Tells whether the {@link SplitDockStation} will attempt to create a fullscreen-action.
+	 * @return whether to create a fullscreen action
+	 */
+	public boolean hasFullscreenAction(){
+		return hasFullscreenAction;
 	}
 	
 	/**

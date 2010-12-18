@@ -69,7 +69,7 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
             this.id = id;
             
             CControl control = core.getEnvironment().getEnvironmentControl();
-            backupFactorySet = control.getSingleBackupFactory( id ) != null;
+            backupFactorySet = control.getSingleDockableFactory( id ) != null;
             dockableSet = control.getSingleDockable( id ) != null;
         }
         
@@ -125,16 +125,16 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
         public void doOperation( PreferenceOperation operation ) {
             if( operation == ADD_SINGLE_BACKUP_FACTORY ){
                 backupFactorySet = true;
-                core.getEnvironment().getEnvironmentControl().addSingleBackupFactory( id, new SingleTestFactory() );
+                core.getEnvironment().getEnvironmentControl().addSingleDockableFactory( id, new SingleTestFactory() );
             }
             if( operation == REMOVE_SINGLE_BACKUP_FACTORY ){
                 backupFactorySet = false;
-                core.getEnvironment().getEnvironmentControl().removeSingleBackupFactory( id );
+                core.getEnvironment().getEnvironmentControl().removeSingleDockableFactory( id );
             }
             if( operation == ADD_SINGLE_DOCKABLE ){
                 dockableSet = true;
                 SingleTestDockable dockable = new SingleTestDockable( id, false );
-                core.getEnvironment().getEnvironmentControl().add( dockable );
+                core.getEnvironment().getEnvironmentControl().addDockable( dockable );
                 dockable.setVisible( true );
             }
             if( operation == REMOVE_SINGLE_DOCKABLE ){
@@ -231,11 +231,11 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
         @Override
         public void doOperation( PreferenceOperation operation ) {
             if( operation == ADD_SINGLE_BACKUP_FACTORY ){
-                core.getEnvironment().getEnvironmentControl().addSingleBackupFactory( value, new SingleTestFactory() );
+                core.getEnvironment().getEnvironmentControl().addSingleDockableFactory( value, new SingleTestFactory() );
             }
             if( operation == ADD_SINGLE_DOCKABLE ){
                 SingleTestDockable dockable = new SingleTestDockable( value, false );
-                core.getEnvironment().getEnvironmentControl().add( dockable );
+                core.getEnvironment().getEnvironmentControl().addDockable( dockable );
                 dockable.setVisible( true );
             }
             updateTable();

@@ -30,6 +30,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -40,6 +41,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import bibliothek.gui.DockController;
 import bibliothek.util.JavaVersionWorkaround;
 
 /**
@@ -58,75 +60,80 @@ public class GlassedPane extends JPanel{
     /** A component lying over all other components. Catches every MouseEvent */
     private JComponent glassPane = new GlassPane();
     /** A controller which will be informed about every click of the mouse */
-    private SecureMouseFocusObserver focusController;
+    private DockController controller;
     
     /**
      * Creates a new pane
      */
     public GlassedPane(){
         setLayout( null );
+        contentPane.setOpaque( false );
+        setOpaque( false );
+        
         add( glassPane );
         add( contentPane );
         setFocusCycleRoot( true );
     }
     
     /**
-     * Creates a new pane and registers <code>this</code> at <code>observer</code>.
-     * @param observer the observer <code>this</code> has to be registered at
+     * Sets the controller to inform about {@link KeyEvent}s.
+     * @param controller the controller to inform
      */
-    public GlassedPane( SecureMouseFocusObserver observer ){
-    	this();
-    	observer.addGlassPane( this );
-    }
-    
-    /**
-     * Sets the focus-observer which has to be informed when the mouse is clicked
-     * or the mouse wheel is moved.
-     * @param focusController the controller, may be <code>null</code>
-     */
-    public void setFocusController( SecureMouseFocusObserver focusController ) {
-        this.focusController = focusController;
-    }
+    public void setController( DockController controller ){
+		this.controller = controller;
+	}
 
     @Override
     public void doLayout() {
         int width = getWidth();
         int height = getHeight();
-        contentPane.setBounds( 0, 0, width, height );
+        if( contentPane != null ){
+        	contentPane.setBounds( 0, 0, width, height );
+        }
         glassPane.setBounds( 0, 0, width, height );
     }
 
     @Override
     public Dimension getPreferredSize() {
+    	if( contentPane == null ){
+    		return super.getPreferredSize();
+    	}
         return contentPane.getPreferredSize();
     }
     @Override
     public Dimension getMaximumSize() {
+    	if( contentPane == null ){
+    		return super.getMaximumSize();
+    	}
         return contentPane.getMaximumSize();
     }
     @Override
     public Dimension getMinimumSize() {
-        return contentPane.getMinimumSize();
+    	if( contentPane == null ){
+    		return super.getMinimumSize();
+    	}
+    	return contentPane.getMinimumSize();
     }
 
     /**
      * Sets the center panel of this GlassedPane.
-     * @param contentPane the content of this pane, not <code>null</code>
+     * @param contentPane the content of this pane, a value of <code>null</code> will
+     * just remove the current content pane
      */
     public void setContentPane( JComponent contentPane ) {
-        if( contentPane == null )
-            throw new IllegalArgumentException( "Content Pane must not be null" );
         this.contentPane = contentPane;
 
         removeAll();
 
         add( glassPane );
-        add( contentPane );
+        if( contentPane != null ){
+        	add( contentPane );
+        }
     }
 
     /**
      * Gets the content of this pane.
-     * @return the content
+     * @return the content, may be <code>null</code>
      */
     public JComponent getContentPane(){
         return contentPane;
@@ -169,6 +176,15 @@ public class GlassedPane extends JPanel{
             JavaVersionWorkaround.markAsGlassPane( this );
         }
 
+//        @Override
+//        protected void paintComponent( Graphics g ){
+//	        g.setColor( Color.BLUE );
+//	        int w = getWidth();
+//	        int h = getHeight();
+//	        g.drawLine( 0, 0, w, h );
+//	        g.drawLine( w, 0, 0, h );
+//        }
+        
         public void mouseClicked( MouseEvent e ) {
             if( !e.isConsumed() )
                 send( e );
@@ -228,6 +244,10 @@ public class GlassedPane extends JPanel{
          * @param id the type of the event
          */
         private void send( MouseEvent e, int id ){
+        	if( contentPane == null ){
+        		return;
+        	}
+        	
             Point mouse = e.getPoint();
             Component component = SwingUtilities.getDeepestComponentAt( contentPane, mouse.x, mouse.y );
 
@@ -290,8 +310,9 @@ public class GlassedPane extends JPanel{
                         mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
                         e.getButton() );
                 
-                if( focusController != null )
-                    focusController.check( forward );
+                if( controller != null ){
+                	controller.getFocusObserver().check( forward );
+                }
                 
                 component.dispatchEvent( forward );
                 
@@ -321,6 +342,10 @@ public class GlassedPane extends JPanel{
          * @param e the event to dispatch
          */
         private void send( MouseWheelEvent e ){
+        	if( contentPane == null ){
+        		return;
+        	}
+        	
             Point mouse = e.getPoint();
             Component component = SwingUtilities.getDeepestComponentAt( contentPane, mouse.x, mouse.y );
             if( component != null ){
@@ -330,8 +355,9 @@ public class GlassedPane extends JPanel{
                         mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
                         e.getScrollType(), e.getScrollAmount(), e.getWheelRotation() );
                 
-                if( focusController != null )
-                    focusController.check( forward );
+                if( controller != null ){
+                	controller.getFocusObserver().check( forward );
+                }
                 
                 component.dispatchEvent( forward );
             }

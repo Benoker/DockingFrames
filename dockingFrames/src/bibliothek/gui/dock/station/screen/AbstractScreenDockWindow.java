@@ -52,8 +52,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowBorder.Position;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -77,7 +77,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     private DockableDisplayer displayer;
 
     /** the parent of {@link #displayer}, used to paint */
-    private OverpaintablePanel content;
+    private SecureContainer content;
 
     /** how to paint a combination */
     private CombinerTarget combination;
@@ -183,6 +183,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         this.window = window;
         
         content = createContent();
+        content.setController( getController() );
         contentParent.setLayout( new GridLayout( 1, 1 ) );
         contentParent.add( content );
 
@@ -224,6 +225,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     @Override
     public void setController( DockController controller ){
     	super.setController( controller );
+    	content.setController( controller );
     	if( border != null ){
     		border.setController( controller );
     	}
@@ -453,11 +455,11 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * This method is invoked by the constructor.
      * @return the new content pane
      */
-    protected OverpaintablePanel createContent(){
+    protected SecureContainer createContent(){
     	contentBackground = new BackgroundPanel( true, false );
     	contentBackground.setBackground( background );
     	
-        OverpaintablePanel panel = new OverpaintablePanel(){
+    	SecureContainer panel = new SecureContainer(){
             @Override
             protected void paintOverlay( Graphics g ) {
             	if( combination != null ){

@@ -169,7 +169,7 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
             }
             if( operation == ADD_MULTI_DOCKABLE ){
                 MultipleTestDockable dockable = new MultipleTestDockable( factory );
-                control.add( dockable );
+                control.addDockable( dockable );
                 dockable.setVisible( true );
             }
             

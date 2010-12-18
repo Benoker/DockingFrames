@@ -55,12 +55,12 @@ import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
-import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
@@ -295,6 +295,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         });
         
         background = createBackground();
+        background.setController( getController() );
         panel = background.getContentPane();
         
         stackComponentFactory = new PropertyValue<StackDockComponentFactory>( COMPONENT_FACTORY ){
@@ -521,6 +522,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             
             boolean wasNull = getController() == null;
             
+            background.setController( controller );
             stackComponentFactory.setProperties( controller );
             super.setController(controller);
             stackComponent.setController( controller );
@@ -1505,7 +1507,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * have this panel as parent too.
      * @author Benjamin Sigg
      */
-    protected class Background extends OverpaintablePanel{
+    protected class Background extends SecureContainer{
     	private BackgroundPanel content;
     	
     	/**
