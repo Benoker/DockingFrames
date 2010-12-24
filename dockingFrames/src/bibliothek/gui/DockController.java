@@ -64,10 +64,10 @@ import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.DoubleClickController;
-import bibliothek.gui.dock.control.FocusController;
 import bibliothek.gui.dock.control.KeyboardController;
-import bibliothek.gui.dock.control.MouseFocusObserver;
 import bibliothek.gui.dock.control.SingleParentRemover;
+import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
@@ -829,7 +829,7 @@ public class DockController {
      * to <code>false</code>.
      */
     public void setFocusedDockable( Dockable focusedDockable, boolean force ) {
-        setFocusedDockable( focusedDockable, force, true );
+        setFocusedDockable( focusedDockable, force, true, false );
     }
 
     /**
@@ -839,11 +839,13 @@ public class DockController {
      * that all properties are correct, <code>false</code> if some
      * optimations are allowed. Clients normally can set this argument
      * to <code>false</code>.
-     * @param ensureFocusSet whether to ensure that the focus is set correctly
-     * or not.
+     * @param ensureFocusSet if <code>true</code>, then this method should make sure that either <code>focusedDockable</code>
+     * itself or one of its {@link DockElementRepresentative} is the focus owner 
+     * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>focusedDockable</code>
+     * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
      */
-    public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
-    	focusController.setFocusedDockable( focusedDockable, force, ensureFocusSet );
+    public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ) {
+    	focusController.setFocusedDockable( focusedDockable, force, ensureFocusSet, ensureDockableFocused );
     }
     
     /**
@@ -883,7 +885,7 @@ public class DockController {
      * has the focus.
      */
     public void ensureFocusSet(){
-    	focusController.ensureFocusSet();
+    	focusController.ensureFocusSet( false );
     }
 
     /**

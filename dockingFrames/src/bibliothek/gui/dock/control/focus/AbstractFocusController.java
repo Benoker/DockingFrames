@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control;
+package bibliothek.gui.dock.control.focus;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -64,7 +64,17 @@ public abstract class AbstractFocusController implements FocusController{
     }
     
     public void setStrategy( FocusStrategy strategy ){
-	    this.strategy = strategy;	
+    	if( this.strategy != strategy ){
+    		if( this.strategy != null ){
+    			this.strategy.unbind();
+    		}
+    		
+    		this.strategy = strategy;
+    		
+    		if( strategy != null ){
+    			strategy.bind();
+    		}
+    	}
     }
     
     public FocusStrategy getStrategy(){

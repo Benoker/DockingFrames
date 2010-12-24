@@ -29,6 +29,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DefaultActionOffer;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
+import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.util.extension.ExtensionManager;
@@ -64,7 +67,15 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
     }
     
     public FocusController createFocusController( DockController controller, ControllerSetupCollection setup ){
-	    return new DefaultFocusController( controller );
+    	final DefaultFocusController focus = new DefaultFocusController( controller );
+    	
+    	setup.add( new ControllerSetupListener(){
+			public void done( DockController controller ){
+				focus.setStrategy( new DefaultFocusStrategy( controller ) );
+			}
+		});
+	    
+    	return focus;
     }
 
     public DockableSelector createDockableSelector( DockController controller, ControllerSetupCollection setup ) {

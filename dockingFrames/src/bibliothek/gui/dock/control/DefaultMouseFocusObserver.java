@@ -31,6 +31,7 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.control.focus.AbstractMouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.Todo;

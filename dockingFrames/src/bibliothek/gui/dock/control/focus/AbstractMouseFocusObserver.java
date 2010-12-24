@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control;
+package bibliothek.gui.dock.control.focus;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
@@ -36,6 +36,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
@@ -179,35 +180,44 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
      * @param event the event that causes this check
      */
     protected void check( final Component component, final boolean ensureFocus, boolean requestFocusInWindow, final AWTEvent event ){
-        Dockable dock = getDockable( component, event );
-        if( dock != null ){
-            Dockable focused = controller.getFocusedDockable();
-            boolean change = true;
-            if( focused != null )
-                change = !DockUtilities.isAncestor( dock, focused );
-            
-            if( change ){
-            	if( component instanceof FocusAwareComponent ){
-            		FocusAwareComponent aware = (FocusAwareComponent)component;
-            		if( requestFocusInWindow ){
-            			aware.maybeRequestFocus();
-            		}
-            		aware.invokeOnFocusRequest(new Runnable(){
-						public void run(){
-							Dockable dock = getDockable( component, event );
-					        if( dock != null ){					
-					        	controller.setFocusedDockable( dock, false, ensureFocus );
+    	DockElementRepresentative element = getDockable( component, event );
+    	if( element == null ){
+    		return;
+    	}
+        Dockable dock = element.getElement().asDockable();
+        if( dock == null ){
+        	return;
+        }
+        
+        Dockable focused = controller.getFocusedDockable();
+        boolean change = true;
+        if( focused != null )
+            change = !DockUtilities.isAncestor( dock, focused );
+        
+        if( change ){
+        	if( component instanceof FocusAwareComponent ){
+        		FocusAwareComponent aware = (FocusAwareComponent)component;
+        		if( requestFocusInWindow ){
+        			aware.maybeRequestFocus();
+        		}
+        		aware.invokeOnFocusRequest(new Runnable(){
+					public void run(){
+						DockElementRepresentative element = getDockable( component, event );
+						if( element != null ){
+							Dockable dock = element.getElement().asDockable();
+					        if( dock != null ){
+					        	controller.setFocusedDockable( dock, false, ensureFocus, element.shouldTransfersFocus() );
 					        }
 						}
-					});
-        		}
-            	else{
-	            	if( requestFocusInWindow ){
-	               		component.requestFocusInWindow();
-	               	}
-	                controller.setFocusedDockable( dock, false, ensureFocus );
-            	}
-            }
+					}
+				});
+    		}
+        	else{
+            	if( requestFocusInWindow ){
+               		component.requestFocusInWindow();
+               	}
+                controller.setFocusedDockable( dock, false, ensureFocus, element.shouldTransfersFocus() );
+        	}
         }
     }
     
@@ -238,7 +248,7 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
      * @param event the event that causes this check
      * @return a Dockable or <code>null</code> if nothing was found
      */
-    protected Dockable getDockable( Component component, AWTEvent event ){
+    protected DockElementRepresentative getDockable( Component component, AWTEvent event ){
         DockElementRepresentative element = controller.searchElement( component );
         if( element == null )
             return null;
@@ -254,6 +264,6 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
         	return null;
         }
         
-        return dockable;
+        return element;
     }
 }

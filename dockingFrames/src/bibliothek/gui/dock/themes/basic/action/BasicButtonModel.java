@@ -27,8 +27,6 @@ package bibliothek.gui.dock.themes.basic.action;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -153,13 +151,6 @@ public class BasicButtonModel {
                 inputMap.put( action.getA(), action.getB() );
                 actionMap.put( action.getB(), action.getC() );
             }
-            
-            owner.addFocusListener( new FocusAdapter(){
-                @Override
-                public void focusLost( FocusEvent e ) {
-                    setMousePressed( false );
-                }
-            });
         }
     }
     

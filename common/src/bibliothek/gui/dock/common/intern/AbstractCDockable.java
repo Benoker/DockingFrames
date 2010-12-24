@@ -706,7 +706,9 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     /**
-     * Sets the {@link Component} which should receive the focus when this <code>CDockable</code> is focused.
+     * Sets the {@link Component} which should receive the focus when this <code>CDockable</code> is focused. Please note
+     * that the focus will be transfered to this component every time the dockable lost the focus and gained the focus again. The
+     * default behavior of re-focusing the last focus owner should be sufficient for most applications.
      * @param component the component to focus, can be <code>null</code>, should be a child of this <code>CDockable</code>
      */
     public void setFocusComponent( Component component ){

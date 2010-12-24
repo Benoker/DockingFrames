@@ -544,6 +544,10 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 	public boolean isUsedAsTitle() {
 		return false;
 	}
+	
+	public boolean shouldTransfersFocus(){
+		return true;
+	}
 
 	public void addMouseInputListener( MouseInputListener listener ) {
 		addMouseListener( listener );

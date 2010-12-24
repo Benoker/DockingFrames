@@ -286,6 +286,10 @@ public abstract class AbstractDockable implements Dockable {
     public boolean isUsedAsTitle() {
         return false;
     }
+    
+    public boolean shouldTransfersFocus(){
+	    return false;
+    }
 
     public boolean accept( DockStation station ) {
         return true;

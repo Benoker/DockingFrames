@@ -155,6 +155,10 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	public boolean isUsedAsTitle(){
 		return true;
 	}
+	
+	public boolean shouldTransfersFocus(){
+		return true;
+	}
 
 	public void removeMouseInputListener( MouseInputListener listener ){
 		component.removeMouseInputListener( listener );

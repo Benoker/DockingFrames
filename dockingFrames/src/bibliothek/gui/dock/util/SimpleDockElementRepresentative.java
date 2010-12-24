@@ -82,6 +82,10 @@ public class SimpleDockElementRepresentative implements DockElementRepresentativ
 	public boolean isUsedAsTitle(){
 		return false;
 	}
+	
+	public boolean shouldTransfersFocus(){
+		return true;
+	}
 
 	public void removeMouseInputListener( MouseInputListener listener ){
 		component.removeMouseListener( listener );

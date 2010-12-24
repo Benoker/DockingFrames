@@ -32,6 +32,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.util.extension.ExtensionManager;

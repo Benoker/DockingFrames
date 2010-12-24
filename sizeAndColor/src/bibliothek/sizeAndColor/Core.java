@@ -48,7 +48,6 @@ import bibliothek.gui.dock.common.layout.FullLockConflictResolver;
 import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
 import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;
-import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 
 /**
@@ -105,7 +104,6 @@ public class Core implements Demonstration{
             frame.setIconImage( icon.getImage() );
             final CControl control = new CControl( frame, true );
             control.putProperty( CControl.RESIZE_LOCK_CONFLICT_RESOLVER, new FullLockConflictResolver() );
-            control.putProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new FramePlaceholderStrategy() );
             
             LookAndFeelList list = monitor == null ? null : monitor.getGlobalLookAndFeel();
             RootMenuPiece laf = new RootMenuPiece( "Look And Feel", false, new CLookAndFeelMenuPiece( control, list ));

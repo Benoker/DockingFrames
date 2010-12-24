@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control;
+package bibliothek.gui.dock.control.focus;
 
 import java.awt.Component;
 
@@ -44,4 +44,14 @@ public interface FocusStrategy {
 	 * follows in the iteration of focusable <code>Component</code>s will be focused
 	 */
 	public Component getFocusComponent( Dockable dockable );
+	
+	/**
+	 * Informs this strategy that it will be used from now on.
+	 */
+	public void bind();
+	
+	/**
+	 * Informs this strategy that it is no longer used from now on.
+	 */
+	public void unbind();
 }

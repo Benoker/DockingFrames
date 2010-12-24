@@ -246,6 +246,10 @@ public class DockTitleTab implements TabComponent{
         return true;
     }
     
+    public boolean shouldTransfersFocus(){
+	    return true;
+    }
+    
     public Point getPopupLocation( Point click, boolean popupTrigger ) {
     	DockTitle current = title.getAnswer();
     	if( current == null )

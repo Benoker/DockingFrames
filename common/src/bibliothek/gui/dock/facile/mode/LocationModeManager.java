@@ -151,7 +151,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 			Dockable focused = (Dockable)event.getClientObject( this );
 			if( event.getDockable() == focused ){
 				if( event.getMode().shouldAutoFocus() ){
-					getController().setFocusedDockable( focused, false, true );
+					getController().setFocusedDockable( focused, true, true, false );
 				}
 			}
 		}

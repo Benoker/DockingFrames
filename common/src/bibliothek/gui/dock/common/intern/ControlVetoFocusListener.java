@@ -4,7 +4,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
-import bibliothek.gui.dock.control.FocusController;
+import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.FrameworkOnly;

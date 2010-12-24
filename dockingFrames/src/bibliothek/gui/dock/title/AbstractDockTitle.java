@@ -671,6 +671,10 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     public boolean isUsedAsTitle() {
         return true;
     }
+    
+    public boolean shouldTransfersFocus(){
+    	return true;
+    }
 
     /**
      * Sets whether this title should be painted as focused or not.

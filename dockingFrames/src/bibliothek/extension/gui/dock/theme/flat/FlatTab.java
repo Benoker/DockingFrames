@@ -397,6 +397,10 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
         return false;
     }
     
+    public boolean shouldTransfersFocus(){
+	    return true;
+    }
+    
     public void addMouseInputListener( MouseInputListener listener ) {
         addMouseListener( listener );
         addMouseMotionListener( listener );

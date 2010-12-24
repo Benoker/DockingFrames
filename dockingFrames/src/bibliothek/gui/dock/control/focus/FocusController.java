@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control;
+package bibliothek.gui.dock.control.focus;
 
 import java.awt.Component;
 
@@ -101,8 +101,10 @@ public interface FocusController {
      * Ensures that a title or a {@link Component} of the currently
      * {@link #getFocusedDockable() focused Dockable} really
      * has the focus.
+     * @param dockableOnly if <code>true</code>, then only the {@link Dockable} itself
+     * should be focused
      */
-    public void ensureFocusSet();
+    public void ensureFocusSet( boolean dockableOnly );
     
     /**
      * Checks whether <code>source</code> can be used to select the next focused {@link Dockable}.
@@ -119,10 +121,12 @@ public interface FocusController {
      * that all properties are correct, <code>false</code> if some
      * optimations are allowed. Clients normally can set this argument
      * to <code>false</code>.
-     * @param ensureFocusSet whether to ensure that the focus is set correctly
-     * or not.
+     * @param ensureFocusSet if <code>true</code>, then this method should make sure that either <code>focusedDockable</code>
+     * itself or one of its {@link DockElementRepresentative} is the focus owner 
+     * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>focusedDockable</code>
+     * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
      * @return whether focus could be transfered, a value of <code>null</code> indicates that {@link #isOnFocusing()} returned
      * <code>true</code> and the call was ignored
      */
-    public FocusVeto setFocusedDockable( DockElementRepresentative source, boolean force, boolean ensureFocusSet );
+    public FocusVeto setFocusedDockable( DockElementRepresentative source, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused );
 }

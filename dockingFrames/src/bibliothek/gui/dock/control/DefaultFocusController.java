@@ -40,6 +40,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.control.focus.AbstractFocusController;
+import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.FocusStrategy;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -93,7 +96,7 @@ public class DefaultFocusController extends AbstractFocusController {
     	return veto;
     }
     
-    public FocusVeto setFocusedDockable( DockElementRepresentative source, boolean force, boolean ensureFocusSet ){
+    public FocusVeto setFocusedDockable( DockElementRepresentative source, boolean force, boolean ensureFocusSet, final boolean ensureDockableFocused ){
     	// ignore more than one call
     	if( onFocusing )
     		return null;
@@ -115,17 +118,17 @@ public class DefaultFocusController extends AbstractFocusController {
 	            Dockable oldFocused = this.focusedDockable;
 	            this.focusedDockable = focusedDockable;
 	            
-	            if( ensureFocusSet ){
+	            if( ensureFocusSet || ensureDockableFocused ){
 	                if( EventQueue.isDispatchThread() ){
     	                SwingUtilities.invokeLater( new Runnable(){
     	                    public void run() {
-    	                        ensureFocusSet();     
+    	                        ensureFocusSet( ensureDockableFocused );
     	                    }
     	                });
 	                }
 	                else{
 	                    // we are in the wrong Thread, but we can try...
-	                    ensureFocusSet();
+	                    ensureFocusSet( ensureDockableFocused );
 	                }
 	            }
 	            
@@ -140,7 +143,7 @@ public class DefaultFocusController extends AbstractFocusController {
     	return FocusVeto.NONE;
     }
     
-    public void ensureFocusSet(){
+    public void ensureFocusSet( boolean dockableOnly ){
         Dockable focusedDockable = this.focusedDockable;
         if( focusedDockable != null ){
             Stack<Dockable> front = new Stack<Dockable>();            
@@ -160,15 +163,17 @@ public class DefaultFocusController extends AbstractFocusController {
                 element.getDockParent().setFrontDockable( element );
             }
         
-            DockTitle[] titles = focusedDockable.listBoundTitles();
-            Component focused = FocusManager.getCurrentManager().getFocusOwner();
-            if( focused != null ){
-                if( SwingUtilities.isDescendingFrom( focused, focusedDockable.getComponent() ) )
-                    return;
-                
-                for( DockTitle title : titles )
-                    if( SwingUtilities.isDescendingFrom( focused, title.getComponent() ))
-                        return;
+            if( !dockableOnly ){
+	            DockTitle[] titles = focusedDockable.listBoundTitles();
+	            Component focused = FocusManager.getCurrentManager().getFocusOwner();
+	            if( focused != null ){
+	                if( SwingUtilities.isDescendingFrom( focused, focusedDockable.getComponent() ) )
+	                    return;
+	                
+	                for( DockTitle title : titles )
+	                    if( SwingUtilities.isDescendingFrom( focused, title.getComponent() ))
+	                        return;
+	            }
             }
             
             FocusStrategy strategy = getStrategy();

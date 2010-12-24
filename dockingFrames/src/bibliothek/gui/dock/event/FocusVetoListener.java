@@ -29,7 +29,7 @@ package bibliothek.gui.dock.event;
 import java.awt.Component;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.control.FocusController;
+import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**

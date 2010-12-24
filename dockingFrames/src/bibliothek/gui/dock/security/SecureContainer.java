@@ -30,7 +30,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.control.MouseFocusObserver;
+import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.util.PropertyValue;
 

@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control;
+package bibliothek.gui.dock.control.focus;
 
 import java.awt.Component;
 

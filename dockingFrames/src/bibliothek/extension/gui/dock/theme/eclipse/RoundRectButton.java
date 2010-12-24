@@ -35,7 +35,7 @@ import java.awt.event.FocusListener;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import bibliothek.gui.dock.control.FocusAwareComponent;
+import bibliothek.gui.dock.control.focus.FocusAwareComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;

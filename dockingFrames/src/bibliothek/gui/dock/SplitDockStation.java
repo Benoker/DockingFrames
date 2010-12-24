@@ -710,6 +710,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean isUsedAsTitle(){
 		return false;
 	}
+	
+	public boolean shouldTransfersFocus(){
+		return false;
+	}
 
 	public Point getPopupLocation( Point click, boolean popupTrigger ){
 		if( popupTrigger )
@@ -1531,7 +1535,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		}
 
-		if( start == null ) {
+		if( start == null || index < 0 ) {
 			start = root();
 			index = 0;
 		}

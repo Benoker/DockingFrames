@@ -53,14 +53,14 @@ public class EfficientControlFactory implements CControlFactory {
 	public DockController createController( final CControl owner ) {
 		return new DockController(){
 			@Override
-			public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet ) {
+			public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ) {
 				if( focusedDockable != null ){
 					CLocationModeManager states = owner.getLocationManager();
 					if( states != null && !states.isOnTransaction() ){
 						states.ensureNotHidden( focusedDockable );
 					}
 				}
-				super.setFocusedDockable( focusedDockable, force, ensureFocusSet );
+				super.setFocusedDockable( focusedDockable, force, ensureFocusSet, ensureDockableFocused );
 			}
 		};
 	}
