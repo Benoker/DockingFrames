@@ -78,7 +78,7 @@ public class TypedPropertyUIScheme implements UIScheme<Object, UIValue<Object>, 
 		Link<?,?> old = links.get( id );
 		if( old != null ){
 			// just reuse, a shift of the generic type is no problem
-			((Link<V,A>)old).setKey( source );
+			((Link)old).setKey( source );
 		}
 		else{
 			Link<V, A> link = new Link<V, A>( source, destinationType, destinationId );

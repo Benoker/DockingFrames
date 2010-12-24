@@ -162,7 +162,7 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
     
     
     /**
-     * The background algorithm to be used by the {@link BasicHandler#model model}.
+     * The background algorithm to be used by the {@link BasicHandler#getModel() model}.
      * @author Benjamin Sigg
      */
     private class Background extends BackgroundAlgorithm implements DockActionBackgroundComponent{
@@ -205,7 +205,6 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
     	
     	/**
     	 * Creates a new wrapper.
-    	 * @param kind the type of this {@link UIValue}
     	 * @param id the identifier of this value
     	 */
     	public BorderHandle( String id ){

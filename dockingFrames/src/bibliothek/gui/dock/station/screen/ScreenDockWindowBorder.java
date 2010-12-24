@@ -593,7 +593,6 @@ public class ScreenDockWindowBorder implements Border{
 	 * @param c the component for which the border is painted
 	 * @param inner whether the inner or the outer rectangle is painted
 	 * @param shadow whether the shadow or the highlight part is painted
-	 * @param position which part is painted, not <code>null</code>
 	 * @return the color, not <code>null</code>
 	 */
 	protected Color getHoverColor( Component c, boolean inner, boolean shadow ){
@@ -621,7 +620,6 @@ public class ScreenDockWindowBorder implements Border{
 	/**
 	 * Gets a color to paint some part of this border that is under the pressed mouse.
 	 * @param c the component for which the border is painted
-	 * @param position which part is painted, not <code>null</code>
 	 * @return the color, not <code>null</code>
 	 */
 	protected Color getSelectedColor( Component c ){
@@ -637,7 +635,6 @@ public class ScreenDockWindowBorder implements Border{
 	 * @param c the component for which the border is painted
 	 * @param inner whether the inner or the outer rectangle is painted
 	 * @param shadow whether the shadow or the highlight part is painted
-	 * @param position which part is painted, not <code>null</code>
 	 * @return the color, not <code>null</code>
 	 */
 	protected Color getSelectedColor( Component c, boolean inner, boolean shadow ){
@@ -665,7 +662,6 @@ public class ScreenDockWindowBorder implements Border{
 	/**
 	 * Gets a color to paint some part of this border.
 	 * @param c the component for which the border is painted
-	 * @param position which part is painted, not <code>null</code>
 	 * @return the color, not <code>null</code>
 	 */
 	protected Color getNormalColor( Component c ){
@@ -681,7 +677,6 @@ public class ScreenDockWindowBorder implements Border{
 	 * @param c the component for which the border is painted
 	 * @param inner whether the inner or the outer rectangle is painted
 	 * @param shadow whether the shadow or the highlight part is painted
-	 * @param position which part is painted, not <code>null</code>
 	 * @return the color, not <code>null</code>
 	 */
 	protected Color getNormalColor( Component c, boolean inner, boolean shadow ){

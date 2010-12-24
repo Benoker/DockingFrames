@@ -423,12 +423,12 @@ public class ThemeManager extends TypedUIProperties{
      * Sets a strategy that is used to modify the border of various components.<br>
      * Valid identifier can be, but are not restricted to:
      * <ul>
-     *  <li>{@value MiniButton#BORDER_KEY_NORMAL}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_NORMAL_SELECTED}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_OVER_SELECTED}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED}</li>
-     * 	<li>{@value MiniButton#BORDER_KEY_MOUSE_PRESSED_SELECTED}</li>
+     *  <li>{@link MiniButton#BORDER_KEY_NORMAL}</li>
+     * 	<li>{@link MiniButton#BORDER_KEY_NORMAL_SELECTED}</li>
+     * 	<li>{@link MiniButton#BORDER_KEY_MOUSE_OVER}</li>
+     * 	<li>{@link MiniButton#BORDER_KEY_MOUSE_OVER_SELECTED}</li>
+     * 	<li>{@link MiniButton#BORDER_KEY_MOUSE_PRESSED}</li>
+     * 	<li>{@link MiniButton#BORDER_KEY_MOUSE_PRESSED_SELECTED}</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.basic.base</li>
      * 	<li>{@value #BORDER_MODIFIER}.displayer.basic.content</li>	
      * 	<li>{@value #BORDER_MODIFIER}.displayer.bubble</li>

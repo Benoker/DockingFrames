@@ -234,7 +234,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	 * @param map the data to read
 	 * @param converter  used to convert items back to dockables, not <code>null</code> 
 	 * @param simulate whether this list should actually be changed or not
-	 * @throw {@link IllegalArgumentException} if the map is in the wrong format
+	 * @throws IllegalArgumentException if the map is in the wrong format
 	 */
 	protected void read( PlaceholderMap map, PlaceholderListItemConverter<D,P> converter, boolean simulate ){
 		if( converter == null ){

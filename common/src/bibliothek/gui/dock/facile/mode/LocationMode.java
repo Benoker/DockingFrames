@@ -116,7 +116,7 @@ public interface LocationMode extends Mode<Location>{
 	/**
 	 * Tells the {@link LocationModeManager} whether the focus should be transfered to
 	 * a {@link Dockable} that has this mode.
-	 * @return
+	 * @return whether auto-focus should be enabled or not
 	 */
 	public boolean shouldAutoFocus();
 }
