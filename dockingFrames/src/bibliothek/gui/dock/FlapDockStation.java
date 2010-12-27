@@ -83,6 +83,7 @@ import bibliothek.gui.dock.station.flap.FlapDropInfo;
 import bibliothek.gui.dock.station.flap.FlapLayoutManager;
 import bibliothek.gui.dock.station.flap.FlapWindow;
 import bibliothek.gui.dock.station.flap.FlapWindowFactory;
+import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -163,94 +164,9 @@ public class FlapDockStation extends AbstractDockableStation {
             	}, true );
     
     /**
-     * What kind of information should be displayed on the buttons. 
-     */
-    public static enum ButtonContent{
-        THEME_DEPENDENT,
-        ICON_ONLY, TEXT_ONLY, ICON_AND_TEXT_ONLY, ICON_THEN_TEXT_ONLY, TEXT_THEN_ICON_ONLY,
-        ICON_ACTIONS, TEXT_ACTIONS, ICON_AND_TEXT_ACTIONS, ICON_THEN_TEXT_ACTIONS, TEXT_THEN_ICON_ACTIONS;
-        
-
-        /**
-         * Tells whether actions should be shown on the button of a {@link FlapDockStation}
-         * or not.
-         * @param theme what the theme would do
-         * @return <code>true</code> if the actions should be shown
-         */
-        public boolean showActions( boolean theme ){
-            switch( this ){
-                case ICON_AND_TEXT_ONLY:
-                case ICON_ONLY:
-                case ICON_THEN_TEXT_ONLY:
-                case TEXT_ONLY:
-                case TEXT_THEN_ICON_ONLY:
-                    return false;
-                case ICON_ACTIONS:
-                case ICON_AND_TEXT_ACTIONS:
-                case ICON_THEN_TEXT_ACTIONS:
-                case TEXT_ACTIONS:
-                case TEXT_THEN_ICON_ACTIONS:
-                    return true;
-            }
-            return theme;
-        }
-        
-        /**
-         * Tells whether an icon should be shown.
-         * @param text whether text is present or not.
-         * @param theme what the theme would decide.
-         * @return <code>true</code> if icons should be shown
-         */
-        public boolean showIcon( boolean text, boolean theme ){
-            switch( this ){
-                case ICON_ACTIONS:
-                case ICON_AND_TEXT_ACTIONS:
-                case ICON_AND_TEXT_ONLY:
-                case ICON_ONLY:
-                case ICON_THEN_TEXT_ACTIONS:
-                case ICON_THEN_TEXT_ONLY:
-                    return true;
-                case TEXT_ACTIONS:
-                case TEXT_ONLY:
-                    return false;
-                case TEXT_THEN_ICON_ACTIONS:
-                case TEXT_THEN_ICON_ONLY:
-                    return !text;
-            }
-            
-            return theme;
-        }
-        
-        /**
-         * Tells whether text should be shown.
-         * @param icon whether an icon is present or not
-         * @param theme what the theme would decide.
-         * @return <code>true</code> if text should be shown
-         */
-        public boolean showText( boolean icon, boolean theme ){
-            switch( this ){
-                case TEXT_ACTIONS:
-                case TEXT_ONLY:
-                case TEXT_THEN_ICON_ACTIONS:
-                case TEXT_THEN_ICON_ONLY:
-                case ICON_AND_TEXT_ACTIONS:
-                case ICON_AND_TEXT_ONLY:
-                    return true;
-                case ICON_ACTIONS:
-                case ICON_ONLY:
-                    return false;
-                case ICON_THEN_TEXT_ACTIONS:
-                case ICON_THEN_TEXT_ONLY:
-                    return !icon;
-            }
-            
-            return theme;
-        }
-    };
-
-    /**
      * Key for all {@link DockTheme}s, tells the theme what content on the buttons
-     * should be visible. Note that some themes might ignore that setting.
+     * should be visible. Note that some themes might ignore that setting. Chaning this property will call
+     * {@link #recreateTitles()}, meaning all {@link DockTitle}s are removed and recreated.
      */
     public static final PropertyKey<ButtonContent> BUTTON_CONTENT = new PropertyKey<ButtonContent>(
             "flap dock station button content", new ConstantPropertyFactory<ButtonContent>( ButtonContent.THEME_DEPENDENT ), true );

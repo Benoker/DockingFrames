@@ -253,6 +253,12 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
         if( element == null )
             return null;
         
+        if( event instanceof MouseEvent || event instanceof MouseWheelEvent ){
+        	if( !element.shouldFocus() ){
+        		return null;
+        	}
+        }
+        
         Dockable dockable = element.getElement().asDockable();
         if( dockable == null )
             return null;

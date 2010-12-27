@@ -25,13 +25,25 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
+import static bibliothek.gui.dock.station.flap.button.ButtonContent.IF_DOCKABLE;
+import static bibliothek.gui.dock.station.flap.button.ButtonContent.IF_STATION;
+import static bibliothek.gui.dock.station.flap.button.ButtonContent.TRUE;
+
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.Point;
+
+import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.FlapDockStation.ButtonContent;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.MultiDockActionSource;
+import bibliothek.gui.dock.action.StationChildrenActionSource;
 import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.station.flap.button.ButtonContent;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonContentValue;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.DockTitle;
@@ -67,7 +79,21 @@ import bibliothek.util.Path;
     "title.foreground.inactive.mouse.flap",
     "title.foreground.inactive.flap",
     "title.foreground.selected.mouse.flap",
-    "title.foreground.selected.flap" })
+    "title.foreground.selected.flap",
+    
+	"title.flap.active.knob.highlight",
+	"title.flap.active.knob.shadow",
+	"title.flap.active.mouse.knob.highlight",
+	"title.flap.active.mouse.knob.shadow",
+	"title.flap.inactive.knob.highlight",
+	"title.flap.inactive.knob.shadow",
+	"title.flap.inactive.mouse.knob.highlight",
+	"title.flap.inactive.mouse.knob.shadow",
+	"title.flap.selected.knob.highlight",
+	"title.flap.selected.knob.shadow",
+	"title.flap.selected.mouse.knob.highlight",
+	"title.flap.selected.mouse.knob.shadow",
+})
 public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     /**
      * A factory which creates new {@link BubbleButtonDockTitle}s.
@@ -86,21 +112,49 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     	}
     };
     
-    private ButtonContent behavior;
+	/** amount of space required to paint the knob */
+	private final int KNOB_SIZE = 10;
+    
+	/** key for the color that is used to paint the knob */
+	public static final String ANIMATION_KEY_KNOB_HIGHLIGHT = "knob.highlight";
+	
+	/** key for the color that is used to paint the knob */
+	public static final String ANIMATION_KEY_KNOB_SHADOW = "knob.shadow";
+	
+    private ButtonContentValue behavior;
     
     private boolean selected = false;
     
+    /** keeps all the {@link DockActionSource}s that have to be shown on this title */
+	private MultiDockActionSource allActionsSource = new MultiDockActionSource();
+	
+	/** whether children are currently shown */
+	private boolean showChildren = false;
+	
+	/** wether actions are currently shown */
+	private boolean showActions = false;
+	
     /**
      * Creates a new title.
      * @param dockable the dockable for which this title will be shown
      * @param origin the {@link DockTitleVersion} which was used to create this title
      */
     public BubbleButtonDockTitle( Dockable dockable, DockTitleVersion origin ) {
-        behavior = FlapDockStation.ButtonContent.THEME_DEPENDENT;
-        if( origin != null )
-            behavior = origin.getController().getProperties().get( FlapDockStation.BUTTON_CONTENT );
+        behavior = new ButtonContentValue( new ButtonContent( TRUE, TRUE, IF_DOCKABLE, IF_STATION, TRUE ) ){
+			@Override
+			protected void propertyChanged(){
+				updateContent();
+			}
+		};
+    	
+        if( origin != null ){
+            behavior.setProperties( origin.getController() );
+        }
         
-        init( dockable, origin, behavior.showActions( false ) );
+        init( dockable, origin, false );
+        allActionsSource.setSeparateSources( true );
+        behavior.setDockable( dockable );
+        updateContent();
     }
     
     /**
@@ -145,6 +199,19 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         addColor( "title.foreground.inactive.flap", path, Color.WHITE );
         addColor( "title.foreground.selected.mouse.flap", path, Color.WHITE );
         addColor( "title.foreground.selected.flap", path, Color.WHITE );
+        
+        addColor( "title.flap.active.knob.highlight", path, Color.WHITE );
+        addColor( "title.flap.active.knob.shadow", path, Color.BLACK );
+        addColor( "title.flap.active.mouse.knob.highlight", path, Color.WHITE );
+        addColor( "title.flap.active.mouse.knob.shadow", path, Color.BLACK );
+        addColor( "title.flap.inactive.knob.highlight", path, Color.WHITE );
+        addColor( "title.flap.inactive.knob.shadow", path, Color.BLACK );
+        addColor( "title.flap.inactive.mouse.knob.highlight", path, Color.WHITE );
+        addColor( "title.flap.inactive.mouse.knob.shadow", path, Color.BLACK );
+        addColor( "title.flap.selected.knob.highlight", path, Color.WHITE );
+        addColor( "title.flap.selected.knob.shadow", path, Color.BLACK );
+        addColor( "title.flap.selected.mouse.knob.highlight", path, Color.WHITE );
+        addColor( "title.flap.selected.mouse.knob.shadow", path, Color.BLACK );
         
         addConditionalFont( DockFont.ID_FLAP_BUTTON_ACTIVE, TitleFont.KIND_FLAP_BUTTON_FONT, 
                 new Condition(){
@@ -212,10 +279,14 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         String top = "title.background.top." + postfix + ".flap";
         String bottom = "title.background.bottom." + postfix + ".flap";
         String text = "title.foreground." + postfix + ".flap";
+        String knobHighlight = "title.flap." + postfix + ".knob.highlight";
+        String knobShadow = "title.flap." + postfix + ".knob.shadow";
         
         updateAnimation( ANIMATION_KEY_TEXT, text );
         updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, top );
         updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, bottom );
+        updateAnimation( ANIMATION_KEY_KNOB_HIGHLIGHT, knobHighlight );
+        updateAnimation( ANIMATION_KEY_KNOB_SHADOW, knobShadow );
     }
     
     /**
@@ -227,10 +298,25 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         return selected;
     }
     
+    private void updateContent(){
+    	updateIcon();
+    	updateText();
+    	updateActionSource();
+    	
+    	if( behavior.isShowActions() || behavior.isShowChildren() ){
+    		setShowMiniButtons( true );
+    	}
+    	else{
+    		setShowMiniButtons( false );
+    	}
+    	
+    	revalidate();
+    	repaint();
+    }
+    
     @Override
     protected void updateIcon() {
-        String text = getDockable().getTitleText();
-        if( behavior.showIcon( text != null && text.length() > 0, true ) )
+        if( behavior.isShowIcon() )
             super.updateIcon();
         else
             setIcon( null );
@@ -238,10 +324,107 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     
     @Override
     protected void updateText() {
-        if( behavior.showText( getDockable().getTitleIcon() != null, true ) )
+        if( behavior.isShowText() )
             super.updateText();
         else
             setText( "" );     
+    }
+    
+    @Override
+    protected DockActionSource getActionSourceFor( Dockable dockable ){
+    	return allActionsSource;
+    }
+    
+    private void updateActionSource(){
+    	boolean showChildren = behavior.isShowChildren();
+    	boolean showActions = behavior.isShowActions();
+    		
+    	if( this.showChildren != showChildren || this.showActions != showActions ){
+    		allActionsSource.removeAll();
+    		
+	    	if( showChildren ){
+	    		allActionsSource.add( getChildrenActionSourceFor( getDockable() ) );
+	    	}
+    	
+	    	if( showActions ){
+	    		allActionsSource.add( getDefaultActionSourceFor( getDockable() ) );
+	    	}
+	    	
+	    	this.showChildren = showChildren;
+	    	this.showActions = showActions;
+    	}
+    }
+    
+    /**
+     * Gets the "normal" actions for <code>dockable</code>.
+     * @param dockable some item for which actions are required
+     * @return the normal actions, may be a new {@link DockActionSource}, not <code>null</code>
+     */
+    protected DockActionSource getDefaultActionSourceFor( Dockable dockable ){
+    	return super.getActionSourceFor( dockable );
+    }
+    
+    /**
+     * Gets the "special" children actions for <code>dockable</code>
+     * @param dockable some item for which actions are required
+     * @return the children actions, may be a new {@link DockActionSource}, not <code>null</code>
+     */
+    protected DockActionSource getChildrenActionSourceFor( Dockable dockable ){
+    	return new StationChildrenActionSource( dockable, null );
+    }
+    
+    @Override
+    protected Insets getInnerInsets(){
+    	Insets base = super.getInnerInsets();
+    	
+    	if( behavior.isShowKnob() ){
+    		if( getOrientation().isHorizontal() ){
+    			base = new Insets( base.top, base.left + KNOB_SIZE, base.bottom, base.right );
+    		}
+    		else{
+    			base = new Insets( base.top + KNOB_SIZE, base.left, base.bottom, base.right );
+    		}
+    	}
+    	
+    	return base;
+    }
+    
+    @Override
+    protected void paintForeground( Graphics g, JComponent component ){
+    	// paint icon etc.
+    	super.paintForeground( g, component );
+    	
+    	// paint knob
+    	if( behavior.isShowKnob() ){
+    		Insets insets = getInnerInsets();
+    		
+    		if( getOrientation().isHorizontal() ){
+    			int x = insets.left - KNOB_SIZE + 3;
+    			int y1 = insets.top + 3;
+    			int y2 = getHeight() - insets.bottom - 4;
+    			
+    			g.setColor( getColor( ANIMATION_KEY_KNOB_HIGHLIGHT ) );
+    			g.drawLine( x, y1+1, x, y2-1 );
+    			g.drawLine( x+1, y1, x+1, y1 );
+    			
+    			g.setColor( getColor( ANIMATION_KEY_KNOB_SHADOW ) );
+    			g.drawLine( x+1, y2, x+1, y2 );
+    			g.drawLine( x+2, y1+1, x+2, y2-1 );
+    		}
+    		else{
+    			int y = insets.top - KNOB_SIZE + 3;
+    			int x1 = insets.left + 3;
+    			int x2 = getWidth() - insets.right - 4;
+    			
+    			g.setColor( getColor( ANIMATION_KEY_KNOB_HIGHLIGHT ) );
+    			g.drawLine( x1+1, y, x2-1, y );
+    			g.drawLine( x1, y+1, x1, y+1 );
+    			
+    			g.setColor( getColor( ANIMATION_KEY_KNOB_SHADOW ) );
+    			g.drawLine( x1+1, y+2, x2-1, y+2 );
+    			g.drawLine( x2, y+1, x2, y+2 );
+    		}
+    	}
     }
     
     @Override

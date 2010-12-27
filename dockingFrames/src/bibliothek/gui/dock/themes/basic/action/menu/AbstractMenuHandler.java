@@ -153,6 +153,10 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
 
         public void actionTooltipTextChanged( StandardDockAction action, Set<Dockable> dockables ) {
             item.setToolTipText( action.getTooltipText( dockable ));
-        }        
+        }
+        
+        public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
+	        // ignore	
+        }
     }
 }

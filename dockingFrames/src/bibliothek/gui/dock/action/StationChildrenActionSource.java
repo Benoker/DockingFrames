@@ -271,6 +271,7 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 		 */
 		public FocusAction( Dockable dockable ){
 			this.dockable = dockable;
+			setDockableRepresentation( dockable );
 		}
 		
 		@Override
@@ -278,7 +279,7 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 			super.action( dockable );
 			DockController controller = dockable.getController();
 			if( controller != null ){
-				controller.setFocusedDockable( this.dockable, true, true );
+				controller.setFocusedDockable( this.dockable, true, true, true );
 			}
 		}
 		
@@ -299,10 +300,17 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 		
 		public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){
 			setText( newTitle );
+			String tooltip = dockable.getTitleToolTip();
+			if( tooltip == null || tooltip.length() == 0 ){
+				setTooltip( newTitle );
+			}
 		}
 		
 		public void titleToolTipChanged( Dockable dockable, String oldToolTip, String newToolTip ){
 			setTooltip( newToolTip );
+			if( newToolTip == null || newToolTip.length() == 0 ){
+				setTooltip( dockable.getTitleText() );
+			}
 		}
 		
 		public void titleBound( Dockable dockable, DockTitle title ){

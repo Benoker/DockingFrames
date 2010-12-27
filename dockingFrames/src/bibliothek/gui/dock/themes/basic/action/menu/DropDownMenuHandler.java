@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -159,6 +159,11 @@ public class DropDownMenuHandler implements MenuViewItem<JComponent>{
 		public void actionTooltipTextChanged( StandardDockAction action, Set<Dockable> dockables ){
 			if( dockables.contains( dockable ))
 				menuAction.setTooltip( action.getTooltipText( dockable ) );
+		}
+		
+		public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
+			if( dockables.contains( dockables ))
+				menuAction.setDockableRepresentation( action.getDockableRepresentation( dockable ) );
 		}
 	}
 }

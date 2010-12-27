@@ -30,6 +30,7 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.extension.gui.dock.preference.model.BubbleThemePreferenceModel;
+import bibliothek.extension.gui.dock.preference.model.ButtonContentPreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.EclipseThemePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.KeyStrokePreferenceModel;
 import bibliothek.extension.gui.dock.preference.model.LayoutPreferenceModel;
@@ -37,6 +38,7 @@ import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.util.Path;
 import bibliothek.util.PathCombiner;
 
@@ -71,11 +73,13 @@ public class DockingFramesPreference extends PreferenceTreeModel{
                 DockUI.getDefaultDockUI().getString( "preference.shortcuts" ), 
                 new KeyStrokePreferenceModel( controller.getProperties() ) );
         
+        put( new Path( "buttonContent" ),
+        		DockUI.getDefaultDockUI().getString( "preference.buttonContent" ),
+        		new ButtonContentPreferenceModel( controller ) );
+        
         put( new Path( "layout" ),
         		DockUI.getDefaultDockUI().getString( "preference.layout" ),
         		new LayoutPreferenceModel( controller.getProperties() ));
-        
-//        put( new Path( "theme" ), DockUI.getDefaultDockUI().getString( "preference.theme" ), null );
         
         put( new Path( "theme.BubbleTheme" ),
         		DockUI.getDefaultDockUI().getString( "theme.bubble" ),
@@ -111,6 +115,21 @@ public class DockingFramesPreference extends PreferenceTreeModel{
     	PreferenceModel model = getModel( new Path( "layout" ) );
     	if( model instanceof LayoutPreferenceModel ){
     		return (LayoutPreferenceModel)model;
+    	}
+    	else{
+    		throw new IllegalStateException( "this model has been removed" );
+    	}
+    }
+    
+    /**
+     * Grants access to the preferences concerning the {@link ButtonContent}.
+     * @return the model, not <code>null</code>
+     * @throws IllegalStateException if the model was removed or replaced by the client
+     */
+    public ButtonContentPreferenceModel getButtonContent(){
+    	PreferenceModel model = getModel( new Path( "buttonContent" ) );
+    	if( model instanceof ButtonContentPreferenceModel ){
+    		return (ButtonContentPreferenceModel)model;
     	}
     	else{
     		throw new IllegalStateException( "this model has been removed" );

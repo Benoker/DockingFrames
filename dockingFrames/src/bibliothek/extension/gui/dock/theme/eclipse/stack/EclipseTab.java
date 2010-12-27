@@ -156,6 +156,10 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		return true;
 	}
 	
+	public boolean shouldFocus(){
+    	return true;
+    }
+	
 	public boolean shouldTransfersFocus(){
 		return true;
 	}

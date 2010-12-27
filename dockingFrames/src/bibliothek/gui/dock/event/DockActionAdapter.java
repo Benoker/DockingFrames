@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -29,7 +29,7 @@ package bibliothek.gui.dock.event;
 import java.util.Set;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.StandardDockAction;
 
 /**
  * An abstract implementation of {@link StandardDockActionListener}. All methods
@@ -38,24 +38,27 @@ import bibliothek.gui.dock.action.DockAction;
  * @author Benjamin Sigg
  */
 public abstract class DockActionAdapter implements StandardDockActionListener {
-
-    public void actionTextChanged( DockAction action, Set<Dockable> dockables ){
-        // do nothing
-    }
-
-    public void actionTooltipTextChanged( DockAction action, Set<Dockable> dockables ) {
-        // do nothing
+	public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables ){
+		// do nothing
+	}
+	
+	public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ){
+		// do nothing
+	}
+	
+    public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
+    	// do nothing
     }
     
-    public void actionIconChanged( DockAction action, Set<Dockable> dockables ){
-        // do nothing
+    public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ){
+    	// do nothing
     }
     
-    public void actionSelectedChanged( DockAction action, Set<Dockable> dockables ) {
-        // do nothing
+    public void actionTooltipTextChanged( StandardDockAction action, Set<Dockable> dockables ){
+    	// do nothing
     }
-
-    public void actionEnabledChanged( DockAction action, Set<Dockable> dockables ){
-        // do nothing
+    
+    public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
+    	// do nothing
     }
 }

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.themes.basic.action;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -44,8 +45,15 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.MouseInputListener;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
@@ -81,6 +89,9 @@ public class BasicButtonModel {
     private Icon autoIconDisabled;
     /** automatically created icon used when this model is not enabled, but selected */
     private Icon autoIconSelectedDisabled;
+    
+    /** the element which is represented by the action */
+    private DockActionRepresentative representative;
     
     /** whether the mouse is inside the button or not */
     private boolean mouseInside = false;
@@ -446,6 +457,21 @@ public class BasicButtonModel {
     }
     
     /**
+     * Sets the {@link Dockable} for which a {@link DockElementRepresentative} has to be installed.
+     * @param dockable the dockable to monitor, can be <code>null</code>
+     */
+    public void setDockableRepresentative( Dockable dockable ){
+    	if( representative != null ){
+    		representative.unbind();
+    		representative = null;
+    	}
+    	if( dockable != null ){
+    		representative = new DockActionRepresentative( dockable );
+    		representative.bind();
+    	}
+    }
+    
+    /**
      * Gets the orientation of the {@link DockTitle} on which the view of
      * this model is displayed.
      * @return the orientation
@@ -648,5 +674,90 @@ public class BasicButtonModel {
                     setMouseInside( inside );
             }
         }
+    }
+    
+    /**
+     * A wrapper around the represented {@link Dockable}.
+     * @author Benjamin Sigg
+     */
+    private class DockActionRepresentative implements DockElementRepresentative, DockHierarchyListener{
+    	private Dockable dockable;
+    	private DockController controller;
+    	
+    	/**
+    	 * Creates a new representative
+    	 * @param dockable the represented {@link Dockable}
+    	 */
+    	public DockActionRepresentative( Dockable dockable ){
+    		this.dockable = dockable;
+    	}
+    	
+    	public void bind(){
+    		dockable.addDockHierarchyListener( this );
+    		controller = dockable.getController();
+    		if( controller != null ){
+    			controller.addRepresentative( this );
+    		}
+    	}
+    	
+    	public void unbind(){
+    		dockable.removeDockHierarchyListener( this );
+    		if( controller != null ){
+    			controller.removeRepresentative( this );
+    			controller = null;
+    		}
+    	}
+    	
+    	public void hierarchyChanged( DockHierarchyEvent event ){
+    		// ignore
+    	}
+    	
+    	public void controllerChanged( DockHierarchyEvent event ){
+    		if( controller != null ){
+    			controller.removeRepresentative( this );
+    			controller = null;
+    		}
+    		controller = dockable.getController();
+    		if( controller != null ){
+    			controller.addRepresentative( this );
+    		}
+    	}
+    	
+		public void addMouseInputListener( MouseInputListener listener ){
+			getOwner().addMouseListener( listener );
+			getOwner().addMouseMotionListener( listener );
+		}
+
+		public Component getComponent(){
+			return getOwner();
+		}
+
+		public DockElement getElement(){
+			return dockable;
+		}
+
+		public Point getPopupLocation( Point click, boolean popupTrigger ){
+			if( popupTrigger ){
+				return click;
+			}
+			return null;
+		}
+
+		public boolean isUsedAsTitle(){
+			return false;
+		}
+
+		public void removeMouseInputListener( MouseInputListener listener ){
+			getOwner().removeMouseListener( listener );
+			getOwner().removeMouseMotionListener( listener );
+		}
+
+		public boolean shouldFocus(){
+			return false;
+		}
+		
+		public boolean shouldTransfersFocus(){
+			return true;
+		}
     }
 }

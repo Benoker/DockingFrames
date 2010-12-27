@@ -91,6 +91,10 @@ public class DockableButton extends JComponent implements DockElementRepresentat
         return false;
     }
     
+    public boolean shouldFocus(){
+    	return true;
+    }
+    
     public boolean shouldTransfersFocus(){
     	return false;
     }

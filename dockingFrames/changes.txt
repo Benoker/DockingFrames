@@ -387,3 +387,8 @@
 - API: New interface FocusStrategy allows the framework to select a special Component of a Dockable to receive the focus
 - API: CDockable has new method "getFocusComponent", AbstractCDockable has new method "setFocusDockable". With these methods a FocusStrategy decides which component to focus when focus is transfered to a CDockable
 - API: Due to the new DefaultFocusStrategy focusing is now more pretictable: a click on a title or tab means that the framework tries to focus the previously focused Component (on the selected Dockable) again.
+! API: The enum "FlapDockStation.ButtonContent" is now defined as class "ButtonContent" in its own file. The old constants remain and clients only have to update their imports.
+- API: The button-title of a FlapDockStation now supports DockStations: one button is painted for each child, pressing that button will focus the child. The button also support drag and drop operations.
+! API: The preferences have been updated to handle the additional options for button-titles: the ButtonContentPreference got replaced by ButtonContentPreferenceModel
+- Bugfix: GlassedPane now also check the extended modifiers of MouseEvents and resets its internal state if no button is pressed. Even if some MouseEvents are not properly delivered (e.g. due to a popup-menu opening) the user can continue working by moving around the mouse a bit.
+ 

@@ -50,7 +50,7 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
     /** key for the background color at the top used by the animation */
     protected static final String ANIMATION_KEY_BACKGROUND_TOP = "top";
     /** key for the background color at the bottom used by the animation */
-    protected static final String ANIMATION_KEY_BACKGROUND_BOTTOM = "top";
+    protected static final String ANIMATION_KEY_BACKGROUND_BOTTOM = "bottom";
 
     /** An animation which can change a set of colors smoothly */
     private BubbleColorAnimation animation;
@@ -175,7 +175,7 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
     protected abstract void updateAnimation();
 
     /**
-     * Starts an animation for chaning the color of <code>animationKey</code>
+     * Starts an animation for changing the color of <code>animationKey</code>
      * to <code>colorId</code>.
      * @param animationKey One of {@link #ANIMATION_KEY_TEXT}, {@link #ANIMATION_KEY_BACKGROUND_TOP},
      * {@link #ANIMATION_KEY_BACKGROUND_BOTTOM} or if this subclasses has its
@@ -191,6 +191,15 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
         }
     }
 
+    /**
+     * Gets a color for an animation that was stared with {@link #updateAnimation()}.
+     * @param animationKey the key for the animation
+     * @return the current color or <code>null</code> if not present
+     */
+    protected Color getColor( String animationKey ){
+    	return animation.getColor( animationKey );
+    }
+    
     /**
      * Called every time when the colors of the animation have been changed.
      */
@@ -218,7 +227,18 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
     protected void paintBackground( Graphics g, JComponent component ) {
         Graphics2D g2 = (Graphics2D)g.create();
         g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-
+        doPaintBackground( g2, component );
+        g2.dispose();
+    }
+    
+    /**
+     * Actually paints the background with a graphics context that has special settings.
+     * @param g the graphics context to use
+     * @param component the component that is painted
+     */
+    protected void doPaintBackground( Graphics g, JComponent component ){
+    	Graphics2D g2 = (Graphics2D)g;
+    	
         Insets insets = getInsets();
         int x = 0, y = 0;
         int w = component.getWidth();
@@ -242,9 +262,7 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
 
             // draw
             drawRoundRect( g2, x, y, w, h );
-        }
-
-        g2.dispose();
+        }    	
     }
     
     @Override

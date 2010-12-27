@@ -29,6 +29,7 @@ package bibliothek.gui.dock.action;
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.event.StandardDockActionListener;
 
 /**
@@ -108,4 +109,13 @@ public interface StandardDockAction extends DockAction {
      * this action, <code>false</code> otherwise
      */
     public boolean isEnabled( Dockable dockable );
+    
+    /**
+     * Tells whether this {@link DockAction} represents a {@link Dockable}. If so, the framework
+     * may register views for this action as {@link DockElementRepresentative}.
+     * @param dockable The {@link Dockable} for which this action may be triggered
+     * @return the {@link Dockable} which is represented by this action, can be <code>null</code>. 
+     * Normally <code>dockable</code> should not be the result.  
+     */
+    public Dockable getDockableRepresentation( Dockable dockable );
 }

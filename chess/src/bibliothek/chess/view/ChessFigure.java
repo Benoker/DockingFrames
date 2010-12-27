@@ -133,6 +133,10 @@ public class ChessFigure extends JLabel implements Dockable {
 		return false;
 	}
 	
+	public boolean shouldFocus(){
+    	return true;
+    }
+	
 	public boolean shouldTransfersFocus(){
 		return false;
 	}

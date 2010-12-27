@@ -156,6 +156,19 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "title.foreground.selected.flap",            color( distribution, 100, 100, 100 ));
         setColor( "title.foreground.selected.mouse.flap",      color( distribution, 25, 25, 25 ));
         
+    	setColor( "title.flap.active.knob.highlight", color( distribution, 255, 175, 175 ) );
+    	setColor( "title.flap.active.knob.shadow", color( distribution, 150, 0, 0 ) );
+    	setColor( "title.flap.active.mouse.knob.highlight", color( distribution, 255, 200, 200 ) );
+    	setColor( "title.flap.active.mouse.knob.shadow", color( distribution, 255, 100, 100 ) );
+    	setColor( "title.flap.inactive.knob.highlight", color( distribution, 200, 200, 200 ) );
+    	setColor( "title.flap.inactive.knob.shadow", color( distribution, 100, 100, 100 ) );
+    	setColor( "title.flap.inactive.mouse.knob.highlight", color( distribution, 200, 255, 200 ) );
+    	setColor( "title.flap.inactive.mouse.knob.shadow", color( distribution, 0, 200, 0 ) );
+    	setColor( "title.flap.selected.knob.highlight", color( distribution, 200, 200, 200 ) );
+    	setColor( "title.flap.selected.knob.shadow", color( distribution, 100, 100, 100 ) );
+    	setColor( "title.flap.selected.mouse.knob.highlight", color( distribution, 200, 255, 200 ) );
+    	setColor( "title.flap.selected.mouse.knob.shadow", color( distribution, 100, 200, 100 ) );
+        
         // display border
         setColor( "displayer.border.high.active",           color( distribution, 255, 100, 100 ));
         setColor( "displayer.border.high.active.mouse",     color( distribution, 255, 200, 200 ));

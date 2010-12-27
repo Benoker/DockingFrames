@@ -397,6 +397,10 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
         return false;
     }
     
+    public boolean shouldFocus(){
+    	return true;
+    }
+    
     public boolean shouldTransfersFocus(){
 	    return true;
     }

@@ -25,15 +25,18 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
+import bibliothek.extension.gui.dock.preference.model.ButtonContentPreferenceModel;
 import bibliothek.gui.DockUI;
-import bibliothek.gui.dock.FlapDockStation.ButtonContent;
+import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**
- * A choice for a {@link ButtonContent}.
+ * A choice for a {@link ButtonContent}. Only a selected set of {@link ButtonContent}s are available through this
+ * choice.
  * @author Benjamin Sigg
- *
+ * @deprecated replaced by {@link ButtonContentPreferenceModel}
  */
+@Deprecated
 public class ButtonContentChoice extends DefaultChoice<ButtonContent>{
 	
 	/**

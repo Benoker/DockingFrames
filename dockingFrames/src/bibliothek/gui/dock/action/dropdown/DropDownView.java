@@ -28,6 +28,8 @@ package bibliothek.gui.dock.action.dropdown;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.Dockable;
+
 /**
  * A connection between an drop-down-item and a view. Clients should use
  * instances of this interface as if they access a button.
@@ -69,4 +71,10 @@ public interface DropDownView {
 	 * @param selected the state
 	 */
 	public void setSelected( boolean selected );
+	
+	/**
+	 * Sets the {@link Dockable} which is represented by the view.
+	 * @param dockable the represented element, can be <code>null</code>
+	 */
+	public void setDockableRepresentation( Dockable dockable );
 }

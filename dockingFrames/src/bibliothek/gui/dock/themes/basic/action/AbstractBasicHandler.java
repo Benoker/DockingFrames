@@ -160,6 +160,13 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
     	}
     }
     
+    /**
+     * Tells whether {@link #bind()} was called.
+     * @return <code>true</code> if this handler is in use, <code>false</code> otherwise
+     */
+    public boolean isBound(){
+		return bound;
+	}
     
     /**
      * The background algorithm to be used by the {@link BasicHandler#getModel() model}.

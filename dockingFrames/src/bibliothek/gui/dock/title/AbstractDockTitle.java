@@ -123,13 +123,13 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     private boolean active = false;
     /** <code>true</code> if this title is currently bound to a {@link Dockable} */
     private boolean bound = false;
-    /** Tells whether small buttons for each action should be created and shown, or not */
-    private boolean showMiniButtons = true;
     
     /** Whether the layout should be horizontal or vertical */
     private Orientation orientation = Orientation.FREE_HORIZONTAL;
     /** The icon which is shown on this title */
     private Icon icon;
+    /** number of pixels to paint between icon and text */
+    private int iconTextGap = 0;
     
     /** the colors used by this title */
     private List<AbstractDockColor> colors = new ArrayList<AbstractDockColor>();
@@ -210,7 +210,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
      */
     protected void init( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
         this.dockable = dockable;
-        this.showMiniButtons = showMiniButtons;
+//        this.showMiniButtons = showMiniButtons;
         this.origin = origin;
         
         label.setBackground( background );
@@ -219,18 +219,18 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
         setLayout( null );
         add( label );
         setActive( false );
-        
-        if( showMiniButtons ){
-        	itemPanel = new ButtonPanel( true ){
-        		@Override
-        		protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
-        			return AbstractDockTitle.this.createItemFor( action, dockable );
-        		}
-        	};
-            itemPanel.setOpaque( false );
-            add( itemPanel );
-        }
-        
+//        
+//        if( showMiniButtons ){
+//        	itemPanel = new ButtonPanel( true ){
+//        		@Override
+//        		protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
+//        			return AbstractDockTitle.this.createItemFor( action, dockable );
+//        		}
+//        	};
+//            itemPanel.setOpaque( false );
+//            add( itemPanel );
+//        }
+//        
         setFocusTraversalPolicyProvider( true );
         setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy(){
             @Override
@@ -239,7 +239,66 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
             }
         });
         setOpaque( false );
+        
+        setShowMiniButtons( showMiniButtons );
     }
+    
+    /**
+     * Tells whether this titel is able to show any {@link DockAction}. 
+     * @return <code>true</code> if {@link DockAction}s are enabled
+     * @see #setShowMiniButtons(boolean)
+     */
+    public boolean isShowMiniButtons(){
+    	return itemPanel != null;
+    }
+    
+    /**
+     * Enables or disables {@link DockAction}s for this title.
+     * @param showMiniButtons whether to show actions or not
+     */
+    public void setShowMiniButtons( boolean showMiniButtons ){
+    	if( showMiniButtons ){
+    		if( itemPanel == null ){
+            	itemPanel = new ButtonPanel( true ){
+            		@Override
+            		protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
+            			return AbstractDockTitle.this.createItemFor( action, dockable );
+            		}
+            	};
+                itemPanel.setOpaque( false );
+                itemPanel.setOrientation( getOrientation() );
+                itemPanel.setToolTipText( getToolTipText() );
+                add( itemPanel );
+                
+                if( isBound() ){
+                	itemPanel.set( getDockable(), getActionSourceFor( getDockable() ) );
+                }
+    		}
+    	}
+    	else{
+    		if( itemPanel != null ){
+    			itemPanel.set( null );
+    			remove( itemPanel );
+    		}
+    	}
+    }
+    
+    /**
+     * Sets the number of pixels to paint between icon and text.
+     * @param iconTextGap the number of pixels to paint
+     */
+    public void setIconTextGap( int iconTextGap ){
+		this.iconTextGap = iconTextGap;
+		revalidate();
+	}
+    
+    /**
+     * Gets the number of pixels to paint between icon and text
+     * @return the number of pixels
+     */
+    public int getIconTextGap(){
+		return iconTextGap;
+	}
     
     /**
      * Adds a color to the list of colors, this title will ensure that 
@@ -429,8 +488,9 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     
     public void setOrientation( Orientation orientation ) {
         this.orientation = orientation;
-        if( showMiniButtons )
+        if( itemPanel != null ){
         	itemPanel.setOrientation( orientation );
+        }
         updateLabelRotation();
         revalidate();
     }
@@ -517,7 +577,8 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     
     /**
      * Gets the insets that have to be applied between the border and the 
-     * content of this title.
+     * content (icon, text, actions) of this title. Subclasses may use this method to
+     * create free space in which they can paint additional items.
      * @return the insets, not <code>null</code>
      */
     protected Insets getInnerInsets(){
@@ -557,15 +618,22 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
         int height = getHeight() - insets.top - insets.bottom;
         
         
-        Dimension labelPreferred = label.getPreferredSize();
+        Dimension labelPreferred;
+        String text = getText();
+        if( text == null || text.length() == 0 ){
+        	labelPreferred = new Dimension( 5, 5 );
+        }
+        else{
+        	labelPreferred = label.getPreferredSize();
+        }
         
         if( orientation.isHorizontal() ){
             if( icon != null ){
-                x += icon.getIconWidth();
-                width -= icon.getIconWidth();
+                x += icon.getIconWidth() + iconTextGap;
+                width -= icon.getIconWidth() + iconTextGap;
             }
             
-            if( showMiniButtons && itemPanel.getItemCount() > 0 ){
+            if( itemPanel != null && itemPanel.getItemCount() > 0 ){
             	Dimension[] buttonPreferred = itemPanel.getPreferredSizes();
             	
             	int remaining = width - labelPreferred.width;
@@ -587,11 +655,11 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
         }
         else{
             if( icon != null ){
-                y += icon.getIconWidth();
-                height -= icon.getIconWidth();
+                y += icon.getIconWidth() + iconTextGap;
+                height -= icon.getIconWidth() + iconTextGap;
             }
             
-            if( showMiniButtons && itemPanel.getItemCount() > 0 ){
+            if( itemPanel != null && itemPanel.getItemCount() > 0 ){
             	Dimension[] buttonPreferred = itemPanel.getPreferredSizes();
             	
             	int remaining = height - labelPreferred.height;
@@ -643,7 +711,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
             	if( restrained ){
             		// icon must not be the whole title
             		int size = getWidth() * getHeight();
-            		if( itemPanel != null && showMiniButtons )
+            		if( itemPanel != null )
             			size -= itemPanel.getWidth() * itemPanel.getHeight();
             		
             		if( size <= 2 * icon.width * icon.height )
@@ -675,6 +743,10 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     public boolean shouldTransfersFocus(){
     	return true;
     }
+    
+    public boolean shouldFocus(){
+    	return true;
+    }
 
     /**
      * Sets whether this title should be painted as focused or not.
@@ -696,10 +768,12 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     @Override
     public Dimension getPreferredSize() {
         Dimension preferred;
-        if( getText() == null || getText().length() == 0 )
-            preferred = new Dimension( 0, 0 );
-        else
+        if( (getText() == null || getText().length() == 0 ) ){
+            preferred = new Dimension( 5, 5 );
+        }
+        else{
             preferred = label.getPreferredSize();
+        }
         
         Insets insets = titleInsets();
 
@@ -723,7 +797,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
             if( icon == null )
                 width = Math.max( width, 2*height );
             
-            preferred = new Dimension( width + insets.left + insets.right,
+            preferred = new Dimension( width + iconTextGap + insets.left + insets.right,
                     height + insets.top + insets.bottom );
         }
         else{
@@ -748,7 +822,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
                 height = Math.max( height, 2*width );
             
             preferred = new Dimension( width + insets.left + insets.right,
-                    height + insets.top + insets.bottom );
+                    height + iconTextGap + insets.top + insets.bottom );
         }            
         
         if( preferred.width < 10 )
@@ -785,8 +859,9 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
             throw new IllegalArgumentException( "Do not call bound twice!" );
         bound = true;
         
-        if( showMiniButtons )
+        if( itemPanel != null ){
         	itemPanel.set( dockable, getActionSourceFor( dockable ) );
+        }
         
         dockable.addDockableListener( listener );
         DockController controller = getDockable().getController();
@@ -820,8 +895,9 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
         
         dockable.removeDockableListener( listener );
         
-        if( showMiniButtons )
+        if( itemPanel != null ){
         	itemPanel.set( null );
+        }
         
         for( AbstractDockColor color : colors )
             color.connect( null );

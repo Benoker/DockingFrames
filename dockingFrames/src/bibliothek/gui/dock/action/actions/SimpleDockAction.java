@@ -37,6 +37,7 @@ import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -65,6 +66,9 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     
     /** allows to invoke this event by the keyboard, might be <code>null</code> */
     private KeyStroke accelerator;
+    
+    /** the {@link Dockable} which is represented by this action and for which drag and drop support may be enabled */
+    private Dockable representative;
     
     private Map<Dockable, DockableKeyForwarder> forwarders =
     	new HashMap<Dockable, DockableKeyForwarder>();
@@ -208,6 +212,32 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     
     public Icon getDisabledIcon( Dockable dockable ){
     	return disabledIcon;
+    }
+    
+    /**
+     * Sets the {@link Dockable} which is represented by this {@link DockAction}. Some views of
+     * this {@link DockAction} will register themselves as {@link DockElementRepresentative} representing
+     * <code>dockable</code>.
+     * @param dockable the new representation, can be <code>null</code>
+     */
+    public void setDockableRepresentation( Dockable dockable ){
+    	if( this.representative != dockable ){
+    		this.representative = dockable;
+    		fireActionRepresentativeChanged( getBoundDockables() );
+    	}
+    }
+    
+    public Dockable getDockableRepresentation( Dockable dockable ){
+    	return representative;
+    }
+    
+    /**
+     * Gets the {@link Dockable} which is represented by this {@link DockAction}.
+     * @return the element, can be <code>null</code>
+     * @see #getDockableRepresentation(Dockable)
+     */
+    public Dockable getDockableRepresentation(){
+    	return representative;
     }
     
     /**

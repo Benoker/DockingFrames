@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -65,6 +65,7 @@ public class DefaultDropDownFilter extends AbstractDropDownFilter {
 		updateDisabledIcon( selection );
 		updateText( selection );
 		updateTooltip( selection );
+		updateRepresentative( selection );
 	}
 	
 	/**
@@ -73,6 +74,14 @@ public class DefaultDropDownFilter extends AbstractDropDownFilter {
 	 */
 	protected void updateEnabled( DropDownViewItem selection ){
 		getView().setEnabled( enabled );
+	}
+	
+	/**
+	 * Updates the {@link Dockable} which is represented by {@link #getView() the view}.
+	 * @param selection the selected item, ignored by the default implementation
+	 */
+	protected void updateRepresentative( DropDownViewItem selection ){
+		getView().setDockableRepresentation( representative );
 	}
 	
 	/**

@@ -191,4 +191,16 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
         for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
             listener.actionEnabledChanged( this, dockables );
     }
+    
+    /**
+     * Invokes the 
+     * {@link StandardDockActionListener#actionRepresentativeChanged(StandardDockAction, Set) actionRepresentativeChanged}-
+     * method of all currently registered {@link StandardDockActionListener}
+     * @param dockables The set of dockables for which the enabled-state has been
+     * changed.
+     */
+    protected void fireActionRepresentativeChanged( Set<Dockable> dockables ){
+        for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
+            listener.actionRepresentativeChanged( this, dockables );
+    }
 }

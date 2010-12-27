@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -81,4 +81,11 @@ public interface StandardDockActionListener {
      * @see StandardDockAction#isEnabled(Dockable)
      */
     public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables );
+    
+    /**
+     * Invoked when the representative-property of a {@link StandardDockAction} has been changed.
+     * @param action the action whose property changed
+     * @param dockables all the affected {@link Dockable}s.
+     */
+    public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables );
 }

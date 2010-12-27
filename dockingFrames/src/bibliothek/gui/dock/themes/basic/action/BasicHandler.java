@@ -99,7 +99,8 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
     	model.setIcon( action.getIcon( dockable ) );
     	model.setDisabledIcon( action.getDisabledIcon( dockable ) );
     	model.setEnabled( action.isEnabled( dockable ) );
-
+    	model.setDockableRepresentative( action.getDockableRepresentation( dockable ) );
+    	
     	action.addDockActionListener( listener );
     	
     	super.bind();
@@ -107,6 +108,7 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
     
     public void unbind(){
     	super.unbind();
+    	getModel().setDockableRepresentative( null );
     	getAction().removeDockActionListener( listener );
     }
     
@@ -152,6 +154,12 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
         	Dockable dockable = getDockable();
             if( dockables.contains( dockable ))
                 updateTooltip();
+        }
+        
+        public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
+	        Dockable dockable = getDockable();
+	        if( dockables.contains( dockable ))
+	        	getModel().setDockableRepresentative( action.getDockableRepresentation( dockable ) );
         }
         
         /**

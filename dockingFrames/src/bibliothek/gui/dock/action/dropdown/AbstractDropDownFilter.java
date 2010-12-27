@@ -55,6 +55,9 @@ public abstract class AbstractDropDownFilter extends DropDownFilter {
 	
 	/** the tooltip of the selected element */
 	protected String tooltip;
+	
+	/** the {@link Dockable} which is represented by this view */
+	protected Dockable representative;
 
 	/**
 	 * Creates a new filter.
@@ -88,5 +91,9 @@ public abstract class AbstractDropDownFilter extends DropDownFilter {
 
 	public void setTooltip( String tooltip ){
 		this.tooltip = tooltip;
+	}
+	
+	public void setDockableRepresentation( Dockable dockable ){
+		this.representative = dockable;	
 	}
 }

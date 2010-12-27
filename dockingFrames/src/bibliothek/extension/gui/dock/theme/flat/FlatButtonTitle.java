@@ -103,7 +103,7 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
     		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat.hover", BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ));
     	}
     	else{
-    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat", BorderFactory.createEmptyBorder( 2, 2, 2, 2 ));
+    		setBorder( ThemeManager.BORDER_MODIFIER + ".title.button.flat", FlatLineBorder.INSTANCE );
     	}
     }
 }

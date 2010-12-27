@@ -545,6 +545,10 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 		return false;
 	}
 	
+	public boolean shouldFocus(){
+    	return true;
+    }
+	
 	public boolean shouldTransfersFocus(){
 		return true;
 	}

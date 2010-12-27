@@ -129,6 +129,11 @@ public abstract class AbstractDropDownHandler<S extends StandardDropDownItemActi
 			if( view != null && dockables.contains( dockable ))
 				view.setEnabled( action.isEnabled( dockable ) );
 		}
+		
+		public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
+			if( view != null && dockables.contains( dockables ))
+				view.setDockableRepresentation( action.getDockableRepresentation( dockable ) );
+		}
 
 		public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ){
 			if( view != null && dockables.contains( dockable ))

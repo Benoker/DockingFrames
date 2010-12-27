@@ -376,6 +376,10 @@ public abstract class BaseTabComponent extends BackgroundPanel implements TabCom
 	    return true;
     }
     
+    public boolean shouldFocus(){
+    	return true;
+    }
+    
     public void addMouseInputListener( MouseInputListener listener ) {
         addMouseListener( listener );
         addMouseMotionListener( listener );

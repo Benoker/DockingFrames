@@ -711,6 +711,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return false;
 	}
 	
+	public boolean shouldFocus(){
+    	return true;
+    }
+	
 	public boolean shouldTransfersFocus(){
 		return false;
 	}

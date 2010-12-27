@@ -142,6 +142,8 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         actions.clear();
         
         super.unbind();
+
+        getModel().setDockableRepresentative( null );
     }
 
     public void setBackground( Color background ) {
@@ -254,6 +256,7 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
             filter.setSelected( false );
             filter.setText( null );
             filter.setTooltip( null );
+            filter.setDockableRepresentation( null );
         }
         update();
     }
@@ -301,6 +304,11 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
             filter.setTooltip( tooltip );
             update();
         }
+        
+        public void setDockableRepresentation( Dockable dockable ){
+        	filter.setDockableRepresentation( dockable );
+        	update();
+        }
     }
     
     /**
@@ -331,6 +339,12 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         public void setTooltip( String tooltip ){
         	getModel().setToolTipText( tooltip );
         }
+        
+        public void setDockableRepresentation( Dockable dockable ){
+        	if( isBound() ){
+        		getModel().setDockableRepresentative( dockable );
+        	}
+        }
     }
     
     /**
@@ -342,6 +356,11 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         	Dockable dockable = getDockable();
             if( dockables.contains( dockable ))
             	getModel().setEnabled( action.isEnabled( dockable ) );
+        }
+        
+        public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
+	        if( dockables.contains( getDockable() ))
+	        	update();
         }
 
         public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ){

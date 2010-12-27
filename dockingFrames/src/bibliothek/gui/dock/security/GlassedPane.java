@@ -247,7 +247,7 @@ public class GlassedPane extends JPanel{
         	if( contentPane == null ){
         		return;
         	}
-        	
+
             Point mouse = e.getPoint();
             Component component = SwingUtilities.getDeepestComponentAt( contentPane, mouse.x, mouse.y );
 
@@ -257,14 +257,15 @@ public class GlassedPane extends JPanel{
             boolean moved = id == MouseEvent.MOUSE_MOVED;
             boolean entered = id == MouseEvent.MOUSE_ENTERED;
             boolean exited = id == MouseEvent.MOUSE_EXITED;
-
+            
             if( drag && dragged == null )
                 dragged = component;
             else if( drag )
                 component = dragged;
 
-            if( press )
-                downCount++;
+            if( press ){
+            	downCount |= 1 << e.getButton();
+            }
 
             if( downCount > 0 && dragged != null )
                 component = dragged;
@@ -274,9 +275,12 @@ public class GlassedPane extends JPanel{
                 dragged = null;
 
             if( release ){
-                downCount--;
-                if( downCount < 0 )
-                    downCount = 0;
+            	downCount &= ~(1 << e.getButton());
+            }
+            if( (e.getModifiersEx() & (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) == 0 ){
+            	// no button is pressed currently, reset dragging
+            	downCount = 0;
+            	dragged = null;
             }
 
             if( moved || entered || exited ){

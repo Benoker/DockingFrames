@@ -154,7 +154,7 @@ public class OrientedLabel extends BackgroundPanel{
      */
     public void setText( String text ){
         this.text = text;
-        label.setText( text == null ? null : "  " + text );
+        label.setText( (text == null || text.length() == 0) ? null : "  " + text );
         revalidate();
         repaint();
     }

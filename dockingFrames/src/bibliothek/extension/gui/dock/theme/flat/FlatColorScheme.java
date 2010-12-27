@@ -50,6 +50,19 @@ public class FlatColorScheme extends DefaultColorScheme {
         setColor( "title.active.text", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ) );
         setColor( "title.inactive.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ) );
         
+        setColor( "title.flap.active", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ) );
+        setColor( "title.flap.active.text", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ) );
+        setColor( "title.flap.active.knob.highlight", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ).brighter() );
+		setColor( "title.flap.active.knob.shadow", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ).darker() );
+        setColor( "title.flap.inactive", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) );
+        setColor( "title.flap.inactive.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ) );
+        setColor( "title.flap.inactive.knob.highlight", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).brighter() );
+		setColor( "title.flap.inactive.knob.shadow", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).darker() );
+        setColor( "title.flap.selected", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) );
+        setColor( "title.flap.selected.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ) );
+        setColor( "title.flap.selected.knob.highlight", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).brighter() );
+		setColor( "title.flap.selected.knob.shadow", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).darker() );
+		
         setColor( "paint", Color.DARK_GRAY );
         setColor( "paint.insertion.area", Color.WHITE );
         

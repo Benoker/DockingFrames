@@ -313,6 +313,32 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
             throw new IllegalArgumentException( "There is no such group" );
         return action.isEnabled();
     }
+
+    public Dockable getDockableRepresentation( Dockable dockable ){
+	    return getGroup( dockable ).getDockableRepresentation( dockable );
+    }
+    
+    /**
+     * Gets the {@link Dockable} which is represented by this {@link DockAction}.
+     * @param key the name of the group
+     * @return the element, can be <code>null</code>
+     * @throws IllegalArgumentException if the group does not exist
+     */
+    public Dockable getDockableRepresentation( K key ){
+        SimpleDockAction action = groups.get( key );
+        if( action == null )
+            throw new IllegalArgumentException( "There is no such group" );
+        return action.getDockableRepresentation();
+    }
+    
+    /**
+     * Sets the {@link Dockable} that is represented by this group.
+     * @param key the name of the group
+     * @param dockable the new represented {@link Dockable}, can be <code>null</code>
+     */
+    public void setDockableRepresentation( K key, Dockable dockable ){
+    	ensureGroup( key ).setDockableRepresentation( dockable );
+    }
     
     /**
      * Set the type of {@link java.awt.event.KeyEvent} that will trigger
@@ -465,6 +491,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         fireActionDisabledIconChanged( set );
         fireActionTextChanged( set );
         fireActionTooltipTextChanged( set );
+        fireActionRepresentativeChanged( set );
     }
     
     /**
@@ -505,6 +532,10 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
 
         public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables ) {
             fireActionEnabledChanged( dockables );
+        }
+        
+        public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
+	        fireActionRepresentativeChanged( dockables );	
         }
     }
 }
