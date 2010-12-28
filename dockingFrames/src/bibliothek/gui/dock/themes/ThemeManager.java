@@ -449,9 +449,11 @@ public class ThemeManager extends TypedUIProperties{
      * 	<li>{@value #BORDER_MODIFIER}.title.button.selected</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.button.pressed</li>	
      * 	<li>{@value #BORDER_MODIFIER}.title.button.selected.pressed</li>
+     * 	<li>{@value #BORDER_MODIFIER}.title.eclipse.button.flat</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.flat</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.station.basic</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.tab</li>
+     * 
      * 	
      * </ul>
      * @param id the identifier of the items that should use <code>modifier</code>

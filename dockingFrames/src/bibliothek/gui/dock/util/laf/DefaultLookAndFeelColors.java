@@ -54,6 +54,7 @@ public class DefaultLookAndFeelColors extends AbstractLookAndFeelColors {
         translations.put( PANEL_BACKGROUND, "Panel.background" );
         translations.put( PANEL_FOREGROUND, "Panel.foreground" );
         translations.put( CONTROL_SHADOW, "controlDkShadow" );
+        translations.put( WINDOW_BORDER, "windowBorder" );
     }
     
     public Color getColor( String key ) {

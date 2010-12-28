@@ -490,8 +490,8 @@ public class ButtonPanel extends JPanel{
 			
 			int x = insets.left;
 			int y = insets.top;
-			int height = getHeight() - insets.left - insets.right;
-			int width = getWidth() - insets.top - insets.bottom;
+			int height = getHeight() - insets.top - insets.bottom;
+			int width = getWidth() - insets.left - insets.right;
 			
 			if( width > current.width ){
 				x += width - current.width;

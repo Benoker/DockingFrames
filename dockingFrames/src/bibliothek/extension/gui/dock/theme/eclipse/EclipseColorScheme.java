@@ -31,6 +31,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.basic.BasicColorScheme;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.util.Colors;
 
 /**
  * A {@link ColorScheme} used by the {@link EclipseTheme}.
@@ -69,6 +70,11 @@ public class EclipseColorScheme extends BasicColorScheme {
         setColor( "stack.tab.text.selected.focuslost",  RexSystemColor.getInactiveTextColor() );
         
         setColor( "stack.border",                       RexSystemColor.getBorderColor() );
+        setColor( "stack.border.edges", 				DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
+        
+        setColor( "flap.button.border.inner", 			Colors.brighter( RexSystemColor.getBorderColor(), 0.7 ) );
+        setColor( "flap.button.border.outer", 			RexSystemColor.getBorderColor() );
+        setColor( "flap.button.border.edge", 			DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         
         setColor( "selection.border",                   RexSystemColor.getBorderColor() );         
     }

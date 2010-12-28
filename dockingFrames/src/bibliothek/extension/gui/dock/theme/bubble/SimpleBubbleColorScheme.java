@@ -232,18 +232,18 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.border.selected.mouse",              diffMirror( inactive, factor ));
         setColor( "stack.tab.foreground.selected.mouse",          diffMirror( inactive, 1.0 ));
         
-        setColor( "stack.tab.background.top.selected",            brighter( inactive, factorWeak ));
-        setColor( "stack.tab.background.bottom.selected",         darker( inactive, factorWeak ) );
+        setColor( "stack.tab.background.top.selected",            brighter( inactive, factor ));
+        setColor( "stack.tab.background.bottom.selected",         darker( inactive, factor ) );
         setColor( "stack.tab.border.selected",                    diffMirror( inactive, factorWeak ));
         setColor( "stack.tab.foreground.selected",                diffMirror( inactive, 1.0 ));
         
-        setColor( "stack.tab.background.top.focused.mouse",       fuller( brighter( active, factor ), factor ));
-        setColor( "stack.tab.background.bottom.focused.mouse",    fuller( darker( active, factor ), factor ) );
+        setColor( "stack.tab.background.top.focused.mouse",       brighter( active, factor ));
+        setColor( "stack.tab.background.bottom.focused.mouse",    darker( active, factor ));
         setColor( "stack.tab.border.focused.mouse",               diffMirror( active, factor ));
         setColor( "stack.tab.foreground.focused.mouse",           diffMirror( active, 1.0 ));
         
-        setColor( "stack.tab.background.top.focused",             fuller( brighter( active, factorWeak ), factor ));
-        setColor( "stack.tab.background.bottom.focused",          fuller( darker( active, factorWeak ), factor ) );
+        setColor( "stack.tab.background.top.focused",             brighter( active, factorWeak ));
+        setColor( "stack.tab.background.bottom.focused",          darker( active, factorWeak ));
         setColor( "stack.tab.border.focused",                     diffMirror( active, factorWeak ));
         setColor( "stack.tab.foreground.focused",                 diffMirror( active, 1.0 ));
         

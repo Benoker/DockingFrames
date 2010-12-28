@@ -391,4 +391,4 @@
 - API: The button-title of a FlapDockStation now supports DockStations: one button is painted for each child, pressing that button will focus the child. The button also support drag and drop operations.
 ! API: The preferences have been updated to handle the additional options for button-titles: the ButtonContentPreference got replaced by ButtonContentPreferenceModel
 - Bugfix: GlassedPane now also check the extended modifiers of MouseEvents and resets its internal state if no button is pressed. Even if some MouseEvents are not properly delivered (e.g. due to a popup-menu opening) the user can continue working by moving around the mouse a bit.
- 
+- Bugfix: Several smaller, non critical issues regarding colors, borders and the position of components 

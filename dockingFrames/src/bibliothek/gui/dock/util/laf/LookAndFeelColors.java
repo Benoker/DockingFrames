@@ -84,6 +84,11 @@ public interface LookAndFeelColors {
     public static final String CONTROL_SHADOW = "dock.control.shadow";
     
     /**
+     * The color for borderes around internal windows.
+     */
+    public static final String WINDOW_BORDER = "dock.window.border";
+    
+    /**
      * Searches for a color respecting the properties of the current
      * LookAndFeel.
      * @param key one of the string keys defined in this interface, clients

@@ -57,6 +57,7 @@ public class Nimbus6u10 extends AbstractLookAndFeelColors{
         translations.put( PANEL_FOREGROUND, "text" );
         
         translations.put( CONTROL_SHADOW, "controlDkShadow" );
+        translations.put( WINDOW_BORDER, "windowBorder" );
     }
     
     public Color getColor( String key ) {

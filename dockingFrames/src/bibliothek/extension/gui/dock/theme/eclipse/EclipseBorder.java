@@ -30,8 +30,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
 
-import javax.swing.border.Border;
-
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -41,30 +39,15 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * @author Janni Kovacs
  * @author Benjamin Sigg
  */
-@ColorCodes( "stack.border" )
-public class EclipseBorder implements Border {
-	/** constant indicating the top left edge has to be painted round */
-	public static final int TOP_LEFT = 1;
-	/** constant indicating the top right edge has to be painted round */
-	public static final int TOP_RIGHT = 2;
-	/** constant indicating the bottom left edge has to be painted round */
-	public static final int BOTTOM_LEFT = 4;
-	/** constant indicating the bottom right edge has to be painted round */
-	public static final int BOTTOM_RIGHT = 8;
-	
-	/** which edges to paint round */
-	private int roundEdges;
-	
-	private boolean fillEdges;
-	private DockController controller;
-	
+@ColorCodes( {"stack.border", "stack.border.edges"} )
+public class EclipseBorder extends AbstractEclipseBorder {
 	/**
 	 * Creates a new border
 	 * @param controller the owner of this border
 	 * @param fillEdges whether to paint over the edges
 	 */
 	public EclipseBorder( DockController controller, boolean fillEdges ){
-		this( controller, fillEdges, TOP_LEFT | TOP_RIGHT );
+		super( controller, fillEdges, TOP_LEFT | TOP_RIGHT );
 	}
 	
 	/**
@@ -75,30 +58,19 @@ public class EclipseBorder implements Border {
 	 * {@link #TOP_RIGHT}, {@link #BOTTOM_LEFT} and {@link #BOTTOM_RIGHT}
 	 */
 	public EclipseBorder( DockController controller, boolean fillEdges, int edges ){
-	    this.fillEdges = fillEdges;
-	    this.controller = controller;
-	    roundEdges = edges;
-	}
-	
-	/**
-	 * Sets which edges are painted round.
-	 * @param roundEdges the edges to paint round
-	 */
-	public void setRoundEdges( int roundEdges ){
-		this.roundEdges = roundEdges;
-	}
-	
-	/**
-	 * Tells which edges are painted round.
-	 * @return the round edges
-	 */
-	public int getRoundEdges(){
-		return roundEdges;
+	    super( controller, fillEdges, edges );
 	}
 	
 	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-		if( fillEdges ){
-    	    g.setColor( c.getBackground() );
+		int roundEdges = getRoundEdges();
+		DockController controller = getController();
+		
+		if( isFillEdges() ){
+			Color color = controller.getColors().get( "stack.border.edges" );
+			if( color == null )
+			    color = c.getBackground();
+			
+    	    g.setColor( color );
     
     	    if( (roundEdges & TOP_LEFT) != 0 ){
     	    	g.fillRect( 0, 0, 6, 1 );
@@ -181,15 +153,11 @@ public class EclipseBorder implements Border {
 		// between edges
 		g.drawLine(0, 6, 0, height-7);
 		g.drawLine(6, height-1, width-7, height-1);
-		g.drawLine(width-1, 7, width-1, height-7);
+		g.drawLine(width-1, 6, width-1, height-7);
 		g.drawLine(6, 0, width-7, 0);
 	}
 
 	public Insets getBorderInsets(Component c) {
 		return new Insets(1, 1, 1, 1);
-	}
-
-	public boolean isBorderOpaque() {
-		return false;
 	}
 }

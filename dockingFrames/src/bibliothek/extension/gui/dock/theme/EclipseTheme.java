@@ -31,6 +31,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseButtonTitle;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseColorScheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockTitleFactory;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockableSelection;
@@ -215,7 +216,8 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         	}
         	
         	public void request( DockTitleRequest request ){
-	        	request.answer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );	
+//	        	request.answer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );
+        		request.answer( new EclipseButtonTitle( request.getTarget(), request.getVersion() ) );
         	}
         });
 

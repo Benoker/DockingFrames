@@ -446,7 +446,10 @@ public class DockFrontend {
     /**
      * Register a backup factory. A backup factory is used to create a {@link Dockable}
      * that is expected to be in the cache, but is missing. The new {@link Dockable}
-     * is automatically added to this frontend.
+     * is automatically added to this frontend.<br>
+     * The difference between a normal and a backup factory is: a normal factory will just create
+     * the {@link Dockable}, a backup factory will also install the {@link Dockable} on the
+     * {@link DockFrontend} using the identifier the element had when it was saved (this happens automatically).
      * @param factory a new factory
      */
     public void registerBackupFactory( DockFactory<? extends Dockable,?,?> factory ){

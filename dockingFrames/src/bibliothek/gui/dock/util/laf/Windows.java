@@ -49,6 +49,7 @@ public class Windows extends AbstractLookAndFeelColors{
         colors.put( PANEL_BACKGROUND, SystemColor.control );
         colors.put( PANEL_FOREGROUND, SystemColor.controlText );
         colors.put( CONTROL_SHADOW, SystemColor.controlShadow );
+        colors.put( WINDOW_BORDER, SystemColor.windowBorder );
     }
     
     public void bind() {

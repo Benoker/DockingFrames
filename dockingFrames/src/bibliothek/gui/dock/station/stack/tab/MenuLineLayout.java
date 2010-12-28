@@ -519,7 +519,8 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 						menu.setBounds( menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height );
 					}
 					if( infoSize != null && info != null ){
-						Rectangle infoBounds = new Rectangle( available.x + available.width - infoSpace, available.y, infoSpace, required );
+						int reqDelta = Math.max( 0, required - infoSize.getHeight() );
+						Rectangle infoBounds = new Rectangle( available.x + available.width - infoSpace, available.y+reqDelta/2, infoSpace, required-reqDelta );
 						infoBounds = conversion.modelToView( infoBounds );
 						info.setBounds( infoBounds.x, infoBounds.y, infoBounds.width, infoBounds.height );
 					}
@@ -545,7 +546,8 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 					}
 					if( infoSize != null ){
 						width = available.x + available.width - x;
-						Rectangle infoBounds = new Rectangle( x, available.y, width, required );
+						int reqDelta = Math.max( 0, required - infoSize.getHeight() );
+						Rectangle infoBounds = new Rectangle( x, available.y+reqDelta/2, width, required-reqDelta );
 						infoBounds = conversion.modelToView( infoBounds );
 						info.setBounds( infoBounds.x, infoBounds.y, infoBounds.width, infoBounds.height );
 					}

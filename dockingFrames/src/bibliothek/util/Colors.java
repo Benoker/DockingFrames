@@ -88,6 +88,20 @@ public final class Colors {
 		);
 		return back;
 	}
+	
+	/**
+	 * Converts <code>c</code> into HSB and adds <code>delta</code> to the brightness.
+	 * @param c the color to convert
+	 * @param delta the delta in brightness
+	 * @return the new color
+	 */
+	public static Color deltaBrightness( Color c, double delta ){
+		float[] hsb = Color.RGBtoHSB( c.getRed(), c.getBlue(), c.getGreen(), null );
+		hsb[2] += delta;
+		hsb[2] = Math.max( 0, Math.min( 1, hsb[2] ));
+		return Color.getHSBColor( hsb[0], hsb[1], hsb[2] );
+	}
+	
 	/**
 	 * Creates a color which "lies between" the colors <code>a</code>
 	 * and <code>b</code>

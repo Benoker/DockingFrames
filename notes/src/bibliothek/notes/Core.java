@@ -27,6 +27,7 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.notes.model.Note;
@@ -112,7 +113,7 @@ public class Core implements ComponentCollector{
 		controller.setTheme( new NoteBasicTheme() );
 		controller.getProperties().set( EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true );
 		controller.getProperties().set( EclipseTheme.TAB_PAINTER, RectGradientPainter.FACTORY );
-		controller.getProperties().set( FlapDockStation.BUTTON_CONTENT, FlapDockStation.ButtonContent.ICON_AND_TEXT_ONLY );
+		controller.getProperties().set( FlapDockStation.BUTTON_CONTENT, ButtonContent.ICON_AND_TEXT_ONLY );
 		
 		frontend = new DockFrontend( controller, frame );
 		preferences = new DockingFramesPreference( controller );

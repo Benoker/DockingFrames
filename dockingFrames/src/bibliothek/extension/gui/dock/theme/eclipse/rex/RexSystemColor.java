@@ -69,7 +69,8 @@ public class RexSystemColor {
 	}
 
 	public static Color getBorderColor(){
-	    return decide( LookAndFeelColors.CONTROL_SHADOW, SystemColor.controlShadow );
+//	    return decide( LookAndFeelColors.CONTROL_SHADOW, SystemColor.controlShadow );
+		return decide( LookAndFeelColors.WINDOW_BORDER + ".[darker]", SystemColor.windowBorder.darker() );
 	}
 	
 	private static Color decide(String lookAndFeelKey, Color defaultColor ) {
