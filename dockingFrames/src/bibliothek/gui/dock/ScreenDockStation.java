@@ -807,7 +807,7 @@ public class ScreenDockStation extends AbstractDockStation {
     
     public void drop() {
         if( dropInfo.combine != null ){
-            combine( dropInfo, dropInfo.combiner );
+            combine( dropInfo, dropInfo.combiner, null );
         }
         else{
             Component component = dropInfo.dockable.getComponent();
@@ -978,7 +978,7 @@ public class ScreenDockStation extends AbstractDockStation {
 
     public void move() {
         if( dropInfo.combine != null ){
-            combine( dropInfo, dropInfo.combiner );
+            combine( dropInfo, dropInfo.combiner, null );
         }
         else{
             ScreenDockWindow window = getWindow( dropInfo.dockable );
@@ -1233,7 +1233,7 @@ public class ScreenDockStation extends AbstractDockStation {
             if( !done ){
                 Dockable old = best.getDockable();
                 if( old.accept( this, dockable ) && dockable.accept( this, old ) && (acceptance == null || acceptance.accept( this, old, dockable ))){
-                    combine( old, dockable );
+                    combine( old, dockable, property.getSuccessor() );
                     done = true;
                 }
             }
@@ -1303,6 +1303,21 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param upper a {@link Dockable} which may be child of this station
      */
     public void combine( Dockable lower, Dockable upper ){
+    	combine( lower, upper, null );
+    }
+    
+    /**
+     * Combines the <code>lower</code> and the <code>upper</code> {@link Dockable}
+     * to one {@link Dockable}, and replaces the <code>lower</code> with
+     * this new Dockable. There are no checks whether this station 
+     * {@link #accept(Dockable) accepts} the new child or the children
+     * can be combined. The creation of the new {@link Dockable} is done
+     * by the {@link #getCombiner() combiner}.
+     * @param lower a {@link Dockable} which must be child of this station
+     * @param upper a {@link Dockable} which may be child of this station
+     * @param property location information associated with <code>upper</code>, may be <code>null</code>
+     */
+    public void combine( Dockable lower, Dockable upper, DockableProperty property ){
     	DropInfo info = new DropInfo();
     	
     	info.dockable = upper;
@@ -1322,7 +1337,7 @@ public class ScreenDockStation extends AbstractDockStation {
     	
     	info.combiner = combiner.prepare( info, true );
     	
-    	combine( info, info.combiner );
+    	combine( info, info.combiner, property );
     }
 
     /**
@@ -1330,8 +1345,9 @@ public class ScreenDockStation extends AbstractDockStation {
      * in <code>source</code>.
      * @param source the source {@link Dockable}s to combine
      * @param target the target created by the {@link Combiner}
+     * @param property location information associated with the new {@link Dockable}, can be <code>null</code>
      */
-    private void combine( CombinerSource source, CombinerTarget target ){
+    private void combine( CombinerSource source, CombinerTarget target, DockableProperty property ){
     	Dockable lower = source.getOld();
     	Dockable upper = source.getNew();
     	
@@ -1367,6 +1383,13 @@ public class ScreenDockStation extends AbstractDockStation {
 	        	return old;
         	}
         }, target );
+        
+        if( property != null ){
+        	DockStation combined = valid.asDockStation();
+        	if( combined != null && upper.getDockParent() == combined ){
+        		combined.move( upper, property );
+        	}
+        }
         
         listeners.fireDockableAdding( valid );
         window.setDockable( valid );

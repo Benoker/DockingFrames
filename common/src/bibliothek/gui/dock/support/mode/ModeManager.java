@@ -577,6 +577,19 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     	H history = entry.properties.get( mode.getUniqueIdentifier() );
     	apply( dockable, mode, history, set );
     }
+
+    /**
+     * Gets the history of <code>dockable</code> in mode <code>modeId</code>.
+     * @param dockable the element whose history is searched
+     * @param modeId the identifier of the mode
+     * @return the history information or <code>null</code> if not found
+     */
+    protected H getHistory( Dockable dockable, Path modeId ){
+    	DockableHandle entry = dockables.get( dockable );
+    	if( entry == null )
+    		return null;
+    	return entry.properties.get( modeId );
+    }
     
     /**
      * Alters the mode of <code>dockable</code> to be <code>mode</code>. 
@@ -1205,6 +1218,10 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		closeAffected();
 	}
 	
+	/**
+	 * Opens the {@link ChangeSet} that collects {@link Dockable}s whose mode
+	 * may have changed.
+	 */
     private void openAffected(){
     	if( affectedCount == 0 ){
     		affected = new ChangeSet();
@@ -1212,6 +1229,10 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     	affectedCount++;
     }
     
+    /**
+     * Closes the {@link ChangeSet} that collected {@link Dockable}s whose mode
+     * may have changed.
+     */
     private void closeAffected(){
     	affectedCount--;
     	if( affectedCount == 0 ){

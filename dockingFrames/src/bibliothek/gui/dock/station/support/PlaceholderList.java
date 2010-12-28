@@ -143,10 +143,20 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		
 		public void add( int index, P object ){
 			super.add( index, object );
-			
-			Path placeholder = getPlaceholder( object.asDockable() );
+			remove( object.asDockable() );
+		}
+		
+		private void remove( D dockable ){
+			Path placeholder = getPlaceholder( dockable );
 			if( placeholder != null ){
 				removeAll( placeholder );
+			}
+			
+			S station = toStation( dockable );
+			if( station != null ){
+				for( D child : getChildren( station )){
+					remove( child );
+				}
 			}
 		}
 	};
@@ -215,6 +225,13 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	 * @param map the map of placeholders, not <code>null</code>
 	 */
 	protected abstract void setPlaceholders( S station, PlaceholderMap map );
+	
+	/**
+	 * Gets all the children of <code>station</code>.
+	 * @param station some station whose children are searched
+	 * @return the children
+	 */
+	protected abstract D[] getChildren( S station );
 	
 	/**
 	 * Reads the contents of <code>map</code> and adds them at the end of this list.
@@ -676,6 +693,21 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	}
 	
 	/**
+	 * Searches the first occurance of <code>placeholder</code> in a placeholder-set and returns
+	 * return the index of that entry on the {@link Level#BASE BASE level}.
+	 * @param placeholder the placeholder to search
+	 * @return its location or -1 if not found
+	 */
+	public int getListIndex( Path placeholder ){
+		Entry entry = search( placeholder );
+		if( entry == null ){
+			return -1;
+		}
+		
+		return entry.index( Level.BASE );
+	}
+	
+	/**
 	 * Tells whether this list contains a reference to <code>placeholder</code>.
 	 * @param placeholder the placeholder to search
 	 * @return whether the placeholder was found
@@ -728,6 +760,20 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			return null;
 		}
 		return entry.item;
+	}
+	
+	/**
+	 * Gets the {@link PlaceholderMap} that was used for a station at location <code>placeholder</code>.
+	 * @param placeholder some placeholder to search
+	 * @return the {@link PlaceholderMap} that was stored at the place where <code>placeholder</code> was found,
+	 * can be <code>null</code>
+	 */
+	public PlaceholderMap getMap( Path placeholder ){
+		Entry entry = search( placeholder );
+		if( entry == null ){
+			return null;
+		}
+		return entry.item.placeholderMap;
 	}
 
 	private Entry search( Path placeholder ){
@@ -1279,26 +1325,26 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			return placeholderMap;
 		}
 		
-		@Override
-		public int hashCode(){
-			return value == null ? 0 : value.hashCode();
-		}
-		
-		@Override
-		public boolean equals( Object obj ){
-			if( obj == null ){
-				return false;
-			}
-			
-			if( obj == this )
-				return true;
-			
-			if( obj.getClass() == getClass() ){
-				return value == null ? ((Item)obj).value == null : value.equals( ((Item)obj).value );
-			}
-			
-			return false;
-		}
+//		@Override
+//		public int hashCode(){
+//			return value == null ? 0 : value.hashCode();
+//		}
+//		
+//		@Override
+//		public boolean equals( Object obj ){
+//			if( obj == null ){
+//				return false;
+//			}
+//			
+//			if( obj == this )
+//				return true;
+//			
+//			if( obj.getClass() == getClass() ){
+//				return value == null ? ((Item)obj).value == null : value.equals( ((Item)obj).value );
+//			}
+//			
+//			return false;
+//		}
 		
 		@Override
 		public String toString(){

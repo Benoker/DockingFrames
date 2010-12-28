@@ -1030,6 +1030,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             
             int destination = ((StackDockProperty)property).getIndex();
             destination = Math.min( destination, getDockableCount()-1 );
+            destination = Math.max( 0, destination );
             move( index, destination );
         }
     }

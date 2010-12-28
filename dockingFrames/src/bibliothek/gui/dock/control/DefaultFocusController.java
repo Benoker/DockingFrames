@@ -98,7 +98,7 @@ public class DefaultFocusController extends AbstractFocusController {
     
     public FocusVeto setFocusedDockable( DockElementRepresentative source, boolean force, boolean ensureFocusSet, final boolean ensureDockableFocused ){
     	// ignore more than one call
-    	if( onFocusing )
+    	if( onFocusing || isFrozen() )
     		return null;
     	
     	FocusVeto veto = checkFocusedDockable( source );
@@ -144,6 +144,10 @@ public class DefaultFocusController extends AbstractFocusController {
     }
     
     public void ensureFocusSet( boolean dockableOnly ){
+    	if( isFrozen() ){
+    		return;
+    	}
+    	
         Dockable focusedDockable = this.focusedDockable;
         if( focusedDockable != null ){
             Stack<Dockable> front = new Stack<Dockable>();            

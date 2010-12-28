@@ -116,6 +116,15 @@ public class PerspectivePlaceholderList<P extends PlaceholderListItem<Perspectiv
 	protected PerspectiveStation toStation( PerspectiveDockable dockable ){
 		return dockable.asStation();
 	}
+	
+	@Override
+	protected PerspectiveDockable[] getChildren( PerspectiveStation station ){
+		PerspectiveDockable[] children = new PerspectiveDockable[ station.getDockableCount() ];
+		for( int i = 0; i < children.length; i++ ){
+			children[i] = station.getDockable( i );
+		}
+		return children;
+	}
 
 	@Override
 	protected String toString( PerspectiveDockable dockable ){

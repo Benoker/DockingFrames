@@ -55,6 +55,9 @@ public abstract class AbstractFocusController implements FocusController{
     /** A list of listeners which can cancel a call to the controller */
     private List<FocusVetoListener> vetos = new ArrayList<FocusVetoListener>();
     
+    /** how often this focus controller was frozen */
+    private int frozen = 0;
+    
     /**
      * Creates a new focus controller
      * @param controller the owner of this controller, not <code>null</code>
@@ -79,6 +82,23 @@ public abstract class AbstractFocusController implements FocusController{
     
     public FocusStrategy getStrategy(){
     	return strategy;
+    }
+    
+    public void freezeFocus(){
+	    frozen++;	
+    }
+    
+    public void meltFocus(){
+	    frozen--;	
+    }
+    
+    /**
+     * Tells whether this {@link FocusController} is temporarily frozen and should
+     * not process any events.
+     * @return <code>true</code> if disabled
+     */
+    protected boolean isFrozen(){
+    	return frozen > 0;
     }
     
     /**

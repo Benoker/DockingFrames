@@ -72,6 +72,17 @@ public interface FocusController {
     public void removeDockableFocusListener( DockableFocusListener listener );
     
     /**
+     * Temporarily disables this {@link FocusController}. Any call that would lead to a change
+     * in the focus is silently ignored.
+     */
+    public void freezeFocus();
+    
+    /**
+     * Re-enabls this {@link FocusController} after it was temporarility disabled.
+     */
+    public void meltFocus();
+    
+    /**
      * Sets the strategy which will be used to focus components.
      * @param strategy the new strategy, can be <code>null</code>
      */

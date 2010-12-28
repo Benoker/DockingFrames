@@ -36,6 +36,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.group.CGroupBehavior;
+import bibliothek.gui.dock.common.group.CGroupBehaviorCallback;
+import bibliothek.gui.dock.common.group.StackGroupBehavior;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
@@ -47,6 +50,8 @@ import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementListener;
+import bibliothek.gui.dock.support.mode.AffectedSet;
+import bibliothek.gui.dock.support.mode.AffectingRunnable;
 import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.util.DockProperties;
@@ -94,6 +99,9 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	/** registers dragged and dropped dockables */
 	private RelocatorListener relocatorListener = new RelocatorListener();
 	
+	/** how to group dockables */
+	private CGroupBehavior behavior = new StackGroupBehavior();
+	
 	/** the current {@link ExtendedModeEnablementFactory} */
 	private PropertyValue<ExtendedModeEnablementFactory> extendedModeFactory = new PropertyValue<ExtendedModeEnablementFactory>( MODE_ENABLEMENT ) {
 		@Override
@@ -138,22 +146,6 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 				}
 			}
 			return false;
-		}
-	};
-	
-	/** transfers focus if necessary to the moved dockable */
-	private LocationModeListener focusListener = new LocationModeListener(){
-		public void applyStarting( LocationModeEvent event ){
-			event.setClientObject( this, getController().getFocusedDockable() );
-		}
-		
-		public void applyDone( LocationModeEvent event ){
-			Dockable focused = (Dockable)event.getClientObject( this );
-			if( event.getDockable() == focused ){
-				if( event.getMode().shouldAutoFocus() ){
-					getController().setFocusedDockable( focused, true, true, false );
-				}
-			}
 		}
 	};
 	
@@ -215,19 +207,82 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	}
 	
 	/**
+	 * Sets the group behavior. The group behavior is applied if {@link #setMode(Dockable, ExtendedMode)} is called and
+	 * modifies the call such that another {@link Dockable} receives the event. Any call directly to any of
+	 * the <code>apply</code> methods will not be modified by the group behavior.
+	 * @param behavior the new behavior, not <code>null</code>
+	 */
+	public void setGroupBehavior( CGroupBehavior behavior ){
+		if( behavior == null ){
+			throw new IllegalArgumentException( "the group behavior must not be null" );
+		}
+		this.behavior = behavior;
+	}
+	
+	/**
+	 * Gets the current group behavior.
+	 * @return the current behavior, not <code>null</code>
+	 * @see #setGroupBehavior(CGroupBehavior)
+	 */
+	public CGroupBehavior getGroupBehavior(){
+		return behavior;
+	}
+	
+	/**
 	 * Sets the current mode of <code>dockable</code>.
 	 * @param dockable the dockable whose mode is to be set
 	 * @param extendedMode the mode
 	 * @throws IllegalArgumentException if <code>extendedMode</code> is unknown
 	 */
-	public void setMode( Dockable dockable, ExtendedMode extendedMode ){
+	public void setMode( final Dockable dockable, final ExtendedMode extendedMode ){
 		M mode = getMode( extendedMode.getModeIdentifier() );
-		if( mode == null )
+		if( mode == null ){
 			throw new IllegalArgumentException( "No mode '" + extendedMode.getModeIdentifier() + "' available" );
-
-		apply( dockable, mode, false );
+		}
+	
+		runTransaction( new AffectingRunnable(){
+			public void run( AffectedSet set ){
+				setMode( dockable, extendedMode, set );
+			}
+		});		
 	}
-
+	
+	private void setMode( final Dockable dockable, ExtendedMode extendedMode, final AffectedSet affected ){
+		try{
+			getController().getFocusController().freezeFocus();
+			
+			behavior.forward( dockable, extendedMode, new CGroupBehaviorCallback(){
+				public void setMode( Dockable element, ExtendedMode mode ){
+					apply( element, mode.getModeIdentifier(), false );
+				}
+				
+				public void setLocation( Dockable element, Location location ){
+					apply( element, location.getMode(), location, affected );
+				}
+				
+				public LocationModeManager<? extends LocationMode> getManager(){
+					return LocationModeManager.this;
+				}
+				
+				public Location getLocation( Dockable dockable ){
+					M mode = getCurrentMode( dockable );
+					if( mode == null ){
+						return null;
+					}
+					return mode.current( dockable );
+				}
+			});
+		}
+		finally{
+			getController().getFocusController().meltFocus();
+		}
+		
+		LocationMode mode = getMode( extendedMode.getModeIdentifier() );
+		if( mode != null && mode.shouldAutoFocus() ){
+			getController().setFocusedDockable( dockable, true, true, false );
+		}
+	}
+	
 	/**
 	 * Gets the current mode of <code>dockable</code>.
 	 * @param dockable the element whose mode is searched
@@ -424,7 +479,6 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		public void modeAdded(	ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
 			mode.setManager( LocationModeManager.this );
 			mode.setController( getController() );
-			mode.addLocationModeListener( focusListener );
 			
 			List<LocationModeListener> list = listeners.get( mode.getUniqueIdentifier() );
 			if( list != null ){
@@ -437,7 +491,6 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		public void modeRemoved( ModeManager<? extends Location, ? extends LocationMode> manager, LocationMode mode ){
 			mode.setManager( null );
 			mode.setController( null );
-			mode.removeLocationModeListener( focusListener );
 			
 			List<LocationModeListener> list = listeners.get( mode.getUniqueIdentifier() );
 			if( list != null ){

@@ -72,6 +72,7 @@ import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
+import bibliothek.gui.dock.common.group.CGroupBehavior;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CControlFactory;
 import bibliothek.gui.dock.common.intern.CDockFrontend;
@@ -115,6 +116,7 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
 import bibliothek.gui.dock.frontend.FrontendEntry;
@@ -2118,7 +2120,7 @@ public class CControl {
 
     /**
      * Sets the {@link CMaximizeBehavior}. The behavior decides what happens
-     * when the user want's to maximize or to un-maximize a {@link CDockable}.
+     * when the user wants to maximize or to un-maximize a {@link CDockable}.
      * @param behavior the new behavior, not <code>null</code>
      */
     public void setMaximizeBehavior( CMaximizeBehavior behavior ){
@@ -2134,6 +2136,27 @@ public class CControl {
         return locationManager.getMaximizedMode().getMaximizeBehavior();
     }
 
+    /**
+     * Sets the {@link CGroupBehavior}. The behavior decides what happens when the user wants to change
+     * the {@link ExtendedMode} of a {@link CDockable}.<br>
+     * To be exact: the group behavior is applied for a call to {@link CDockable#setExtendedMode(ExtendedMode)}
+     * respective a call to {@link LocationModeManager#setMode(Dockable, ExtendedMode)}. The buttons that are
+     * visible to the user all link to these methods.  
+     * @param behavior the new behavior, not <code>null</code>
+     */
+    public void setGroupBehavior( CGroupBehavior behavior ){
+    	locationManager.setGroupBehavior( behavior );
+    }
+    
+    /**
+     * Gets the currently used {@link CGroupBehavior}.
+     * @return the current behavior, not <code>null</code>
+     * @see #setMinimizeBehavior(CGroupBehavior)
+     */
+    public CGroupBehavior getGroupBehavior(){
+    	return locationManager.getGroupBehavior();
+    }
+    
     /**
      * Sets the theme of the elements in the realm of this control.
      * @param theme the new theme

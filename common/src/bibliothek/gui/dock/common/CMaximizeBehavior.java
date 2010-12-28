@@ -37,9 +37,8 @@ import bibliothek.gui.dock.util.DockUtilities;
  * The maximize-behavior is used by the {@link MaximizedMode} to decide, what
  * happens when the user maximizes or un-maximizes some {@link CDockable}.<br>
  * Clients can use {@link CControl#setMaximizeBehavior(CMaximizeBehavior)} to
- * change the behavior.
+ * change the behavior. 
  * @author Benjamin Sigg
- *
  */
 public interface CMaximizeBehavior {
 	/**

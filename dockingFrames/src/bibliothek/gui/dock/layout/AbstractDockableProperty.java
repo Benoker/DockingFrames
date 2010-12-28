@@ -49,7 +49,7 @@ public abstract class AbstractDockableProperty implements DockableProperty {
      */
     protected void copy( AbstractDockableProperty copy ){
         if( successor != null )
-            copy.successor = successor;
+            copy.successor = successor.copy();
     }
 
     public boolean equalsNoSuccessor( DockableProperty property ){

@@ -103,6 +103,15 @@ public class DockablePlaceholderList<P extends PlaceholderListItem<Dockable>> ex
 	}
 	
 	@Override
+	protected Dockable[] getChildren( DockStation station ){
+		Dockable[] children = new Dockable[ station.getDockableCount() ];
+		for( int i = 0; i < children.length; i++ ){
+			children[i] = station.getDockable( i );
+		}
+		return children;
+	}
+	
+	@Override
 	protected PlaceholderMap getPlaceholders( DockStation station ){
 		return station.getPlaceholders();
 	}
@@ -114,6 +123,6 @@ public class DockablePlaceholderList<P extends PlaceholderListItem<Dockable>> ex
 	
 	@Override
 	protected String toString( Dockable dockable ){
-		return dockable.getTitleText();
+		return "'" + dockable.getTitleText() + "'";
 	}
 }

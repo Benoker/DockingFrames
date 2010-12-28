@@ -67,7 +67,7 @@ public interface DockableProperty {
     public void setSuccessor( DockableProperty properties );
     
     /**
-     * Gets a copy of this property, the {@link #getSuccessor()} must be
+     * Gets a copy of this property, the {@link #getSuccessor() successor} must be
      * copied as well.
      * @return an independent copy of <code>this</code>
      */
