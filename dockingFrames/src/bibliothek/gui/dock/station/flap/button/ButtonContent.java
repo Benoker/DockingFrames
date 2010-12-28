@@ -295,15 +295,25 @@ public class ButtonContent {
     }
     
     public void handleChange( Dockable dockable ){
-    	
+    	for( ButtonContentListener listener : listeners( dockable )){
+    		listener.changed( this, dockable );
+    	}
     }
     
     private void install( Dockable dockable ){
-    	
+    	knob.install( dockable, this );
+    	icon.install( dockable, this );
+    	text.install( dockable, this );
+    	children.install( dockable, this );
+    	actions.install( dockable, this );
     }
     
     private void uninstall( Dockable dockable ){
-    	
+    	knob.uninstall( dockable, this );
+    	icon.uninstall( dockable, this );
+    	text.uninstall( dockable, this );
+    	children.uninstall( dockable, this );
+    	actions.uninstall( dockable, this );
     }
         
     /**
