@@ -89,7 +89,7 @@ public class StackGroupBehavior implements CGroupBehavior {
 		for( int i = baseIndex - 1; i >= 0; i-- ){
 			Location base = callback.getLocation( dockable );
 			Dockable moving = children[i];
-			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex ) );
+			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex + 1 ) );
 			callback.setLocation( moving, movingLocation );
 		}
 		

@@ -38,7 +38,10 @@ import bibliothek.gui.dock.facile.mode.LocationMode;
  */
 public interface CGroupBehavior {
 	/**
-	 * Changes the mode of <code>dockable</code> such that it matches <code>target</code>. May trigger additional
+	 * Changes the mode of <code>dockable</code> such that it matches <code>target</code>. This method may also change
+	 * the {@link ExtendedMode} or location of other {@link Dockable}s to keep the group together. While this
+	 * method runs, focus management is disabled. The focus will be transfered to <code>dockable</code> if
+	 * <code>target</code> represents a {@link LocationMode} that requires focus transfer.
 	 * {@link Dockable}s to change their mode. 
 	 * @param dockable the element that was clicked by the user
 	 * @param target the extended mode intended for <code>dockable</code>

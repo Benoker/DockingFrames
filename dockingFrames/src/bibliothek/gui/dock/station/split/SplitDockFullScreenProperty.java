@@ -45,7 +45,9 @@ import bibliothek.util.xml.XElement;
 @ClientOnly
 public class SplitDockFullScreenProperty extends AbstractDockableProperty {
 	public DockableProperty copy(){
-		return this;
+		SplitDockFullScreenProperty property = new SplitDockFullScreenProperty();
+		copy( property );
+		return property;
 	}
 
 	public String getFactoryID(){

@@ -148,7 +148,9 @@ public class SplitDockPlaceholderProperty extends AbstractDockableProperty {
 	}
 
 	public SplitDockPlaceholderProperty copy(){
-		return new SplitDockPlaceholderProperty( placeholder, backup == null ? null : backup.copy() );
+		SplitDockPlaceholderProperty copy = new SplitDockPlaceholderProperty( placeholder, backup == null ? null : backup.copy() );
+		copy( copy );
+		return copy;
 	}
 
 	public String getFactoryID(){
