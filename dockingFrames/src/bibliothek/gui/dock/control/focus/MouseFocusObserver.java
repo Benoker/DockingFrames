@@ -40,7 +40,7 @@ import bibliothek.util.Todo.Version;
 
 /**
  * A {@link MouseFocusObserver} tracks the movement and actions of the mouse and is responsible for
- * transfering the focus by calling {@link DockController#setFocusedDockable(Dockable, boolean, boolean)}
+ * transferring the focus by calling {@link DockController#setFocusedDockable(Dockable, boolean, boolean,  boolean)}
  * at an appropriate time.
  * @author Benjamin Sigg
  */

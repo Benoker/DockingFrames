@@ -67,7 +67,6 @@ public class SecureDockController extends DockController {
      * Creates a new controller, but does not initiate the properties
      * if <code>factory</code> is <code>null</code>.
      * @param factory the factory that will create the elements of this controller
-     * @see #initiate()   
      */
     public SecureDockController( SecureDockControllerFactory factory ) {
         super( factory );

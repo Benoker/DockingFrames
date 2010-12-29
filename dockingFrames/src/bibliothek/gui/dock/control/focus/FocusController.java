@@ -127,7 +127,7 @@ public interface FocusController {
     
     /**
      * Sets the {@link Dockable} which should have the focus.
-     * @param the item to focs, may be <code>null</code>
+     * @param source the item to focs, may be <code>null</code>
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
      * optimations are allowed. Clients normally can set this argument

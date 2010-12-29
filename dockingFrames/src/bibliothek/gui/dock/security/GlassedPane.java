@@ -42,16 +42,16 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.util.JavaVersionWorkaround;
 
 /**
  * A panel containing two children: a "content pane" and a "glass pane". The
  * "content pane" can be replaced by the client and can be any {@link JComponent}.
  * The "glassed pane" is an invisible panel above the "content pane". It will
- * catch all {@link MouseEvent}s, inform a {@link SecureMouseFocusObserver} about
+ * catch all {@link MouseEvent}s, inform the {@link FocusController} about
  * them, and then forward the events to the "content pane".
- * <b>Note:</b> clients can use {@link SecureDockController#wrap(JComponent)} to
- * create and register a {@link GlassedPane} in one step.
  * @author Benjamin Sigg
  */
 public class GlassedPane extends JPanel{
@@ -149,8 +149,7 @@ public class GlassedPane extends JPanel{
     
     /**
      * A panel that lies over all other components of the enclosing GlassedPane.
-     * This panel catches all MouseEvent, and informs the {@link GlassedPane#focusController focusController}
-     * about the events.
+     * This panel catches all MouseEvent, and informs the {@link MouseFocusObserver}.
      * @author Benjamin Sigg
      */
     private class GlassPane extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
@@ -239,7 +238,7 @@ public class GlassedPane extends JPanel{
 
         /**
          * Dispatches the event <code>e</code> to the ContentPane or a child
-         * of the ContentPane. Also informs the FocusManager about the event.
+         * of the ContentPane. Also informs the {@link MouseFocusObserver} about the event.
          * @param e the event to handle
          * @param id the type of the event
          */

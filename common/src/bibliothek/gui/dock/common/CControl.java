@@ -2151,7 +2151,7 @@ public class CControl {
     /**
      * Gets the currently used {@link CGroupBehavior}.
      * @return the current behavior, not <code>null</code>
-     * @see #setMinimizeBehavior(CGroupBehavior)
+     * @see #setGroupBehavior(CGroupBehavior)
      */
     public CGroupBehavior getGroupBehavior(){
     	return locationManager.getGroupBehavior();

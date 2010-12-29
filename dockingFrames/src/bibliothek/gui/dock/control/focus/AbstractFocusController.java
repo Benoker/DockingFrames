@@ -120,7 +120,7 @@ public abstract class AbstractFocusController implements FocusController{
     
     /**
      * Asks all {@link FocusVetoListener} through their method
-     * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, DockTitle)}
+     * {@link FocusVetoListener#vetoFocus(FocusController, DockTitle)}
      * whether they want cancel a call to the {@link DockController}.
      * @param title the title which is about to be focused
      * @return the first veto
@@ -137,7 +137,7 @@ public abstract class AbstractFocusController implements FocusController{
     
     /**
      * Asks all {@link FocusVetoListener} through their method
-     * {@link FocusVetoListener#vetoFocus(MouseFocusObserver, Dockable)}
+     * {@link FocusVetoListener#vetoFocus(FocusController, Dockable)}
      * whether they want cancel a call to the {@link DockController}.
      * @param dockable the Dockable which is about to be focused
      * @return the first veto

@@ -107,7 +107,7 @@ public abstract class AbstractEclipseBorder implements Border{
 	
 	/**
 	 * Gets the controller in whose realm this border paints
-	 * @return
+	 * @return the controller
 	 */
 	public DockController getController(){
 		return controller;

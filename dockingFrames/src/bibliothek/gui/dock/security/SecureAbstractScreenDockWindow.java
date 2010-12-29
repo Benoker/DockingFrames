@@ -37,8 +37,7 @@ import bibliothek.util.Todo.Version;
 /**
  * An {@link AbstractScreenDockWindow} that uses a {@link GlassedPane}
  * in order to catch all {@link MouseEvent}s and to report them to the
- * {@link SecureMouseFocusObserver}. Subclasses should call {@link #ensureSecure(boolean)}
- * whenever the visibility of the window changes.
+ * {@link SecureMouseFocusObserver}.
  * @author Benjamin Sigg
  * @deprecated this class is no longer required and will be removed in a future release, use
  * {@link AbstractScreenDockWindow} instead.

@@ -18,10 +18,7 @@
  * <li>Instead of a {@link bibliothek.gui.dock.StackDockStation} they
  * have to create a {@link bibliothek.gui.dock.security.SecureStackDockStation}.</li>
  * <li>All other elements which show a {@link bibliothek.gui.Dockable} have to be
- * wrapped into a {@link bibliothek.gui.dock.security.GlassedPane}. This can 
- * be done using {@link bibliothek.gui.dock.security.SecureDockController#wrap(java.awt.Component)}
- * or manually by creating a <code>GlassedPane</code> and registering it
- * at the {@link bibliothek.gui.dock.security.SecureMouseFocusObserver}.</li>
+ * wrapped into a {@link bibliothek.gui.dock.security.GlassedPane}.</li>
  * </ul>
  */
 package bibliothek.gui.dock.security;
