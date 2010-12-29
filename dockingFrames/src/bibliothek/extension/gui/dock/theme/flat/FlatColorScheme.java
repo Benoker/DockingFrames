@@ -31,6 +31,7 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.color.DefaultColorScheme;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.util.Colors;
 
 /**
  * A color scheme for {@link FlatTheme}.
@@ -72,9 +73,12 @@ public class FlatColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.border.center", border.darker() );
         setColor( "stack.tab.border", border );
                         
-        setColor( "stack.tab.background.top.selected", border.brighter() );
-        setColor( "stack.tab.background.top.focused", border.brighter() );
-        setColor( "stack.tab.background", border );
+        setColor( "stack.tab.background.top.selected", Colors.diffMirror( border, 0.2 ) );
+        setColor( "stack.tab.background.top.focused", Colors.diffMirror( border, 0.2 ) );
+        setColor( "stack.tab.background.top", border );
+        setColor( "stack.tab.background.bottom.selected", Colors.diffMirror( border, 0.1 ) );
+        setColor( "stack.tab.background.bottom.focused", Colors.diffMirror( border, 0.1 ) );
+        setColor( "stack.tab.background.bottom", border );
             
         setColor( "stack.tab.foreground", DockUI.getColor( LookAndFeelColors.PANEL_FOREGROUND ));
         

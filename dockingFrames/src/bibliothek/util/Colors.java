@@ -48,9 +48,12 @@ public final class Colors {
 	public static Color darker ( Color c, double value ){
 		if ( c == null )
 			return null;
+		
+		if( value < 0 ){
+			return brighter( c, -value );
+		}
 
 		if ( value > 1 ) value = 1;
-		if ( value < 0 ) value = 0;
 
 		value = 1 - value;
 
@@ -72,10 +75,13 @@ public final class Colors {
 		if ( c == null )
 			return null;
 
+		if( value < 0 ){
+			return darker( c, -value );
+		}
+		
 		int dr, dg, db;
 
 		if ( value > 1 ) value = 1;
-		if ( value < 0 ) value = 0;
 
 		dr = 255 - c.getRed();
 		dg = 255 - c.getGreen();

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import tutorial.support.ColorIcon;
 import tutorial.support.ColorSingleCDockable;
 import tutorial.support.JTutorialFrame;
 import tutorial.support.Tutorial;
@@ -122,6 +123,7 @@ public class PerspectivesMulti {
 			panel.setBackground( color );
 			panel.setOpaque( true );
 			add( panel, BorderLayout.CENTER );
+			setTitleIcon( new ColorIcon( color ) );
 		}
 		
 		public Color getColor(){

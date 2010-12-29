@@ -34,6 +34,7 @@ public class ColorSingleCDockable extends DefaultSingleCDockable{
 		panel.setOpaque( true );
 		panel.setBackground( color );
 		add( panel );
+		setTitleIcon( new ColorIcon( color ) );
 	}
 	
 	public Color getColor(){

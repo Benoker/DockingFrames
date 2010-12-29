@@ -29,7 +29,9 @@ package bibliothek.gui.dock.util;
 import javax.swing.Icon;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.PropertyFactory;
 
 /**
@@ -42,11 +44,13 @@ public class PropertyKey<A> {
 	/**
 	 * The Icon used for a {@link Dockable} if it has no icon.
 	 */
-	public static final PropertyKey<Icon> DOCKABLE_ICON = new PropertyKey<Icon>( "javax.swing.Icon_dockable_icon" );
+	public static final PropertyKey<Icon> DOCKABLE_ICON = new PropertyKey<Icon>( "javax.swing.Icon_dockable_icon",
+			new ConstantPropertyFactory<Icon>( DockUI.getDefaultDockUI().getIcon( "dockable.default" ) ), false );
 	/**
 	 * The Icon used for a {@link DockStation} if it has no icon.
 	 */
-	public static final PropertyKey<Icon> DOCK_STATION_ICON = new PropertyKey<Icon>( "javax.swing.Icon_dock_station_icon" );
+	public static final PropertyKey<Icon> DOCK_STATION_ICON = new PropertyKey<Icon>( "javax.swing.Icon_dock_station_icon",
+			new ConstantPropertyFactory<Icon>( DockUI.getDefaultDockUI().getIcon( "dockStation.default" ) ), false );
 	
 	/**
 	 * The title of a {@link Dockable} if it has no title.
@@ -104,7 +108,8 @@ public class PropertyKey<A> {
      * @param value the value that will be used when no value is set
      * in the properties
 	 * @param nullValueReplacedByDefault if set, then the <code>null</code> value
-	 * in {@link DockProperties} gets replaced by the default value of this key.
+	 * in {@link DockProperties} gets replaced by the default value of this key even if
+	 * the <code>null</code> value was set explicitely.
 	 */
 	public PropertyKey( String id, PropertyFactory<A> value, boolean nullValueReplacedByDefault ){
 		if( id == null )

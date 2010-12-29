@@ -345,7 +345,7 @@ public class DockProperties {
 		public A getValue(){
 			A value = this.value.get();
 			
-			if( value == null && key.isNullValueReplacedByDefault() ){
+			if( value == null && (!this.value.isSomethingSet() || key.isNullValueReplacedByDefault()) ){
 				return getDefault();
 			}
 			return value;

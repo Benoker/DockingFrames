@@ -393,3 +393,4 @@
 - Bugfix: GlassedPane now also check the extended modifiers of MouseEvents and resets its internal state if no button is pressed. Even if some MouseEvents are not properly delivered (e.g. due to a popup-menu opening) the user can continue working by moving around the mouse a bit.
 - Bugfix: Several smaller, non critical issues regarding colors, borders and the position of components
 - API: The new CGroupBehavior allows clients to group CDockables: grouped CDockables will usually stick together when the user changes the ExtendedMode of one Dockable. The user still can grab the title of one Dockable and drag it away from the others. The StackGroupBehavior is installed as default behavior.
+- API: There is now a default icon set of all Dockables and DockStations. The icon can be changed using the PropertyKeys "PropertyKey.DOCKABLE_ICON" and "PropertyKey.DOCK_STATION_ICON".

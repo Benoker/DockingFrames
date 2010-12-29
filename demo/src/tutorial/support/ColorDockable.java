@@ -33,6 +33,7 @@ public class ColorDockable extends DefaultDockable{
 		panel.setOpaque( true );
 		panel.setBackground( color );
 		add( panel );
+		setTitleIcon( new ColorIcon( color ) );
 	}
 	
 	public Color getColor(){

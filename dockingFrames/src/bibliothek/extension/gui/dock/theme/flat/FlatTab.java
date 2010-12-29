@@ -500,6 +500,8 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
     
     @Override
     public void paintBackground( Graphics g ){
+        super.paintBackground( g );
+    	
         Graphics2D g2 = (Graphics2D)g;
         Paint oldPaint = g2.getPaint();
         
@@ -554,8 +556,6 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
         g.fillRect( 0, 0, w, h );
         
         g2.setPaint( oldPaint );
-        
-        super.paintBackground( g2 );
     }
     
     /**
