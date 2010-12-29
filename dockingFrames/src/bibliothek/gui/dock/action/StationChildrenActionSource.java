@@ -36,10 +36,13 @@ import javax.swing.Icon;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
 import bibliothek.gui.dock.event.DockActionSourceListener;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.event.SelectableDockActionListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.container.Tuple;
 
@@ -262,8 +265,42 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 	 * An action that can transfer the focus
 	 * @author Benjamin Sigg
 	 */
-	protected class FocusAction extends SimpleButtonAction implements DockableListener{
+	protected class FocusAction extends SimpleSelectableAction.Check implements DockableListener{
 		private Dockable dockable;
+		private DockStation parent;
+		
+		private boolean onChange = false;
+		private int bound = 0;
+		
+		private DockStationAdapter adapter = new DockStationAdapter(){
+			@Override
+			public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection ){
+				checkState();
+			}
+			@Override
+			public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ){
+				checkState();
+			}
+		};
+		
+		private DockHierarchyListener hierarchy = new DockHierarchyListener(){
+			public void hierarchyChanged( DockHierarchyEvent event ){
+				if( bound > 0 ){
+					if( parent != null ){
+						parent.removeDockStationListener( adapter );
+					}
+					parent = dockable.getDockParent();
+					if( parent != null ){
+						parent.addDockStationListener( adapter );
+					}
+					checkState();
+				}
+			}
+			
+			public void controllerChanged( DockHierarchyEvent event ){
+				// ignore
+			}
+		};
 		
 		/**
 		 * Creates a new action
@@ -272,14 +309,102 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 		public FocusAction( Dockable dockable ){
 			this.dockable = dockable;
 			setDockableRepresentation( dockable );
+			
+			addSelectableListener( new SelectableDockActionListener(){
+				public void selectedChanged( SelectableDockAction action, Set<Dockable> dockables ){
+					checkDockable();
+				}
+			});
 		}
 		
 		@Override
-		public void action( Dockable dockable ){
-			super.action( dockable );
-			DockController controller = dockable.getController();
-			if( controller != null ){
-				controller.setFocusedDockable( this.dockable, true, true, true );
+		public void bind( Dockable dockable ){
+			bound++;
+			if( bound == 1 ){
+				this.dockable.addDockHierarchyListener( hierarchy );
+				parent = this.dockable.getDockParent();
+				
+				if( parent != null ){
+					parent.addDockStationListener( adapter );
+				}
+				
+				checkState();
+			}
+			super.bind( dockable );
+		}
+		
+		@Override
+		public void unbind( Dockable dockable ){
+			super.unbind( dockable );
+			bound--;
+			if( bound == 0 ){
+				if( parent != null ){
+					parent.removeDockStationListener( adapter );
+				}
+				this.dockable.removeDockHierarchyListener( hierarchy );
+				parent = null;
+			}
+		}
+		
+		private void checkState(){
+			if( !onChange ){
+				try{
+					onChange = true;
+					
+					DockStation parent = dockable.getDockParent();
+					boolean select = false;
+					
+					if( parent != null ){
+						select = parent.isVisible( dockable ) && parent.getFrontDockable() == dockable;
+					}
+					
+					setSelected( select );
+				}
+				finally{
+					onChange = false;
+				}
+			}
+		}
+		
+		private void checkDockable(){
+			if( !onChange ){
+				try{
+					onChange = true;
+					
+					if( isSelected() ){
+						DockController controller = dockable.getController();
+						if( controller != null ){
+							controller.setFocusedDockable( dockable, true, true, true );
+						}
+					}
+					else{
+						DockStation parent = this.parent;
+						Dockable dockable = this.dockable;
+						
+						DockStation finalParent = StationChildrenActionSource.this.dockable.getDockParent();
+						
+						while( parent != null ){
+							if( parent.getFrontDockable() == dockable ){
+								parent.setFrontDockable( null );
+							}
+							if( parent == finalParent ){
+								parent = null;
+							}
+							else{
+								dockable = parent.asDockable();
+								if( dockable != null ){
+									parent = dockable.getDockParent();
+								}
+								else{
+									parent = null;
+								}
+							}
+						}
+					}
+				}
+				finally{
+					onChange = false;
+				}
 			}
 		}
 		
