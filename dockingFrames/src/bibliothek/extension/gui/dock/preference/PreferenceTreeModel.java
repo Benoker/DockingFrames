@@ -33,6 +33,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import bibliothek.gui.DockController;
 import bibliothek.util.Path;
 import bibliothek.util.PathCombiner;
 
@@ -66,19 +67,23 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
     
     /**
      * Creates a new empty model.
+     * @param controller the controller in whose realm this model is used
      */
-    public PreferenceTreeModel(){
-        delegate = new MergedPreferenceModel();
+    public PreferenceTreeModel( DockController controller ){
+    	super( controller );
+        delegate = new MergedPreferenceModel( controller );
     }
     
     /**
      * Creates a new empty model.
      * @param combiner tells how to combine the {@link Path} of a model with
      * the preferences of a model. Used in {@link #getPath(int)}. Not <code>null</code>.
+     * @param controller the controller in whose realm this model is used
      * @see MergedPreferenceModel#MergedPreferenceModel(PathCombiner)
      */
-    public PreferenceTreeModel( PathCombiner combiner ){
-        delegate = new MergedPreferenceModel( combiner );
+    public PreferenceTreeModel( PathCombiner combiner, DockController controller ){
+    	super( controller );
+        delegate = new MergedPreferenceModel( combiner, controller );
     }
     
     public void addTreeModelListener( TreeModelListener l ) {

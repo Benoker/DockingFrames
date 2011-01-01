@@ -47,7 +47,7 @@ public class PreferenceTreeDialog extends AbstractPreferenceDialog<PreferenceTre
      * @param owner the owner of the dialog
      */
     public static void openDialog( PreferenceTreeModel model, Component owner ){
-        PreferenceTreeDialog dialog = new PreferenceTreeDialog( model );
+        PreferenceTreeDialog dialog = new PreferenceTreeDialog( model, true );
         dialog.openDialog( owner, true );
     }
     
@@ -56,19 +56,25 @@ public class PreferenceTreeDialog extends AbstractPreferenceDialog<PreferenceTre
     
     /**
      * Creates a new dialog without model.
+     * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
      */
-    public PreferenceTreeDialog(){
-    	this( null );
+    public PreferenceTreeDialog( boolean destroyOnClose ){
+    	this( null, destroyOnClose );
     }
     
     /**
      * Creates a new dialog.
      * @param model the model to show on the dialog
+     * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
      */
-    public PreferenceTreeDialog( PreferenceTreeModel model ){
-    	super( false, null );
+    public PreferenceTreeDialog( PreferenceTreeModel model, boolean destroyOnClose ){
+    	super( false, null, destroyOnClose );
     	panel = new PreferenceTreePanel();
-    	init( model );
+    	init( model, destroyOnClose );
     }
 
 	/**

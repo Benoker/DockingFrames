@@ -123,7 +123,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 FlapDockStation.BUTTON_TITLE_ID, 
                 BubbleButtonDockTitle.FACTORY );
 
-        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/bubble/icons.ini", BubbleTheme.class.getClassLoader() ) );
+        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/bubble/icons.ini", BubbleTheme.class.getClassLoader(), controller ) );
 
         ActionViewConverter converter = controller.getActionViewConverter();
 

@@ -23,7 +23,7 @@ public class PreferenceDialog extends AbstractPreferenceDialog<PreferenceModel>{
      * @param owner the owner of the dialog
      */
     public static void openDialog( PreferenceModel model, Component owner ){
-        PreferenceDialog dialog = new PreferenceDialog( model );
+        PreferenceDialog dialog = new PreferenceDialog( model, true );
         dialog.openDialog( owner, true );
     }
     
@@ -31,19 +31,25 @@ public class PreferenceDialog extends AbstractPreferenceDialog<PreferenceModel>{
 	
 	/**
 	 * Creates a new dialog without model.
+     * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
 	 */
-	public PreferenceDialog(){
-		this( null );
+	public PreferenceDialog( boolean destroyOnClose ){
+		this( null, destroyOnClose );
 	}
 	
 	/**
 	 * Creates a new dialog.
 	 * @param model the model of the dialog, can be <code>null</code>
+	 * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
 	 */
-	public PreferenceDialog( PreferenceModel model ){
-		super( false, null );
+	public PreferenceDialog( PreferenceModel model, boolean destroyOnClose ){
+		super( false, null, destroyOnClose );
 		table = new PreferenceTable();
-		init( model );
+		init( model, destroyOnClose );
 	}
 	
 	/**

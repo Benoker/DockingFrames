@@ -68,7 +68,7 @@ public class DockingFramesPreference extends PreferenceTreeModel{
      * @param combiner how to create preference paths for nested preferences
      */
     public DockingFramesPreference( DockController controller, PathCombiner combiner ){
-        super( combiner );
+        super( combiner, controller );
         put( new Path( "shortcuts" ),
                 DockUI.getDefaultDockUI().getString( "preference.shortcuts" ), 
                 new KeyStrokePreferenceModel( controller.getProperties() ) );

@@ -187,7 +187,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
         super.install( controller );
 
-        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/eclipse/icons.ini", EclipseTheme.class.getClassLoader() ) );
+        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/eclipse/icons.ini", EclipseTheme.class.getClassLoader(), controller ) );
 
         EclipseDockTitleFactory factory = new EclipseDockTitleFactory( this, new ControllerTitleFactory() );
 

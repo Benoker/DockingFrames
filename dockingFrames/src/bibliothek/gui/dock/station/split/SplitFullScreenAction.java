@@ -34,11 +34,10 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
-import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.event.SplitDockListener;
-import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
@@ -49,7 +48,9 @@ import bibliothek.gui.dock.util.PropertyValue;
 public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> implements ListeningDockAction {
     private SplitDockStation split;
     private DockController controller;
-    private Listener listener = new Listener();
+    
+    private DockActionIcon iconNormalize;
+    private DockActionIcon iconMaximize;
 
     private PropertyValue<KeyStroke> accelerator = new PropertyValue<KeyStroke>( SplitDockStation.MAXIMIZE_ACCELERATOR ){
     	@Override
@@ -87,24 +88,31 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
         
         setTooltip( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize.tooltip" ));
         setTooltip( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize.tooltip" ));
+        
+        iconNormalize = new DockActionIcon( "split.normalize", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( Boolean.TRUE, newValue );	
+			}
+		};
+		iconMaximize = new DockActionIcon( "split.maximize", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( Boolean.FALSE, newValue );	
+			}
+		};
     }
     
     public void setController( DockController controller ) {
         if( this.controller != controller ){
-            if( this.controller != null ){
-                this.controller.getIcons().remove( "split.normalize", listener );
-                this.controller.getIcons().remove( "split.maximize", listener );
-            }
-            
             this.controller = controller;
             accelerator.setProperties( controller );
             
-            if( controller != null ){
-                IconManager icons = controller.getIcons();
-                icons.add( "split.normalize", listener );
-                icons.add( "split.maximize", listener );
-                setIcon( true, icons.getIcon( "split.normalize" ));
-                setIcon( false, icons.getIcon( "split.maximize" ));
+            if( controller == null ){
+            	iconNormalize.setManager( null );
+            	iconMaximize.setManager( null );
+            }
+            else{
+            	iconNormalize.setManager( controller.getIcons() );
+            	iconMaximize.setManager( controller.getIcons() );
             }
         }
     }
@@ -155,18 +163,5 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
             return Boolean.TRUE;
         else
             return Boolean.FALSE;
-    }
-    
-    /**
-     * A listener to the set of icons
-     * @author Benjamin Sigg
-     */
-    private class Listener implements IconManagerListener{
-        public void iconChanged( String key, Icon icon ) {
-            if( key.equals( "split.normalize" ))
-                setIcon( true, icon );
-            else
-                setIcon( false, icon );
-        }
     }
 }

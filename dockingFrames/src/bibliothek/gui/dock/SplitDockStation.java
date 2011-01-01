@@ -78,6 +78,7 @@ import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.DockStationIcon;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
@@ -130,6 +131,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
@@ -222,14 +224,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	};
 
 	/** Optional icon for this station */
-	private PropertyValue<Icon> titleIcon = new PropertyValue<Icon>(PropertyKey.DOCK_STATION_ICON){
-		@Override
-		protected void valueChanged( Icon oldValue, Icon newValue ){
-			for( DockableListener listener : dockableListeners.toArray(new DockableListener[dockableListeners.size()]) )
-				listener.titleIconChanged(SplitDockStation.this, oldValue, newValue);
-		}
-	};
-
+	private DockIcon titleIcon;
+	
+	/** the current icon for this station */
+	private Icon currentTitleIcon;
+	
 	/** Optional tooltip for this station */
 	private PropertyValue<String> titleToolTip = new PropertyValue<String>(PropertyKey.DOCK_STATION_TOOLTIP){
 		@Override
@@ -448,6 +447,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		hierarchyObserver = new DockHierarchyObserver(this);
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();
+		
+		titleIcon = new DockStationIcon( "dockStation.default", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				currentTitleIcon = newValue;
+				for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] )){
+					listener.titleIconChanged( SplitDockStation.this, oldValue, newValue );
+				}
+			}
+		};
 
 		addDockStationListener(new DockStationAdapter(){
 			@Override
@@ -638,7 +646,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			if( fullScreenAction != null )
 				fullScreenAction.setController(controller);
 
-			titleIcon.setProperties(controller);
+			titleIcon.setController(controller);
 			titleText.setProperties(controller);
 			layoutManager.setProperties(controller);
 			placeholderStrategyProperty.setProperties(controller);
@@ -756,7 +764,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public Icon getTitleIcon(){
-		return titleIcon.getValue();
+		return currentTitleIcon;
 	}
 
 	/**

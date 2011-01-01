@@ -25,10 +25,13 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.Icon;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.util.IconManager;
 
 /**
  * Represents an operation that a {@link PreferenceEditor} or a {@link PreferenceModel} can
@@ -43,7 +46,7 @@ public class PreferenceOperation {
      */
     public static final PreferenceOperation DELETE = new PreferenceOperation(
             "delete", 
-            DockUI.getDefaultDockUI().getIcon( "delete.small" ),
+            null,
             DockUI.getDefaultDockUI().getString( "preference.operation.delete" ));
     
     /**
@@ -51,15 +54,23 @@ public class PreferenceOperation {
      */
     public static final PreferenceOperation DEFAULT = new PreferenceOperation(
             "default", 
-            DockUI.getDefaultDockUI().getIcon( "default.small" ),
+            null,
             DockUI.getDefaultDockUI().getString( "preference.operation.default" ));
+    
+    static{
+    	DELETE.setIconId( "delete.small" );
+    	DEFAULT.setIconId( "default.small" );
+    }
     
     private String key;
     
     private Icon icon;
+    private String iconId = "null";
+    
     private String description;
     
-    private PreferenceOperationIcon opIcon;
+    /** all the views of this operation */
+    private List<View> views = new ArrayList<View>();
     
     /**
      * Creates a new operation.
@@ -84,19 +95,13 @@ public class PreferenceOperation {
     }
     
     /**
-     * Informs this {@link PreferenceOperation} that it will be used for <code>model</code>.
-     * @param model the model for which this operation will be used
+     * Creates and returns a view of this {@link PreferenceOperation} for
+     * <code>model</code>.
+     * @param model the model using the operation
+     * @return the view
      */
-    public void bind( PreferenceModel model ){
-    	
-    }
-    
-    /**
-     * Informs this {@link PreferenceModel} that it is no longer used for <code>model</code>.
-     * @param model the model for which this operation is used
-     */
-    public void unbind( PreferenceModel model ){
-    	
+    public PreferenceOperationView create( PreferenceModel model ){
+    	return new View( model );
     }
     
     @Override
@@ -115,19 +120,46 @@ public class PreferenceOperation {
     
     /**
      * Gets an icon for this operation. The icon should have a size of 10x10 pixels.
-     * @param model the model for which the icon is used
      * @return the icon for this operation
      */
-    public Icon getIcon( PreferenceModel model ) {
+    public Icon getIcon() {
         return icon;
     }
     
     /**
      * Sets an icon for this operation. The icon should have a size of 10x10 pixels.
-     * @param icon the new icon
+     * @param icon the new icon, can be <code>null</code>
      */
     public void setIcon( Icon icon ) {
         this.icon = icon;
+        for( View view : views ){
+        	view.icon.setValue( icon );
+        }
+    }
+    
+    /**
+     * Gets the current identifier for the icon of this operation.
+     * @return the identifier
+     * @see #setIconId(String)
+     */
+    public String getIconId(){
+		return iconId;
+	}
+    
+    /**
+     * Sets the identifier for the icon, the identifier will be used to read an icon 
+     * from the {@link IconManager}.
+     * @param iconId the new id, can not be <code>null</code>
+     */
+    public void setIconId( String iconId ){
+    	if( iconId == null ){
+    		throw new IllegalArgumentException( "iconId must not be null" );
+    	}
+    	
+    	this.iconId = iconId;
+    	for( View view : views ){
+    		view.icon.setId( iconId );
+    	}
     }
     
     /**
@@ -144,5 +176,68 @@ public class PreferenceOperation {
      */
     public void setDescription( String description ) {
         this.description = description;
+    }
+    
+    /**
+     * The view of a {@link PreferenceOperation}
+     * @author Benjamin Sigg
+     */
+    private class View implements PreferenceOperationView{
+    	private List<PreferenceOperationViewListener> listeners = new ArrayList<PreferenceOperationViewListener>();
+    
+    	private PreferenceOperationIcon icon;
+    	private Icon currentIcon;
+    	
+    	public View( PreferenceModel model ){
+    		views.add( this );
+    		
+    		icon = new PreferenceOperationIcon( iconId, getOperation() ){
+    			@Override
+    			protected void changed( Icon oldValue, Icon newValue ){
+    				currentIcon = newValue;
+    				fireIconChanged( oldValue, newValue );
+    			}
+    		};
+    		icon.setValue( PreferenceOperation.this.icon );
+    		icon.setManager( model.getController().getIcons() );
+    	}
+
+		public void destroy(){
+			views.remove( this );
+			icon.setManager( null );
+		}
+
+		public String getDescription(){
+			return PreferenceOperation.this.getDescription();
+		}
+
+		public Icon getIcon(){
+			return currentIcon;
+		}
+
+		public PreferenceOperation getOperation(){
+			return PreferenceOperation.this;
+		}
+    	
+		private void fireIconChanged( Icon oldIcon, Icon newIcon ){
+			for( PreferenceOperationViewListener listener : listeners ){
+				listener.iconChanged( this, oldIcon, newIcon );
+			}
+		}
+		
+		private void fireDescriptionChanged( String oldDescription, String newDescription ){
+			for( PreferenceOperationViewListener listener : listeners ){
+				listener.descriptionChanged( this, oldDescription, newDescription );
+			}
+		}
+		
+		public void addListener( PreferenceOperationViewListener listener ){
+			listeners.add( listener );
+		}
+
+		
+		public void removeListener( PreferenceOperationViewListener listener ){
+			listeners.remove( listener );
+		}
     }
 }

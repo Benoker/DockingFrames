@@ -54,9 +54,8 @@ public class KeyStrokePreferenceModel extends DefaultPreferenceModel{
      * @param properties the properties to read and write from
      */
     public KeyStrokePreferenceModel( DockProperties properties ){
-        if( properties == null )
-            throw new IllegalArgumentException( "properties must not be null" );
-        
+    	super( properties.getController() );
+    	
         add( initSelector = new KeyStrokeInitSelectorPreference( properties ));
         add( maximize = new KeyStrokeMaximizePreference( properties ));
         add( hide = new KeyStrokeHidePreference( properties ));

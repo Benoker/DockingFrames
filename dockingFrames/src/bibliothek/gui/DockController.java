@@ -168,7 +168,7 @@ public class DockController {
     private DockTitleManager dockTitles;
     
     /** the set of icons used with this controller */
-    private IconManager icons = new IconManager();
+    private IconManager icons;
     /** map of colors that are used through the realm of this controller */
     private ColorManager colors;
     /** map of fonts that are used through the realm of this controller */
@@ -257,6 +257,7 @@ public class DockController {
         
         properties = new DockProperties( this );
         theme = new ThemeManager( this );
+        icons = new IconManager( this );
         colors = new ColorManager( this );
         fonts = new FontManager( this );
         dockTitles = new DockTitleManager( this );
@@ -315,8 +316,6 @@ public class DockController {
         
         extensions = factory.createExtensionManager( this, setup );
         extensions.init();
-        
-        DockUI.getDefaultDockUI().fillIcons( icons );
         
         setTheme( DockUI.getDefaultDockUI().getDefaultTheme().create() );
         

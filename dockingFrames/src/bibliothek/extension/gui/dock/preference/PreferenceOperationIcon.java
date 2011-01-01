@@ -36,7 +36,7 @@ import bibliothek.util.Path;
  * by a {@link PreferenceOperation}.
  * @author Benjamin Sigg
  */
-public class PreferenceOperationIcon extends DockIcon{
+public abstract class PreferenceOperationIcon extends DockIcon{
 	/** The kind of {@link UIValue} this is */
 	public static final Path KIND_PREFERENCE_OPERATION = KIND_ICON.append( "preference" );
 
@@ -59,10 +59,5 @@ public class PreferenceOperationIcon extends DockIcon{
 	 */
 	public PreferenceOperation getOperation(){
 		return operation;
-	}
-	
-	@Override
-	protected void changed( Icon oldValue, Icon newValue ){
-		operation.setIcon( newValue );	
 	}
 }

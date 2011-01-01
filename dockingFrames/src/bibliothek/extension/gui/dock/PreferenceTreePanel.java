@@ -9,6 +9,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -44,14 +46,16 @@ public class PreferenceTreePanel extends JPanel{
      * @param model the contents of this panel, might be <code>null</code>
      */
     public PreferenceTreePanel( PreferenceTreeModel model ){
-        if( model == null )
-            model = new PreferenceTreeModel();
-        
         this.model = model;
         setLayout( new GridLayout( 1, 1 ) );
         JSplitPane pane = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT );
         
-        tree = new JTree( model );
+        if( model == null ){
+        	tree = new JTree( new DefaultTreeModel( new DefaultMutableTreeNode( "<null>" ) ) );
+        }
+        else{
+        	tree = new JTree( model );
+        }
         tree.setEditable( false );
         tree.setRootVisible( false );
         tree.setShowsRootHandles( true );
@@ -134,7 +138,7 @@ public class PreferenceTreePanel extends JPanel{
     
     /**
      * Sets the model of this panel.
-     * @param model the new model
+     * @param model the new model, not <code>null</code>
      */
     public void setModel( PreferenceTreeModel model ) {
         if( model == null )

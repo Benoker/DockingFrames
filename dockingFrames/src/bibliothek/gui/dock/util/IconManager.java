@@ -49,7 +49,11 @@ public class IconManager extends UIProperties<Icon, DockIcon, DockIconBridge>{
      */
     public IconManager( DockController controller ){
     	super( controller );
-    	setScheme( Priority.DEFAULT, new DefaultIconScheme( "data/icons.ini" ) );
+    	
+    	DefaultIconScheme scheme = new DefaultIconScheme( "data/icons.ini", controller );
+    	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
+    	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );
+    	setScheme( Priority.DEFAULT, scheme );
     }
     
     /**

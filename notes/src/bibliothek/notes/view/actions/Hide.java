@@ -7,10 +7,10 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.notes.view.NoteViewManager;
 import bibliothek.notes.view.panels.NoteView;
 
@@ -24,7 +24,10 @@ public class Hide extends SimpleButtonAction implements ActionGuard{
     /** the result of {@link #getSource(Dockable)} */
 	private DefaultDockActionSource source;
 	/** the manager of the graphical representations of the Notes */
-	private NoteViewManager manager; 
+	private NoteViewManager manager;
+	
+	/** the icon of this action */
+	private DockActionIcon icon;
 	
 	/**
 	 * Creates a new action and {@link ActionGuard}
@@ -35,15 +38,15 @@ public class Hide extends SimpleButtonAction implements ActionGuard{
 	public Hide( DockFrontend frontend, NoteViewManager manager ){
 		this.manager = manager;
 		setText( "Hide" );
-		setIcon( frontend.getController().getIcons().getIcon( "close" ) );
-		frontend.getController().getIcons().add( "close", new IconManagerListener(){
-			public void iconChanged( String key, Icon icon ){
-				setIcon( icon );
-			}
-		});
 		
-		source = new DefaultDockActionSource(
-				new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT_OF_ALL ));
+		icon = new DockActionIcon( "close", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( newValue );
+			}
+		};
+		icon.setManager( frontend.getController().getIcons() );
+		
+		source = new DefaultDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT_OF_ALL ));
 		source.add( this );
 	}
 	

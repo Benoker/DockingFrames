@@ -31,6 +31,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
+import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
@@ -47,6 +48,7 @@ import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
  * An abstract combination between {@link DockStation} and {@link Dockable}. This
@@ -69,7 +71,16 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
 	 * Constructs a new station, but does nothing more
 	 */
 	public AbstractDockableStation(){
-		super( PropertyKey.DOCK_STATION_ICON, PropertyKey.DOCK_STATION_TITLE, PropertyKey.DOCK_STATION_TOOLTIP );
+		super( PropertyKey.DOCK_STATION_TITLE, PropertyKey.DOCK_STATION_TOOLTIP );
+	}
+	
+	@Override
+	protected DockIcon createTitleIcon(){
+		return new DockStationIcon( "dockStation.default", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				fireTitleIconChanged( oldValue, newValue );
+			}
+		};
 	}
 	
 	/**

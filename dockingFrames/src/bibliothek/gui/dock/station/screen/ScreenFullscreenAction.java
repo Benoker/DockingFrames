@@ -35,10 +35,9 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
-import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyValue;
 
 
@@ -50,8 +49,10 @@ import bibliothek.gui.dock.util.PropertyValue;
 public class ScreenFullscreenAction extends GroupedButtonDockAction<Boolean> implements ListeningDockAction {
 	private ScreenDockStation screen;
 	private DockController controller;
-	private Listener listener = new Listener();
 
+	private DockActionIcon iconNormalize;
+	private DockActionIcon iconMaximize;
+	
 	private PropertyValue<KeyStroke> accelerator = new PropertyValue<KeyStroke>( SplitDockStation.MAXIMIZE_ACCELERATOR ){
 		@Override
 		protected void valueChanged( KeyStroke oldValue, KeyStroke newValue ){
@@ -90,24 +91,31 @@ public class ScreenFullscreenAction extends GroupedButtonDockAction<Boolean> imp
 
 		setTooltip( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "screen.normalize.tooltip" ));
 		setTooltip( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "screen.maximize.tooltip" ));
+		
+		iconNormalize = new DockActionIcon( "screen.normalize", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( true, newValue );
+			}
+		};
+		iconMaximize = new DockActionIcon( "screen.maximize", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( false, newValue );	
+			}
+		};
 	}
 
 	public void setController( DockController controller ) {
 		if( this.controller != controller ){
-			if( this.controller != null ){
-				this.controller.getIcons().remove( "screen.normalize", listener );
-				this.controller.getIcons().remove( "screen.maximize", listener );
-			}
-
 			this.controller = controller;
 			accelerator.setProperties( controller );
-
-			if( controller != null ){
-				IconManager icons = controller.getIcons();
-				icons.add( "screen.normalize", listener );
-				icons.add( "screen.maximize", listener );
-				setIcon( true, icons.getIcon( "screen.normalize" ));
-				setIcon( false, icons.getIcon( "screen.maximize" ));
+			
+			if( controller == null ){
+				iconMaximize.setManager( null );
+				iconNormalize.setManager( null );
+			}
+			else{
+				iconMaximize.setManager( controller.getIcons() );
+				iconNormalize.setManager( controller.getIcons() );
 			}
 		}
 	}
@@ -152,17 +160,4 @@ public class ScreenFullscreenAction extends GroupedButtonDockAction<Boolean> imp
 
 		return screen.isFullscreen( dockable );
 	}
-
-	/**
-	 * A listener to the set of icons
-	 * @author Benjamin Sigg
-	 */
-	 private class Listener implements IconManagerListener{
-		public void iconChanged( String key, Icon icon ) {
-			if( key.equals( "screen.normalize" ))
-				setIcon( true, icon );
-			else
-				setIcon( false, icon );
-		}
-	 }
 }

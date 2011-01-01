@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.preference;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.DockController;
 import bibliothek.util.Path;
 
 /**
@@ -37,6 +38,10 @@ import bibliothek.util.Path;
  */
 public class DefaultPreferenceModel extends AbstractPreferenceModel{
     private List<Entry<?>> entries = new ArrayList<Entry<?>>();
+    
+    public DefaultPreferenceModel( DockController controller ){
+    	super( controller );
+    }
     
     public int getSize() {
         return entries.size();

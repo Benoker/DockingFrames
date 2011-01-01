@@ -41,6 +41,8 @@ public class LayoutPreferenceModel extends DefaultPreferenceModel{
 	private TabContentFilterPreference tabContentFilter;
 	
 	public LayoutPreferenceModel( DockProperties properties ){
+		super( properties.getController() );
+		
 		add( tabPlacement = new TabPlacementPreference( properties, new Path( "dock.layout.tabplacement" )));
 		add( tabContentFilter = new TabContentFilterPreference( properties, new Path( "dock.layout.tabcontentfilter" )));
 	}

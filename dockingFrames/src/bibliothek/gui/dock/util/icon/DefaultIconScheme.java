@@ -29,15 +29,21 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.UIProperties;
 import bibliothek.gui.dock.util.UIScheme;
-import bibliothek.gui.dock.util.UISchemeListener;
+import bibliothek.gui.dock.util.UISchemeEvent;
 import bibliothek.util.Path;
 
 /**
@@ -46,7 +52,7 @@ import bibliothek.util.Path;
  * ini file when needed.
  * @author Benjamin Sigg
  */
-public class DefaultIconScheme implements UIScheme<Icon, DockIcon, DockIconBridge>{
+public class DefaultIconScheme extends AbstractIconScheme {
 	private Map<String, Icon> icons;
 	
 	/**
@@ -54,10 +60,11 @@ public class DefaultIconScheme implements UIScheme<Icon, DockIcon, DockIconBridg
 	 * then the icons that are found by analyzing the content of <code>file</code>.<br>
 	 * If no file is found, then this scheme just remains empty.
 	 * @param file the file to read
+	 * @param controller the {@link DockController} in whose realm this scheme will be used
 	 * @see #DefaultIconScheme(String, ClassLoader)
 	 */
-	public DefaultIconScheme( String file ){
-		this( file, DefaultIconScheme.class.getClassLoader() );
+	public DefaultIconScheme( String file, DockController controller ){
+		this( file, DefaultIconScheme.class.getClassLoader(), controller );
 	}
 	
 	/**
@@ -67,8 +74,11 @@ public class DefaultIconScheme implements UIScheme<Icon, DockIcon, DockIconBridg
 	 * @param file the file to read
 	 * @param loader the {@link ClassLoader} whose {@link ClassLoader#getResource(String)} method
 	 * will be used to load any files
+	 * @param controller the {@link DockController} in whose realm this scheme will be used
 	 */
-	public DefaultIconScheme( String file, ClassLoader loader ){
+	public DefaultIconScheme( String file, ClassLoader loader, DockController controller ){
+		super( controller );
+		
 		icons = DockUtilities.loadIcons( file, null, loader );
 		
         icons.put( DockUI.OVERFLOW_MENU_ICON, new Icon(){
@@ -93,27 +103,39 @@ public class DefaultIconScheme implements UIScheme<Icon, DockIcon, DockIconBridg
         });
 	}
 
-	public void addListener( UISchemeListener<Icon, DockIcon, DockIconBridge> listener ){
-		
-	}
-
 	public DockIconBridge getBridge( Path name, UIProperties<Icon, DockIcon, DockIconBridge> properties ){
 		return null;
 	}
 
 	public Icon getResource( String name, UIProperties<Icon, DockIcon, DockIconBridge> properties ){
-		return null;
+		return icons.get( name );
 	}
-
-	public void install( UIProperties<Icon, DockIcon, DockIconBridge> properties ){
+	
+	@Override
+	protected void changed( final String id, Icon icon ){
+		if( icon == null ){
+			icons.remove( id );
+		}
+		else{
+			icons.put( id, icon );
+		}
 		
-	}
-
-	public void removeListener( UISchemeListener<Icon, DockIcon, DockIconBridge> listener ){
-		
-	}
-
-	public void uninstall( UIProperties<Icon, DockIcon, DockIconBridge> properties ){
-		
+		fire( new UISchemeEvent<Icon, DockIcon, DockIconBridge>(){
+			public UIScheme<Icon, DockIcon, DockIconBridge> getScheme(){
+				return DefaultIconScheme.this;
+			}
+			
+			public Collection<String> changedResources( Set<String> names ){
+				List<String> list = new ArrayList<String>( 1 );
+				if( names.contains( id )){
+					list.add( id );
+				}
+				return list;
+			}
+			
+			public Collection<Path> changedBridges( Set<Path> names ){
+				return Collections.emptySet();
+			}
+		});
 	}
 }

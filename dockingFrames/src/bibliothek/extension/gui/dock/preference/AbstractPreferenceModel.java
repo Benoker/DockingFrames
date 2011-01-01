@@ -28,6 +28,8 @@ package bibliothek.extension.gui.dock.preference;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.DockController;
+
 /**
  * An abstract implementation of {@link PreferenceModel} handling events and
  * returning <code>null</code> in most methods.
@@ -37,6 +39,17 @@ import java.util.List;
 public abstract class AbstractPreferenceModel implements PreferenceModel{
     /** the list of known listeners */
     private List<PreferenceModelListener> listeners = new ArrayList<PreferenceModelListener>();
+    
+    /** the controller in whose realm this model works */
+    private DockController controller;
+    
+    public AbstractPreferenceModel( DockController controller ){
+    	this.controller = controller;
+    }
+    
+    public DockController getController(){
+	    return controller;
+    }
     
     public void read() {
         // do nothing

@@ -44,6 +44,7 @@ public class EclipseThemePreferenceModel extends DefaultPreferenceModel{
 	 * @param properties the properties to read or write
 	 */
 	public EclipseThemePreferenceModel( DockProperties properties ){
+		super( properties.getController() );
 		add( tab = new EclipseTabPreference( properties ));
 		add( icon = new EclipseIconPreference( properties ));
 	}

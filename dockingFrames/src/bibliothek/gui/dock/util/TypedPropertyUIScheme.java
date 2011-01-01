@@ -52,6 +52,9 @@ public class TypedPropertyUIScheme implements UIScheme<Object, UIValue<Object>, 
 	private List<UISchemeListener<Object, UIValue<Object>, UIBridge<Object, UIValue<Object>>>> listeners =
 		new ArrayList<UISchemeListener<Object,UIValue<Object>,UIBridge<Object,UIValue<Object>>>>();
 	
+	/** how often this scheme is used */
+	private int bound = 0;
+	
 	/**
 	 * Creates a new scheme
 	 * @param properties the source of all the information to read, not <code>null</code>
@@ -83,7 +86,9 @@ public class TypedPropertyUIScheme implements UIScheme<Object, UIValue<Object>, 
 		else{
 			Link<V, A> link = new Link<V, A>( source, destinationType, destinationId );
 			links.put( id, link );
-			link.setProperties( properties );
+			if( bound > 0 ){
+				link.setProperties( properties );
+			}
 		}
 	}
 	
@@ -151,11 +156,21 @@ public class TypedPropertyUIScheme implements UIScheme<Object, UIValue<Object>, 
 	}
 
 	public void install( UIProperties<Object, UIValue<Object>, UIBridge<Object, UIValue<Object>>> properties ){
-		// ignore
+		if( bound == 0 ){
+			for( Link<?,?> link : links.values() ){
+				link.setProperties( (DockProperties)null );
+			}
+		}
+		bound++;
 	}
 
 	public void uninstall( UIProperties<Object, UIValue<Object>, UIBridge<Object, UIValue<Object>>> properties ){
-		// ignore
+		bound--;
+		if( bound == 0 ){
+			for( Link<?,?> link : links.values() ){
+				link.setProperties( this.properties );
+			}
+		}
 	}
 	
 	private class Link<V, A extends V> extends PropertyValue<A>{

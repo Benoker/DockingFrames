@@ -27,6 +27,7 @@ package bibliothek.gui.dock.util.icon;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.AbstractUIValue;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.UIValue;
@@ -57,6 +58,19 @@ public abstract class DockIcon extends AbstractUIValue<Icon, DockIcon>{
 	 */
 	public DockIcon( String id, Path kind, Icon backup ){
 		super( id, kind, backup );
+	}
+	
+	/**
+	 * Sets the {@link IconManager} of <code>controller</code>
+	 * @param controller the controller to observe, can be <code>null</code>
+	 */
+	public void setController( DockController controller ){
+		if( controller == null ){
+			setManager( null );
+		}
+		else{
+			setManager( controller.getIcons() );
+		}
 	}
 	
 	@Override

@@ -42,8 +42,6 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  */
 public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
-	private DockController controller;
-	
 	private ButtonContentConditionChoice knobChoice;
 	private ButtonContentConditionChoice iconChoice;
 	private ButtonContentConditionChoice textChoice;
@@ -61,7 +59,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 	 * @param controller the controller in whose realm this model works
 	 */
 	public ButtonContentPreferenceModel( DockController controller ){
-		this.controller = controller;
+		super( controller );
 		
 		knobChoice = new ButtonContentConditionChoice( controller );
 		iconChoice = new ButtonContentConditionChoice( controller );
@@ -72,14 +70,14 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 	
 	@Override
 	public void write(){
-		DockProperties properties = controller.getProperties();
+		DockProperties properties = getController().getProperties();
 		properties.setOrRemove( FlapDockStation.BUTTON_CONTENT, getContent(), Priority.CLIENT );
 		super.write();
 	}
 	
 	@Override
 	public void read(){
-		DockProperties properties = controller.getProperties();
+		DockProperties properties = getController().getProperties();
 		setContent( properties.get( FlapDockStation.BUTTON_CONTENT, Priority.CLIENT ) );
 		super.read();
 	}

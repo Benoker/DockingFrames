@@ -14,11 +14,15 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.action.*;
+import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionIcon;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
-import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.help.Core;
@@ -266,6 +270,9 @@ public class Minimizer {
         /** the result of {@link #getSource(Dockable)} */
         private DefaultDockActionSource source;
         
+        /** the icon of this action */
+        private DockActionIcon icon;
+        
         /**
          * Creates a new action
          */
@@ -273,13 +280,13 @@ public class Minimizer {
             source = new DefaultDockActionSource( new LocationHint( LocationHint.ACTION_GUARD, LocationHint.RIGHT ), this );
             setText( "Normalize" );
             
-            controller.getIcons().add( "split.normalize", new IconManagerListener(){
-                public void iconChanged( String key, Icon icon ) {
-                    setIcon( icon );
-                }
-            });
-            
-            setIcon( controller.getIcons().getIcon( "split.normalize" ) );
+            icon = new DockActionIcon( "split.normalize", this ){
+				protected void changed( Icon oldValue, Icon newValue ){
+					setIcon( newValue );
+				}
+			};
+			
+			icon.setManager( controller.getIcons() );
         }
         
         @Override

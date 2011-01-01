@@ -50,6 +50,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
@@ -57,7 +58,6 @@ import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockFrontendListener;
-import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.event.VetoableDockFrontendListener;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.DockFrontendInternals;
@@ -2368,16 +2368,23 @@ public class DockFrontend {
      * @author Benjamin Sigg
      */
     @EclipseTabDockAction
-    public class Hider extends SimpleButtonAction implements ActionGuard, IconManagerListener{
+    public class Hider extends SimpleButtonAction implements ActionGuard{
+    	private DockActionIcon icon;
+    	
     	/**
          * Creates a new action/guard.
          */
         public Hider(){
         	setText( DockUI.getDefaultDockUI().getString( "close" ));
             setTooltip( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
-            
-            controller.getIcons().add( "close", this );
-            setIcon( controller.getIcons().getIcon( "close" ));
+           
+           
+            icon = new DockActionIcon("close", this){
+				protected void changed( Icon oldValue, Icon newValue ){
+					setIcon( newValue );
+				}
+			};
+			icon.setManager( controller.getIcons() );
             
             PropertyValue<KeyStroke> stroke = new PropertyValue<KeyStroke>( HIDE_ACCELERATOR ){
                 @Override

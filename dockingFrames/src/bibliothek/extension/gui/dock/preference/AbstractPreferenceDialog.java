@@ -48,7 +48,10 @@ import bibliothek.gui.DockUI;
 
 /**
  * An abstract dialog used to show the content of some {@link PreferenceModel}. The
- * exact graphical user interface for the model depends on the subclass.
+ * exact graphical user interface for the model depends on the subclass.<br>
+ * <b>Note: </b> clients using this panel have to call {@link #destroy()}. The only time {@link #destroy()} has
+ * not to be called is if the dialog was shown using {@link #openDialog(Component, boolean)} and {@link #isDestroyOnClose() destroyOnClose}
+ * was set to <code>true</code>.
  * @author Benjamin Sigg
  *
  * @param <M> What kind of model this dialog can show
@@ -57,20 +60,27 @@ public abstract class AbstractPreferenceDialog<M extends PreferenceModel> extend
     private M model;
     private JComponent content;
     private JDialog dialog;
+    private boolean destroyOnClose;
     
     /**
      * Creates a new dialog.
+     * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
      */
-    public AbstractPreferenceDialog(){
-        this( null );
+    public AbstractPreferenceDialog( boolean destroyOnClose ){
+        this( null, destroyOnClose );
     }
     
     /**
      * Creates a new dialog using the given model.
      * @param model the model to use
+     * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
      */
-    public AbstractPreferenceDialog( M model ){
-        init( model );
+    public AbstractPreferenceDialog( M model, boolean destroyOnClose ){
+        init( model, destroyOnClose );
     }
     
     /**
@@ -78,23 +88,30 @@ public abstract class AbstractPreferenceDialog<M extends PreferenceModel> extend
      * call {@link #init(PreferenceModel)} to finish constructing this dialog.
      * @param init whether to call {@link #init(PreferenceModel)}.
      * @param model the model to use, can be <code>null</code>
+     * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
      */
-    protected AbstractPreferenceDialog( boolean init, M model ){
+    protected AbstractPreferenceDialog( boolean init, M model, boolean destroyOnClose ){
     	if( init ){
-    		init( null );
+    		init( model, destroyOnClose );
     	}
     }
     
     /**
      * Creates the contents of this dialog.
      * @param model the model to use, can be <code>null</code>
+     * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
+     * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not
+     * using {@link #openDialog(Component, boolean)}.
      */
-    protected void init( M model ){
+    protected void init( M model, boolean destroyOnClose ){
     	if( content != null )
     		throw new IllegalStateException( "Already initialized" );
     	
     	setLayout( new GridBagLayout() );
     	this.model = model;
+    	this.destroyOnClose = destroyOnClose;
         
         content = getContent();
         setModelForContent( model );
@@ -238,7 +255,36 @@ public abstract class AbstractPreferenceDialog<M extends PreferenceModel> extend
             dialog.remove( this );
             dialog = null;
         }
+    	if( destroyOnClose ){
+    		destroy();
+    	}
     }
+    
+    /**
+     * Allows this dialog to free any resources that it used. Should be called once this dialog is no longer
+     * used, otherwise memory leaks can appear.
+     */
+    public void destroy(){
+    	setModel( null );
+    }
+    
+    /**
+     * Tells whether {@link #destroy()} is called automatically or not.
+     * @return whether to free resources
+     * @see #setDestroyOnClose(boolean)
+     */
+    public boolean isDestroyOnClose(){
+		return destroyOnClose;
+	}
+    
+    /**
+     * If set to <code>true</code> then {@link #destroy()} is automatically called if this dialog is
+     * {@link #close() closed}
+     * @param destroyOnClose whether to free resources
+     */
+    public void setDestroyOnClose( boolean destroyOnClose ){
+		this.destroyOnClose = destroyOnClose;
+	}
     
     private class OkAction extends AbstractAction{
         public OkAction(){

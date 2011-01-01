@@ -42,10 +42,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.dockable.DockableBackgroundComponent;
+import bibliothek.gui.dock.dockable.DockableIcon;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
  * A {@link Dockable} which consists only of one {@link Component} called
@@ -123,7 +125,7 @@ public class DefaultDockable extends AbstractDockable {
      * @param icon the icon, to be shown at various places
      */
     public DefaultDockable( Component component, String title, Icon icon ){
-    	super( PropertyKey.DOCKABLE_ICON, PropertyKey.DOCKABLE_TITLE, PropertyKey.DOCKABLE_TOOLTIP );
+    	super( PropertyKey.DOCKABLE_TITLE, PropertyKey.DOCKABLE_TOOLTIP );
     	
     	pane.setFocusTraversalPolicyProvider( true );
     	pane.setFocusTraversalPolicy( new LayoutFocusTraversalPolicy() );
@@ -136,6 +138,15 @@ public class DefaultDockable extends AbstractDockable {
         
         setTitleIcon( icon );
         setTitleText( title );
+    }
+    
+    @Override
+    protected DockIcon createTitleIcon(){
+	    return new DockableIcon( "dockable.default", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				fireTitleIconChanged( oldValue, newValue );	
+			}
+		};
     }
     
     public String getFactoryID() {

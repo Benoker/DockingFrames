@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
@@ -73,6 +74,9 @@ public class PreferenceTable extends JPanel{
     /** the operations visible on this table */
     private List<PreferenceOperation> operations = new ArrayList<PreferenceOperation>();
     
+    /** all the views that are currently in use */
+    private Map<PreferenceOperation, Operation> operationViews = new HashMap<PreferenceOperation, Operation>();
+    
     /** whether the order of the operations should be reversed or not */
     private boolean reverseOrder = true;
     
@@ -93,8 +97,17 @@ public class PreferenceTable extends JPanel{
         setEditorFactory( Path.TYPE_LABEL, LabelEditor.FACTORY );
         setEditorFactory( Path.TYPE_STRING_PATH, StringEditor.FACTORY );
         
-        operations.add( PreferenceOperation.DEFAULT );
-        operations.add( PreferenceOperation.DELETE );
+        addOperation( PreferenceOperation.DEFAULT );
+        addOperation( PreferenceOperation.DELETE );
+    }
+    
+    /**
+     * Creates a new table
+     * @param model the model shown on this table
+     */
+    public PreferenceTable( PreferenceModel model ){
+        this();
+        setModel( model );
     }
     
     /**
@@ -129,6 +142,7 @@ public class PreferenceTable extends JPanel{
     public void addOperation( PreferenceOperation operation ){
         if( !operations.contains( operation )){
             operations.add( operation );
+            operationViews.put( operation, new Operation( operation ) );
         }
     }
     
@@ -141,6 +155,7 @@ public class PreferenceTable extends JPanel{
     public void insertOperation( int index, PreferenceOperation operation ){
         if( !operations.contains( operation )){
             operations.add( index, operation );
+            operationViews.put( operation, new Operation( operation ) );
         }
     }
     
@@ -164,16 +179,7 @@ public class PreferenceTable extends JPanel{
     private void removeTable( Component component ){
         panel.remove( component );
     }
-    
-    /**
-     * Creates a new table
-     * @param model the model shown on this table
-     */
-    public PreferenceTable( PreferenceModel model ){
-        this();
-        setModel( model );
-    }
-    
+
     /**
      * Gets the model that is used on this table.
      * @return the model
@@ -187,15 +193,19 @@ public class PreferenceTable extends JPanel{
      * @param model the new model, can be <code>null</code>
      */
     public void setModel( PreferenceModel model ) {
-        if( this.model != null ){
-            this.model.removePreferenceModelListener( listener );
-            listener.preferenceRemoved( this.model, 0, this.model.getSize()-1 );
-        }
-        this.model = model;
-        if( this.model != null ){
-            this.model.addPreferenceModelListener( listener );
-            listener.preferenceAdded( this.model, 0, this.model.getSize()-1 );
-        }
+    	if( this.model != model ){
+	        if( this.model != null ){
+	            this.model.removePreferenceModelListener( listener );
+	            listener.preferenceRemoved( this.model, 0, this.model.getSize()-1 );
+	        }
+	        
+	        this.model = model;
+	        
+	        if( this.model != null ){
+	            this.model.addPreferenceModelListener( listener );
+	            listener.preferenceAdded( this.model, 0, this.model.getSize()-1 );
+	        }
+    	}
     }
     
     /**
@@ -237,6 +247,55 @@ public class PreferenceTable extends JPanel{
         if( factory == null )
             throw new IllegalArgumentException( "No editor defined for type '" + type.toString() + "'" );
         return (PreferenceEditor<V>)factory.create();
+    }
+    
+    /**
+     * A wrapper around a {@link PreferenceOperation} adding support for {@link PreferenceOperationView}s.
+     * @author Benjamin Sigg
+     */
+    private class Operation{
+    	private PreferenceOperation operation;
+    	private PreferenceOperationView view;
+    	private int usages;
+    	
+    	/**
+    	 * Creates a new wrapper around <code>operation</code>
+    	 * @param operation the operation represented by this wrapper
+    	 */
+    	public Operation( PreferenceOperation operation ){
+    		this.operation = operation;
+    	}
+    	
+    	/**
+    	 * Gets the operation which is hidden behind this wrapper.
+    	 * @return the operation
+    	 */
+    	public PreferenceOperation getOperation(){
+			return operation;
+		}
+    	
+    	/**
+    	 * Gets a view of this operation
+    	 * @return the view, not <code>null</code>
+    	 */
+    	public synchronized PreferenceOperationView createView(){
+    		if( view == null ){
+    			view = operation.create( model );
+    		}
+    		usages++;
+    		return view;
+    	}
+    	
+    	/**
+    	 * Informs this operation that its view is no longer required
+    	 */
+    	public synchronized void freeView(){
+    		usages--;
+    		if( usages == 0 ){
+    			view.destroy();
+    			view = null;
+    		}
+    	}
     }
     
     /**
@@ -353,7 +412,7 @@ public class PreferenceTable extends JPanel{
             
             Button button = operations.get( operation );
             if( button == null ){
-                button = new Button( operation, editor );
+                button = new Button( operationViews.get( operation ), editor );
                 operations.put( operation, button );
                 addTable( button );
                 
@@ -387,7 +446,7 @@ public class PreferenceTable extends JPanel{
         /**
          * Destroys this row.
          */
-        public void kill(){
+        public void destroy(){
             removeTable( label );
             if( editor != null ){
                 editor.setCallback( null );
@@ -397,11 +456,13 @@ public class PreferenceTable extends JPanel{
             }
             if( editorOperations != null ){
                 for( Button button : editorOperations.values() ){
+                	button.destroy();
                     removeTable( button );
                 }
             }
             if( modelOperations != null ){
                 for( Button button : modelOperations.values() ){
+                	button.destroy();
                     removeTable( button );
                 }
             }
@@ -423,20 +484,28 @@ public class PreferenceTable extends JPanel{
          * A small button that can trigger an operation 
          * @author Benjamin Sigg
          */
-        private class Button extends BasicMiniButton{
-            public Button( final PreferenceOperation operation, final boolean editorOperation ){
+        private class Button extends BasicMiniButton implements PreferenceOperationViewListener{
+        	private Operation operation;
+        	private PreferenceOperationView view;
+        	
+            public Button( final Operation operation, final boolean editorOperation ){
                 super( new BasicTrigger(){
                     public void triggered() {
                         if( editorOperation )
-                            editor.doOperation( operation );
+                            editor.doOperation( operation.getOperation() );
                         else
-                            doOperation( operation );
+                            doOperation( operation.getOperation() );
                     }
                 }, null );
                 
-                getModel().setIcon( operation.getIcon() );
-                getModel().setToolTipText( operation.getDescription() );
+                this.operation = operation;
+                view = operation.createView();
                 
+                view.addListener( this );
+                
+                getModel().setIcon( view.getIcon() );
+                getModel().setToolTipText( view.getDescription() );
+   
                 setMouseOverBorder( BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ) );
                 setMousePressedBorder( BorderFactory.createLoweredBevelBorder() );
             }
@@ -445,6 +514,19 @@ public class PreferenceTable extends JPanel{
             public void setEnabled( boolean enabled ) {
                 super.setEnabled( enabled );
                 setFocusable( enabled );
+            }
+            
+            public void iconChanged( PreferenceOperationView operation, Icon oldIcon, Icon newIcon ){
+            	getModel().setIcon( newIcon );
+            }
+            
+            public void descriptionChanged( PreferenceOperationView operation, String oldDescription, String newDescription ){
+            	getModel().setToolTipText( newDescription );
+            }
+            
+            public void destroy(){
+            	view.removeListener( this );
+            	operation.freeView();
             }
         }
     }
@@ -484,7 +566,7 @@ public class PreferenceTable extends JPanel{
         public void preferenceRemoved( PreferenceModel model, int beginIndex, int endIndex ){
             for( int i = endIndex; i >= beginIndex; i-- ){
                 Row<?> row = rows.remove( i );
-                row.kill();
+                row.destroy();
             }
             
             for( int i = beginIndex, n = rows.size(); i<n; i++ ){

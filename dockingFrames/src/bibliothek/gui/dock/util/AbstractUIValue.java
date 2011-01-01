@@ -218,12 +218,12 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * @param value the new override or <code>null</code>
      */
     public void setValue( V value ) {
-        V oldColor = value();
+        V oldValue = value();
         this.override = value;
-        V newColor = value();
+        V newValue = value();
         
-        if( oldColor != newColor ){
-            changed( oldColor, newColor );
+        if( oldValue != newValue ){
+            changed( oldValue, newValue );
         }
     }
     

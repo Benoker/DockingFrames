@@ -49,8 +49,8 @@ public class EclipseThemeExtension implements DockThemeExtension{
 	public void uninstall( DockController controller, DockTheme theme ){
 		if( this.trigger == theme ){
 			IconManager im = controller.getIcons();
-			
-			im.clearThemeIcons();
+
+			im.clear( Priority.THEME );
 		}
 	}
 	

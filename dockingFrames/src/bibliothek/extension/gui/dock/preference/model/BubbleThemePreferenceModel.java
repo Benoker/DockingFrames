@@ -43,6 +43,7 @@ public class BubbleThemePreferenceModel extends DefaultPreferenceModel{
 	 * @param properties the properties to read to or write from
 	 */
 	public BubbleThemePreferenceModel( DockProperties properties ){
+		super( properties.getController() );
 		add( colorScheme = new BubbleColorSchemePreference( properties ) );
 	}
 	
