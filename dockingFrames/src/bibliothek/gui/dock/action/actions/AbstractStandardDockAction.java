@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -59,7 +59,7 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
     public void removeDockActionListener( StandardDockActionListener listener ) {
         listeners.remove( listener );
     }
-
+    
     /**
      * Invoked by this {@link AbstractStandardDockAction} when a {@link Dockable}
      * was bound to this action the first time.

@@ -71,7 +71,7 @@ import static bibliothek.gui.dock.station.flap.button.ButtonContent.*;
 	"title.flap.inactive.knob.highlight",
 	"title.flap.inactive.knob.shadow",
 	"title.flap.selected.knob.highlight",
-	"title.flap.selected.knob.shadow",
+	"title.flap.selected.knob.shadow"
 })
 public class BasicButtonDockTitle extends AbstractDockTitle {
 	/** amount of space required to paint the knob */

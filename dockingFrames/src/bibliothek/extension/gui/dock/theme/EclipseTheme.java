@@ -25,9 +25,6 @@
  */
 package bibliothek.extension.gui.dock.theme;
 
-import java.util.Map;
-
-import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
@@ -46,7 +43,6 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.BasicTabDockTitle;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.DockTitleTab;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.RectGradientPainter;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
-import bibliothek.extension.gui.dock.theme.flat.FlatButtonTitle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
@@ -88,9 +84,9 @@ import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockProperties;
-import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.icon.DefaultIconScheme;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
@@ -191,9 +187,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
         super.install( controller );
 
-        Map<String, Icon> icons = DockUtilities.loadIcons( "data/eclipse/icons.ini", null, EclipseTheme.class.getClassLoader() );
-        for( Map.Entry<String, Icon> entry : icons.entrySet() )
-            controller.getIcons().setIconTheme( entry.getKey(), entry.getValue() );
+        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/eclipse/icons.ini", EclipseTheme.class.getClassLoader() ) );
 
         EclipseDockTitleFactory factory = new EclipseDockTitleFactory( this, new ControllerTitleFactory() );
 
@@ -314,7 +308,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     @Override
     public void uninstall( DockController controller ){
         super.uninstall( controller );
-        controller.getIcons().clearThemeIcons();
+        controller.getIcons().setScheme( Priority.THEME, null );
         controller.getDockTitleManager().clearThemeFactories();
         controller.removeAcceptance( acceptance );
         controller.getProperties().unset( TabPane.LAYOUT_MANAGER, Priority.THEME );

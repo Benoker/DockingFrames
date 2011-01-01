@@ -28,9 +28,7 @@ package bibliothek.extension.gui.dock.theme;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import bibliothek.extension.gui.dock.theme.bubble.BubbleButtonDockTitle;
@@ -69,9 +67,9 @@ import bibliothek.gui.dock.themes.basic.action.BasicMenuHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicSelectableHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.util.DockProperties;
-import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.icon.DefaultIconScheme;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
@@ -125,10 +123,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 FlapDockStation.BUTTON_TITLE_ID, 
                 BubbleButtonDockTitle.FACTORY );
 
-        Map<String,Icon> icons = DockUtilities.loadIcons( "data/bubble/icons.ini", null, BubbleTheme.class.getClassLoader() );
-        for( Map.Entry<String, Icon> icon : icons.entrySet() ){
-            controller.getIcons().setIconTheme( icon.getKey(), icon.getValue() );
-        }
+        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/bubble/icons.ini", BubbleTheme.class.getClassLoader() ) );
 
         ActionViewConverter converter = controller.getActionViewConverter();
 
@@ -170,7 +165,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
         controller.getDockTitleManager().clearThemeFactories();
 
-        controller.getIcons().clearThemeIcons();
+        controller.getIcons().setScheme( Priority.THEME, null );
 
         ActionViewConverter converter = controller.getActionViewConverter();
 

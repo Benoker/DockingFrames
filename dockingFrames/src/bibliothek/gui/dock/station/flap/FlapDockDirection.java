@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,11 +35,10 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.SimpleMenuAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
-import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.util.IconManager;
 
 /**
  * This {@link DockAction} is used as an action of a {@link FlapDockStation}.
@@ -51,14 +50,13 @@ import bibliothek.gui.dock.util.IconManager;
 public class FlapDockDirection extends SimpleMenuAction implements ListeningDockAction{
     private DirectedArrow north, south, east, west, center;
     private DockController controller;
-    private Listener listener = new Listener();
+    
+    private FlapIcon[] icons;
     
     /**
      * Creates the icon of the action, and sets the text and tooltip of the action.
-     * @param controller The controller for which this action will be used. The
-     * controller is needed to retrieve the icons for this action.
      */
-    public FlapDockDirection( DockController controller ){
+    public FlapDockDirection(){
         setText( DockUI.getDefaultDockUI().getString( "flap.direction" ) );
         setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.tooltip" ) );
         
@@ -67,6 +65,15 @@ public class FlapDockDirection extends SimpleMenuAction implements ListeningDock
         south = new DirectedArrow( Direction.SOUTH );
         east = new DirectedArrow( Direction.EAST );
         west = new DirectedArrow( Direction.WEST );
+        
+        icons = new FlapIcon[]{
+        		new FlapIcon( "flap.direction" ),
+        		new FlapIcon( "flap.south" ),
+        		new FlapIcon( "flap.east" ),
+        		new FlapIcon( "flap.west" ),
+        		new FlapIcon( "flap.north" ),
+        		new FlapIcon( "flap.auto" )
+        };
         
         north.setText( DockUI.getDefaultDockUI().getString( "flap.direction.north" ));
         north.setTooltip( DockUI.getDefaultDockUI().getString( "flap.direction.north.tooltip" ));
@@ -84,38 +91,15 @@ public class FlapDockDirection extends SimpleMenuAction implements ListeningDock
         source.addSeparator();
         source.add( north, south, east, west );
         setMenu( source );
-        
-        setController( controller );
     }
     
     public void setController( DockController controller ) {
         if( this.controller != controller ){
-            if( this.controller != null ){
-                IconManager icons = this.controller.getIcons();
-                icons.remove( "flap.direction", listener );
-                icons.remove( "flap.south", listener );
-                icons.remove( "flap.east", listener );
-                icons.remove( "flap.west", listener );
-                icons.remove( "flap.north", listener );
-                icons.remove( "flap.auto", listener );
-            }
-            
             this.controller = controller;
-            if( controller != null ){
-                IconManager icons = controller.getIcons();
-                icons.add( "flap.direction", listener );
-                icons.add( "flap.south", listener );
-                icons.add( "flap.east", listener );
-                icons.add( "flap.west", listener );
-                icons.add( "flap.north", listener );
-                icons.add( "flap.auto", listener );
-                setIcon( icons.getIcon( "flap.direction" ));
-                north.setIcon( icons.getIcon( "flap.north" ));
-                south.setIcon( icons.getIcon( "flap.south" ));
-                east.setIcon( icons.getIcon( "flap.east" ));
-                west.setIcon( icons.getIcon( "flap.west" ));
-                center.setIcon( icons.getIcon( "flap.auto" ));
-            }
+            
+            for( FlapIcon icon : icons ){
+        		icon.setManager( controller.getIcons() );
+        	}
         }
     }
     
@@ -146,11 +130,21 @@ public class FlapDockDirection extends SimpleMenuAction implements ListeningDock
     }
     
     /**
-     * A listener that can exchange the icons of this action
+     * Listener for getting an icon for this action.
      * @author Benjamin Sigg
      */
-    private class Listener implements IconManagerListener{
-        public void iconChanged( String key, Icon icon ) {
+    private class FlapIcon extends DockActionIcon{
+    	/**
+    	 * Creates a new listener
+    	 * @param id identifier of the icon to observe
+    	 */
+    	public FlapIcon( String id ){
+    		super( id, FlapDockDirection.this );
+    	}
+    	
+    	@Override
+    	protected void changed( Icon oldValue, Icon icon ){
+    		String key = getId();
             if( key.equals( "flap.direction" ))
                 setIcon( icon );
             else if( key.equals( "flap.north" ))
@@ -162,8 +156,8 @@ public class FlapDockDirection extends SimpleMenuAction implements ListeningDock
             else if( key.equals( "flap.west" ))
                 west.setIcon( icon );
             else if( key.equals( "flap.auto" ))
-                center.setIcon( icon );
-        }
+                center.setIcon( icon );		
+    	}
     }
     
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -33,11 +33,10 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedSelectableDockAction;
 import bibliothek.gui.dock.event.FlapDockListener;
-import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.util.IconManager;
 
 /**
  * This {@link DockAction} is shown together with the children of a 
@@ -51,7 +50,8 @@ import bibliothek.gui.dock.util.IconManager;
 public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolean> implements ListeningDockAction {
     private FlapDockStation flap;
     private DockController controller;
-    private Listener listener = new Listener();
+   
+    private Listener[] icons;
     
     /**
      * Constructor, sets the icons and makes the action ready to be shown.
@@ -62,6 +62,11 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
         super( null );
         setRemoveEmptyGroups( false );
         flap = station;
+        
+        icons = new Listener[]{
+        		new Listener( "flap.hold" ),
+        		new Listener( "flap.free" )
+        };
         
         station.addFlapDockStationListener( new FlapDockListener(){
             public void holdChanged( FlapDockStation station, Dockable dockable, boolean hold ) {
@@ -99,20 +104,11 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
     
     public void setController( DockController controller ) {
         if( this.controller != controller ){
-            if( this.controller != null ){
-                this.controller.getIcons().remove( "flap.hold", listener );
-                this.controller.getIcons().remove( "flap.free", listener );
-            }
-            
             this.controller = controller;
             
-            if( controller != null ){
-                IconManager icons = controller.getIcons();
-                icons.add( "flap.hold", listener );
-                icons.add( "flap.free", listener );
-                setIcon( false, icons.getIcon( "flap.free" ));
-                setSelectedIcon( true, icons.getIcon( "flap.hold" ));
-            }
+            for( Listener icon : icons ){
+        		icon.setManager( controller.getIcons() );
+        	}
         }
     }
     
@@ -121,8 +117,15 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
      * @author Benjamin Sigg
      *
      */
-    private class Listener implements IconManagerListener{
-        public void iconChanged( String key, Icon icon ) {
+    private class Listener extends DockActionIcon{
+    	public Listener( String id ){
+    		super( id, FlapDockHoldToggle.this );
+    	}
+    	
+    	@Override
+    	protected void changed( Icon oldValue, Icon icon ){
+    		String key = getId();
+    		
             if( key.equals( "flap.free" ))
                 setIcon( false, icon );
             else
