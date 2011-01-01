@@ -25,6 +25,7 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
+import bibliothek.gui.DockController;
 import bibliothek.util.Path;
 
 /**
@@ -56,6 +57,13 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  */
 public interface PreferenceModel {
+	/**
+	 * Gets the {@link DockController} in whose realm this model is used. The controller
+	 * is mainly necessary to load icons and text.
+	 * @return the controller in whose realm this model is used
+	 */
+	public DockController getController();
+	
     /**
      * Uses an unknown source to update this model and load all the preferences
      * that are currently available. If the underlying resource cannot be

@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.preference;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
 
 /**
@@ -58,6 +59,8 @@ public class PreferenceOperation {
     private Icon icon;
     private String description;
     
+    private PreferenceOperationIcon opIcon;
+    
     /**
      * Creates a new operation.
      * @param key the unique identifier of this operation
@@ -80,6 +83,22 @@ public class PreferenceOperation {
         setDescription( description );
     }
     
+    /**
+     * Informs this {@link PreferenceOperation} that it will be used for <code>model</code>.
+     * @param model the model for which this operation will be used
+     */
+    public void bind( PreferenceModel model ){
+    	
+    }
+    
+    /**
+     * Informs this {@link PreferenceModel} that it is no longer used for <code>model</code>.
+     * @param model the model for which this operation is used
+     */
+    public void unbind( PreferenceModel model ){
+    	
+    }
+    
     @Override
     public int hashCode() {
         return key.hashCode();
@@ -96,9 +115,10 @@ public class PreferenceOperation {
     
     /**
      * Gets an icon for this operation. The icon should have a size of 10x10 pixels.
+     * @param model the model for which the icon is used
      * @return the icon for this operation
      */
-    public Icon getIcon() {
+    public Icon getIcon( PreferenceModel model ) {
         return icon;
     }
     

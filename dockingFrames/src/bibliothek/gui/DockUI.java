@@ -30,11 +30,8 @@ import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.beans.PropertyChangeEvent;
@@ -71,9 +68,7 @@ import bibliothek.gui.dock.themes.ThemePropertyFactory;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
-import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
@@ -107,9 +102,6 @@ public class DockUI {
 	/** the local used to load the {@link ResourceBundle} */
 	private Locale locale = Locale.getDefault();
 	
-    /** The icons used in this framework */
-    private Map<String, Icon> icons;
-    
     /** A list of all available themes */
     private List<ThemeFactory> themes = new ArrayList<ThemeFactory>();
     
@@ -157,30 +149,6 @@ public class DockUI {
      * Creates a new DockUI
      */
     protected DockUI(){
-        icons = DockUtilities.loadIcons( "data/icons.ini", null, DockUI.class.getClassLoader() );
-        
-        // special icons
-        icons.put( OVERFLOW_MENU_ICON, new Icon(){
-			public int getIconHeight(){
-				return 7;
-			}
-
-			public int getIconWidth(){
-				return 9;
-			}
-
-			public void paintIcon( Component c, Graphics g, int x, int y ){
-				g = g.create();
-				((Graphics2D)g).setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-				g.setColor( c.getForeground() );
-				
-				g.fillPolygon( 
-						new int[]{ x + 1, x + 8, x + 4 },
-						new int[]{ y + 1, y + 1, y + 6 }, 3 );
-				g.dispose();
-			}
-        });
-        
         setLocale( Locale.getDefault() );
         
         registerThemes();
@@ -448,34 +416,6 @@ public class DockUI {
         
         for( LocaleListener listener : localeListeners() )
         	listener.localeChanged( this );
-    }
-    
-    /**
-     * Gets the icon stored under <code>key</code>. The keys are stored in
-     * a file "icons.ini" in the directory "data".
-     * @param key the key for the icon
-     * @return the icon or <code>null</code>
-     */
-    public Icon getIcon( String key ){
-        return icons.get( key );
-    }
-    
-    /**
-     * Sets the icon that is used for a certain key.
-     * @param key the key 
-     * @param icon the icon to return if {@link #getIcon(String)} is invoked
-     */
-    public void setIcon( String key, Icon icon ){
-        icons.put( key, icon );
-    }
-    
-    /**
-     * Fills all known icons as default-icons into the given manager.
-     * @param manager the manager to fill
-     */
-    public void fillIcons( IconManager manager ){
-        for( Map.Entry<String, Icon> icon : icons.entrySet() )
-            manager.setIcon( icon.getKey(), Priority.DEFAULT, icon.getValue() );
     }
     
     /**
