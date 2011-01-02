@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -56,8 +57,8 @@ import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.util.Todo;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Version;
 
@@ -534,6 +535,20 @@ public class DockUtilities {
      * @see Properties#load(InputStream)
      */
     public static Map<String, Icon> loadIcons( String list, String path, ClassLoader loader ){
+    	return loadIcons( list, path, null, loader );
+    }
+    
+    /**
+     * Loads a map of icons.
+     * @param list a path to a property-file containing key-path-pairs.
+     * @param path the base path to the icons, will be added before any
+     * path of the property file, can be <code>null</code>
+     * @param ignore keys that are already present in <code>ignore</code> are not loaded, can be <code>null</code>
+     * @param loader used to transform paths into urls.
+     * @return the map of {@link Icon}s, the map can be empty if no icons were found
+     * @see Properties#load(InputStream)
+     */
+    public static Map<String, Icon> loadIcons( String list, String path, Set<String> ignore, ClassLoader loader ){
         try{
             InputStream in = loader.getResourceAsStream( list );
             if( in == null )
@@ -546,17 +561,20 @@ public class DockUtilities {
             Map<String, Icon> result = new HashMap<String, Icon>();
             for( Map.Entry<Object, Object> entry : properties.entrySet() ){
                 String key = (String)entry.getKey();
-                String file = (String)entry.getValue();
-                if( path != null )
-                    file = path + file;
                 
-                URL url = loader.getResource( file );
-                if( url == null ){
-                    System.err.println( "Missing file: " + file );
-                }
-                else{
-                    ImageIcon icon = new ImageIcon( url );
-                    result.put( key, icon );
+                if( ignore == null || !ignore.contains( key )){
+	                String file = (String)entry.getValue();
+	                if( path != null )
+	                    file = path + file;
+	                
+	                URL url = loader.getResource( file );
+	                if( url == null ){
+	                    System.err.println( "Missing file: " + file );
+	                }
+	                else{
+	                    ImageIcon icon = new ImageIcon( url );
+	                    result.put( key, icon );
+	                }
                 }
             }
             

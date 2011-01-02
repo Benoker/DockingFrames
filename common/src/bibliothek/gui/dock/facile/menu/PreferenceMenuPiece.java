@@ -51,7 +51,7 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
     private AbstractAction action = new AbstractAction(){
         public void actionPerformed( ActionEvent e ) {
             PreferenceTreeModel model = getModel();
-            PreferenceTreeDialog dialog = new PreferenceTreeDialog( model );
+            PreferenceTreeDialog dialog = new PreferenceTreeDialog( model, true );
             dialog.openDialog( controller.findRootWindow(), true );
         }
     };
@@ -79,7 +79,7 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
      */
     protected PreferenceTreeModel createModel(){
         if( controller == null )
-            return new PreferenceTreeModel();
+            return new PreferenceTreeModel( controller );
         else
             return new DockingFramesPreference( controller );
     }

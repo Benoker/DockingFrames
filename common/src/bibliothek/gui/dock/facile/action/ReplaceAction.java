@@ -34,11 +34,11 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.util.ClientOnly;
 
@@ -57,8 +57,7 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
 	/** A listener to the stations known to this action */
     private DockStationListener dockStationListener;
     
-    private DockController controller;
-    private Listener listener = new Listener();
+    private DockActionIcon icon;
     
     /**
      * Sets up this action.
@@ -91,6 +90,13 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
         setText( false, bundle.getString( "replace" ) );
         setTooltip( true, bundle.getString( "replace.tooltip" ));
         setTooltip( false, bundle.getString( "replace.tooltip" ));
+        
+        icon = new DockActionIcon( "replace", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( true, newValue );
+				setIcon( false, newValue );
+			}
+		};
         
         setController( controller );
     }
@@ -163,30 +169,6 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
     }
     
     public void setController( DockController controller ) {
-        if( this.controller != controller ){
-            if( this.controller != null )
-                this.controller.getIcons().remove( "replace", listener );
-            
-            this.controller = controller;
-            
-            if( controller != null ){
-            	controller.getIcons().setIconDefault( KEY_ICON, Resources.getIcon( KEY_ICON ) );
-                controller.getIcons().add( "replace" , listener );
-                Icon icon = controller.getIcons().getIcon( "replace" );
-                setIcon( true, icon );
-                setIcon( false, icon );
-            }
-        }
-    }
-    
-    /**
-     * A listener changing the icon of this action
-     * @author Benjamin Sigg
-     */
-    private class Listener implements IconManagerListener{
-        public void iconChanged( String key, Icon icon ) {
-            setIcon( true, icon );
-            setIcon( false, icon );
-        }
+        icon.setController( controller );
     }
 }

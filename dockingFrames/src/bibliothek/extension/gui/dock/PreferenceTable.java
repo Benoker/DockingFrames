@@ -384,7 +384,7 @@ public class PreferenceTable extends JPanel{
             if( operations != null ){
                 for( PreferenceOperation operation : operations ){
                     if( editorOperations == null || !editorOperations.containsKey( operation )){
-                        setOperation( operation, model.isEnabled( index, operation ), false );
+                    	setOperation( operation, model.isEnabled( index, operation ), false );
                     }
                 }
             }
@@ -412,7 +412,12 @@ public class PreferenceTable extends JPanel{
             
             Button button = operations.get( operation );
             if( button == null ){
-                button = new Button( operationViews.get( operation ), editor );
+            	Operation view = operationViews.get( operation );
+            	if( view == null ){
+            		view = new Operation( operation );
+            	}
+            	
+                button = new Button( view, editor );
                 operations.put( operation, button );
                 addTable( button );
                 

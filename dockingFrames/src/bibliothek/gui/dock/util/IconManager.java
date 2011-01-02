@@ -32,6 +32,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.util.icon.DefaultIconScheme;
 import bibliothek.gui.dock.util.icon.DockIconBridge;
 import bibliothek.gui.dock.util.icon.DockIcon;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A map of icons which are used by various objects. The icon is stored
@@ -50,6 +53,8 @@ public class IconManager extends UIProperties<Icon, DockIcon, DockIconBridge>{
     public IconManager( DockController controller ){
     	super( controller );
     	
+    	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_0,
+    			description="load these icons somewhere else, for example in the DockControllerFactory")
     	DefaultIconScheme scheme = new DefaultIconScheme( "data/icons.ini", controller );
     	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
     	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );

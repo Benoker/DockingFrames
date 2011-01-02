@@ -45,7 +45,7 @@ public class CUnmaximizeExternalizedAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CUnmaximizeExternalizedAction( CControl control ){
-        super( control, ExtendedMode.EXTERNALIZED, "unmaximize_externalized", CLocationModeManager.ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED, CControl.KEY_GOTO_EXTERNALIZED );
+        super( control, ExtendedMode.EXTERNALIZED, CLocationModeManager.ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED, CControl.KEY_GOTO_EXTERNALIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

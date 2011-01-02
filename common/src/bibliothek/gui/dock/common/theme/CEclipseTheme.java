@@ -51,6 +51,7 @@ import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.color.ColorBridge;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.FontBridge;
@@ -142,7 +143,7 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
     @Override
     public void uninstall( DockController controller ) {
         super.uninstall( controller );
-        controller.getIcons().clearThemeIcons();
+        controller.getIcons().clear( Priority.THEME );
         ActionViewConverter converter = controller.getActionViewConverter();
     	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.TITLE, null );
     	converter.putTheme( CPanelPopup.PANEL_POPUP, ViewTarget.MENU, null );

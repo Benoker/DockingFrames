@@ -65,7 +65,7 @@ public class CPreferenceModel extends PreferenceTreeModel{
      * @param combiner how to combine paths of models and of preferences
      */
     public CPreferenceModel( CControl control, PathCombiner combiner ){
-        super( combiner );
+        super( combiner, control.getController() );
         DockController controller = control.intern().getController();
         
         put( new Path( "shortcuts" ),

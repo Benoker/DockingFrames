@@ -119,7 +119,7 @@ public class CPreferenceMenuPiece extends BaseMenuPiece{
     	if( model == null )
     		model = control.getPreferenceModel();
     	if( model == null )
-    		model = new DefaultPreferenceModel();
+    		model = new DefaultPreferenceModel( control.getController() );
     	
     	Component owner = control.intern().getController().findRootWindow();
     	control.getPreferences().load( model, false );

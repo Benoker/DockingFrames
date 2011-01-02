@@ -135,6 +135,7 @@ import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.gui.dock.util.icon.DefaultIconScheme;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Filter;
 import bibliothek.util.Todo;
@@ -486,6 +487,7 @@ public class CControl {
 
         initExtendedModes();
         initProperties();
+        initIcons();
 
         setTheme( ThemeMap.KEY_SMOOTH_THEME );
     }
@@ -640,6 +642,18 @@ public class CControl {
         putProperty( EclipseTheme.THEME_CONNECTOR, new CommonEclipseThemeConnector( this ) );
         putProperty( SingleTabDecider.SINGLE_TAB_DECIDER, new CommonSingleTabDecider( this ) );
         putProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new CPlaceholderStrategy( this ) );
+    }
+    
+    /**
+     * Sets up all the default icons used in the ralm of this {@link CControl}.
+     */
+    protected void initIcons(){
+    	DefaultIconScheme scheme = new DefaultIconScheme( getController(),
+    			new DefaultIconScheme.IconResource( "data/icons.ini", null, DockController.class.getClassLoader() ),
+    			new DefaultIconScheme.IconResource( "data/bibliothek/gui/dock/icons/icons.ini", "data/bibliothek/gui/dock/icons/", CControl.class.getClassLoader() ));
+    	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
+    	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );
+    	getController().getIcons().setScheme( Priority.DEFAULT, scheme );
     }
 
     /**

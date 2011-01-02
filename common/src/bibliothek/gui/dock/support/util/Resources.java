@@ -25,14 +25,10 @@
  */
 package bibliothek.gui.dock.support.util;
 
-import java.util.Map;
 import java.util.ResourceBundle;
-
-import javax.swing.Icon;
 
 import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.local.LocaleListener;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
@@ -49,9 +45,6 @@ public class Resources {
     /** various text snippets */
     private static ResourceBundle bundle;
     
-    /** the list of default-icons */
-    private static Map<String, Icon> icons;
-    
     static{
         // read the localized text
         updateBundle();
@@ -64,10 +57,6 @@ public class Resources {
         		// ignore
         	}
         });
-        
-        // read the icons
-        icons = DockUtilities.loadIcons( "data/bibliothek/gui/dock/icons/icons.ini",
-                "data/bibliothek/gui/dock/icons/", Resources.class.getClassLoader() );
     }
     
     private static void updateBundle(){
@@ -92,15 +81,5 @@ public class Resources {
      */
     public static String getString( String key ){
     	return bundle.getString( key );
-    }
-    
-    /**
-     * Searches an icon that was stored with the given key. The keys
-     * can be found in the file <code>bibliothek/gui/dock/icons/icons.ini</code>.
-     * @param key the name of an icon
-     * @return the icon or <code>null</code>
-     */
-    public static Icon getIcon( String key ){
-        return icons.get( key );
     }
 }

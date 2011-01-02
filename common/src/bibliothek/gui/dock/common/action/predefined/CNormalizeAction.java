@@ -44,7 +44,7 @@ public class CNormalizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CNormalizeAction( CControl control ){
-        super( control, ExtendedMode.NORMALIZED, "normalize", CLocationModeManager.ICON_MANAGER_KEY_NORMALIZE, CControl.KEY_GOTO_NORMALIZED );
+        super( control, ExtendedMode.NORMALIZED, CLocationModeManager.ICON_MANAGER_KEY_NORMALIZE, CControl.KEY_GOTO_NORMALIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

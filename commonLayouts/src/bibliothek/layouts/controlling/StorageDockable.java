@@ -9,6 +9,7 @@ import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.extension.gui.dock.preference.AbstractPreference;
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.layouts.Core;
@@ -32,12 +33,12 @@ public class StorageDockable extends DefaultSingleCDockable{
     private DefaultPreferenceModel model;
     private int entryCount = 0;
 
-    public StorageDockable( Core core ){
+    public StorageDockable( Core core, CControl control ){
         super( "storage" );
         setTitleText( "Storage" );
         this.core = core;
 
-        model = new DefaultPreferenceModel();
+        model = new DefaultPreferenceModel( control.getController() );
         model.add( new Entry( ++entryCount ) );
         
         PreferenceTable table = new PreferenceTable();

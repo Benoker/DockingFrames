@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -32,10 +32,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.util.IconManager;
 
 /**
  * This action shows an icon for "close". When the action is trigged, 
@@ -45,8 +44,7 @@ import bibliothek.gui.dock.util.IconManager;
  * @author Benjamin Sigg
  */
 public class CloseAction extends SimpleButtonAction implements ListeningDockAction{
-    private DockController controller;
-    private Listener listener = new Listener();
+    private DockActionIcon icon;
     
     /**
      * Sets the icon and the text of this action.
@@ -57,22 +55,18 @@ public class CloseAction extends SimpleButtonAction implements ListeningDockActi
     public CloseAction( DockController controller ){
         setText( DockUI.getDefaultDockUI().getString( "close" ));
         setTooltip( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
+        
+        icon = new DockActionIcon( "close", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( newValue );	
+			}
+		};
+        
         setController( controller );
     }
     
     public void setController( DockController controller ) {
-        if( controller != this.controller ){
-            if( this.controller != null )
-                this.controller.getIcons().remove( "close", listener );
-            
-            this.controller = controller;
-            
-            if( controller != null ){
-                IconManager icons = controller.getIcons();
-                icons.add( "close", listener );
-                setIcon( icons.getIcon( "close" ));
-            }
-        }
+        icon.setController( controller );
     }
     
     @Override
@@ -90,15 +84,5 @@ public class CloseAction extends SimpleButtonAction implements ListeningDockActi
         DockStation parent = dockable.getDockParent();
         if( parent != null )
             parent.drag( dockable );
-    }
-    
-    /**
-     * A listener changing the icon of this action
-     * @author Benjamin Sigg
-     */
-    private class Listener implements IconManagerListener{
-        public void iconChanged( String key, Icon icon ) {
-            setIcon( icon );
-        }
     }
 }

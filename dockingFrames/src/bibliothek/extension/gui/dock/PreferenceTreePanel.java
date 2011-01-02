@@ -129,7 +129,7 @@ public class PreferenceTreePanel extends JPanel{
     private void checkSelection(){
         PreferenceModel preference = null;
         TreePath path = tree.getSelectionPath();
-        if( path != null ){
+        if( path != null && model != null ){
             PreferenceTreeModel.Node node = (PreferenceTreeModel.Node)path.getLastPathComponent();
             preference = node.getModel();
         }
@@ -138,13 +138,17 @@ public class PreferenceTreePanel extends JPanel{
     
     /**
      * Sets the model of this panel.
-     * @param model the new model, not <code>null</code>
+     * @param model the new model, can be <code>null</code>
      */
     public void setModel( PreferenceTreeModel model ) {
-        if( model == null )
-            throw new IllegalArgumentException( "model must not be null" );
         this.model = model;
-        tree.setModel( model );
+        if( model == null ){
+        	tree.setModel( new DefaultTreeModel( new DefaultMutableTreeNode( "<null>" ) ) );
+        	table.setModel( null );
+        }
+        else{
+        	tree.setModel( model );
+        }
     }
     
     /**

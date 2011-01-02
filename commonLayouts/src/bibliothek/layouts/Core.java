@@ -108,9 +108,9 @@ public class Core implements Demonstration{
         CGrid grid = new CGrid( control );
 
         environment = new EnvironmentDockable();
-        storage = new StorageDockable( this );
-        singleDockables = new ModifySingleDockable( this );
-        multiDockables = new ModifyMultiDockable( this );
+        storage = new StorageDockable( this, control );
+        singleDockables = new ModifySingleDockable( this, control );
+        multiDockables = new ModifyMultiDockable( this, control );
 
         grid.add( 0, 0, 100, 100, environment );
         grid.add( 100, 0, 50, 100, storage );

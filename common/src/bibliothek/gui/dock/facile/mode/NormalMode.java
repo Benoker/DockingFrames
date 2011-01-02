@@ -30,12 +30,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.action.predefined.CNormalizeAction;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.action.NormalModeAction;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettingFactory;
 import bibliothek.gui.dock.support.mode.NullModeSettingsFactory;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.util.Path;
 
@@ -50,7 +50,7 @@ public class NormalMode<M extends NormalModeArea> extends DefaultLocationMode<M>
 	public static final Path IDENTIFIER = new Path( "dock.mode.normal" );
 	
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "normalize"-action */
-    public static final String ICON_IDENTIFIER = "location.normalize";
+    public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_NORMALIZE;
     
     /**
      * Empty default constructor. Subclasses should call 
@@ -74,10 +74,7 @@ public class NormalMode<M extends NormalModeArea> extends DefaultLocationMode<M>
 	 * @param controller the owner of this mode
 	 */
 	public NormalMode( DockController controller ){
-		IconManager icons = controller.getIcons();
-        icons.setIconDefault( "normalize", Resources.getIcon( "normalize" ) );
-        
-        setActionProvider( new DefaultLocationModeActionProvider( new NormalModeAction( controller, this ) ) );
+		setActionProvider( new DefaultLocationModeActionProvider( new NormalModeAction( controller, this ) ) );
 	}
 	
 	public Path getUniqueIdentifier(){

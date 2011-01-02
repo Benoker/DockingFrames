@@ -25,12 +25,20 @@
  */
 package bibliothek.gui.dock.facile.action;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -42,8 +50,8 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.event.IconManagerListener;
 import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.ClientOnly;
@@ -60,6 +68,9 @@ public abstract class RenameAction extends SimpleButtonAction {
 	/** the key uses for the {@link bibliothek.gui.dock.util.IconManager} to get the {@link Icon} of this action */
 	public static final String KEY_ICON = "rename";
 	
+	/** the controller in whose realm this action is used */
+	private DockController controller;
+	
 	/** button that is pressed if the new name should be applied */
     private JButton okButton = new JButton();
     /** button to cancel the event */
@@ -72,19 +83,24 @@ public abstract class RenameAction extends SimpleButtonAction {
     /** the dockable whose title is currently changed */
     private Dockable current;
         
+    /** the icon of this action */
+    private DockActionIcon icon;
+    
+    private int bound = 0;
+    
     /**
      * Constructs a new action
      * @param controller The controller to which a listener will be added to 
      * get the Icon for this action
      */
     public RenameAction( DockController controller ){
-    	controller.getIcons().setIconDefault( KEY_ICON, Resources.getIcon( KEY_ICON ) );
-        controller.getIcons().add( KEY_ICON, new IconManagerListener(){
-            public void iconChanged( String key, Icon icon ) {
-                setIcon( icon );
-            }
-        });
-        setIcon( controller.getIcons().getIcon( KEY_ICON ));
+    	this.controller = controller;
+    	
+    	icon = new DockActionIcon( KEY_ICON, this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( newValue );	
+			}
+		};
         
         ResourceBundle bundle = Resources.getBundle();
         setText( bundle.getString( "rename" ) );
@@ -159,6 +175,24 @@ public abstract class RenameAction extends SimpleButtonAction {
     private void rename(){
         rename( current, titleField.getText() );
         menu.setVisible( false );
+    }
+    
+    @Override
+    protected void bound( Dockable dockable ){
+    	super.bound( dockable );
+    	if( bound == 0 ){
+    		icon.setController( controller );
+    	}
+    	bound++;
+    }
+    
+    @Override
+    protected void unbound( Dockable dockable ){
+    	super.unbound( dockable );
+    	bound--;
+    	if( bound == 0 ){
+    		icon.setController( null );
+    	}
     }
     
     /**

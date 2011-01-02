@@ -75,7 +75,7 @@ public class CMaximizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CMaximizeAction( CControl control ){
-        super( control, ExtendedMode.MAXIMIZED, "maximize", CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE, CControl.KEY_GOTO_MAXIMIZED );
+        super( control, ExtendedMode.MAXIMIZED, CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE, CControl.KEY_GOTO_MAXIMIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

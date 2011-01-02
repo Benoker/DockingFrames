@@ -52,7 +52,6 @@ import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.gui.dock.support.mode.UndoableModeSettings;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.util.Path;
 import bibliothek.util.container.Single;
@@ -104,14 +103,6 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 		putMode( externalizedMode );
 		putMode( normalMode );
 		putMode( maximizedMode );
-		
-        IconManager icons = control.getOwner().intern().getController().getIcons();
-        icons.setIconDefault( ICON_MANAGER_KEY_MAXIMIZE, Resources.getIcon( "maximize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_MINIMIZE, Resources.getIcon( "minimize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_NORMALIZE, Resources.getIcon( "normalize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_EXTERNALIZE, Resources.getIcon( "externalize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_UNEXTERNALIZE, Resources.getIcon( "unexternalize" ) );
-        icons.setIconDefault( ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED, Resources.getIcon( "unmaximize_externalized" ) );
         
         addModeManagerListener(new ModeManagerListener<Location, LocationMode>(){
 			public void dockableAdded( ModeManager<? extends Location, ? extends LocationMode> manager, Dockable dockable ){

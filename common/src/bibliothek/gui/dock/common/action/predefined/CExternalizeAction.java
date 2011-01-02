@@ -44,7 +44,7 @@ public class CExternalizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CExternalizeAction( CControl control ){
-        super( control, ExtendedMode.EXTERNALIZED, "externalize", CLocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE, CControl.KEY_GOTO_EXTERNALIZED );
+        super( control, ExtendedMode.EXTERNALIZED, CLocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE, CControl.KEY_GOTO_EXTERNALIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

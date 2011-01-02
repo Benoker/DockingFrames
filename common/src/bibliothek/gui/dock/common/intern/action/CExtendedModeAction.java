@@ -32,13 +32,12 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.event.IconManagerListener;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -54,17 +53,8 @@ public class CExtendedModeAction extends CDropDownItem{
     /** the mode into which this action leads */
     private ExtendedMode mode;
     
-    /** the key of the icon in the {@link IconManager} */
-    private String iconKey;
-    /** the key of the icon in the {@link Resources} */
-    private String defaultIconKey;
-    
-    /** a listener to the IconManager, may change the icon of this action */
-    private IconManagerListener iconListener = new IconManagerListener(){
-        public void iconChanged( String key, Icon icon ) {
-            setIcon( icon );
-        }
-    };
+    /** a listener to the {@link IconManager}, may change the icon of this action */
+    private DockActionIcon iconListener;
     
     /** the key stroke that triggers this action */
     private PropertyValue<KeyStroke> stroke;
@@ -81,11 +71,10 @@ public class CExtendedModeAction extends CDropDownItem{
      * Creates a new action.
      * @param control the control for which this action will be used
      * @param mode the mode into which this action leads
-     * @param defaultIconKey the key of the icon when searching in {@link Resources}
      * @param iconKey the key of the icon when searching in the {@link IconManager}
      * @param gotoStroke the key to the {@link KeyStroke} that triggers this action
      */
-    protected CExtendedModeAction( CControl control, ExtendedMode mode, String defaultIconKey, String iconKey, PropertyKey<KeyStroke> gotoStroke ){
+    protected CExtendedModeAction( CControl control, ExtendedMode mode, String iconKey, PropertyKey<KeyStroke> gotoStroke ){
         super( null );
         action = new Action();
         init( action );
@@ -94,8 +83,6 @@ public class CExtendedModeAction extends CDropDownItem{
             throw new NullPointerException( "control is null" );
         if( mode == null )
             throw new NullPointerException( "mode is null" );
-        if( defaultIconKey == null )
-            throw new NullPointerException( "defaultIconKey is null" );
         if( iconKey == null )
             throw new NullPointerException( "iconKey is null" );
         if( gotoStroke == null )
@@ -103,8 +90,12 @@ public class CExtendedModeAction extends CDropDownItem{
         
         this.control = control;
         this.mode = mode;
-        this.iconKey = iconKey;
-        this.defaultIconKey = defaultIconKey;
+        
+        iconListener = new DockActionIcon( iconKey, action ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( newValue );
+			}
+		};
         
         stroke = new PropertyValue<KeyStroke>( gotoStroke ){
             @Override
@@ -114,34 +105,14 @@ public class CExtendedModeAction extends CDropDownItem{
         };
     }
     
-    @Override
-    public void setIcon( Icon icon ) {
-        if( icon == null ){
-            icon = Resources.getIcon( defaultIconKey );
-        }
-        
-        super.setIcon( icon );
-    }
-    
     /**
      * Exchanges all the properties such that they are read from <code>controller</code>
      * @param controller the controller from which to read properties, or <code>null</code>
      */
     protected void setController( DockController controller ){
-        if( this.controller != null ){
-            IconManager icons = this.controller.getIcons();
-            icons.remove( iconKey, iconListener );
-            setIcon( null );
-        }
-        
         this.controller = controller;
         stroke.setProperties( controller );
-        
-        if( controller != null ){
-            IconManager icons = controller.getIcons();
-            icons.add( iconKey, iconListener );
-            setIcon( icons.getIcon( iconKey ) );
-        }
+        iconListener.setController( controller );
     }
     
     /**

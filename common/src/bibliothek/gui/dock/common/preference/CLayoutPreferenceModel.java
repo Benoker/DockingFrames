@@ -53,6 +53,7 @@ public class CLayoutPreferenceModel extends DefaultPreferenceModel{
      * @param control the control whose settings this model represents
      */
     public CLayoutPreferenceModel( CControl control ){
+    	super( control.getController() );
         add( tabPlacement = new TabPlacementPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabplacement" )));
         add( tabContentFilter = new TabContentFilterPreference( control.intern().getDockProperties(), new Path( "dock.layout.tabcontentfilter" )));
         add( theme = new ThemePreference( control.intern().getDockProperties(), control.getThemes() ));

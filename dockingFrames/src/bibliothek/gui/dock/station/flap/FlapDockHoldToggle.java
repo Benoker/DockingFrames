@@ -107,7 +107,7 @@ public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolea
             this.controller = controller;
             
             for( Listener icon : icons ){
-        		icon.setManager( controller.getIcons() );
+        		icon.setController( controller );
         	}
         }
     }

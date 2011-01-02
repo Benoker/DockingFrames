@@ -29,12 +29,12 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.action.predefined.CMinimizeAction;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.action.MinimizedModeAction;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettingFactory;
 import bibliothek.gui.dock.support.mode.NullModeSettingsFactory;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.util.Path;
 
@@ -47,7 +47,7 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
 	public static final Path IDENTIFIER = new Path( "dock.mode.minimized" );
 	
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "minimize"-action */
-    public static final String ICON_IDENTIFIER = "location.minimize";
+    public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_MINIMIZE;
 
     /**
      * Empty default constructor. Subclasses should call 
@@ -72,10 +72,7 @@ public class MinimizedMode<M extends MinimizedModeArea> extends DefaultLocationM
 	 * @param controller the owner of this mode
 	 */
 	public MinimizedMode( DockController controller ){
-		IconManager icons = controller.getIcons();
-        icons.setIconDefault( "minimize", Resources.getIcon( "minimize" ) );
-        
-        setActionProvider( new DefaultLocationModeActionProvider( new MinimizedModeAction( controller, this ) ) );
+		setActionProvider( new DefaultLocationModeActionProvider( new MinimizedModeAction( controller, this ) ) );
         setShouldAutoFocus( false );
 	}
 	

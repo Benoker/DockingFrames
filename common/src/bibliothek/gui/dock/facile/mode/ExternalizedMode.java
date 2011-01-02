@@ -34,6 +34,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.action.ExternalizedModeAction;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -42,7 +43,6 @@ import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettingFactory;
 import bibliothek.gui.dock.support.mode.NullModeSettingsFactory;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.util.Path;
 
@@ -55,7 +55,7 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
 	public static final Path IDENTIFIER = new Path( "dock.mode.externalized" );
 
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
-    public static final String ICON_IDENTIFIER = "location.externalize";
+    public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE;
 	
     /**
      * Empty default constructor. Subclasses should call 
@@ -79,10 +79,7 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
 	 * @param controller the owner of this mode
 	 */
 	public ExternalizedMode( DockController controller ){
-		IconManager icons = controller.getIcons();
-        icons.setIconDefault( "externalize", Resources.getIcon( "externalize" ) );
-        
-        setActionProvider( new DefaultLocationModeActionProvider( new ExternalizedModeAction( controller, this ) ) );
+		setActionProvider( new DefaultLocationModeActionProvider( new ExternalizedModeAction( controller, this ) ) );
 	}
 	
 	public Path getUniqueIdentifier(){

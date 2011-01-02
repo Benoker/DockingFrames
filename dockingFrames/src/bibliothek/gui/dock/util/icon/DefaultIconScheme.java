@@ -32,6 +32,7 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,10 @@ import bibliothek.gui.dock.util.UIProperties;
 import bibliothek.gui.dock.util.UIScheme;
 import bibliothek.gui.dock.util.UISchemeEvent;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This default implementation of an {@link UIScheme} for {@link Icon}s reads an ini-file
@@ -54,6 +59,58 @@ import bibliothek.util.Path;
  */
 public class DefaultIconScheme extends AbstractIconScheme {
 	private Map<String, Icon> icons;
+	
+	/**
+	 * A helper class describing a source for icons
+	 * @author Benjamin Sigg
+	 */
+	public static class IconResource{
+		private String fileName;
+		private String path;
+		private ClassLoader loader;
+		
+		/**
+		 * Creates a new source for icons
+		 * @param fileName the name of the file that contains "key=path" values
+		 * @param path the prefix of the paths that are found in the file
+		 * @param loader the {@link ClassLoader} to load the icons
+		 */
+		public IconResource( String fileName, String path, ClassLoader loader ){
+			if( fileName == null ){
+				throw new IllegalArgumentException( "fileName must not be null" );
+			}
+			this.fileName = fileName;
+			this.path = path;
+			if( loader == null ){
+				loader = DefaultIconScheme.class.getClassLoader();
+			}
+			this.loader = loader;
+		}
+		
+		/**
+		 * Gets the name of the file with the "key=path" values.
+		 * @return the file name
+		 */
+		public String getFileName(){
+			return fileName;
+		}
+		
+		/**
+		 * Gets the prefix of the paths that are found in the icons file.
+		 * @return the prefix, can be <code>null</code>
+		 */
+		public String getPath(){
+			return path;
+		}
+		
+		/**
+		 * Gets the {@link ClassLoader} which should be used to load files
+		 * @return the class loader
+		 */
+		public ClassLoader getLoader(){
+			return loader;
+		}
+	}
 	
 	/**
 	 * Creates a new scheme loading first the contents of the ini file <code>file</code> and
@@ -77,9 +134,25 @@ public class DefaultIconScheme extends AbstractIconScheme {
 	 * @param controller the {@link DockController} in whose realm this scheme will be used
 	 */
 	public DefaultIconScheme( String file, ClassLoader loader, DockController controller ){
+		this( controller, new IconResource( file, null, loader ));
+	}
+	
+	/**
+	 * Creates a new scheme loading icons from all the specified resources.
+	 * @param controller the {@link DockController} in whose realm this scheme will be used
+	 * @param resources a list of files with "key=path" lines telling key and path of the icons to load. If a key
+	 * appears more than once, then the last occurance of the key wins
+	 */
+	@Todo( priority=Priority.MAJOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+			description="get rid of the Overflow-menu-icon")
+	public DefaultIconScheme( DockController controller, IconResource... resources ){
 		super( controller );
 		
-		icons = DockUtilities.loadIcons( file, null, loader );
+		icons = new HashMap<String, Icon>();
+		
+		for( int i = resources.length-1; i >= 0; i-- ){
+			icons.putAll( DockUtilities.loadIcons( resources[i].getFileName(), resources[i].getPath(), icons.keySet(), resources[i].getLoader() ) );
+		}
 		
         icons.put( DockUI.OVERFLOW_MENU_ICON, new Icon(){
 			public int getIconHeight(){

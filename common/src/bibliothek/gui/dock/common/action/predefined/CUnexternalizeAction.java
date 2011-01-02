@@ -46,7 +46,7 @@ public class CUnexternalizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CUnexternalizeAction( CControl control ){
-        super( control, ExtendedMode.NORMALIZED, "unexternalize", CLocationModeManager.ICON_MANAGER_KEY_UNEXTERNALIZE, CControl.KEY_GOTO_NORMALIZED );
+        super( control, ExtendedMode.NORMALIZED, CLocationModeManager.ICON_MANAGER_KEY_UNEXTERNALIZE, CControl.KEY_GOTO_NORMALIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

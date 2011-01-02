@@ -58,6 +58,8 @@ public class CKeyStrokePreferenceModel extends DefaultPreferenceModel{
      * @param properties the set of properties to read and write
      */
     public CKeyStrokePreferenceModel( DockProperties properties ){
+    	super( properties.getController() );
+    	
         add( initSelector = new KeyStrokeInitSelectorPreference( properties ));
         add( maskNoCombination = new ModifierMaskNoCombinationPreference( properties ));
         add( maskScreenOnly = new ModifierMaskScreenOnlyPreference( properties ));

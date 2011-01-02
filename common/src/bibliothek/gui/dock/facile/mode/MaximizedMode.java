@@ -40,6 +40,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CMaximizeBehavior;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
+import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.KeyboardListener;
@@ -51,7 +52,6 @@ import bibliothek.gui.dock.support.mode.ModeManager;
 import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettingFactory;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
@@ -69,7 +69,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	public static final Path IDENTIFIER = new Path( "dock.mode.maximized" );
 
 	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "maximize"-action */
-	public static final String ICON_IDENTIFIER = "location.maximize";
+	public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE;
 
 	/** when to maximize what */
 	private CMaximizeBehavior maximizeBehavior = CMaximizeBehavior.STACKED;
@@ -118,9 +118,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * @param controller the owner of this mode
 	 */
 	public MaximizedMode( DockController controller ){
-		IconManager icons = controller.getIcons();
-		icons.setIconDefault( "maximize", Resources.getIcon( "maximize" ) );
-
 		setActionProvider( new DefaultLocationModeActionProvider( new MaximizedModeAction( controller, this ) ) );
 	}
 

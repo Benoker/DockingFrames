@@ -46,7 +46,7 @@ public class NormalModeAction extends LocationModeAction{
 	 * @param mode the mode which is applied
 	 */
 	public NormalModeAction( DockController controller, NormalMode<?> mode ){
-		super( controller, mode, "normalize", NormalMode.ICON_IDENTIFIER, CControl.KEY_GOTO_NORMALIZED );
+		super( controller, mode, NormalMode.ICON_IDENTIFIER, CControl.KEY_GOTO_NORMALIZED );
 		
         ResourceBundle bundle = Resources.getBundle();
         

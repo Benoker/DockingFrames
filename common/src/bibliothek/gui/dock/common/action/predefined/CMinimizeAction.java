@@ -44,7 +44,7 @@ public class CMinimizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CMinimizeAction( CControl control ){
-        super( control, ExtendedMode.MINIMIZED, "minimize", CLocationModeManager.ICON_MANAGER_KEY_MINIMIZE, CControl.KEY_GOTO_MINIMIZED );
+        super( control, ExtendedMode.MINIMIZED, CLocationModeManager.ICON_MANAGER_KEY_MINIMIZE, CControl.KEY_GOTO_MINIMIZED );
         
         ResourceBundle bundle = Resources.getBundle();
         

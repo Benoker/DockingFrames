@@ -32,16 +32,18 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
     private static final PreferenceOperation ADD_MULTI_DOCKABLE = new PreferenceOperation( "add", Icons.get( "add dockable" ), "CControl.add( MultipleCDockable )" );
     
     private Core core;
+    private CControl coreControl;
     
     private PreferenceTable table;
     private DefaultPreferenceModel model;
     
-    public ModifyMultiDockable( Core core ){
+    public ModifyMultiDockable( Core core, CControl control ){
         super( "modify multi" );
+        this.coreControl = control;
         setTitleText( "Multiple Dockables" );
         this.core = core;
 
-        model = new DefaultPreferenceModel();
+        model = new DefaultPreferenceModel( control.getController() );
         table = new PreferenceTable( model );
         setLayout( new GridLayout( 1, 1 ) );
         add( new JScrollPane( table ));
@@ -84,7 +86,7 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
         CControl control = core.getEnvironment().getEnvironmentControl();
         CControlRegister register = control.getRegister();
         
-        model = new DefaultPreferenceModel();
+        model = new DefaultPreferenceModel( coreControl.getController() );
         for( String id : factoryOrder ){
             MultipleCDockableFactory<?, ?> factory = register.getFactory( id );
             int count = 0;

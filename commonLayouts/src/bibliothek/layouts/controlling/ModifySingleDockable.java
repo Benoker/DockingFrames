@@ -30,12 +30,12 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
     private Core core;
     private DefaultPreferenceModel model;
     
-    public ModifySingleDockable( Core core ){
+    public ModifySingleDockable( Core core, CControl control ){
         super( "modify single" );
         setTitleText( "Single Dockables" );
      
         this.core = core;
-        model = new DefaultPreferenceModel();
+        model = new DefaultPreferenceModel( control.getController() );
         
         PreferenceTable table = new PreferenceTable( model );
         setLayout( new GridLayout( 1, 1 ) );

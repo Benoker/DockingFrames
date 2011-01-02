@@ -46,7 +46,7 @@ public class MinimizedModeAction extends LocationModeAction{
 	 * @param mode the mode which is applied
 	 */
 	public MinimizedModeAction( DockController controller, MinimizedMode<?> mode ){
-		super( controller, mode, "minimize", MinimizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_MINIMIZED );
+		super( controller, mode, MinimizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_MINIMIZED );
 		
         ResourceBundle bundle = Resources.getBundle();
         
