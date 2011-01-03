@@ -143,10 +143,10 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		
 		public void add( int index, P object ){
 			super.add( index, object );
-			remove( object.asDockable() );
+			removeDockable( object.asDockable() );
 		}
 		
-		private void remove( D dockable ){
+		private void removeDockable( D dockable ){
 			Path placeholder = getPlaceholder( dockable );
 			if( placeholder != null ){
 				removeAll( placeholder );
@@ -155,7 +155,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			S station = toStation( dockable );
 			if( station != null ){
 				for( D child : getChildren( station )){
-					remove( child );
+					removeDockable( child );
 				}
 			}
 		}
