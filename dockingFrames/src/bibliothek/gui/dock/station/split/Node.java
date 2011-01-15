@@ -144,6 +144,9 @@ public class Node extends VisibleSplitNode{
         }
         
         treeChanged();
+        if( left != null ){
+        	ensureIdUniqueAsync();
+        }
         
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();
@@ -177,6 +180,9 @@ public class Node extends VisibleSplitNode{
         }
         
         treeChanged();
+        if( right != null ){
+        	ensureIdUniqueAsync();
+        }
         
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();
@@ -209,6 +215,20 @@ public class Node extends VisibleSplitNode{
             setRight( child );
         else
             throw new IllegalArgumentException( "Location not valid " + location );
+    }
+    
+    @Override
+    public int getMaxChildrenCount(){
+    	return 2;
+    }
+    
+    @Override
+    public SplitNode getChild( int location ){
+    	switch( location ){
+    		case 0: return getLeft();
+    		case 1: return getRight();
+    		default: return null;
+    	}
     }
     
     /**
@@ -615,7 +635,12 @@ public class Node extends VisibleSplitNode{
 
     				long splitId = -1;
     				if( lastNode != node ){
-    					splitId = node.getId();
+    					if( depth > 0 ){
+    						splitId = property.getNode( depth-1 ).getId();
+    					}
+    					else{
+    						splitId = node.getId();
+    					}
     				}
     				Leaf leaf = create( dockable, leafId );
     				if( leaf == null )

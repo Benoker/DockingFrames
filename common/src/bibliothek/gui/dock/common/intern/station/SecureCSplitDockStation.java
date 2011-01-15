@@ -43,10 +43,12 @@ import bibliothek.util.Todo.Version;
 /**
  * The secure version of {@link CSplitDockStation}.
  * @author Benjamin Sigg
+ * @deprecated this class is no longer required and will be removed in a future release
  */
 @FrameworkOnly
-@Todo( priority=Priority.ENHANCEMENT, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+@Todo( priority=Priority.ENHANCEMENT, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_1,
 		description="Remove this class" )
+@Deprecated
 public class SecureCSplitDockStation extends SecureSplitDockStation implements CommonStation<SplitDockStation>{
 	private CommonStationDelegate delegate;
 

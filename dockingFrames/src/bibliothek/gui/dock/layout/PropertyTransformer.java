@@ -71,9 +71,7 @@ public class PropertyTransformer {
 
 	/**
 	 * Creates a new transformer and installs <code>factories</code>.
-	 * 
-	 * @param factories
-	 *            a list of factories to install
+	 * @param factories a list of factories to install
 	 */
 	public PropertyTransformer( DockablePropertyFactory... factories ){
 		for (DockablePropertyFactory factory : factories)
@@ -81,28 +79,20 @@ public class PropertyTransformer {
 	}
 
 	/**
-	 * Installs a factory
-	 * 
-	 * @param factory
-	 *            the new factory
+	 * Installs a factory 
+	 * @param factory the new factory
 	 */
 	public void addFactory( DockablePropertyFactory factory ){
 		factories.put( factory.getID(), factory );
 	}
 
 	/**
-	 * Writes <code>property</code> and all its successors into <code>out</code>
-	 * .
-	 * 
-	 * @param property
-	 *            the property to write
-	 * @param out
-	 *            a stream to write into
-	 * @throws IOException
-	 *             if the stream throws an exception
+	 * Writes <code>property</code> and all its successors into <code>out</code>.
+	 * @param property the property to write
+	 * @param out a stream to write into
+	 * @throws IOException if the stream throws an exception
 	 */
-	public void write( DockableProperty property, DataOutputStream out )
-			throws IOException{
+	public void write( DockableProperty property, DataOutputStream out ) throws IOException{
 		Version.write( out, Version.VERSION_1_0_4 );
 
 		int count = 0;
@@ -130,12 +120,9 @@ public class PropertyTransformer {
 	/**
 	 * Reads a property which was earlier stored. If the property had any
 	 * successors, then they are read as well.
-	 * 
-	 * @param in
-	 *            a stream to read from
+	 * @param in a stream to read from
 	 * @return the properties
-	 * @throws IOException
-	 *             if the property can't be read
+	 * @throws IOException if the property can't be read
 	 */
 	public DockableProperty read( DataInputStream in ) throws IOException{
 		Version version = Version.read( in );
@@ -185,11 +172,8 @@ public class PropertyTransformer {
 	/**
 	 * Writes <code>property</code> and all its successors into
 	 * <code>element</code>.
-	 * 
-	 * @param property
-	 *            the property to write
-	 * @param element
-	 *            an xml element to which this method will add some children
+	 * @param property the property to write
+	 * @param element an xml element to which this method will add some children
 	 */
 	public void writeXML( DockableProperty property, XElement element ){
 		while( property != null ) {
@@ -202,24 +186,18 @@ public class PropertyTransformer {
 
 	/**
 	 * Reads a {@link DockableProperty} and its successors from an xml element.
-	 * 
-	 * @param element
-	 *            the element to read from
-	 * @return the property or <code>null</code> if <code>element</code> is
-	 *         empty
-	 * @throws IllegalArgumentException
-	 *             if a {@link DockablePropertyFactory} is missing.
+	 * @param element the element to read from
+	 * @return the property or <code>null</code> if <code>element</code> is empty
+	 * @throws IllegalArgumentException if a {@link DockablePropertyFactory} is missing.
 	 */
 	public DockableProperty readXML( XElement element ){
 		DockableProperty base = null;
 		DockableProperty property = null;
 
 		for (XElement xnode : element.getElements( "property" )) {
-			DockablePropertyFactory factory = factories.get( xnode
-					.getString( "factory" ) );
+			DockablePropertyFactory factory = factories.get( xnode.getString( "factory" ) );
 			if (factory == null)
-				throw new IllegalArgumentException( "Missing factory: "
-						+ xnode.getString( "factory" ) );
+				throw new IllegalArgumentException( "Missing factory: " + xnode.getString( "factory" ) );
 
 			DockableProperty next = factory.createProperty();
 			next.load( xnode );

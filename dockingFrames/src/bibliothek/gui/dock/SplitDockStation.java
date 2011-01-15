@@ -344,7 +344,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		public long uniqueID(){
 			long id = System.currentTimeMillis();
 			if( id <= lastUniqueId ) {
-				id = lastUniqueId + 1;
+				lastUniqueId++;
+				id = lastUniqueId+1;
 			}
 			while( getNode(id) != null ) {
 				id++;
@@ -1538,11 +1539,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		}
 		if( start == null ) {
-			for( index = property.size() - 1; index >= 0 && start == null; index-- ) {
+			for( index = property.size() - 1; index >= 0; index-- ) {
 				SplitDockPathProperty.Node node = property.getNode(index);
 				long id = node.getId();
 				if( id != -1 ) {
 					start = getNode(id);
+					if( start != null ){
+						break;
+					}
 				}
 			}
 		}

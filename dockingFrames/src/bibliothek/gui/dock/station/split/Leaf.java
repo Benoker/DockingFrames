@@ -99,6 +99,16 @@ public class Leaf extends VisibleSplitNode{
         throw new IllegalStateException( "can't add children to a leaf" );
     }
     
+    @Override
+    public int getMaxChildrenCount(){
+    	return 0;
+    }
+    
+    @Override
+    public SplitNode getChild( int location ){
+    	return null;
+    }
+    
     /**
      * Sets the element of this leaf. This method ensures that <code>dockable</code>
      * is registered in the {@link DockStation}

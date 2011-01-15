@@ -32,7 +32,7 @@ public class Placeholder extends SplitNode {
 
 	@Override
 	public int getChildLocation( SplitNode child ){
-		return 0;
+		return -1;
 	}
 
 	@Override
@@ -87,6 +87,16 @@ public class Placeholder extends SplitNode {
 	@Override
 	public void setChild( SplitNode child, int location ){
 		throw new IllegalArgumentException();
+	}
+	
+	@Override
+	public int getMaxChildrenCount(){
+		return 0;
+	}
+	
+	@Override
+	public SplitNode getChild( int location ){
+		return null;
 	}
 
 	@Override
