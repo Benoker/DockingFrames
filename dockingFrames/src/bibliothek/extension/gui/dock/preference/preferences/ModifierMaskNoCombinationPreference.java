@@ -25,7 +25,6 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.ModifierMask;
@@ -46,8 +45,8 @@ public class ModifierMaskNoCombinationPreference extends DockPropertyPreference<
 	public ModifierMaskNoCombinationPreference( DockProperties properties ){
 		super( properties, DockRelocatorMode.NO_COMBINATION_MASK, Path.TYPE_MODIFIER_MASK_PATH, new Path( "dock.DockRelocatorMode.NO_COMBINATION_MASK" ) );
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.no_combination_mask.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.no_combination_mask.description" ));
+		setLabelId( "preference.shortcuts.no_combination_mask.label" );
+		setDescriptionId( "preference.shortcuts.no_combination_mask.description" );
 		
 		setDefaultValue( DockRelocatorMode.NO_COMBINATION_MASK.getDefault( null ) );
 	}

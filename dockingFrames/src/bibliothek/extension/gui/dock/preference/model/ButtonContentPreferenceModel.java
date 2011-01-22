@@ -27,9 +27,10 @@ package bibliothek.extension.gui.dock.preference.model;
 
 import bibliothek.extension.gui.dock.preference.AbstractPreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
+import bibliothek.extension.gui.dock.preference.PreferenceModelListener;
+import bibliothek.extension.gui.dock.preference.PreferenceModelText;
 import bibliothek.extension.gui.dock.preference.preferences.choice.ButtonContentConditionChoice;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.util.DockProperties;
@@ -54,6 +55,12 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 	private String children;
 	private String actions;
 	
+	private PreferenceModelText knobDescription;
+	private PreferenceModelText iconDescription;
+	private PreferenceModelText textDescription;
+	private PreferenceModelText childrenDescription;
+	private PreferenceModelText actionsDescription;
+	
 	/**
 	 * Creates a new model
 	 * @param controller the controller in whose realm this model works
@@ -66,6 +73,56 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 		textChoice = new ButtonContentConditionChoice( controller );
 		childrenChoice = new ButtonContentConditionChoice( controller );
 		actionsChoice = new ButtonContentConditionChoice( controller );
+	
+		knobDescription = new PreferenceModelText( "preference.buttonContent.knob", this ){
+			protected void changed( String oldValue, String newValue ){
+				firePreferenceChanged( 0, 0 );
+			}
+		};
+		iconDescription = new PreferenceModelText( "preference.buttonContent.icon", this ){
+			protected void changed( String oldValue, String newValue ){
+				firePreferenceChanged( 1, 1 );
+			}
+		};
+		textDescription = new PreferenceModelText( "preference.buttonContent.text", this ){
+			protected void changed( String oldValue, String newValue ){
+				firePreferenceChanged( 2, 2 );
+			}
+		};
+		childrenDescription = new PreferenceModelText( "preference.buttonContent.children", this ){
+			protected void changed( String oldValue, String newValue ){
+				firePreferenceChanged( 3, 3 );
+			}
+		};
+		actionsDescription = new PreferenceModelText( "preference.buttonContent.actions", this ){
+			protected void changed( String oldValue, String newValue ){
+				firePreferenceChanged( 4, 4 );
+			}
+		};
+	}
+	
+	@Override
+	public void addPreferenceModelListener( PreferenceModelListener listener ){
+		if( !hasListeners() ){
+			knobDescription.setController( getController() );
+			iconDescription.setController( getController() );
+			textDescription.setController( getController() );
+			childrenDescription.setController( getController() );
+			actionsDescription.setController( getController() );
+		}
+		super.addPreferenceModelListener( listener );
+	}
+	
+	@Override
+	public void removePreferenceModelListener( PreferenceModelListener listener ){
+		super.removePreferenceModelListener( listener );
+		if( !hasListeners() ){
+			knobDescription.setController( null );
+			iconDescription.setController( null );
+			textDescription.setController( null );
+			childrenDescription.setController( null );
+			actionsDescription.setController( null );
+		}
 	}
 	
 	@Override
@@ -108,14 +165,21 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 	}
 	
 	public String getLabel( int index ){
+		PreferenceModelText text;
+		
 		switch( index ){
-			case 0: return DockUI.getDefaultDockUI().getString( "preference.buttonContent.knob" );
-			case 1: return DockUI.getDefaultDockUI().getString( "preference.buttonContent.icon" );
-			case 2: return DockUI.getDefaultDockUI().getString( "preference.buttonContent.text" );
-			case 3: return DockUI.getDefaultDockUI().getString( "preference.buttonContent.children" );
-			case 4: return DockUI.getDefaultDockUI().getString( "preference.buttonContent.actions" );
+			case 0: text = knobDescription; break;
+			case 1: text = iconDescription; break;
+			case 2: text = textDescription; break;
+			case 3: text = childrenDescription; break;
+			case 4: text = actionsDescription; break;
 			default: throw new IllegalArgumentException( "unkonwn property: " + index );
 		}
+		
+		if( !hasListeners() ){
+			text.update( getController().getTexts() );
+		}
+		return text.value();
 	}
 
 	public Path getPath( int index ){

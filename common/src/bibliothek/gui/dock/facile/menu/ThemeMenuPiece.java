@@ -40,6 +40,8 @@ import bibliothek.gui.dock.common.theme.ThemeMapListener;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
 import bibliothek.gui.dock.support.menu.MenuPiece;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.ThemeMeta;
+import bibliothek.gui.dock.themes.ThemeMetaListener;
 import bibliothek.util.ClientOnly;
 
 /**
@@ -86,7 +88,7 @@ public class ThemeMenuPiece extends BaseMenuPiece {
             if( controller != null && transferTheme ){
                 ThemeFactory factory = themes.getSelectedFactory();
                 if( factory != null ){
-                    controller.setTheme( factory.create() );
+                    controller.setTheme( factory.create( controller ) );
                 }
             }
         }
@@ -191,7 +193,7 @@ public class ThemeMenuPiece extends BaseMenuPiece {
                     if( controller != null ){
                         ThemeFactory factory = themes.getSelectedFactory();
                         if( factory != null ){
-                            controller.setTheme( factory.create() );
+                            controller.setTheme( factory.create( controller ) );
                         }
                     }
                 }
@@ -227,7 +229,10 @@ public class ThemeMenuPiece extends BaseMenuPiece {
             ThemeFactory selection = themes.getSelectedFactory();
             
             if( selection != null )
-                controller.setTheme( selection.create() );
+                controller.setTheme( selection.create( controller ) );
+        }
+        for( Item item : items ){
+        	item.setController( controller );
         }
     }
     
@@ -235,9 +240,15 @@ public class ThemeMenuPiece extends BaseMenuPiece {
      * An item that changes the theme when selected.
      * @author Benjamin Sigg
      */
-    private class Item extends JRadioButtonMenuItem implements ActionListener{
+    private class Item extends JRadioButtonMenuItem implements ActionListener, ThemeMetaListener{
         /** the name of this factory */
         private String key;
+ 
+        /** the factory represented by this item */
+        private ThemeFactory factory;
+        
+        /** information about the current factory */
+        private ThemeMeta meta;
         
         /**
          * Creates a new item.
@@ -246,14 +257,50 @@ public class ThemeMenuPiece extends BaseMenuPiece {
          */
         public Item( String key, ThemeFactory factory ){
             this.key = key;
-            
-            setText( factory.getName() );
-            setToolTipText( factory.getDescription() );
+            this.factory = factory;
             addActionListener( this );
+            setController( getController() );
+        }
+        
+        /**
+         * Sets the controller in whose realm this piece should work.
+         * @param controller the controller
+         */
+        public void setController( DockController controller ){
+        	if( meta != null ){
+        		meta.removeListener( this );
+        		
+        		setText( "" );
+        		setToolTipText( "" );
+        		
+        		meta = null;
+        	}
+        	if( controller != null ){
+        		meta = factory.createMeta( controller );
+        		meta.addListener( this );
+        		setText( meta.getName() );
+        		setToolTipText( meta.getDescription() );
+        	}
         }
         
         public void actionPerformed( ActionEvent e ) {
             themes.select( key );
+        }
+        
+        public void authorsChanged( ThemeMeta meta ){
+        	// ignore
+        }
+        
+        public void descriptionChanged( ThemeMeta meta ){
+	        setToolTipText( meta.getDescription() );	
+        }
+        
+        public void nameChanged( ThemeMeta meta ){
+        	setText( meta.getName() );
+        }
+        
+        public void webpagesChanged( ThemeMeta meta ){
+        	// ignore
         }
         
         /**

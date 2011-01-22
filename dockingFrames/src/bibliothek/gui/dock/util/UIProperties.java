@@ -613,6 +613,24 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
     }
     
     /**
+     * Call {@link UIValue#set(Object)} with the matching value that is stored in this
+     * map for <code>id</code>.
+     * @param id the unique identifier of the value to read
+     * @param kind the kind of value <code>key</code> is
+     * @param key the destination of the value
+     */
+    public void get( String id, Path kind, U key ){
+    	V base = get( id );
+    	B bridge = getBridgeFor( kind );
+    	if( bridge != null ){
+    		bridge.set( id, base, key );
+    	}
+    	else{
+    		key.set( base );
+    	}
+    }
+    
+    /**
      * Removes all values that stored under the given priority. Values created by an {@link UIScheme} are
      * not affected by this call.
      * @param priority the priority whose elements should be removed

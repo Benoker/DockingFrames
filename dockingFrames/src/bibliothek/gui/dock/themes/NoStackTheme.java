@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,13 +26,9 @@
 
 package bibliothek.gui.dock.themes;
 
-import java.net.URI;
-import java.util.ResourceBundle;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
@@ -56,58 +52,18 @@ public class NoStackTheme implements DockTheme {
      * theme.
      * @param <T> the type of the internal {@link DockTheme}
      * @param theme the theme to encapsulate
-     * @param bundle the bundle to read strings for the other theme, can be <code>null</code> 
-     * if the bundle of <code>ui</code> should be used.
-     * @param ui the {@link DockUI} from which values should be read, can be <code>null</code>
-     * if the default-DockUI should be used.
      * @return the new factory
      */
-    public static <T extends DockTheme> ThemeFactory getFactory( final Class<T> theme, final ResourceBundle bundle, final DockUI ui ){
-        final ThemeFactory factory = new ThemePropertyFactory<T>( theme, bundle, ui );
+    public static <T extends DockTheme> ThemeFactory getFactory( final Class<T> theme ){
+        final ThemeFactory factory = new ThemePropertyFactory<T>( theme );
         
         return new ThemeFactory(){
-            public DockTheme create() {
-                return new NoStackTheme( factory.create() );
+            public DockTheme create( DockController controller ) {
+                return new NoStackTheme( factory.create( controller ) );
             }
             
-            public URI[] getWebpages() {
-                return factory.getWebpages();
-            }
-            
-            public String[] getAuthors() {
-                String[] authors = factory.getAuthors();
-                final String BENI = "Benjamin Sigg";
-                for( String author : authors ){
-                    if( author.equals( BENI ))
-                        return authors;
-                }
-                
-                String[] result = new String[ authors.length + 1 ];
-                System.arraycopy( authors, 0, result, 0, authors.length );
-                result[ authors.length ] = BENI;
-                return result;
-            }
-            
-            public String getDescription() {
-                if( ui == null )
-                    return DockUI.getDefaultDockUI().getString( "theme.small.description" );
-                else
-                    return ui.getString( "theme.small.description" );
-            }
-
-            public String getName() {
-                String name = factory.getName();
-                
-                String small = null;
-                if( ui != null )
-                    small = ui.getString( "theme.small" );
-                else
-                    small = DockUI.getDefaultDockUI().getString( "theme.small" );
-                
-                if( name == null )
-                    return small;
-                else
-                    return small + " \"" + name + "\"";
+            public ThemeMeta createMeta( DockController controller ){
+            	return new Meta( this, controller, factory.createMeta( controller ));
             }
         };
     }
@@ -162,5 +118,69 @@ public class NoStackTheme implements DockTheme {
     public void uninstall(DockController controller) {
     	base.uninstall( controller );
         controller.removeAcceptance( acceptance );
+    }
+    
+
+    private static class Meta extends DefaultThemeMeta implements ThemeMetaListener{
+    	private ThemeMeta meta;
+    	
+		public Meta( ThemeFactory factory, DockController controller, ThemeMeta meta ){
+			super( factory, controller, "theme.small", "theme.small.description", meta.getAuthors(), meta.getWebpages() );
+		}
+    	
+		@Override
+		public void addListener( ThemeMetaListener listener ){
+			if( !hasListeners() ){
+				meta.addListener( this );
+			}
+			super.addListener( listener );
+		}
+		
+		@Override
+		public void removeListener( ThemeMetaListener listener ){
+			super.removeListener( listener );
+			if( !hasListeners() ){
+				meta.removeListener( this );
+			}
+		}
+		
+		@Override
+		public String getName(){
+			String small = super.getName();
+			String factory = meta.getName();
+			
+			return small  + " \"" + factory + "\"";
+		}
+		
+		@Override
+		public String[] getAuthors(){
+			String[] authors = getAuthors();
+            final String BENI = "Benjamin Sigg";
+            for( String author : authors ){
+                if( author.equals( BENI ))
+                    return authors;
+            }
+            
+            String[] result = new String[ authors.length + 1 ];
+            System.arraycopy( authors, 0, result, 0, authors.length );
+            result[ authors.length ] = BENI;
+            return result;
+		}
+		
+		public void authorsChanged( ThemeMeta meta ){
+			setAuthors( meta.getAuthors() );
+		}
+		
+		public void webpagesChanged( ThemeMeta meta ){
+			setWebpages( meta.getWebpages() );
+		}
+		
+		public void descriptionChanged( ThemeMeta meta ){
+			// ignore
+		}
+		
+		public void nameChanged( ThemeMeta meta ){
+			fireNameChanged();
+		}
     }
 }

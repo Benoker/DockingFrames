@@ -25,6 +25,7 @@
  */
 package bibliothek.extension.gui.dock.preference;
 
+import bibliothek.gui.dock.util.TextManager;
 import bibliothek.util.Path;
 
 /**
@@ -44,12 +45,17 @@ public abstract class DefaultPreference<V> extends AbstractPreference<V>{
     private Path type;
     
     private String label;
+    private PreferenceText labelText;
+    
     private String description;
+    private PreferenceText descriptionText;
 
     private V defaultValue;
     private Path path;
     
     private boolean natural = false;
+    
+    private PreferenceModel model;
     
     /**
      * Creates a new preference.
@@ -83,8 +89,56 @@ public abstract class DefaultPreference<V> extends AbstractPreference<V>{
         setLabel( label );
     }
     
+    @Override
+    public void addPreferenceListener( PreferenceListener<V> listener ){
+    	if( !hasListeners() ){
+    		if( model != null ){
+    			if( labelText != null ){
+        			labelText.setController( model.getController() );
+        		}
+        		if( descriptionText != null ){
+        			descriptionText.setController( model.getController() );
+        		}	
+    		}
+    	}
+    	super.addPreferenceListener( listener );
+    }
+    
+    @Override
+    public void removePreferenceListener( PreferenceListener<V> listener ){
+    	super.removePreferenceListener( listener );
+    	if( !hasListeners() ){
+    		if( labelText != null ){
+    			labelText.setController( null );
+    		}
+    		if( descriptionText != null ){
+    			descriptionText.setController( null );
+    		}
+    	}
+    }
+    
+    public void setModel( PreferenceModel model ){
+    	this.model = model;
+    	if( hasListeners() ){
+	    	if( labelText != null ){
+	    		labelText.setController( model == null ? null : model.getController() );
+	    	}
+	    	if( descriptionText != null ){
+	    		descriptionText.setController( model == null ? null : model.getController() );
+	    	}
+    	}
+    }
+    
     public String getLabel() {
-        return label;
+    	if( labelText == null ){
+    		return label;
+    	}
+    	
+    	if( !hasListeners() && model != null ){
+    		labelText.update( model.getController().getTexts() );
+    	}
+    	
+    	return labelText.value();
     }
     
     /**
@@ -94,10 +148,53 @@ public abstract class DefaultPreference<V> extends AbstractPreference<V>{
      */
     public void setLabel( String label ) {
         this.label = label;
+        if( labelText != null ){
+        	labelText.setValue( label );
+        }
+        else{
+        	fireChanged();
+        }
+    }
+    
+    /**
+     * Sets a unique identifier for the label text, the unique identifier will be used to read
+     * a text from the current {@link TextManager}.
+     * @param labelId the unique identifier, can be <code>null</code>
+     */
+    public void setLabelId( String labelId ){
+    	if( labelId == null ){
+    		if( labelText != null ){
+    			labelText.setController( null );
+    			labelText = null;
+    		}
+    	}
+    	else{
+    		if( labelText == null ){
+    			labelText = new PreferenceText( labelId, this ){
+					protected void changed( String oldValue, String newValue ){
+						fireChanged();
+					}
+				};
+				if( hasListeners() && model != null ){
+					labelText.setController( model.getController() );
+				}
+    		}
+    		else{
+    			labelText.setId( labelId );
+    		}
+    	}
     }
     
     public String getDescription() {
-        return description;
+    	if( descriptionText == null ){
+    		return description;
+    	}
+    	
+    	if( !hasListeners() && model != null ){
+    		descriptionText.update( model.getController().getTexts() );
+    	}
+    	
+    	return descriptionText.value();
     }
     
     /**
@@ -107,6 +204,41 @@ public abstract class DefaultPreference<V> extends AbstractPreference<V>{
      */
     public void setDescription( String description ) {
         this.description = description;
+        if( descriptionText != null ){
+        	descriptionText.setValue( description );
+        }
+        else{
+        	fireChanged();
+        }
+    }
+    
+    /**
+     * Sets a unique identifier for the description text, the unique identifier will be used to read
+     * a text from the current {@link TextManager}.
+     * @param descriptionId the unique identifier, can be <code>null</code>
+     */
+    public void setDescriptionId( String descriptionId ){
+    	if( descriptionId == null ){
+    		if( descriptionText != null ){
+    			descriptionText.setController( null );
+    			descriptionText = null;
+    		}
+    	}
+    	else{
+    		if( descriptionText == null ){
+    			descriptionText = new PreferenceText( descriptionId, this ){
+					protected void changed( String oldValue, String newValue ){
+						fireChanged();
+					}
+				};
+				if( hasListeners() && model != null ){
+					descriptionText.setController( model.getController() );
+				}
+    		}
+    		else{
+    			descriptionText.setId( descriptionId );
+    		}
+    	}
     }
     
     public Path getTypePath() {

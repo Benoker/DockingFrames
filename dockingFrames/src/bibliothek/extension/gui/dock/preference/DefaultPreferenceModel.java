@@ -87,6 +87,26 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         getPreference( index ).read();
     }
     
+    @Override
+    public void addPreferenceModelListener( PreferenceModelListener listener ){
+    	if( !hasListeners() ){
+    		for( Entry<?> entry : entries ){
+    			entry.setListener( true );
+    		}
+    	}
+    	super.addPreferenceModelListener( listener );
+    }
+    
+    @Override
+    public void removePreferenceModelListener( PreferenceModelListener listener ){
+    	super.removePreferenceModelListener( listener );
+    	if( !hasListeners() ){
+    		for( Entry<?> entry : entries ){
+    			entry.setListener( false );
+    		}
+    	}
+    }
+    
     /**
      * Gets the preference of location <code>index</code>.
      * @param index the location of the preference
@@ -231,7 +251,10 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         public Entry( Preference<V> preference, int index ){
             this.preference = preference;
             this.index = index;
-            preference.addPreferenceListener( this );
+            preference.setModel( DefaultPreferenceModel.this );
+            if( hasListeners() ){
+            	preference.addPreferenceListener( this );
+            }
         }
 
         public void changed( Preference<V> preference ) {
@@ -239,10 +262,27 @@ public class DefaultPreferenceModel extends AbstractPreferenceModel{
         }
         
         /**
+         * Sets whether <code>this</code> is listening to the changes
+         * of {@link #preference} or not.
+         * @param listening whether to listen
+         */
+        public void setListener( boolean listening ){
+        	if( listening ){
+        		preference.addPreferenceListener( this );
+        	}
+        	else{
+        		preference.removePreferenceListener( this );
+        	}
+        }
+        
+        /**
          * Destroys this entry.
          */
         public void kill(){
-            preference.removePreferenceListener( this );
+        	preference.setModel( null );
+        	if( hasListeners() ){
+        		preference.removePreferenceListener( this );
+        	}
         }
         
         /**

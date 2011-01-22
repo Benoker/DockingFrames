@@ -51,6 +51,14 @@ public abstract class AbstractPreference<V> implements Preference<V>{
     }
     
     /**
+     * Tells whether this preference currently has listeners.
+     * @return <code>true</code> if there are any listeners
+     */
+    protected boolean hasListeners(){
+    	return listeners.size() > 0;
+    }
+    
+    /**
      * Gets all the listeners of this preference.
      * @return the list of listeners
      */

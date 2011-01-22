@@ -30,7 +30,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockFrontend;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
@@ -49,8 +48,8 @@ public class KeyStrokeHidePreference extends DockPropertyPreference<KeyStroke>{
 	public KeyStrokeHidePreference( DockProperties properties ){
 		super( properties, DockFrontend.HIDE_ACCELERATOR, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.frontend.INIT_SELECTION" ));
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.hide_accelerator.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.hide_accelerator.description" ));
+		setLabelId( "preference.shortcuts.hide_accelerator.label" );
+		setDescriptionId( "preference.shortcuts.hide_accelerator.description" );
 		
 		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK  ) );
 	}

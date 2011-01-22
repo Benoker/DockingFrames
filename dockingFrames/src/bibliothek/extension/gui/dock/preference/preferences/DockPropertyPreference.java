@@ -25,14 +25,12 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.preference.Preference;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.TextManager;
 import bibliothek.util.Path;
 
 /**
@@ -89,9 +87,8 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
     
     /**
      * Creates a new preference.
-     * @param bundle a bundle to read label and description from
-     * @param prefix the prefix of the key for <code>bundle</code>, the strings
-     * ".label" and ".description" will be added to <code>bundle</code> in order
+     * @param prefix the prefix of the key used for the {@link TextManager}. The strings
+     * ".label" and ".description" will be added to <code>prefix</code> in order
      * to generate two keys.
      * @param properties the properties from which this preference reads its values
      * and to which it writes its values
@@ -100,23 +97,12 @@ public class DockPropertyPreference<V> extends DefaultPreference<V> {
      * @param type the type of values used in this preference
      * @param path the unique path of this preference
      */
-    public DockPropertyPreference( ResourceBundle bundle, String prefix, DockProperties properties, PropertyKey<V> key, V defaultValue, Path type, Path path ){
+    public DockPropertyPreference( String prefix, DockProperties properties, PropertyKey<V> key, V defaultValue, Path type, Path path ){
         this( properties, key, type, path );
         setDefaultValue( defaultValue );
         
-        try{
-            setLabel( bundle.getString( prefix + ".label" ) );
-        }
-        catch( MissingResourceException ex ){
-            // do nothing
-        }
-        
-        try{
-            setDescription( bundle.getString( prefix + ".description" ) );
-        }
-        catch( MissingResourceException ex ){
-            // do nothing
-        }
+        setLabelId( prefix + ".label" );
+        setDescriptionId( prefix + ".description" );
     }
     
     public void read(){

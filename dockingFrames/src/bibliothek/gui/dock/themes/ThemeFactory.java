@@ -26,8 +26,7 @@
 
 package bibliothek.gui.dock.themes;
 
-import java.net.URI;
-
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 
 /**
@@ -37,32 +36,15 @@ import bibliothek.gui.DockTheme;
 public interface ThemeFactory {
     /**
      * Creates a new theme.
+     * @param controller the controller in whose realm the theme will be used
      * @return the new theme
      */
-    public DockTheme create();
+    public DockTheme create( DockController controller );
     
     /**
-     * Gets a human readable description of the theme.
-     * @return the description, might be <code>null</code>
+     * Gets meta information about this factory.
+     * @param controller the controller in whose realm the meta information will be displayed
+     * @return the new meta information
      */
-    public String getDescription();
-    
-    /**
-     * Gets the name of the theme.
-     * @return the name, might be <code>null</code>
-     */
-    public String getName();
-    
-    /**
-     * Gets a list of strings, containing the names of the authors.
-     * @return the authors, might be <code>null</code>
-     */
-    public String[] getAuthors();
-    
-    /**
-     * Gets a set of links to any webpage the authors might want to
-     * show the user.
-     * @return the pages, might be <code>null</code>
-     */
-    public URI[] getWebpages();
+    public ThemeMeta createMeta( DockController controller );
 }

@@ -39,7 +39,6 @@ import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
 import bibliothek.extension.gui.dock.preference.preferences.KeyStrokeValidator;
-import bibliothek.gui.DockUI;
 
 /**
  * An editor for {@link KeyStroke}s.
@@ -116,6 +115,7 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
     private KeyStrokeValidator validator = KeyStrokeValidator.EVERYTHING;
     private PreferenceEditorCallback<KeyStroke> callback;
     private boolean focused = false;
+    private EditorText text;
     
     /**
      * Creates a new editor
@@ -144,6 +144,14 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
                 }
             }
         });
+        
+        text = new EditorText( "preference.keystroke.click", this ){
+			protected void changed( String oldValue, String newValue ){
+				if( !focused ){
+					setText( newValue );
+				}
+			}
+		};
         
         addKeyListener( new KeyAdapter(){
             @Override
@@ -183,6 +191,10 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
         this.callback = callback;
         if( callback != null ){
             callback.setOperation( PreferenceOperation.DELETE, stroke != null );
+            text.setController( callback.getModel().getController() );
+        }
+        else{
+        	text.setController( null );
         }
     }
 
@@ -193,7 +205,7 @@ public class KeyStrokeEditor extends JTextField implements PreferenceEditor<KeyS
                 setText( "" );
             }
             else{
-                setText( DockUI.getDefaultDockUI().getString( "preference.keystroke.click" ) );
+                setText( text.value() );
             }
         }
         else{

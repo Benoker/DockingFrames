@@ -30,7 +30,6 @@ import bibliothek.extension.gui.dock.theme.IdentifiedColorScheme;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleColorScheme;
 import bibliothek.extension.gui.dock.theme.bubble.SimpleBubbleColorScheme;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleColorScheme.Distribution;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.DockProperties;
 
@@ -38,30 +37,28 @@ import bibliothek.gui.dock.util.DockProperties;
  * A list of {@link ColorScheme}s for {@link BubbleTheme}.
  * @author Benjamin Sigg
  */
-public class BubbleColorSchemeChoice extends DefaultChoice<ColorScheme>{
+public class BubbleColorSchemeChoice extends DefaultChoice<ColorScheme> {
 	/**
 	 * Creates a new choice
 	 * @param properties default settings
 	 */
 	public BubbleColorSchemeChoice( DockProperties properties ){
 		super( properties.getController() );
-		
-		DockUI ui = DockUI.getDefaultDockUI();
-		
-		add( "rgb", ui.getString( "preference.theme.bubble.color.rgb" ), new IdentifiedColorScheme( "rgb", new BubbleColorScheme( Distribution.RGB ) ));
-		add( "rbg", ui.getString( "preference.theme.bubble.color.rbg" ), new IdentifiedColorScheme( "rbg", new BubbleColorScheme( Distribution.RBG ) ));
-		
-		add( "grb", ui.getString( "preference.theme.bubble.color.grb" ), new IdentifiedColorScheme( "grb", new BubbleColorScheme( Distribution.GRB ) ));
-		add( "gbr", ui.getString( "preference.theme.bubble.color.gbr" ), new IdentifiedColorScheme( "gbr", new BubbleColorScheme( Distribution.GBR ) ));
-		
-		add( "brg", ui.getString( "preference.theme.bubble.color.brg" ), new IdentifiedColorScheme( "brg", new BubbleColorScheme( Distribution.BRG ) ));
-		add( "bgr", ui.getString( "preference.theme.bubble.color.bgr" ), new IdentifiedColorScheme( "bgr", new BubbleColorScheme( Distribution.BGR ) ));
 
-		add( "blop", ui.getString( "preference.theme.bubble.color.blops" ), new IdentifiedColorScheme( "blops", SimpleBubbleColorScheme.BLOPS ));
-		add( "bright", ui.getString( "preference.theme.bubble.color.bright" ), new IdentifiedColorScheme( "bright", SimpleBubbleColorScheme.BRIGHT ));
-		add( "looAndFeel", ui.getString( "preference.theme.bubble.color.system" ), new IdentifiedColorScheme( "system", SimpleBubbleColorScheme.LOOK_AND_FEEL ));
-		
-		if( properties != null ){
+		addLinked( "rgb", "preference.theme.bubble.color.rgb", new IdentifiedColorScheme( "rgb", new BubbleColorScheme( Distribution.RGB ) ) );
+		addLinked( "rbg", "preference.theme.bubble.color.rbg", new IdentifiedColorScheme( "rbg", new BubbleColorScheme( Distribution.RBG ) ) );
+
+		addLinked( "grb", "preference.theme.bubble.color.grb", new IdentifiedColorScheme( "grb", new BubbleColorScheme( Distribution.GRB ) ) );
+		addLinked( "gbr", "preference.theme.bubble.color.gbr", new IdentifiedColorScheme( "gbr", new BubbleColorScheme( Distribution.GBR ) ) );
+
+		addLinked( "brg", "preference.theme.bubble.color.brg", new IdentifiedColorScheme( "brg", new BubbleColorScheme( Distribution.BRG ) ) );
+		addLinked( "bgr", "preference.theme.bubble.color.bgr", new IdentifiedColorScheme( "bgr", new BubbleColorScheme( Distribution.BGR ) ) );
+
+		addLinked( "blop", "preference.theme.bubble.color.blops", new IdentifiedColorScheme( "blops", SimpleBubbleColorScheme.BLOPS ) );
+		addLinked( "bright", "preference.theme.bubble.color.bright", new IdentifiedColorScheme( "bright", SimpleBubbleColorScheme.BRIGHT ) );
+		addLinked( "looAndFeel", "preference.theme.bubble.color.system", new IdentifiedColorScheme( "system", SimpleBubbleColorScheme.LOOK_AND_FEEL ) );
+
+		if( properties != null ) {
 			setDefaultChoice( "rgb" );
 		}
 	}

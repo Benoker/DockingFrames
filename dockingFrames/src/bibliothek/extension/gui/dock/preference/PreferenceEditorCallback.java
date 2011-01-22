@@ -56,4 +56,11 @@ public interface PreferenceEditorCallback<V> {
      * @param enabled whether the operation is available right now 
      */
     public void setOperation( PreferenceOperation operation, boolean enabled );
+    
+    /**
+     * Gets the model from which this callback takes its values. The model should only be used
+     * to ask for more information, not for write access.
+     * @return the model, not <code>null</code>
+     */
+    public PreferenceModel getModel();
 }

@@ -32,7 +32,6 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -48,8 +47,8 @@ public class KeyStrokeExternalizePreference extends DockPropertyPreference<KeySt
     public KeyStrokeExternalizePreference( DockProperties properties ){
         super( properties, CControl.KEY_GOTO_EXTERNALIZED, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.externalize" ) );
         
-        setLabel( Resources.getString( "preference.shortcut.externalize.label" ));
-        setDescription( Resources.getString( "preference.shortcut.externalize.description" ));
+        setLabelId( "preference.shortcut.externalize.label" );
+        setDescriptionId( "preference.shortcut.externalize.description" );
         
         setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK ));
     }

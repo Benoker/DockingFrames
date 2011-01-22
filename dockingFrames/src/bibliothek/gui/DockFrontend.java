@@ -52,6 +52,7 @@ import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.control.DockRegister;
@@ -2371,19 +2372,32 @@ public class DockFrontend {
     public class Hider extends SimpleButtonAction implements ActionGuard{
     	private DockActionIcon icon;
     	
+    	private DockActionText text;
+    	private DockActionText tooltip;
+    	
     	/**
          * Creates a new action/guard.
          */
         public Hider(){
-        	setText( DockUI.getDefaultDockUI().getString( "close" ));
-            setTooltip( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
-           
-           
+        	text = new DockActionText( "close", this ){
+				protected void changed( String oldValue, String newValue ){
+					setText( newValue );
+				}
+			};
+			tooltip = new DockActionText( "close.tooltip", this ){
+				protected void changed( String oldValue, String newValue ){
+					setTooltip( newValue );	
+				}
+			};
+        	
             icon = new DockActionIcon("close", this){
 				protected void changed( Icon oldValue, Icon newValue ){
 					setIcon( newValue );
 				}
 			};
+			
+			text.setController( controller );
+			tooltip.setController( controller );
 			icon.setManager( controller.getIcons() );
             
             PropertyValue<KeyStroke> stroke = new PropertyValue<KeyStroke>( HIDE_ACCELERATOR ){

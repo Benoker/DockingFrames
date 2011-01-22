@@ -1,10 +1,10 @@
 package bibliothek.gui.dock.common.theme;
 
-import java.net.URI;
-
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.ThemeMeta;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
 
 /**
@@ -37,7 +37,10 @@ public  abstract class CDockThemeFactory<D extends DockTheme> implements ThemeFa
         return control;
     }
     
-    public DockTheme create() {
+    public DockTheme create( DockController controller ) {
+    	if( control.getController() != controller ){
+    		throw new IllegalArgumentException( "the supplied controller does not match the CControl" );
+    	}
         return create( control );
     }
     
@@ -48,19 +51,9 @@ public  abstract class CDockThemeFactory<D extends DockTheme> implements ThemeFa
      */
     public abstract DockTheme create( CControl control );
     
-    public String[] getAuthors() {
-        return delegate.getAuthors();
-    }
-
-    public String getDescription() {
-        return delegate.getDescription();
-    }
-
-    public String getName() {
-        return delegate.getName();
-    }
-
-    public URI[] getWebpages() {
-        return delegate.getWebpages();
+    public ThemeMeta createMeta( DockController controller ){
+	    ThemeMeta meta = delegate.createMeta( controller );
+	    meta.setFactory( this );
+	    return meta;
     }
 }

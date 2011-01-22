@@ -477,12 +477,17 @@ public class PreferenceTable extends JPanel{
         public V get() {
             return (V)model.getValue( index );
         }
+        
         public void set( V value ) {
             model.setValue( index, value );
         }
 
         private void doOperation( PreferenceOperation operation ){
             model.doOperation( index, operation );
+        }
+        
+        public PreferenceModel getModel(){
+        	return model;
         }
         
         /**

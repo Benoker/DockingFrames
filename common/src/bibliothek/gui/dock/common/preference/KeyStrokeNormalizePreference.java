@@ -32,7 +32,6 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -48,8 +47,8 @@ public class KeyStrokeNormalizePreference extends DockPropertyPreference<KeyStro
     public KeyStrokeNormalizePreference( DockProperties properties ){
         super( properties, CControl.KEY_GOTO_NORMALIZED, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.normalize" ) );
         
-        setLabel( Resources.getString( "preference.shortcut.normalize.label" ));
-        setDescription( Resources.getString( "preference.shortcut.normalize.description" ));
+        setLabelId( "preference.shortcut.normalize.label" );
+        setDescriptionId( "preference.shortcut.normalize.description" );
         
         setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK ));
     }

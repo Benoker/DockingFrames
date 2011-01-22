@@ -30,9 +30,9 @@ import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionIcon;
+import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 
@@ -46,6 +46,9 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 public class CloseAction extends SimpleButtonAction implements ListeningDockAction{
     private DockActionIcon icon;
     
+    private DockActionText text;
+    private DockActionText tooltip;
+    
     /**
      * Sets the icon and the text of this action.
      * @param controller The controller from which this action should read
@@ -53,9 +56,16 @@ public class CloseAction extends SimpleButtonAction implements ListeningDockActi
      * method {@link #setController(DockController) setController}
      */
     public CloseAction( DockController controller ){
-        setText( DockUI.getDefaultDockUI().getString( "close" ));
-        setTooltip( DockUI.getDefaultDockUI().getString( "close.tooltip" ));
-        
+    	text = new DockActionText( "close", this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( newValue );	
+			}
+		};
+    	tooltip = new DockActionText( "close.tooltip", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( newValue );	
+			}
+		};
         icon = new DockActionIcon( "close", this ){
 			protected void changed( Icon oldValue, Icon newValue ){
 				setIcon( newValue );	
@@ -67,6 +77,8 @@ public class CloseAction extends SimpleButtonAction implements ListeningDockActi
     
     public void setController( DockController controller ) {
         icon.setController( controller );
+        text.setController( controller );
+        tooltip.setController( controller );
     }
     
     @Override

@@ -28,13 +28,15 @@ package bibliothek.gui.dock.util.local;
 import java.util.Locale;
 
 import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.util.TextManager;
 
 /**
  * This listener can be added to a {@link DockUI} and will be informed if
  * the {@link Locale} changes.
  * @author Benjamin Sigg
- *
+ * @deprecated replaced by the {@link TextManager}
  */
+@Deprecated
 public interface LocaleListener {
 	/**
 	 * Called when the {@link Locale} has changed.

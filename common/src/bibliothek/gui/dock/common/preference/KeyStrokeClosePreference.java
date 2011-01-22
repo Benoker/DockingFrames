@@ -32,7 +32,6 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -48,8 +47,8 @@ public class KeyStrokeClosePreference extends DockPropertyPreference<KeyStroke>{
     public KeyStrokeClosePreference( DockProperties properties ){
         super( properties, CControl.KEY_CLOSE, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.close" ) );
         
-        setLabel( Resources.getString( "preference.shortcut.close.label" ));
-        setDescription( Resources.getString( "preference.shortcut.close.description" ));
+        setLabelId( "preference.shortcut.close.label" );
+        setDescriptionId( "preference.shortcut.close.description" );
         
         setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK ));
     }

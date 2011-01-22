@@ -35,7 +35,6 @@ import bibliothek.extension.gui.dock.preference.model.EclipseThemePreferenceMode
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.common.preference.CKeyStrokePreferenceModel;
 import bibliothek.gui.dock.common.preference.CLayoutPreferenceModel;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
@@ -67,26 +66,11 @@ public class CPreferenceModel extends PreferenceTreeModel{
     public CPreferenceModel( CControl control, PathCombiner combiner ){
         super( combiner, control.getController() );
         DockController controller = control.intern().getController();
-        
-        put( new Path( "shortcuts" ),
-                DockUI.getDefaultDockUI().getString( "preference.shortcuts" ), 
-                new CKeyStrokePreferenceModel( controller.getProperties() ) );
-        
-        put( new Path( "buttonContent" ),
-        		DockUI.getDefaultDockUI().getString( "preference.buttonContent" ),
-        		new ButtonContentPreferenceModel( controller ) );
-        
-        put( new Path( "layout" ),
-                DockUI.getDefaultDockUI().getString( "preference.layout" ),
-                new CLayoutPreferenceModel( control ));
-        
-        put( new Path( "layout.BubbleTheme" ),
-                DockUI.getDefaultDockUI().getString( "theme.bubble" ),
-                new BubbleThemePreferenceModel( controller.getProperties() ));
-        
-        put( new Path( "layout.EclipseTheme" ),
-                DockUI.getDefaultDockUI().getString( "theme.eclipse" ),
-                new EclipseThemePreferenceModel( controller.getProperties() ));
+        putLinked( new Path( "shortcuts" ), "preference.shortcuts", new CKeyStrokePreferenceModel( controller.getProperties() ) );
+        putLinked( new Path( "buttonContent" ), "preference.buttonContent", new ButtonContentPreferenceModel( controller ) );
+        putLinked( new Path( "layout" ), "preference.layout", new CLayoutPreferenceModel( control ));
+        putLinked( new Path( "layout.BubbleTheme" ), "theme.bubble", new BubbleThemePreferenceModel( controller.getProperties() ));
+        putLinked( new Path( "layout.EclipseTheme" ), "theme.eclipse", new EclipseThemePreferenceModel( controller.getProperties() ));
     }
     
     /**

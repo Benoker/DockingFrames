@@ -30,7 +30,6 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -46,9 +45,7 @@ public class KeyStrokeMinimizePreference extends DockPropertyPreference<KeyStrok
     public KeyStrokeMinimizePreference( DockProperties properties ){
         super( properties, CControl.KEY_GOTO_MINIMIZED, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.minimize" ) );
         
-        setLabel( Resources.getString( "preference.shortcut.minimize.label" ));
-        setDescription( Resources.getString( "preference.shortcut.minimize.description" ));
-        
-        // setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ));
+        setLabelId( "preference.shortcut.minimize.label" );
+        setDescriptionId( "preference.shortcut.minimize.description" );
     }
 }

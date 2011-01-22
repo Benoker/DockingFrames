@@ -29,7 +29,6 @@ import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.common.theme.ThemeMap;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -54,8 +53,8 @@ public class ThemePreference extends DefaultPreference<String>{
         
         setValueInfo( new ThemeChoice( themes, controller ) );
         
-        setLabel( Resources.getString( "preference.layout.theme.label" ) );
-        setDescription( Resources.getString( "preference.layout.theme.description" ) );
+        setLabelId( "preference.layout.theme.label" );
+        setDescriptionId( "preference.layout.theme.description" );
         
         setNatural( true );
     }

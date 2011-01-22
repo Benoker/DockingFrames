@@ -32,7 +32,6 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.preference.preferences.DockPropertyPreference;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -49,8 +48,8 @@ public class KeyStrokeMaximizeChangePreference extends DockPropertyPreference<Ke
 	public KeyStrokeMaximizeChangePreference( DockProperties properties ){
 		super( properties, CControl.KEY_MAXIMIZE_CHANGE, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.common.control.maximize_change" ) );
 		
-		setLabel( Resources.getString( "preference.shortcut.maximize_change.label" ));
-		setDescription( Resources.getString( "preference.shortcut.maximize_change.description" ));
+		setLabelId( "preference.shortcut.maximize_change.label" );
+		setDescriptionId( "preference.shortcut.maximize_change.description" );
 		
 		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ));
 	}

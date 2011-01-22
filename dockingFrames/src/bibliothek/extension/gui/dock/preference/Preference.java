@@ -72,6 +72,12 @@ public interface Preference<V> {
     public void doOperation( PreferenceOperation operation );
     
     /**
+     * Sets the model which is using this preference.
+     * @param model the model, can be <code>null</code>
+     */
+    public void setModel( PreferenceModel model );
+    
+    /**
      * Adds a listener to this preference.
      * @param listener the new listener
      */

@@ -26,7 +26,6 @@
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.extension.gui.dock.preference.preferences.ChoiceDockPropertyPreference;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.util.DockProperties;
@@ -45,9 +44,7 @@ public class TabContentFilterPreference extends ChoiceDockPropertyPreference<Tab
 	public TabContentFilterPreference( DockProperties properties, Path path ){
 		super( properties, StackDockStation.TAB_CONTENT_FILTER, path, new TabContentFilterChoice( properties ) );
 		
-		DockUI ui = DockUI.getDefaultDockUI();
-		
-		setLabel( ui.getString( "preference.layout.tabcontentfilter.label" ) );
-		setDescription( ui.getString( "preference.layout.tabcontentfilter.description" ) );
+		setLabelId( "preference.layout.tabcontentfilter.label" );
+		setDescriptionId( "preference.layout.tabcontentfilter.description" );
 	}
 }

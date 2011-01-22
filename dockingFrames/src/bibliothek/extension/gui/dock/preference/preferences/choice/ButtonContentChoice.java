@@ -26,7 +26,6 @@
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.extension.gui.dock.preference.model.ButtonContentPreferenceModel;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.util.DockProperties;
 
@@ -46,20 +45,18 @@ public class ButtonContentChoice extends DefaultChoice<ButtonContent>{
 	public ButtonContentChoice( DockProperties properties ){
 		super( properties.getController() );
 		
-		DockUI ui = DockUI.getDefaultDockUI();
+		addLinked( "td", "preference.layout.choice.ButtonContent.theme_dependent", ButtonContent.THEME_DEPENDENT );
 		
-		add( "td", ui.getString( "preference.layout.choice.ButtonContent.theme_dependent" ), ButtonContent.THEME_DEPENDENT );
+		addLinked( "io", "preference.layout.choice.ButtonContent.icon_only", ButtonContent.ICON_ONLY );
+		addLinked( "to", "preference.layout.choice.ButtonContent.text_only", ButtonContent.TEXT_ONLY );
+		addLinked( "ito", "preference.layout.choice.ButtonContent.icon_and_text_only", ButtonContent.ICON_AND_TEXT_ONLY );
+		addLinked( "itto", "preference.layout.choice.ButtonContent.icon_then_text_only", ButtonContent.ICON_THEN_TEXT_ONLY );
+		addLinked( "ttio", "preference.layout.choice.ButtonContent.text_then_icon_only", ButtonContent.TEXT_THEN_ICON_ONLY );
 		
-		add( "io", ui.getString( "preference.layout.choice.ButtonContent.icon_only" ), ButtonContent.ICON_ONLY );
-		add( "to", ui.getString( "preference.layout.choice.ButtonContent.text_only" ), ButtonContent.TEXT_ONLY );
-		add( "ito", ui.getString( "preference.layout.choice.ButtonContent.icon_and_text_only" ), ButtonContent.ICON_AND_TEXT_ONLY );
-		add( "itto", ui.getString( "preference.layout.choice.ButtonContent.icon_then_text_only" ), ButtonContent.ICON_THEN_TEXT_ONLY );
-		add( "ttio", ui.getString( "preference.layout.choice.ButtonContent.text_then_icon_only" ), ButtonContent.TEXT_THEN_ICON_ONLY );
-		
-		add( "ia", ui.getString( "preference.layout.choice.ButtonContent.icon_actions" ), ButtonContent.ICON_ACTIONS );
-		add( "ta", ui.getString( "preference.layout.choice.ButtonContent.text_actions" ), ButtonContent.TEXT_ACTIONS );
-		add( "ita", ui.getString( "preference.layout.choice.ButtonContent.icon_and_text_actions" ), ButtonContent.ICON_AND_TEXT_ACTIONS );
-		add( "itta", ui.getString( "preference.layout.choice.ButtonContent.icon_then_text_actions" ), ButtonContent.ICON_THEN_TEXT_ACTIONS );
-		add( "ttia", ui.getString( "preference.layout.choice.ButtonContent.text_then_icon_actions" ), ButtonContent.TEXT_THEN_ICON_ACTIONS );
+		addLinked( "ia", "preference.layout.choice.ButtonContent.icon_actions", ButtonContent.ICON_ACTIONS );
+		addLinked( "ta", "preference.layout.choice.ButtonContent.text_actions", ButtonContent.TEXT_ACTIONS );
+		addLinked( "ita", "preference.layout.choice.ButtonContent.icon_and_text_actions", ButtonContent.ICON_AND_TEXT_ACTIONS );
+		addLinked( "itta", "preference.layout.choice.ButtonContent.icon_then_text_actions", ButtonContent.ICON_THEN_TEXT_ACTIONS );
+		addLinked( "ttia", "preference.layout.choice.ButtonContent.text_then_icon_actions", ButtonContent.TEXT_THEN_ICON_ACTIONS );
 	}
 }

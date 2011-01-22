@@ -25,7 +25,6 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences;
 
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.control.DockRelocatorMode;
@@ -47,8 +46,8 @@ public class ModifierMaskScreenOnlyPreference extends DockPropertyPreference<Mod
 	public ModifierMaskScreenOnlyPreference( DockProperties properties ){
 		super( properties, DockRelocatorMode.SCREEN_MASK, Path.TYPE_MODIFIER_MASK_PATH, new Path( "dock.DockRelocatorMode.SCREEN_MASK" ) );
 
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.screen_only.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.screen_only.description" ));
+		setLabelId( "preference.shortcuts.screen_only.label" );
+		setDescriptionId( "preference.shortcuts.screen_only.description" );
 		
 		setDefaultValue( DockRelocatorMode.SCREEN_MASK.getDefault( null ) );
 	}

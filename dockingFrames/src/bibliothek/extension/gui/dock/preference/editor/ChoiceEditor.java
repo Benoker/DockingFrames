@@ -37,6 +37,7 @@ import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
 import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
 import bibliothek.extension.gui.dock.preference.preferences.choice.Choice;
+import bibliothek.extension.gui.dock.preference.preferences.choice.ChoiceListener;
 
 /**
  * An editor using a {@link Choice} to let the user select one string-identifier.
@@ -50,11 +51,50 @@ public class ChoiceEditor extends JComboBox implements PreferenceEditor<String>{
 		}
 	};
 	
-	private DefaultComboBoxModel model;
+	private Model model;
 	private Choice choice;
 	
 	private boolean onChange = false;
 	private PreferenceEditorCallback<String> callback;
+	
+	/** this listener is added to the current {@link #choice} */
+	private ChoiceListener listener = new ChoiceListener(){
+		public void updated( Choice choice, int indexStart, int indexEnd ){
+			int delta = 0;
+			if( choice.isNullEntryAllowed() ){
+				delta = 1;
+			}
+			
+			for( int i = indexStart; i <= indexEnd; i++ ){
+				Entry entry = (Entry)model.getElementAt( i+delta );
+				entry.text = choice.getText( i );
+			}
+			
+			model.fireContentsChanged( indexStart+delta, indexEnd+delta );
+		}
+		
+		public void removed( Choice choice, int indexStart, int indexEnd ){
+			if( choice.isNullEntryAllowed() ){
+				indexStart++;
+				indexEnd++;
+			}
+			
+			for( int i = indexEnd; i >= indexStart; i-- ){
+				model.removeElementAt( i );
+			}
+		}
+		
+		public void inserted( Choice choice, int indexStart, int indexEnd ){
+			int delta = 0;
+			if( choice.isNullEntryAllowed() ){
+				delta = 1;
+			}	
+			
+			for( int i = indexStart; i <= indexEnd; i++ ){
+				model.insertElementAt( new Entry( choice.getId( i ), choice.getText( i ) ), i+delta );
+			}
+		}
+	};
 	
 	/**
 	 * Creates a new editor.
@@ -75,12 +115,17 @@ public class ChoiceEditor extends JComboBox implements PreferenceEditor<String>{
 	}
 	
 	public void setValueInfo(Object information) {
+		if( this.choice != null ){
+			this.choice.removeChoiceListener( listener );
+			this.choice.setController( null );
+		}
+		
 		if( information instanceof Choice )
 			choice = (Choice)information;
 		else
 			choice = null;
 		
-		model = new DefaultComboBoxModel();
+		model = new Model();
 		if( choice != null ){
 			if( choice.isNullEntryAllowed() ){
 				model.addElement( new Entry( null, "" ));
@@ -88,6 +133,13 @@ public class ChoiceEditor extends JComboBox implements PreferenceEditor<String>{
 
 			for( int i = 0, n = choice.size(); i<n; i++ ){
 				model.addElement( new Entry( choice.getId( i ), choice.getText( i ) ) );
+			}
+		}
+		
+		if( choice != null ){
+			choice.addChoiceListener( listener );
+			if( callback != null ){
+				choice.setController( callback.getModel().getController() );
 			}
 		}
 		
@@ -117,6 +169,15 @@ public class ChoiceEditor extends JComboBox implements PreferenceEditor<String>{
 	}
 
 	public void setCallback( PreferenceEditorCallback<String> callback ) {
+		if( choice != null ){
+			if( callback == null ){
+				choice.setController( null );
+			}
+			else{
+				choice.setController( callback.getModel().getController() );
+			}
+		}
+		
 		this.callback = callback;
 		checkOperations();
 	}
@@ -146,6 +207,22 @@ public class ChoiceEditor extends JComboBox implements PreferenceEditor<String>{
 		finally{
 			onChange = false;
 			checkOperations();
+		}
+	}
+	
+	/**
+	 * Shows varios entries of a {@link Choice}
+	 * @author Benjamin Sigg
+	 */
+	private static class Model extends DefaultComboBoxModel{
+		/**
+		 * Informs the client of this {@link Model} that the entries <code>start</code>
+		 * to <code>end</code> changed.
+		 * @param start the index of the first changed item
+		 * @param end the index of the last changed item
+		 */
+		public void fireContentsChanged( int start, int end ){
+			fireContentsChanged( this, start, end );
 		}
 	}
 

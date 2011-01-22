@@ -25,7 +25,6 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter.Behavior;
@@ -43,12 +42,11 @@ public class TabContentFilterChoice extends DefaultChoice<TabContentFilter> {
 	public TabContentFilterChoice( DockProperties properties ){
 		super( properties.getController() );
 		
-		DockUI ui = DockUI.getDefaultDockUI();
-		add( "all", ui.getString( "preference.layout.tabcontentfilter.all" ), null );
-		add( "icon", ui.getString( "preference.layout.tabcontentfilter.icon" ), new DefaultTabContentFilter( Behavior.ICON_ONLY ) );
-		add( "title", ui.getString( "preference.layout.tabcontentfilter.title" ), new DefaultTabContentFilter( Behavior.TEXT_ONLY ) );
-		add( "iconOrTitle", ui.getString( "preference.layout.tabcontentfilter.iconOrTitle" ), new DefaultTabContentFilter( Behavior.ALL, Behavior.TEXT_ONLY ) );
-		add( "titleOrIcon", ui.getString( "preference.layout.tabcontentfilter.titleOrIcon" ), new DefaultTabContentFilter( Behavior.ALL, Behavior.ICON_ONLY ) );
+		addLinked( "all", "preference.layout.tabcontentfilter.all", null );
+		addLinked( "icon", "preference.layout.tabcontentfilter.icon", new DefaultTabContentFilter( Behavior.ICON_ONLY ) );
+		addLinked( "title", "preference.layout.tabcontentfilter.title", new DefaultTabContentFilter( Behavior.TEXT_ONLY ) );
+		addLinked( "iconOrTitle", "preference.layout.tabcontentfilter.iconOrTitle", new DefaultTabContentFilter( Behavior.ALL, Behavior.TEXT_ONLY ) );
+		addLinked( "titleOrIcon", "preference.layout.tabcontentfilter.titleOrIcon", new DefaultTabContentFilter( Behavior.ALL, Behavior.ICON_ONLY ) );
 		
 		if( getDefaultChoice() == null ){
 			setDefaultChoice( "all" );

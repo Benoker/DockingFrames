@@ -192,6 +192,15 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
     }
     
     /**
+     * Updates the value of this {@link UIValue} without actually installing <code>this</code>
+     * on <code>manager</code>.
+     * @param manager the manager from which to read the value
+     */
+    public void update( UIProperties<V, U, ?> manager ){
+    	manager.get( id, kind, me() );
+    }
+    
+    /**
      * Gets the first non-<code>null</code> value of the list
      * <code>override</code>, <code>value</code>, <code>backup</code>.
      * @return a resource or <code>null</code>

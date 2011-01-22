@@ -32,7 +32,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -43,7 +42,6 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.FlapDockStation;
@@ -51,8 +49,8 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionIcon;
+import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.ClientOnly;
 
@@ -86,6 +84,18 @@ public abstract class RenameAction extends SimpleButtonAction {
     /** the icon of this action */
     private DockActionIcon icon;
     
+    /** text of this action */
+    private DockActionText text;
+    
+    /** automatic tooltip fo this action */
+    private DockActionText tooltip;
+    
+    /** text on the ok button */
+    private DockActionText textOk;
+    
+    /** text on the cancel button */
+    private DockActionText textCancel;
+    
     private int bound = 0;
     
     /**
@@ -102,9 +112,16 @@ public abstract class RenameAction extends SimpleButtonAction {
 			}
 		};
         
-        ResourceBundle bundle = Resources.getBundle();
-        setText( bundle.getString( "rename" ) );
-        setTooltip( bundle.getString( "rename.tooltip" ) );
+		text = new DockActionText( "rename", this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( newValue );	
+			}
+		};
+		tooltip = new DockActionText( "rename.tooltip", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( newValue );	
+			}
+		};
         
         menu.setLayout( new GridBagLayout() );
         JPanel panel = new JPanel( new GridLayout( 1, 2 ));
@@ -119,8 +136,16 @@ public abstract class RenameAction extends SimpleButtonAction {
         
         titleField.setColumns( 10 );
         
-        okButton.setText( DockUI.getDefaultDockUI().getString( "rename.ok" ) );
-        cancelButton.setText( DockUI.getDefaultDockUI().getString( "rename.cancel" ) );
+        textOk = new DockActionText( "rename.ok", this ){
+			protected void changed( String oldValue, String newValue ){
+				okButton.setText( newValue );	
+			}
+		};
+		textCancel = new DockActionText( "rename.cancel", this ){
+			protected void changed( String oldValue, String newValue ){
+				cancelButton.setText( newValue );	
+			}
+		};
         
         menu.addPopupMenuListener( new PopupMenuListener(){
             public void popupMenuCanceled( PopupMenuEvent e ) {
@@ -182,6 +207,10 @@ public abstract class RenameAction extends SimpleButtonAction {
     	super.bound( dockable );
     	if( bound == 0 ){
     		icon.setController( controller );
+    		text.setController( controller );
+    		tooltip.setController( controller );
+    		textOk.setController( controller );
+    		textCancel.setController( controller );
     	}
     	bound++;
     }
@@ -192,6 +221,10 @@ public abstract class RenameAction extends SimpleButtonAction {
     	bound--;
     	if( bound == 0 ){
     		icon.setController( null );
+    		text.setController( null );
+    		tooltip.setController( null );
+    		textOk.setController( null );
+    		textCancel.setController( null );
     	}
     }
     

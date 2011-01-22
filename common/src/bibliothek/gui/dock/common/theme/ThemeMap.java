@@ -111,7 +111,7 @@ public class ThemeMap {
                     theme = new CBasicTheme( control );
                 }
                 else{
-                    theme = factory.create();
+                    theme = factory.create( control.getController() );
                 }
                 
                 if( modifier != null )

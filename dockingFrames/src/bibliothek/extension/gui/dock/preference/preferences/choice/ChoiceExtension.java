@@ -25,6 +25,7 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
+import bibliothek.gui.dock.util.TextManager;
 import bibliothek.util.Path;
 
 /**
@@ -55,6 +56,14 @@ public interface ChoiceExtension<V> {
 	 * @return the name of that choice, should be human readable
 	 */
 	public String getText( int index );
+	
+	/**
+	 * Tells whether {@link #getText(int)} for index <code>index</code> returns
+	 * a key for the {@link TextManager} or is just ordinary text.
+	 * @param index the index of the item
+	 * @return whether the text is a key or not
+	 */
+	public boolean isTextKey( int index );
 	
 	/**
 	 * Gets a unique identifier for the <code>index</code>'th choice.

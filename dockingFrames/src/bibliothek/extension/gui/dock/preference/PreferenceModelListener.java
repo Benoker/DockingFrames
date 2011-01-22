@@ -48,7 +48,7 @@ public interface PreferenceModelListener {
     
     /**
      * Called when some preferences have been changed. This includes
-     * the value of a preference, but also the enabled {@link PreferenceOperation}s.
+     * the value of a preference, the text or description, but also the enabled {@link PreferenceOperation}s.
      * @param model the source of the event
      * @param beginIndex the index of the first preference that changed
      * @param endIndex the index of the last preference that changeds

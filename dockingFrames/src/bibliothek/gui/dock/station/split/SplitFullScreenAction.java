@@ -30,11 +30,11 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionIcon;
+import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.event.SplitDockListener;
@@ -51,6 +51,11 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
     
     private DockActionIcon iconNormalize;
     private DockActionIcon iconMaximize;
+    
+    private DockActionText textNormalize;
+    private DockActionText textMaximize;
+    private DockActionText textNormalizeTooltip;
+    private DockActionText textMaximizeTooltip;
 
     private PropertyValue<KeyStroke> accelerator = new PropertyValue<KeyStroke>( SplitDockStation.MAXIMIZE_ACCELERATOR ){
     	@Override
@@ -83,11 +88,28 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
             }
         });
         
-        setText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize" ) );
-        setText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize" ) );
+        textNormalize = new DockActionText( "split.normalize", this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( Boolean.TRUE, newValue );	
+			}
+		};
+		textMaximize = new DockActionText( "split.maximize", this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( Boolean.FALSE, newValue );	
+			}
+		};
         
-        setTooltip( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "split.normalize.tooltip" ));
-        setTooltip( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "split.maximize.tooltip" ));
+        textNormalizeTooltip = new DockActionText( "split.normalize.tooltip", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( Boolean.TRUE, newValue );	
+			}
+		};
+		
+		textMaximizeTooltip = new DockActionText( "split.maximize.tooltip", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( Boolean.FALSE, newValue );
+			}
+		};
         
         iconNormalize = new DockActionIcon( "split.normalize", this ){
 			protected void changed( Icon oldValue, Icon newValue ){
@@ -109,10 +131,20 @@ public class SplitFullScreenAction extends GroupedButtonDockAction<Boolean> impl
             if( controller == null ){
             	iconNormalize.setManager( null );
             	iconMaximize.setManager( null );
+            	
+                textNormalize.setManager( null );
+                textMaximize.setManager( null );
+                textNormalizeTooltip.setManager( null );
+                textMaximizeTooltip.setManager( null );
             }
             else{
             	iconNormalize.setManager( controller.getIcons() );
             	iconMaximize.setManager( controller.getIcons() );
+            	
+            	textNormalize.setManager( controller.getTexts() );
+                textMaximize.setManager( controller.getTexts() );
+                textNormalizeTooltip.setManager( controller.getTexts() );
+                textMaximizeTooltip.setManager( controller.getTexts() );
             }
         }
     }

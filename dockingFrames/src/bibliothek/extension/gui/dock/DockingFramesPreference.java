@@ -37,7 +37,6 @@ import bibliothek.extension.gui.dock.preference.model.LayoutPreferenceModel;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.util.Path;
 import bibliothek.util.PathCombiner;
@@ -69,25 +68,11 @@ public class DockingFramesPreference extends PreferenceTreeModel{
      */
     public DockingFramesPreference( DockController controller, PathCombiner combiner ){
         super( combiner, controller );
-        put( new Path( "shortcuts" ),
-                DockUI.getDefaultDockUI().getString( "preference.shortcuts" ), 
-                new KeyStrokePreferenceModel( controller.getProperties() ) );
-        
-        put( new Path( "buttonContent" ),
-        		DockUI.getDefaultDockUI().getString( "preference.buttonContent" ),
-        		new ButtonContentPreferenceModel( controller ) );
-        
-        put( new Path( "layout" ),
-        		DockUI.getDefaultDockUI().getString( "preference.layout" ),
-        		new LayoutPreferenceModel( controller.getProperties() ));
-        
-        put( new Path( "theme.BubbleTheme" ),
-        		DockUI.getDefaultDockUI().getString( "theme.bubble" ),
-        		new BubbleThemePreferenceModel( controller.getProperties() ));
-        
-        put( new Path( "theme.EclipseTheme" ),
-        		DockUI.getDefaultDockUI().getString( "theme.eclipse" ),
-        		new EclipseThemePreferenceModel( controller.getProperties() ));
+        putLinked( new Path( "shortcuts" ), "preference.shortcuts", new KeyStrokePreferenceModel( controller.getProperties() ) );
+        putLinked( new Path( "buttonContent" ), "preference.buttonContent", new ButtonContentPreferenceModel( controller ) );        
+        putLinked( new Path( "layout" ), "preference.layout", new LayoutPreferenceModel( controller.getProperties() ));        
+        putLinked( new Path( "theme.BubbleTheme" ), "theme.bubble", new BubbleThemePreferenceModel( controller.getProperties() ));        
+        putLinked( new Path( "theme.EclipseTheme" ), "theme.eclipse", new EclipseThemePreferenceModel( controller.getProperties() ));
     }
 
     

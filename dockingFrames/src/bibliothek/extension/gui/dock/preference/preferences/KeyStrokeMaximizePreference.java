@@ -29,7 +29,6 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
@@ -48,8 +47,8 @@ public class KeyStrokeMaximizePreference extends DockPropertyPreference<KeyStrok
 	public KeyStrokeMaximizePreference( DockProperties properties ){
 		super( properties, SplitDockStation.MAXIMIZE_ACCELERATOR, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.station.split.MAXIMIZE_ACCELERATOR" ));
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.maximize_accelerator.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.maximize_accelerator.description" ));
+		setLabelId( "preference.shortcuts.maximize_accelerator.label" );
+		setDescriptionId( "preference.shortcuts.maximize_accelerator.description" );
 		
 		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK ) );
 	}

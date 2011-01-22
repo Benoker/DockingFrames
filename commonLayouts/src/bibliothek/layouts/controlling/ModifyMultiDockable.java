@@ -111,6 +111,10 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
             this.factory = factory;
         }
         
+        public void setModel( PreferenceModel model ){
+	        // ignore	
+        }
+        
         public int getCount() {
             return count;
         }
@@ -226,6 +230,10 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
             return "New: ";
         }
 
+        public void setModel( PreferenceModel model ){
+	        // ignore	
+        }
+        
         public Path getPath() {
             return new Path( "newentry" );
         }

@@ -27,7 +27,6 @@ package bibliothek.extension.gui.dock.preference.preferences;
 
 import bibliothek.extension.gui.dock.preference.preferences.choice.BubbleColorSchemeChoice;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
@@ -44,7 +43,7 @@ public class BubbleColorSchemePreference extends ChoiceDockPropertyPreference<Co
 	public BubbleColorSchemePreference( DockProperties properties ){
 		super( properties, BubbleTheme.BUBBLE_COLOR_SCHEME, new Path( "dock.theme.bubble.colorscheme" ), new BubbleColorSchemeChoice( properties ) );
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.theme.bubble.color.description" ));
+		setLabelId( "preference.theme.bubble.color.label" );
+		setDescriptionId( "preference.theme.bubble.color.description" );
 	}
 }

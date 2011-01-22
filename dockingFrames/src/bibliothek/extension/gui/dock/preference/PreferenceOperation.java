@@ -30,8 +30,8 @@ import java.util.List;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.TextManager;
 
 /**
  * Represents an operation that a {@link PreferenceEditor} or a {@link PreferenceModel} can
@@ -44,22 +44,19 @@ public class PreferenceOperation {
     /**
      * Operation for deleting a property.
      */
-    public static final PreferenceOperation DELETE = new PreferenceOperation(
-            "delete", 
-            null,
-            DockUI.getDefaultDockUI().getString( "preference.operation.delete" ));
+    public static final PreferenceOperation DELETE = new PreferenceOperation( "delete" );
     
     /**
      * Operation for setting a property to its default value
      */
-    public static final PreferenceOperation DEFAULT = new PreferenceOperation(
-            "default", 
-            null,
-            DockUI.getDefaultDockUI().getString( "preference.operation.default" ));
+    public static final PreferenceOperation DEFAULT = new PreferenceOperation( "default" );
     
     static{
     	DELETE.setIconId( "delete.small" );
+    	DELETE.setDescriptionId( "preference.operation.delete" );
+    	
     	DEFAULT.setIconId( "default.small" );
+    	DEFAULT.setDescriptionId( "preference.operation.default" );
     }
     
     private String key;
@@ -68,6 +65,7 @@ public class PreferenceOperation {
     private String iconId = "null";
     
     private String description;
+    private String descriptionId = "null";
     
     /** all the views of this operation */
     private List<View> views = new ArrayList<View>();
@@ -171,11 +169,29 @@ public class PreferenceOperation {
     }
     
     /**
+     * Sets the unique identifier of the description. The identifier is used to read a
+     * string from the {@link TextManager}.
+     * @param descriptionId the identifier, not <code>null</code>
+     */
+    public void setDescriptionId( String descriptionId ){
+    	if( descriptionId == null ){
+    		throw new IllegalArgumentException( "descriptionId must not be null" );
+    	}
+    	this.descriptionId = descriptionId;
+    	for( View view : views ){
+    		view.description.setId( descriptionId );
+    	}
+    }
+    
+    /**
      * Sets a human readable description of this operation.
      * @param description the description
      */
     public void setDescription( String description ) {
         this.description = description;
+        for( View view : views ){
+        	view.description.setValue( description );
+        }
     }
     
     /**
@@ -186,7 +202,8 @@ public class PreferenceOperation {
     	private List<PreferenceOperationViewListener> listeners = new ArrayList<PreferenceOperationViewListener>();
     
     	private PreferenceOperationIcon icon;
-    	private Icon currentIcon;
+    	
+    	private PreferenceOperationText description;
     	
     	public View( PreferenceModel model ){
     		views.add( this );
@@ -194,25 +211,33 @@ public class PreferenceOperation {
     		icon = new PreferenceOperationIcon( iconId, getOperation() ){
     			@Override
     			protected void changed( Icon oldValue, Icon newValue ){
-    				currentIcon = newValue;
     				fireIconChanged( oldValue, newValue );
     			}
     		};
     		icon.setValue( PreferenceOperation.this.icon );
     		icon.setManager( model.getController().getIcons() );
+    		
+    		description = new PreferenceOperationText( descriptionId, getOperation() ){
+				protected void changed( String oldValue, String newValue ){
+					fireDescriptionChanged( oldValue, newValue );
+				}
+			};
+			description.setValue( PreferenceOperation.this.description );
+			description.setController( model.getController() );
     	}
 
 		public void destroy(){
 			views.remove( this );
 			icon.setManager( null );
+			description.setController( null );
 		}
 
 		public String getDescription(){
-			return PreferenceOperation.this.getDescription();
+			return description.value();
 		}
 
 		public Icon getIcon(){
-			return currentIcon;
+			return icon.value();
 		}
 
 		public PreferenceOperation getOperation(){

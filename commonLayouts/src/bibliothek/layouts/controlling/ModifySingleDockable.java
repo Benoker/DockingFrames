@@ -11,6 +11,7 @@ import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.extension.gui.dock.preference.AbstractPreference;
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
 import bibliothek.extension.gui.dock.preference.Preference;
+import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
@@ -71,6 +72,10 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
             CControl control = core.getEnvironment().getEnvironmentControl();
             backupFactorySet = control.getSingleDockableFactory( id ) != null;
             dockableSet = control.getSingleDockable( id ) != null;
+        }
+        
+        public void setModel( PreferenceModel model ){
+	        // ignore	
         }
         
         public String getLabel() {
@@ -171,6 +176,10 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
     
     private class NewEntry extends AbstractPreference<String>{
         private String value;
+        
+        public void setModel( PreferenceModel model ){
+	        // ignore	
+        }
         
         public String getDescription() {
             return "Create a new entry.";

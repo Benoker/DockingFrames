@@ -41,6 +41,7 @@ import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.ThemeMeta;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.help.control.LinkManager;
 import bibliothek.help.control.URManager;
@@ -343,19 +344,21 @@ public class Core implements ComponentCollector{
 		boolean first = true;
 		
 		for( final ThemeFactory factory : DockUI.getDefaultDockUI().getThemes()){
-			JRadioButtonMenuItem item = new JRadioButtonMenuItem( factory.getName() );
+			ThemeMeta meta = factory.createMeta( frontend.getController() );
+			
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem( meta.getName() );
 			if( first ){
 				item.setSelected( true );
-				frontend.getController().setTheme( factory.create() );
+				frontend.getController().setTheme( factory.create( frontend.getController() ) );
 				first = false;
 			}
 			
 			group.add( item );
-			item.setToolTipText( factory.getDescription() );
+			item.setToolTipText( meta.getDescription() );
 			item.addActionListener( new ActionListener(){
 				public void actionPerformed( ActionEvent e ){
 					onThemeUpdate = true;
-					frontend.getController().setTheme( factory.create() );
+					frontend.getController().setTheme( factory.create( frontend.getController() ) );
 					onThemeUpdate = false;
 				}
 			});

@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.util.TextManager;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 
 
@@ -40,9 +41,14 @@ import bibliothek.gui.dock.util.extension.ExtensionName;
  * @param <V> the kind of values this choice manages
  */
 public class DefaultChoice<V> implements Choice {
-	private List<Entry> list = new ArrayList<Entry>();
+	private List<Entry<V>> list = new ArrayList<Entry<V>>();
 	private boolean nullEntryAllowed = false;
 	private String defaultChoice;
+	
+	/** all the listeners that were added to this choice */
+	private List<ChoiceListener> listeners = new ArrayList<ChoiceListener>();
+	
+	private DockController controller;
 	
 	/**
 	 * Creates a new choice, adding additional entries if there are any 
@@ -60,9 +66,10 @@ public class DefaultChoice<V> implements Choice {
 				
 				for( int i = 0, n = choice.size(); i<n; i++ ){
 					String text = choice.getText( i );
+					boolean textIsKey = choice.isTextKey( i );
 					String id = choice.getId( i );
 					V value = choice.getChoice( i );
-					add( id, text, value );
+					add( id, text, textIsKey, value );
 				}
 				
 				if( defaultChoice == null ){
@@ -72,36 +79,130 @@ public class DefaultChoice<V> implements Choice {
 		}
 	}
 	
+	public void addChoiceListener( ChoiceListener listener ){
+		listeners.add( listener );	
+	}
+	
+	public void removeChoiceListener( ChoiceListener listener ){
+		listeners.remove( listener );
+	}
+	
+	private ChoiceListener[] listeners(){
+		return listeners.toArray( new ChoiceListener[ listeners.size() ] );
+	}
+	
+	/**
+	 * Calls {@link ChoiceListener#inserted(Choice, int, int)} on all listeners
+	 * that are currently known.
+	 * @param start the index of the first entry
+	 * @param end the index of the last entry
+	 */
+	protected void fireInserted( int start, int end ){
+		for( ChoiceListener listener : listeners() ){
+			listener.inserted( this, start, end );
+		}
+	}
+
+	/**
+	 * Calls {@link ChoiceListener#removed(Choice, int, int)} on all listeners
+	 * that are currently known.
+	 * @param start the index of the first entry
+	 * @param end the index of the last entry
+	 */
+	protected void fireRemoved( int start, int end ){ 
+		for( ChoiceListener listener : listeners() ){
+			listener.removed( this, start, end );
+		}		
+	}
+	
+	/**
+	 * Calls {@link ChoiceListener#updated(Choice, int, int)} on all listeners
+	 * that are currently known.
+	 * @param start the index of the first entry
+	 * @param end the index of the last entry
+	 */
+	protected void fireUpdated( int start, int end ){
+		for( ChoiceListener listener : listeners() ){
+			listener.updated( this, start, end );
+		}
+	}
+	
+	public void setController( DockController controller ){
+		this.controller = controller;
+		for( Entry<V> entry : list ){
+			entry.setController( controller );
+		}
+	}
+	
 	/**
 	 * Removes the index'th entry of this choice.
 	 * @param index the index of the entry to remove
 	 */
 	public void remove( int index ){
-		list.remove( index );
+		Entry<V> entry = list.remove( index );
+		entry.setController( null );
+		fireRemoved( index, index );
+	}
+
+	/**
+	 * Like {@link #add(String, String, boolean, Object)} with <code>codeIsKey</code> set to <code>false</code>
+	 * @param id the id of the new entry
+	 * @param text the text of the new entry
+	 * @param value the optional value
+	 * @return a direct link to the data that was added
+	 */
+	public Entry<V> add( String id, String text, V value ){
+		return add( id, text, false, value );
+	}
+	
+	/**
+	 * Like {@link #add(String, String, boolean, Object)} with <code>codeIsKey</code> set to <code>true</code>
+	 * @param id the id of the new entry
+	 * @param text the text of the new entry
+	 * @param value the optional value
+	 * @return a direct link to the data that was added
+	 */
+	public Entry<V> addLinked( String id, String text, V value ){
+		return add( id, text, true, value );
 	}
 	
 	/**
 	 * Adds an entry to this {@link Choice}.
 	 * @param id the id of the new entry
 	 * @param text the text of the new entry
+	 * @param textIsKey if <code>true</code>, then <code>text</code> is interpreted as a key for a {@link TextManager},
+	 * otherwise it is just text 
 	 * @param value the optional value
+	 * @return a direct link to the data that was added
 	 */
-	public void add( String id, String text, V value ){
+	public Entry<V> add( String id, String text, boolean textIsKey, V value ){
 		if( id == null )
 			throw new IllegalArgumentException( "id must not be null" );
 		
 		if( text == null )
 			throw new IllegalArgumentException( "text must not be null" );
 		
-		list.add( new Entry( id, text, value ));
+		int index = list.size();
+		Entry<V> entry;
+		if( textIsKey){ 
+			entry = new IdentifiedEntry( id, text, value );
+		}
+		else{
+			entry = new BaseEntry( id, text, value );
+		}
+		entry.setController( controller );
+		list.add( entry );
+		fireInserted( index, index );
+		
+		return entry;
 	}
 	
 	public String getId( int index ){
-		return list.get( index ).id;
+		return list.get( index ).getEntryId();
 	}
 	
 	public String getText( int index ){
-		return list.get( index ).text;
+		return list.get( index ).getEntryText();
 	}
 	
 	/**
@@ -110,7 +211,16 @@ public class DefaultChoice<V> implements Choice {
 	 * @return the value
 	 */
 	public V getValue( int index ){
-		return list.get( index ).value;
+		return list.get( index ).getEntryValue();
+	}
+	
+	/**
+	 * Gets all the data that is stored at <code>index</code>.
+	 * @param index the index of some entry
+	 * @return the entry at that location
+	 */
+	public Entry<V> getEntry( int index ){
+		return list.get( index );
 	}
 	
 	/**
@@ -121,13 +231,13 @@ public class DefaultChoice<V> implements Choice {
 	public int indexOfIdentifier( String id ){
 		if( id == null ){
 			for( int i = 0, n = list.size(); i<n; i++ ){
-				if( list.get( i ).id == null )
+				if( list.get( i ).getEntryId() == null )
 					return i;
 			}
 		}
 		else{
 			for( int i = 0, n = list.size(); i<n; i++ ){
-				if( list.get( i ).id.equals( id ))
+				if( id.equals( list.get( i ).getEntryId() ) )
 					return i;
 			}
 		}
@@ -147,7 +257,7 @@ public class DefaultChoice<V> implements Choice {
 			return -1;
 		
 		for( int i = 0, n = list.size(); i<n; i++ ){
-			if( equals( list.get( i ).value, value ))
+			if( equals( list.get( i ).getEntryValue(), value ))
 				return i;
 		}
 		
@@ -227,22 +337,89 @@ public class DefaultChoice<V> implements Choice {
 				return null;
 			
 			if( list.size() > 0 )
-				return list.get( 0 ).id;
+				return list.get( 0 ).getEntryId();
 			
 			return null;
 		}
 		return defaultChoice;
 	}
 	
-	private class Entry{
-		public String id;
-		public String text;
-		public V value;
+	public interface Entry<V>{
+		public String getEntryId();
+		public V getEntryValue();
+		public String getEntryText();
+		public void setEntryText( String text );
+		public void setController( DockController controller );
+	}
+	
+	private class BaseEntry implements Entry<V>{
+		private String id;
+		private V value;
+		private String text;
 		
-		public Entry( String id, String text, V value ){
+		public BaseEntry( String id, String text, V value ){
 			this.id = id;
 			this.text = text;
 			this.value = value;
+		}
+		
+		public String getEntryId(){
+			return id;
+		}
+		
+		public V getEntryValue(){
+			return value;
+		}
+		
+		public String getEntryText(){
+			return text;
+		}
+		
+		public void setEntryText( String text ){
+			this.text = text;
+			int index = indexOfIdentifier( id );
+			if( index >= 0 ){
+				fireUpdated( index, index );
+			}
+		}
+		
+		public void setController( DockController controller ){
+			// ignore
+		}
+	}
+	
+	private class IdentifiedEntry extends ChoiceEntryText implements Entry<V>{
+		public String id;
+		public V value;
+		
+		public IdentifiedEntry( String id, String text, V value ){
+			super( text, DefaultChoice.this );
+			this.id = id;
+			this.value = value;
+		}
+		
+		@Override
+		protected void changed( String oldValue, String newValue ){
+			int index = indexOfIdentifier( id );
+			if( index >= 0 ){
+				fireUpdated( index, index );
+			}
+		}
+		
+		public String getEntryId(){
+			return id;
+		}
+		
+		public V getEntryValue(){
+			return value;
+		}
+		
+		public void setEntryText( String text ){
+			setValue( text );
+		}
+		
+		public String getEntryText(){
+			return value();
 		}
 	}
 }

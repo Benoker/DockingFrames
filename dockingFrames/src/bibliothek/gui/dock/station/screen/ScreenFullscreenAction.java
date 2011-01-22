@@ -30,12 +30,12 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionIcon;
+import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -52,6 +52,11 @@ public class ScreenFullscreenAction extends GroupedButtonDockAction<Boolean> imp
 
 	private DockActionIcon iconNormalize;
 	private DockActionIcon iconMaximize;
+	
+	private DockActionText textNormalize;
+	private DockActionText textMaximize;
+	private DockActionText textNormalizeTooltip;
+	private DockActionText textMaximizeTooltip;
 	
 	private PropertyValue<KeyStroke> accelerator = new PropertyValue<KeyStroke>( SplitDockStation.MAXIMIZE_ACCELERATOR ){
 		@Override
@@ -85,12 +90,28 @@ public class ScreenFullscreenAction extends GroupedButtonDockAction<Boolean> imp
 				change( dockable, station.isFullscreen( dockable ) );
 			}
 		});
-		
-		setText( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "screen.normalize" ) );
-		setText( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "screen.maximize" ) );
 
-		setTooltip( Boolean.TRUE, DockUI.getDefaultDockUI().getString( "screen.normalize.tooltip" ));
-		setTooltip( Boolean.FALSE, DockUI.getDefaultDockUI().getString( "screen.maximize.tooltip" ));
+		textNormalize = new DockActionText( "screen.normalize", this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( Boolean.TRUE, newValue );	
+			}
+		};
+		textMaximize = new DockActionText( "screen.maximize", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( Boolean.FALSE, newValue );	
+			}
+		};
+		
+		textNormalizeTooltip = new DockActionText( "screen.normalize.tooltip", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( Boolean.TRUE, newValue );	
+			}
+		};
+		textMaximizeTooltip = new DockActionText( "screen.maximize.tooltip", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( Boolean.FALSE, newValue );	
+			}
+		};
 		
 		iconNormalize = new DockActionIcon( "screen.normalize", this ){
 			protected void changed( Icon oldValue, Icon newValue ){
@@ -117,6 +138,10 @@ public class ScreenFullscreenAction extends GroupedButtonDockAction<Boolean> imp
 				iconMaximize.setManager( controller.getIcons() );
 				iconNormalize.setManager( controller.getIcons() );
 			}
+			textNormalize.setController( controller );
+			textNormalizeTooltip.setController( controller );
+			textMaximize.setController( controller );
+			textMaximizeTooltip.setController( controller );
 		}
 	}
 

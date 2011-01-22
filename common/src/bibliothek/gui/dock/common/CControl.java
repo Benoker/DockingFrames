@@ -42,7 +42,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -137,6 +139,7 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.icon.DefaultIconScheme;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.text.DefaultTextScheme;
 import bibliothek.util.Filter;
 import bibliothek.util.Todo;
 import bibliothek.util.Version;
@@ -488,6 +491,7 @@ public class CControl {
         initExtendedModes();
         initProperties();
         initIcons();
+        initTexts();
 
         setTheme( ThemeMap.KEY_SMOOTH_THEME );
     }
@@ -654,6 +658,16 @@ public class CControl {
     	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
     	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );
     	getController().getIcons().setScheme( Priority.DEFAULT, scheme );
+    }
+    
+    /**
+     * Sets up all the default text that is used in the realm of this {@link CControl}
+     */
+    protected void initTexts(){
+    	ResourceBundle bundleCore = ResourceBundle.getBundle( "data.locale.text", Locale.getDefault(), DockController.class.getClassLoader() );
+    	ResourceBundle bundleCommon = ResourceBundle.getBundle( "data.bibliothek.gui.dock.locale.common", Locale.getDefault(), CControl.class.getClassLoader() );
+    	
+    	getController().getTexts().setScheme( Priority.DEFAULT, new DefaultTextScheme( bundleCommon, bundleCore ) );
     }
 
     /**

@@ -44,6 +44,10 @@ public class EclipseTabChoiceExtension implements ChoiceExtension<TabPainter>{
 	public String getText( int index ){
 		return "Glass";
 	}
+	
+	public boolean isTextKey( int index ){
+		return false;
+	}
 
 	public int size(){
 		return 1;

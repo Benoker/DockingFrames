@@ -69,6 +69,7 @@ import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.TextManager;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
@@ -78,6 +79,7 @@ import bibliothek.gui.dock.util.laf.Windows;
 import bibliothek.gui.dock.util.local.LocaleListener;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
 import bibliothek.util.container.Tuple;
 
@@ -172,15 +174,15 @@ public class DockUI {
     }
     
     private void registerThemes(){
-        registerTheme( BasicTheme.class, null );
-        registerTheme( FlatTheme.class, null );
-        registerTheme( SmoothTheme.class, null );
-        registerTheme( BubbleTheme.class, null );
-        registerTheme( EclipseTheme.class, null );
-        registerTheme( NoStackTheme.getFactory( BasicTheme.class, null, this ));
-        registerTheme( NoStackTheme.getFactory( FlatTheme.class, null, this ));
-        registerTheme( NoStackTheme.getFactory( SmoothTheme.class, null, this ));
-        registerTheme( NoStackTheme.getFactory( BubbleTheme.class, null, this ));
+        registerTheme( BasicTheme.class );
+        registerTheme( FlatTheme.class );
+        registerTheme( SmoothTheme.class );
+        registerTheme( BubbleTheme.class );
+        registerTheme( EclipseTheme.class );
+        registerTheme( NoStackTheme.getFactory( BasicTheme.class ));
+        registerTheme( NoStackTheme.getFactory( FlatTheme.class ));
+        registerTheme( NoStackTheme.getFactory( SmoothTheme.class ));
+        registerTheme( NoStackTheme.getFactory( BubbleTheme.class ));
     }
     
     private void registerColors(){
@@ -211,12 +213,9 @@ public class DockUI {
      * @param <T> the type of the {@link DockTheme}.
      * @param theme A class which must have the annotation 
      * {@link ThemeProperties}
-     * @param bundle The {@link ResourceBundle} that should be used to read
-     * name and description. This argument can be <code>null</code>, in that
-     * case the bundle of this DockUI will be used.
      */
-    public <T extends DockTheme> void registerTheme( Class<T> theme, ResourceBundle bundle ){
-        registerTheme( new ThemePropertyFactory<T>( theme, bundle, this ));
+    public <T extends DockTheme> void registerTheme( Class<T> theme ){
+        registerTheme( new ThemePropertyFactory<T>( theme ));
     }
     
     /**
@@ -339,7 +338,11 @@ public class DockUI {
     /**
      * Gets the local resource bundle.
      * @return the bundle
+     * @deprecated replaced by the {@link TextManager}
      */
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     public ResourceBundle getBundle(){
 		return bundle;
 	}
@@ -348,7 +351,11 @@ public class DockUI {
      * Gets a string of the current {@link #getBundle() bundle}.
      * @param key the key of the string
      * @return the string
+     * @deprecated replaced by the {@link TextManager}
      */
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     public String getString( String key ){
     	return getBundle().getString( key );
     }
@@ -357,7 +364,11 @@ public class DockUI {
      * Sets the locale for which a {@link #getBundle() ResourceBundle}
      * should be loaded.
      * @param locale the new locale, not <code>null</code>
+     * @deprecated replaced by the {@link TextManager}
      */
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     public void setLocale( Locale locale ){
     	if( locale == null )
     		throw new IllegalArgumentException( "locale must not be null" );
@@ -368,7 +379,11 @@ public class DockUI {
      * Gets the {@link Locale} for which {@link #getBundle() the ResourceBundle}
      * was loaded.
      * @return the locale, not <code>null</code>
+     * @deprecated replaced by the {@link TextManager}
      */
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     public Locale getLocale(){
 		return locale;
 	}
@@ -376,7 +391,11 @@ public class DockUI {
     /**
      * Adds a new {@link LocaleListener}.
      * @param listener the new listener, not <code>null</code>
+     * @deprecated replaced by the {@link TextManager}
      */
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     public void addLocaleListener( LocaleListener listener ){
     	localeListeners.add( listener );
     }
@@ -384,11 +403,18 @@ public class DockUI {
     /**
      * Removes <code>listener</code> from this {@link DockUI}.
      * @param listener the listener to remove
+     * @deprecated replaced by the {@link TextManager}
      */
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     public void removeLocaleListener( LocaleListener listener ){
     	localeListeners.remove( listener );
     }
     
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     private LocaleListener[] localeListeners(){
     	return localeListeners.toArray( new LocaleListener[ localeListeners.size() ] );
     }
@@ -396,7 +422,11 @@ public class DockUI {
     /**
      * Sets the resource bundle which should be used.
      * @param bundle the bundle
+     * @deprecated replaced by the {@link TextManager}
      */
+    @Deprecated
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+    		description="remove this method")
     public void setBundle( ResourceBundle bundle ){
 		this.bundle = bundle;
 		

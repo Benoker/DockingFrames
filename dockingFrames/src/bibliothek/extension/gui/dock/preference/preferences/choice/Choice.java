@@ -25,12 +25,35 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
+import bibliothek.gui.DockController;
+
 /**
  * A choice is a set of entries from which the user can choose one. Note
  * that some components assume that a <code>Choice</code> is immutable.
  * @author Benjamin Sigg
  */
 public interface Choice {
+	/**
+	 * Adds a listener to this choice. The listener is informed about changes
+	 * of the entries of this choice.
+	 * @param listener the new listener, not <code>null</code>
+	 */
+	public void addChoiceListener( ChoiceListener listener );
+	
+	/**
+	 * Removes the listener <code>listener</code> from this choice.
+	 * @param listener the listener to remove
+	 */
+	public void removeChoiceListener( ChoiceListener listener );
+	
+	/**
+	 * Informs this {@link Choice} that it is now used for displaying items for
+	 * <code>controller</code>.
+	 * @param controller the controller in whose realm this {@link Choice} is currently
+	 * used, can be <code>null</code>
+	 */
+	public void setController( DockController controller );
+	
 	/**
 	 * Gets the number of available choices.
 	 * @return the number of choices

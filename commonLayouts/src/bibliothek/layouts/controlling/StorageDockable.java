@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import bibliothek.extension.gui.dock.PreferenceTable;
 import bibliothek.extension.gui.dock.preference.AbstractPreference;
 import bibliothek.extension.gui.dock.preference.DefaultPreferenceModel;
+import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceOperation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
@@ -57,7 +58,11 @@ public class StorageDockable extends DefaultSingleCDockable{
             this.index = index;
             label = "empty";
         }
-
+        
+        public void setModel( PreferenceModel model ){
+	        // ignore	
+        }
+        
         @Override
         public PreferenceOperation[] getOperations() {
             return new PreferenceOperation[]{

@@ -37,7 +37,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.KeyStroke;
@@ -90,7 +92,10 @@ import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.TextManager;
+import bibliothek.gui.dock.util.UIScheme;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.WindowProviderListener;
 import bibliothek.gui.dock.util.WindowProviderWrapper;
@@ -98,9 +103,11 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.extension.ExtensionManager;
 import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.text.DefaultTextScheme;
+import bibliothek.gui.dock.util.text.TextBridge;
+import bibliothek.gui.dock.util.text.TextValue;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
 
 /**
@@ -169,6 +176,8 @@ public class DockController {
     
     /** the set of icons used with this controller */
     private IconManager icons;
+    /** the set of strings used by this controller */
+    private TextManager texts;
     /** map of colors that are used through the realm of this controller */
     private ColorManager colors;
     /** map of fonts that are used through the realm of this controller */
@@ -261,6 +270,9 @@ public class DockController {
         colors = new ColorManager( this );
         fonts = new FontManager( this );
         dockTitles = new DockTitleManager( this );
+        texts = new TextManager( this );
+        texts.setScheme( Priority.DEFAULT, createDefaultTextScheme() );
+        
         theme.init();
         
     	rootWindowProvider = new WindowProviderWrapper();
@@ -317,7 +329,7 @@ public class DockController {
         extensions = factory.createExtensionManager( this, setup );
         extensions.init();
         
-        setTheme( DockUI.getDefaultDockUI().getDefaultTheme().create() );
+        setTheme( DockUI.getDefaultDockUI().getDefaultTheme().create( this ) );
         
         relocator.addMode( DockRelocatorMode.SCREEN_ONLY );
         relocator.addMode( DockRelocatorMode.NO_COMBINATION );
@@ -339,6 +351,15 @@ public class DockController {
         
         for( ControllerSetupListener listener : setupListeners )
             listener.done( this );
+    }
+    
+    /**
+     * Creates the default {@link UIScheme} for the {@link TextManager}.
+     * @return the default {@link UIScheme}, should not be <code>null</code>
+     */
+    protected UIScheme<String, TextValue, TextBridge> createDefaultTextScheme(){
+    	ResourceBundle bundle = ResourceBundle.getBundle( "data.locale.text", Locale.getDefault(), this.getClass().getClassLoader() );
+    	return new DefaultTextScheme( bundle );
     }
     
     /**
@@ -388,7 +409,7 @@ public class DockController {
      * @deprecated replaced by {@link #getMouseFocusObserver()}
      */
     @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Version.VERSION_1_1_1,
     		description="remove this method")
     public MouseFocusObserver getFocusObserver(){
 		return getMouseFocusObserver();
@@ -921,6 +942,14 @@ public class DockController {
     }
     
     /**
+     * Gets the set of strings which are used by this controller.
+     * @return the set of texts
+     */
+    public TextManager getTexts(){
+		return texts;
+	}
+    
+    /**
      * Gets the map of colors which are used by this controller.
      * @return the map of colors
      */
@@ -1231,7 +1260,7 @@ public class DockController {
      * removed in a future release.
      */
     @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
     		description="remove this method")
     public void addUIListener( UIListener listener ){
         theme.addUIListener( listener );
@@ -1244,7 +1273,7 @@ public class DockController {
      * removed in a future release.
      */
     @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
     		description="remove this method")
     public void removeUIListener( UIListener listener ){
         theme.removeUIListener( listener );
@@ -1259,7 +1288,7 @@ public class DockController {
      * removed in a future release.
      */
     @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
     		description="remove this method")
     public void updateUI(){
     	theme.updateUI();

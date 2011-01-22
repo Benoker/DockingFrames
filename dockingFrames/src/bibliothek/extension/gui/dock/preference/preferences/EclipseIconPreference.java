@@ -26,7 +26,6 @@
 package bibliothek.extension.gui.dock.preference.preferences;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.util.Path;
 
@@ -43,8 +42,8 @@ public class EclipseIconPreference extends DockPropertyPreference<Boolean>{
 	public EclipseIconPreference( DockProperties properties ){
 		super( properties, EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, Path.TYPE_BOOLEAN_PATH, new Path( "dock.theme.eclipse.icons" ));
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.theme.eclipse.icon.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.theme.eclipse.icon.description" ));
+		setLabelId( "preference.theme.eclipse.icon.label" );
+		setDescriptionId( "preference.theme.eclipse.icon.description" );
 		
 		setDefaultValue( Boolean.FALSE );
 	}

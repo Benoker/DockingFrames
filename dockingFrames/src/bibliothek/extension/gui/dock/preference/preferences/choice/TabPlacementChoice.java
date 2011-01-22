@@ -25,7 +25,6 @@
  */
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.DockProperties;
 
@@ -42,12 +41,11 @@ public class TabPlacementChoice extends DefaultChoice<TabPlacement> {
 	public TabPlacementChoice( DockProperties properties ){
 		super( properties.getController() );
 		
-		DockUI ui = DockUI.getDefaultDockUI();
-		add( "theme", ui.getString( "preference.layout.tabplacement.theme" ), null );
-		add( "top", ui.getString( "preference.layout.tabplacement.top" ), TabPlacement.TOP_OF_DOCKABLE );
-		add( "bottom", ui.getString( "preference.layout.tabplacement.bottom" ), TabPlacement.BOTTOM_OF_DOCKABLE );
-		add( "left", ui.getString( "preference.layout.tabplacement.left" ), TabPlacement.LEFT_OF_DOCKABLE );
-		add( "right", ui.getString( "preference.layout.tabplacement.right" ), TabPlacement.RIGHT_OF_DOCKABLE );
+		addLinked( "theme", "preference.layout.tabplacement.theme", null );
+		addLinked( "top", "preference.layout.tabplacement.top", TabPlacement.TOP_OF_DOCKABLE );
+		addLinked( "bottom", "preference.layout.tabplacement.bottom", TabPlacement.BOTTOM_OF_DOCKABLE );
+		addLinked( "left", "preference.layout.tabplacement.left", TabPlacement.LEFT_OF_DOCKABLE );
+		addLinked( "right", "preference.layout.tabplacement.right", TabPlacement.RIGHT_OF_DOCKABLE );
 		
 		if( getDefaultChoice() == null ){
 			setDefaultChoice( "theme" );

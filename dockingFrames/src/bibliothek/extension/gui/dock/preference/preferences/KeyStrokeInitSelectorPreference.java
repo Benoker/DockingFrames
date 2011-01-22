@@ -29,7 +29,6 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.util.DockProperties;
@@ -49,8 +48,8 @@ public class KeyStrokeInitSelectorPreference extends DockPropertyPreference<KeyS
 	public KeyStrokeInitSelectorPreference( DockProperties properties ){
 		super( properties, DockableSelector.INIT_SELECTION, Path.TYPE_KEYSTROKE_PATH, new Path( "dock.DockableSelector.INIT_SELECTION" ));
 		
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.shortcuts.init_selection.label" ));
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.shortcuts.init_selection.description" ));
+		setLabelId( "preference.shortcuts.init_selection.label" );
+		setDescriptionId( "preference.shortcuts.init_selection.description" );
 		
 		setDefaultValue( KeyStroke.getKeyStroke( KeyEvent.VK_E, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK ) );
 	}

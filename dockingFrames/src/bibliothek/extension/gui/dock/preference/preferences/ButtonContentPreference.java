@@ -29,7 +29,6 @@ package bibliothek.extension.gui.dock.preference.preferences;
 import bibliothek.extension.gui.dock.preference.DefaultPreference;
 import bibliothek.extension.gui.dock.preference.model.ButtonContentPreferenceModel;
 import bibliothek.extension.gui.dock.preference.preferences.choice.ButtonContentChoice;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
@@ -58,8 +57,8 @@ public class ButtonContentPreference extends DefaultPreference<String>{
 		
 		choice = new ButtonContentChoice( properties );
 		setValueInfo( choice );
-		setLabel( DockUI.getDefaultDockUI().getString( "preference.layout.ButtonContentPreference.text" ) );
-		setDescription( DockUI.getDefaultDockUI().getString( "preference.layout.ButtonContentPreference.description" ) );
+		setLabelId( "preference.layout.ButtonContentPreference.text" );
+		setDescriptionId( "preference.layout.ButtonContentPreference.description" );
 		this.properties = properties;
 	}
 	

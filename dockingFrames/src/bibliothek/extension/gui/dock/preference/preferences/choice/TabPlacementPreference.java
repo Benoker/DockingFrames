@@ -26,7 +26,6 @@
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.extension.gui.dock.preference.preferences.ChoiceDockPropertyPreference;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.DockProperties;
@@ -46,9 +45,7 @@ public class TabPlacementPreference extends ChoiceDockPropertyPreference<TabPlac
 	public TabPlacementPreference( DockProperties properties, Path path ){
 		super( properties, StackDockStation.TAB_PLACEMENT, path, new TabPlacementChoice( properties ) );
 		
-		DockUI ui = DockUI.getDefaultDockUI();
-		
-		setLabel( ui.getString( "preference.layout.tabplacement.label" ) );
-		setDescription( ui.getString( "preference.layout.tabplacement.description" ) );
+		setLabelId( "preference.layout.tabplacement.label" );
+		setDescriptionId( "preference.layout.tabplacement.description" );
 	}
 }
