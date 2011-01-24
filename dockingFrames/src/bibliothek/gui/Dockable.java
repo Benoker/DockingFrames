@@ -38,6 +38,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.AbstractDockable;
+import bibliothek.gui.dock.dockable.DockableStateListener;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -80,6 +81,17 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      * @return the parent property, can be <code>null</code>
      */
     public DockStation getDockParent();
+    
+    /**
+     * Tells whether this {@link Dockable} can be seen by the user. A {@link Dockable} at least needs
+     * to be registered as root-station on a {@link DockController}, or be a child of a root-station
+     * to be visible.<br>
+     * Implementations will assume that {@link Component}s which are {@link Component#isDisplayable() displayable} are
+     * are visible to the user.
+     * @return <code>true</code> if the user can actually see this dockable, <code>false</code> 
+     * otherwise
+     */
+    public boolean isDockableVisible();
     
     /**
      * Sets the controller in whose realm this Dockable is. A value of <code>null</code>
@@ -134,6 +146,19 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      */
     public void removeDockHierarchyListener( DockHierarchyListener listener );
     
+    /**
+	 * Adds <code>listener</code> to this {@link Dockable}. The listener will be informed about
+	 * various events concerning the position and visibility of this dockable.
+	 * @param listener the new listener, not <code>null</code>
+	 */
+	public void addDockableStateListener( DockableStateListener listener );
+	
+	/**
+	 * Removes <code>listener</code> from this element.
+	 * @param listener the listener to remove
+	 */
+	public void removeDockableStateListener( DockableStateListener listener );
+	
     /**
      * Adds a {@link MouseInputListener} to the {@link #getComponent() component} of this <code>Dockable</code>.
      * A <code>Dockable</code> has to decide by itself which {@link Component Components}

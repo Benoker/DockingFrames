@@ -231,7 +231,12 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     
     public boolean isFullscreen() {
     	if( strategy == null ){
-    		throw new IllegalStateException( "no strategy available" );
+    		if( isVisible() ){
+    			throw new IllegalStateException( "no strategy available" );
+    		}
+    		else{
+    			return false;
+    		}
     	}
     	return strategy.isFullscreen( this );
     }

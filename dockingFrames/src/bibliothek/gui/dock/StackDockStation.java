@@ -76,6 +76,7 @@ import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
@@ -859,9 +860,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
 
     public void drop(){
-    	listeners.fireDockableAdding( dropping );
-        add( dropping, insert.tab + (insert.right ? 1 : 0), null, false );
-        listeners.fireDockableAdded( dropping );
+        add( dropping, insert.tab + (insert.right ? 1 : 0), null );
     }
 
     public void drop( Dockable dockable ) {
@@ -885,9 +884,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		done = drop( dockable, new StackDockProperty( dockables.dockables().size(), placeholder ) );
     	}
     	if( !done ){
-    		listeners.fireDockableAdding( dockable );
-        	add( dockable, dockables.dockables().size(), null, false );
-        	listeners.fireDockableAdded( dockable );
+    		add( dockable, dockables.dockables().size(), null );
     	}
     }
     
@@ -931,7 +928,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         }
         else if( placeholder != null ){
         	if( acceptable && dockables.hasPlaceholder( placeholder )){
-        		add( dockable, 0, placeholder, true );
+        		add( dockable, 0, placeholder );
         		result = true;
         	}
         }
@@ -1119,9 +1116,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         if( index < 0 )
             throw new IllegalArgumentException( "The dockable is not part of this station." );
         
-        listeners.fireDockableRemoving( dockable );
-        remove( index, false );
-        listeners.fireDockableRemoved( dockable );
+        remove( index );
     }
     
     public boolean canReplace( Dockable old, Dockable next ) {
@@ -1170,7 +1165,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * @param index the preferred location of the new child
      */
     public void add( Dockable dockable, int index ){
-        add( dockable, index, null, true );
+        add( dockable, index, null );
     }
     
     /**
@@ -1178,15 +1173,12 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * @param dockable the new child
      * @param index the preferred location of the new child
      * @param placeholder the preferred location of the new child, can be <code>null</code>
-     * @param fire if <code>true</code> the method should fire events for
-     * adding a new {@link Dockable}, otherwise the method will run silently
      */
-    protected void add( Dockable dockable, int index, Path placeholder, boolean fire ){
+    protected void add( Dockable dockable, int index, Path placeholder ){
         DockUtilities.ensureTreeValidity( this, dockable );
         
-        if( fire ){
-        	listeners.fireDockableAdding( dockable );
-        }
+        listeners.fireDockableAdding( dockable );
+        
         dockable.setDockParent( this );
         
         StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
@@ -1204,11 +1196,25 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         dockable.addDockableListener( listener );
         
-        if( fire ){
-        	listeners.fireDockableAdded( dockable );
-        }
-        
+        listeners.fireDockableAdded( dockable );
+        fireDockablesRepositioned( index+1 );
         fireDockableSelected();
+    }
+    
+    /**
+     * Invokes {@link DockStationListenerManager#fireDockablesRepositioned(Dockable...)} for
+     * all children starting at index <code>fromIndex</code>.
+     * @param fromIndex the index of the first moved child
+     */
+    private void fireDockablesRepositioned( int fromIndex ){
+        int count = getDockableCount() - fromIndex;
+        if( count > 0 ){
+        	Dockable[] moved = new Dockable[count];
+        	for( int i = 0; i < count; i++ ){
+        		moved[i] = getDockable( i+fromIndex );
+        	}
+        	listeners.fireDockablesRepositioned( moved );
+        }
     }
     
     /**
@@ -1311,24 +1317,13 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * @param index the location of the child which will be removed
      */
     public void remove( int index ){
-        remove( index, true );
-    }
-
-    /**
-     * Removes the child of location <code>index</code>.
-     * @param index the location of the child which will be removed
-     * @param fire <code>true</code> if the method should fire some events,
-     * <code>false</code> if the method should run silently
-     */
-    private void remove( int index, boolean fire ){
         if( index < 0 || index >= dockables.dockables().size() )
             throw new IllegalArgumentException( "Index out of bounds" );
         
         StationChildHandle handle = dockables.dockables().get( index );
         Dockable dockable = handle.getDockable();
         
-        if( fire )
-        	listeners.fireDockableRemoving( dockable );
+       	listeners.fireDockableRemoving( dockable );
         
         if( dockables.dockables().size() == 1 ){
         	if( singleTabStackDockComponent() ){
@@ -1357,9 +1352,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         panel.revalidate();
         
         dockable.setDockParent( null );
-        if( fire )
-        	listeners.fireDockableRemoved( dockable );
-        
+       	listeners.fireDockableRemoved( dockable );
+        fireDockablesRepositioned( index );
         fireDockableSelected();
     }
 

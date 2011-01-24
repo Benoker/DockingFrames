@@ -1642,6 +1642,10 @@ public class ScreenDockStation extends AbstractDockStation {
             visibility.fire();
         }
     }
+    
+    public boolean isStationVisible(){
+    	return isShowing();
+    }
         
     public Rectangle getStationBounds() {
         return null;
@@ -1760,12 +1764,13 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * A listener that adds itself to {@link ScreenDockWindow}s for monitoring their fullscreen state.
+     * A listener that adds itself to {@link ScreenDockWindow}s for monitoring their fullscreen state
+     * and their position.
      * @author Benjamin Sigg
      */
     private class FullscreenListener implements ScreenDockStationListener, ScreenDockWindowListener{
 		public void fullscreenChanged( ScreenDockStation station, Dockable dockable ) {
-			// ignore
+			listeners.fireDockablesRepositioned( dockable );
 		}
 
 		public void windowDeregistering( ScreenDockStation station, Dockable dockable, ScreenDockWindow window ) {
@@ -1787,7 +1792,10 @@ public class ScreenDockStation extends AbstractDockStation {
 		}
 
 		public void shapeChanged( ScreenDockWindow window ) {
-			// ignore
+			Dockable dockable = window.getDockable();
+			if( dockable != null ){
+				listeners.fireDockablesRepositioned( dockable );
+			}
 		}
 
 		public void visibilityChanged( ScreenDockWindow window ) {

@@ -103,6 +103,8 @@ public class Root extends VisibleSplitNode{
 	        
 	        getAccess().getOwner().revalidate();
 	        getAccess().getOwner().repaint();
+	        
+	        getAccess().repositioned( this );
     	}
     }
     

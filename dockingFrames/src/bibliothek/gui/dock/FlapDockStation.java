@@ -88,6 +88,7 @@ import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -125,10 +126,8 @@ import bibliothek.util.Todo.Version;
  * which owns the clicked title is shown in this window.
  * @author Benjamin Sigg
  */
-//@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
-//		description="Allow clients to tell whether a Dockable should be opened if dropped on this station")
 @Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
-		description="Alles nested CDockables / FlapDockStations")
+		description="Allow clients to tell whether a Dockable should be opened if dropped on this station")
 public class FlapDockStation extends AbstractDockableStation {
     /** 
      * The direction in which the window with the <code>Dockable</code> will popup,
@@ -1713,6 +1712,8 @@ public class FlapDockStation extends AbstractDockableStation {
         // race condition, only required if not called from the EDT
         buttonPane.resetTitles();
         listeners.fireDockableRemoved( dockable );
+        
+        fireDockablesRepositioned( index );
     }
     
     /**
@@ -1748,6 +1749,24 @@ public class FlapDockStation extends AbstractDockableStation {
         dockable.setDockParent( this );
         buttonPane.resetTitles(); // race condition, only required if not called from the EDT
         listeners.fireDockableAdded( dockable );
+        
+        fireDockablesRepositioned( index+1 );
+    }
+    
+    /**
+     * Invokes {@link DockStationListenerManager#fireDockablesRepositioned(Dockable...)} for
+     * all children starting at index <code>fromIndex</code>.
+     * @param fromIndex the index of the first moved child
+     */
+    private void fireDockablesRepositioned( int fromIndex ){
+        int count = getDockableCount() - fromIndex;
+        if( count > 0 ){
+        	Dockable[] moved = new Dockable[count];
+        	for( int i = 0; i < count; i++ ){
+        		moved[i] = getDockable( i+fromIndex );
+        	}
+        	listeners.fireDockablesRepositioned( moved );
+        }
     }
     
     private DockableHandle link( Dockable dockable ){

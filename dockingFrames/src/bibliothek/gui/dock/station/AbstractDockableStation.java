@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.io.IOException;
 
 import javax.swing.Icon;
@@ -150,16 +151,17 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
     }
 
     public boolean isStationVisible() {
-        Dockable dockable = asDockable();
-        if( dockable == null )
-            return true;
-        
-        DockStation parent = dockable.getDockParent();
-        
-        if( parent == null )
-            return true;
-        else
-            return parent.isVisible( dockable );
+    	boolean visible = isDockableVisible();
+    	if( visible ){
+    		return true;
+    	}
+    	if( getController() != null ){
+    		Window window = SwingUtilities.getWindowAncestor( getComponent() );
+    		if( window != null ){
+    			return window.isVisible();
+    		}
+    	}
+    	return false;
     }
 
     public boolean accept( Dockable child ) {

@@ -65,6 +65,8 @@ import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
+import bibliothek.gui.dock.dockable.DockableStateListener;
+import bibliothek.gui.dock.dockable.DockableStateListenerManager;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
@@ -188,6 +190,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/** A list of {@link DockableListener} which will be invoked when something noticable happens */
 	private List<DockableListener> dockableListeners = new ArrayList<DockableListener>();
 
+	/** All {@link DockableStateListener}s of this station */
+	private DockableStateListenerManager dockableStateListeners;
+	
 	/** an observer ensuring that the {@link DockHierarchyEvent}s are sent properly */
 	private DockHierarchyObserver hierarchyObserver;
 
@@ -225,9 +230,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** Optional icon for this station */
 	private DockIcon titleIcon;
-	
-	/** the current icon for this station */
-	private Icon currentTitleIcon;
 	
 	/** Optional tooltip for this station */
 	private PropertyValue<String> titleToolTip = new PropertyValue<String>(PropertyKey.DOCK_STATION_TOOLTIP){
@@ -302,66 +304,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private boolean allowSideSnap = true;
 
 	/** Access to the private and protected methods for some friends of this station */
-	private SplitDockAccess access = new SplitDockAccess(){
-		private long lastUniqueId = -1;
-
-		public StationChildHandle getFullScreenDockable(){
-			return fullScreenDockable;
-		}
-
-		public DockTitleVersion getTitleVersion(){
-			return title;
-		}
-
-		public SplitDockStation getOwner(){
-			return SplitDockStation.this;
-		}
-
-		public double validateDivider( double divider, Node node ){
-			return layoutManager.getValue().validateDivider(SplitDockStation.this, divider, node);
-		}
-
-		public StationChildHandle newHandle( Dockable dockable ){
-			return new StationChildHandle(SplitDockStation.this, getDisplayers(), dockable, title);
-		}
-
-		public void addHandle( StationChildHandle dockable, boolean fire ){
-			SplitDockStation.this.addHandle(dockable, fire);
-		}
-
-		public void removeHandle( StationChildHandle handle, boolean fire ){
-			SplitDockStation.this.removeHandle(handle, fire);
-		}
-
-		public boolean drop( Dockable dockable, SplitDockProperty property, SplitNode root ){
-			return SplitDockStation.this.drop(dockable, property, root);
-		}
-
-		public PutInfo validatePutInfo( PutInfo putInfo ){
-			return layoutManager.getValue().validatePutInfo(SplitDockStation.this, putInfo);
-		}
-
-		public long uniqueID(){
-			long id = System.currentTimeMillis();
-			if( id <= lastUniqueId ) {
-				lastUniqueId++;
-				id = lastUniqueId+1;
-			}
-			while( getNode(id) != null ) {
-				id++;
-			}
-			lastUniqueId = id;
-			return id;
-		}
-
-		public boolean isTreeAutoCleanupEnabled(){
-			return treeLock == 0;
-		}
-
-		public SplitPlaceholderSet getPlaceholderSet(){
-			return placeholderSet;
-		}
-	};
+	private Access access = new Access();
 
 	/** The root of the tree which determines the structure of this station */
 	private Root root;
@@ -424,6 +367,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		setBasePane( content );
 
 		placeholderSet = new SplitPlaceholderSet(access);
+		dockableStateListeners = new DockableStateListenerManager( this );
 
 		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".split", this );
 		combiner = new DefaultCombinerValue( ThemeManager.COMBINER + ".split", this );
@@ -451,7 +395,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		
 		titleIcon = new DockStationIcon( "dockStation.default", this ){
 			protected void changed( Icon oldValue, Icon newValue ){
-				currentTitleIcon = newValue;
 				for( DockableListener listener : dockableListeners.toArray( new DockableListener[ dockableListeners.size()] )){
 					listener.titleIconChanged( SplitDockStation.this, oldValue, newValue );
 				}
@@ -765,7 +708,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public Icon getTitleIcon(){
-		return currentTitleIcon;
+		return titleIcon.value();
 	}
 
 	/**
@@ -773,8 +716,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * @param titleIcon the icon or <code>null</code>
 	 */
 	public void setTitleIcon( Icon titleIcon ){
-		this.titleIcon.setValue(titleIcon);
+		this.titleIcon.setValue( titleIcon, true );
 	}
+	
+    /**
+     * Resets the icon of this {@link SplitDockStation}, the default icon is shown again.
+     */
+    public void resetTitleIcon(){
+    	this.titleIcon.setValue( null );
+    }
 
 	/**
 	 * Sets a special {@link SplitLayoutManager} which this station has to use.
@@ -1037,6 +987,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		dockStationListeners.removeListener(listener);
 	}
 
+	public void addDockableStateListener( DockableStateListener listener ){
+		dockableStateListeners.addListener( listener );	
+	}
+	
+	public void removeDockableStateListener( DockableStateListener listener ){
+		dockableStateListeners.removeListener( listener );
+	}
+	
 	/**
 	 * Adds a listener to this station. The listener is informed some 
 	 * settings only available to a {@link SplitDockStation} are changed.
@@ -1059,11 +1017,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public boolean isStationVisible(){
-		if( parent != null )
-			return parent.isStationVisible() && parent.isVisible(this);
-		else
-			return isDisplayable();
+		return isDockableVisible();
 	}
+	
+	public boolean isDockableVisible(){
+    	DockController controller = getController();
+    	if( controller == null ){
+    		return false;
+    	}
+    	DockStation parent = getDockParent();
+    	if( parent != null ){
+    		return parent.isVisible( this );
+    	}
+    	return isDisplayable();
+    }
 
 	public int getDockableCount(){
 		return dockables.size();
@@ -1236,30 +1203,41 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * @see #isFullScreen()
 	 */
 	public void setFullScreen( Dockable dockable ){
-		dockable = layoutManager.getValue().willMakeFullscreen(this, dockable);
-		Dockable oldFullScreen = getFullScreen();
-		if( oldFullScreen != dockable ) {
-			if( dockable != null ) {
-				Leaf leaf = getRoot().getLeaf(dockable);
-				if( leaf == null )
-					throw new IllegalArgumentException("Dockable not child of this station");
-
-				fullScreenDockable = leaf.getDockableHandle();
-
-				for( StationChildHandle handle : dockables ) {
-					handle.getDisplayer().getComponent().setVisible(handle == fullScreenDockable);
+		try{
+			access.arm();
+			dockable = layoutManager.getValue().willMakeFullscreen(this, dockable);
+			Dockable oldFullScreen = getFullScreen();
+			if( oldFullScreen != dockable ) {
+				if( dockable != null ) {
+					access.repositioned.add( dockable );
+					Leaf leaf = getRoot().getLeaf(dockable);
+					if( leaf == null )
+						throw new IllegalArgumentException("Dockable not child of this station");
+	
+					fullScreenDockable = leaf.getDockableHandle();
+	
+					for( StationChildHandle handle : dockables ) {
+						handle.getDisplayer().getComponent().setVisible(handle == fullScreenDockable);
+					}
 				}
-			}
-			else {
-				fullScreenDockable = null;
-				for( StationChildHandle handle : dockables ) {
-					handle.getDisplayer().getComponent().setVisible(true);
+				else {
+					fullScreenDockable = null;
+					for( StationChildHandle handle : dockables ) {
+						handle.getDisplayer().getComponent().setVisible(true);
+					}
 				}
+	
+				if( oldFullScreen != null ){
+					access.repositioned.add( oldFullScreen );
+				}
+				
+				doLayout();
+				fireFullScreenChanged(oldFullScreen, getFullScreen());
+				visibility.fire();
 			}
-
-			doLayout();
-			fireFullScreenChanged(oldFullScreen, getFullScreen());
-			visibility.fire();
+		}
+		finally{
+			access.fire();
 		}
 	}
 
@@ -1764,50 +1742,57 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * <code>false</code> otherwise
 	 */
 	protected void dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, Leaf leaf, double divider, boolean fire ){
-		if( fire ) {
-			DockUtilities.ensureTreeValidity(this, dockable);
-			dockStationListeners.fireDockableAdding(dockable);
+		try{
+			access.arm();
+			
+			if( fire ) {
+				DockUtilities.ensureTreeValidity(this, dockable);
+				dockStationListeners.fireDockableAdding(dockable);
+			}
+	
+			boolean leafSet = false;
+	
+			if( leaf == null ) {
+				leaf = new Leaf(access);
+				leafSet = true;
+			}
+	
+			SplitNode parent = neighbor.getParent();
+	
+			// Node herstellen
+			Node node = null;
+			updateBounds();
+			int location = parent.getChildLocation(neighbor);
+	
+			if( put == PutInfo.Put.TOP ) {
+				node = new Node(access, leaf, neighbor, Orientation.VERTICAL);
+			}
+			else if( put == PutInfo.Put.BOTTOM ) {
+				node = new Node(access, neighbor, leaf, Orientation.VERTICAL);
+			}
+			else if( put == PutInfo.Put.LEFT ) {
+				node = new Node(access, leaf, neighbor, Orientation.HORIZONTAL);
+			}
+			else {
+				node = new Node(access, neighbor, leaf, Orientation.HORIZONTAL);
+			}
+	
+			node.setDivider(divider);
+			parent.setChild(node, location);
+	
+			if( leafSet ) {
+				leaf.setDockable(dockable, false);
+			}
+	
+			if( fire ) {
+				dockStationListeners.fireDockableAdded(dockable);
+			}
+			revalidate();
+			repaint();
 		}
-
-		boolean leafSet = false;
-
-		if( leaf == null ) {
-			leaf = new Leaf(access);
-			leafSet = true;
+		finally{
+			access.fire();
 		}
-
-		SplitNode parent = neighbor.getParent();
-
-		// Node herstellen
-		Node node = null;
-		updateBounds();
-		int location = parent.getChildLocation(neighbor);
-
-		if( put == PutInfo.Put.TOP ) {
-			node = new Node(access, leaf, neighbor, Orientation.VERTICAL);
-		}
-		else if( put == PutInfo.Put.BOTTOM ) {
-			node = new Node(access, neighbor, leaf, Orientation.VERTICAL);
-		}
-		else if( put == PutInfo.Put.LEFT ) {
-			node = new Node(access, leaf, neighbor, Orientation.HORIZONTAL);
-		}
-		else {
-			node = new Node(access, neighbor, leaf, Orientation.HORIZONTAL);
-		}
-
-		node.setDivider(divider);
-		parent.setChild(node, location);
-
-		if( leafSet ) {
-			leaf.setDockable(dockable, false);
-		}
-
-		if( fire ) {
-			dockStationListeners.fireDockableAdded(dockable);
-		}
-		revalidate();
-		repaint();
 	}
 
 	public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
@@ -1946,7 +1931,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ){
-
 		if( isFullScreen() )
 			return false;
 
@@ -2008,8 +1992,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		Point location = new Point(0, 0);
 		SwingUtilities.convertPointToScreen(location, this);
 		if( isAllowSideSnap() )
-			return new Rectangle(location.x - borderSideSnapSize, location.y - borderSideSnapSize, getWidth() + 2 * borderSideSnapSize, getHeight() + 2
-					* borderSideSnapSize);
+			return new Rectangle(location.x - borderSideSnapSize, location.y - borderSideSnapSize, getWidth() + 2 * borderSideSnapSize, getHeight() + 2 * borderSideSnapSize);
 		else
 			return new Rectangle(location.x, location.y, getWidth(), getHeight());
 	}
@@ -2159,29 +2142,35 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * some events.
 	 */
 	private void addDockable( Dockable dockable, boolean fire ){
-		if( fire ) {
-			DockUtilities.ensureTreeValidity(this, dockable);
-			dockStationListeners.fireDockableAdding(dockable);
+		try{
+			access.arm();
+			if( fire ) {
+				DockUtilities.ensureTreeValidity(this, dockable);
+				dockStationListeners.fireDockableAdding(dockable);
+			}
+			Leaf leaf = new Leaf(access);
+	
+			Root root = root();
+			if( root.getChild() == null ) {
+				root.setChild(leaf);
+			}
+			else {
+				SplitNode child = root.getChild();
+				root.setChild(null);
+				Node node = new Node(access, leaf, child);
+				root.setChild(node);
+			}
+	
+			leaf.setDockable(dockable, false);
+	
+			if( fire ) {
+				dockStationListeners.fireDockableAdded(dockable);
+			}
+			revalidate();
 		}
-		Leaf leaf = new Leaf(access);
-
-		Root root = root();
-		if( root.getChild() == null ) {
-			root.setChild(leaf);
+		finally{
+			access.fire();
 		}
-		else {
-			SplitNode child = root.getChild();
-			root.setChild(null);
-			Node node = new Node(access, leaf, child);
-			root.setChild(node);
-		}
-
-		leaf.setDockable(dockable, false);
-
-		if( fire ) {
-			dockStationListeners.fireDockableAdded(dockable);
-		}
-		revalidate();
 	}
 
 	public boolean canReplace( Dockable old, Dockable next ){
@@ -2197,27 +2186,34 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	private void replace( Dockable previous, Dockable next, boolean station ){
-		if( previous == null )
-			throw new NullPointerException("previous must not be null");
-		if( next == null )
-			throw new NullPointerException("next must not be null");
-		if( previous != next ) {
-			Leaf leaf = root().getLeaf(previous);
-
-			if( leaf == null )
-				throw new IllegalArgumentException("Previous is not child of this station");
-
-			DockUtilities.ensureTreeValidity(this, next);
-
-			boolean wasFullScreen = isFullScreen() && getFullScreen() == previous;
-
-			leaf.setDockable(next, true, true, station);
-
-			if( wasFullScreen )
-				setFullScreen(next);
-
-			revalidate();
-			repaint();
+		try{
+			access.arm();
+			
+			if( previous == null )
+				throw new NullPointerException("previous must not be null");
+			if( next == null )
+				throw new NullPointerException("next must not be null");
+			if( previous != next ) {
+				Leaf leaf = root().getLeaf(previous);
+	
+				if( leaf == null )
+					throw new IllegalArgumentException("Previous is not child of this station");
+	
+				DockUtilities.ensureTreeValidity(this, next);
+	
+				boolean wasFullScreen = isFullScreen() && getFullScreen() == previous;
+	
+				leaf.setDockable(next, true, true, station);
+	
+				if( wasFullScreen )
+					setFullScreen(next);
+	
+				revalidate();
+				repaint();
+			}
+		}
+		finally{
+			access.fire();
 		}
 	}
 
@@ -2293,6 +2289,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void removeAllDockables(){
 		DockController controller = getController();
 		try {
+			access.arm();
+			
 			if( controller != null )
 				controller.freezeLayout();
 
@@ -2304,6 +2302,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		finally {
 			if( controller != null )
 				controller.meltLayout();
+			
+			access.fire();
 		}
 	}
 
@@ -2316,10 +2316,16 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * @param dockable the child to remove
 	 */
 	public void removeDockable( Dockable dockable ){
-		Leaf leaf = root().getLeaf(dockable);
-		if( leaf != null ) {
-			leaf.setDockable(null, true, true, dockable.asDockStation() != null);
-			leaf.placehold(true);
+		try{
+			access.arm();
+			Leaf leaf = root().getLeaf(dockable);
+			if( leaf != null ) {
+				leaf.setDockable(null, true, true, dockable.asDockStation() != null);
+				leaf.placehold(true);
+			}
+		}
+		finally{
+			access.fire();
 		}
 	}
 
@@ -2774,6 +2780,130 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					return null;
 			}
 			return dockable;
+		}
+	}
+	
+	/**
+	 * Access to this {@link SplitDockStation}.
+	 * @author Benjamin Sigg
+	 */
+	private class Access implements SplitDockAccess{
+		private long lastUniqueId = -1;
+		private int repositionedArm = 0;
+		private Set<Dockable> repositioned = new HashSet<Dockable>();
+		
+		public StationChildHandle getFullScreenDockable(){
+			return fullScreenDockable;
+		}
+
+		public DockTitleVersion getTitleVersion(){
+			return title;
+		}
+
+		public SplitDockStation getOwner(){
+			return SplitDockStation.this;
+		}
+
+		public double validateDivider( double divider, Node node ){
+			return layoutManager.getValue().validateDivider(SplitDockStation.this, divider, node);
+		}
+
+		public StationChildHandle newHandle( Dockable dockable ){
+			return new StationChildHandle(SplitDockStation.this, getDisplayers(), dockable, title);
+		}
+
+		public void addHandle( StationChildHandle dockable, boolean fire ){
+			SplitDockStation.this.addHandle(dockable, fire);
+		}
+
+		public void removeHandle( StationChildHandle handle, boolean fire ){
+			SplitDockStation.this.removeHandle(handle, fire);
+		}
+
+		public boolean drop( Dockable dockable, SplitDockProperty property, SplitNode root ){
+			return SplitDockStation.this.drop(dockable, property, root);
+		}
+
+		public PutInfo validatePutInfo( PutInfo putInfo ){
+			return layoutManager.getValue().validatePutInfo(SplitDockStation.this, putInfo);
+		}
+		
+		public void repositioned( SplitNode node ){
+			arm();
+			try{
+				node.visit( new SplitNodeVisitor(){
+					public void handleRoot( Root root ){
+						// ignore	
+					}
+					
+					public void handlePlaceholder( Placeholder placeholder ){
+						// ignore					
+					}
+					
+					public void handleNode( Node node ){
+						// ignore
+					}
+					
+					public void handleLeaf( Leaf leaf ){
+						Dockable dockable = leaf.getDockable();
+						if( dockable != null ){
+							repositioned.add( dockable );
+						}
+					}
+				});
+			}
+			finally{
+				fire();
+			}
+		}
+		
+		/**
+		 * Prepares <code>this</code> to fire an event to 
+		 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}.
+		 */
+		public void arm(){
+			repositionedArm++;
+		}
+
+		/**
+		 * Fires an event to {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}.
+		 */
+		public void fire(){
+			repositionedArm--;
+			if( repositionedArm == 0 ){
+				List<Dockable> dockables = new ArrayList<Dockable>();
+				for( Dockable dockable : repositioned ){
+					if( dockable.getDockParent() == SplitDockStation.this ){
+						dockables.add( dockable );
+					}
+				}
+				repositioned.clear();
+				
+				if( dockables.size() > 0 ){
+					dockStationListeners.fireDockablesRepositioned( dockables.toArray( new Dockable[ dockables.size() ] ) );
+				}
+			}
+		}
+
+		public long uniqueID(){
+			long id = System.currentTimeMillis();
+			if( id <= lastUniqueId ) {
+				lastUniqueId++;
+				id = lastUniqueId+1;
+			}
+			while( getNode(id) != null ) {
+				id++;
+			}
+			lastUniqueId = id;
+			return id;
+		}
+
+		public boolean isTreeAutoCleanupEnabled(){
+			return treeLock == 0;
+		}
+
+		public SplitPlaceholderSet getPlaceholderSet(){
+			return placeholderSet;
 		}
 	}
 }

@@ -278,6 +278,10 @@ public abstract class AbstractCDockable implements CDockable {
             return control.isVisible( this );
     }
     
+    public boolean isDockableVisible(){
+    	return intern().isDockableVisible();
+    }
+    
     /**
      * Tries to focus this dockable. There are no guarantees that this dockabe
      * really gets focused.

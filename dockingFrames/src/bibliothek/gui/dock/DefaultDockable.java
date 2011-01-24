@@ -136,7 +136,9 @@ public class DefaultDockable extends AbstractDockable {
             getContentPane().add( component );
         }
         
-        setTitleIcon( icon );
+        if( icon != null ){
+        	setTitleIcon( icon );
+        }
         setTitleText( title );
     }
     

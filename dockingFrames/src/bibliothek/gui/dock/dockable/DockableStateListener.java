@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,35 +26,19 @@
 package bibliothek.gui.dock.dockable;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.util.UIValue;
-import bibliothek.gui.dock.util.icon.DockIcon;
-import bibliothek.util.Path;
 
 /**
- * An icon that is used for a {@link Dockable}
+ * This listener is invoked when the location of one or many {@link Dockable}s changed. The listener is
+ * intended to keep track of a {@link Dockable} while its hierarchy remains the same. If the hierarchy 
+ * changes an event is sent too, but applications should be aware that all flags but the "visibility" will
+ * be ignored.
  * @author Benjamin Sigg
  */
-public abstract class DockableIcon extends DockIcon{
-	/** what kind of {@link UIValue} this is */
-	public static final Path KIND_DOCKABLE = KIND_ICON.append( "dockable" );
-	
-	private Dockable dockable;
-	
+public interface DockableStateListener {
 	/**
-	 * Creates a new icon
-	 * @param id the identifier of the icon
-	 * @param dockable the element for which the icon is used
+	 * Called if the location changed. Many events can be merged into one event, it may
+	 * happen that two events cancel each other out, but are still reported here.
+	 * @param event detailed information about the change
 	 */
-	public DockableIcon( String id, Dockable dockable ){
-		super( id, KIND_DOCKABLE );
-		this.dockable = dockable;
-	}
-	
-	/**
-	 * Gets the {@link Dockable} for which this icon is used.
-	 * @return the dockable
-	 */
-	public Dockable getDockable(){
-		return dockable;
-	}
+	public void changed( DockableStateEvent event );
 }

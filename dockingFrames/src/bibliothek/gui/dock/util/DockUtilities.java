@@ -144,8 +144,14 @@ public class DockUtilities {
      */
     private static void visitStation( DockStation station, DockVisitor visitor ){
         visitor.handleDockStation( station );
-        for( int i = 0, n = station.getDockableCount(); i<n; i++ )
-            visitDockable( station.getDockable( i ), visitor );
+        Dockable[] children = new Dockable[ station.getDockableCount() ];
+        for( int i = 0; i < children.length; i++ ){
+        	children[i] = station.getDockable( i );
+        }
+        
+        for( Dockable child : children ){
+            visitDockable( child, visitor );
+        }
     }
     
     /**

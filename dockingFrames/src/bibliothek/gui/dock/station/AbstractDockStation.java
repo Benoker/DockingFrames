@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -28,7 +28,11 @@ package bibliothek.gui.dock.station;
 
 import java.io.IOException;
 
-import bibliothek.gui.*;
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
@@ -52,7 +56,7 @@ public abstract class AbstractDockStation implements DockStation {
 	 * can be used to send events to all listeners.
 	 */
 	protected DockStationListenerManager listeners = new DockStationListenerManager( this );
-
+	
 	/** The theme of this station */
 	private DockTheme theme;
 	
@@ -99,22 +103,9 @@ public abstract class AbstractDockStation implements DockStation {
     public void removeDockStationListener( DockStationListener listener ) {
         listeners.removeListener( listener );
     }
-
+    
     public boolean isVisible( Dockable dockable ) {
         return true;
-    }
-
-    public boolean isStationVisible() {
-        Dockable dockable = asDockable();
-        if( dockable == null )
-            return true;
-        
-        DockStation parent = dockable.getDockParent();
-        
-        if( parent == null )
-            return true;
-        else
-            return parent.isStationVisible();
     }
 
     public boolean accept( Dockable child ) {

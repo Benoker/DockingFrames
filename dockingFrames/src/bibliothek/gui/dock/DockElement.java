@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -32,21 +32,24 @@ import bibliothek.gui.Dockable;
 
 
 /**
- * An element in the hierarchy of dockables and stations.
+ * An element in the hierarchy of dockables and stations. Classes implementing this interface
+ * must either be a {@link Dockable}, a {@link DockStation} or both of them.
  * @author Benjamin Sigg
  */
 public interface DockElement {
-    /**
+	/**
      * Returns <code>this</code> if <code>this</code> is an instance of 
      * {@link Dockable}. Otherwise <code>null</code> is returned.
-     * @return <code>this</code> or <code>null</code>
+     * @return <code>this</code> or <code>null</code>. Must not return <code>null</code> if {@link #asDockable()}
+     * already returns <code>null</code>.
      */
     public Dockable asDockable();
 
     /**
      * Returns <code>this</code> if <code>this</code> is an instance of 
      * {@link DockStation}. Otherwise <code>null</code> is returned.
-     * @return <code>this</code> or <code>null</code>
+     * @return <code>this</code> or <code>null</code>. Must not return <code>null</code> if {@link #asDockable()}
+     * already returns <code>null</code>
      */
     public DockStation asDockStation();
     

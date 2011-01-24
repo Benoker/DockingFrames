@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -99,6 +99,13 @@ public interface SplitDockAccess {
      * if no location could be found
      */
     public boolean drop( Dockable dockable, final SplitDockProperty property, SplitNode root );
+    
+    /**
+     * Invoked whenever a node changes its shape. Leads to a call to {@link DockStationListener#dockablesRepositioned(bibliothek.gui.DockStation, Dockable[])}
+     * for all {@link Dockable}s that are in <code>node</code> or children of <code>node</code>.
+     * @param node the source of the event
+     */
+    public void repositioned( SplitNode node );
     
     /**
      * Checks whether <code>info</code> is valid or not.

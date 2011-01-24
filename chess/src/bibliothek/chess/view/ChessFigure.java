@@ -17,6 +17,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
+import bibliothek.gui.dock.dockable.DockableStateListener;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
@@ -88,6 +89,14 @@ public class ChessFigure extends JLabel implements Dockable {
 		return false;
 	}
 
+	public void addDockableStateListener( DockableStateListener listener ){
+		// ignore
+	}
+	
+	public void removeDockableStateListener( DockableStateListener listener ){
+		// ignore
+	}
+	
 	public void addDockableListener( DockableListener listener ){
 		listeners.add( listener );
 	}
@@ -220,5 +229,10 @@ public class ChessFigure extends JLabel implements Dockable {
 	
 	public void configureDisplayerHints( DockableDisplayerHints hints ) {
 	    // ignore
+	}
+	
+	public boolean isDockableVisible(){
+		// ignore
+		return true;
 	}
 }

@@ -150,6 +150,7 @@ public class Node extends VisibleSplitNode{
         
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();
+        getAccess().repositioned( this );
     }
     
     /**
@@ -186,6 +187,7 @@ public class Node extends VisibleSplitNode{
         
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();
+        getAccess().repositioned( this );
     }
 
     /**
@@ -290,6 +292,7 @@ public class Node extends VisibleSplitNode{
         this.divider = divider;
         getAccess().getOwner().revalidate();
         getAccess().getOwner().repaint();
+        getAccess().repositioned( this );
     }
     
     /**
@@ -739,8 +742,12 @@ public class Node extends VisibleSplitNode{
     @Override
     public void visit( SplitNodeVisitor visitor ) {
         visitor.handleNode( this );
-        left.visit( visitor );
-        right.visit( visitor );
+        if( left != null ){
+        	left.visit( visitor );
+        }
+        if( right != null ){
+        	right.visit( visitor );
+        }
     }
     
     @Override

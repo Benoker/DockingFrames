@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -60,5 +60,9 @@ public abstract class DockStationAdapter implements DockStationListener {
     
     public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection ) {
         // do nothing
+    }
+    
+    public void dockablesRepositioned( DockStation station, Dockable[] dockables ){
+    	// do nothing
     }
 }

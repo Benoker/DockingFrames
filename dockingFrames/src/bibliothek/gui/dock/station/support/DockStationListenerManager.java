@@ -139,4 +139,14 @@ public class DockStationListenerManager {
         for( DockStationListener listener : listeners.toArray( new DockStationListener[ listeners.size() ] ))
             listener.dockableSelected( station, oldSelected, newSelected );
     }
+    
+    /**
+     * Invokes {@link DockStationListener#dockableRepositioned(DockStation, Dockable)} on all
+     * registered {@link DockStationListener}s.
+     * @param dockables the elements that have a new position
+     */
+    public void fireDockablesRepositioned( Dockable... dockables ){
+    	for( DockStationListener listener : listeners.toArray( new DockStationListener[ listeners.size() ] ))
+            listener.dockablesRepositioned( station, dockables );
+    }
 }

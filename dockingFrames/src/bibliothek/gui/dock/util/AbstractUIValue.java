@@ -58,6 +58,8 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
     /** the current owner of this {@link UIValue} */
     private UIProperties<V, U, ?> manager;
     
+    /** an override value of <code>null</code> is returned by {@link #value()} */
+    private boolean overrideNull = false;
 
     /**
      * Creates a new {@link UIValue}.
@@ -206,7 +208,7 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * @return a resource or <code>null</code>
      */
     public V value(){
-        if( override != null )
+        if( overrideNull || override != null )
             return override;
         
         if( value != null )
@@ -227,8 +229,20 @@ public abstract class AbstractUIValue<V, U extends UIValue<V>> implements UIValu
      * @param value the new override or <code>null</code>
      */
     public void setValue( V value ) {
+    	setValue( value, false );
+    }
+    
+    /**
+     * Sets the override value. Please note that some modules won't work properly if {@link #value()} returns
+     * <code>null</code>, use <code>forceNull</code> with care.
+     * @param value the new value, can be <code>null</code>
+     * @param forceNull if <code>true</code> and <code>value</code> is <code>null</code>, then
+     * the result of {@link #value()} is <code>null</code> too
+     */
+    public void setValue( V value, boolean forceNull ){
         V oldValue = value();
         this.override = value;
+        this.overrideNull = forceNull;
         V newValue = value();
         
         if( oldValue != newValue ){

@@ -396,6 +396,10 @@
 - API: There is now a default icon set of all Dockables and DockStations. The icon can be changed using the PropertyKeys "PropertyKey.DOCKABLE_ICON" and "PropertyKey.DOCK_STATION_ICON".
 
 [v1.1.0p5]
-! API: The IconManager now extends UIManager, all the icons of the framework must now be accessed through the class "DockIcon" (which is an UIValue).
+! API: The IconManager now extends UIProperties, all the icons of the framework must now be accessed through the class "DockIcon" (which is an UIValue).
 ! API: Icons are now only handled by the IconManager. Both DockUI (Core project) and Resources (Common project) no longer handle any icons. The Common project no longer makes a distingtion between "local" and "foreign" icons.
 ! Bugfix: The unique identifiers of SplitNodes (a node used by a SplitDockStation) are now checked when a new node is inserted into the tree. The unique identifier of parent nodes may be changed to ensure the identifiers really are unique.
+! APi: All the strings that are used by the framework are now collected by the TextManager, which is yet another UIProperties.
+! API: DockStationListener has an additional method "dockableRepositioned"
+- API: A new listener DockableStateListener can be added to Dockables, the listener receives notifications for events related to changed layouts
+- API: Calling (C)Dockable.setTitleIcon( null ) now makes the icon invisible, and does no longer restore the default icon.

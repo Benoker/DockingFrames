@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -90,4 +90,14 @@ public interface DockStationListener {
      * @param newSelection the current value of {@link DockStation#getFrontDockable()}, can be <code>null</code>
      */
     public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection );
+    
+    /**
+     * Called when the location and/or size of one or several <code>dockables</code> changed. This means that
+     * {@link DockStation#getDockableProperty(Dockable, Dockable)} now returns another value than
+     * before. This method may or may not be called for <code>Dockable</code>s that were just added or being removed 
+     * from <code>station</code>. 
+     * @param station the source of the event
+     * @param dockables the affected elements
+     */
+    public void dockablesRepositioned( DockStation station, Dockable[] dockables );
 }

@@ -290,6 +290,15 @@ public interface CDockable {
 	public boolean isVisible();
 	
 	/**
+	 * Tells whether this <code>CDockable</code> is currently visible to the user. A <code>CDockable</code>
+	 * which is not {@link #isVisible() visible}, is not <code>dockable visible</code> either. The method
+	 * does not take into account that a frame may be positioned such that it is not entierly visible on the
+	 * screen. Neither does the method take into account, that a frame may be minimized.
+	 * @return <code>true</code> if the user should be able to see this item
+	 */
+	public boolean isDockableVisible();
+	
+	/**
 	 * Sets the location of this <code>CDockable</code>. If this <code>CDockable</code> is visible, than
 	 * this method will take immediately effect. Otherwise the location will be
 	 * stored in a cache and read as soon as this <code>CDockable</code> is made visible.<br>
@@ -314,7 +323,8 @@ public interface CDockable {
     /**
      * Sets how and where this <code>CDockable</code> should be shown. Conflicts with
      * {@link #isExternalizable()}, {@link #isMaximizable()} and {@link #isMinimizable()}
-     * will just be ignored. Implementations should call {@link CLocationModeManager#setMode(Dockable, ExtendedMode)}.
+     * will just be ignored. Implementations should call {@link CLocationModeManager#setMode(Dockable, ExtendedMode)}.<br>
+     * If this dockable is not visible, then it will be made visible in order to apply the <code>extendedMode</code>.
      * @param extendedMode the size and location
      */
     public void setExtendedMode( ExtendedMode extendedMode );
@@ -323,7 +333,7 @@ public interface CDockable {
      * Gets the size and location of this <code>CDockable</code>. Implementations should
      * return {@link CLocationModeManager#getMode(Dockable)}.
      * @return the size and location or <code>null</code> if this <code>CDockable</code>
-     * is not part of an {@link CControl}.
+     * is not part of an {@link CControl}. May be <code>null</code> if this dockable is not visible.
      */
     public ExtendedMode getExtendedMode();
     

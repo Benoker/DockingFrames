@@ -76,6 +76,8 @@ public abstract class AbstractDockable implements Dockable {
     private List<DockableListener> dockableListeners = new ArrayList<DockableListener>();
     /** a listener to the hierarchy of the parent */
     private DockHierarchyObserver hierarchyObserver;
+    /** a listener for monitoring the location of this dockable */
+    private DockableStateListenerManager dockableStateListeners;
     
     /** the list of {@link KeyListener}s of this dockable */
     private List<KeyListener> keyListeners = new ArrayList<KeyListener>();
@@ -132,6 +134,7 @@ public abstract class AbstractDockable implements Dockable {
     	    }
     	};
     	
+    	dockableStateListeners = new DockableStateListenerManager( this );
     	hierarchyObserver = new DockHierarchyObserver( this );
     	globalSource = new HierarchyDockActionSource( this );
     	globalSource.bind();
@@ -189,6 +192,18 @@ public abstract class AbstractDockable implements Dockable {
     public DockController getController() {
         return controller;
     }
+    
+    public boolean isDockableVisible(){
+    	DockController controller = getController();
+    	if( controller == null ){
+    		return false;
+    	}
+    	DockStation parent = getDockParent();
+    	if( parent != null ){
+    		return parent.isVisible( this );
+    	}
+    	return false;
+    }
 
     public void addDockableListener( DockableListener listener ) {
         dockableListeners.add( listener );
@@ -205,6 +220,23 @@ public abstract class AbstractDockable implements Dockable {
     public void removeDockHierarchyListener( DockHierarchyListener listener ){
     	hierarchyObserver.removeDockHierarchyListener( listener );
     }
+    
+    public void addDockableStateListener( DockableStateListener listener ){
+    	dockableStateListeners.addListener( listener );
+    }
+    
+    public void removeDockableStateListener( DockableStateListener listener ){
+    	dockableStateListeners.removeListener( listener );
+    }
+    
+    /**
+     * Access to the {@link DockableStateListenerManager} which can be used to fire {@link DockableStateEvent}s. This method
+     * is intended to be used by subclasses that implement {@link DockStation}.
+     * @return the listeners
+     */
+    protected DockableStateListenerManager getDockElementObserver(){
+		return dockableStateListeners;
+	}
     
     public void addMouseInputListener( MouseInputListener listener ) {
         getComponent().addMouseListener( listener );
@@ -362,7 +394,14 @@ public abstract class AbstractDockable implements Dockable {
      * @param titleIcon the new icon, may be <code>null</code>
      */
     public void setTitleIcon( Icon titleIcon ) {
-        titleIcon().setValue( titleIcon );
+        titleIcon().setValue( titleIcon, true );
+    }
+    
+    /**
+     * Resets the icon of this {@link Dockable}, the default icon is shown again.
+     */
+    public void resetTitleIcon(){
+    	titleIcon().setValue( null );
     }
     
     /**
