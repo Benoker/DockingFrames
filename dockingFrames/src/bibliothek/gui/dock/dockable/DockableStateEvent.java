@@ -38,7 +38,7 @@ public class DockableStateEvent {
 	/** Indicates that the internal location of the {@link Dockable} on its {@link DockStation} changed. */
 	public static final int FLAG_POSITION_CHANGED = 1;
 
-	/** Indicates that the internal location of one of the anchestors of the {@link Dockable} */
+	/** Indicates that the internal location of one of the anchestors of the {@link Dockable} changed */
 	public static final int FLAG_PARENT_POSITION_CHANGED = 2;
 
 	/** Indicates that the {@link Dockable} was either made visible or invisible to the user */
