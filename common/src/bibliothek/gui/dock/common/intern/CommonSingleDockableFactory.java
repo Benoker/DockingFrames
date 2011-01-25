@@ -266,6 +266,15 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         	layout.setId( in.readUTF() );
         	layout.setArea( in.readUTF() );
         }
+        else if( version.equals( Version.VERSION_1_1_0a )){
+        	layout.setId( in.readUTF() );
+        	if( in.readBoolean() ){
+        		layout.setArea( in.readUTF() );
+        	}
+        	else{
+        		layout.setArea( null );
+        	}
+        }
         else{
             throw new IOException( "Data from the future - unknown version: " + version );
         }
@@ -301,9 +310,17 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     }
 
     public void write( CommonSingleDockableLayout layout, DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_1_0 );
+        Version.write( out, Version.VERSION_1_1_0a );
         out.writeUTF( layout.getId() );
-        out.writeUTF( layout.getArea() );
+        
+        String area = layout.getArea();
+        if( area == null ){
+        	out.writeBoolean( false );
+        }
+        else{
+        	out.writeBoolean( true );
+        	out.writeUTF( area );
+        }
     }
 
     public void write( CommonSingleDockableLayout layout, XElement element ) {

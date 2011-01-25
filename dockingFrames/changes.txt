@@ -403,3 +403,4 @@
 ! API: DockStationListener has an additional method "dockableRepositioned"
 - API: A new listener DockableStateListener can be added to Dockables, the listener receives notifications for events related to changed layouts
 - API: Calling (C)Dockable.setTitleIcon( null ) now makes the icon invisible, and does no longer restore the default icon.
+- Bugfix: Layout could not be stored in byte-array format due to a NullPointerException
