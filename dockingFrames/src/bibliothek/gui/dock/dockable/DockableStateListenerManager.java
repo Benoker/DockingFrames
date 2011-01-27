@@ -213,7 +213,6 @@ public class DockableStateListenerManager {
 	/**
 	 * Informs this observer that <code>dockable</code> changed. The flags are created using the 
 	 * constants from {@link DockableStateEvent}.
-	 * @param dockable the element which changed
 	 * @param flags the changes
 	 */
 	public void event( int flags ){

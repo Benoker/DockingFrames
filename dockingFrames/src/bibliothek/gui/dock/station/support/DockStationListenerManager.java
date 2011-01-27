@@ -141,7 +141,7 @@ public class DockStationListenerManager {
     }
     
     /**
-     * Invokes {@link DockStationListener#dockableRepositioned(DockStation, Dockable)} on all
+     * Invokes {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])} on all
      * registered {@link DockStationListener}s.
      * @param dockables the elements that have a new position
      */
