@@ -25,14 +25,11 @@
  */
 package bibliothek.gui.dock.facile.mode.action;
 
-import java.util.ResourceBundle;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.facile.mode.NormalMode;
 import bibliothek.gui.dock.support.mode.Mode;
-import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * An action used to change the {@link Mode} of a {@link Dockable} to
@@ -46,11 +43,6 @@ public class NormalModeAction extends LocationModeAction{
 	 * @param mode the mode which is applied
 	 */
 	public NormalModeAction( DockController controller, NormalMode<?> mode ){
-		super( controller, mode, NormalMode.ICON_IDENTIFIER, CControl.KEY_GOTO_NORMALIZED );
-		
-        ResourceBundle bundle = Resources.getBundle();
-        
-        setText( bundle.getString( "normalize.in" ) );
-        setTooltip( bundle.getString( "normalize.in.tooltip" ) );
+		super( controller, mode, NormalMode.ICON_IDENTIFIER, "normalize.in", "normalize.in.tooltip", CControl.KEY_GOTO_NORMALIZED );
 	}
 }

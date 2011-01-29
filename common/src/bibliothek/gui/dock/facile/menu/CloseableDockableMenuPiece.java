@@ -88,24 +88,57 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
      */
     public void setFrontend( DockFrontend frontend ) {
         if( this.frontend != frontend ){
-            if( this.frontend != null ){
-                this.frontend.removeFrontendListener( collector );
-                for( Item item : items.values() ){
-                    item.destroy();
-                    remove( item );
-                }
-                items.clear();
-            }
+        	if( isBound() ){
+	            if( this.frontend != null ){
+	                this.frontend.removeFrontendListener( collector );
+	                for( Item item : items.values() ){
+	                    item.destroy();
+	                    remove( item );
+	                }
+	                items.clear();
+	            }
+        	}
             
             this.frontend = frontend;
             
-            if( this.frontend != null ){
-                this.frontend.addFrontendListener( collector );
+            if( isBound() ){
+	            if( this.frontend != null ){
+	                this.frontend.addFrontendListener( collector );
+	                for( Dockable dockable : this.frontend.listDockables() ){
+	                    collector.added( frontend, dockable );
+	                }
+	            }
+            }
+        }
+    }
+    
+    @Override
+    public void bind(){
+	    if( !isBound() ){
+	    	super.bind();
+	    	
+	    	if( frontend != null ){
+                frontend.addFrontendListener( collector );
                 for( Dockable dockable : this.frontend.listDockables() ){
                     collector.added( frontend, dockable );
                 }
             }
-        }
+	    }
+    }
+    
+    @Override
+    public void unbind(){
+    	if( isBound() ){
+    		super.unbind();
+    		if( frontend != null ){
+    			frontend.removeFrontendListener( collector );
+    			for( Item item : items.values() ){
+    				item.destroy();
+    				remove( item );
+    			}
+    			items.clear();
+    		}
+    	}
     }
     
     /**

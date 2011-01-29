@@ -35,12 +35,14 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.action.util.CActionText;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.TextManager;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -62,6 +64,12 @@ public class CExtendedModeAction extends CDropDownItem{
     /** the control for which this action is used */
     private CControl control;
     
+    /** the text of this action */
+    private CActionText text;
+    
+    /** the tooltip of this action */
+    private CActionText tooltip;
+    
     /** the internal representation */
     private Action action;
     /** the controller of {@link #control} or <code>null</code> */
@@ -72,9 +80,11 @@ public class CExtendedModeAction extends CDropDownItem{
      * @param control the control for which this action will be used
      * @param mode the mode into which this action leads
      * @param iconKey the key of the icon when searching in the {@link IconManager}
+     * @param textKey the key for the text of this action when searching the {@link TextManager}
+     * @param tooltipKey the key for the tooltip of this action when searching the {@link TextManager}
      * @param gotoStroke the key to the {@link KeyStroke} that triggers this action
      */
-    protected CExtendedModeAction( CControl control, ExtendedMode mode, String iconKey, PropertyKey<KeyStroke> gotoStroke ){
+    protected CExtendedModeAction( CControl control, ExtendedMode mode, String iconKey, String textKey, String tooltipKey, PropertyKey<KeyStroke> gotoStroke ){
         super( null );
         action = new Action();
         init( action );
@@ -103,6 +113,18 @@ public class CExtendedModeAction extends CDropDownItem{
                 setAccelerator( newValue );
             }
         };
+        
+        text = new CActionText( textKey, this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( newValue );
+			}
+		};
+		
+		tooltip = new CActionText( tooltipKey, this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( newValue );	
+			}
+		};
     }
     
     /**
@@ -113,6 +135,8 @@ public class CExtendedModeAction extends CDropDownItem{
         this.controller = controller;
         stroke.setProperties( controller );
         iconListener.setController( controller );
+        text.setController( controller );
+        tooltip.setController( controller );
     }
     
     /**

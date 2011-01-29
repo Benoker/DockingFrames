@@ -46,6 +46,9 @@ public abstract class MenuPiece {
     /** the listeners of this piece */
     private List<MenuPieceListener> listeners = new ArrayList<MenuPieceListener>();
     
+    /** whether this piece may be visible to the user */
+    private boolean bound = false;
+    
     /**
      * Adds a listener to this piece, the listener will get informed when the 
      * children of this piece change.
@@ -110,6 +113,33 @@ public abstract class MenuPiece {
      */
     public void setParent( MenuPiece parent ){
 		this.parent = parent;
+	}
+    
+    /**
+     * This method is called if there is a possibility for the user to see this menu. The menu
+     * shoudl register listeners, update its text etc. to be ready for that event. This method 
+     * must never be called twice in a row.
+     * @see #unbind()
+     */
+    public void bind(){
+    	bound = true;
+    }
+    
+    /**
+     * This method is called if the user has no longer any possibility to see this menu. The
+     * menu should unregister its listeners. This method must never be called twice in a row.
+     * @see #bind()
+     */
+    public void unbind(){
+    	bound = false;
+    }
+    
+    /**
+     * Whether {@link #bind()} was called but {@link #unbind()} not yet.
+     * @return whether this menu piece may be visible to the user
+     */
+    public boolean isBound(){
+		return bound;
 	}
     
     /**

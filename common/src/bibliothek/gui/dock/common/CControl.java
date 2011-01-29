@@ -664,8 +664,24 @@ public class CControl {
      * Sets up all the default text that is used in the realm of this {@link CControl}
      */
     protected void initTexts(){
-    	ResourceBundle bundleCore = ResourceBundle.getBundle( "data.locale.text", Locale.getDefault(), DockController.class.getClassLoader() );
-    	ResourceBundle bundleCommon = ResourceBundle.getBundle( "data.bibliothek.gui.dock.locale.common", Locale.getDefault(), CControl.class.getClassLoader() );
+    	initTexts( Locale.getDefault() );
+    }
+    
+    /**
+     * Re-initializes the default text that is used in the realm of this {@link CControl}.
+     * @param locale the new language, must not be <code>null</code>
+     */
+    public void setLanguage( Locale locale ){
+    	initTexts( locale );
+    }
+    
+    /**
+     * Sets up all the default text that is used in the realm of this {@link CControl}
+     * @param locale what language to use
+     */
+    protected void initTexts( Locale locale ){
+    	ResourceBundle bundleCore = ResourceBundle.getBundle( "data.locale.text", locale, DockController.class.getClassLoader() );
+    	ResourceBundle bundleCommon = ResourceBundle.getBundle( "data.bibliothek.gui.dock.locale.common", locale, CControl.class.getClassLoader() );
     	
     	getController().getTexts().setScheme( Priority.DEFAULT, new DefaultTextScheme( bundleCommon, bundleCore ) );
     }

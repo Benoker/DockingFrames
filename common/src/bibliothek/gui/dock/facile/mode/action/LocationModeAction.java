@@ -33,11 +33,13 @@ import javax.swing.KeyStroke;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionIcon;
+import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.TextManager;
 
 /**
  * Action for changing the {@link LocationMode} of a {@link Dockable}.
@@ -56,6 +58,12 @@ public class LocationModeAction extends SimpleButtonAction{
     /** the key stroke that triggers this action */
     private PropertyValue<KeyStroke> stroke;
     
+    /** the text of this action */
+    private DockActionText text;
+    
+    /** the tooltip of this action */
+    private DockActionText tooltip;
+    
     /** the controller in whose realm this mode action is used or <code>null</code> */
     private DockController controller;
     
@@ -64,9 +72,11 @@ public class LocationModeAction extends SimpleButtonAction{
      * @param controller the controller in whose realm this action works
      * @param mode the mode that is applied to any {@link Dockable} for which this button is pressed
      * @param iconKey the key of an icon to be used on this action
+     * @param textKey the key for the text of this action when searching the {@link TextManager}
+     * @param tooltipKey the key for the tooltip of this action when searching the {@link TextManager}
      * @param gotoStroke the key for an accelerator which triggers this action
      */
-	public LocationModeAction( DockController controller, LocationMode mode, String iconKey, PropertyKey<KeyStroke> gotoStroke ){
+	public LocationModeAction( DockController controller, LocationMode mode, String iconKey, String textKey, String tooltipKey, PropertyKey<KeyStroke> gotoStroke ){
 		if( mode == null )
             throw new NullPointerException( "mode is null" );
         if( iconKey == null )
@@ -88,7 +98,19 @@ public class LocationModeAction extends SimpleButtonAction{
 				setIcon( newValue );
 			}
 		};
-        
+
+        text = new DockActionText( textKey, this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( newValue );
+			}
+		};
+		
+		tooltip = new DockActionText( tooltipKey, this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( newValue );	
+			}
+		};
+		
         setController( controller );
 	}
 	
@@ -113,6 +135,8 @@ public class LocationModeAction extends SimpleButtonAction{
     private void connect( DockController oldController, DockController newController ){
     	stroke.setProperties( newController );
         iconListener.setController( newController );
+        text.setController( newController );
+        tooltip.setController( newController );
     }
     
     /**

@@ -95,6 +95,23 @@ public class CLookAndFeelMenuPiece extends LookAndFeelMenuPiece implements Destr
     }
     
     @Override
+    public void bind(){
+    	if( !isBound() ){
+    		super.bind();
+    		getList().addComponentCollector( dockableCollector );
+    	}
+    }
+    
+    @Override
+    public void unbind(){
+    	if( isBound() ){
+    		super.unbind();
+    		getList().removeComponentCollector( dockableCollector );
+    	}
+    }
+    
+    @Deprecated
+    @Override
     public void destroy() {
         super.destroy();
         getList().removeComponentCollector( dockableCollector );

@@ -33,9 +33,9 @@ import java.util.Set;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.util.ClientOnly;
 
 /**
@@ -53,6 +53,11 @@ public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 	/** the frontend which might be modified by this piece */
 	private DockFrontend frontend;
 	
+	private MenuPieceText textSave;
+	private MenuPieceText textSaveAs;
+	private MenuPieceText textLoad;
+	private MenuPieceText textDelete;
+	
 	/**
 	 * Creates a new piece.
 	 * @param frontend the frontend which might be modified by this piece, can be <code>null</code>
@@ -65,19 +70,40 @@ public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 		
 		FreeMenuPiece menu = new FreeMenuPiece();
 		
-		JMenuItem save = new JMenuItem( Resources.getBundle().getString( "FrontendSettingsMenuPiece.save" ) );
-		JMenuItem saveAs = new JMenuItem( Resources.getBundle().getString( "FrontendSettingsMenuPiece.saveAs" ) );
+		final JMenuItem save = new JMenuItem();
+		textSave = new MenuPieceText( "FrontendSettingsMenuPiece.save", this ){
+			protected void changed( String oldValue, String newValue ){
+				save.setText( newValue );	
+			}
+		};
+		
+		final JMenuItem saveAs = new JMenuItem();
+		textSaveAs = new MenuPieceText( "FrontendSettingsMenuPiece.saveAs", this ){
+			protected void changed( String oldValue, String newValue ){
+				saveAs.setText( newValue );	
+			}
+		};
 		
 		menu.add( save );
 		menu.add( saveAs );
 		
 		if( loadAsSubmenu ){
-			RootMenuPiece rootLoad = new RootMenuPiece( Resources.getBundle().getString( "FrontendSettingsMenuPiece.load" ), true );
+			final RootMenuPiece rootLoad = new RootMenuPiece( null, true );
+			textLoad = new MenuPieceText( "FrontendSettingsMenuPiece.load", this ){
+				protected void changed( String oldValue, String newValue ){
+					rootLoad.getMenu().setText( newValue );
+				}
+			};
 			menu.add( rootLoad.getMenu() );
 			rootLoad.add( load );
 		}
 		
-		RootMenuPiece rootDelete = new RootMenuPiece( Resources.getBundle().getString( "FrontendSettingsMenuPiece.delete" ), true );
+		final RootMenuPiece rootDelete = new RootMenuPiece( null, true );
+		textDelete = new MenuPieceText( "FrontendSettingsMenuPiece.delete", this ){
+			protected void changed( String oldValue, String newValue ){
+				rootDelete.getMenu().setText( newValue );	
+			}
+		};
 		rootDelete.add( delete );
 		menu.add( rootDelete.getMenu() );
 		
@@ -115,6 +141,38 @@ public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 		this.frontend = frontend;
 		load.setFrontend( frontend );
 		delete.setFrontend( frontend );
+		
+		if( isBound() ){
+			if( frontend == null ){
+				link( null );
+			}
+			else{
+				link( frontend.getController() );
+			}
+		}
+	}
+	
+	@Override
+	public void bind(){
+		super.bind();
+		if( frontend != null ){
+			link( frontend.getController() );
+		}
+	}
+	
+	@Override
+	public void unbind(){
+		super.unbind();
+		link( null );
+	}
+	
+	private void link( DockController controller ){
+		textDelete.setController( controller );
+		textSave.setController( controller );
+		textSaveAs.setController( controller );
+		if( textLoad != null ){
+			textLoad.setController( controller );
+		}
 	}
 	
 	/**
@@ -138,7 +196,19 @@ public class FrontendSettingsMenuPiece extends NodeMenuPiece {
 	 */
 	public void saveAs( Component owner ){
 		if( frontend != null ){
-			String input = JOptionPane.showInputDialog( owner,  Resources.getBundle().getString( "FrontendSettingsMenuPiece.saveAsInput" ));
+			MenuPieceText text = new MenuPieceText( "FrontendSettingsMenuPiece.saveAsInput", this ){
+				protected void changed( String oldValue, String newValue ){
+					// ignore	
+				}
+			};
+			if( frontend != null ){
+				text.setController( frontend.getController() );
+			}
+			
+			String dialogText = text.value();
+			text.setController( null );
+			
+			String input = JOptionPane.showInputDialog( owner, dialogText );
 			if( input != null ){
 				Set<String> settings = frontend.getSettings();
 				if( settings.contains( input )){

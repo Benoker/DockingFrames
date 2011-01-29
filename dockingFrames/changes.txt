@@ -404,3 +404,9 @@
 - API: A new listener DockableStateListener can be added to Dockables, the listener receives notifications for events related to changed layouts
 - API: Calling (C)Dockable.setTitleIcon( null ) now makes the icon invisible, and does no longer restore the default icon.
 - Bugfix: Layout could not be stored in byte-array format due to a NullPointerException
+- API: CAction and CDecorateableAction are no longer an abstract class as there was no reason to keep them abstract
+- API: MenuPieces now have a method "bind" and "unbind" which are automatically called if the root-menu is shown or hidden (see Component.isShown()).
+- API: RootMenuPiece now accepts a parent in order to handle "bind" und "unbind" correctly.
+! API: The class "bibliothek.gui.dock.support.util.Resources" has been removed. The TextManager now is responsible for all the strings. The bundle is now loaded in CControl.initTexts using a DefaultTextScheme.
+- API: FrontendSettingsList now orders its items alphabetically
+- Bugfix: Deutsche Übersetzung aktualisiert (German translation updated) 

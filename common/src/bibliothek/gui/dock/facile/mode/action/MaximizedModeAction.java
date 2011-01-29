@@ -25,14 +25,11 @@
  */
 package bibliothek.gui.dock.facile.mode.action;
 
-import java.util.ResourceBundle;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
 import bibliothek.gui.dock.support.mode.Mode;
-import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * An action used to change the {@link Mode} of a {@link Dockable} to
@@ -46,11 +43,6 @@ public class MaximizedModeAction extends LocationModeAction{
 	 * @param mode the mode which is applied
 	 */
 	public MaximizedModeAction( DockController controller, MaximizedMode<?> mode ){
-		super( controller, mode, MaximizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_MAXIMIZED );
-		
-        ResourceBundle bundle = Resources.getBundle();
-        
-        setText( bundle.getString( "maximize.in" ) );
-        setTooltip( bundle.getString( "maximize.in.tooltip" ) );
+		super( controller, mode, MaximizedMode.ICON_IDENTIFIER, "maximize.in", "maximize.in.tooltip", CControl.KEY_GOTO_MAXIMIZED );
 	}
 }

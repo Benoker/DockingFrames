@@ -73,6 +73,22 @@ public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {
     }
     
     @Override
+    public void bind(){
+    	if( !isBound() ){
+    		super.bind();
+    		closeableManager.bind();
+    	}
+    }
+    
+    @Override
+    public void unbind(){
+    	if( isBound() ){
+    		super.unbind();
+    		closeableManager.unbind();
+    	}
+    }
+    
+    @Override
     public void setFrontend( DockFrontend frontend ) {
         super.setFrontend( frontend );
         closeableManager.setFrontend( frontend );
@@ -120,20 +136,46 @@ public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {
          * @param frontend the new frontend, can be <code>null</code>
          */
         public void setFrontend( DockFrontend frontend ) {
-            if( this.frontend != frontend ){
-                if( this.frontend != null ){
-                    this.frontend.removeFrontendListener( this );
-                    for( Dockable dockable : frontend.listDockables() )
-                        removed( this.frontend, dockable );
-                }
+        	if( this.frontend != frontend ){
+        		if( isBound() ){
+	                if( this.frontend != null ){
+	                    this.frontend.removeFrontendListener( this );
+	                    for( Dockable dockable : frontend.listDockables() )
+	                        removed( this.frontend, dockable );
+	                }
+        		}
                 
                 this.frontend = frontend;
                 
-                if( this.frontend != null ){
-                    this.frontend.addFrontendListener( this );
-                    for( Dockable dockable : frontend.listDockables() )
-                        added( this.frontend, dockable );
+                if( isBound() ){
+	                if( this.frontend != null ){
+	                    this.frontend.addFrontendListener( this );
+	                    for( Dockable dockable : frontend.listDockables() )
+	                        added( this.frontend, dockable );
+	                }
                 }
+            }
+        }
+        
+        /**
+         * Connects this listener with {@link #frontend}
+         */
+        public void bind(){
+        	if( this.frontend != null ){
+                frontend.addFrontendListener( this );
+                for( Dockable dockable : frontend.listDockables() )
+                    added( frontend, dockable );
+            }
+        }
+        
+        /**
+         * Disconnects this listener from {@link #frontend}
+         */
+        public void unbind(){
+        	if( frontend != null ){
+                frontend.removeFrontendListener( this );
+                for( Dockable dockable : frontend.listDockables() )
+                    removed( frontend, dockable );
             }
         }
         

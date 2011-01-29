@@ -25,14 +25,11 @@
  */
 package bibliothek.gui.dock.facile.mode.action;
 
-import java.util.ResourceBundle;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.facile.mode.ExternalizedMode;
 import bibliothek.gui.dock.support.mode.Mode;
-import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * An action used to change the {@link Mode} of a {@link Dockable} to
@@ -46,11 +43,6 @@ public class ExternalizedModeAction extends LocationModeAction{
 	 * @param mode the mode which is applied
 	 */
 	public ExternalizedModeAction( DockController controller, ExternalizedMode<?> mode ){
-		super( controller, mode, ExternalizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_EXTERNALIZED );
-		
-        ResourceBundle bundle = Resources.getBundle();
-        
-        setText( bundle.getString( "externalize.in" ) );
-        setTooltip( bundle.getString( "externalize.in.tooltip" ) );
+		super( controller, mode, ExternalizedMode.ICON_IDENTIFIER, "externalize.in", "externalize.in.tooltip", CControl.KEY_GOTO_EXTERNALIZED );
 	}
 }

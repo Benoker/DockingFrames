@@ -167,37 +167,65 @@ public class ThemeMenuPiece extends BaseMenuPiece {
      */
     public void setThemes( ThemeMap themes ) {
         if( this.themes != themes ){
-            if( this.themes != null ){
-                this.themes.removeThemeMapListener( listener );
-                
-                removeAll();
-                items.clear();
-            }
+        	if( isBound() ){
+        		uninstall();
+        	}
             
             this.themes = themes;
             
-            if( themes != null ){
-                themes.addThemeMapListener( listener );
+            if( isBound() ){
+            	install();
+            }
+        }
+    }
+    
+    @Override
+    public void bind(){
+    	if( !isBound() ){
+    		super.bind();
+    		install();
+    	}
+    }
+    
+    @Override
+    public void unbind(){
+    	if( isBound() ){
+    		super.unbind();
+    		uninstall();
+    	}
+    }
+    
+    private void install(){
+    	if( themes != null ){
+            themes.addThemeMapListener( listener );
+            
+            String selected = themes.getSelectedKey();
+            
+            for( int i = 0, n = themes.size(); i<n; i++ ){
+                Item item = new Item( themes.getKey( i ), themes.getFactory( i ));
+                items.add( item );
+                add( item );
                 
-                String selected = themes.getSelectedKey();
-                
-                for( int i = 0, n = themes.size(); i<n; i++ ){
-                    Item item = new Item( themes.getKey( i ), themes.getFactory( i ));
-                    items.add( item );
-                    add( item );
-                    
-                    item.setSelected( item.getKey().equals( selected ) );
-                }
-                
-                if( transferTheme ){
-                    if( controller != null ){
-                        ThemeFactory factory = themes.getSelectedFactory();
-                        if( factory != null ){
-                            controller.setTheme( factory.create( controller ) );
-                        }
+                item.setSelected( item.getKey().equals( selected ) );
+            }
+            
+            if( transferTheme ){
+                if( controller != null ){
+                    ThemeFactory factory = themes.getSelectedFactory();
+                    if( factory != null ){
+                        controller.setTheme( factory.create( controller ) );
                     }
                 }
             }
+        }
+    }
+    
+    private void uninstall(){
+    	if( this.themes != null ){
+            this.themes.removeThemeMapListener( listener );
+            
+            removeAll();
+            items.clear();
         }
     }
     

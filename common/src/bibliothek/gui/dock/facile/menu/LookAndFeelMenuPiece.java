@@ -28,9 +28,11 @@ package bibliothek.gui.dock.facile.menu;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JRadioButtonMenuItem;
@@ -63,6 +65,9 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
     private ListListener listListener = new ListListener();
     /** whether the <code>LookAndFeel</code> is currently changing or not */
     private boolean onChange = false;
+    
+    /** a collector monitoring {@link #frame} */
+    private ComponentCollector frameCollector;
     
     /**
      * Creates a new menu.
@@ -104,35 +109,51 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
             add( item );
         }
         
-        list.addLookAndFeelListener( listListener );
-        
         if( frame != null ){
-        	final ComponentCollector frameCollector = new ComponentCollector(){
+        	frameCollector = new ComponentCollector(){
         		public Collection<Component> listComponents(){
         			List<Component> result = new ArrayList<Component>();
         			result.add( frame );
         			return result;
         		}
         	};
-        	
         	list.addComponentCollector( frameCollector );
-        	
-	        frame.addWindowListener( new WindowAdapter(){
-	        	@Override
-	        	public void windowClosing( WindowEvent e ){
-	        		destroy();
-	        		LookAndFeelMenuPiece.this.list.removeComponentCollector( frameCollector );
-	        	}
-	        });
         }
         
         changed();
     }
     
+    @Override
+    public void bind(){
+    	if( !isBound() ){
+    		super.bind();
+    		install();
+    	}
+    }
+    
+    @Override
+    public void unbind(){
+    	if( isBound() ){
+    		super.unbind();
+    		uninstall();
+    	}
+    }
+    
+    private void install(){
+    	list.addLookAndFeelListener( listListener );
+    }
+    
+    private void uninstall(){
+    	list.removeLookAndFeelListener( listListener );
+    }
+    
     /**
      * Frees resources and cuts connections to other objects such that this
      * piece can be removed by the garbage collector.
+     * @deprecated the method {@link #unbind()} is automatically called if this menu is no
+     * longer visible, that method will also uninstall resources
      */
+    @Deprecated
     public void destroy(){
         list.removeLookAndFeelListener( listListener );
     }

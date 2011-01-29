@@ -36,7 +36,7 @@ import bibliothek.gui.dock.common.action.CAction;
  * An action which has text, icons and other decorations.
  * @author Benjamin Sigg
  */
-public abstract class CDecorateableAction extends CAction {
+public class CDecorateableAction extends CAction {
     /** the internal representation */
     private SimpleDockAction action;
     

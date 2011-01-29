@@ -25,14 +25,11 @@
  */
 package bibliothek.gui.dock.common.action.predefined;
 
-import java.util.ResourceBundle;
-
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * An action that {@link ExtendedMode#NORMALIZED normalizes} each {@link CDockable} to which it is added.
@@ -44,11 +41,6 @@ public class CNormalizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CNormalizeAction( CControl control ){
-        super( control, ExtendedMode.NORMALIZED, CLocationModeManager.ICON_MANAGER_KEY_NORMALIZE, CControl.KEY_GOTO_NORMALIZED );
-        
-        ResourceBundle bundle = Resources.getBundle();
-        
-        setText( bundle.getString( "normalize.in" ) );
-        setTooltip( bundle.getString( "normalize.in.tooltip" ) );
+        super( control, ExtendedMode.NORMALIZED, CLocationModeManager.ICON_MANAGER_KEY_NORMALIZE, "normalize.in", "normalize.in.tooltip", CControl.KEY_GOTO_NORMALIZED );
     }
 }

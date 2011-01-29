@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.common.action.predefined;
 
 import java.awt.event.KeyEvent;
-import java.util.ResourceBundle;
 
 import javax.swing.KeyStroke;
 
@@ -36,7 +35,6 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
@@ -75,12 +73,7 @@ public class CMaximizeAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CMaximizeAction( CControl control ){
-        super( control, ExtendedMode.MAXIMIZED, CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE, CControl.KEY_GOTO_MAXIMIZED );
-        
-        ResourceBundle bundle = Resources.getBundle();
-        
-        setText( bundle.getString( "maximize.in" ) );
-        setTooltip( bundle.getString( "maximize.in.tooltip" ) );
+        super( control, ExtendedMode.MAXIMIZED, CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE, "maximize.in", "maximize.in.tooltip", CControl.KEY_GOTO_MAXIMIZED );
     }
     
     @Override

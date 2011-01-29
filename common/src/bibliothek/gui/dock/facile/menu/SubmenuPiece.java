@@ -48,6 +48,7 @@ public class SubmenuPiece extends MenuPiece{
      */
     public SubmenuPiece(){
         root = new RootMenuPiece();
+        root.setParent( this );
     }
     
     /**
@@ -58,6 +59,7 @@ public class SubmenuPiece extends MenuPiece{
      */
     public SubmenuPiece( String text, boolean disableWhenEmpty, MenuPiece... pieces ){
         root = new RootMenuPiece( text, disableWhenEmpty, pieces );
+        root.setParent( this );
     }
     
     /**
@@ -66,6 +68,19 @@ public class SubmenuPiece extends MenuPiece{
      */
     public SubmenuPiece( JMenu menu ){
         root = new RootMenuPiece( menu );
+        root.setParent( this );
+    }
+    
+    @Override
+    public void bind(){
+    	super.bind();
+    	root.bind();
+    }
+    
+    @Override
+    public void unbind(){
+    	super.unbind();
+    	root.unbind();
     }
     
     @Override

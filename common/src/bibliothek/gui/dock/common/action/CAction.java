@@ -27,19 +27,13 @@ package bibliothek.gui.dock.common.action;
 
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A {@link CAction} is associated with one {@link CDockable}, allowing the
  * user to perform actions which are somehow connected to that <code>CDockable</code>. 
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
-		description="remove 'abstract'")
-public abstract class CAction {
+public class CAction {
     /** the internal representation of the action */
     private DockAction action;
     

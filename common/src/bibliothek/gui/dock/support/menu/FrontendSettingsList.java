@@ -27,6 +27,7 @@ package bibliothek.gui.dock.support.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.Collator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +53,9 @@ public abstract class FrontendSettingsList extends BaseMenuPiece {
 	/** the list of visible items */
 	private Map<String, JRadioButtonMenuItem> items = new HashMap<String, JRadioButtonMenuItem>();
 	
+	/** tells how to order the items of this list */
+	private Collator order = Collator.getInstance();
+	
 	/**
 	 * Creates a new list.
 	 * @param frontend the frontend to observe, can be <code>null</code>
@@ -76,23 +80,51 @@ public abstract class FrontendSettingsList extends BaseMenuPiece {
 	 */
 	public void setFrontend( DockFrontend frontend ){
 		if( this.frontend != frontend ){
-			if( this.frontend != null ){
-				int count = getItemCount();
-				while( count > 0 ){
-					remove( --count );
-				}
-				items.clear();
-				this.frontend.removeFrontendListener( listener );
+			if( isBound() ){
+				uninstall();
 			}
 			
 			this.frontend = frontend;
 			
-			if( this.frontend != null ){
-				this.frontend.addFrontendListener( listener );
-				for( String name : frontend.getSettings() )
-					add( name );
+			if( isBound() ){
+				install();
 			}
 		}
+	}
+	
+	@Override
+	public void bind(){
+		if( !isBound() ){
+			super.bind();
+			install();
+		}
+	}
+	
+	@Override
+	public void unbind(){
+		if( isBound() ){
+			super.unbind();
+			uninstall();
+		}
+	}
+	
+	private void install(){
+		if( this.frontend != null ){
+			this.frontend.addFrontendListener( listener );
+			for( String name : frontend.getSettings() )
+				add( name );
+		}	
+	}
+	
+	private void uninstall(){
+		if( this.frontend != null ){
+			int count = getItemCount();
+			while( count > 0 ){
+				remove( --count );
+			}
+			items.clear();
+			this.frontend.removeFrontendListener( listener );
+		}	
 	}
 	
 	/**
@@ -113,9 +145,20 @@ public abstract class FrontendSettingsList extends BaseMenuPiece {
 				updateSelection();
 			}
 		});
-		add( item );
+		
+		insert( preferredIndex( name ), item );
 		items.put( name, item );
 		updateSelection();
+	}
+	
+	protected int preferredIndex( String name ){
+		int index = 0;
+		for( String item : items.keySet() ){
+			if( order.compare( item, name ) < 0 ){
+				index++;
+			}
+		}
+		return index;
 	}
 	
 	/**

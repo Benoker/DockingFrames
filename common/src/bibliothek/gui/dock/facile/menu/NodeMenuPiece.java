@@ -66,6 +66,10 @@ public class NodeMenuPiece extends MenuPiece{
 		
 		piece.addListener( listener );
 		listener.insert( piece, 0, piece.items() );
+		
+		if( isBound() ){
+			piece.bind();
+		}
 	}
 	
 	/**
@@ -79,6 +83,10 @@ public class NodeMenuPiece extends MenuPiece{
 			
 			piece.setParent( null );
 			children.remove( piece );
+			
+			if( isBound() ){
+				piece.unbind();
+			}
 		}
 	}
 	
@@ -93,6 +101,10 @@ public class NodeMenuPiece extends MenuPiece{
 		
 		piece.setParent( null );
 		children.remove( index );
+		
+		if( isBound() ){
+			piece.unbind();
+		}
 	}
 	
 	/**
@@ -125,7 +137,27 @@ public class NodeMenuPiece extends MenuPiece{
 			count += piece.getItemCount();
 		return count;
 	}
-
+	
+	@Override
+	public void bind(){
+		if( !isBound() ){
+			super.bind();
+			for( MenuPiece child : children ){
+				child.bind();
+			}
+		}
+	}
+	
+	@Override
+	public void unbind(){
+		if( isBound() ){
+			super.unbind();
+			for( MenuPiece child : children ){
+				child.unbind();
+			}
+		}
+	}
+	
 	/**
 	 * A listener to all children, forwarding any call of inserting or removing
 	 * items.

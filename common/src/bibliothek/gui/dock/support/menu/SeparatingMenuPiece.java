@@ -76,6 +76,18 @@ public class SeparatingMenuPiece extends MenuPiece{
 		return piece;
 	}
     
+    @Override
+    public void bind(){
+    	super.bind();
+    	piece.bind();
+    }
+    
+    @Override
+    public void unbind(){
+    	super.unbind();
+    	piece.unbind();
+    }
+    
     /**
      * Sets the piece which will be embraced by separators.
      * @param piece the child of this piece

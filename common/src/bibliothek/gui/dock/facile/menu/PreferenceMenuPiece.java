@@ -35,7 +35,6 @@ import bibliothek.extension.gui.dock.preference.PreferenceTreeDialog;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.util.ClientOnly;
 
 /**
@@ -47,6 +46,8 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
     private DockController controller;
     
     private PreferenceTreeModel model;
+    
+    private MenuPieceText text;
     
     private AbstractAction action = new AbstractAction(){
         public void actionPerformed( ActionEvent e ) {
@@ -68,7 +69,11 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
      * @param controller the controller for which this piece will work
      */
     public PreferenceMenuPiece( DockController controller ){
-        action.putValue( AbstractAction.NAME, Resources.getBundle().getString( "PreferenceMenuPiece.text" ) );
+    	text = new MenuPieceText( "PreferenceMenuPiece.text", this ){
+			protected void changed( String oldValue, String newValue ){
+				action.putValue( AbstractAction.NAME, newValue );
+			}
+		};
         add( new JMenuItem( action ) );
         setController( controller );
     }
@@ -90,6 +95,18 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
         return model;
     }
     
+    @Override
+    public void bind(){
+    	super.bind();
+    	text.setController( controller );
+    }
+    
+    @Override
+    public void unbind(){
+    	super.unbind();
+    	text.setController( null );
+    }
+    
     /**
      * Sets the controller for which this piece works.
      * @param controller the controller
@@ -98,6 +115,9 @@ public class PreferenceMenuPiece extends BaseMenuPiece{
         this.controller = controller;
         action.setEnabled( controller != null );
         model = null;
+        if( isBound() ){
+        	text.setController( controller );
+        }
     }
     
     /**

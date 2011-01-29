@@ -25,14 +25,11 @@
  */
 package bibliothek.gui.dock.common.action.predefined;
 
-import java.util.ResourceBundle;
-
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * An action which externalizes each {@link CDockable} to which is is added. This action
@@ -45,11 +42,6 @@ public class CUnmaximizeExternalizedAction extends CExtendedModeAction{
      * @param control the control for which this action will be used
      */
     public CUnmaximizeExternalizedAction( CControl control ){
-        super( control, ExtendedMode.EXTERNALIZED, CLocationModeManager.ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED, CControl.KEY_GOTO_EXTERNALIZED );
-        
-        ResourceBundle bundle = Resources.getBundle();
-        
-        setText( bundle.getString( "maximize_externalized.out" ) );
-        setTooltip( bundle.getString( "maximize_externalized.out.tooltip" ) );
+        super( control, ExtendedMode.EXTERNALIZED, CLocationModeManager.ICON_MANAGER_KEY_UNMAXIMIZE_EXTERNALIZED, "maximize_externalized.out", "maximize_externalized.out.tooltip", CControl.KEY_GOTO_EXTERNALIZED );
     }
 }

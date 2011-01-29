@@ -38,8 +38,8 @@ import bibliothek.extension.gui.dock.preference.PreferenceTreeDialog;
 import bibliothek.extension.gui.dock.preference.PreferenceTreeModel;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CPreferenceModel;
+import bibliothek.gui.dock.facile.menu.MenuPieceText;
 import bibliothek.gui.dock.support.menu.BaseMenuPiece;
-import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * A menu piece that shows an entry for opening the preferences-dialog. The
@@ -51,6 +51,9 @@ import bibliothek.gui.dock.support.util.Resources;
  * @author Benjamin Sigg
  */
 public class CPreferenceMenuPiece extends BaseMenuPiece{
+	/** text for this menu */
+	private MenuPieceText text;
+	
 	/**
 	 * Creates a new {@link CPreferenceMenuPiece}. Reads the model of <code>control</code>,
 	 * if <code>control</code> has no model then a new {@link PreferenceModel} will
@@ -88,8 +91,26 @@ public class CPreferenceMenuPiece extends BaseMenuPiece{
     		throw new IllegalArgumentException( "control must not be null" );
     	
         this.control = control;
-        action.putValue( AbstractAction.NAME, Resources.getBundle().getString( "PreferenceMenuPiece.text" ) );
+        
+        text = new MenuPieceText( "PreferenceMenuPiece.text", this ){
+			protected void changed( String oldValue, String newValue ){
+				action.putValue( AbstractAction.NAME, newValue );	
+			}
+		};
+        
         add( new JMenuItem( action ) );
+    }
+    
+    @Override
+    public void bind(){
+    	super.bind();
+    	text.setController( control.getController() );
+    }
+    
+    @Override
+    public void unbind(){
+    	super.unbind();
+    	text.setController( null );
     }
     
     /**

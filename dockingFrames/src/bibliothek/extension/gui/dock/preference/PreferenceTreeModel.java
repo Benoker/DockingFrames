@@ -167,8 +167,8 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
             }
             else{
                 event = new TreeModelEvent(
-                        this,
-                        node.getTreePath(),
+                        parent,
+                        parent.getTreePath(),
                         new int[]{ parent.indexOf( node ) },
                         new Object[]{ node });
             }

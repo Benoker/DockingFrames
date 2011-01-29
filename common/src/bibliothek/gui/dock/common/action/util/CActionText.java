@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2010 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,24 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.action.predefined;
+package bibliothek.gui.dock.common.action.util;
 
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.action.CExtendedModeAction;
-import bibliothek.gui.dock.common.mode.CLocationModeManager;
-import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.util.UIValue;
+import bibliothek.gui.dock.util.text.TextValue;
+import bibliothek.util.Path;
 
 /**
- * An action which {@link ExtendedMode#EXTERNALIZED externalizes} each {@link CDockable} to which is is added.
+ * A text that is used by a {@link CAction}.
  * @author Benjamin Sigg
  */
-public class CExternalizeAction extends CExtendedModeAction{
-    /**
-     * Creates a new action
-     * @param control the control for which this action will be used
-     */
-    public CExternalizeAction( CControl control ){
-        super( control, ExtendedMode.EXTERNALIZED, CLocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE, "externalize.in", "externalize.in.tooltip", CControl.KEY_GOTO_EXTERNALIZED );
-    }
+public abstract class CActionText extends TextValue{
+	/** what kind of {@link UIValue} this is */
+	public static final Path KIND_CACTION = KIND_TEXT.append( "caction" );
+
+	/** the action which is using this text */
+	private CAction action;
+	
+	/**
+	 * Creates a new {@link CActionText}.
+	 * @param id the unique identifier of this text
+	 * @param action the action using the text
+	 */
+	public CActionText( String id, CAction action ){
+		super( id, KIND_CACTION );
+		this.action = action;
+	}
+	
+	/**
+	 * Gets the action which is using this text.
+	 * @return the action
+	 */
+	public CAction getAction(){
+		return action;
+	}
 }

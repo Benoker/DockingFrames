@@ -25,14 +25,11 @@
  */
 package bibliothek.gui.dock.facile.mode.action;
 
-import java.util.ResourceBundle;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.facile.mode.MinimizedMode;
 import bibliothek.gui.dock.support.mode.Mode;
-import bibliothek.gui.dock.support.util.Resources;
 
 /**
  * An action used to change the {@link Mode} of a {@link Dockable} to
@@ -46,11 +43,6 @@ public class MinimizedModeAction extends LocationModeAction{
 	 * @param mode the mode which is applied
 	 */
 	public MinimizedModeAction( DockController controller, MinimizedMode<?> mode ){
-		super( controller, mode, MinimizedMode.ICON_IDENTIFIER, CControl.KEY_GOTO_MINIMIZED );
-		
-        ResourceBundle bundle = Resources.getBundle();
-        
-        setText( bundle.getString( "minimize.in" ) );
-        setTooltip( bundle.getString( "minimize.in.tooltip" ) );
+		super( controller, mode, MinimizedMode.ICON_IDENTIFIER, "minimize.in", "minimize.in.tooltip", CControl.KEY_GOTO_MINIMIZED );
 	}
 }

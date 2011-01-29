@@ -26,6 +26,8 @@
 package bibliothek.gui.dock.facile.menu;
 
 import java.awt.Component;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 
 import javax.swing.JMenu;
 
@@ -33,7 +35,8 @@ import bibliothek.gui.dock.support.menu.MenuPiece;
 import bibliothek.gui.dock.support.menu.MenuPieceListener;
 
 /**
- * The root of a tree of {@link MenuPiece}s.
+ * The root of a tree of {@link MenuPiece}s. This {@link MenuPiece} is a direct representation
+ * of a {@link JMenu}
  * @author Benjamin Sigg
  */
 public class RootMenuPiece extends NodeMenuPiece {
@@ -72,6 +75,16 @@ public class RootMenuPiece extends NodeMenuPiece {
 		if( menu == null )
 			throw new NullPointerException( "menu must not be null" );
 		this.menu = menu;
+
+        menu.addHierarchyListener( new HierarchyListener(){
+			public void hierarchyChanged( HierarchyEvent e ){
+				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
+					checkVisibility();
+				}
+			}
+		});
+        
+		checkVisibility();
 		
 		addListener( new MenuPieceListener(){
 			public void insert( MenuPiece child, int index, Component... items ){
@@ -89,6 +102,24 @@ public class RootMenuPiece extends NodeMenuPiece {
 				menu.setEnabled( !disableWhenEmpty || getItemCount() > 0 );
 			}
 		});
+	}
+	
+	private void checkVisibility(){
+		boolean showing;
+		
+		if( getParent() == null ){
+			showing = menu.isShowing();
+		}
+		else{
+			showing = getParent().isBound();
+		}
+		
+		if( showing && !isBound() ){
+			bind();
+		}
+		else if( !showing && isBound() ){
+			unbind();
+		}
 	}
 	
 	/**
@@ -115,7 +146,8 @@ public class RootMenuPiece extends NodeMenuPiece {
 	}
 	
 	@Override
-	public final void setParent( MenuPiece parent ){
-		throw new IllegalStateException( "A root can't have any parent" );
+	public void setParent( MenuPiece parent ){
+		super.setParent( parent );
+		checkVisibility();
 	}
 }

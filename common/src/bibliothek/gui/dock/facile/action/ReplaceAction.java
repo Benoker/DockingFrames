@@ -26,8 +26,6 @@
 
 package bibliothek.gui.dock.facile.action;
 
-import java.util.ResourceBundle;
-
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
@@ -35,11 +33,11 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionIcon;
+import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedButtonDockAction;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.support.util.Resources;
 import bibliothek.util.ClientOnly;
 
 /**
@@ -56,6 +54,10 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
 	
 	/** A listener to the stations known to this action */
     private DockStationListener dockStationListener;
+    
+    private DockActionText text;
+    
+    private DockActionText tooltip;
     
     private DockActionIcon icon;
     
@@ -85,11 +87,19 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
         setEnabled( true, true );
         setEnabled( false, false );
         
-        ResourceBundle bundle = Resources.getBundle();
-        setText( true, bundle.getString( "replace" ) );
-        setText( false, bundle.getString( "replace" ) );
-        setTooltip( true, bundle.getString( "replace.tooltip" ));
-        setTooltip( false, bundle.getString( "replace.tooltip" ));
+        text = new DockActionText( "replace", this ){
+			protected void changed( String oldValue, String newValue ){
+				setText( true, newValue );
+		        setText( false, newValue );			
+			}
+		};
+        
+        tooltip = new DockActionText( "replace.tooltip", this ){
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( true, newValue );
+				setTooltip( false, newValue );
+			}
+		};
         
         icon = new DockActionIcon( "replace", this ){
 			protected void changed( Icon oldValue, Icon newValue ){
@@ -170,5 +180,7 @@ public class ReplaceAction extends GroupedButtonDockAction<Boolean> implements L
     
     public void setController( DockController controller ) {
         icon.setController( controller );
+        text.setController( controller );
+        tooltip.setController( controller );
     }
 }

@@ -440,6 +440,9 @@ public class PreferenceTable extends JPanel{
                 editor.setValue( (V)model.getValue( index ) );
             }
             
+            label.setText( model.getLabel( index ) );
+            label.setToolTipText( model.getDescription( index ) );
+            
             if( modelOperations != null ){
                 for( Map.Entry<PreferenceOperation, Button> entry : modelOperations.entrySet() ){
                     boolean enabled = model.isEnabled( index, entry.getKey() );
