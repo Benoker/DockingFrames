@@ -64,7 +64,7 @@ public class VisibilityFocusObserver implements DockRegisterListener{
 	
 	public void dockableUnregistered( DockController controller, Dockable dockable ){
 		if( dockable == controller.getFocusedDockable() )
-			controller.setFocusedDockable( null, false );
+			controller.setFocusedDockable( null, null, false );
 	}
 	
 	public void dockStationRegistering( DockController controller, DockStation station ){
@@ -95,7 +95,7 @@ public class VisibilityFocusObserver implements DockRegisterListener{
             	Dockable focusedDockable = controller.getFocusedDockable();
                 if( dockable == focusedDockable || focusedDockable == null )
                     if( station.isVisible( dockable ))
-                        controller.setFocusedDockable( dockable, true );
+                        controller.setFocusedDockable( dockable, null, true );
             }
         }
         
@@ -109,7 +109,7 @@ public class VisibilityFocusObserver implements DockRegisterListener{
             			parent = dockable.getDockParent();
             			if( parent != null ){
             				if( parent.isVisible( dockable )){
-            					controller.setFocusedDockable( dockable, false );
+            					controller.setFocusedDockable( dockable, null, false );
             					return;
             				}
             			}
@@ -118,7 +118,7 @@ public class VisibilityFocusObserver implements DockRegisterListener{
             			break;
             	}
             	
-                controller.setFocusedDockable( null, false );
+                controller.setFocusedDockable( null, null, false );
             }
         }
     }

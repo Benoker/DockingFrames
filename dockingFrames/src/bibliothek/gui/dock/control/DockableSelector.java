@@ -121,7 +121,7 @@ public class DockableSelector {
      */
     public void stop( Dockable dockable ){
         close();
-        controller.setFocusedDockable( dockable, false );
+        controller.setFocusedDockable( dockable, null, false );
     }
     
     private void open(){

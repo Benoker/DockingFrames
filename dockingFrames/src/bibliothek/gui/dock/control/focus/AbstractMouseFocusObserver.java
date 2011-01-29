@@ -206,7 +206,7 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
 						if( element != null ){
 							Dockable dock = element.getElement().asDockable();
 					        if( dock != null ){
-					        	controller.setFocusedDockable( dock, false, ensureFocus, element.shouldTransfersFocus() );
+					        	controller.setFocusedDockable( dock, component, false, ensureFocus, element.shouldTransfersFocus() );
 					        }
 						}
 					}
@@ -216,7 +216,7 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
             	if( requestFocusInWindow ){
                		component.requestFocusInWindow();
                	}
-                controller.setFocusedDockable( dock, false, ensureFocus, element.shouldTransfersFocus() );
+                controller.setFocusedDockable( dock, component, false, ensureFocus, element.shouldTransfersFocus() );
         	}
         }
     }
@@ -236,7 +236,7 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
     public void drop( final DockController controller, final Dockable dockable, DockStation station ) {
         EventQueue.invokeLater( new Runnable(){
             public void run(){
-                controller.setFocusedDockable( dockable, true );
+                controller.setFocusedDockable( dockable, null, true );
             }
         });
     }

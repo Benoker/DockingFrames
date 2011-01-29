@@ -279,7 +279,7 @@ public class ThemeManager extends TypedUIProperties{
     			register.setStalled( false );
     		}
 	    		
-    		controller.setFocusedDockable( focused, true );
+    		controller.setFocusedDockable( focused, null, true );
     		
     		for( UIListener listener : uiListeners() )
     			listener.themeChanged( controller, oldTheme, theme );

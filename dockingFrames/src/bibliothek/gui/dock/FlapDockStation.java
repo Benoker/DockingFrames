@@ -2153,11 +2153,11 @@ public class FlapDockStation extends AbstractDockableStation {
         			DockTitle title = handle.getTitle();
 	        		
 		            if( getFrontDockable() == dockable && title.isActive() ){
-		                getController().setFocusedDockable( FlapDockStation.this, true );
+		                getController().setFocusedDockable( FlapDockStation.this, null, true );
 		                setFrontDockable( null );
 		            }
 		            else
-		                getController().setFocusedDockable( dockable, true );
+		                getController().setFocusedDockable( dockable, null, true );
         		}
         	}
         }

@@ -374,7 +374,7 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 					if( isSelected() ){
 						DockController controller = dockable.getController();
 						if( controller != null ){
-							controller.setFocusedDockable( dockable, true, true, true );
+							controller.setFocusedDockable( dockable, null, true, true, true );
 						}
 					}
 					else{

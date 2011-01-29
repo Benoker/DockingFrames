@@ -288,7 +288,7 @@ public abstract class AbstractCDockable implements CDockable {
      */
     public void toFront(){
         if( isVisible() ){
-            control.getOwner().intern().getController().setFocusedDockable( intern(), false );
+            control.getOwner().intern().getController().setFocusedDockable( intern(), null, false );
         }
     }
     

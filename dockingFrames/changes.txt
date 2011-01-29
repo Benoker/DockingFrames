@@ -409,4 +409,5 @@
 - API: RootMenuPiece now accepts a parent in order to handle "bind" und "unbind" correctly.
 ! API: The class "bibliothek.gui.dock.support.util.Resources" has been removed. The TextManager now is responsible for all the strings. The bundle is now loaded in CControl.initTexts using a DefaultTextScheme.
 - API: FrontendSettingsList now orders its items alphabetically
-- Bugfix: Deutsche Übersetzung aktualisiert (German translation updated) 
+- Bugfix: Deutsche Übersetzung aktualisiert (German translation updated)
+- Bugfix: FocusController now does not select a (more or less) random Component if the caller indicates that Swing itself will issue a focus request in the future. This means that clicking on the dropdown-button of a JCombobBox will not close the popup again because focus is transfered. 

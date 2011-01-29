@@ -127,7 +127,12 @@ public interface FocusController {
     
     /**
      * Sets the {@link Dockable} which should have the focus.
-     * @param source the item to focs, may be <code>null</code>
+     * @param source the item to focus, may be <code>null</code>
+     * @param component the {@link Component} which triggered this call for example because the user clicked with the mouse on it. 
+     * This method can assume that the focus will automatically be transfered to <code>component</code> by the Swing framework itself.
+     * Can be <code>null</code>, in which case this method decides on its own which {@link Component} to focus. This method may or may
+     * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
+     * as if it would be <code>null</code>.
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
      * optimations are allowed. Clients normally can set this argument
@@ -139,5 +144,5 @@ public interface FocusController {
      * @return whether focus could be transfered, a value of <code>null</code> indicates that {@link #isOnFocusing()} returned
      * <code>true</code> and the call was ignored
      */
-    public FocusVeto setFocusedDockable( DockElementRepresentative source, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused );
+    public FocusVeto setFocusedDockable( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused );
 }

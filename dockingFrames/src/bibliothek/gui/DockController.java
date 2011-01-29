@@ -827,16 +827,18 @@ public class DockController {
      * Sets the focused {@link Dockable}. Nothing happens if <code>focusedDockable</code>
      * is a station and one of its children already has the focus.
      * @param focusedDockable the element which should have the focus
+     * @param component the {@link Component} which should receive the focus, can be <code>null</code>.
+     * See {@link FocusController#setFocusedDockable(DockElementRepresentative, Component, boolean, boolean, boolean)}.
      * @see #isOnFocusing()
      */
-    public void setAtLeastFocusedDockable( Dockable focusedDockable ) {
+    public void setAtLeastFocusedDockable( Dockable focusedDockable, Component component ) {
     	Dockable current = getFocusedDockable();
     	
         if( current == null ){
-            setFocusedDockable( focusedDockable, false );
+            setFocusedDockable( focusedDockable, component, false );
         }
         else if( !DockUtilities.isAncestor( focusedDockable, current )){
-            setFocusedDockable( focusedDockable, false );
+            setFocusedDockable( focusedDockable, component, false );
         }
     }
     
@@ -849,12 +851,28 @@ public class DockController {
      * to <code>false</code>.
      */
     public void setFocusedDockable( Dockable focusedDockable, boolean force ) {
-        setFocusedDockable( focusedDockable, force, true, false );
+    	setFocusedDockable( focusedDockable, null, force );
+    }
+    
+    /**
+     * Sets the {@link Dockable} which should have the focus.
+     * @param focusedDockable the element with the focus or <code>null</code>
+     * @param component the {@link Component} which should receive the focus, can be <code>null</code>.
+     * See {@link FocusController#setFocusedDockable(DockElementRepresentative, Component, boolean, boolean, boolean)}.
+     * @param force <code>true</code> if this controller must ensure
+     * that all properties are correct, <code>false</code> if some
+     * optimations are allowed. Clients normally can set this argument
+     * to <code>false</code>.
+     */
+    public void setFocusedDockable( Dockable focusedDockable, Component component, boolean force ) {
+        setFocusedDockable( focusedDockable, component, force, true, false );
     }
 
     /**
      * Sets the {@link Dockable} which should have the focus.
      * @param focusedDockable the element with the focus or <code>null</code>
+     * @param component the {@link Component} which should receive the focus, can be <code>null</code>.
+     * See {@link FocusController#setFocusedDockable(DockElementRepresentative, Component, boolean, boolean, boolean)}.
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
      * optimations are allowed. Clients normally can set this argument
@@ -864,8 +882,8 @@ public class DockController {
      * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>focusedDockable</code>
      * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
      */
-    public void setFocusedDockable( Dockable focusedDockable, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ) {
-    	focusController.setFocusedDockable( focusedDockable, force, ensureFocusSet, ensureDockableFocused );
+    public void setFocusedDockable( Dockable focusedDockable, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ) {
+    	focusController.setFocusedDockable( focusedDockable, component, force, ensureFocusSet, ensureDockableFocused );
     }
     
     /**

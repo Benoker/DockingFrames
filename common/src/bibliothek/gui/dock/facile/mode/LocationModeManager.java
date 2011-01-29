@@ -280,10 +280,10 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		LocationMode mode = getMode( extendedMode.getModeIdentifier() );
 		if( mode != null ){
 			if( mode.shouldAutoFocus() ){
-				getController().setFocusedDockable( dockable, true, true, false );
+				getController().setFocusedDockable( dockable, null, true, true, false );
 			}
 			else{
-				getController().setFocusedDockable( null, true );
+				getController().setFocusedDockable( null, null, true );
 			}
 		}
 	}

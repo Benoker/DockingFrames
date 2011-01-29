@@ -96,7 +96,7 @@ public class DefaultFocusController extends AbstractFocusController {
     	return veto;
     }
     
-    public FocusVeto setFocusedDockable( DockElementRepresentative source, boolean force, boolean ensureFocusSet, final boolean ensureDockableFocused ){
+    public FocusVeto setFocusedDockable( DockElementRepresentative source, final Component component, boolean force, boolean ensureFocusSet, final boolean ensureDockableFocused ){
     	// ignore more than one call
     	if( onFocusing || isFrozen() )
     		return null;
@@ -122,13 +122,13 @@ public class DefaultFocusController extends AbstractFocusController {
 	                if( EventQueue.isDispatchThread() ){
     	                SwingUtilities.invokeLater( new Runnable(){
     	                    public void run() {
-    	                        ensureFocusSet( ensureDockableFocused );
+    	                        ensureFocusSet( ensureDockableFocused, component );
     	                    }
     	                });
 	                }
 	                else{
 	                    // we are in the wrong Thread, but we can try...
-	                    ensureFocusSet( ensureDockableFocused );
+	                    ensureFocusSet( ensureDockableFocused, component );
 	                }
 	            }
 	            
@@ -144,6 +144,10 @@ public class DefaultFocusController extends AbstractFocusController {
     }
     
     public void ensureFocusSet( boolean dockableOnly ){
+    	ensureFocusSet( dockableOnly, null );
+    }
+    
+    private void ensureFocusSet( boolean dockableOnly, Component component ){
     	if( isFrozen() ){
     		return;
     	}
@@ -180,10 +184,12 @@ public class DefaultFocusController extends AbstractFocusController {
 	            }
             }
             
-            FocusStrategy strategy = getStrategy();
-            Component component = null;
-            if( strategy != null ){
-            	component = strategy.getFocusComponent( focusedDockable );
+            boolean preset = component != null;
+            if( component == null ){
+	            FocusStrategy strategy = getStrategy();
+	            if( strategy != null ){
+	            	component = strategy.getFocusComponent( focusedDockable );
+	            }
             }
             
             if( component == null ){
@@ -195,7 +201,7 @@ public class DefaultFocusController extends AbstractFocusController {
                 component.requestFocusInWindow();
                 focus( component, 10, 20 );
             }
-            else{
+            else if( !preset ){
                 KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent( component );
             }
         }
