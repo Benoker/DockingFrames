@@ -39,6 +39,7 @@ import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.event.CVetoClosingEvent;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * A collection of the listeners which are normally added to a {@link CDockable}.
@@ -51,24 +52,9 @@ public class CListenerCollection {
     private List<CDockableStateListener> stateListeners = new ArrayList<CDockableStateListener>();
     
     private CDockableStateListener stateListener = new CDockableStateListener(){
-        public void externalized( CDockable dockable ) {
-            for( CDockableStateListener listener : getCDockableStateListeners() )
-                listener.externalized( dockable );
-        }
-
-        public void maximized( CDockable dockable ) {
-            for( CDockableStateListener listener : getCDockableStateListeners() )
-                listener.maximized( dockable );
-        }
-
-        public void minimized( CDockable dockable ) {
-            for( CDockableStateListener listener : getCDockableStateListeners() )
-                listener.minimized( dockable );
-        }
-
-        public void normalized( CDockable dockable ) {
-            for( CDockableStateListener listener : getCDockableStateListeners() )
-                listener.normalized( dockable );
+    	public void extendedModeChanged( CDockable dockable, ExtendedMode mode ){
+    	    for( CDockableStateListener listener : getCDockableStateListeners() )
+                listener.extendedModeChanged( dockable, mode );
         }
 
         public void visibilityChanged( CDockable dockable ) {

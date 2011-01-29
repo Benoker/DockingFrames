@@ -410,4 +410,5 @@
 ! API: The class "bibliothek.gui.dock.support.util.Resources" has been removed. The TextManager now is responsible for all the strings. The bundle is now loaded in CControl.initTexts using a DefaultTextScheme.
 - API: FrontendSettingsList now orders its items alphabetically
 - Bugfix: Deutsche Übersetzung aktualisiert (German translation updated)
-- Bugfix: FocusController now does not select a (more or less) random Component if the caller indicates that Swing itself will issue a focus request in the future. This means that clicking on the dropdown-button of a JCombobBox will not close the popup again because focus is transfered. 
+- Bugfix: FocusController now does not select a (more or less) random Component if the caller indicates that Swing itself will issue a focus request in the future. This means that clicking on the dropdown-button of a JCombobBox will not close the popup again because focus is transfered.
+! API: CDockableStateListener no longer has one method for each ExtendedMode, instead one method handles all possible ExtendedModes. Clients can extend CDockableAdapter to keep the old API.

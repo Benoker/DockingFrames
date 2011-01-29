@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.event;
 
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * A class implementing all methods of {@link CDockableStateListener}
@@ -47,23 +48,11 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
         // empty
     }
 
-    public void externalized( CDockable dockable ) {
-        // empty
-    }
-
     public void maximizableChanged( CDockable dockable ) {
         // empty
     }
 
-    public void maximized( CDockable dockable ) {
-        // empty
-    }
-
     public void minimizableChanged( CDockable dockable ) {
-        // empty
-    }
-
-    public void minimized( CDockable dockable ) {
         // empty
     }
     
@@ -87,11 +76,67 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
         // empty
     }
     
-    public void normalized( CDockable dockable ) {
+    public void visibilityChanged( CDockable dockable ) {
         // empty
     }
 
-    public void visibilityChanged( CDockable dockable ) {
-        // empty
+    /**
+     * Called when the <code>dockable</code> has been minimized.
+     * @param dockable the source of the event
+     */
+    public void minimized( CDockable dockable ){
+    	// empty
+    }
+ 
+    /**
+     * Called when the <code>dockable</code> has been maximized.
+     * @param dockable the source of the event
+     */
+    public void maximized( CDockable dockable ){
+    	// empty
+    }
+    
+    /**
+     * Called when the <code>dockable</code> has been normalized.
+     * @param dockable the source of the event
+     */
+    public void normalized( CDockable dockable ){
+    	// empty
+    }
+    
+    /**
+     * Called when the <code>dockable</code> has been externalized.
+     * @param dockable the source of the event
+     */
+    public void externalized( CDockable dockable ){
+    	// empty
+    }
+    
+    /**
+     * Called by {@link #extendedModeChanged(CDockable, ExtendedMode)} if none of the
+     * default modes was selected
+     * @param dockable the element whose mode changed
+     * @param mode the new mode
+     */
+    public void modeChanged( CDockable dockable, ExtendedMode mode ){
+    	// empty
+    }
+    
+    public void extendedModeChanged( CDockable dockable, ExtendedMode mode ){
+	    if( mode == ExtendedMode.EXTERNALIZED ){
+	    	externalized( dockable );
+	    }
+	    else if( mode == ExtendedMode.MAXIMIZED ){
+	    	maximized( dockable );
+	    }
+	    else if( mode == ExtendedMode.MINIMIZED ){
+	    	minimized( dockable );
+	    }
+	    else if( mode == ExtendedMode.NORMALIZED ){
+	    	normalized( dockable );
+	    }
+	    else{
+	    	modeChanged( dockable, mode );
+	    }
     }
 }

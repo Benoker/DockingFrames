@@ -617,18 +617,7 @@ public abstract class AbstractCDockable implements CDockable {
                 	if( currentMode != mode ){
                 		currentMode = mode;
 	                	CDockableStateListener forward = listenerCollection.getCDockableStateListener();
-	                    if( mode == ExtendedMode.EXTERNALIZED ){
-	                    	forward.externalized( AbstractCDockable.this );
-	                    }
-	                    else if( mode == ExtendedMode.MINIMIZED ){
-	                    	forward.minimized( AbstractCDockable.this );
-	                    }
-	                    else if( mode == ExtendedMode.MAXIMIZED ){
-	                    	forward.maximized( AbstractCDockable.this );
-	                    }
-	                    else if( mode == ExtendedMode.NORMALIZED ){
-	                    	forward.normalized( AbstractCDockable.this );
-	                    }
+	                	forward.extendedModeChanged( AbstractCDockable.this, mode );
                 	}
                 }
                 public CFocusListener getFocusListener() {

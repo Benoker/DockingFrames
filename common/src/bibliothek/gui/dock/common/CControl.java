@@ -1365,7 +1365,8 @@ public class CControl {
     }
 
     /**
-     * Gets the element that should be in the center of the mainframe.
+     * Gets the element that should be in the center of the mainframe. The {@link CContentArea}
+     * is created the first time this method is called.
      * @return the center of the mainframe of the application
      */
     public CContentArea getContentArea() {

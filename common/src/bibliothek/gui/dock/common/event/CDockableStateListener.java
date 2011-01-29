@@ -26,10 +26,7 @@
 package bibliothek.gui.dock.common.event;
 
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * A listener added to a {@link CDockable}, this listener will get informed
@@ -37,10 +34,7 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  * @see CDockablePropertyListener
  */
-@Todo( priority=Priority.MINOR, compatibility=Compatibility.BREAK_MAJOR, target=Version.VERSION_1_1_0, 
-		description="Support all the ExtendedModes that exist. Make an abstract subclass which offers the current methods." )
 public interface CDockableStateListener {
-
     /**
      * Called when the {@link CDockable#isVisible() visibility}-property
      * has changed. Please read the notes of {@link CDockable#isVisible()} to
@@ -51,26 +45,10 @@ public interface CDockableStateListener {
     public void visibilityChanged( CDockable dockable );
     
     /**
-     * Called when the <code>dockable</code> has been minimized.
-     * @param dockable the source of the event
+     * Called if the {@link CDockable#getExtendedMode() extended mode} of <code>dockable</code>
+     * changed.
+     * @param dockable the element whose mode changed
+     * @param mode the new mode
      */
-    public void minimized( CDockable dockable );
- 
-    /**
-     * Called when the <code>dockable</code> has been maximized.
-     * @param dockable the source of the event
-     */
-    public void maximized( CDockable dockable );
-    
-    /**
-     * Called when the <code>dockable</code> has been normalized.
-     * @param dockable the source of the event
-     */
-    public void normalized( CDockable dockable );
-    
-    /**
-     * Called when the <code>dockable</code> has been externalized.
-     * @param dockable the source of the event
-     */
-    public void externalized( CDockable dockable );
+    public void extendedModeChanged( CDockable dockable, ExtendedMode mode );
 }
