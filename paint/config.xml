@@ -2409,9 +2409,9 @@
 									<replacement id="rootccontrol center"/>
 									<delegate id="delegate_SplitDockStationFactory">
 										<fullscreen-action>false</fullscreen-action>
-										<node nodeId="1293551127564" orientation="VERTICAL" divider="0.7453703703703703">
+										<node nodeId="1293551127564" orientation="VERTICAL" divider="0.75693287037037">
 											<node nodeId="1293533691140" orientation="HORIZONTAL" divider="0.3076923076923077">
-												<leaf id="2" nodeId="1293532777226">
+												<leaf id="1" nodeId="1293532777226">
 													<placeholders>
 														<placeholder>dock.single.PictureListDockable</placeholder>
 													</placeholders>
@@ -2426,7 +2426,7 @@
 													</placeholders>
 												</leaf>
 											</node>
-											<leaf id="1" nodeId="1293551127563">
+											<leaf id="2" nodeId="1293551127563">
 												<placeholders>
 													<placeholder>dock.single.ColorDockable</placeholder>
 												</placeholders>
@@ -2511,20 +2511,20 @@
 										</children>
 									</child>
 									<child>
-										<layout factory="predefined" placeholder="dock.single.ColorDockable">
-											<replacement id="dockablesingle ColorDockable"/>
+										<layout factory="predefined" placeholder="dock.single.PictureListDockable">
+											<replacement id="dockablesingle PictureListDockable"/>
 											<delegate id="delegate_ccontrol backup factory id">
-												<id>ColorDockable</id>
+												<id>PictureListDockable</id>
 												<area/>
 											</delegate>
 										</layout>
 										<children ignore="false"/>
 									</child>
 									<child>
-										<layout factory="predefined" placeholder="dock.single.PictureListDockable">
-											<replacement id="dockablesingle PictureListDockable"/>
+										<layout factory="predefined" placeholder="dock.single.ColorDockable">
+											<replacement id="dockablesingle ColorDockable"/>
 											<delegate id="delegate_ccontrol backup factory id">
-												<id>PictureListDockable</id>
+												<id>ColorDockable</id>
 												<area/>
 											</delegate>
 										</layout>

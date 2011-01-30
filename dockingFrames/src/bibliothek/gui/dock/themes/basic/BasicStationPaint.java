@@ -84,7 +84,7 @@ public class BasicStationPaint implements StationPaint {
         color.setId( "paint.insertion" );
         color.connect( station.getController() );
         
-        g.setColor( new Color( color.value().getRGB() ) );
+        g.setColor( color.value() );
         Graphics2D g2 = (Graphics2D)g;
         
         Composite old = g2.getComposite();
@@ -99,19 +99,23 @@ public class BasicStationPaint implements StationPaint {
         
         g2.setComposite( old );
         
-        drawInsertionLine( g, station, x, y, x+w, y );
-        drawInsertionLine( g, station, x, y, x, y+h );
-        drawInsertionLine( g, station, x+w, y+h, x, y+h );
-        drawInsertionLine( g, station, x+w, y+h, x+w, y );
+        drawInsertionLine( g, station, x, y, x+w, y, false );
+        drawInsertionLine( g, station, x, y, x, y+h, false );
+        drawInsertionLine( g, station, x+w, y+h, x, y+h, false );
+        drawInsertionLine( g, station, x+w, y+h, x+w, y, false );
         
         color.connect( null );
     }
     
-    public void drawInsertionLine( Graphics g, DockStation station, int x1,
-            int x2, int y1, int y2 ) {
-        
-        color.setId( "paint.line" );
-        color.connect( station.getController() );
+    public void drawInsertionLine( Graphics g, DockStation station, int x1, int x2, int y1, int y2 ) {
+    	drawInsertionLine( g, station, x1, x2, y1, y2, true );
+    }
+    
+    private void drawInsertionLine( Graphics g, DockStation station, int x1, int x2, int y1, int y2, boolean newColor ) {
+    	if( newColor ){
+	        color.setId( "paint.line" );
+	        color.connect( station.getController() );
+    	}
         
         g.setColor( color.value() );
         Graphics2D g2 = (Graphics2D)g;
@@ -121,6 +125,8 @@ public class BasicStationPaint implements StationPaint {
         g2.drawLine( x1, x2, y1, y2 );
         g2.setStroke( old );
         
-        color.connect( null );
+        if( newColor ){
+        	color.connect( null );
+        }
     }
 }

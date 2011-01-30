@@ -37,6 +37,7 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.event.CDockableLocationListener;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
@@ -106,6 +107,9 @@ public abstract class AbstractCDockable implements CDockable {
     /** the listeners that were added to this dockable */
     protected CListenerCollection listenerCollection = new CListenerCollection();
     
+    /** handles the {@link CDockableLocationListener}s */
+    private CDockableLocationListenerManager locationListenerManager;
+    
     /** support class to fire {@link CVetoClosingEvent}s */
     private ControlVetoClosingListener vetoClosingListenerConverter;
     
@@ -122,7 +126,7 @@ public abstract class AbstractCDockable implements CDockable {
      * Creates a new dockable
      */
     protected AbstractCDockable(){
-        // nothing
+    	// nothing
     }
     
     /**
@@ -170,12 +174,30 @@ public abstract class AbstractCDockable implements CDockable {
         listenerCollection.addCDockablePropertyListener( listener );
     }
     
+    public void addCDockableLocationListener( CDockableLocationListener listener ){
+    	if( locationListenerManager == null ){
+    		locationListenerManager = new CDockableLocationListenerManager( this );
+    	}
+    	boolean has = listenerCollection.hasCDockableLocationListeners();
+	    listenerCollection.addCDockableLocationListener( listener );	
+	    if( !has ){
+	    	locationListenerManager.setListener( listenerCollection.getCDockableLocationListener() );
+	    }
+    }
+    
     public void removeCDockableStateListener( CDockableStateListener listener ){
         listenerCollection.removeCDockableStateListener( listener );
+        if( locationListenerManager != null && !listenerCollection.hasCDockableLocationListeners() ){
+        	locationListenerManager.setListener( null );
+        }
     }
     
     public void removeCDockablePropertyListener( CDockablePropertyListener listener ) {
         listenerCollection.removeCDockablePropertyListener( listener );
+    }
+    
+    public void removeCDockableLocationListener( CDockableLocationListener listener ){
+    	listenerCollection.removeCDockableLocationListener( listener );
     }
     
     public void addFocusListener( CFocusListener listener ){

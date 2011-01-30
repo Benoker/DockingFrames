@@ -230,6 +230,14 @@ public abstract class AbstractDockable implements Dockable {
     }
     
     /**
+     * Gets the manager which is responsible for handling {@link DockableStateListener}s.
+     * @return the manager, not <code>null</code>
+     */
+    protected DockableStateListenerManager getDockableStateListeners(){
+		return dockableStateListeners;
+	}
+    
+    /**
      * Access to the {@link DockableStateListenerManager} which can be used to fire {@link DockableStateEvent}s. This method
      * is intended to be used by subclasses that implement {@link DockStation}.
      * @return the listeners

@@ -12,17 +12,16 @@ import bibliothek.gui.dock.util.Priority;
 
 public class EclipseThemeExtension implements DockThemeExtension{
 	private DockTheme trigger;
-	private EclipseTheme theme;
 	
 	public EclipseThemeExtension( DockTheme trigger, EclipseTheme theme ){
 		this.trigger = trigger;
-		this.theme = theme;
+		
+		theme.setMovingImageFactory( new CMiniPreviewMovingImageFactory( 128 ), Priority.THEME );
+		theme.setPaint( new CGlassStationPaint(), Priority.THEME );
 	}
 	
 	public void install( DockController controller, DockTheme theme ){
-		if( theme == this.theme ){
-			this.theme.setMovingImageFactory( new CMiniPreviewMovingImageFactory( 128 ), Priority.THEME );
-		}
+		// nothing to do
 	}
 	
 	public void installed( DockController controller, DockTheme theme ){

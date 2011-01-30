@@ -32,6 +32,8 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -331,6 +333,18 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         		lastSelectedDockable = newSelection;
         	}
 		});
+        
+		panel.addHierarchyListener( new HierarchyListener(){
+			public void hierarchyChanged( HierarchyEvent e ){
+				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
+					if( getDockParent() == null ){
+						getDockableStateListeners().checkVisibility();
+					}
+					
+					visibility.fire();
+				}
+			}
+		});
     }
     
     /**
@@ -558,6 +572,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             for( StationChildHandle handle : dockables.dockables() ){
             	handle.setTitleRequest( title, true );
             }
+            
+            visibility.fire();
         }
     }
     

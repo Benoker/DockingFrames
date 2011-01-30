@@ -1646,6 +1646,10 @@ public class ScreenDockStation extends AbstractDockStation {
     public boolean isStationVisible(){
     	return isShowing();
     }
+    
+    public boolean isVisible( Dockable dockable ){
+	    return isStationVisible();
+    }
         
     public Rectangle getStationBounds() {
         return null;

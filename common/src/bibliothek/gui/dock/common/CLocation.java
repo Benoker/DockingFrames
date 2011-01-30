@@ -55,6 +55,8 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * 	CContentArea area = ...
  * 	CLocation location = CLocation.base( area ).normalRectangle( 0.25, 0.25, 0.5, 0.5 );
  * </pre>
+ * Two {@link CLocation}s are to be considered equal if {@link #findRoot()}, {@link #findMode()} and
+ * {@link #findProperty()} return the same value.
  * @author Benjamin Sigg
  */
 public abstract class CLocation {
@@ -213,4 +215,46 @@ public abstract class CLocation {
 	 * @return the new location
 	 */
 	public abstract CLocation aside();
+	
+	@Override
+	public boolean equals( Object obj ){
+		if( obj instanceof CLocation ){
+			CLocation that = (CLocation)obj;
+			return equals( findRoot(), that.findRoot() ) &&
+				equals( findMode(), that.findMode() ) &&
+				equals( findProperty(), that.findProperty() );
+		}
+		return false;
+	}
+	
+	private boolean equals( Object a, Object b ){
+		if( a == b ){
+			return true;
+		}
+		if( a == null && b != null ){
+			return false;
+		}
+		return a != null && a.equals( b );
+	}
+
+	@Override
+	public int hashCode(){
+		Object root = findRoot();
+		Object mode = findMode();
+		Object property = findProperty();
+		
+		int result = 0;
+		if( root != null ){
+			result = root.hashCode();
+		}
+		result *= 31;
+		if( mode != null ){
+			result += mode.hashCode();
+		}
+		result *= 31;
+		if( property != null ){
+			result += property.hashCode();
+		}
+		return result;
+	}
 }

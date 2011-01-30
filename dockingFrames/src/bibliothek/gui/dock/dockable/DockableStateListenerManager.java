@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.dockable;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,15 +37,19 @@ import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 
 /**
- * A handler for invoking {@link DockableStateListener}s. Can be used by {@link Dockable}s.
+ * A handler for invoking {@link DockableStateListener}s. Can be used by {@link Dockable}s.<br>
+ * <b>Note:</b>
+ * <ul>
+ * 	<li>This listener does not create any new information, it only combines events from other listeners.</li>
+ * 	<li>This listener receives its events delayed in order to put as much information as possible into one event.</li>
+ * 	<li>Due to this delay, this listener may seem to receive events too late. However, once all events are received, the
+ * 	state described by this listener and by other listeners matches again.</li>
+ * </ul>
  * @author Benjamin Sigg
  */
 public class DockableStateListenerManager {
 	/** all the listeners that are currently registered */
 	private List<DockableStateListener> listeners = new ArrayList<DockableStateListener>();
-
-	/** whether events can be fired */
-	private int count = 0;
 
 	/** the currently pending events */
 	private int current = 0;
@@ -57,16 +62,17 @@ public class DockableStateListenerManager {
 
 	/** whether {@link #dockable} currently is visible */
 	private boolean dockableVisible;
+	
+	/** whether an event is about to be fired */
+	private boolean firing = false;
 
 	/** this listener is added to the parent of {@link #dockable} and forwards an event if it is triggered */
 	private DockableStateListener dockableStateListener = new DockableStateListener(){
 		public void changed( DockableStateEvent event ){
-			arm();
-
 			int flags = event.getFlags();
-			if( event.didPositionChange() ) {
-				flags &= ~DockableStateEvent.FLAG_POSITION_CHANGED;
-				flags |= DockableStateEvent.FLAG_PARENT_POSITION_CHANGED;
+			if( event.didLocationChange() ) {
+				flags &= ~DockableStateEvent.FLAG_LOCATION_CHANGED;
+				flags |= DockableStateEvent.FLAG_PARENT_LOCATION_CHANGED;
 			}
 			
 			if( event.didParentSelectionChange() ){
@@ -86,7 +92,6 @@ public class DockableStateListenerManager {
 			}
 
 			event( flags );
-			fire();
 		}
 	};
 
@@ -108,10 +113,8 @@ public class DockableStateListenerManager {
 				parent.addDockStationListener( dockStationListener );
 			}
 			
-			arm();
 			event( DockableStateEvent.FLAG_HIERARCHY );
-			eventVisibility();
-			fire();
+			checkVisibility();
 		}
 
 		public void controllerChanged( DockHierarchyEvent event ){
@@ -123,24 +126,20 @@ public class DockableStateListenerManager {
 	private DockStationListener dockStationListener = new DockStationAdapter(){
 		public void dockableVisibiltySet( DockStation station, Dockable changed, boolean visible ){
 			if( changed == dockable ){
-				eventVisibility();
+				checkVisibility();
 			}
 		}
 
 		public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection ){
 			if( oldSelection == dockable || newSelection == dockable ){
-				arm();
 				event( DockableStateEvent.FLAG_SELECTION );
-				fire();
 			}
 		}
 		
 		public void dockablesRepositioned( DockStation station, Dockable[] dockables ){
 			for( Dockable check : dockables ){
 				if( check == dockable ){
-					arm();
-					event( DockableStateEvent.FLAG_POSITION_CHANGED );
-					fire();		
+					event( DockableStateEvent.FLAG_LOCATION_CHANGED );
 					break;
 				}
 			}
@@ -155,14 +154,15 @@ public class DockableStateListenerManager {
 		this.dockable = dockable;
 	}
 	
-	private void eventVisibility(){
+	/**
+	 * Rechecks the visibility state and may fire an event if the visibility changed.
+	 */
+	public void checkVisibility(){
 		boolean newVisible = dockable.isDockableVisible();
 		
 		if( dockableVisible != newVisible ){
-			arm();
 			dockableVisible = newVisible;
 			event( DockableStateEvent.FLAG_VISIBILITY );
-			fire();
 		}
 	}
 	
@@ -202,46 +202,27 @@ public class DockableStateListenerManager {
 	}
 
 	/**
-	 * Prepares this observer for combining several events and fire them together. Has to be
-	 * followed by a call to {@link #fire()}. This method may be called more than once in a 
-	 * row, in this case {@link #fire()} has to be called multiple times too.
-	 */
-	public void arm(){
-		count++;
-	}
-
-	/**
 	 * Informs this observer that <code>dockable</code> changed. The flags are created using the 
 	 * constants from {@link DockableStateEvent}.
 	 * @param flags the changes
 	 */
 	public void event( int flags ){
-		if( count == 0 ) {
-			throw new IllegalStateException( "this observer is not armed" );
-		}
-
 		current |= flags;
-	}
-
-	/**
-	 * Combines all collected events since the call to {@link #arm()} and fires them. If {@link #arm()}
-	 * was called more than once, then this method does nothing until it was called the same number of
-	 * times.
-	 */
-	public void fire(){
-		if( count == 0 ) {
-			throw new IllegalStateException( "observer is not armed" );
-		}
-		count--;
-		if( count == 0 ) {
-			fireNow();
+		if( !firing ){
+			firing = true;
+			EventQueue.invokeLater( new Runnable(){
+				public void run(){
+					firing = false;
+					fireNow();
+				}
+			});
 		}
 	}
 
 	/**
 	 * Combines all collected events and fires them now.
 	 */
-	public void fireNow(){
+	private void fireNow(){
 		if( current != 0 ) {
 			if( listeners.size() > 0 ) {
 				DockableStateEvent event = new DockableStateEvent( dockable, current );

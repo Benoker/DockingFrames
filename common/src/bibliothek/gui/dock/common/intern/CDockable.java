@@ -38,6 +38,7 @@ import bibliothek.gui.dock.common.DefaultMultipleCDockable;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.event.CDockableLocationListener;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
@@ -129,6 +130,13 @@ public interface CDockable {
 	public void addCDockablePropertyListener( CDockablePropertyListener listener );
 	
 	/**
+	 * Adds a listener to this dockable which gets informed if the location or
+	 * the visibility changes. 
+	 * @param listener the new listener
+	 */
+	public void addCDockableLocationListener( CDockableLocationListener listener );
+	
+	/**
 	 * Removes a state listener from this dockable.
 	 * @param listener the listener to remove
 	 */
@@ -139,6 +147,12 @@ public interface CDockable {
      * @param listener the listener to remove
      */
 	public void removeCDockablePropertyListener( CDockablePropertyListener listener );
+	
+	/**
+	 * Removes <code>listener</code> from this dockable
+	 * @param listener the listener to remove
+	 */
+	public void removeCDockableLocationListener( CDockableLocationListener listener );
 	
 	/**
 	 * Adds a focus listener to this dockable. The focus listener gets informed

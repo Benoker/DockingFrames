@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -29,7 +29,6 @@ package bibliothek.gui.dock.station;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.io.IOException;
 
 import javax.swing.Icon;
@@ -156,10 +155,7 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
     		return true;
     	}
     	if( getController() != null ){
-    		Window window = SwingUtilities.getWindowAncestor( getComponent() );
-    		if( window != null ){
-    			return window.isVisible();
-    		}
+    		return getComponent().isShowing();
     	}
     	return false;
     }

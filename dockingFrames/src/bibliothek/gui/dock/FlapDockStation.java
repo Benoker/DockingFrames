@@ -36,6 +36,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -308,6 +309,8 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /** A listener that is added to the parent of this dockable station. */
     private VisibleListener visibleListener = new VisibleListener();
+    /** the last checked state of {@link #isDockableVisible()} */
+    private boolean lastVisible = false;
     /** A list of listeners that were added to this station */
     private List<FlapDockListener> flapDockListeners = new ArrayList<FlapDockListener>();
     
@@ -376,6 +379,17 @@ public class FlapDockStation extends AbstractDockableStation {
                     updateWindowBounds();
             }
         });
+        
+		buttonPane.addHierarchyListener( new HierarchyListener(){
+			public void hierarchyChanged( HierarchyEvent e ){
+				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
+					if( getDockParent() == null ){
+						getDockableStateListeners().checkVisibility();
+					}
+					checkVisibility();
+				}
+			}
+		});
         
         holdAction = createHoldAction();
     }
@@ -498,6 +512,8 @@ public class FlapDockStation extends AbstractDockableStation {
             
             windowFactory.setProperties( controller );
             buttonPane.resetTitles();
+            
+            visibility.fire();
         }
     }
     
@@ -1967,6 +1983,26 @@ public class FlapDockStation extends AbstractDockableStation {
     	return -1;
     }
 
+    private void checkVisibility(){
+    	boolean visible = isDockableVisible();
+    	if( visible != lastVisible ){
+    		lastVisible = visible;
+            
+            if( visible ){
+                if( oldFrontDockable != null )
+                    setFrontDockable( oldFrontDockable );
+            }
+            else{
+                oldFrontDockable = getFrontDockable();
+                setFrontDockable( null );
+                if( !isHold( oldFrontDockable ))
+                    oldFrontDockable = null;
+            }
+            
+            visibility.fire();
+    	}
+    }
+    
     /**
      * This listener is added to the direct parent of the enclosing
      * {@link FlapDockListener}. The listener fires events if the visibility
@@ -1975,28 +2011,10 @@ public class FlapDockStation extends AbstractDockableStation {
      * @author Benjamin Sigg
      */
     private class VisibleListener extends DockStationAdapter{
-        /** The last known state. Used to react only if real changes happen */
-        private boolean visible = false;
-        
         @Override
         public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ) {
-            if( visible != this.visible ){
-                if( dockable == FlapDockStation.this ){
-                    this.visible = visible;
-                    
-                    if( visible ){
-                        if( oldFrontDockable != null )
-                            setFrontDockable( oldFrontDockable );
-                    }
-                    else{
-                        oldFrontDockable = getFrontDockable();
-                        setFrontDockable( null );
-                        if( !isHold( oldFrontDockable ))
-                            oldFrontDockable = null;
-                    }
-                    
-                    visibility.fire();
-                }
+        	if( dockable == FlapDockStation.this ){
+        		checkVisibility();
             }
         }
     }

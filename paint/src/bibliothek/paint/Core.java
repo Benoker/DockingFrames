@@ -27,7 +27,15 @@ package bibliothek.paint;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -35,7 +43,11 @@ import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.menu.*;
+import bibliothek.gui.dock.common.menu.CLayoutChoiceMenuPiece;
+import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
+import bibliothek.gui.dock.common.menu.CPreferenceMenuPiece;
+import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
+import bibliothek.gui.dock.common.menu.SingleCDockableListMenuPiece;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;
 import bibliothek.gui.dock.facile.menu.SubmenuPiece;
 import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
@@ -80,8 +92,8 @@ public class Core {
         frame.setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
         frame.setIconImage( Resources.toImage( Resources.getIcon( "application" ) ) );
         
-        CControl control = new CControl( frame, secure );
-
+        final CControl control = new CControl( frame, secure );
+                
         RootMenuPiece settings = new RootMenuPiece( "View", false );
         settings.add( new SingleCDockableListMenuPiece( control ));
         settings.add( new SeparatingMenuPiece( new CLayoutChoiceMenuPiece( control, false ), true, false, false ));
@@ -94,7 +106,7 @@ public class Core {
         JMenuBar bar = new JMenuBar();
         bar.add( settings.getMenu() );
         bar.add( layout.getMenu() );
-        
+
         frame.setJMenuBar( bar );
         
         frame.getContentPane().add( control.getContentArea() );

@@ -67,8 +67,7 @@ public class DockableVisibilityManager extends DockStationAdapter{
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable(i);
             boolean visible = station.isVisible( dockable );
-            if( !visibility.containsKey( dockable ) || 
-                    visibility.get( dockable ) != visible ){
+            if( !visibility.containsKey( dockable ) || visibility.get( dockable ) != visible ){
                 listeners.fireDockableVisibilitySet( dockable, visible );
                 visibility.put( dockable, visible );
             }

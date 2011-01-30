@@ -25,11 +25,21 @@
  */
 package bibliothek.paint.view;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
@@ -55,7 +65,7 @@ public class ColorDockable extends DefaultSingleCDockable{
 	public ColorDockable( ViewManager manager ){
 		super( "ColorDockable" );
 		this.manager = manager;
-		
+
 		setCloseable( true );
 		setMinimizable( true );
 		setExternalizable( true );

@@ -16,59 +16,62 @@ import bibliothek.gui.dock.util.color.ColorCodes;
 
 @ColorCodes( {"glass.paint.divider", "glass.paint.insertion", "glass.paint.line"})
 public class CGlassStationPaint implements StationPaint {
-   private final StationPaintColor color = new StationPaintColor("glass.paint", this, Color.GRAY) {
-      @Override
-      protected void changed (Color oldColor, Color newColor) {
-      // ignore
-      }
-   };
+	private final StationPaintColor color = new StationPaintColor("glass.paint", this, Color.GRAY) {
+		@Override
+		protected void changed (Color oldColor, Color newColor) {
+			// ignore
+		}
+	};
 
-   public void drawDivider (Graphics g, DockStation station, Rectangle bounds) {
-      if (station instanceof SplitDockStation && !((SplitDockStation)station).isContinousDisplay()) {
-         Graphics2D g2 = (Graphics2D)g.create();
-         g2.setColor(Color.BLACK);
-         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.8f));
+	public void drawDivider (Graphics g, DockStation station, Rectangle bounds) {
+		if (station instanceof SplitDockStation && !((SplitDockStation)station).isContinousDisplay()) {
+			color.setId( "glass.paint.divider" );
+			color.connect( station.getController() );
+			
+			Graphics2D g2 = (Graphics2D)g.create();
+			g2.setColor(color.value());
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.8f));
+			g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+			g2.dispose();
+			
+			color.connect( null );
+		}
+	}
 
-         g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+	public void drawInsertion (Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds) {
+		color.setId("glass.paint.insertion");
+		color.connect(station.getController());
 
-         g2.dispose();
-      }
-   }
+		Graphics2D g2 = (Graphics2D)g.create();
+		g2.setColor(color.value());
+		//      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setStroke(new BasicStroke(3f));
 
-   public void drawInsertion (Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds) {
-      color.setId("glass.paint.insertion");
-      color.connect(station.getController());
+		int x = dockableBounds.x + 1;
+		int y = dockableBounds.y + 1;
+		int w = dockableBounds.width - 3;
+		int h = dockableBounds.height - 3;
 
-      Graphics2D g2 = (Graphics2D)g.create();
-      g2.setColor(color.value());
-      //      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2.setStroke(new BasicStroke(3f));
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f));
+		g2.drawRect(x, y, w, h);
+		g2.fillRect(x, y, w + 1, h + 1);
 
-      int x = dockableBounds.x + 1;
-      int y = dockableBounds.y + 1;
-      int w = dockableBounds.width - 3;
-      int h = dockableBounds.height - 3;
+		g2.dispose();
 
-      g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.4f));
-      g2.drawRect(x, y, w, h);
-      g2.fillRect(x, y, w + 1, h + 1);
+		color.connect(null);
+	}
 
-      g2.dispose();
+	public void drawInsertionLine (Graphics g, DockStation station, int x1, int y1, int x2, int y2) {
+		color.setId("glass.paint.line");
+		color.connect(station.getController());
 
-      color.connect(null);
-   }
+		Graphics2D g2d = (Graphics2D)g.create();
+		g2d.setStroke(new BasicStroke(3f));
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.6f));
+		g2d.setColor(color.value());
+		g2d.drawLine(x1, y1, x2, y2);
+		g2d.dispose();
 
-   public void drawInsertionLine (Graphics g, DockStation station, int x1, int y1, int x2, int y2) {
-      color.setId("glass.paint.line");
-      color.connect(station.getController());
-
-      Graphics2D g2d = (Graphics2D)g.create();
-      g2d.setStroke(new BasicStroke(3f));
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.6f));
-      g2d.setColor(color.value());
-      g2d.drawLine(x1, y1, x2, y2);
-      g2d.dispose();
-
-      color.connect(null);
-   }
+		color.connect(null);
+	}
 }

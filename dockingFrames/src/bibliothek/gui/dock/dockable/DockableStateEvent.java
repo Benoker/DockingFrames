@@ -36,10 +36,10 @@ import bibliothek.gui.Dockable;
  */
 public class DockableStateEvent {
 	/** Indicates that the internal location of the {@link Dockable} on its {@link DockStation} changed. */
-	public static final int FLAG_POSITION_CHANGED = 1;
+	public static final int FLAG_LOCATION_CHANGED = 1;
 
 	/** Indicates that the internal location of one of the anchestors of the {@link Dockable} changed */
-	public static final int FLAG_PARENT_POSITION_CHANGED = 2;
+	public static final int FLAG_PARENT_LOCATION_CHANGED = 2;
 
 	/** Indicates that the {@link Dockable} was either made visible or invisible to the user */
 	public static final int FLAG_VISIBILITY = 4;
@@ -108,17 +108,17 @@ public class DockableStateEvent {
 	 * than before.
 	 * @return whether the position changed
 	 */
-	public boolean didPositionChange(){
-		return (flags & FLAG_POSITION_CHANGED) == FLAG_POSITION_CHANGED;
+	public boolean didLocationChange(){
+		return (flags & FLAG_LOCATION_CHANGED) == FLAG_LOCATION_CHANGED;
 	}
 
 	/**
 	 * Tells whether the position of one of the anchestors of {@link #getDockable() dockable} changed. This
-	 * event is cased if an event with {@link #didPositionChange()} was found for one of the anchestors.
+	 * event is cased if an event with {@link #didLocationChange()} was found for one of the anchestors.
 	 * @return whether an anchestor changed its position
 	 */
-	public boolean didParentPositionChange(){
-		return (flags & FLAG_PARENT_POSITION_CHANGED) == FLAG_PARENT_POSITION_CHANGED;
+	public boolean didParentLocationChange(){
+		return (flags & FLAG_PARENT_LOCATION_CHANGED) == FLAG_PARENT_LOCATION_CHANGED;
 	}
 
 	/**
@@ -136,5 +136,42 @@ public class DockableStateEvent {
 	 */
 	public boolean didHierarchyChange(){
 		return (flags & FLAG_HIERARCHY) == FLAG_HIERARCHY;
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder( getClass().getSimpleName() );
+		builder.append( "[" );
+		boolean comma = false;
+		if( didHierarchyChange() ){
+			builder.append( "HIERARCHY" );
+			comma = true;
+		}
+		if( didParentLocationChange() ){
+			if( comma ){
+				builder.append( ", " );
+			}
+			builder.append( "PARENT LOCATION" );
+		}
+		if( didLocationChange() ){
+			if( comma ){
+				builder.append( ", " );
+			}
+			builder.append( "LOCATION" );
+		}
+		if( didSelectionChange() ){
+			if( comma ){
+				builder.append( ", " );
+			}
+			builder.append( "SELECTION" );
+		}
+		if( didVisibilityChange() ){
+			if( comma ){
+				builder.append( ", " );
+			}
+			builder.append( "VISIBILITY" );
+		}
+		builder.append( "]" );
+		return builder.toString();
 	}
 }

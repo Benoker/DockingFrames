@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.event.CDockableLocationEvent;
+import bibliothek.gui.dock.common.event.CDockableLocationListener;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
@@ -210,6 +212,16 @@ public class CListenerCollection {
 			}
 		}
 	};
+	
+	private List<CDockableLocationListener> locationListeners = new ArrayList<CDockableLocationListener>();
+	
+	private CDockableLocationListener locationListener = new CDockableLocationListener(){
+		public void changed( CDockableLocationEvent event ){
+			for( CDockableLocationListener listener : getCDockableLocationListeners() ){
+				listener.changed( event );
+			}
+		}
+	};
     
     /**
      * Stores an additional {@link CDockableStateListener} in this collection.
@@ -236,6 +248,51 @@ public class CListenerCollection {
      */
     public CDockableStateListener[] getCDockableStateListeners(){
         return stateListeners.toArray( new CDockableStateListener[ stateListeners.size() ] );
+    }
+    
+    /**
+     * Gets a {@link CDockableLocationListener} which forwards all calls to its
+     * methods to the listeners registered at this collection.
+     * @return a forwarding listener
+     */
+    public CDockableLocationListener getCDockableLocationListener(){
+        return locationListener;
+    }
+    
+    /**
+     * Tells whether at least one {@link CDockableStateListener} is currently
+     * registered.
+     * @return <code>true</code> if there is at least one listener
+     */
+    public boolean hasCDockableLocationListeners(){
+    	return locationListeners.size() > 0;
+    }
+    
+    /**
+     * Stores an additional {@link CDockableLocationListener} in this collection.
+     * @param listener the additional listener
+     */
+    public void addCDockableLocationListener( CDockableLocationListener listener ){
+        if( listener == null )
+            throw new IllegalArgumentException( "listener must not be null" );
+        locationListeners.add( listener );
+    }
+    
+    /**
+     * Removes a listener from this collection
+     * @param listener the listener to remove
+     */
+    public void removeCDockableLocationListener( CDockableLocationListener listener ){
+        locationListeners.remove( listener );
+    }
+    
+    /**
+     * Gets all currently registered {@link CDockableLocationListener}s collected
+     * in an array. Modifications of the array will not modify this collection.
+     * @return the independent array of listeners
+     */
+    public CDockableLocationListener[] getCDockableLocationListeners(){
+        return locationListeners.toArray( new CDockableLocationListener[ locationListeners.size() ] );
     }
     
     /**
