@@ -53,7 +53,8 @@ public class CExtendedModeLocation extends CLocation{
 		return this;
 	}
 
-	public CLocation expandProperty( DockableProperty property ){
+	@Override
+	public CLocation expandProperty( DockableProperty property, CLocationExpandStrategy strategy ){
 		return null;
 	}
 

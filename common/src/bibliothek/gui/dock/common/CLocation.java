@@ -30,10 +30,12 @@ import bibliothek.gui.dock.common.location.CBaseLocation;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.common.location.CFlapIndexLocation;
 import bibliothek.gui.dock.common.location.CGridAreaLocation;
+import bibliothek.gui.dock.common.location.CLocationExpandStrategy;
 import bibliothek.gui.dock.common.location.CMaximalExternalizedLocation;
 import bibliothek.gui.dock.common.location.CMaximizedLocation;
 import bibliothek.gui.dock.common.location.CMinimizeAreaLocation;
 import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
+import bibliothek.gui.dock.common.location.DefaultExpandStrategy;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 
@@ -207,7 +209,29 @@ public abstract class CLocation {
 	 * <code>property</code> again, or <code>null</code> in case that <code>property</code>
 	 * can't be used
 	 */
-	public abstract CLocation expandProperty( DockableProperty property );
+	public final CLocation expandProperty( DockableProperty property ){
+		return expandProperty( property, new DefaultExpandStrategy() );
+	}
+	
+	/**
+	 * Tries to create a location that resembles <code>property</code>.
+	 * @param property some location
+	 * @param strategy a strategy helping to convert the properties
+	 * @return a location whose {@link #findProperty()} would create 
+	 * <code>property</code> again, or <code>null</code> in case that <code>property</code>
+	 * can't be used
+	 */
+	public CLocation expandProperty( DockableProperty property, CLocationExpandStrategy strategy ){
+		CLocation location = strategy.expand( this, property );
+		if( location == null ){
+			return null;
+		}
+		property = property.getSuccessor();
+		if( property == null ){
+			return location;
+		}
+		return location.expandProperty( property, strategy );
+	}
 	
 	/**
 	 * Returns a {@link CLocation} that describes the location of an element

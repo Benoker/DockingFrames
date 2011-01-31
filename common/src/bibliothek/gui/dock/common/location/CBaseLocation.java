@@ -199,8 +199,8 @@ public class CBaseLocation extends CLocation{
 	}
 	
 	@Override
-	public CLocation expandProperty( DockableProperty property ) {
-	    return null;
+	public CLocation expandProperty( DockableProperty property, CLocationExpandStrategy strategy ){
+		return null;
 	}
 	
 	@Override

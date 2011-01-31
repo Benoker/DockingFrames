@@ -208,4 +208,31 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
         SwingUtilities.convertPointToScreen( location, component );
         return new Rectangle( location.x, location.y, component.getWidth(), component.getHeight() );
     }
+    
+
+    /**
+     * Invokes {@link DockStationListenerManager#fireDockablesRepositioned(Dockable...)} for
+     * all children starting at index <code>fromIndex</code>.
+     * @param fromIndex the index of the first moved child
+     */
+    protected void fireDockablesRepositioned( int fromIndex ){
+    	fireDockablesRepositioned( fromIndex, getDockableCount()-1 );
+    }
+    
+    /**
+     * Invokes {@link DockStationListenerManager#fireDockablesRepositioned(Dockable...)} for
+     * all children starting at index <code>fromIndex</code> to index <code>toIndex</code>.
+     * @param fromIndex the index of the first moved child
+     * @param toIndex the index of the last moved child
+     */
+    protected void fireDockablesRepositioned( int fromIndex, int toIndex ){
+        int count = toIndex - fromIndex + 1;
+        if( count > 0 ){
+        	Dockable[] moved = new Dockable[count];
+        	for( int i = 0; i < count; i++ ){
+        		moved[i] = getDockable( i+fromIndex );
+        	}
+        	listeners.fireDockablesRepositioned( moved );
+        }
+    }
 }

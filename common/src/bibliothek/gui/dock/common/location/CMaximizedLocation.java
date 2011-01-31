@@ -32,7 +32,7 @@ import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
 
 /**
  * A location representing the maximized state. If no root-station is set,
- * then, the location of a maximized element depends on its location before
+ * then the location of a maximized element depends on its location before
  * maximization.
  * @author Benjamin Sigg
  */

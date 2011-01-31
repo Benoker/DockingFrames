@@ -35,7 +35,25 @@ import bibliothek.gui.dock.station.flap.FlapDockProperty;
  * A location which represents a {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
-public abstract class CFlapLocation extends CLocation{
+public class CFlapLocation extends CLocation{
+	/** the parent of this location */
+	private CLocation parent; 
+	
+	/**
+	 * Creates a new location
+	 */
+	public CFlapLocation(){
+		// nothing
+	}
+	
+	/**
+	 * Creates a new location
+	 * @param parent
+	 */
+	public CFlapLocation( CLocation parent ){
+		this.parent = parent;
+	}
+	
     /**
      * Creates a location to append children at the end of the station.
      * @return the location marking the last position
@@ -53,29 +71,53 @@ public abstract class CFlapLocation extends CLocation{
         return new CFlapIndexLocation( this, index );
     }
 
+    /**
+     * Gets the parent location of this location.
+     * @return the parent location, can be <code>null</code>
+     */
+    public CLocation getParent(){
+		return parent;
+	}
+    
     @Override
     public CLocation aside() {
         return this;
     }
     
     @Override
-    public CLocation expandProperty( DockableProperty property ) {
-        if( property instanceof FlapDockProperty ){
-            FlapDockProperty flap = (FlapDockProperty)property;
-            return insert( flap.getIndex() );
-        }
-        return null;
-    }
-
-    @Override
     public ExtendedMode findMode() {
+    	if( parent != null ){
+    		return parent.findMode();
+    	}
+    	
         return ExtendedMode.MINIMIZED;
+    }
+    
+    @Override
+    public String findRoot(){
+    	if( parent != null ){
+    		return parent.findRoot();
+    	}
+    	return null;
     }
 
     @Override
     public DockableProperty findProperty( DockableProperty successor ) {
         FlapDockProperty property = new FlapDockProperty( Integer.MAX_VALUE );
         property.setSuccessor( successor );
+        if( parent != null ){
+        	return parent.findProperty( property );
+        }
         return property;
+    }
+    
+    @Override
+    public String toString(){
+	    if( parent == null ){
+	    	return "[flap]";
+	    }
+	    else{
+	    	return parent.toString() + " [flap]";
+	    }
     }
 }

@@ -44,6 +44,8 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CBaseLocation;
+import bibliothek.gui.dock.common.location.CMinimizedLocation;
+import bibliothek.gui.dock.common.location.Side;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
 import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
@@ -166,10 +168,10 @@ public class CContentArea extends JPanel{
 
 		stations = new CStation[]{
 				new CenterStation( center, getCenterIdentifier(), base.normal() ),
-				new MinimizeStation( north, getNorthIdentifier(), base.minimalNorth() ),
-				new MinimizeStation( south, getSouthIdentifier(), base.minimalSouth() ),
-				new MinimizeStation( east, getEastIdentifier(), base.minimalEast() ),
-				new MinimizeStation( west, getWestIdentifier(), base.minimalWest() )
+				new MinimizeStation( north, getNorthIdentifier(), new CMinimizedLocation( base, Side.NORTH ) ),
+				new MinimizeStation( south, getSouthIdentifier(), new CMinimizedLocation( base, Side.SOUTH ) ),
+				new MinimizeStation( east, getEastIdentifier(), new CMinimizedLocation( base, Side.EAST ) ),
+				new MinimizeStation( west, getWestIdentifier(), new CMinimizedLocation( base, Side.WEST ) )
 		};
 	}
 

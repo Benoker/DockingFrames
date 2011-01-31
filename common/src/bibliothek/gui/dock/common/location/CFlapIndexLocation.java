@@ -78,27 +78,18 @@ public class CFlapIndexLocation extends AbstractStackholdingLocation{
     public DockableProperty findProperty( DockableProperty successor ) {
         FlapDockProperty property = new FlapDockProperty( index );
         property.setSuccessor( successor );
+        
+        CLocation parent = this.parent.getParent();
+        if( parent != null ){
+        	return parent.findProperty( property );
+        }
+        
         return property;
     }
 
     @Override
     public String findRoot() {
         return parent.findRoot();
-    }
-    
-    @Override
-    public CLocation expandProperty( DockableProperty property ) {
-        if( property instanceof FlapDockProperty ){
-            int index = ((FlapDockProperty)property).getIndex();
-            CFlapIndexLocation location = new CFlapIndexLocation( parent, index );
-            DockableProperty successor = property.getSuccessor();
-            if( successor == null )
-                return location;
-            return location.expandProperty( successor );
-        }
-        else{
-            return super.expandProperty( property );
-        }
     }
     
     @Override

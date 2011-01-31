@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,29 +27,21 @@ package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
-import bibliothek.gui.dock.station.stack.StackDockProperty;
 
 /**
- * A location which can be parent of a stack (stack is also known as tabbed-pane).
+ * This strategy tells a {@link CLocation} how to represents a
+ * {@link DockableProperty}.
  * @author Benjamin Sigg
- *
  */
-public abstract class AbstractStackholdingLocation extends CLocation{
+public interface CLocationExpandStrategy {
 	/**
-	 * Creates a new stack inside this location.
-	 * @param index the tab the new location represents
-	 * @return a tab on a stack
+	 * Expands <code>location</code> by creating a new location that represents
+	 * <code>property</code>.
+	 * @param location the location to expand, not <code>null</code>
+	 * @param property the property to expand, not <code>null</code>, the 
+	 * {@link DockableProperty#getSuccessor() successor} can be ignored by this method.
+	 * @return the expanded location, can be <code>null</code> to indicate that
+	 * <code>property</code> could not be understood
 	 */
-	public CStackLocation stack( int index ){
-		return new CStackLocation( this, index );
-	}
-	
-	/**
-	 * Creates a new stack inside this location.
-	 * @return the tab at the very end of a stack
-	 */
-	public CStackLocation stack(){
-		return new CStackLocation( this );
-	}
+	public CLocation expand( CLocation location, DockableProperty property );
 }

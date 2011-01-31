@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.location;
 
+import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
@@ -41,12 +42,29 @@ public class CMaximalExternalizedLocation extends CExternalizedLocation{
 	 * @param width the width in pixel
 	 * @param height the height in pixel
 	 */
-	public CMaximalExternalizedLocation(int x, int y, int width, int height) {
+	public CMaximalExternalizedLocation( int x, int y, int width, int height ) {
 		super( x, y, width, height );
+	}
+	
+	/**
+	 * Creates a new location.
+	 * @param parent the parent location, can be <code>null</code>
+	 * @param x the x-coordinate in pixel
+	 * @param y the y-coordinate in pixel
+	 * @param width the width in pixel
+	 * @param height the height in pixel
+	 */
+	public CMaximalExternalizedLocation( CLocation parent, int x, int y, int width, int height ) {
+		super( parent, x, y, width, height );
 	}
 
 	@Override
 	public ExtendedMode findMode(){
+		CLocation parent = getParent();
+		if( parent != null ){
+			return parent.findMode();
+		}
+		
 		return ExtendedMode.MAXIMIZED;
 	}
 	
@@ -54,6 +72,12 @@ public class CMaximalExternalizedLocation extends CExternalizedLocation{
 	public DockableProperty findProperty( DockableProperty successor ){
 		ScreenDockProperty screen = new ScreenDockProperty( getX(), getY(), getWidth(), getHeight(), null, true );
 		screen.setSuccessor( successor );
+		
+		CLocation parent = getParent();
+		if( parent != null ){
+			return parent.findProperty( screen );
+		}
+		
 		return screen;
 	}
 	

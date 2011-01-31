@@ -415,3 +415,6 @@
 - Bugfix: Some StationPaints did not properly use the colors from the ColorManager
 - Bugfix: CGlassStationPaint was not applied when using the Glass extension
 - API: The new CDockableLocationListener can be used to observe location and visibility (to the user) of a CDockable
+
+[v1.1.0p5a]
+- Bugfix: StackDockStation and FlapDockStation did not fire dockablesRepositioned if its content was only moved

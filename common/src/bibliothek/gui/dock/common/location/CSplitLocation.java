@@ -29,15 +29,31 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.split.SplitDockPathProperty;
-import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 
 /**
  * This location is used to describe a {@link SplitDockStation}.
  * @author Benjamin Sigg
  */
-public abstract class CSplitLocation extends CLocation{
+public class CSplitLocation extends CLocation{
+	/** the parent location of this location */
+	private CLocation parent;
+	
+	/**
+	 * Creates a new location
+	 */
+	public CSplitLocation(){
+		// nothing
+	}
+	
+	/**
+	 * Creates a new location
+	 * @param parent the parent location, can be <code>null</code>
+	 */
+	public CSplitLocation( CLocation parent ){
+		this.parent = parent;
+	}
+	
     @Override
     public CLocation aside() {
         return this;
@@ -162,77 +178,38 @@ public abstract class CSplitLocation extends CLocation{
     }
     
     @Override
-    public CLocation expandProperty( DockableProperty property ) {
-        CLocation location = null;
-        
-        if( property instanceof SplitDockPlaceholderProperty ){
-        	property = ((SplitDockPlaceholderProperty)property).getBackup();
-        }
-        
-        if( property instanceof SplitDockProperty ){
-            SplitDockProperty split = (SplitDockProperty)property;
-            location = rectangle( split.getX(), split.getY(), split.getWidth(), split.getHeight() );
-        }
-        else if( property instanceof SplitDockPathProperty ){
-            SplitDockPathProperty path = (SplitDockPathProperty)property;
-            if( path.size() > 0 ){
-                AbstractTreeLocation tree = null;
-                SplitDockPathProperty.Node node = path.getNode( 0 );
-                switch( node.getLocation() ){
-                    case BOTTOM: 
-                        tree = south( node.getSize(), node.getId() ); 
-                        break;
-                    case LEFT:
-                        tree = west( node.getSize(), node.getId() );
-                        break;
-                    case RIGHT:
-                        tree = east( node.getSize(), node.getId() );
-                        break;
-                    case TOP:
-                        tree = north( node.getSize(), node.getId() );
-                        break;
-                }
-                
-                for( int i = 1, n = path.size(); i<n; i++ ){
-                    node = path.getNode( i );
-                    switch( node.getLocation() ){
-                        case BOTTOM:
-                            tree = tree.south( node.getSize(), node.getId() );
-                            break;
-                        case LEFT:
-                            tree = tree.west( node.getSize(), node.getId() );
-                            break;
-                        case RIGHT:
-                            tree = tree.east( node.getSize(), node.getId() );
-                            break;
-                        case TOP:
-                            tree = tree.north( node.getSize(), node.getId() );
-                            break;
-                    }
-                }
-                location = tree.leaf( path.getLeafId() );
-            }
-            else{
-                location = rectangle( 0, 0, 1, 1 );
-            }
-        }
-        
-        DockableProperty successor = property.getSuccessor();
-        if( successor == null )
-            return location;
-        else
-            return location.expandProperty( successor );
-    }
-
-    @Override
     public ExtendedMode findMode() {
+    	if( parent != null ){
+    		return parent.findMode();
+    	}
         return ExtendedMode.NORMALIZED;
     }
 
     @Override
+    public String findRoot(){
+    	if( parent != null ){
+    		return parent.findRoot();
+    	}
+    	return null;
+    }
+    
+    @Override
     public DockableProperty findProperty( DockableProperty successor ) {
         SplitDockProperty property = new SplitDockProperty( 0, 0, 1, 1 );
         property.setSuccessor( successor );
+        if( parent != null ){
+        	return parent.findProperty( property );
+        }
         return property;
+    }
+    
+    @Override
+    public String toString(){
+    	if( parent == null ){
+    		return "[split]";
+    	}
+    	else{
+    		return parent.toString() + " [split]";
+    	}
     }
 }

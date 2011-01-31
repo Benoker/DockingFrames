@@ -78,7 +78,6 @@ import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
@@ -1052,6 +1051,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	if( source != destination ){
     		dockables.dockables().move( source, destination );
     		stackComponent.moveTab( source, destination );
+    		
+    		fireDockablesRepositioned( Math.min( source, destination ), Math.max( source, destination ) );
     	}
     }
     
@@ -1215,22 +1216,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         listeners.fireDockableAdded( dockable );
         fireDockablesRepositioned( index+1 );
         fireDockableSelected();
-    }
-    
-    /**
-     * Invokes {@link DockStationListenerManager#fireDockablesRepositioned(Dockable...)} for
-     * all children starting at index <code>fromIndex</code>.
-     * @param fromIndex the index of the first moved child
-     */
-    private void fireDockablesRepositioned( int fromIndex ){
-        int count = getDockableCount() - fromIndex;
-        if( count > 0 ){
-        	Dockable[] moved = new Dockable[count];
-        	for( int i = 0; i < count; i++ ){
-        		moved[i] = getDockable( i+fromIndex );
-        	}
-        	listeners.fireDockablesRepositioned( moved );
-        }
     }
     
     /**

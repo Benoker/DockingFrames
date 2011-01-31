@@ -47,25 +47,6 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
         }
 
         @Override
-        public CLocation expandProperty( DockableProperty property ) {
-            if( property instanceof ScreenDockProperty ){
-                ScreenDockProperty screen = (ScreenDockProperty)property;
-                CLocation location;
-                if( screen.isFullscreen() ){
-                	location = new CMaximalExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
-                }
-                else {
-                	location = new CExternalizedLocation( screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight() );
-                }
-                DockableProperty successor = property.getSuccessor();
-                if( successor != null )
-                    location = location.expandProperty( successor );
-                return location;
-            }
-            return null;
-        }
-
-        @Override
         public ExtendedMode findMode() {
             return ExtendedMode.EXTERNALIZED;
         }
@@ -81,7 +62,10 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
         }
     };
     
-	/** the x-coordinate */
+    /** the parent location, can be <code>null</code> */
+    private CLocation parent;
+    
+    /** the x-coordinate */
 	private int x;
 	/** the y-coordinate */
 	private int y;
@@ -98,6 +82,19 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	 * @param height the height in pixel
 	 */
 	public CExternalizedLocation( int x, int y, int width, int height ){
+		this( null, x, y, width, height );
+	}
+	
+	/**
+	 * Creates a new location.
+	 * @param parent the parent location, can be <code>null</code>
+	 * @param x the x-coordinate in pixel
+	 * @param y the y-coordinate in pixel
+	 * @param width the width in pixel
+	 * @param height the height in pixel
+	 */
+	public CExternalizedLocation( CLocation parent, int x, int y, int width, int height ){
+		this.parent = parent;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -106,11 +103,17 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	
 	@Override
 	public String findRoot(){
+		if( parent != null ){
+			return parent.findRoot();
+		}
 		return CControl.EXTERNALIZED_STATION_ID;
 	}
 	
 	@Override
 	public ExtendedMode findMode(){
+		if( parent != null ){
+			return parent.findMode();
+		}
 		return ExtendedMode.EXTERNALIZED;
 	}
 	
@@ -118,6 +121,9 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	public DockableProperty findProperty( DockableProperty successor ){
 		ScreenDockProperty screen = new ScreenDockProperty( x, y, width, height );
 		screen.setSuccessor( successor );
+		if( parent != null ){
+			return parent.findProperty( screen );
+		}
 		return screen;
 	}
 	
@@ -138,6 +144,14 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 	@Override
 	public String toString() {
 	    return "[externalized " + x + " " + y + " " + width + " " + height + "]";
+	}
+	
+	/**
+	 * Gets the parent location, if there is any.
+	 * @return the parent location, can be <code>null</code>
+	 */
+	public CLocation getParent(){
+		return parent;
 	}
 	
 	/**

@@ -82,6 +82,9 @@ public class CRectangleLocation extends AbstractStackholdingLocation{
 	public DockableProperty findProperty( DockableProperty successor ){
 		SplitDockProperty split = new SplitDockProperty( x, y, width, height );
 		split.setSuccessor( successor );
+		if( parent != null ){
+			return parent.findProperty( split );
+		}
 		return split;
 	}
 

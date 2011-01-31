@@ -89,7 +89,6 @@ import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -1592,6 +1591,7 @@ public class FlapDockStation extends AbstractDockableStation {
 	    	}
 	    	handles.dockables().move( index, dropInfo.getIndex() );
 	    	buttonPane.resetTitles();
+	    	fireDockablesRepositioned( Math.min( index, dropInfo.getIndex() ), Math.max( index, dropInfo.getIndex() ) );
     	}
     }
     
@@ -1608,6 +1608,7 @@ public class FlapDockStation extends AbstractDockableStation {
             if( destination != index ){
             	handles.dockables().move( index, destination );
                 buttonPane.resetTitles();
+                fireDockablesRepositioned( Math.min( index, destination ), Math.max( index, destination ) );
             }
         }
     }
@@ -1767,22 +1768,6 @@ public class FlapDockStation extends AbstractDockableStation {
         listeners.fireDockableAdded( dockable );
         
         fireDockablesRepositioned( index+1 );
-    }
-    
-    /**
-     * Invokes {@link DockStationListenerManager#fireDockablesRepositioned(Dockable...)} for
-     * all children starting at index <code>fromIndex</code>.
-     * @param fromIndex the index of the first moved child
-     */
-    private void fireDockablesRepositioned( int fromIndex ){
-        int count = getDockableCount() - fromIndex;
-        if( count > 0 ){
-        	Dockable[] moved = new Dockable[count];
-        	for( int i = 0; i < count; i++ ){
-        		moved[i] = getDockable( i+fromIndex );
-        	}
-        	listeners.fireDockablesRepositioned( moved );
-        }
     }
     
     private DockableHandle link( Dockable dockable ){
