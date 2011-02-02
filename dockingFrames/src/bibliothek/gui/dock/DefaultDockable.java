@@ -127,6 +127,7 @@ public class DefaultDockable extends AbstractDockable {
     public DefaultDockable( Component component, String title, Icon icon ){
     	super( PropertyKey.DOCKABLE_TITLE, PropertyKey.DOCKABLE_TOOLTIP );
     	
+    	pane.setFocusable( false );
     	pane.setFocusTraversalPolicyProvider( true );
     	pane.setFocusTraversalPolicy( new LayoutFocusTraversalPolicy() );
     	pane.setBackground( background );

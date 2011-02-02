@@ -151,11 +151,11 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
         return new ScreenDockStationLayout( station.getPlaceholders( children ) );
     }
     
-    public void setLayout( ScreenDockStation element, ScreenDockStationLayout layout ) {
+    public void setLayout( ScreenDockStation element, ScreenDockStationLayout layout, PlaceholderStrategy placeholders ) {
         // nothing to do
     }
     
-    public void setLayout( ScreenDockStation station, ScreenDockStationLayout layout, Map<Integer, Dockable> children ) {
+    public void setLayout( ScreenDockStation station, ScreenDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         for( int i = station.getDockableCount()-1; i >= 0; i-- )
             station.removeDockable( i );
         
@@ -174,19 +174,19 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
 	        }
         }
         else{
-        	station.setPlaceholders( layout.getPlaceholders(), children );
+        	station.setPlaceholders( layout.getPlaceholders().filter( placeholders ), children );
         }
     }
 
-    public ScreenDockStation layout( ScreenDockStationLayout layout ) {
+    public ScreenDockStation layout( ScreenDockStationLayout layout, PlaceholderStrategy placeholders ) {
         ScreenDockStation station = createStation();
-        setLayout( station, layout );
+        setLayout( station, layout, placeholders );
         return station;
     }
     
-    public ScreenDockStation layout( ScreenDockStationLayout layout, Map<Integer, Dockable> children ) {
+    public ScreenDockStation layout( ScreenDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         ScreenDockStation station = createStation();
-        setLayout( station, layout, children );
+        setLayout( station, layout, children, placeholders );
         return station;
     }
     

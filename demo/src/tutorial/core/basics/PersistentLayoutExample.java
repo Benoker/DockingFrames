@@ -202,24 +202,24 @@ public class PersistentLayoutExample {
 		}
 		
 		/* CustomColorDockable <--- CustomColorLayout */
-		public CustomColorDockable layout( CustomColorLayout layout, Map<Integer, Dockable> children ){
-			return layout( layout );
+		public CustomColorDockable layout( CustomColorLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+			return layout( layout, placeholders );
 		}
 
 		/* CustomColorDockable <--- CustomColorLayout */
-		public CustomColorDockable layout( CustomColorLayout layout ){
+		public CustomColorDockable layout( CustomColorLayout layout, PlaceholderStrategy placeholders ){
 			return new CustomColorDockable( layout.getTitle(), layout.getColor() );
 		}
 		
 		/* CustomColorDockable <--- CustomColorLayout, using an existing CustomColorDockable (never happens
 		 *                                             in our case) */
-		public void setLayout( CustomColorDockable element, CustomColorLayout layout, Map<Integer, Dockable> children ){
-			setLayout( element, layout );
+		public void setLayout( CustomColorDockable element, CustomColorLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+			setLayout( element, layout, placeholders );
 		}
 
 		/* CustomColorDockable <--- CustomColorLayout, using an existing CustomColorDockable (never happens
 		 *                                             in our case) */
-		public void setLayout( CustomColorDockable element, CustomColorLayout layout ){
+		public void setLayout( CustomColorDockable element, CustomColorLayout layout, PlaceholderStrategy placeholders ){
 			element.setTitleText( layout.getTitle() );
 			element.setColor( layout.getColor() );
 		}

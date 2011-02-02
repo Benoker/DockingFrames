@@ -39,11 +39,13 @@ public interface FocusStrategy {
 	/**
 	 * Given a {@link Dockable} this method tells which {@link Component} should be focused.
 	 * @param dockable some dockable which is about to get the focus
+	 * @param mouseClicked the component which was touched by the mouse and which would get the focus normally. Can be <code>null</code>.
 	 * @return the component to focus or <code>null</code> if this method cannot decide (in which case
 	 * a default component will be chosen). If the <code>Component</code> is not focusable, then the next {@link Component} that
-	 * follows in the iteration of focusable <code>Component</code>s will be focused
+	 * follows in the iteration of focusable <code>Component</code>s will be focused. If the result is
+	 * <code>mouseClicked</code> then no focus will be transfered - even if <code>mouseClicked</code> is not focusable 
 	 */
-	public Component getFocusComponent( Dockable dockable );
+	public Component getFocusComponent( Dockable dockable, Component mouseClicked );
 	
 	/**
 	 * Informs this strategy that it will be used from now on.

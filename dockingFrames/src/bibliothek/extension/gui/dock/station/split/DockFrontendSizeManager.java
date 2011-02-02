@@ -127,11 +127,11 @@ public class DockFrontendSizeManager implements SizeManager{
             return element.getDouble();
         }
 
-        public void setLayout( DockElement element, Double layout, Map<Integer, Dockable> children ) {
-            setLayout( element, layout );
+        public void setLayout( DockElement element, Double layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
+            setLayout( element, layout, placeholders );
         }
 
-        public void setLayout( DockElement element, Double layout ) {
+        public void setLayout( DockElement element, Double layout, PlaceholderStrategy placeholders ) {
             Dockable dockable = element.asDockable();
             if( dockable != null ){
                 sizes.put( dockable, layout );

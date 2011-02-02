@@ -82,19 +82,19 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Defa
         return new Object();
     }
     
-    public void setLayout( DefaultDockable element, Object layout, Map<Integer, Dockable> children ) {
+    public void setLayout( DefaultDockable element, Object layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         // nothing to do
     }
     
-    public void setLayout( DefaultDockable element, Object layout ) {
+    public void setLayout( DefaultDockable element, Object layout, PlaceholderStrategy placeholders ) {
         // nothing to do
     }
 
-    public DefaultDockable layout( Object layout, Map<Integer, Dockable> children ) {
+    public DefaultDockable layout( Object layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         return new DefaultDockable();
     }
     
-    public DefaultDockable layout( Object layout ) {
+    public DefaultDockable layout( Object layout, PlaceholderStrategy placeholders ) {
         return new DefaultDockable();
     }
     

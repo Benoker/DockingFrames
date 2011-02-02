@@ -87,7 +87,10 @@ public class DockSituation {
     /** a filter for elements which should be ignored */
     private DockSituationIgnore ignore;
     
-    /** strategy used to filter placeholders */
+    /** strategy used to filter placeholders in the intermediate format */
+    private PlaceholderStrategy intermediatePlaceholders;
+    
+    /** strategy used to filter placeholders when converting the intermediate format to real {@link DockElement}s */
     private PlaceholderStrategy placeholders;
 
     /**
@@ -169,6 +172,22 @@ public class DockSituation {
      */
     public PlaceholderStrategy getPlaceholderStrategy(){
 		return placeholders;
+	}
+    
+    /**
+     * Sets the strategy for deleting invalid placeholders in the intermediate format
+     * @param intermediatePlaceholders the strategy, can be <code>null</code>
+     */
+    public void setIntermediatePlaceholders( PlaceholderStrategy intermediatePlaceholders ){
+		this.intermediatePlaceholders = intermediatePlaceholders;
+	}
+    
+    /**
+     * Gets the strategy for deleting invalid placeholders in the intermediate format.
+     * @return the intermediate strategy, can be <code>null</code>
+     */
+    public PlaceholderStrategy getIntermediatePlaceholders(){
+		return intermediatePlaceholders;
 	}
     
     /**
@@ -340,7 +359,7 @@ public class DockSituation {
                 convert( childComposition );
             }
 
-            result = factory.layout( layout.getData() );
+            result = factory.layout( layout.getData(), placeholders );
         }
         else{
             children = new HashMap<Integer, Dockable>();
@@ -361,7 +380,7 @@ public class DockSituation {
                 index++;
             }
 
-            result = factory.layout( layout.getData(), children );
+            result = factory.layout( layout.getData(), children, placeholders );
         }
 
         if( result != null ){
@@ -371,10 +390,10 @@ public class DockSituation {
                     AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( adjacentLayout.getFactoryID() );
                     if( adjacentFactory != null ){
                         if( children == null ){
-                            adjacentFactory.setLayout( result, adjacentLayout.getData() );
+                            adjacentFactory.setLayout( result, adjacentLayout.getData(), placeholders );
                         }
                         else{
-                            adjacentFactory.setLayout( result, adjacentLayout.getData(), children );
+                            adjacentFactory.setLayout( result, adjacentLayout.getData(), children, placeholders );
                         }
                     }
                 }
@@ -545,7 +564,7 @@ public class DockSituation {
                     }
                     else{
                         DataInputStream din = readBuffer( in, adjacentCount );
-                        Object data = adjacentFactory.read( din, placeholders );
+                        Object data = adjacentFactory.read( din, intermediatePlaceholders );
                         if( data != null ){
                             adjacentLayouts.add( new DockLayout<Object>( adjacentFactoryId, data ) );
                         }
@@ -612,7 +631,7 @@ public class DockSituation {
             }
         }
         else{
-            Object data = factory.read( entryIn, placeholders );
+            Object data = factory.read( entryIn, intermediatePlaceholders );
             if( data == null ){
                 info = null;
             }
@@ -869,7 +888,7 @@ public class DockSituation {
                 String factoryId = xlayout.getString( "factory" );
                 AdjacentDockFactory<Object> adjacentFactory = (AdjacentDockFactory<Object>)getAdjacentFactory( factoryId );
                 if( adjacentFactory != null ){
-                    Object data = adjacentFactory.read( xlayout, placeholders );
+                    Object data = adjacentFactory.read( xlayout, intermediatePlaceholders );
                     if( data != null ){
                         adjacentLayouts.add( new DockLayout<Object>( factoryId, data ));
                     }
@@ -915,7 +934,7 @@ public class DockSituation {
             }
             DockFactory<DockElement,?,Object> factory = (DockFactory<DockElement,?,Object>)getFactory( factoryId );
             if( factory != null ){
-                Object data = factory.read( element, placeholders );
+                Object data = factory.read( element, intermediatePlaceholders );
                 if( data != null ){
                     layout = new DockLayoutInfo( new DockLayout<Object>( factoryId, data ) );
                     layout.setPlaceholder( placeholder );

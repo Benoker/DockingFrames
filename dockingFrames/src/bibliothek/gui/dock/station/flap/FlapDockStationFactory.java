@@ -68,12 +68,12 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
         return new FlapDockStationLayout( station.isAutoDirection(), station.getDirection(), map );
     }
     
-    public void setLayout( FlapDockStation station, FlapDockStationLayout layout ) {
+    public void setLayout( FlapDockStation station, FlapDockStationLayout layout, PlaceholderStrategy placeholders ) {
         station.setDirection( layout.getDirection() );
         station.setAutoDirection( layout.isAutoDirection() );
     }
     
-    public void setLayout( FlapDockStation station, FlapDockStationLayout layout, Map<Integer, Dockable> children ) {
+    public void setLayout( FlapDockStation station, FlapDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
     	DockController controller = station.getController();
     	try{
     		if( controller != null )
@@ -103,7 +103,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
 		        }	
 	        }
 	        else{
-	        	station.setPlaceholders( layout.getPlaceholders(), children );
+	        	station.setPlaceholders( layout.getPlaceholders().filter( placeholders ), children );
 	        }
 	        
     	}
@@ -173,17 +173,16 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     	}
     }
     
-    public FlapDockStation layout( FlapDockStationLayout layout,
-            Map<Integer, Dockable> children ) {
+    public FlapDockStation layout( FlapDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         
         FlapDockStation station = createStation();
-        setLayout( station, layout, children );
+        setLayout( station, layout, children, placeholders );
         return station;
     }
     
-    public FlapDockStation layout( FlapDockStationLayout layout ) {
+    public FlapDockStation layout( FlapDockStationLayout layout, PlaceholderStrategy placeholders ) {
         FlapDockStation station = createStation();
-        setLayout( station, layout );
+        setLayout( station, layout, placeholders );
         return station;
     }
 

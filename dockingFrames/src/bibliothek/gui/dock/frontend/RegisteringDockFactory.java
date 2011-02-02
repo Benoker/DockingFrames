@@ -76,8 +76,8 @@ public class RegisteringDockFactory<D extends Dockable, P extends PerspectiveDoc
         return new BackupFactoryData<L>( null, factory.getLayout( element, children ));
     }
 
-    public D layout( BackupFactoryData<L> layout, Map<Integer, Dockable> children ) {
-        D element = factory.layout( layout.getData() );
+    public D layout( BackupFactoryData<L> layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
+        D element = factory.layout( layout.getData(), placeholders );
         if( element != null ){
             String id = layout.getIdentifier();
             if( id.startsWith( "dockable" )){
@@ -90,8 +90,8 @@ public class RegisteringDockFactory<D extends Dockable, P extends PerspectiveDoc
         return element;
     }
 
-    public D layout( BackupFactoryData<L> layout ) {
-        D element = factory.layout( layout.getData() );
+    public D layout( BackupFactoryData<L> layout, PlaceholderStrategy placeholders ) {
+        D element = factory.layout( layout.getData(), placeholders );
         if( element != null ){
             String id = layout.getIdentifier();
             if( id.startsWith( "dockable" )){
@@ -112,12 +112,12 @@ public class RegisteringDockFactory<D extends Dockable, P extends PerspectiveDoc
         return new BackupFactoryData<L>( null, factory.read( element, placeholders ));
     }
 
-    public void setLayout( D element, BackupFactoryData<L> layout, Map<Integer, Dockable> children ) {
-        factory.setLayout( element, layout.getData(), children );
+    public void setLayout( D element, BackupFactoryData<L> layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
+        factory.setLayout( element, layout.getData(), children, placeholders );
     }
 
-    public void setLayout( D element, BackupFactoryData<L> layout ) {
-        factory.setLayout( element, layout.getData() );
+    public void setLayout( D element, BackupFactoryData<L> layout, PlaceholderStrategy placeholders ) {
+        factory.setLayout( element, layout.getData(), placeholders );
     }
 
     public void write( BackupFactoryData<L> layout, DataOutputStream out ) throws IOException {

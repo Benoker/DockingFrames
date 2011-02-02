@@ -38,6 +38,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
@@ -105,4 +106,11 @@ public interface LayoutChangeStrategy {
      * @param layout the layout to estimate
      */
     public void estimateLocations( DockFrontendInternals frontend, DockSituation situation, DockLayoutComposition layout );
+
+    /**
+     * Gets the default {@link PlaceholderStrategy} which should be used to filter placeholders by <code>frontend</code>.
+     * @param frontend information about the {@link DockFrontend} that needs the strategy
+     * @return the strategy, can be <code>null</code>
+     */
+	public PlaceholderStrategy getPlaceholderStrategy( DockFrontendInternals frontend );
 }

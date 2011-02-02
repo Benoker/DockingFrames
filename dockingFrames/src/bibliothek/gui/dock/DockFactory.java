@@ -28,6 +28,7 @@ package bibliothek.gui.dock;
 
 import java.util.Map;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.layout.DockConverter;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
@@ -36,6 +37,7 @@ import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 
 /**
  * A {@link DockConverter} which can not only store and load the contents of an
@@ -70,20 +72,24 @@ public interface DockFactory<D extends DockElement, P extends PerspectiveElement
      * Creates a new {@link DockElement} and changes the layout of the new 
      * element such that is matches <code>layout</code>.
      * @param layout the new layout
+     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
+     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument.
      * @param children some children, note that the map may not contain all elements
      * which were present when the layout was created. 
      * @return a new element or <code>null</code> if layout can't be used
      */
-    public D layout( L layout, Map<Integer, Dockable> children );
+    public D layout( L layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders );
     
     /**
      * Creates a new {@link DockElement} and changes the layout of the new 
      * element such that is matches <code>layout</code>. This method should
      * not add any children to the element.
      * @param layout the new layout
+     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
+     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument.
      * @return a new element or <code>null</code> if layout can't be used
      */
-    public D layout( L layout );
+    public D layout( L layout, PlaceholderStrategy placeholders );
     
     /**
      * Creates an element that can be used by a {@link Perspective} to create a layout

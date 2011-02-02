@@ -110,7 +110,7 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
 		}
 	}
 
-	public void setLayout( StackDockStation station, StackDockStationLayout layout, Map<Integer, Dockable> children ){
+	public void setLayout( StackDockStation station, StackDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
 		DockController controller = station.getController();
 		try {
 			if (controller != null)
@@ -129,7 +129,7 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
 				}
 			}
 			else{
-				station.setPlaceholders( layout.getPlaceholders(), children );
+				station.setPlaceholders( layout.getPlaceholders().filter( placeholders ), children );
 			}
 
 			Dockable selected = children.get( layout.getSelected() );
@@ -142,7 +142,7 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
 		}
 	}
 
-	public void setLayout( StackDockStation element, StackDockStationLayout layout ){
+	public void setLayout( StackDockStation element, StackDockStationLayout layout, PlaceholderStrategy placeholders ){
 		// nothing to do
 	}
 	
@@ -156,15 +156,15 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
 		perspective.read( layout.getPlaceholders(), children, layout.getSelected() );
 	}
 
-	public StackDockStation layout( StackDockStationLayout layout, Map<Integer, Dockable> children ){
+	public StackDockStation layout( StackDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
 		StackDockStation station = createStation();
-		setLayout( station, layout, children );
+		setLayout( station, layout, children, placeholders );
 		return station;
 	}
 
-	public StackDockStation layout( StackDockStationLayout layout ){
+	public StackDockStation layout( StackDockStationLayout layout, PlaceholderStrategy placeholders ){
 		StackDockStation station = createStation();
-		setLayout( station, layout );
+		setLayout( station, layout, placeholders );
 		return station;
 	}
 	

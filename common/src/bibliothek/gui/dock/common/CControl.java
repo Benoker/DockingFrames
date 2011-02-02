@@ -465,14 +465,20 @@ public class CControl {
         
         frontend.getController().getFocusController().addVetoListener( new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
         frontend.getController().getFocusController().setStrategy( new DefaultFocusStrategy( frontend.getController() ){
-			public Component getFocusComponent( Dockable dockable ){
+			public Component getFocusComponent( Dockable dockable, Component mouseClicked ){
+				if( mouseClicked != null ){
+					if( mouseClicked.isFocusable() || focusable( mouseClicked )){
+						return mouseClicked;
+					}
+				}
+				
 				if( dockable instanceof CommonDockable ){
 					Component result = ((CommonDockable)dockable).getDockable().getFocusComponent();
 					if( result != null ){
 						return result;
 					}
 				}
-				return super.getFocusComponent( dockable );
+				return super.getFocusComponent( dockable, null );
 			}
 		});
         

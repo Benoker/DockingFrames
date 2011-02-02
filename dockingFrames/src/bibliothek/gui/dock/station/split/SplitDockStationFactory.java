@@ -184,7 +184,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     	return placeholders.toArray( new Path[ placeholders.size() ] );
     }
     
-    public void setLayout( SplitDockStation station, SplitDockStationLayout layout, Map<Integer, Dockable> children ) {
+    public void setLayout( SplitDockStation station, SplitDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         DockableSplitDockTree tree = new DockableSplitDockTree();
         DockableSplitDockTree.Key root = null;
         if( layout.getRoot() != null ){
@@ -193,7 +193,18 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         if( root != null ){
             tree.root( root );
         }
+        
         station.dropTree( tree, false );
+        
+        PlaceholderStrategy oldStrategy = station.getPlaceholderStrategy().getStrategy();
+        if( placeholders != oldStrategy && placeholders != null ){
+	        try{
+	        	station.setPlaceholderStrategy( placeholders );
+	        }
+	        finally{
+	        	station.setPlaceholderStrategy( oldStrategy );
+	        }
+        }
         
         Dockable fullscreen = children.get( layout.getFullscreen() );
         station.setFullScreen( fullscreen );
@@ -330,21 +341,20 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     	}
     }
     
-    public void setLayout( SplitDockStation element,
-            SplitDockStationLayout layout ) {
+    public void setLayout( SplitDockStation element, SplitDockStationLayout layout, PlaceholderStrategy placeholders ) {
         
         // nothing to do
     }
     
-    public SplitDockStation layout( SplitDockStationLayout layout ) {
+    public SplitDockStation layout( SplitDockStationLayout layout, PlaceholderStrategy placeholders ) {
         SplitDockStation station = createStation( layout.hasFullscreenAction() );
-        setLayout( station, layout );
+        setLayout( station, layout, placeholders );
         return station;
     }
     
-    public SplitDockStation layout( SplitDockStationLayout layout, Map<Integer, Dockable> children ) {
+    public SplitDockStation layout( SplitDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         SplitDockStation station = createStation( layout.hasFullscreenAction() );
-        setLayout( station, layout, children );
+        setLayout( station, layout, children, placeholders );
         return station;
     }
     

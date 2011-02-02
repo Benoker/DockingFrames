@@ -1563,14 +1563,14 @@ public class DockFrontend {
      */
     @SuppressWarnings("unchecked")
     private void fillMissing( String root, DockLayoutComposition composition, DockFactory<?,?,?> factory, String factoryId ){
-        DockLayoutInfo info = composition.getLayout();
+    	DockLayoutInfo info = composition.getLayout();
         if( info.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT ){
             if( info.getDataLayout().getFactoryID().equals( factoryId )){
                 DockableProperty location = info.getLocation();
                 if( location != null ){
                     DockFactory<DockElement,?,Object> normalizedFactory = (DockFactory<DockElement,?,Object>)factory;
                     if( missingDockable.shouldCreate( normalizedFactory, info.getDataLayout().getData() ) ){
-                        DockElement element = normalizedFactory.layout( info.getDataLayout().getData() );
+                    	DockElement element = normalizedFactory.layout( info.getDataLayout().getData(), layoutChangeStrategy.getPlaceholderStrategy( new Internals() ) );
                         if( element != null ){
                             Dockable dockable = element.asDockable();
                             if( dockable != null ){

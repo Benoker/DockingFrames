@@ -80,8 +80,10 @@ public interface DockConverter <D extends DockElement, L>{
      * @param layout the new layout of <code>element</code>
      * @param children some children, note that the map may not contain all elements
      * which were present when the layout was created.
+     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
+     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument. 
      */
-    public void setLayout( D element, L layout, Map<Integer, Dockable> children );
+    public void setLayout( D element, L layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders );
     
     /**
      * Reads the contents of <code>layout</code> and changes the layout of
@@ -89,8 +91,10 @@ public interface DockConverter <D extends DockElement, L>{
      * children to or from <code>element</code>.
      * @param element the element whose properties will be changed
      * @param layout the new set of properties
+     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
+     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument. 
      */
-    public void setLayout( D element, L layout );
+    public void setLayout( D element, L layout, PlaceholderStrategy placeholders );
     
     /**
      * Writes the contents of <code>layout</code> into <code>out</code>.
@@ -111,10 +115,10 @@ public interface DockConverter <D extends DockElement, L>{
     /**
      * Reads a layout from a stream.
      * @param in the stream to read from
-     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
-     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument. 
      * @return the new layout, can be <code>null</code> if the layout
      * should be discarded
+     * @param placeholders a strategy to detect invalid placeholders, can be <code>null</code>.
+     * Factories loading only {@link Dockable}s but no {@link DockStation}s can safely ignore this argument.
      * @throws IOException if an I/O-error occurs
      */
     public L read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException;

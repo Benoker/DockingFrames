@@ -52,6 +52,7 @@ import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PredefinedMap;
 import bibliothek.gui.dock.perspective.PredefinedPerspective;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XException;
 
 /**
@@ -474,6 +475,10 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
         }
         
         return null;
+    }
+    
+    public PlaceholderStrategy getPlaceholderStrategy( DockFrontendInternals frontend ){
+    	return null;
     }
     
     /**

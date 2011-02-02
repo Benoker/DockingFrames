@@ -76,25 +76,25 @@ public class NoteViewFactory implements DockFactory<NoteView, PerspectiveElement
 	    return element.getNote().getId();
 	}
 	
-	public NoteView layout( String layout ) {
+	public NoteView layout( String layout, PlaceholderStrategy placeholders ) {
 	    NoteView view = new NoteView( manager, model );
 	    view.setNote( model.getNote( layout ) );
 	    manager.putExternal( view );
 	    return view;
 	}
 	
-	public NoteView layout( String layout, Map<Integer, Dockable> children ) {
+	public NoteView layout( String layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
 	    NoteView view = new NoteView( manager, model );
         view.setNote( model.getNote( layout ) );
         manager.putExternal( view );
         return view;
 	}
 	
-	public void setLayout( NoteView element, String layout ) {
+	public void setLayout( NoteView element, String layout, PlaceholderStrategy placeholders ) {
 	    element.setNote( model.getNote( layout ) );
 	}
 	
-	public void setLayout( NoteView element, String layout, Map<Integer, Dockable> children ) {
+	public void setLayout( NoteView element, String layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
 	    element.setNote( model.getNote( layout ) );
 	}
 	

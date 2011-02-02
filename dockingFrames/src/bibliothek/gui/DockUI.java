@@ -543,7 +543,7 @@ public class DockUI {
     		    station.drag( station.getDockable( i ));
     	    }
     	
-    	    factory.setLayout( station, layout, children );
+    	    factory.setLayout( station, layout, children, null );
     	}
     	finally{
     		if( controller != null ){

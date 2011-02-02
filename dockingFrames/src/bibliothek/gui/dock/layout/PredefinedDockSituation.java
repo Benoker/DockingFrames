@@ -632,7 +632,7 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public void setLayout( DockElement element, PreloadedLayout layout, Map<Integer, Dockable> children ) {
+        public void setLayout( DockElement element, PreloadedLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element )){
                 String factoryId = delegate.getDataLayout().getFactoryID();
@@ -643,7 +643,7 @@ public class PredefinedDockSituation extends DockSituation {
                 		if( controller != null )
                 			controller.freezeLayout();
                 		
-                		factory.setLayout( element, delegate.getDataLayout().getData(), children );
+                		factory.setLayout( element, delegate.getDataLayout().getData(), children, placeholders );
                 	}
                 	finally{
                 		if( controller != null )
@@ -654,7 +654,7 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public void setLayout( DockElement element, PreloadedLayout layout ) {
+        public void setLayout( DockElement element, PreloadedLayout layout, PlaceholderStrategy placeholders ) {
             DockLayoutInfo delegate = layout.getDelegate();
             if( delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT && shouldLayout( element )){
             	String factoryId = delegate.getDataLayout().getFactoryID();
@@ -665,7 +665,7 @@ public class PredefinedDockSituation extends DockSituation {
                 		if( controller != null )
                 			controller.freezeLayout();
                 		
-                		factory.setLayout( element, delegate.getDataLayout().getData() );
+                		factory.setLayout( element, delegate.getDataLayout().getData(), placeholders );
                 	}
                 	finally{
                 		if( controller != null )
@@ -676,7 +676,7 @@ public class PredefinedDockSituation extends DockSituation {
         }
 
         @SuppressWarnings("unchecked")
-        public DockElement layout( PreloadedLayout layout, Map<Integer, Dockable> children ) {
+        public DockElement layout( PreloadedLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
             DockLayoutInfo delegate = layout.getDelegate();
             boolean isLayout = delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT;
             boolean isNull =  delegate.getKind() == DockLayoutInfo.Data.NULL;
@@ -692,17 +692,18 @@ public class PredefinedDockSituation extends DockSituation {
                 if( factory != null ){
                     return factory.layout( new BackupFactoryData<Object>(
                             layout.getPreload(), 
-                            delegate.getDataLayout().getData()), children );
+                            delegate.getDataLayout().getData()), children,
+                            placeholders );
                 }
                 return null;
             }
 
-            setLayout( element, layout, children );
+            setLayout( element, layout, children, placeholders );
             return element;
         }
 
         @SuppressWarnings("unchecked")
-        public DockElement layout( PreloadedLayout layout ) {
+        public DockElement layout( PreloadedLayout layout, PlaceholderStrategy placeholders ) {
             DockLayoutInfo delegate = layout.getDelegate();
             
             boolean isLayout = delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT;
@@ -722,13 +723,14 @@ public class PredefinedDockSituation extends DockSituation {
                 if( factory != null ){
                     return factory.layout( new BackupFactoryData<Object>( 
                             layout.getPreload(),
-                            delegate.getDataLayout().getData()) );
+                            delegate.getDataLayout().getData()),
+                            placeholders);
                 }
 
                 return null;
             }
 
-            setLayout( element, layout );
+            setLayout( element, layout, placeholders );
             return element;
         }
         

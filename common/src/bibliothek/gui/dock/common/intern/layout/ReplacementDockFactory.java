@@ -54,11 +54,11 @@ public class ReplacementDockFactory implements DockFactory<CommonDockable, Persp
 		// ignore
 	}
 
-	public CommonDockable layout( MultipleCDockable layout, Map<Integer, Dockable> children ){
-		return layout( layout );
+	public CommonDockable layout( MultipleCDockable layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+		return layout( layout, placeholders );
 	}
 
-	public CommonDockable layout( MultipleCDockable layout ){
+	public CommonDockable layout( MultipleCDockable layout, PlaceholderStrategy placeholders ){
 		return layout.intern();
 	}
 
@@ -90,11 +90,11 @@ public class ReplacementDockFactory implements DockFactory<CommonDockable, Persp
 		return null;
 	}
 
-	public void setLayout( CommonDockable element, MultipleCDockable layout, Map<Integer, Dockable> children ){
+	public void setLayout( CommonDockable element, MultipleCDockable layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
 		// ignore
 	}
 
-	public void setLayout( CommonDockable element, MultipleCDockable layout ){
+	public void setLayout( CommonDockable element, MultipleCDockable layout, PlaceholderStrategy placeholders ){
 		// ignore
 	}
 

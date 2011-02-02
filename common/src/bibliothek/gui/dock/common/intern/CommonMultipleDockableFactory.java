@@ -188,11 +188,11 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
     	return perspective.intern();
     }
     
-    public CommonDockable layout( CommonMultipleDockableLayout layout, Map<Integer, Dockable> children ) {
-        return layout( layout );
+    public CommonDockable layout( CommonMultipleDockableLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
+        return layout( layout, placeholders );
     }
 
-    public CommonDockable layout( CommonMultipleDockableLayout layout ) {
+    public CommonDockable layout( CommonMultipleDockableLayout layout, PlaceholderStrategy placeholders ) {
         // base
         MultipleCDockable dockable = delegate.read( layout.getLayout() );
         if( dockable == null )
@@ -238,11 +238,11 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return dockable.intern();
     }
 
-    public void setLayout( CommonDockable element, CommonMultipleDockableLayout layout, Map<Integer, Dockable> children ) {
+    public void setLayout( CommonDockable element, CommonMultipleDockableLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         // not supported
     }
 
-    public void setLayout( CommonDockable element, CommonMultipleDockableLayout layout ) {
+    public void setLayout( CommonDockable element, CommonMultipleDockableLayout layout, PlaceholderStrategy placeholders ) {
         // not supported
     }
     

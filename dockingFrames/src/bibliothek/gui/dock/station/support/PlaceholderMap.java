@@ -360,7 +360,21 @@ public class PlaceholderMap {
 		return result;
 	}
 	
-	
+	/**
+	 * May return this or a copy of this {@link PlaceholderMap} to which <code>strategy</code> was applied. The
+	 * strategy of the result may or may not be set. This map is not modified by this method.
+	 * @param strategy the strategy to apply
+	 * @return either this or a copy of this map
+	 */
+	public PlaceholderMap filter( PlaceholderStrategy strategy ){
+		if( strategy == null || this.strategy == strategy ){
+			return this;
+		}
+		PlaceholderMap copy = copy();
+		copy.setPlaceholderStrategy( strategy );
+		copy.setPlaceholderStrategy( null );
+		return copy;
+	}
 	
 	private Object copy( Object value ){
 		if( value instanceof String ){

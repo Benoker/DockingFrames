@@ -185,11 +185,9 @@ public class DefaultFocusController extends AbstractFocusController {
             }
             
             boolean preset = component != null;
-            if( component == null ){
-	            FocusStrategy strategy = getStrategy();
-	            if( strategy != null ){
-	            	component = strategy.getFocusComponent( focusedDockable );
-	            }
+            FocusStrategy strategy = getStrategy();
+            if( strategy != null ){
+            	component = strategy.getFocusComponent( focusedDockable, component );
             }
             
             if( component == null ){

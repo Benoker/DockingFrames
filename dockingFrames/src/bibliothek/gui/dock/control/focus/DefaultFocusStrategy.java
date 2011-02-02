@@ -26,9 +26,11 @@
 package bibliothek.gui.dock.control.focus;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
@@ -64,7 +66,29 @@ public class DefaultFocusStrategy implements FocusStrategy{
 		this.controller = controller;
 	}
 	
-	public Component getFocusComponent( Dockable dockable ){
+	/**
+	 * Tells whether the non-focusable <code>component</code> in reality is focusable. This is <code>true</code>
+	 * for example for any child of a {@link JComboBox}.
+	 * @param component the component which seems to be not focusable, but in reality is focusable
+	 * @return <code>true</code> if <code>component</code> should be treated as if it would be focusable
+	 */
+	protected boolean focusable( Component component ){
+		while( component != null ){
+			if( component instanceof JComboBox ){
+				return true;
+			}
+			component = component.getParent();
+		}
+		return false;
+	}
+	
+	public Component getFocusComponent( Dockable dockable, Component mouseClicked ){
+		if( mouseClicked != null ){
+			if( mouseClicked.isFocusable() || focusable( mouseClicked )){
+				return mouseClicked;
+			}
+		}
+		
 		Tracker tracker = trackers.get( dockable.getComponent() );
 		if( tracker == null ){
 			return null;

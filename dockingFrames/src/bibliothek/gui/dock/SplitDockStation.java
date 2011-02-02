@@ -761,10 +761,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	/**
-	 * Gets the strategy for creating and storing placeholders.
-	 * @return the strategy
+	 * Gets the strategy for creating and storing placeholders. Note that this is not the same
+	 * value as was set to {@link #setPlaceholderStrategy(PlaceholderStrategy)} 
+	 * @return the strategy, never <code>null</code>
 	 */
-	public PlaceholderStrategy getPlaceholderStrategy(){
+	public RootPlaceholderStrategy getPlaceholderStrategy(){
 		return placeholderStrategy;
 	}
 

@@ -209,11 +209,11 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
             throw new IllegalArgumentException( "A CommonSingleDockableFactory works only with Dockables of type SingleCDockable, but this is not a single dockable: " + element );
     }
 
-    public CommonDockable layout( CommonSingleDockableLayout layout, Map<Integer, Dockable> children ) {
-        return layout( layout );
+    public CommonDockable layout( CommonSingleDockableLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
+        return layout( layout, placeholders );
     }
 
-    public CommonDockable layout( CommonSingleDockableLayout layout ) {
+    public CommonDockable layout( CommonSingleDockableLayout layout, PlaceholderStrategy placeholders ) {
         SingleCDockableFactory backup = getFactory( layout.getId() );
         if( backup == null )
             return null;
@@ -301,11 +301,11 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     	return layout;
     }
 
-    public void setLayout( CommonDockable element, CommonSingleDockableLayout layout, Map<Integer, Dockable> children ) {
+    public void setLayout( CommonDockable element, CommonSingleDockableLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
         // can't do anything
     }
 
-    public void setLayout( CommonDockable element, CommonSingleDockableLayout layout ) {
+    public void setLayout( CommonDockable element, CommonSingleDockableLayout layout, PlaceholderStrategy placeholders ) {
         // can't do anything
     }
 
