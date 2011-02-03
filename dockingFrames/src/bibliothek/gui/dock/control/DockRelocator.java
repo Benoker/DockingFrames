@@ -282,7 +282,31 @@ public abstract class DockRelocator {
      * Creates a device with which drag&amp;drop operations concerning
      * <code>dockable</code> can be initiated and executed.
      * @param dockable the dockable which might be moved
+     * @param forceDrag if this flag is set to <code>true</code>, then dragging will always start even
+     * if one of the usual conditions is not met. I.e. dragging will start even if <code>dockable</code>
+     * does not have a parent of even if the parent does not allow dragging. This flag should be used
+     * with caution.
+     * @return the new remote
+     */
+    public abstract DirectRemoteRelocator createDirectRemote( Dockable dockable, boolean forceDrag );
+    
+    /**
+     * Creates a device with which drag&amp;drop operations concerning
+     * <code>dockable</code> can be initiated and executed.
+     * @param dockable the dockable which might be moved
      * @return the new remote
      */
     public abstract RemoteRelocator createRemote( Dockable dockable );
+    
+    /**
+     * Creates a device with which drag&amp;drop operations concerning
+     * <code>dockable</code> can be initiated and executed.
+     * @param dockable the dockable which might be moved
+     * @param forceDrag if this flag is set to <code>true</code>, then dragging will always start even
+     * if one of the usual conditions is not met. I.e. dragging will start even if <code>dockable</code>
+     * does not have a parent of even if the parent does not allow dragging. This flag should be used
+     * with caution.
+     * @return the new remote
+     */
+    public abstract RemoteRelocator createRemote( Dockable dockable, boolean forceDrag );
 }

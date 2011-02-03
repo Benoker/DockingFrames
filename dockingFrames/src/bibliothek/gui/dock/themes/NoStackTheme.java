@@ -126,6 +126,7 @@ public class NoStackTheme implements DockTheme {
     	
 		public Meta( ThemeFactory factory, DockController controller, ThemeMeta meta ){
 			super( factory, controller, "theme.small", "theme.small.description", meta.getAuthors(), meta.getWebpages() );
+			this.meta = meta;
 		}
     	
 		@Override

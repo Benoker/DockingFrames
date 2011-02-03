@@ -428,3 +428,5 @@
 [v1.1.0p5c]
 - Bugfix: Perspectives did ignore the "ignoreChildren" tag. DockFactories did throw NPE if called with a perspective that has the "ignoreChildren" tag set to true.
 - API: Additional method "isWorkingArea" in "CStationPerspective".
+! API: DockRelocator has two additional methods "getRemote" and "getDirectRemote" with a parameter "forgeDrag". If that parameter is true, then a DnD operation can be forced to start.
+- Bugfix: NoStackTheme.Meta, field "meta" was never set.

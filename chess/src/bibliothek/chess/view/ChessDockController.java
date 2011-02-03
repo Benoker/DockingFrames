@@ -43,8 +43,8 @@ public class ChessDockController extends DockController {
             }
             
             @Override
-            protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable ) {
-                Reaction reaction = super.dragMousePressed( x, y, dx, dy, modifiers, dockable );
+            protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable, boolean forceDrag ) {
+                Reaction reaction = super.dragMousePressed( x, y, dx, dy, modifiers, dockable, forceDrag );
                 if( reaction == Reaction.CONTINUE || reaction == Reaction.CONTINUE_CONSUMED ){
                     return createRemote( dockable ).drag( x, y, modifiers );
                 }

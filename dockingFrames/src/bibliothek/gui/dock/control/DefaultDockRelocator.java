@@ -129,16 +129,26 @@ public class DefaultDockRelocator extends DockRelocator{
     
     @Override
     public DirectRemoteRelocator createDirectRemote( Dockable dockable ){
-        if( dockable == null )
+    	return createDirectRemote( dockable, false );
+    }
+    
+    @Override
+    public DirectRemoteRelocator createDirectRemote( Dockable dockable, boolean forceDrag ){
+    	if( dockable == null )
             throw new IllegalArgumentException( "dockable must not be null" );
-        return new DefaultRemoteRelocator( dockable );        
+        return new DefaultRemoteRelocator( dockable, forceDrag );
     }
     
     @Override
     public RemoteRelocator createRemote( Dockable dockable ) {
+        return createRemote( dockable, false );
+    }
+    
+    @Override
+    public RemoteRelocator createRemote( Dockable dockable, boolean forceDrag ){
         if( dockable == null )
             throw new IllegalArgumentException( "dockable must not be null" );
-        return new DefaultRemoteRelocator( dockable );
+        return new DefaultRemoteRelocator( dockable, forceDrag );
     }
     
     /**
@@ -419,7 +429,7 @@ public class DefaultDockRelocator extends DockRelocator{
         
         Point point = e.getPoint();
         SwingUtilities.convertPointToScreen( point, e.getComponent() );
-        Reaction reaction = dragMousePressed( point.x, point.y, e.getX(), e.getY(), e.getModifiersEx(), dockable );
+        Reaction reaction = dragMousePressed( point.x, point.y, e.getX(), e.getY(), e.getModifiersEx(), dockable, false );
         if( reaction == Reaction.BREAK_CONSUMED || reaction == Reaction.CONTINUE_CONSUMED )
             e.consume();
     }
@@ -432,10 +442,14 @@ public class DefaultDockRelocator extends DockRelocator{
      * @param dy the y-coordinate of the mouse on its component
      * @param modifiers the state of the mouse, see {@link MouseEvent#getModifiersEx()}
      * @param dockable the dockable which is moved around
+     * @param forceDrag if this flag is set to <code>true</code>, then dragging will always start even
+     * if one of the usual conditions is not met. I.e. dragging will start even if <code>dockable</code>
+     * does not have a parent of even if the parent does not allow dragging. This flag should be used
+     * with caution.
      * @return how this relocator reacts on the event
      */
-    protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable ){
-        if( dockable.getDockParent() == null )
+    protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable, boolean forceDrag ){
+        if( !forceDrag && dockable.getDockParent() == null )
             return Reaction.BREAK;
         
         lastPoint = new Point( x, y );
@@ -475,7 +489,7 @@ public class DefaultDockRelocator extends DockRelocator{
     protected void dragMouseDragged( MouseEvent e, DockTitle title, Dockable dockable ) {
         Point point = e.getPoint();
         SwingUtilities.convertPointToScreen( point, e.getComponent() );
-        Reaction reaction = dragMouseDragged( point.x, point.y, e.getModifiersEx(), title, dockable, false );
+        Reaction reaction = dragMouseDragged( point.x, point.y, e.getModifiersEx(), title, dockable, false, false );
         if( reaction == Reaction.BREAK_CONSUMED || reaction == Reaction.CONTINUE_CONSUMED )
             e.consume();
     }
@@ -489,9 +503,13 @@ public class DefaultDockRelocator extends DockRelocator{
      * @param dockable the dockable which is moved around
      * @param always <code>true</code> if the drag event should be executed and
      * restrictions to this relocator ignored.
+     * @param forceDrag if this flag is set to <code>true</code>, then dragging will always start even
+     * if one of the usual conditions is not met. I.e. dragging will start even if <code>dockable</code>
+     * does not have a parent of even if the parent does not allow dragging. This flag should be used
+     * with caution.
      * @return how this relocator reacts on the event
      */
-    protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable, boolean always ){
+    protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable, boolean always, boolean forceDrag ){
         if( pressPointScreen == null )
             return Reaction.BREAK;
         
@@ -510,7 +528,7 @@ public class DefaultDockRelocator extends DockRelocator{
         if( !onMove ){
             // not yet free
         	DockStation parent = dockable.getDockParent();
-            if( parent != null && !parent.canDrag( dockable )){
+            if( !forceDrag && parent != null && !parent.canDrag( dockable )){
                 titleDragCancel();
                 disableAllModes();
                 return Reaction.BREAK_CONSUMED;
@@ -742,12 +760,20 @@ public class DefaultDockRelocator extends DockRelocator{
         /** the Dockable which might be moved by this relocator */
         private Dockable dockable;
         
+        /** whether to force dragging anyway */
+        private boolean forceDrag;
+        
         /**
          * Creates a new remote
          * @param dockable the dockable which might be moved
+	     * @param forceDrag if this flag is set to <code>true</code>, then dragging will always start even
+	     * if one of the usual conditions is not met. I.e. dragging will start even if <code>dockable</code>
+	     * does not have a parent of even if the parent does not allow dragging. This flag should be used
+	     * with caution.
          */
-        public DefaultRemoteRelocator( Dockable dockable ){
+        public DefaultRemoteRelocator( Dockable dockable, boolean forceDrag ){
             this.dockable = dockable;
+            this.forceDrag = forceDrag;
         }
         
         public void cancel() {
@@ -756,11 +782,11 @@ public class DefaultDockRelocator extends DockRelocator{
         }
 
         public void drag( int x, int y, boolean always ) {
-            dragMouseDragged( x, y, InputEvent.BUTTON1_DOWN_MASK, null, dockable, always );
+            dragMouseDragged( x, y, InputEvent.BUTTON1_DOWN_MASK, null, dockable, always, forceDrag );
         }
         
         public Reaction drag( int x, int y, int modifiers ) {
-            return dragMouseDragged( x, y, modifiers, null, dockable, false );
+            return dragMouseDragged( x, y, modifiers, null, dockable, false, forceDrag );
         }
 
         public void drop( int x, int y ) {
@@ -776,7 +802,7 @@ public class DefaultDockRelocator extends DockRelocator{
         }
         
         public Reaction init( int x, int y, int dx, int dy, int modifiers ) {
-            return dragMousePressed( x, y, dx, dy, modifiers, dockable );
+            return dragMousePressed( x, y, dx, dy, modifiers, dockable, forceDrag );
         }
     }
     
