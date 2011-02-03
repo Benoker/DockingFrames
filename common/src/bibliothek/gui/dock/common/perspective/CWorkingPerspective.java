@@ -59,7 +59,7 @@ public class CWorkingPerspective extends CGridPerspective{
 	 * @param id the unique identifier of this area
 	 */
 	public CWorkingPerspective( String id ){
-		super( id );
+		super( id, true );
 	}
 	
 	/**

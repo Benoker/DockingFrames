@@ -204,10 +204,8 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     	perspective.read( layout.getPlaceholders(), children );
     }
     
-    public void write( ScreenDockStationLayout layout, DataOutputStream out )
-            throws IOException {
-     
-    	if( layout instanceof RetroScreenDockStationLayout ){
+    public void write( ScreenDockStationLayout layout, DataOutputStream out ) throws IOException {
+     	if( layout instanceof RetroScreenDockStationLayout ){
     		RetroScreenDockStationLayout retro = (RetroScreenDockStationLayout)layout;
     	
 	        Version.write( out, Version.VERSION_1_0_4 );

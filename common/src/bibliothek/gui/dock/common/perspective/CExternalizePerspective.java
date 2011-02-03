@@ -253,6 +253,10 @@ public class CExternalizePerspective implements CStationPerspective{
 		delegate.setPlaceholders( placeholders );	
 	}
 	
+	public boolean isWorkingArea(){
+		return false;
+	}
+	
 	/**
 	 * This type of object is used by the {@link CExternalizePerspective} as intern representation.
 	 * @author Benjamin Sigg

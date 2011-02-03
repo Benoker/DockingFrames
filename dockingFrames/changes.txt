@@ -424,3 +424,7 @@
 - Bugfix: In Common, placeholders are no longer removed in the intermediate layout information no longer
 - Bugfix: The FocusStrategy can now decide whether to transfer focus if the user clicked on a non-focusable Component or not. Currently focus is not transfered if the user clicked on a JComboBox
 - API: The content-pane of a Dockable is no longer focusable
+
+[v1.1.0p5c]
+- Bugfix: Perspectives did ignore the "ignoreChildren" tag. DockFactories did throw NPE if called with a perspective that has the "ignoreChildren" tag set to true.
+- API: Additional method "isWorkingArea" in "CStationPerspective".

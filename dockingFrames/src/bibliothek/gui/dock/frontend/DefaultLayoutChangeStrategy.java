@@ -50,6 +50,7 @@ import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.perspective.PredefinedMap;
 import bibliothek.gui.dock.perspective.PredefinedPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -72,6 +73,12 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
                 }
                 public boolean ignoreElement( DockElement element ) {
                     return false;
+                }
+                public boolean ignoreChildren( PerspectiveStation station ){
+                	return false;
+                }
+                public boolean ignoreElement( PerspectiveElement element ){
+                	return false;
                 }
             };
         }

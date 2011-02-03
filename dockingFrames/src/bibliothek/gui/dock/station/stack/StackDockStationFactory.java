@@ -169,7 +169,10 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
 	}
 	
 	public StackDockStationLayout getPerspectiveLayout( StackDockPerspective element, Map<PerspectiveDockable, Integer> children ){
-		Integer selected = children.get( element.getSelection() );
+		Integer selected = null;
+		if( children != null ){
+			selected = children.get( element.getSelection() );
+		}
 		return new StackDockStationLayout( selected == null ? -1 : selected.intValue(), element.toMap( children ) );
 	}
 

@@ -519,7 +519,7 @@ public class CContentArea extends JPanel{
 		}
 		
 		public CStationPerspective createPerspective(){
-			return new CGridPerspective( getUniqueId() );
+			return new CGridPerspective( getUniqueId(), isWorkingArea() );
 		}
 	}
 }

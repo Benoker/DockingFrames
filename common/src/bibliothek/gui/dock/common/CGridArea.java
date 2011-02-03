@@ -132,7 +132,7 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 	}
 	
 	public CStationPerspective createPerspective(){
-		return new CGridPerspective( getUniqueId() );
+		return new CGridPerspective( getUniqueId(), isWorkingArea() );
 	}
 
     /**

@@ -45,4 +45,10 @@ public interface CStationPerspective extends CElementPerspective{
 	 */
 	@FrameworkOnly
 	public void setPerspective( CPerspective perspective );
+
+	/**
+	 * Tells whether this station will act as a {@link CStation#isWorkingArea() working area}.
+	 * @return whether this station acts as working area
+	 */
+	public boolean isWorkingArea();
 }

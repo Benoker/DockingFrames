@@ -97,7 +97,8 @@ public interface DockFactory<D extends DockElement, P extends PerspectiveElement
      * if the client is guaranteed not to use a {@link Perspective}. 
      * @param layout the new layout
      * @param children some children, note that the map may not contain all elements
-     * which were present when the layout was created. 
+     * which were present when the layout was created. Is <code>null</code> if the children of this
+     * station are going to be ignored. 
      * @return the new element, can be <code>null</code>, the return value of {@link PerspectiveElement#getFactoryID()} should
      * be equal to {@link #getID()}
      */
@@ -107,7 +108,8 @@ public interface DockFactory<D extends DockElement, P extends PerspectiveElement
      * Updates the contents of <code>perspective</code> such that it reflects the contents of <code>layout</code>.
      * @param perspective the perspective that is to be updated
      * @param layout the layout to apply
-     * @param children the new children of <code>perspective</code>
+     * @param children the new children of <code>perspective</code>, is <code>null</code> if the children of this
+     * station are going to be ignored.
      */
     public void layoutPerspective( P perspective, L layout, Map<Integer, PerspectiveDockable> children );
     
@@ -123,6 +125,7 @@ public interface DockFactory<D extends DockElement, P extends PerspectiveElement
 	 * @param children a map providing identifiers for the children of this element. The
 	 * identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.), 
 	 * the exact same identifiers would be given to {@link DockConverter#getLayout(bibliothek.gui.dock.DockElement, Map)}.
+	 * Is <code>null</code> if the children of this station should be ignored.
 	 * @return the layout information
 	 */
 	public L getPerspectiveLayout( P element, Map<PerspectiveDockable, Integer> children );

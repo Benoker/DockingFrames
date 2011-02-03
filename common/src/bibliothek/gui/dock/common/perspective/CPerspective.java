@@ -187,7 +187,7 @@ public class CPerspective {
 		ensureType( west, CMinimizePerspective.class );
 		
 		if( getRoot( center ) == null ){
-			addRoot( new CGridPerspective( center ));
+			addRoot( new CGridPerspective( center, false ));
 		}
 		if( getRoot( north ) == null ){
 			addRoot( new CMinimizePerspective( north ));

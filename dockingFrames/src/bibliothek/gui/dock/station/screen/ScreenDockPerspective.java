@@ -62,6 +62,10 @@ public class ScreenDockPerspective implements PerspectiveStation{
     	next.read( map, new PlaceholderListItemAdapter<PerspectiveDockable, ScreenPerspectiveWindow>(){
 			@Override
 			public ScreenPerspectiveWindow convert( ConvertedPlaceholderListItem item ){
+				if( children == null ){
+					return null;
+				}
+				
 				int id = item.getInt( "id" );
 				PerspectiveDockable dockable = children.get( id );
 				if( dockable != null ){
@@ -122,6 +126,10 @@ public class ScreenDockPerspective implements PerspectiveStation{
     	return dockables.toMap( new PlaceholderListItemAdapter<PerspectiveDockable, ScreenPerspectiveWindow>() {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, ScreenPerspectiveWindow child ) {
+    			if( children == null ){
+    				return null;
+    			}
+    			
     			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
     			item.putInt( "id", children.get( child.asDockable() ) );
     			item.putInt( "x", child.getX() );

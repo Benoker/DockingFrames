@@ -71,6 +71,9 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 		dockables.read( map, new PlaceholderListItemAdapter<PerspectiveDockable, Item>(){
 			@Override
 			public Item convert( ConvertedPlaceholderListItem item ){
+				if( children == null ){
+					return null;
+				}
 				int id = item.getInt( "id" );
 				PerspectiveDockable dockable = children.get( id );
 				if( dockable != null ){

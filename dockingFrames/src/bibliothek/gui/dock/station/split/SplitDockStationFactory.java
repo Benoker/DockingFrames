@@ -136,6 +136,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     public SplitDockStationLayout getPerspectiveLayout( SplitDockPerspective element, Map<PerspectiveDockable, Integer> children ){
+    	if( children == null ){
+    		return new SplitDockStationLayout( null, -1, element.hasFullscreenAction() );
+    	}
     	Entry root = convert( element.getRoot(), children );
          
         PerspectiveDockable fullscreenDockable = element.getFullscreen();
@@ -217,15 +220,17 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     public void layoutPerspective( SplitDockPerspective perspective, SplitDockStationLayout layout, Map<Integer,PerspectiveDockable> children ){
-	    PerspectiveSplitDockTree tree = new PerspectiveSplitDockTree();
-	    PerspectiveSplitDockTree.Key root = null;
-	    if( layout.getRoot() != null ){
-	    	root = handleEntry( layout.getRoot(), tree, children );
-	    }
-	    if( root != null ){
-	    	tree.root( root );
-	    }
-	    perspective.read( tree, children.get( layout.getFullscreen() ) );
+    	if( children != null ){
+		    PerspectiveSplitDockTree tree = new PerspectiveSplitDockTree();
+		    PerspectiveSplitDockTree.Key root = null;
+		    if( layout.getRoot() != null ){
+		    	root = handleEntry( layout.getRoot(), tree, children );
+		    }
+		    if( root != null ){
+		    	tree.root( root );
+		    }
+		    perspective.read( tree, children.get( layout.getFullscreen() ) );
+    	}
 	    perspective.setHasFullscreenAction( layout.hasFullscreenAction() );
     }
     
@@ -342,7 +347,6 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     public void setLayout( SplitDockStation element, SplitDockStationLayout layout, PlaceholderStrategy placeholders ) {
-        
         // nothing to do
     }
     

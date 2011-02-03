@@ -90,6 +90,9 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		dockables.read( placeholders, new PlaceholderListItemAdapter<PerspectiveDockable, PerspectiveDockable>(){
 			@Override
 			public PerspectiveDockable convert( ConvertedPlaceholderListItem item ){
+				if( children == null ){
+					return null;
+				}
 				int id = item.getInt( "id" );
 				PerspectiveDockable dockable = children.get( id );
 				dockable.setParent( StackDockPerspective.this );
@@ -98,7 +101,9 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		});
 		
 		this.dockables = dockables;
-		selection = children.get( selected );
+		if( children != null ){
+			selection = children.get( selected );
+		}
 	}
 	
 	public void setPlaceholders( PlaceholderMap placeholders ){

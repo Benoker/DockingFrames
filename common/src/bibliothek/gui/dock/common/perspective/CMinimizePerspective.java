@@ -179,6 +179,10 @@ public class CMinimizePerspective implements CStationPerspective{
 		delegate.setPlaceholders( placeholders );	
 	}
 	
+	public boolean isWorkingArea(){
+		return false;
+	}
+	
 	/**
 	 * The type of object that is used by {@link CMinimizePerspective} as intern representation.
 	 * @author Benjamin Sigg

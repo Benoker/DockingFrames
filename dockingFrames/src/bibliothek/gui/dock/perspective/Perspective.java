@@ -41,6 +41,7 @@ import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockSituation;
+import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -147,6 +148,11 @@ public abstract class Perspective {
 	 */
 	@SuppressWarnings("unchecked")
 	public DockLayoutComposition convert( PerspectiveElement element ){
+		DockSituationIgnore ignore = situation.getIgnore();
+		if( ignore != null && ignore.ignoreElement( element )){
+			return null;
+		}
+		
 		String id = getID( element );
 		DockFactory<DockElement, PerspectiveElement, Object> factory = (DockFactory<DockElement, PerspectiveElement, Object>)getFactory( id );
 		if( factory == null ){
@@ -156,16 +162,22 @@ public abstract class Perspective {
 		Map<PerspectiveDockable, Integer> ids = new HashMap<PerspectiveDockable, Integer>();
 		List<DockLayoutComposition> children = new ArrayList<DockLayoutComposition>();
 
+		boolean ignoreChildren = false;
 		PerspectiveStation station = element.asStation();
 		if( station != null ){
-			int index = 0;
-			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-				PerspectiveDockable dockable = station.getDockable( i );
-				DockLayoutComposition composition = convert( dockable );
-				if( composition != null ){
-					children.add( composition );
-					ids.put( dockable, index++ );
+			if( ignore == null || !ignore.ignoreChildren( station )){
+				int index = 0;
+				for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+					PerspectiveDockable dockable = station.getDockable( i );
+					DockLayoutComposition composition = convert( dockable );
+					if( composition != null ){
+						children.add( composition );
+						ids.put( dockable, index++ );
+					}
 				}
+			}
+			else{
+				ignoreChildren = true;
 			}
 		}
 
@@ -176,7 +188,8 @@ public abstract class Perspective {
 		if( dockable != null ){
 			info.setPlaceholder( dockable.getPlaceholder() );
 		}
-		return new DockLayoutComposition( info, null, children, false );
+		
+		return new DockLayoutComposition( info, null, children, ignoreChildren );
 	}
 
 	/**
@@ -200,17 +213,16 @@ public abstract class Perspective {
 			return null;
 
 		PerspectiveElement result = null;
-		Map<Integer, PerspectiveDockable> children = null;
 		
 		if( composition.isIgnoreChildren() ){
 			for( DockLayoutComposition childComposition : composition.getChildren() ){
 				convert( childComposition );
 			}
 
-			result = factory.layoutPerspective( layout.getData(), children );
+			result = factory.layoutPerspective( layout.getData(), null );
 		}
 		else{
-			children = new HashMap<Integer, PerspectiveDockable>();
+			Map<Integer, PerspectiveDockable> children = new HashMap<Integer, PerspectiveDockable>();
 			int index = 0;
 
 			for( DockLayoutComposition childComposition : composition.getChildren() ){

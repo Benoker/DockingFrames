@@ -29,6 +29,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGridArea;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.mode.CMaximizedModeAreaPerspective;
@@ -78,6 +79,9 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 
 	/** the location the currently maximized element had before maximization, can be <code>null</code> */
 	private Location unmaximizeLocation;
+	
+	/** whether this perspective acts as working area */
+	private boolean workingArea;
 
 	/** identifiers children that are in normal mode */
 	private CModeAreaPerspective normalMode = new CModeAreaPerspective(){
@@ -119,16 +123,40 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 			return unmaximizeMode;
 		}
 	};
-
+	
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
 	 */
 	public CGridPerspective( String id ){
+		this( id, false );
+	}
+
+	/**
+	 * Creates a new, empty perspective.
+	 * @param id the unique identifier of this perspective
+	 * @param workingArea whether this station should be treated as {@link CStation#isWorkingArea() working area} or not.
+	 */
+	public CGridPerspective( String id, boolean workingArea ){
 		super( id );
 		delegate = new CommonSplitDockPerspective();
 		delegate.setHasFullscreenAction( false );
+		setWorkingArea( workingArea );
 		gridClear();
+	}
+	
+	public boolean isWorkingArea(){
+		return workingArea;
+	}
+	
+	/**
+	 * Sets whether this station should be regarded as a {@link CStation#isWorkingArea() working area} or not. This
+	 * setting is not stored, it is the clients responsibility to make sure that the matching {@link CStation} is
+	 * or is not a working area.
+	 * @param workingArea whether this station is to be treated like a working area or not
+	 */
+	public void setWorkingArea( boolean workingArea ){
+		this.workingArea = workingArea;
 	}
 
 	@Override

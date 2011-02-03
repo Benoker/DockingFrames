@@ -107,7 +107,10 @@ import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.CControlPerspective;
+import bibliothek.gui.dock.common.perspective.CDockablePerspective;
 import bibliothek.gui.dock.common.perspective.CStackPerspective;
+import bibliothek.gui.dock.common.perspective.CStationPerspective;
+import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.common.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.control.DockRegister;
@@ -125,6 +128,8 @@ import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationLayout;
@@ -987,6 +992,15 @@ public class CControl {
 		
 		            return false;
 		        }
+		        public boolean ignoreChildren( PerspectiveStation station ){
+		        	if( station instanceof CommonElementPerspective ){
+		        		CStationPerspective perspective = ((CommonElementPerspective)station).getElement().asStation();
+		        		if( perspective != null ){
+		        			return perspective.isWorkingArea();
+		        		}
+		        	}
+		        	return false;
+		        }
 		        public boolean ignoreElement( DockElement element ) {
 		            if( element instanceof CommonDockable ){
 		                CDockable cdockable = ((CommonDockable)element).getDockable();
@@ -994,6 +1008,15 @@ public class CControl {
 		                    return true;
 		            }
 		            return false;
+		        }
+		        public boolean ignoreElement( PerspectiveElement element ){
+		        	if( element instanceof CommonElementPerspective ){
+		        		CDockablePerspective perspective = ((CommonElementPerspective)element).getElement().asDockable();
+		        		if( perspective != null ){
+		        			return perspective.getWorkingArea() != null;
+		        		}
+		        	}
+		        	return false;
 		        }
 		    });
     	}

@@ -27,6 +27,8 @@ package bibliothek.gui.dock.layout;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 
 /**
  * Utility class for {@link DockSituationIgnore}.
@@ -53,7 +55,21 @@ public abstract class DockSituationIgnoreUtil {
                 }
                 return true;
             }
+            public boolean ignoreChildren( PerspectiveStation station ){
+        	   for( DockSituationIgnore ignore : ignores ){
+                   if( !ignore.ignoreChildren( station ))
+                       return false;
+               }
+               return true;
+            }
             public boolean ignoreElement( DockElement element ) {
+                for( DockSituationIgnore ignore : ignores ){
+                    if( !ignore.ignoreElement( element ))
+                        return false;
+                }
+                return true;
+            }
+            public boolean ignoreElement( PerspectiveElement element ){
                 for( DockSituationIgnore ignore : ignores ){
                     if( !ignore.ignoreElement( element ))
                         return false;
@@ -78,7 +94,21 @@ public abstract class DockSituationIgnoreUtil {
                 }
                 return false;
             }
+            public boolean ignoreChildren( PerspectiveStation station ){
+                for( DockSituationIgnore ignore : ignores ){
+                    if( !ignore.ignoreChildren( station ))
+                        return true;
+                }
+                return false;
+            }
             public boolean ignoreElement( DockElement element ) {
+                for( DockSituationIgnore ignore : ignores ){
+                    if( !ignore.ignoreElement( element ))
+                        return true;
+                }
+                return false;
+            }
+            public boolean ignoreElement( PerspectiveElement element ){
                 for( DockSituationIgnore ignore : ignores ){
                     if( !ignore.ignoreElement( element ))
                         return true;
@@ -99,8 +129,14 @@ public abstract class DockSituationIgnoreUtil {
             public boolean ignoreChildren( DockStation station ) {
                 return !ignore.ignoreChildren( station );
             }
+            public boolean ignoreChildren( PerspectiveStation station ){
+                return !ignore.ignoreChildren( station );
+            }
             public boolean ignoreElement( DockElement element ) {
                 return !ignore.ignoreElement( element );
+            }
+            public boolean ignoreElement( PerspectiveElement element ){
+            	return !ignore.ignoreElement( element );
             }
         };
     }
