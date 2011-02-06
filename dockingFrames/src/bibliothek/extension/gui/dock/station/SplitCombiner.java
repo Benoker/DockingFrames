@@ -25,6 +25,7 @@
  */
 package bibliothek.extension.gui.dock.station;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -189,7 +190,7 @@ public class SplitCombiner extends BasicCombiner{
 			this.space = space;
 		}
 		
-		public void paint( Graphics g, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
+		public void paint( Graphics g, Component component, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
 			Rectangle destination = new Rectangle( dockableBounds );
 			switch( side ){
 				case TOP:

@@ -473,7 +473,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 	                            getWidth() - 2*(insets.left+insets.right),
 	                            getHeight() - 2*(insets.top+insets.bottom ));
 	
-	                    combination.paint( g, paint, bounds, insert );
+	                    combination.paint( g, contentBackground, paint, bounds, insert );
                     }
                 }
             }

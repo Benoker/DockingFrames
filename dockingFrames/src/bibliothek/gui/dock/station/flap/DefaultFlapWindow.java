@@ -127,7 +127,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 					Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
 					StationPaint paint = DefaultFlapWindow.this.station.getPaint().get();
 					if( paint != null ){
-						dropInfo.getCombineTarget().paint( g, paint, bounds, bounds );
+						dropInfo.getCombineTarget().paint( g, contentContainer, paint, bounds, bounds );
 					}
 				}
 			}

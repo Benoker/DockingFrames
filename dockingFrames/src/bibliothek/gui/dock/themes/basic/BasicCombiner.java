@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.themes.basic;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -51,7 +52,7 @@ public class BasicCombiner implements Combiner {
 		}
 		
 		return new CombinerTarget(){
-			public void paint( Graphics g, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
+			public void paint( Graphics g, Component component, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
 				paint.drawInsertion( g, source.getParent(), stationBounds, dockableBounds );	
 			}
 		};

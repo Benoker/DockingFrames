@@ -28,7 +28,7 @@ import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.UIBridge;
 import bibliothek.gui.dock.util.UIValue;
 
-@Tutorial( id="BorderModifier", title="BorderModifier" )
+@Tutorial( id="BorderModifier", title="Border" )
 public class BorderModifierExample {
 	/* Clients can install "BorderModifiers" to modify any Border used by the framework. Basically a BorderModifier
 	 * gets the original border, and can decide what to do with that border. The border may be replaced, it may

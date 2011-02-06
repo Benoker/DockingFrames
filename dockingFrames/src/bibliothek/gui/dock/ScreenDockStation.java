@@ -83,7 +83,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
-import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -151,7 +151,7 @@ public class ScreenDockStation extends AbstractDockStation {
     private DockTitleVersion version;
     
     /** Combiner to merge some {@link Dockable Dockables} */
-    private DefaultCombinerValue combiner;
+    private StationCombinerValue combiner;
     
     /** Information about the current movement of a {@link Dockable} */
     private DropInfo dropInfo;
@@ -304,7 +304,7 @@ public class ScreenDockStation extends AbstractDockStation {
         this.owner = owner;
         
         displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".screen", this );
-        combiner = new DefaultCombinerValue( ThemeManager.COMBINER + ".screen", this );
+        combiner = new StationCombinerValue( ThemeManager.COMBINER + ".screen", this );
         
         displayers = new DisplayerCollection( this, displayerFactory );
         fullscreenAction = createFullscreenAction();
@@ -421,9 +421,9 @@ public class ScreenDockStation extends AbstractDockStation {
      * Gets the {@link Combiner} that is used to merge two {@link Dockable Dockables}
      * on this station.
      * @return the combiner
-     * @see DefaultCombinerValue#setDelegate(Combiner)
+     * @see StationCombinerValue#setDelegate(Combiner)
      */
-    public DefaultCombinerValue getCombiner() {
+    public StationCombinerValue getCombiner() {
         return combiner;
     }
     
@@ -1735,7 +1735,7 @@ public class ScreenDockStation extends AbstractDockStation {
 			SwingUtilities.convertPointFromScreen( point, combine.getDockable().getComponent() );
 			return point;
 		}
-
+		
 		public Dimension getSize(){
 			return combine.getDockable().getComponent().getSize();
 		}

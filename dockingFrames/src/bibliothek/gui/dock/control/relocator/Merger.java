@@ -35,7 +35,7 @@ public interface Merger {
 	/**
 	 * Checks whether {@link #merge(DockStation, DockStation)} will succeed or not. This
 	 * method will only be called if <code>parent</code> would accept all children
-	 * of <code>child</code>.
+	 * of <code>child</code>. This method may be called during "drop" and during "move" operations.
 	 * @param parent an existing station
 	 * @param child a station that is dragged around and may be dropped onto <code>parent</code>
 	 * @return whether {@link #merge(DockStation, DockStation)} will succeed
@@ -45,9 +45,11 @@ public interface Merger {
 	/**
 	 * Moves all children of <code>child</code> to <code>parent</code>, leaving <code>child</code>
 	 * empty. This method is only called if {@link #canMerge(DockStation, DockStation) canMerge}
-	 * returned <code>true</code> and if the <code>accept</code>-methods allow the operation. 
-	 * @param parent 
-	 * @param child
+	 * returned <code>true</code> and if the <code>accept</code>-methods allow the operation.<br>
+	 * If the parent of <code>child</code> is not <code>parent</code>, then <code>child</code> will be removed
+	 * from its parent. Otherwise the child remains, allowing this {@link Merger} to reuse it.  
+	 * @param parent the new parent of the children
+	 * @param child the station to disolve
 	 */
 	public void merge( DockStation parent, DockStation child );
 }

@@ -71,7 +71,7 @@ public class MergeOperation implements RelocateOperation{
 		}
 		
 		DockStation parent = selection.getDockParent();
-		if( parent != null ){
+		if( parent != null && parent != station ){
 			parent.drag( selection );
 		}
 	}

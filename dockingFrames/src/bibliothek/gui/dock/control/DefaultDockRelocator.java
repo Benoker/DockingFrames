@@ -206,17 +206,20 @@ public class DefaultDockRelocator extends DockRelocator{
             boolean checkOverrideZone = i == 0;
             
             for( DockStation station : list ){
+            	boolean merge = canMerge( station, dockable );
+            	
                 if( dockable.getDockParent() == station ){
                     // just a move
                     if( station.prepareMove( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable ) ){
+                    	if( merge ){
+                    		return new MergeOperation( getController(), getMerger(), station );
+                    	}
                         return new MoveOperation( getController(), station );
                     }
                 }
                 else{
                     // perhaps a drop
-                	boolean merge = canMerge( station, dockable );
-                	
-                    if( station.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable )){
+                	if( station.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable )){
                     	if( merge ){
                     		return new MergeOperation( getController(), getMerger(), station );
                     	}

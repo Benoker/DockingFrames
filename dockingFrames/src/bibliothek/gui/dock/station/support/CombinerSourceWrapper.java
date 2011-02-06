@@ -62,7 +62,7 @@ public class CombinerSourceWrapper implements CombinerSource{
 	public Point getMousePosition(){
 		return delegate.getMousePosition();
 	}
-
+	
 	public Dockable getNew(){
 		return delegate.getNew();
 	}

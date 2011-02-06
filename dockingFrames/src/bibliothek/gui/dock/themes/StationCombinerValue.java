@@ -34,6 +34,8 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
+import bibliothek.gui.dock.util.UIValue;
+import bibliothek.util.Path;
 
 /**
  * A <code>CombinerWrapper</code> encloses a {@link Combiner} and uses
@@ -42,14 +44,17 @@ import bibliothek.gui.dock.themes.basic.BasicCombiner;
  * @author Benjamin Sigg
  *
  */
-public class DefaultCombinerValue extends StationThemeItemValue<Combiner> implements CombinerValue, Combiner {
+public class StationCombinerValue extends StationThemeItemValue<Combiner> implements CombinerValue, Combiner {
+	/** What kind of {@link UIValue} this is */
+	public static final Path KIND_STATION = CombinerValue.KIND_COMBINER.append( "station" );
+	
 	/**
 	 * Creates a new value.
 	 * @param id the identifier of this value, used to read a resource from the {@link ThemeManager}
 	 * @param station the owner of this object
 	 */
-    public DefaultCombinerValue( String id, DockStation station ){
-    	super( id, KIND_COMBINER, ThemeManager.COMBINER_TYPE, station );
+    public StationCombinerValue( String id, DockStation station ){
+    	super( id, KIND_STATION, ThemeManager.COMBINER_TYPE, station );
     }
 
     public CombinerTarget prepare( CombinerSource source, boolean force ){

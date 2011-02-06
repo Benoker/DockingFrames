@@ -32,7 +32,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.DockThemeExtension;
@@ -105,7 +105,7 @@ public interface DockTheme {
     
     /**
      * Gets the Combiner for <code>station</code>.<br>
-     * This method should not be used directly, instead an {@link UIValue} of type {@link DefaultCombinerValue} should
+     * This method should not be used directly, instead an {@link UIValue} of type {@link StationCombinerValue} should
      * be installed at the local {@link ThemeManager} to retrieve the value.
      * @param station the station whose combiner is searched
      * @return a combiner for <code>station</code>

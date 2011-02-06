@@ -98,7 +98,7 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
-import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -280,7 +280,7 @@ public class FlapDockStation extends AbstractDockableStation {
     /** The {@link StationPaint} used to paint on this station */
     private DefaultStationPaintValue paint;
     /** The {@link Combiner} user to combine {@link Dockable Dockables}*/
-    private DefaultCombinerValue combiner;
+    private StationCombinerValue combiner;
     /** The {@link DisplayerFactory} used to create displayers*/
     private DefaultDisplayerFactoryValue displayerFactory;
     /** Collection used to handle the {@link DockableDisplayer} */
@@ -352,7 +352,7 @@ public class FlapDockStation extends AbstractDockableStation {
         displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".flap", this );
         displayers = new DisplayerCollection( this, displayerFactory );
         paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".flap", this );
-        combiner = new DefaultCombinerValue( ThemeManager.COMBINER + ".flap", this );
+        combiner = new StationCombinerValue( ThemeManager.COMBINER + ".flap", this );
         
         buttonPane.addComponentListener( new ComponentAdapter(){
             @Override
@@ -621,7 +621,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Gets the {@link Combiner} to merge {@link Dockable Dockables}
      * @return the combiner
      */
-    public DefaultCombinerValue getCombiner() {
+    public StationCombinerValue getCombiner() {
         return combiner;
     }
     

@@ -430,3 +430,7 @@
 - API: Additional method "isWorkingArea" in "CStationPerspective".
 ! API: DockRelocator has two additional methods "getRemote" and "getDirectRemote" with a parameter "forgeDrag". If that parameter is true, then a DnD operation can be forced to start.
 - Bugfix: NoStackTheme.Meta, field "meta" was never set.
+
+[v1.1.0p6]
+- Bugfix: CombinerTarget is created earlier on SplitDockStation in order to allow the Combiner to paint the DnD operation
+- Bugfix: Merger can now also be applied on a move operation. The child DockStation in a merge operation only gets removed from its parent if the parent is not the parent DockStation of the operation

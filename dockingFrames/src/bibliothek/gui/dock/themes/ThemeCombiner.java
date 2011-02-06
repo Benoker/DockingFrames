@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.themes;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -91,8 +92,8 @@ public class ThemeCombiner implements Combiner{
 			this.delegate = delegate;
 		}
 		
-		public void paint( Graphics g, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
-			delegate.paint( g, paint, stationBounds, dockableBounds );	
+		public void paint( Graphics g, Component component, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
+			delegate.paint( g, component, paint, stationBounds, dockableBounds );	
 		}
 	}
 }

@@ -52,9 +52,7 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         return dockable;
     }
     
-    public PutInfo prepareDrop( SplitDockStation station, int x, int y,
-            int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        
+    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         if( station.isFullScreen() )
             return null;
         
@@ -101,9 +99,7 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         }
     }
     
-    public PutInfo prepareMove( SplitDockStation station, int x, int y,
-            int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        
+    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         if( station.isFullScreen() )
             return null;
         

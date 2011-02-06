@@ -120,7 +120,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.station.support.RootPlaceholderStrategy;
-import bibliothek.gui.dock.themes.DefaultCombinerValue;
+import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -184,7 +184,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private DockTheme theme;
 
 	/** Combiner to {@link #dropOver(Leaf, Dockable, CombinerSource, CombinerTarget) combine} some Dockables */
-	private DefaultCombinerValue combiner;
+	private StationCombinerValue combiner;
 
 	/** The type of titles which are used for this station */
 	private DockTitleVersion title;
@@ -372,7 +372,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		dockableStateListeners = new DockableStateListenerManager( this );
 
 		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".split", this );
-		combiner = new DefaultCombinerValue( ThemeManager.COMBINER + ".split", this );
+		combiner = new StationCombinerValue( ThemeManager.COMBINER + ".split", this );
 		displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".split", this );
 		
 		displayers = new DisplayerCollection(this, displayerFactory);
@@ -1310,10 +1310,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	
 	private void prepareCombine( PutInfo putInfo, int x, int y ){
 		if( putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE ){
-			if( putInfo.getCombinerSource() != null && putInfo.getCombinerTarget() != null ){
+			if( putInfo.getCombinerSource() == null && putInfo.getCombinerTarget() == null ){
 				if( putInfo.getNode() instanceof Leaf ){
 					Point mouseOnStation = new Point( x, y );
 					SwingUtilities.convertPointFromScreen( mouseOnStation, getComponent() );
+					
 					SplitDockCombinerSource source = new SplitDockCombinerSource( putInfo, this, mouseOnStation );
 						
 					CombinerTarget target = getCombiner().prepare( source, true );
@@ -1650,10 +1651,26 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 	}
 
+	/**
+	 * Gets information about the current {@link #drop()} or {@link #move()} operation.
+	 * @return information about the current operation, can be <code>null</code>
+	 */
+	public PutInfo getDropInfo(){
+		return putInfo;
+	}
+	
 	public void drop(){
 		drop(true);
 	}
 
+	/**
+	 * Executes a drop operation using the information from <code>put</code>.
+	 * @param put information about the drop
+	 */
+	public void drop( PutInfo put ){
+		drop( put, true );
+	}
+	
 	/**
 	 * Drops the current {@link #putInfo}.
 	 * @param fire <code>true</code> if events should be fired,
@@ -2145,7 +2162,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * this station.
 	 * @return the combiner
 	 */
-	public DefaultCombinerValue getCombiner(){
+	public StationCombinerValue getCombiner(){
 		return combiner;
 	}
 
@@ -2185,7 +2202,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					Rectangle bounds = putInfo.getNode().getBounds();
 					StationPaint stationPaint = paint.get();
 					if( stationPaint != null ){
-						target.paint( g, stationPaint, bounds, bounds );
+						target.paint( g, getComponent(), stationPaint, bounds, bounds );
 					}
 				}
 			}

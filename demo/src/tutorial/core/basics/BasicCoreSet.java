@@ -14,6 +14,8 @@ public class BasicCoreSet extends TutorialSet{
                 ActionsExample.class,
                 InternalExample.class,
                 BackgroundExample.class,
-                BorderModifierExample.class );
+                BorderModifierExample.class,
+                CombinerExample.class,
+                MergerExample.class );
 	}
 }

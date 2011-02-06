@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.support;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -41,8 +42,16 @@ import bibliothek.gui.dock.station.StationPaint;
 public interface CombinerTarget {
 	/**
 	 * Paints some lines on the screen that allow the user to understand of what is
-	 * going to happen if he/she releases the mouse now.
+	 * going to happen if he/she releases the mouse now.<br>
+	 * Implementations interested in painting something in relation to the position of the mouse
+	 * can use the following piece of code to get the mouse position:
+	 * <pre><code>
+	 * CombinerSource source = ... // the source that was used to create this target
+	 * Point mouse = source.getMousePosition();
+	 * if( mouse != null ){ 
+	 *   mouse = SwingUtilities.convertPoint( source.getOld().getComponent(), mouse, component );</code></pre>	
 	 * @param g the graphics context to use
+	 * @param component the component on which <code>g</code> paints.
 	 * @param paint painting algorithms fitting to the current {@link DockTheme}
 	 * @param stationBounds an estimate of the area which will be affected by inserting
 	 * the combined {@link Dockable}, not <code>null</code>
@@ -52,5 +61,5 @@ public interface CombinerTarget {
 	 * (e.g. when {@link CombinerSource#getSize()} returned <code>null</code>), then
 	 * this may be the location and size of a title. Never <code>null</code>. 
 	 */
-	public void paint( Graphics g, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds );
+	public void paint( Graphics g, Component component, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds );
 }
