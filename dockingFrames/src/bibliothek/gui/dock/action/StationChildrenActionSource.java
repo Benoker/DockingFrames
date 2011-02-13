@@ -469,6 +469,10 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 			updateActionList( true );
 		}
 		
+		public void dockablesRepositioned( DockStation station, Dockable[] dockables ){
+			updateActionList( true );
+		}
+		
 		public void add( Dockable dockable ){
 			DockStation station = dockable.asDockStation();
 			if( station != null ){

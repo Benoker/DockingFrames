@@ -440,3 +440,4 @@
 - Bugfix: Externalizing a minimized CDockable that has no size makes now sure that the window has a minimum size and (if possible) is not placed at 0/0
 - API: Actions of the button of a FlapDockStation can be filtered through the ButtonContent and the ButtonContentConnector. The default implementation will show any action that has the annotation ButtonContentAction.
 - API: A stack of minimized CDockable now shows the "normalize" button per default. The exact behavior of which buttons are visible can be configured through the CGroupBehavior, the ButtonContent and the ButtonContentFilter.
+- Bugfix: Reordering the children of a dockable DockStation that is shown on a FlapDockStation now also reorders the actions on the button.
