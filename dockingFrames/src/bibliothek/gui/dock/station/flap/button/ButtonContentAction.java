@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 /**
  * Marks a {@link bibliothek.gui.dock.action.DockAction} that it should be shown
  * on a component that depends on a {@link ButtonContent} and that filters its actions.<br>
- * This annotation receives only attention if the {@link DefaultButtonContentConnector} is used.
+ * This annotation receives only attention if the {@link DefaultButtonContentFilter} is used.
  * @author Benjamin Sigg
  */
 @Retention(RetentionPolicy.RUNTIME)

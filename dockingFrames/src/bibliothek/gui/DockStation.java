@@ -66,7 +66,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  *  its controller using the {@link DockController#getDockTitleManager() DockTitleManager} and its 
  *  {@link DockTitleManager#registerDefault(String, DockTitleFactory) factory method}. With the {@link DockTitleVersion}-object one
  *  {@link DockTitleRequest} for each required {@link DockTitle} can be created.</li>
- *  <li>One child can be focused. If this station changes the focus it should use {@link DockController#setAtLeastFocusedDockable(Dockable)}.</li>
+ *  <li>One child can be focused. If this station changes the focus it should use {@link DockController#setAtLeastFocusedDockable(Dockable, Component)}.</li>
  *  <li>This station should support placeholders. The current {@link PlaceholderStrategy} can be used to convert {@link Dockable}s to placeholders. 
  *  A {@link PlaceholderList} is a good datastructure to store {@link Dockable}s and placeholders at the same time.</li>
  *  <li>Additional points where the user can start drag and drop operations can be installed by implementing a {@link DockElementRepresentative}. It

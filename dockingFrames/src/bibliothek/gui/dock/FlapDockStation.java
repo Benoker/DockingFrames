@@ -86,7 +86,7 @@ import bibliothek.gui.dock.station.flap.FlapWindow;
 import bibliothek.gui.dock.station.flap.FlapWindowFactory;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
-import bibliothek.gui.dock.station.flap.button.DefaultButtonContentConnector;
+import bibliothek.gui.dock.station.flap.button.DefaultButtonContentFilter;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -176,7 +176,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Key for all elements that depend from {@link #BUTTON_CONTENT}, adds additional information to the {@link ButtonContent}.
      */
     public static final PropertyKey<ButtonContentFilter> BUTTON_CONTENT_FILTER = new PropertyKey<ButtonContentFilter>( 
-    		"flap dock station button content connector", new ConstantPropertyFactory<ButtonContentFilter>( new DefaultButtonContentConnector() ), true );
+    		"flap dock station button content connector", new ConstantPropertyFactory<ButtonContentFilter>( new DefaultButtonContentFilter() ), true );
     
     /**
      * Key for the minimum size of all {@link FlapDockStation}s.

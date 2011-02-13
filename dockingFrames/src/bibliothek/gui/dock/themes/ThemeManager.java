@@ -421,7 +421,7 @@ public class ThemeManager extends TypedUIProperties{
     
     /**
      * Sets a strategy that is used to modify the border of various components.<br>
-     * Valid identifier can be, but are not restricted to:
+     * Valid identifiers can be, but are not restricted to:
      * <ul>
      *  <li>{@link MiniButton#BORDER_KEY_NORMAL}</li>
      * 	<li>{@link MiniButton#BORDER_KEY_NORMAL_SELECTED}</li>
@@ -453,8 +453,6 @@ public class ThemeManager extends TypedUIProperties{
      * 	<li>{@value #BORDER_MODIFIER}.title.flat</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.station.basic</li>
      * 	<li>{@value #BORDER_MODIFIER}.title.tab</li>
-     * 
-     * 	
      * </ul>
      * @param id the identifier of the items that should use <code>modifier</code>
      * @param modifier the new strategy, can be <code>null</code>

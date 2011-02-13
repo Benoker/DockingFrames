@@ -32,7 +32,7 @@ import bibliothek.gui.dock.action.DockAction;
  * have the annotation {@link ButtonContentAction} attached.
  * @author Benjamin Sigg
  */
-public class DefaultButtonContentConnector implements ButtonContentFilter{
+public class DefaultButtonContentFilter implements ButtonContentFilter{
 	public boolean isButtonAction( DockAction action ){
 		ButtonContentAction button = action.getClass().getAnnotation( ButtonContentAction.class );
 		return button != null;

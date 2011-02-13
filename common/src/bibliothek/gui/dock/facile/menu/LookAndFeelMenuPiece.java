@@ -66,7 +66,7 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
     /** whether the <code>LookAndFeel</code> is currently changing or not */
     private boolean onChange = false;
     
-    /** a collector monitoring {@link #frame} */
+    /** a collector monitoring the {@link JFrame} that is given to the constructor of this menu */
     private ComponentCollector frameCollector;
     
     /**
@@ -117,7 +117,6 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
         			return result;
         		}
         	};
-        	list.addComponentCollector( frameCollector );
         }
         
         changed();
@@ -140,10 +139,16 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
     }
     
     private void install(){
+    	if( frameCollector != null ){
+    		list.addComponentCollector( frameCollector );
+    	}
     	list.addLookAndFeelListener( listListener );
     }
     
     private void uninstall(){
+    	if( frameCollector != null ){
+    		list.removeComponentCollector( frameCollector );
+    	}
     	list.removeLookAndFeelListener( listListener );
     }
     

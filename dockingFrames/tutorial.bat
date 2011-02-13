@@ -1,1 +1,1 @@
-java -jar tutorial.jar
+java -jar bin\tutorial.jar

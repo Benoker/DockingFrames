@@ -41,7 +41,7 @@ import bibliothek.util.xml.XElement;
 
 /**
  * A {@link DockFactory} that wraps around another factory and adds all elements
- * that are read through {@link #layout(BackupFactoryData)} or {@link #layout(BackupFactoryData, Map)}
+ * that are read through {@link #layout(BackupFactoryData, PlaceholderStrategy)} or {@link #layout(BackupFactoryData, Map, PlaceholderStrategy)}
  * to a {@link DockFrontend}.
  * @author Benjamin Sigg
  * @param <D> the kind of elements read by this factory

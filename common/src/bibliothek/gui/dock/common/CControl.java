@@ -2199,7 +2199,6 @@ public class CControl {
      * respective a call to {@link LocationModeManager#setMode(Dockable, ExtendedMode)}. The buttons that are
      * visible to the user all link to these methods.
      * @param behavior the new behavior, not <code>null</code>
-     * @see #setMaximizeBehavior(CMaximizeBehavior)
      */
     public void setGroupBehavior( CGroupBehavior behavior ){
     	locationManager.setGroupBehavior( behavior );

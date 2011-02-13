@@ -118,7 +118,6 @@ public class DefaultIconScheme extends AbstractIconScheme {
 	 * If no file is found, then this scheme just remains empty.
 	 * @param file the file to read
 	 * @param controller the {@link DockController} in whose realm this scheme will be used
-	 * @see #DefaultIconScheme(String, ClassLoader)
 	 */
 	public DefaultIconScheme( String file, DockController controller ){
 		this( file, DefaultIconScheme.class.getClassLoader(), controller );

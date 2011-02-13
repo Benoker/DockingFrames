@@ -92,8 +92,8 @@ public abstract class AbstractPreferenceDialog<M extends PreferenceModel> extend
     
     /**
      * A constructor which does not initialize this dialog. Subclasses must
-     * call {@link #init(PreferenceModel)} to finish constructing this dialog.
-     * @param init whether to call {@link #init(PreferenceModel)}.
+     * call {@link #init(PreferenceModel, boolean)} to finish constructing this dialog.
+     * @param init whether to call {@link #init(PreferenceModel, boolean)}.
      * @param model the model to use, can be <code>null</code>
      * @param destroyOnClose if set to <code>true</code>, then {@link #destroy()} is automatically called
      * if {@link #close()} is called. Clients have to call {@link #destroy()} manually if they are not

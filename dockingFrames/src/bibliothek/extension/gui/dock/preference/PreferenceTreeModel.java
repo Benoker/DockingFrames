@@ -80,7 +80,7 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
      * @param combiner tells how to combine the {@link Path} of a model with
      * the preferences of a model. Used in {@link #getPath(int)}. Not <code>null</code>.
      * @param controller the controller in whose realm this model is used
-     * @see MergedPreferenceModel#MergedPreferenceModel(PathCombiner)
+     * @see MergedPreferenceModel#MergedPreferenceModel(PathCombiner, DockController)
      */
     public PreferenceTreeModel( PathCombiner combiner, DockController controller ){
     	super( controller );
