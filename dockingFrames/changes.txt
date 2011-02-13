@@ -437,4 +437,6 @@
 ! API: CGroupBehavior now creates a CGroupMovement and does not execute its changes directly
 ! API: CMaximizedBehavior and all associated methods have been removed, the ordinary CGroupBehavior can now perform all necessary tasks
 - Bugfix: Maximizing a minimized CDockable on a stack now maximizes the entire stack
-- Bugfix: Externalizing a minimized CDockable that has no size makes now sure that the window has a minimum size and (if possible) is not placed at 0/0 
+- Bugfix: Externalizing a minimized CDockable that has no size makes now sure that the window has a minimum size and (if possible) is not placed at 0/0
+- API: Actions of the button of a FlapDockStation can be filtered through the ButtonContent and the ButtonContentConnector. The default implementation will show any action that has the annotation ButtonContentAction.
+- API: A stack of minimized CDockable now shows the "normalize" button per default. The exact behavior of which buttons are visible can be configured through the CGroupBehavior, the ButtonContent and the ButtonContentFilter.

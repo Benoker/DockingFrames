@@ -31,6 +31,7 @@ import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.DockActionText;
@@ -118,7 +119,21 @@ public class LocationModeAction extends SimpleButtonAction{
 	public void action( Dockable dockable ){
 		super.action( dockable );
 		LocationModeManager<?> manager = mode.getManager();
-		manager.apply( dockable, mode.getUniqueIdentifier(), false );
+		
+		while( dockable != null ){
+			if( manager.isRegistered( dockable )){
+				manager.apply( dockable, mode.getUniqueIdentifier(), false );
+				return;
+			}
+			
+			DockStation station = dockable.asDockStation();
+			if( station == null ){
+				return;
+			}
+			else{
+				dockable = station.getFrontDockable();
+			}
+		}
 	}
 	
     /**

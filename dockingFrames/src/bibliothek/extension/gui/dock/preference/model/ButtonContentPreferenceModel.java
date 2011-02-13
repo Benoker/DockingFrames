@@ -48,18 +48,21 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 	private ButtonContentConditionChoice textChoice;
 	private ButtonContentConditionChoice childrenChoice;
 	private ButtonContentConditionChoice actionsChoice;
+	private ButtonContentConditionChoice filterChoice;
 	
 	private String knob;
 	private String icon;
 	private String text;
 	private String children;
 	private String actions;
+	private String filter;
 	
 	private PreferenceModelText knobDescription;
 	private PreferenceModelText iconDescription;
 	private PreferenceModelText textDescription;
 	private PreferenceModelText childrenDescription;
 	private PreferenceModelText actionsDescription;
+	private PreferenceModelText filterDescription;
 	
 	/**
 	 * Creates a new model
@@ -73,6 +76,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 		textChoice = new ButtonContentConditionChoice( controller );
 		childrenChoice = new ButtonContentConditionChoice( controller );
 		actionsChoice = new ButtonContentConditionChoice( controller );
+		filterChoice = new ButtonContentConditionChoice( controller );
 	
 		knobDescription = new PreferenceModelText( "preference.buttonContent.knob", this ){
 			protected void changed( String oldValue, String newValue ){
@@ -99,6 +103,11 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 				firePreferenceChanged( 4, 4 );
 			}
 		};
+		filterDescription = new PreferenceModelText( "preference.buttonContent.filter", this ){
+			protected void changed( String oldValue, String newValue ){
+				firePreferenceChanged( 5, 5 );
+			}
+		};
 	}
 	
 	@Override
@@ -109,6 +118,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 			textDescription.setController( getController() );
 			childrenDescription.setController( getController() );
 			actionsDescription.setController( getController() );
+			filterDescription.setController( getController() );
 		}
 		super.addPreferenceModelListener( listener );
 	}
@@ -122,6 +132,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 			textDescription.setController( null );
 			childrenDescription.setController( null );
 			actionsDescription.setController( null );
+			filterDescription.setController( null );
 		}
 	}
 	
@@ -149,7 +160,8 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 				iconChoice.identifierToValue( icon ),
 				textChoice.identifierToValue( text ),
 				childrenChoice.identifierToValue( children ),
-				actionsChoice.identifierToValue( actions ));
+				actionsChoice.identifierToValue( actions ),
+				filterChoice.identifierToValue( filter ));
 	}
 	
 	/**
@@ -162,6 +174,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 		setValue( 2, textChoice.valueToIdentifier( content.getText() ) );
 		setValue( 3, childrenChoice.valueToIdentifier( content.getChildren() ) );
 		setValue( 4, actionsChoice.valueToIdentifier( content.getActions() ) );
+		setValue( 5, filterChoice.valueToIdentifier( content.getActions() ) );
 	}
 	
 	public String getLabel( int index ){
@@ -173,6 +186,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 			case 2: text = textDescription; break;
 			case 3: text = childrenDescription; break;
 			case 4: text = actionsDescription; break;
+			case 5: text = filterDescription; break;
 			default: throw new IllegalArgumentException( "unkonwn property: " + index );
 		}
 		
@@ -189,12 +203,13 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 			case 2: return new Path( "dock.ButtonContent.text" );
 			case 3: return new Path( "dock.ButtonContent.children" );
 			case 4: return new Path( "dock.ButtonContent.actions" );
+			case 5: return new Path( "dock.ButtonContent.filter" );
 			default: throw new IllegalArgumentException( "unkonwn property: " + index );
 		}
 	}
 
 	public int getSize(){
-		return 5;
+		return 6;
 	}
 
 	public Path getTypePath( int index ){
@@ -208,6 +223,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 			case 2: return text;
 			case 3: return children;
 			case 4: return actions;
+			case 5: return filter;
 			default: throw new IllegalArgumentException( "unknown value: " + index );
 		}
 	}
@@ -219,6 +235,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 			case 2: return textChoice;
 			case 3: return childrenChoice;
 			case 4: return actionsChoice;
+			case 5: return filterChoice;
 			default: throw new IllegalArgumentException( "unknown value: " + index );
 		}
 	}
@@ -230,6 +247,7 @@ public class ButtonContentPreferenceModel extends AbstractPreferenceModel{
 			case 2: text = (String)value; break;
 			case 3: children = (String)value; break;
 			case 4: actions = (String)value; break;
+			case 5: filter = (String)value; break;
 		}
 		
 		firePreferenceChanged( index, index );

@@ -39,17 +39,22 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.FilteredDockActionSource;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.action.StationChildrenActionSource;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
+import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonContentValue;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.util.Condition;
@@ -86,11 +91,23 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 	/** tells what items to paint */
 	private ButtonContentValue behavior;
 	
+	/** tells what items to filter */
+	private PropertyValue<ButtonContentFilter> connector = new PropertyValue<ButtonContentFilter>( FlapDockStation.BUTTON_CONTENT_FILTER ) {
+		protected void valueChanged( ButtonContentFilter oldValue, ButtonContentFilter newValue ){
+			if( behavior != null ){
+				updateActionSource( true );
+			}
+		}
+	};
+	
 	/** whether children are currently shown */
 	private boolean showChildren = false;
 	
 	/** wether actions are currently shown */
 	private boolean showActions = false;
+	
+	/** whether all actions should be painted or only a selection */
+	private boolean filterActions = false;
 	
 	/** the color used for the background when active */
 	private TitleColor activeColor = new BasicTitleColor( "title.flap.active", null );
@@ -128,8 +145,12 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
      */
     public BasicButtonDockTitle( Dockable dockable, DockTitleVersion origin ) {
         super();
+        
+        if( origin != null ){
+        	connector.setProperties( origin.getController() );
+        }
     
-        behavior = new ButtonContentValue( new ButtonContent( TRUE, TRUE, IF_DOCKABLE, IF_STATION, TRUE ) ){
+        behavior = new ButtonContentValue( new ButtonContent( TRUE, TRUE, IF_DOCKABLE, IF_STATION, TRUE, TRUE ) ){
 			@Override
 			protected void propertyChanged(){
 				updateContent();
@@ -199,7 +220,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     private void updateContent(){    	
     	updateIcon();
     	updateText();
-    	updateActionSource();
+    	updateActionSource( false );
     	
     	if( behavior.isShowActions() || behavior.isShowChildren() ){
     		setShowMiniButtons( true );
@@ -233,11 +254,12 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     	return allActionsSource;
     }
     
-    private void updateActionSource(){
+    private void updateActionSource( boolean force ){
     	boolean showChildren = behavior.isShowChildren();
     	boolean showActions = behavior.isShowActions();
+    	boolean filterActions = behavior.isFilterActions();
     		
-    	if( this.showChildren != showChildren || this.showActions != showActions ){
+    	if( force || this.showChildren != showChildren || this.showActions != showActions || this.filterActions != filterActions ){
     		allActionsSource.removeAll();
     		
 	    	if( showChildren ){
@@ -245,12 +267,33 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 	    	}
     	
 	    	if( showActions ){
-	    		allActionsSource.add( getDefaultActionSourceFor( getDockable() ) );
+	    		if( filterActions ){
+	    			allActionsSource.add( createFilter( getDefaultActionSourceFor( getDockable() ) ) );
+	    		}
+	    		else{
+	    			allActionsSource.add( getDefaultActionSourceFor( getDockable() ) );
+	    		}
 	    	}
 	    	
 	    	this.showChildren = showChildren;
 	    	this.showActions = showActions;
     	}
+    }
+    
+    /**
+     * Creates a filter around <code>actions</code>, only the actions going through the filter
+     * will be shown.
+     * @param actions the actions to filter
+     * @return the filter
+     */
+    protected DockActionSource createFilter( DockActionSource actions ){
+    	final ButtonContentFilter connector = this.connector.getValue();
+    	
+    	return new FilteredDockActionSource( actions ){
+			protected boolean include( DockAction action ){
+				return connector.isButtonAction( action );
+			}
+		};
     }
     
     /**

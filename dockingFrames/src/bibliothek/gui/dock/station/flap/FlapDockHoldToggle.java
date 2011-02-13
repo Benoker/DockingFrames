@@ -37,6 +37,7 @@ import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.actions.GroupedSelectableDockAction;
 import bibliothek.gui.dock.event.FlapDockListener;
+import bibliothek.gui.dock.station.flap.button.ButtonContentAction;
 
 /**
  * This {@link DockAction} is shown together with the children of a 
@@ -47,6 +48,7 @@ import bibliothek.gui.dock.event.FlapDockListener;
  * of the station.
  * @author Benjamin Sigg
  */
+@ButtonContentAction
 public class FlapDockHoldToggle extends GroupedSelectableDockAction.Check<Boolean> implements ListeningDockAction {
 	private FlapDockStation flap;
 	private DockController controller;

@@ -95,7 +95,7 @@ The station consists of four layers, as seen in the image below. There is a back
 }
 
 \subsubsection{SplitDockStation}
-All the children of this station are visible. The user controls the children as if the station would consist of many \src{JSplitPane}s set into each other (hence the name). Internally the station is organized as tree, where a leaf is a \src{Dockable} and a node the gap between two sets of \src{Dockable}s. Further more this station offers a ``fullscreen mode'' where one of its children takes up the entire space and all other children are invisible.
+All the children of this station are visible. The user controls the children as if the station would consist of many \src{JSplitPane}s set into each other (hence the name). Internally the station is organized as tree, where a leaf is a \src{Dockable} and a node the gap between two sets of \src{Dockable}s. Furthermore this station offers a ``fullscreen mode'' where one of its children takes up the entire space and all other children are invisible.
 
 
 \classbox{
@@ -114,14 +114,13 @@ This station is a list of buttons. If the user clicks on one of the buttons a wi
 }
 
 \subsubsection{ScreenDockStation}
+The \src{ScreenDockStation} allows its children to float around freely on the screen. Each child is put onto its own window which is independent from any other window. This station also offers a ``fullscreen mode'' where a window is enlarged to fill the entire space of a screen.
 
-There are different kind of \src{DockStation}s, each kind has its unique behavior and abilities:
-\begin{description}
- \item[StackDockStation] The children are organized like on a \src{JTabbedPane}. Only one child is visible, but another can be made visible by clicking some button.
- \item[SplitDockStation] The children are organized like in a tree of \src{JSplitPane}s. All children are visible and the user can change the (relative) size of the \src{Dockable}s.
- \item[FlapDockStation] Much like \src{StackDockStation} but the one visible child pops up in its own window. This station can also show no \src{Dockable} at all.
- \item[ScreenDockStation] Shows each child in its own window.
-\end{description}
+\classbox{
+This station is pretty simple and consists of only 3 layers. Some windows (1), instances of \src{ScreenDockWindow}, provide a container to show the children. On each window there is a \src{DockableDisplayer} (2) to paint decorations, and on top is one \src{Dockable} child (3).
+
+\hspace{0.20\textwidth} \includegraphics[width=0.5\textwidth]{basics/screen}
+}
 
 \subsection{DockController}
 A \src{DockController} holds \src{Dockable}s, \src{DockStation}s and other supporting elements together. Most tasks are not handled by the \src{DockController} but by one of its sub-controllers, e.g. drag and drop is handled by the \src{DockRelocator}.

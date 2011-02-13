@@ -34,6 +34,7 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -112,5 +113,15 @@ public class StackGroupBehavior implements CGroupBehavior {
 		}
 		
 		return old;
+	}
+	
+	public boolean shouldForwardActions( DockStation station, Dockable dockable, ExtendedMode mode, ExtendedModeEnablement enablement ){
+		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+			Dockable child = station.getDockable( i );
+			if( !enablement.isAvailable( child, mode )){
+				return false;
+			}
+		}
+		return true;
 	}
 }

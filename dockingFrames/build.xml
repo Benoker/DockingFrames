@@ -154,15 +154,14 @@
 	</target>
 
 	<target name="text" depends="source, paths">
-		<!-- <copy tofile="${base}/common_(old).pdf" file="${location.common}/guide/Guide.pdf"/> -->
 		<copy tofile="${base}/common.pdf" file="${location.common}/guide2/guide2.pdf"/>
-		<!-- <copy tofile="${base}/core_(old).pdf" file="${location.core}/guide/guide.pdf"/> -->
 		<copy tofile="${base}/core.pdf" file="${location.core}/guide2/guide2.pdf"/>
-		<!-- <copy tofile="${base}/faq.pdf" file="${location.core}/guide/faq.pdf"/> -->
 		<copy tofile="${base}/transition.pdf" file="${location.common}/guide/Transition.pdf"/>
 		<copy todir="${base}" file="${location.core}/license.txt"/>
 		<copy todir="${base}" file="${location.core}/changes.txt"/>
 		<copy tofile="${base}/readme.txt" file="${location.core}/readme_full.txt"/>
+		<copy todir="${base}" file="${location.core}/tutorial.sh"/>
+		<copy todir="${base}" file="${location.core}/tutorial.bat"/>
 	</target>
 
 	<target name="webstart" depends="bin, paths">

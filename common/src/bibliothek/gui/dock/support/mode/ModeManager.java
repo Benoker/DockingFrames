@@ -40,6 +40,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionGuard;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.MultiDockActionSource;
@@ -100,11 +101,28 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		}
 	};
 	
+
+	/**
+	 * This {@link ActionGuard} adds {@link DockAction}s to unregistered parents of
+	 * registered {@link Dockable}s. 
+	 */
+	private ActionGuard stationGuard = new ActionGuard(){
+		public boolean react( Dockable dockable ){
+			DockStation station = dockable.asDockStation();
+			return station != null && getHandle( dockable ) == null;
+		}
+		
+		public DockActionSource getSource( Dockable dockable ){
+			return new ModeForwardingActionSource<H>( dockable.asDockStation(), ModeManager.this );
+		}
+	};
+	
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller in whose realm this manager will work
 	 */
 	public ModeManager( DockController controller ){
+		controller.addActionGuard( stationGuard );
 		controller.addActionGuard( guard );
 		this.controller = controller;
 	}
@@ -115,6 +133,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	 */
 	public void destroy(){
 		if( controller != null ){
+			controller.removeActionGuard( stationGuard );
 			controller.removeActionGuard( guard );
 			controller = null;
 		}
@@ -1057,6 +1076,15 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 			entry.updateActionSource();
 		}
 	}
+	
+	/**
+	 * Gets a list of actions that should be shown on <code>station</code> depending on the
+	 * current children of <code>station</code>. This method is called everytime when either
+	 * a child is added, removed or selected on <code>station</code>.
+	 * @param station the station whose actions are asked
+	 * @return the actions, can be <code>null</code>
+	 */
+	public abstract DockActionSource getSharedActions( DockStation station );
 	
 	private DockableHandle getHandle( Dockable dockable ){
 		return dockables.get( dockable );

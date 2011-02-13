@@ -29,6 +29,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.facile.mode.NormalMode;
+import bibliothek.gui.dock.station.flap.button.ButtonContentAction;
 import bibliothek.gui.dock.support.mode.Mode;
 
 /**
@@ -36,6 +37,7 @@ import bibliothek.gui.dock.support.mode.Mode;
  * the {@link NormalMode}.
  * @author Benjamin Sigg
  */
+@ButtonContentAction
 public class NormalModeAction extends LocationModeAction{
 	/**
 	 * Creates a new action.

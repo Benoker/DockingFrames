@@ -24,7 +24,6 @@ Examples for \src{single-dockable}s could be:
 \end{itemize}
 
 \subsubsection{MultipleCDockable}
-\src{MultipleCDockable}s are used if the number of instances is not known prior to runtime. Each kind of \src{MultipleCDockable} is associated with a \linebreak \src{MultipleCDockableFactory}. The framework can delete or create new instances of this kind of \src{dockable} whenever they are needed.
 A set of \src{multi-dockable}s is used if the exact number of instances is not known prior to runtime. Before a \src{multi-dockable} can be used its factory (of type \src{MultipleCDockableFactory}) must be registered at a \src{CControl}. The factory offers methods to store and load the layout of a \src{dockable}. Of course there can be more than one \src{multi-dockable} per factory. Once the factory is registered, clients can add and remove \linebreak \src{multi-dockable}s at any time.
 
 The interface describing all \src{multi-dockable}s is \src{MultipleCDockable}, a convenient implementation is \src{DefaultMultipleCDockable}. This class offers most of the methods and properties a client should ever need.

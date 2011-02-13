@@ -162,62 +162,63 @@ public class ButtonContent {
 	};
 	
 	/** the look and feel completely depends on the current {@link DockTheme}. */
-	public static final ButtonContent THEME_DEPENDENT = new ButtonContent( THEME, THEME, THEME, THEME, THEME );
+	public static final ButtonContent THEME_DEPENDENT = new ButtonContent( THEME, THEME, THEME, THEME, THEME, THEME );
 	/**
 	 * Only the icon is painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent ICON_ONLY = new ButtonContent( FALSE, TRUE, FALSE, FALSE, FALSE );
+    public static final ButtonContent ICON_ONLY = new ButtonContent( FALSE, TRUE, FALSE, FALSE, FALSE, FALSE );
     /**
 	 * Only the title text is painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent TEXT_ONLY = new ButtonContent( FALSE, FALSE, TRUE, FALSE, FALSE );
+    public static final ButtonContent TEXT_ONLY = new ButtonContent( FALSE, FALSE, TRUE, FALSE, FALSE, FALSE );
     /**
 	 * Only the icon and the title text are painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent ICON_AND_TEXT_ONLY = new ButtonContent( FALSE, TRUE, TRUE, FALSE, FALSE );
+    public static final ButtonContent ICON_AND_TEXT_ONLY = new ButtonContent( FALSE, TRUE, TRUE, FALSE, FALSE, FALSE );
     /**
 	 * The icon, or if not present the title text, is painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent ICON_THEN_TEXT_ONLY = new ButtonContent( FALSE, TRUE, NOT_IF_ICON, FALSE, FALSE );
+    public static final ButtonContent ICON_THEN_TEXT_ONLY = new ButtonContent( FALSE, TRUE, NOT_IF_ICON, FALSE, FALSE, FALSE );
     /**
 	 * The title text, or if not present the icon, is painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent TEXT_THEN_ICON_ONLY = new ButtonContent( FALSE, NOT_IF_TEXT, TRUE, FALSE, FALSE );
+    public static final ButtonContent TEXT_THEN_ICON_ONLY = new ButtonContent( FALSE, NOT_IF_TEXT, TRUE, FALSE, FALSE, FALSE );
     /**
 	 * Only the icon and the actions are painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent ICON_ACTIONS = new ButtonContent( FALSE, TRUE, FALSE, FALSE, TRUE );
+    public static final ButtonContent ICON_ACTIONS = new ButtonContent( FALSE, TRUE, FALSE, FALSE, TRUE, FALSE );
     /**
 	 * Only the title text and the actions are painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent TEXT_ACTIONS = new ButtonContent( FALSE, FALSE, TRUE, FALSE, TRUE );
+    public static final ButtonContent TEXT_ACTIONS = new ButtonContent( FALSE, FALSE, TRUE, FALSE, TRUE, FALSE );
     /**
 	 * Icon, title text and actions are painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent ICON_AND_TEXT_ACTIONS = new ButtonContent( FALSE, TRUE, TRUE, FALSE, TRUE );
+    public static final ButtonContent ICON_AND_TEXT_ACTIONS = new ButtonContent( FALSE, TRUE, TRUE, FALSE, TRUE, FALSE );
     /**
 	 * The icon, or if not present the title text, and the actions are painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent ICON_THEN_TEXT_ACTIONS = new ButtonContent( FALSE, TRUE, NOT_IF_ICON, FALSE, TRUE );
+    public static final ButtonContent ICON_THEN_TEXT_ACTIONS = new ButtonContent( FALSE, TRUE, NOT_IF_ICON, FALSE, TRUE, FALSE );
     /**
 	 * The title text, or if not present the icon, and the actions are painted. Please note that this constant only remains for backwards compatibility,
 	 * creating a new {@link ButtonContent} would have the exact same effect. 
 	 */
-    public static final ButtonContent TEXT_THEN_ICON_ACTIONS = new ButtonContent( FALSE, NOT_IF_TEXT, TRUE, FALSE, TRUE );
+    public static final ButtonContent TEXT_THEN_ICON_ACTIONS = new ButtonContent( FALSE, NOT_IF_TEXT, TRUE, FALSE, TRUE, FALSE );
     
     private ButtonContentCondition knob;
     private ButtonContentCondition icon;
     private ButtonContentCondition text;
     private ButtonContentCondition actions;
+    private ButtonContentCondition filterActions;
     private ButtonContentCondition children;
     
     private Map<Dockable, List<ButtonContentListener>> listeners = new HashMap<Dockable, List<ButtonContentListener>>();
@@ -233,13 +234,15 @@ public class ButtonContent {
      * open the station and focus one of its children with on click. If the represented {@link Dockable} is not a 
      * station, then only one button is painted.
      * @param actions whether to show the normal {@link DockAction}s of a <code>Dockable</code>
+     * @param filterActions whether only important {@link DockAction}s, as defined by {@link ButtonContentFilter}, should be shown
      */
-    public ButtonContent( ButtonContentCondition knob, ButtonContentCondition icon, ButtonContentCondition text, ButtonContentCondition children, ButtonContentCondition actions ){
+    public ButtonContent( ButtonContentCondition knob, ButtonContentCondition icon, ButtonContentCondition text, ButtonContentCondition children, ButtonContentCondition actions, ButtonContentCondition filterActions ){
     	this.knob = get( knob );
     	this.icon = get( icon );
     	this.text = get( text );
     	this.children = get( children );
     	this.actions = get( actions );
+    	this.filterActions = get( filterActions );
     }
     
     private ButtonContentCondition get( ButtonContentCondition condition ){
@@ -306,6 +309,7 @@ public class ButtonContent {
     	text.install( dockable, this );
     	children.install( dockable, this );
     	actions.install( dockable, this );
+    	filterActions.install( dockable, this );
     }
     
     private void uninstall( Dockable dockable ){
@@ -314,6 +318,7 @@ public class ButtonContent {
     	text.uninstall( dockable, this );
     	children.uninstall( dockable, this );
     	actions.uninstall( dockable, this );
+    	filterActions.uninstall( dockable, this );
     }
         
     /**
@@ -351,6 +356,27 @@ public class ButtonContent {
      */
     public ButtonContentCondition getActions(){
 		return actions;
+	}
+    
+
+    /**
+     * Tells whether actions should filtered before showing on the button of a {@link FlapDockStation}.
+     * If {@link #showActions(Dockable, boolean)} returns <code>false</code> for <code>dockable</code>, then
+     * this method is ignored.
+     * @param dockable the element for which the property is requested
+     * @param theme what the theme would do
+     * @return <code>true</code> if the actions should be filtered by the current {@link ButtonContentFilter}
+     */
+    public boolean filterActions( Dockable dockable, boolean theme ){
+    	return actions.shouldShow( dockable, theme );
+    }
+    
+    /**
+     * Gets the condition that decides the property for {@link #filterActions(Dockable, boolean)}
+     * @return the condition, not <code>null</code>
+     */
+    public ButtonContentCondition getFilterActions(){
+		return filterActions;
 	}
     
     /**

@@ -25,10 +25,12 @@
  */
 package bibliothek.gui.dock.common.group;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 
 /**
  * This most simple {@link CGroupBehavior} just set the mode of the one
@@ -48,5 +50,9 @@ public class TopMostGroupBehavior implements CGroupBehavior{
 		if( dockable == old )
 			return null;
 		return old;
+	}
+	
+	public boolean shouldForwardActions( DockStation station, Dockable dockable, ExtendedMode mode, ExtendedModeEnablement enablement ){
+		return true;
 	}
 }

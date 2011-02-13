@@ -17,7 +17,7 @@ There are at least 10 other docking frameworks for Java. As with any complex sof
  \item The licence, you can use the framework without paying a fee nor are you required to open source your entire project.
  \item It is pure \src{Swing}, it does not have any dependencies to other libraries. It does not force you to use some special design pattern or set up some cryptic configuration files.
  \item It does support unsigned applets (does anyone use them anymore?) and webstart.
- \item Multiple instances can run independent from each other. Sounds trivial, but there are many libraries which do not. Try to render a preview in your preference-dialog if you cannot change any properties because the whole application would be affected. And don't mention the mess you get if forced to use multiple classloaders.
+ \item Multiple instances can run independent from each other. Sounds trivial, but there are many libraries which cannot handle this case. This design has benefits, for example a preference dialog can easily show a preview. The preview is just another instance and any properties only affects this independent instance.
  \item Much control for the client. You can change almost anything to your likings. Unfortunatelly this is not always easy as some properties are hidden deep in the framework. On the bright side you are now reading the document which tells you how to modify some of the modules.
 \end{itemize}
 
@@ -39,6 +39,8 @@ This document uses the following style-guide:
 \classbox{Implementation details, especially lists of class names, are written in boxes like this.}
 
 \designbox{These boxes explain \textit{why} some thing was designed the way it is. This might either contain some bit of history or an explanation why some awkward design is not as bad as it first looks.}
+
+\codebox{Examples in the tutorial application are mentioned in these boxes.}
 
 \subsection{Design principles}
 In order to understand \src{Core} it helps to know what the basic design is. These design principles are applied through the entire framework. Most modules follow this principles, altough there are a few exceptions in old code.

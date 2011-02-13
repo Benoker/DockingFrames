@@ -31,6 +31,7 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 
 /**
  * A {@link CGroupBehavior} allows to define groups of {@link CDockable}. Groups normaly
@@ -77,4 +78,15 @@ public interface CGroupBehavior {
      * no longer in <code>mode</code>, can be <code>null</code>
      */
 	public Dockable getReplaceElement( Dockable old, Dockable dockable, ExtendedMode mode );
+	
+	/**
+	 * Tells whether the actions of <code>dockable</code> for mode <code>mode</code> should be
+	 * shown on <code>station</code> too.
+	 * @param station the parent of <code>dockable</code>
+	 * @param dockable the element whose actions will be shown
+	 * @param mode the mode for which the actions are requested
+	 * @param enablement a strategy telling which {@link ExtendedMode}s are enabled for which {@link Dockable}s
+	 * @return <code>true</code> if the actions should be forwarded
+	 */
+	public boolean shouldForwardActions( DockStation station, Dockable dockable, ExtendedMode mode, ExtendedModeEnablement enablement );
 }

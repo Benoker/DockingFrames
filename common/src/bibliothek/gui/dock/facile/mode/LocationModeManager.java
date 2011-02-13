@@ -35,6 +35,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.group.CGroupBehavior;
 import bibliothek.gui.dock.common.group.CGroupBehaviorCallback;
@@ -490,7 +492,31 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
     	// nothing
     }
     
-    
+    @Override
+    public DockActionSource getSharedActions( DockStation station ){
+    	Dockable selected = station.getFrontDockable();
+    	if( selected == null ){
+    		return null;
+    	}
+    	
+    	LocationMode mode = getCurrentMode( selected );
+    	if( mode == null ){
+    		return null;
+    	}
+    	
+    	MultiDockActionSource result = new MultiDockActionSource();
+    	
+    	for( LocationMode other : modes() ){
+    		if( behavior.shouldForwardActions( station, selected, other.getExtendedMode(), enablement ) ){
+    			DockActionSource source = other.getActionsFor( selected, mode );
+    			if( source != null ){
+    				result.add( source );
+    			}
+    		}
+    	}
+    	
+    	return result;
+    }
 	
 	/**
 	 * Adds and removes listeners from {@link LocationMode}s according to the map

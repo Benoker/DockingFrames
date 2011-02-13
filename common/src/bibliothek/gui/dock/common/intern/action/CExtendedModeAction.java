@@ -31,6 +31,7 @@ import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
@@ -86,7 +87,28 @@ public class CExtendedModeAction extends CDropDownItem{
      */
     protected CExtendedModeAction( CControl control, ExtendedMode mode, String iconKey, String textKey, String tooltipKey, PropertyKey<KeyStroke> gotoStroke ){
         super( null );
-        action = new Action();
+        init( control, mode, iconKey, textKey, tooltipKey, gotoStroke );
+    }
+
+    /**
+     * Creates an empty, non initialized action. Subclasses must call {@link #init(CControl, ExtendedMode, String, String, String, PropertyKey)} to
+     * complete initialization.
+     */
+    protected CExtendedModeAction(){
+    	super( null );
+    }
+    
+    /**
+     * Creates a new action, this method must be called only once.
+     * @param control the control for which this action will be used
+     * @param mode the mode into which this action leads
+     * @param iconKey the key of the icon when searching in the {@link IconManager}
+     * @param textKey the key for the text of this action when searching the {@link TextManager}
+     * @param tooltipKey the key for the tooltip of this action when searching the {@link TextManager}
+     * @param gotoStroke the key to the {@link KeyStroke} that triggers this action
+     */
+    protected void init( CControl control, ExtendedMode mode, String iconKey, String textKey, String tooltipKey, PropertyKey<KeyStroke> gotoStroke ){
+        action = createAction();
         init( action );
         
         if( control == null )
@@ -168,10 +190,18 @@ public class CExtendedModeAction extends CDropDownItem{
     }
     
     /**
+     * Creates an instance of the action representing this {@link CExtendedModeAction}.
+     * @return the action
+     */
+    protected Action createAction(){
+    	return new Action();
+    }
+    
+    /**
      * The internal representation of a {@link CExtendedModeAction}.
      * @author Benjamin Sigg
      */
-    private class Action extends SimpleButtonAction{
+    protected class Action extends SimpleButtonAction{
         /** how many times this action was bound */
         private int count = 0;
         
@@ -185,9 +215,20 @@ public class CExtendedModeAction extends CDropDownItem{
         
         @Override
         public void action( Dockable dockable ) {
-            if( dockable instanceof CommonDockable ){
-                CExtendedModeAction.this.action( ((CommonDockable)dockable).getDockable() );
-            }
+        	while( dockable != null ){
+	            if( dockable instanceof CommonDockable ){
+	                CExtendedModeAction.this.action( ((CommonDockable)dockable).getDockable() );
+	                return;
+	            }
+	            
+	            DockStation station = dockable.asDockStation();
+	            if( station == null ){
+	            	return;
+	            }
+	            else{
+	            	dockable = station.getFrontDockable();
+	            }
+        	}
         }
         
         @Override

@@ -30,6 +30,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
+import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
 import bibliothek.gui.dock.station.flap.button.ButtonContentListener;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -51,6 +52,7 @@ public abstract class ButtonContentValue extends PropertyValue<ButtonContent> im
 	private boolean showText;
 	private boolean showChildren;
 	private boolean showActions;
+	private boolean filterActions;
 	
 	/**
 	 * Creates a new wrapper
@@ -137,6 +139,11 @@ public abstract class ButtonContentValue extends PropertyValue<ButtonContent> im
 				change = true;
 			}
 			
+			if( filterActions != content.filterActions( dockable, theme.filterActions( dockable, false ) ) ){
+				filterActions = !filterActions;
+				change = true;
+			}
+			
 			if( change ){
 				propertyChanged();
 			}
@@ -182,6 +189,15 @@ public abstract class ButtonContentValue extends PropertyValue<ButtonContent> im
 	 */
 	public boolean isShowActions(){
 		return showActions;
+	}
+	
+	/**
+	 * Tells whether the {@link DockAction}s should be filtered by the current {@link ButtonContentFilter} before
+	 * made visible.
+	 * @return <code>true</code> if the actions should be filtered
+	 */
+	public boolean isFilterActions(){
+		return filterActions;
 	}
 	
 	/**
