@@ -25,10 +25,12 @@
  */
 package bibliothek.gui.dock.common.group;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
+import bibliothek.gui.dock.facile.mode.LocationModeManager;
 
 /**
  * A {@link CGroupBehavior} allows to define groups of {@link CDockable}. Groups normaly
@@ -38,15 +40,41 @@ import bibliothek.gui.dock.facile.mode.LocationMode;
  */
 public interface CGroupBehavior {
 	/**
-	 * Changes the mode of <code>dockable</code> such that it matches <code>target</code>. This method may also change
-	 * the {@link ExtendedMode} or location of other {@link Dockable}s to keep the group together. While this
-	 * method runs, focus management is disabled. The focus will be transfered to <code>dockable</code> if
-	 * <code>target</code> represents a {@link LocationMode} that requires focus transfer.
-	 * {@link Dockable}s to change their mode. 
+	 * A behavior that moves only one {@link Dockable} at a time.
+	 */
+	public static final CGroupBehavior TOPMOST = new TopMostGroupBehavior();
+	
+	/**
+	 * A behavior that moves around entire stacks of {@link Dockable}s.
+	 */
+	public static final CGroupBehavior STACKED = new StackGroupBehavior();
+	
+	/**
+	 * Calculates how the mode of <code>dockable</code> has to be changed such that it matches <code>target</code>.
+	 * @param manager a manager which may be asked for additional information
 	 * @param dockable the element that was clicked by the user
 	 * @param target the extended mode intended for <code>dockable</code>
-	 * @param callback a set of information and methods that may be needed to apply all the necessary changes to
-	 * <code>dockable</code> and maybe other {@link Dockable}s as well
 	 */
-	public void forward( Dockable dockable, ExtendedMode target, CGroupBehaviorCallback callback );
+	public CGroupMovement prepare( LocationModeManager<? extends LocationMode> manager, Dockable dockable, ExtendedMode target );
+
+    /**
+     * Gets the element whose location or mode must be changed in order to apply
+     * <code>mode</code> to <code>dockable</code>. Normally <code>dockable</code> itself
+     * is returned, or a parent {@link DockStation} of <code>dockable</code>.
+     * @param dockable some element, not <code>null</code>
+     * @return the element that must be repositioned, might be <code>dockable</code>
+     * itself, not <code>null</code>
+     */
+	public Dockable getGroupElement( Dockable dockable, ExtendedMode mode );
+	
+    /**
+     * Gets the element which would replace <code>old</code> if <code>old</code> is currently
+     * in <code>mode</code>, and <code>dockable</code> is or will not be in <code>mode</code>.<br>
+     * @param old some element
+     * @param dockable some element, might be <code>old</code>
+     * @param mode the mode in which <code>old</code> is
+     * @return the element which would be maximized if <code>dockable</code> is
+     * no longer in <code>mode</code>, can be <code>null</code>
+     */
+	public Dockable getReplaceElement( Dockable old, Dockable dockable, ExtendedMode mode );
 }

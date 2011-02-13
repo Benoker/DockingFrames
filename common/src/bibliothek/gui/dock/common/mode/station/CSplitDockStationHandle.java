@@ -12,6 +12,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.group.CGroupMovement;
 import bibliothek.gui.dock.common.location.CMaximizedLocation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -349,7 +350,10 @@ public class CSplitDockStationHandle{
 			if( !remaximize ){
 				CLocationMode normal = manager.getMode( NormalMode.IDENTIFIER );
 				if( normal != null ){
-					manager.apply( dockable, normal, set, false );
+					CGroupMovement movement = maximizedMode.getManager().getGroupBehavior().prepare( manager, dockable, normal.getExtendedMode() );
+					if( movement != null ){
+						manager.apply( dockable, normal.getExtendedMode(), movement );
+					}
 				}
 			}
 		}

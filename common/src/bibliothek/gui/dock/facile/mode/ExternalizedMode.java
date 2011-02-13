@@ -25,11 +25,6 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
-import java.awt.Component;
-import java.awt.Point;
-
-import javax.swing.SwingUtilities;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
@@ -38,7 +33,6 @@ import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.action.ExternalizedModeAction;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 import bibliothek.gui.dock.support.mode.ModeSettingFactory;
@@ -57,6 +51,9 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
     public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE;
 	
+    /** customizeable algorithms */
+    private ExternalizedModeBehavior behavior = new DefaultExternalizedModeBehavior();
+    
     /**
      * Empty default constructor. Subclasses should call 
      * {@link #setActionProvider(LocationModeActionProvider)} to complete
@@ -126,18 +123,7 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
         	property = location.getLocation();
         }
         if( property == null && !area.isChild( dockable )){
-            Component component = dockable.getComponent();
-            component.invalidate();
-
-            Component parent = component;
-            while( parent.getParent() != null )
-                parent = parent.getParent();
-            parent.validate();
-
-            Point corner = new Point();
-            SwingUtilities.convertPointToScreen( corner, dockable.getComponent() );
-
-            property = new ScreenDockProperty( corner.x, corner.y, component.getWidth(), component.getHeight(), null, false );
+        	property = behavior.findLocation( area, dockable );
         }
         
         area.setLocation( dockable, property, affected );
@@ -146,6 +132,26 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
     public ModeSettingFactory<Location> getSettingFactory(){
     	return new NullModeSettingsFactory<Location>( getUniqueIdentifier() );
     }
+    
+    /**
+     * Tells this {@link ExternalizedMode} how some algorithms are implemented.
+     * @param behavior the new behavior, not <code>null</code>
+     */
+    public void setBehavior( ExternalizedModeBehavior behavior ){
+    	if( behavior == null ){
+    		throw new IllegalArgumentException( "behavior must not be null" );
+    	}
+    	
+		this.behavior = behavior;
+	}
+    
+    /**
+     * Gets the current implementation of some algorithms of this mode.
+     * @return the behavior
+     */
+    public ExternalizedModeBehavior getBehavior(){
+		return behavior;
+	}
     
     public void ensureNotHidden( Dockable dockable ){
 	    // ignore	

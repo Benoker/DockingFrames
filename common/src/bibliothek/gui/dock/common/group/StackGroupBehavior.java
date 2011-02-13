@@ -29,12 +29,13 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.station.stack.StackDockProperty;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * This {@link CGroupBehavior} assumes that all {@link Dockable}s which share a common {@link StackDockStation} as
@@ -46,24 +47,22 @@ import bibliothek.gui.dock.station.stack.StackDockProperty;
  * @author Benjamin Sigg
  */
 public class StackGroupBehavior implements CGroupBehavior {
-	public void forward( Dockable dockable, ExtendedMode target, CGroupBehaviorCallback callback ){
-		if( isGrouped( dockable, target, callback ) ) {
-			moveGroup( (StackDockStation)dockable.getDockParent(), dockable, target, callback );
+	public CGroupMovement prepare( LocationModeManager<? extends LocationMode> manager, Dockable dockable, ExtendedMode target ){
+		if( isGrouped( dockable, target, manager ) ) {
+			return new StackGroupMovement( (StackDockStation)dockable.getDockParent(), dockable, target );
 		}
 		else {
-			callback.setMode( dockable, target );
+			return new SingleGroupMovement( dockable, target );
 		}
 	}
 
-	private boolean isGrouped( Dockable dockable, ExtendedMode target, CGroupBehaviorCallback callback ){
+	private boolean isGrouped( Dockable dockable, ExtendedMode target, LocationModeManager<?> manager ){
 		if( target == ExtendedMode.MAXIMIZED ){
 			return false;
 		}
 		
 		DockStation parent = dockable.getDockParent();
 		if( parent instanceof StackDockStation ) {
-			LocationModeManager<?> manager = callback.getManager();
-
 			for( int i = 0, n = parent.getDockableCount(); i < n; i++ ) {
 				if( !manager.isModeAvailable( parent.getDockable( i ), target ) ) {
 					return false;
@@ -74,52 +73,44 @@ public class StackGroupBehavior implements CGroupBehavior {
 		return false;
 	}
 	
-	private void moveGroup( StackDockStation dockParent, Dockable dockable, ExtendedMode target, CGroupBehaviorCallback callback ){
-		// find location of dockable in respect to the other items
-		int baseIndex = dockParent.indexOf( dockable );
-		Dockable[] children = new Dockable[ dockParent.getDockableCount() ];
-		for( int i = 0; i < children.length; i++ ){
-			children[i] = dockParent.getDockable( i );
+	public Dockable getGroupElement( Dockable dockable, ExtendedMode mode ){
+		DockStation parent = dockable.getDockParent();
+		
+		if( parent instanceof StackDockStation ){
+			for( int i = 0, n = parent.getDockableCount(); i<n; i++ ){
+				Dockable check = parent.getDockable( i );
+				if( check != dockable ){
+					if( check instanceof CommonDockable ){
+						CDockable fdock = ((CommonDockable)check).getDockable();
+						if( !fdock.isMaximizable() )
+							return dockable;
+					}
+				}
+			}
+			return (StackDockStation)parent;
 		}
 		
-		// move the first item and find out where it lands
-		callback.setMode( dockable, target );
-		
-		// move all the items that were before dockable
-		for( int i = baseIndex - 1; i >= 0; i-- ){
-			Location base = callback.getLocation( dockable );
-			Dockable moving = children[i];
-			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex + 1 ) );
-			callback.setLocation( moving, movingLocation );
-		}
-		
-		// move all the items that were after dockable
-		for( int i = baseIndex + 1; i < children.length; i++ ){
-			Location base = callback.getLocation( dockable );
-			Dockable moving = children[i];
-			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex ) );
-			callback.setLocation( moving, movingLocation );
-		}
-		
-		DockStation newParent = dockable.getDockParent();
-		if( newParent instanceof StackDockStation ){
-			newParent.setFrontDockable( dockable );
-		}
+		return dockable;
 	}
 	
-	private DockableProperty copyAndSetStackLocation( DockableProperty property, int delta ){
-		property = property.copy();
-		DockableProperty last = property;
-		while( last.getSuccessor() != null ){
-			last = last.getSuccessor();
+	public Dockable getReplaceElement( Dockable old, Dockable dockable, ExtendedMode mode ){
+		if( old == dockable )
+			return null;
+		
+		if( !DockUtilities.isAncestor( old, dockable ) )
+			return null;
+		
+		DockStation station = old.asDockStation();
+		if( station == null )
+			return old;
+		
+		if( station.getDockableCount() == 2 ){
+			if( station.getDockable( 0 ) == dockable )
+				return station.getDockable( 1 );
+			if( station.getDockable( 1 ) == dockable )
+				return station.getDockable( 0 );
 		}
-		if( last instanceof StackDockProperty ){
-			((StackDockProperty)last).setIndex( ((StackDockProperty)last).getIndex() + delta );
-		}
-		else{
-			StackDockProperty stack = new StackDockProperty( delta );
-			last.setSuccessor( stack );
-		}
-		return property;
+		
+		return old;
 	}
 }

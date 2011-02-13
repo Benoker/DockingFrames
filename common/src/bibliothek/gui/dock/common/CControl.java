@@ -2193,30 +2193,13 @@ public class CControl {
     }
 
     /**
-     * Sets the {@link CMaximizeBehavior}. The behavior decides what happens
-     * when the user wants to maximize or to un-maximize a {@link CDockable}.
-     * @param behavior the new behavior, not <code>null</code>
-     */
-    public void setMaximizeBehavior( CMaximizeBehavior behavior ){
-        locationManager.getMaximizedMode().setMaximizeBehavior( behavior );
-    }
-
-    /**
-     * Gets the currently used maximize-behavior.
-     * @return the behavior, not <code>null</code>
-     * @see #setMaximizeBehavior(CMaximizeBehavior)
-     */
-    public CMaximizeBehavior getMaximizeBehavior(){
-        return locationManager.getMaximizedMode().getMaximizeBehavior();
-    }
-
-    /**
      * Sets the {@link CGroupBehavior}. The behavior decides what happens when the user wants to change
      * the {@link ExtendedMode} of a {@link CDockable}.<br>
      * To be exact: the group behavior is applied for a call to {@link CDockable#setExtendedMode(ExtendedMode)}
      * respective a call to {@link LocationModeManager#setMode(Dockable, ExtendedMode)}. The buttons that are
-     * visible to the user all link to these methods.  
+     * visible to the user all link to these methods.
      * @param behavior the new behavior, not <code>null</code>
+     * @see #setMaximizeBehavior(CMaximizeBehavior)
      */
     public void setGroupBehavior( CGroupBehavior behavior ){
     	locationManager.setGroupBehavior( behavior );

@@ -434,3 +434,7 @@
 [v1.1.0p6]
 - Bugfix: CombinerTarget is created earlier on SplitDockStation in order to allow the Combiner to paint the DnD operation
 - Bugfix: Merger can now also be applied on a move operation. The child DockStation in a merge operation only gets removed from its parent if the parent is not the parent DockStation of the operation
+! API: CGroupBehavior now creates a CGroupMovement and does not execute its changes directly
+! API: CMaximizedBehavior and all associated methods have been removed, the ordinary CGroupBehavior can now perform all necessary tasks
+- Bugfix: Maximizing a minimized CDockable on a stack now maximizes the entire stack
+- Bugfix: Externalizing a minimized CDockable that has no size makes now sure that the window has a minimum size and (if possible) is not placed at 0/0 

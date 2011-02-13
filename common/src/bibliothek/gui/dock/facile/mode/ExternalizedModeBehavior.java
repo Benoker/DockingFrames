@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,30 +23,22 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common.group;
+package bibliothek.gui.dock.facile.mode;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.facile.mode.LocationMode;
-import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 
 /**
- * This most simple {@link CGroupBehavior} just set the mode of the one
- * {@link Dockable} whose mode should change anyway.
+ * This interface allows easy customization of some algorithms of the {@link ExternalizedMode}.
  * @author Benjamin Sigg
  */
-public class TopMostGroupBehavior implements CGroupBehavior{
-	public CGroupMovement prepare( LocationModeManager<? extends LocationMode> manager, Dockable dockable, ExtendedMode target ){
-		return new SingleGroupMovement( dockable, target );
-	}
-	
-	public Dockable getGroupElement( Dockable dockable, ExtendedMode mode ){
-		return dockable;
-	}
-	
-	public Dockable getReplaceElement( Dockable old, Dockable dockable, ExtendedMode mode ){
-		if( dockable == old )
-			return null;
-		return old;
-	}
+public interface ExternalizedModeBehavior {
+	/**
+	 * Finds a good location for <code>dockable</code> which was
+	 * never in the {@link ExternalizedMode}.
+	 * @param target the area on which <code>dockable</code> will be dropped
+	 * @param dockable some element
+	 * @return a good location for <code>dockable</code>, must not be <code>null</code>
+	 */
+	public ScreenDockProperty findLocation( ExternalizedModeArea target, Dockable dockable );
 }

@@ -38,6 +38,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.group.CGroupBehavior;
 import bibliothek.gui.dock.common.group.CGroupBehaviorCallback;
+import bibliothek.gui.dock.common.group.CGroupMovement;
 import bibliothek.gui.dock.common.group.StackGroupBehavior;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.DockRegister;
@@ -240,52 +241,68 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 			throw new IllegalArgumentException( "No mode '" + extendedMode.getModeIdentifier() + "' available" );
 		}
 	
-		runTransaction( new AffectingRunnable(){
-			public void run( AffectedSet set ){
-				setMode( dockable, extendedMode, set );
+		runTransaction( new Runnable(){
+			public void run(){
+				CGroupMovement action = behavior.prepare( LocationModeManager.this, dockable, extendedMode );
+				if( action == null ){
+					return;
+				}
+				
+				apply( dockable, extendedMode, action );		
 			}
-		});		
+		});
 	}
 	
-	private void setMode( final Dockable dockable, ExtendedMode extendedMode, final AffectedSet affected ){
-		try{
-			getController().getFocusController().freezeFocus();
-			
-			behavior.forward( dockable, extendedMode, new CGroupBehaviorCallback(){
-				public void setMode( Dockable element, ExtendedMode mode ){
-					apply( element, mode.getModeIdentifier(), false );
+	/**
+	 * Executes <code>action</code> in a transaction assuming that the result of this action will lead to
+	 * <code>dockable</code> having the new mode <code>extendedMode</code>.
+	 * @param dockable the primary {@link Dockable}, this item may very well be the new focus owner
+	 * @param extendedMode the expected mode <code>dockable</code> will have after <code>action</code> completed
+	 * @param action the action to execute
+	 */
+	public void apply( final Dockable dockable, final ExtendedMode extendedMode, final CGroupMovement action ){
+		runTransaction( new AffectingRunnable(){
+			public void run( final AffectedSet set ){
+				try{
+					getController().getFocusController().freezeFocus();
+				
+					action.apply( new CGroupBehaviorCallback(){
+						public void setMode( Dockable element, ExtendedMode mode ){
+							apply( element, mode.getModeIdentifier(), false );
+						}
+						
+						public void setLocation( Dockable element, Location location ){
+							apply( element, location.getMode(), location, set );
+						}
+						
+						public LocationModeManager<? extends LocationMode> getManager(){
+							return LocationModeManager.this;
+						}
+						
+						public Location getLocation( Dockable dockable ){
+							M mode = getCurrentMode( dockable );
+							if( mode == null ){
+								return null;
+							}
+							return mode.current( dockable );
+						}
+					});
+				}
+				finally{
+					getController().getFocusController().meltFocus();
 				}
 				
-				public void setLocation( Dockable element, Location location ){
-					apply( element, location.getMode(), location, affected );
-				}
-				
-				public LocationModeManager<? extends LocationMode> getManager(){
-					return LocationModeManager.this;
-				}
-				
-				public Location getLocation( Dockable dockable ){
-					M mode = getCurrentMode( dockable );
-					if( mode == null ){
-						return null;
+				LocationMode mode = getMode( extendedMode.getModeIdentifier() );
+				if( mode != null ){
+					if( mode.shouldAutoFocus() ){
+						getController().setFocusedDockable( dockable, null, true, true, false );
 					}
-					return mode.current( dockable );
-				}
-			});
-		}
-		finally{
-			getController().getFocusController().meltFocus();
-		}
-		
-		LocationMode mode = getMode( extendedMode.getModeIdentifier() );
-		if( mode != null ){
-			if( mode.shouldAutoFocus() ){
-				getController().setFocusedDockable( dockable, null, true, true, false );
+					else{
+						getController().setFocusedDockable( null, null, true );
+					}
+				}	
 			}
-			else{
-				getController().setFocusedDockable( null, null, true );
-			}
-		}
+		});
 	}
 	
 	/**

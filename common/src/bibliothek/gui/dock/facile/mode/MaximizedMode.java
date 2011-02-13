@@ -38,7 +38,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CMaximizeBehavior;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -70,9 +69,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 
 	/** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "maximize"-action */
 	public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE;
-
-	/** when to maximize what */
-	private CMaximizeBehavior maximizeBehavior = CMaximizeBehavior.STACKED;
 
 	/** the mode in which some dockable with id=key was before maximizing */
 	private HashMap<String, Path> lastMaximizedMode = new HashMap<String, Path>();
@@ -139,28 +135,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		super.setManager( manager );
 	}
 
-	/**
-	 * Sets the maximize behavior which determines what {@link Dockable} to 
-	 * maximize when hitting the maximize-button.<br>
-	 * Note: Changing the behavior if dockables are already shown can lead
-	 * to an unspecified behavior.
-	 * @param maximizeBehavior the behavior, not <code>null</code>
-	 */
-	public void setMaximizeBehavior( CMaximizeBehavior maximizeBehavior ){
-		if( maximizeBehavior == null )
-			throw new IllegalArgumentException( "maximizeBehavior must not be null" );
-		this.maximizeBehavior = maximizeBehavior;
-	}
-
-	/**
-	 * Gets the maximize behavior.
-	 * @return the behavior, not <code>null</code>
-	 * @see #setMaximizeBehavior(CMaximizeBehavior)
-	 */
-	public CMaximizeBehavior getMaximizeBehavior(){
-		return maximizeBehavior;
-	}
-
 	public Path getUniqueIdentifier(){
 		return IDENTIFIER;
 	}
@@ -174,7 +148,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 
 		if( area == null )
 			area = getDefaultArea();
-
+		
 		area.prepareApply( dockable, history, set );
 		maximize( area, dockable, history, set );
 	}
@@ -455,7 +429,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * itself, not <code>null</code>
 	 */
 	public Dockable getMaximizingElement( Dockable dockable ){
-		return maximizeBehavior.getMaximizingElement( dockable );
+		return getManager().getGroupBehavior().getGroupElement( dockable, getExtendedMode() );
 	}
 
 	/**
@@ -467,7 +441,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * no longer maximized, can be <code>null</code>
 	 */
 	public Dockable getMaximizingElement( Dockable old, Dockable dockable ){
-		return maximizeBehavior.getMaximizingElement( old, dockable );
+		return getManager().getGroupBehavior().getReplaceElement( old, dockable, getExtendedMode() );
 	}
 
 	protected void applyStarting( LocationModeEvent event ){
