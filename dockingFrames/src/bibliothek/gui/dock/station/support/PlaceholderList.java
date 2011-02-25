@@ -1135,15 +1135,15 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		/**
 		 * Creates a new item.
 		 * @param dockable the value of this item, not <code>null</code>
-		 * @param placeholderSet the placeholders of this item
-		 * @param placeholderMap the childrens placeholder info
+		 * @param placeholderSet the placeholders of this item, can be <code>null</code>
+		 * @param placeholderMap the childrens placeholder info, can be <code>null</code>
 		 */
 		public Item( P dockable, Set<Path> placeholderSet, PlaceholderMap placeholderMap ){
 			if( dockable == null )
 				throw new IllegalArgumentException( "dockable must not be null" );
 			this.value = dockable;
-			this.placeholderSet = placeholderSet;
 			this.placeholderMap = placeholderMap;
+			setPlaceholderSet( placeholderSet );
 		}
 		
 		/**
@@ -1153,7 +1153,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		public Item( Set<Path> placeholders ){
 			if( placeholders == null || placeholders.isEmpty() )
 				throw new IllegalArgumentException( "placeholder must not be null nor empty" );
-			placeholderSet = placeholders;
+			setPlaceholderSet( placeholders );
 		}
 		
 		/**
@@ -1209,6 +1209,9 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		 * @param placeholderSet the placeholders, can be <code>null</code>
 		 */
 		public void setPlaceholderSet( Set<Path> placeholderSet ){
+			if( placeholderSet != null && placeholderSet.contains( null )){
+				throw new IllegalArgumentException( "placeholderSet contains a null value" );
+			}
 			this.placeholderSet = placeholderSet;
 		}
 		
@@ -1255,6 +1258,10 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		 * @param placeholder the new placeholder
 		 */
 		public void add( Path placeholder ){
+			if( placeholder == null ){
+				throw new IllegalArgumentException( "placeholder must not be null" );
+			}
+			
 			if( placeholderSet == null ){
 				placeholderSet = new HashSet<Path>();
 			}

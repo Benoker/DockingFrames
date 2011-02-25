@@ -306,11 +306,11 @@ public class CSplitDockStationHandle{
 		private DockController controller;
 		
 		public void addModeAreaListener( ModeAreaListener listener ){
-			add(  new ModeAreaListenerWrapper( this, listener ) );
+			add( new ModeAreaListenerWrapper( this, listener ) );
 		}
 		
 		public void removeModeAreaListener( ModeAreaListener listener ){
-			remove(  new ModeAreaListenerWrapper( this, listener ) );	
+			remove( new ModeAreaListenerWrapper( this, listener ) );	
 		}
 		
 		public void setMode( LocationMode mode ){
@@ -348,11 +348,13 @@ public class CSplitDockStationHandle{
 			boolean remaximize = history != null && history.getLocation() instanceof SplitDockFullScreenProperty; 
 			
 			if( !remaximize ){
-				CLocationMode normal = manager.getMode( NormalMode.IDENTIFIER );
-				if( normal != null ){
-					CGroupMovement movement = maximizedMode.getManager().getGroupBehavior().prepare( manager, dockable, normal.getExtendedMode() );
-					if( movement != null ){
-						manager.apply( dockable, normal.getExtendedMode(), movement );
+				if( manager.getMode( dockable ) != ExtendedMode.NORMALIZED ){
+					CLocationMode normal = manager.getMode( NormalMode.IDENTIFIER );
+					if( normal != null ){
+						CGroupMovement movement = maximizedMode.getManager().getGroupBehavior().prepare( manager, dockable, normal.getExtendedMode() );
+						if( movement != null ){
+							manager.apply( dockable, normal.getExtendedMode(), movement );
+						}
 					}
 				}
 			}

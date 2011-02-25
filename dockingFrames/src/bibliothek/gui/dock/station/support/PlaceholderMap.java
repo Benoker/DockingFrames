@@ -974,12 +974,18 @@ public class PlaceholderMap {
 		
 		/**
 		 * Creates a new key.
-		 * @param placeholders the placeholders which make up this key
+		 * @param placeholders the placeholders which make up this key, must not contain a <code>null</code> value
 		 * @param shared how the <code>equals</code> method behaves
 		 */
 		public PlaceholderKey( Path[] placeholders, boolean shared ){
 			if( placeholders == null ){
 				throw new IllegalArgumentException( "placeholders must not be null" );
+			}
+			
+			for( Path placeholder : placeholders ){
+				if( placeholder == null ){
+					throw new IllegalArgumentException( "placeholders does contain a null value" );
+				}
 			}
 			
 			this.placeholders = placeholders;

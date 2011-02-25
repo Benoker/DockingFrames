@@ -65,6 +65,22 @@ public class StackGroupMovement implements CGroupMovement{
 		// move the first item and find out where it lands
 		callback.setMode( dockable, target );
 		
+		// check premature end because of multiple Dockables movement.
+		boolean oneMissing = false;
+		for( Dockable child : children ){
+			if( child != dockable ){
+				if( callback.getManager().getMode( child ) != target ){
+					oneMissing = true;
+					break;
+				}
+			}
+		}
+		
+		// premature end
+		if( !oneMissing ){
+			return;
+		}
+		
 		// move all the items that were before dockable
 		for( int i = baseIndex - 1; i >= 0; i-- ){
 			Location base = callback.getLocation( dockable );

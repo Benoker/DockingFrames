@@ -64,6 +64,7 @@ public class SecureContainer extends OverpaintablePanel {
 			pane.setController( controller );
 		}
 		restricted.setProperties( controller );
+		checkRestricted();
 	}
 	
 	/**

@@ -93,7 +93,7 @@ This station is organized like a \src{JTabbedPane}. Only one child is visible, b
 \classbox{
 The station consists of four layers, as seen in the image below. There is a background panel (1) which just is some \src{Container} to put other things onto it. Then there is a selection layer (2), which is represented by an instance of \src{StackDockComponent}. Above that is a \src{DockableDisplayer} (3) for each \src{Dockable}. The displayers paint some decorations that depend on the \src{Dockables} in the topmost layer (4).
 
-\hspace{0.20\textwidth} \includegraphics[width=0.5\textwidth]{basics/stack}
+\hspace{0.20\textwidth} \includegraphics[width=0.75\textwidth]{basics/stack}
 }
 
 \subsubsection{SplitDockStation}
@@ -103,7 +103,7 @@ All the children of this station are visible. The user controls the children as 
 \classbox{
 Like the \src{StackDockStation}, this station consists of four layers. Layers 1, 3 and 4 are identical to the layers of the \src{StackDockStation}. A background panel (1), \src{DockableDisplayers} (3) to paint decorations and the children (4). Layer 2 is the logical tree which tells how to lay out the children. The nodes of this tree consist of \src{SplitNode}s and the root can be accessed through the method \src{getRoot}. Clients should never add or remove nodes from the tree directly.
 
-\hspace{0.20\textwidth} \includegraphics[width=0.5\textwidth]{basics/split}
+\hspace{0.20\textwidth} \includegraphics[width=0.75\textwidth]{basics/split}
 }
 
 \subsubsection{FlapDockStation}
@@ -112,7 +112,7 @@ This station is a list of buttons. If the user clicks on one of the buttons a wi
 \classbox{
 \src{FlapDockStation} consists of 5 layers. A background panel (1) as \src{Container} for other components. A set of buttons (2), each button is a \src{DockTitle}. Then there is the window that shows the current selection (3), an instance of \src{FlapWindow}. A displayer (4) to paint decorations and the \src{Dockable} child (5) that is selected.
 
-\hspace{0.20\textwidth} \includegraphics[width=0.5\textwidth]{basics/flap}
+\hspace{0.20\textwidth} \includegraphics[width=0.75\textwidth]{basics/flap}
 }
 
 \subsubsection{ScreenDockStation}
@@ -121,7 +121,7 @@ The \src{ScreenDockStation} allows its children to float around freely on the sc
 \classbox{
 This station is pretty simple and consists of only 3 layers. Some windows (1), instances of \src{ScreenDockWindow}, provide a container to show the children. On each window there is a \src{DockableDisplayer} (2) to paint decorations, and on top is one \src{Dockable} child (3).
 
-\hspace{0.20\textwidth} \includegraphics[width=0.5\textwidth]{basics/screen}
+\hspace{0.20\textwidth} \includegraphics[width=0.75\textwidth]{basics/screen}
 }
 
 \subsection{DockController}

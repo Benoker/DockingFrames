@@ -441,3 +441,10 @@
 - API: Actions of the button of a FlapDockStation can be filtered through the ButtonContent and the ButtonContentFilter. The default implementation will show any action that has the annotation ButtonContentAction.
 - API: A stack of minimized CDockable now shows the "normalize" button per default. The exact behavior of which buttons are visible can be configured through the CGroupBehavior, the ButtonContent and the ButtonContentFilter.
 - Bugfix: Reordering the children of a dockable DockStation that is shown on a FlapDockStation now also reorders the actions on the button.
+
+[v1.1.0p6a]
+- Bugfix: focus is no longer lost if maximizing a Dockable by pressing ctrl+m
+- API: New DefaultFrontendPerspectiveCache, a default implementation of the interface FrontendPerspectiveCache
+- Bugfix: Glass Extension now also works if Common is not in the classpath
+- Bugfix: The default behavior of CControl was to set always "secure environment = false". The parameter is now set to the correct value depending on the environment in which an application runs.
+- Bugfix: Common, tabs are no longer reordered when maximizing or unmaximizing a stack of Dockables

@@ -142,6 +142,8 @@ import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.gui.dock.util.extension.Extension;
+import bibliothek.gui.dock.util.extension.ExtensionManager;
 import bibliothek.gui.dock.util.icon.DefaultIconScheme;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.text.DefaultTextScheme;
@@ -284,7 +286,7 @@ public class CControl {
      * would be the better choice than this constructor.
      */
     public CControl(){
-        this( new NullWindowProvider(), false );
+        this( new NullWindowProvider() );
     }
 
     /**
@@ -293,16 +295,20 @@ public class CControl {
      * dialogs for externalized {@link CDockable}s
      */
     public CControl( JFrame frame ){
-        this( frame, false );
+    	this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ) );
     }
 
     /**
      * Creates a new control
      * @param restrictedEnvironment whether this application runs in a
      * restricted environment and is not allowed to listen for global events.
+     * @deprecated it is not necessary to set the <code>restrictedEnvironment</code> parameter anymore, the framework
+     * will choose a fitting value itself
      */
+    @Deprecated
     public CControl( boolean restrictedEnvironment ){
-        this( new NullWindowProvider(), restrictedEnvironment );
+        this( new NullWindowProvider() );
+        getController().setRestrictedEnvironment( restrictedEnvironment );
     }
 
     /**
@@ -312,7 +318,7 @@ public class CControl {
      * its search method may return <code>null</code>
      */
     public CControl( WindowProvider window ){
-        this( window, false );
+    	this( window, new EfficientControlFactory() );
     }
 
     /**
@@ -321,9 +327,13 @@ public class CControl {
      * dialogs for externalized {@link CDockable}s
      * @param restrictedEnvironment whether this application runs in a
      * restricted environment and is not allowed to listen for global events.
+     * @deprecated it is not necessary to set the <code>restrictedEnvironment</code> parameter anymore, the framework
+     * will choose a fitting value itself
      */
+    @Deprecated
     public CControl( JFrame frame, boolean restrictedEnvironment ){
-        this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ), restrictedEnvironment );
+        this( frame == null ? new NullWindowProvider() : new DirectWindowProvider( frame ) );
+        getController().setRestrictedEnvironment( restrictedEnvironment );
     }
 
     /**
@@ -333,9 +343,12 @@ public class CControl {
      * its search method may return <code>null</code>
      * @param restrictedEnvironment whether this application runs in a
      * restricted environment and is not allowed to listen for global events.
+     * @deprecated it is not necessary to set the <code>restrictedEnvironment</code> parameter anymore, the framework
+     * will choose a fitting value itself
      */
+    @Deprecated
     public CControl( WindowProvider window, boolean restrictedEnvironment ){
-        this( window, new EfficientControlFactory() );
+    	this( window ); 
         getController().setRestrictedEnvironment( restrictedEnvironment );
     }
 
@@ -403,6 +416,7 @@ public class CControl {
         controller.getProperties().finalize( CCONTROL );
         controller.setSingleParentRemover( new CSingleParentRemover( this ) );
 
+        initExtensions( controller );
         initFocusListeners( controller );
         initInputListener( controller );
 
@@ -507,6 +521,32 @@ public class CControl {
         setTheme( ThemeMap.KEY_SMOOTH_THEME );
     }
 
+    /**
+     * Initializes additional {@link Extension}s and registers them at the
+     * {@link ExtensionManager} of <code>controller</code>.
+     * @param controller the controller for which additional extensions should be
+     * loaded
+     */
+    protected void initExtensions( DockController controller ){
+    	ExtensionManager manager = controller.getExtensions();
+		String[] list = { "glass.eclipse.CGlassExtension" };
+		for( String className : list ){
+			try {
+				Class<?> clazz = Class.forName( className );
+				Object extension = clazz.newInstance();
+				if( extension instanceof Extension ){
+					manager.add( (Extension)extension );
+				}
+			} catch( ClassNotFoundException e ) {
+				// ignore
+			} catch( InstantiationException e ) {
+				e.printStackTrace();
+			} catch( IllegalAccessException e ) {
+				// ignore
+			}
+		}
+    }
+    
     /**
      * Creates and adds the listeners needed to track the focus.
      * @param controller the controller which will be observed

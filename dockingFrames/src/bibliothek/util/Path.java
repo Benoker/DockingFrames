@@ -151,7 +151,14 @@ public final class Path {
      * @param segments the path
      */
     public Path( String... segments ){
-    	this.segments = segments;
+    	this.segments = new String[ segments.length ];
+    	System.arraycopy( segments, 0, this.segments, 0, segments.length );
+    	
+    	for( String check : this.segments ){
+    		if( check == null ){
+    			throw new IllegalArgumentException( "null segments are not allowed" );
+    		}
+    	}
     }
     
     /**

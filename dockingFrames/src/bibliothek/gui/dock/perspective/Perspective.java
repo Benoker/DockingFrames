@@ -85,7 +85,7 @@ public abstract class Perspective {
 	}
 
 	/**
-	 * Converts the content of <code>station</code> to XML.
+	 * Converts the content of <code>stations</code> to XML.
 	 * @param stations the items to write
 	 * @param element the element to write into
 	 */

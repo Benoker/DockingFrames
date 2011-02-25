@@ -119,6 +119,9 @@ public class DockUI {
     /** a list of listeners waiting for the language to change */
     private List<LocaleListener> localeListeners = new ArrayList<LocaleListener>();
     
+    /** whether this is a secure environment where global {@link AWTEventListener}s are not allowed */
+    private Boolean secureEnvironment = null;
+    
     /** a listener added to {@link #lookAndFeelColor} */
     private LookAndFeelColorsListener colorsListener = new LookAndFeelColorsListener(){
         public void colorChanged( String key ) {
@@ -623,7 +626,11 @@ public class DockUI {
      * only makes a guess and may return a false result.
      * @return whether this is a restricted environment
      */
-    public static boolean isSecureEnvironment(){
+    public boolean isSecureEnvironment(){
+    	if( secureEnvironment != null ){
+    		return secureEnvironment;
+    	}
+    	
         try{
         	Toolkit toolkit = Toolkit.getDefaultToolkit();
         	AWTEventListener listener = new AWTEventListener(){
@@ -640,11 +647,23 @@ public class DockUI {
 //            }
         }
         catch( SecurityException ex ){
+        	secureEnvironment = true;
             return true;
         }
         
+        secureEnvironment = false;
         return false;
     }
+    
+    /**
+     * Overrides the result of {@link #isSecureEnvironment()}, any future call of that method will
+     * return <code>secureEnvironment</code>.
+     * @param secureEnvironment Whether global {@link AWTEventListener}s are allowed or not, a value of <code>true</code> 
+     * indicates that listeners are not allowed
+     */
+    public void setSecureEnvironment( boolean secureEnvironment ){
+		this.secureEnvironment = secureEnvironment;
+	}
     
     private static Component firstOnPath( Container parent, Component child ){
     	Component result = child;

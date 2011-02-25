@@ -46,7 +46,6 @@ import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
-import bibliothek.util.Todo;
 
 /**
  * A {@link CControlPerspective} is a wrapper around a {@link CControl} allowing
@@ -120,7 +119,6 @@ public class CControlPerspective {
      * @param includeWorkingAreas whether {@link Dockable}s that are managed by a working-area should be
      * included in the layout or not
      */
-    @Todo( description="handle modes" )
     public void setPerspective( CPerspective perspective, boolean includeWorkingAreas ){
     	control.getOwner().intern().setSetting( convert( perspective, includeWorkingAreas ), !includeWorkingAreas );
     }

@@ -64,7 +64,9 @@ public interface FrontendPerspectiveCache {
 	/**
 	 * Gets the unique identifier of <code>element</code>.
 	 * @param element some element, can be either a dockable or a root-station
-	 * @return the unique identifier or <code>null</code> if this element can be recreated at any time 
+	 * @return the unique identifier or <code>null</code> if this cache is unable to associate <code>element</code> 
+	 * with an identifier. Should not be <code>null</code> for elements that were created by
+	 * {@link #get(String, boolean)} or {@link #get(String, DockElement, boolean)}.
 	 */
 	public String get( PerspectiveElement element );
 	

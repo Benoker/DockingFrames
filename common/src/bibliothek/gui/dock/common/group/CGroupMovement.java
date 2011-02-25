@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.group;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 
 /**
@@ -40,7 +41,12 @@ import bibliothek.gui.dock.facile.mode.LocationModeManager;
 public interface CGroupMovement {
 	/**
 	 * Executes this movement. While this operation runs, focus management is disabled. The 
-	 * framework will choose a new focused {@link Dockable} once this method finished.
+	 * framework will choose a new focused {@link Dockable} once this method finished.<br>
+	 * <b>Note:</b> While the various <code>apply</code>-methods of {@link LocationModeManager}
+	 * only take one argument, more than one {@link Dockable} might be moved because of the 
+	 * internal logic of some {@link LocationMode}s. Implementations should assume that any
+	 * cached information about any {@link Dockable} is invalid once a {@link Dockable} has been
+	 * moved.
 	 * @param callback can be used by this object to freely move around any
 	 * {@link Dockable}
 	 */

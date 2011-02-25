@@ -60,6 +60,7 @@ import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.VetoableDockFrontendListener;
+import bibliothek.gui.dock.frontend.DefaultFrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.DockFrontendInternals;
 import bibliothek.gui.dock.frontend.FrontendEntry;
@@ -1469,13 +1470,32 @@ public class DockFrontend {
     
     /**
      * Creates and returns a new {@link Perspective} which can be used to read, write and convert
+     * {@link PerspectiveElement}s. This method creates a new {@link DefaultFrontendPerspectiveCache}.<br>
+     * <b>Note:</b> Please read the documentation of {@link DefaultFrontendPerspectiveCache} to learn
+     * about the drawbacks of using that class.
+     * @param entry Whether the perspective should act as if loading or storing an "normal setting". A normal setting
+     * is a setting created by {@link #save(String)} or by {@link #save()}.
+     * @return the new perspective, not <code>null</code>
+     * @see #getPerspective(boolean, FrontendPerspectiveCache)
+     */
+    public Perspective getPerspective( boolean entry ){
+    	return getPerspective( entry, new DefaultFrontendPerspectiveCache( this ) );
+    }
+    
+    /**
+     * Creates and returns a new {@link Perspective} which can be used to read, write and convert
      * {@link PerspectiveElement}s. The new perspective will be set up with the factories known to this
      * frontend and with the entries from <code>elements</code>.<br>
      * Please note that the new perspective does not contain any information about the current layout of
-     * this {@link DockFrontend}.
-     * @param entry Whether the perspective should act as if loading or storing an "normal setting".
+     * this {@link DockFrontend}. Clients can use a {@link Setting} to access layout information.
+     * @param entry Whether the perspective should act as if loading or storing an "normal setting". A normal setting
+     * is a setting created by {@link #save(String)} or by {@link #save()}.
      * @param factory a factory that will be used to translate {@link DockElement}s to {@link PerspectiveElement}s
      * @return the new perspective, not <code>null</code>
+     * @see #getSetting(boolean)
+     * @see #getSetting(String)
+     * @see #setSetting(Setting, boolean)
+     * @see #setSetting(String, Setting)
      */
     public Perspective getPerspective( boolean entry, FrontendPerspectiveCache factory ){
     	return layoutChangeStrategy.createPerspective( new Internals(), entry, factory );

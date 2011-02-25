@@ -549,10 +549,14 @@ public class PredefinedDockSituation extends DockSituation {
 
         /**
          * Creates a new layout.
-         * @param preload the element which was preloaded
+         * @param preload the element which was preloaded, not <code>null</code>
          * @param delegate the delegate which stores the content
          */
         public PreloadedLayout( String preload, DockLayoutInfo delegate ){
+        	if( preload == null ){
+        		throw new IllegalArgumentException( "argument 'preload' must not be null" );
+        	}
+        	
             this.preload = preload;
             this.delegate = delegate;
         }
@@ -780,6 +784,8 @@ public class PredefinedDockSituation extends DockSituation {
         		throw new IllegalStateException( "the perspective of this factory is not set, meaning this factory cannot be used handling perspective dependent tasks" );
         	}
         	
+        	DockLayoutInfo info;
+        	
         	if( shouldLayout( element, perspective )){
                 String factoryId = UNKNOWN + PredefinedDockSituation.super.getID( element );
                 DockFactory factory = getFactory( factoryId );
@@ -788,11 +794,18 @@ public class PredefinedDockSituation extends DockSituation {
 
                 Object data = factory.getPerspectiveLayout( element, children );
                 DockLayout<Object> layout = new DockLayout<Object>( factoryId, data );
-                return new PreloadedLayout( perspective.get( element ), new DockLayoutInfo( layout ));    
+                info = new DockLayoutInfo( layout );
             }
             else{
-                return new PreloadedLayout( perspective.get( element ), new DockLayoutInfo() );
+            	info = new DockLayoutInfo();
             }
+        	
+        	String key = perspective.get( element );
+        	if( key == null ){
+        		throw new IllegalStateException( "Expected a key for an element, the element should be known to the perspective, otherwise this method would not have been called: '" + element +"'" );
+        	}
+        	
+        	return new PreloadedLayout( key, info );
         }
 
         @SuppressWarnings("unchecked")

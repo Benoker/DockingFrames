@@ -137,7 +137,7 @@ import bibliothek.util.Todo.Version;
  */
 public class DockController {
 	/** property telling whether this application runs in a restricted environment or not, the default value is the result of {@link DockUI#isSecureEnvironment()} */
-	public static final PropertyKey<Boolean> RESTRICTED_ENVIRONMENT = new PropertyKey<Boolean>( "dock.restricted_environment", new ConstantPropertyFactory<Boolean>( DockUI.isSecureEnvironment() ), true );
+	public static final PropertyKey<Boolean> RESTRICTED_ENVIRONMENT = new PropertyKey<Boolean>( "dock.restricted_environment", new ConstantPropertyFactory<Boolean>( DockUI.getDefaultDockUI().isSecureEnvironment() ), true );
 	
 	/** the known dockables and DockStations */
 	private DockRegister register;

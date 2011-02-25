@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="dock" default="default" basedir="../">
-	<target name="default" depends="text, source, bin, doc, webstart">
+	<target name="default" depends="text, source, bin, doc, webstartDemo, webstartTutorial">
 		<delete>
 			<fileset dir="${temp}"/>
 		</delete>
@@ -75,7 +75,7 @@
 	<target name="release.web" depends="release.properties, default">
 		<mkdir dir="${release.web}"/>
 		<copy todir="${release.web}">
-			<fileset dir="${web}"/>
+			<fileset dir="${web.demo}"/>
 		</copy>
 
 		<zip destfile="${release.web}/demo.zip">
@@ -105,7 +105,8 @@
 		<property name="bin" value="${base}/bin"/>
 		<property name="temp" value="${base}/temp"/>
 		<property name="doc" value="${base}/doc"/>
-		<property name="web" value="${base}/web"/>
+		<property name="web.demo" value="${base}/web/demo"/>
+		<property name="web.tutorial" value="${base}/web/tutorial"/>
 
 		<property name="name.chess" value="chess"/>
 		<property name="name.common" value="dockingFramesCommon"/>
@@ -164,43 +165,64 @@
 		<copy todir="${base}" file="${location.core}/tutorial.bat"/>
 	</target>
 
-	<target name="webstart" depends="bin, paths">
-		<mkdir dir="${web}"/>
-		<mkdir dir="${web}/lib"/>
+	<target name="webstartDemo" depends="bin, paths">
+		<mkdir dir="${web.demo}"/>
+		<mkdir dir="${web.demo}/lib"/>
 
-		<jar destfile="${web}/lib/${name.chess}.jar">
+		<jar destfile="${web.demo}/lib/${name.chess}.jar">
 			<fileset dir="${temp}/${name.chess}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.common}.jar">
+		<jar destfile="${web.demo}/lib/${name.common}.jar">
 			<fileset dir="${temp}/${name.common}"/>
 		</jar>
-		<jar destfile="${web}/${name.demonstration}.jar">
+		<jar destfile="${web.demo}/${name.demonstration}.jar">
 			<fileset dir="${temp}/${name.demonstration}"/>
 			<manifest>
 				<attribute name="Main-Class" value="bibliothek.demonstration.Main"/>
 				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.demonstrationInterface}.jar lib/${name.core}.jar lib/${name.chess}.jar lib/${name.help}.jar lib/${name.notes}.jar lib/${name.paint}.jar lib/${name.sizeAndColor}.jar lib/${name.layouts}.jar"/>
 			</manifest>
 		</jar>
-		<jar destfile="${web}/lib/${name.demonstrationInterface}.jar">
+		<jar destfile="${web.demo}/lib/${name.demonstrationInterface}.jar">
 			<fileset dir="${temp}/${name.demonstrationInterface}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.core}.jar">
+		<jar destfile="${web.demo}/lib/${name.core}.jar">
 			<fileset dir="${temp}/${name.core}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.help}.jar">
+		<jar destfile="${web.demo}/lib/${name.help}.jar">
 			<fileset dir="${temp}/${name.help}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.notes}.jar">
+		<jar destfile="${web.demo}/lib/${name.notes}.jar">
 			<fileset dir="${temp}/${name.notes}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.paint}.jar">
+		<jar destfile="${web.demo}/lib/${name.paint}.jar">
 			<fileset dir="${temp}/${name.paint}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.sizeAndColor}.jar">
+		<jar destfile="${web.demo}/lib/${name.sizeAndColor}.jar">
 			<fileset dir="${temp}/${name.sizeAndColor}"/>
 		</jar>
-		<jar destfile="${web}/lib/${name.layouts}.jar">
+		<jar destfile="${web.demo}/lib/${name.layouts}.jar">
 			<fileset dir="${temp}/${name.layouts}"/>
+		</jar>
+	</target>
+	
+	<target name="webstartTutorial" depends="bin, paths">
+		<mkdir dir="${web.tutorial}"/>
+		<mkdir dir="${web.tutorial}/lib"/>
+		
+		<jar destfile="${web.tutorial}/lib/${name.core}.jar">
+			<fileset dir="${temp}/${name.core}"/>
+		</jar>
+		<jar destfile="${web.tutorial}/lib/${name.common}.jar">
+			<fileset dir="${temp}/${name.common}"/>
+		</jar>
+		
+		<jar destfile="${web.tutorial}/${name.tutorial}.jar" duplicate="preserve">
+			<fileset dir="${temp}/${name.tutorial}"/>
+			<fileset dir="${source}/${name.tutorial}"/>
+			<manifest>
+				<attribute name="Main-Class" value="tutorial.TutorialMain"/>
+				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.core}.jar"/>
+			</manifest>
 		</jar>
 	</target>
 
@@ -307,7 +329,7 @@
 	</target>
 
 	<target name="bin.common" depends="source, bin.dir, bin.core">
-		<javac srcdir="${source}/${name.common}" destdir="${temp}/${name.common}">
+		<javac srcdir="${source}/${name.common}" destdir="${temp}/${name.common}" debug="on">
 			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.common}">
@@ -319,7 +341,7 @@
 
 
 	<target name="bin.tutorial" depends="source, bin.dir, bin.core, bin.common">
-		<javac srcdir="${source}/${name.tutorial}" destdir="${temp}/${name.tutorial}">
+		<javac srcdir="${source}/${name.tutorial}" destdir="${temp}/${name.tutorial}" debug="on">
 			<classpath path="${temp}/${name.core}"/>
 			<classpath path="${temp}/${name.common}"/>
 		</javac>
@@ -361,7 +383,7 @@
 	</target>
 
 	<target name="bin.core" depends="source, bin.dir">
-		<javac srcdir="${source}/${name.core}" destdir="${temp}/${name.core}"/>
+		<javac srcdir="${source}/${name.core}" destdir="${temp}/${name.core}" debug="on"/>
 		<copy todir="${temp}/${name.core}">
 			<fileset dir="${source}/${name.core}">
 				<exclude name="**/*.java"/>
@@ -438,6 +460,7 @@
 		<mkdir dir="${temp}/${name.notes}"/>
 		<mkdir dir="${temp}/${name.paint}"/>
 		<mkdir dir="${temp}/${name.sizeAndColor}"/>
+		<mkdir dir="${temp}/${name.tutorial}"/>
 	</target>
 
 	<!-- copy source -->

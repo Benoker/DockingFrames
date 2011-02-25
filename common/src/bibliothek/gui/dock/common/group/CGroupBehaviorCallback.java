@@ -44,7 +44,10 @@ public interface CGroupBehaviorCallback {
 	
 	/**
 	 * Sets the {@link ExtendedMode} of <code>dockable</code> using all available
-	 * history information.  
+	 * history information.<br>
+	 * <b>Note</b>: {@link LocationMode}s may decide that more than one {@link Dockable} must be moved
+	 * in order to accomplish the goal, any cached location information about {@link Dockable}s shoud be
+	 * considered invalid once this method has been executed.
 	 * @param dockable the element whose mode is going to change 
 	 * @param mode the new mode
 	 */
@@ -58,7 +61,10 @@ public interface CGroupBehaviorCallback {
 	public Location getLocation( Dockable dockable );
 	
 	/**
-	 * Sets the location of <code>dockable</code>.
+	 * Sets the location of <code>dockable</code>.<br>
+	 * <b>Note</b>: {@link LocationMode}s may decide that more than one {@link Dockable} must be moved
+	 * in order to accomplish the goal, any cached location information about {@link Dockable}s shoud be
+	 * considered invalid once this method has been executed.
 	 * @param dockable the element whose location is going to be set
 	 * @param location the new location
 	 */

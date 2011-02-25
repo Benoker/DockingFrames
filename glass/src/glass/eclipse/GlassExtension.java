@@ -29,7 +29,6 @@ import glass.eclipse.theme.CGlassEclipseColorSchemeExtension;
 import glass.eclipse.theme.CGlassEclipseTabPainter;
 import glass.eclipse.theme.EclipseTabChoiceExtension;
 import glass.eclipse.theme.EclipseThemeExtension;
-import glass.eclipse.theme.GlassEclipseTabTransmitterFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,9 +40,6 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseColorScheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.dock.common.theme.CDockTheme;
-import bibliothek.gui.dock.common.theme.CEclipseTheme;
-import bibliothek.gui.dock.common.theme.color.CColorBridgeExtension;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.util.DockProperties;
@@ -75,10 +71,6 @@ public class GlassExtension implements Extension{
 			Object themeParameter = extension.get( DockThemeExtension.THEME_PARAMETER );
 			DockTheme trigger = null;
 			
-			if( themeParameter instanceof CDockTheme ){
-				trigger = (DockTheme)themeParameter;
-				themeParameter = ((CDockTheme)themeParameter).intern();
-			}
 			if( themeParameter instanceof EclipseTheme ){
 				EclipseTheme theme = (EclipseTheme)themeParameter;
 				if( trigger == null ){
@@ -99,13 +91,6 @@ public class GlassExtension implements Extension{
 			Object parameterValue = extension.get( ColorScheme.COLOR_SCHEME_PARAMETER );
 			if( parameterValue instanceof EclipseColorScheme ){
 				result.add( (E)new CGlassEclipseColorSchemeExtension() );
-			}
-		}
-		
-		if( extension.getName().equals( CColorBridgeExtension.EXTENSION_NAME )){
-			Object parameterValue = extension.get( CColorBridgeExtension.PARAMETER_NAME );
-			if( parameterValue instanceof CEclipseTheme ){
-				result.add( (E) new GlassEclipseTabTransmitterFactory() );
 			}
 		}
 		

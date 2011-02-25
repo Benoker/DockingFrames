@@ -191,16 +191,8 @@ The views for \src{DockAction}s are changed through the \src{ActionViewConverter
 Any \src{Border} can be modified or replaced by a \src{BorderModifier}. \src{BorderModifier}s can be set by the \src{ThemeManager}.
 
 \subsubsection{Background}
-The usual background of a \src{Component} is either grey or transparent. Clients can set a painting algorithm for the background with help of the interface \src{BackgroundPaint}. Instances of \src{BackgroundPaint} are applied through the \src{ThemeManager}.
-
-The method \src{paint} of \src{BackgroundPaint} is called every time when a component has to be repainted. The method receives a \src{PaintableComponent} which offers the standard algorithms to paint border, children and other stuff. The \src{BackgroundPaint} can freely decide what to paint and in which order to paint.
-
 \subsubsection{Drag and drop decorations}
-During drag and drop operations \src{DockStation}s use a \src{StationPaint} to paint decorations. The \src{StationPaint} can be set through the \src{ThemeManager}.
-
 \subsubsection{Combining}
-
-
 
 \subsubsection{Displayers}
 A \src{DockableDisplayer} is a wrapper around a \src{Dockable} painting some decorations like a title or some border. All \src{DockStation}s make use of \linebreak \src{DockableDisplayer}s to paint their children. \src{DockableDisplayer}s are created by \src{DisplayerFactory}s which are accessible through the \src{ThemeManager}.

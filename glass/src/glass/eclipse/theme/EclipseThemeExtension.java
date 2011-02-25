@@ -29,8 +29,15 @@ public class EclipseThemeExtension implements DockThemeExtension{
 			IconManager im = controller.getIcons();
 	
 			Icon normalizeIcon = createIcon("images/normalize.png");
+			Icon maximizeIcon = createIcon("images/maximize.png");
 			
-			im.setIconTheme("locationmanager.maximize", createIcon("images/maximize.png"));
+			im.setIconTheme("split.normalize", normalizeIcon);
+			im.setIconTheme("split.maximize", maximizeIcon);
+			
+			im.setIconTheme("screen.normalize", normalizeIcon);
+			im.setIconTheme("screen.maximize", maximizeIcon);
+			
+			im.setIconTheme("locationmanager.maximize", maximizeIcon);
 			im.setIconTheme("locationmanager.normalize", normalizeIcon);
 			im.setIconTheme("locationmanager.externalize", createIcon("images/externalize.png"));
 			im.setIconTheme("locationmanager.minimize", createIcon("images/minimize.png"));

@@ -58,6 +58,15 @@ public class DefaultFocusController extends AbstractFocusController {
     /** <code>true</code> while the controller actively changes the focus */
     private boolean onFocusing = false;
     
+    /** whether the focus is to be transfered in the near future */
+    private boolean focusingPending = false;
+    
+    /** the element whose focus may be set in the near future */
+    private Component focusingComponent;
+    
+    /** whether to ensure that the focus is set in the near future */
+    private boolean focusingEnsure;
+    
     /**
      * Creates a new focus-controller
      * @param controller the owner of this controller
@@ -96,7 +105,7 @@ public class DefaultFocusController extends AbstractFocusController {
     	return veto;
     }
     
-    public FocusVeto setFocusedDockable( DockElementRepresentative source, final Component component, boolean force, boolean ensureFocusSet, final boolean ensureDockableFocused ){
+    public FocusVeto setFocusedDockable( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ){
     	// ignore more than one call
     	if( onFocusing || isFrozen() )
     		return null;
@@ -119,13 +128,20 @@ public class DefaultFocusController extends AbstractFocusController {
 	            this.focusedDockable = focusedDockable;
 	            
 	            if( ensureFocusSet || ensureDockableFocused ){
-	                if( EventQueue.isDispatchThread() ){
-    	                SwingUtilities.invokeLater( new Runnable(){
-    	                    public void run() {
-    	                        ensureFocusSet( ensureDockableFocused, component );
-    	                    }
-    	                });
-	                }
+	            	if( EventQueue.isDispatchThread() ){
+	            		if( !focusingPending ){
+	            			focusingPending = true;
+		            	    SwingUtilities.invokeLater( new Runnable(){
+	    	                    public void run() {
+	    	                    	focusingPending = false;
+	    	                        ensureFocusSet( focusingEnsure, focusingComponent );
+	    	                        focusingComponent = null;
+	    	                    }
+	    	                });
+		                }
+	            		focusingEnsure = ensureDockableFocused;
+	            		focusingComponent = component;
+	            	}
 	                else{
 	                    // we are in the wrong Thread, but we can try...
 	                    ensureFocusSet( ensureDockableFocused, component );
@@ -151,7 +167,7 @@ public class DefaultFocusController extends AbstractFocusController {
     	if( isFrozen() ){
     		return;
     	}
-    	
+
         Dockable focusedDockable = this.focusedDockable;
         if( focusedDockable != null ){
             Stack<Dockable> front = new Stack<Dockable>();            
@@ -187,7 +203,16 @@ public class DefaultFocusController extends AbstractFocusController {
             boolean preset = component != null;
             FocusStrategy strategy = getStrategy();
             if( strategy != null ){
-            	component = strategy.getFocusComponent( focusedDockable, component );
+            	Component replacement = strategy.getFocusComponent( focusedDockable, component );
+            	if( replacement != null ){
+            		if( replacement != component ){
+            			component = replacement;
+            			preset = false;
+            		}
+            	}
+            	else{
+            		preset = false;
+            	}
             }
             
             if( component == null ){

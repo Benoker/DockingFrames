@@ -58,7 +58,7 @@ import bibliothek.util.xml.XException;
 
 /**
  * This default implementation of a {@link LayoutChangeStrategy} heavily depends on the methods of {@link PredefinedDockSituation}. It
- * also offers a set of methods that may be interesting for subclasses which do not use a {@link PredefinedDockSituation}. 
+ * also offers a set of methods that may be interesting for subclasses which do not use a {@link PredefinedDockSituation}.
  * @author Benjamin Sigg
  */
 public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
