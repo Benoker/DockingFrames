@@ -125,8 +125,35 @@ public class XElement extends XContainer implements Iterable<XElement>{
         if( attribute == null )
             throw new NullPointerException( "attribute must not be null" );
         
+        if( getAttribute( attribute.getName() ) != null ){
+        	throw new IllegalArgumentException( "attribute '" + attribute.getName() + "' has already been added to this element" );
+        }
+        
         attributes.add( attribute );
         return this;
+    }
+    
+    /**
+     * Removes the attribute with name <code>name</code> from this {@link XElement}.
+     * @param name the name of the attribute to remove
+     * @return the attribute that was removed, or <code>null</code> if not found
+     */
+    public XAttribute removeAttribute( String name ){
+    	for( int i = 0, n = attributes.size(); i<n; i++ ){
+    		if( attributes.get( i ).getName().equals( name ) ){
+    			return attributes.remove( i );
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * Removes the attribute <code>attribute</code> from this {@link XElement}.
+     * @param attribute the attribute to remove
+     * @return <code>true</code> if <code>attribute</code> was removed
+     */
+    public boolean removeAttribute( XAttribute attribute ){
+    	return attributes.remove( attribute );
     }
     
     /**
@@ -429,6 +456,15 @@ public class XElement extends XContainer implements Iterable<XElement>{
         if( attribute == null )
             throw new XException( "no attribute known with name: " + name );
         return attribute.getByteArray();
+    }
+    
+    /**
+     * Removes the child <code>element</code> from this {@link XElement}.
+     * @param element the element to remove
+     * @return <code>true</code> if <code>element</code> was removed, <code>false</code> otherwise
+     */
+    public boolean removeElement( XElement element ){
+    	return children.remove( element );
     }
     
     /**

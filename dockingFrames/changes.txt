@@ -421,14 +421,14 @@
 
 [v1.1.0p5b]
 ! API: DockSituation can now use a PlaceholderStrategy to load the intermediate format and another strategy to load the final DockElements. The DockFactories had to be modified in order to allow this.
-- Bugfix: In Common, placeholders are no longer removed in the intermediate layout information no longer
+- Bugfix: In Common, placeholders are no longer removed in the intermediate layout
 - Bugfix: The FocusStrategy can now decide whether to transfer focus if the user clicked on a non-focusable Component or not. Currently focus is not transfered if the user clicked on a JComboBox
 - API: The content-pane of a Dockable is no longer focusable
 
 [v1.1.0p5c]
 - Bugfix: Perspectives did ignore the "ignoreChildren" tag. DockFactories did throw NPE if called with a perspective that has the "ignoreChildren" tag set to true.
 - API: Additional method "isWorkingArea" in "CStationPerspective".
-! API: DockRelocator has two additional methods "getRemote" and "getDirectRemote" with a parameter "forgeDrag". If that parameter is true, then a DnD operation can be forced to start.
+! API: DockRelocator has two additional methods "getRemote" and "getDirectRemote" with a parameter "forceDrag". If that parameter is true, then a DnD operation can be forced to start.
 - Bugfix: NoStackTheme.Meta, field "meta" was never set.
 
 [v1.1.0p6]
@@ -443,6 +443,7 @@
 - Bugfix: Reordering the children of a dockable DockStation that is shown on a FlapDockStation now also reorders the actions on the button.
 
 [v1.1.0p6a]
+- API: Remove children and attributes of XElement
 - Bugfix: focus is no longer lost if maximizing a Dockable by pressing ctrl+m
 - API: New DefaultFrontendPerspectiveCache, a default implementation of the interface FrontendPerspectiveCache
 - Bugfix: Glass Extension now also works if Common is not in the classpath
