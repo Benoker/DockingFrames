@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,7 +53,9 @@ import javax.swing.KeyStroke;
 
 import bibliothek.extension.gui.dock.preference.PreferenceModel;
 import bibliothek.extension.gui.dock.preference.PreferenceStorage;
+import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
@@ -63,6 +66,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.action.predefined.CCloseAction;
 import bibliothek.gui.dock.common.event.CControlListener;
@@ -114,8 +118,11 @@ import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.common.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.control.DockRelocatorMode;
+import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
@@ -124,19 +131,33 @@ import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
+import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.flap.FlapWindow;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationLayout;
+import bibliothek.gui.dock.station.stack.menu.CombinedMenuContent;
+import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
+import bibliothek.gui.dock.themes.BasicTheme;
+import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.border.BorderModifier;
+import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.AWTComponentCaptureStrategy;
+import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.Priority;
@@ -1394,15 +1415,67 @@ public class CControl {
     }
 
     /**
-     * Changes the value of a property. Some properties are:
-     * <ul>
-     * <li>{@link #KEY_MAXIMIZE_CHANGE}</li>
-     * <li>{@link #KEY_GOTO_EXTERNALIZED}</li>
-     * <li>{@link #KEY_GOTO_MAXIMIZED}</li>
-     * <li>{@link #KEY_GOTO_MINIMIZED}</li>
-     * <li>{@link #KEY_GOTO_NORMALIZED}</li>
-     * <li>{@link #KEY_CLOSE}</li>
-     * </ul>
+     * Changes the value of a property. The incomplete list of properties, in alphabetical order, includes:
+     * (properties marked with '*' should not be changed by clients if using the Common project).
+     * <table>
+     * 	<tr><td>{@link BasicTheme#BASIC_COLOR_SCHEME}</td><td>The {@link ColorScheme} to use if the {@link BasicTheme} is installed.</td></tr>
+     * 	<tr><td>{@link ScreenDockStation#BOUNDARY_RESTRICTION}</td><td>How far the user can push a window with a {@link Dockable} out of the screen(s).</td></tr>
+     *  <tr><td>{@link BubbleTheme#BUBBLE_COLOR_SCHEME} </td><td>The {@link ColorScheme} to use if the {@link BubbleTheme} is installed.</td></tr>
+     *  <tr><td>{@link FlapDockStation#BUTTON_CONTENT} </td><td>Tells what content should be on the buttons that represent minimized {@link Dockable}s.</td></tr>
+     *  <tr><td>{@link FlapDockStation#BUTTON_CONTENT_FILTER} </td><td>Tells which {@link DockAction}s should be shown on a button representing a minimized {@link Dockable}.</td></tr>
+     *  <tr><td>{@link DockTheme#COMBINER} </td><td>Default value of the {@link Combiner}.</td></tr>
+     *  <tr><td>{@link DockTheme#DISPLAYER_FACTORY} </td><td>Default value of the {@link DisplayerFactory}.</td></tr>
+     *  <tr><td>{@link DockTheme#DOCKABLE_MOVING_IMAGE_FACTORY} </td><td>Default value of the {@link DockableMovingImageFactory}.</td></tr>
+     *  <tr><td>{@link DockTheme#DOCKABLE_SELECTION} </td><td>Default value of the {@link DockableSelection}.</td></tr>
+     *  <tr><td>{@link LocationModeManager#DOUBLE_CLICK_STRATEGY} </td><td>Tells what happens if the user double clicks on a {@link DockTitle} or a {@link Dockable}.</td></tr>
+     *  <tr><td>{@link EclipseTheme#ECLIPSE_COLOR_SCHEME} </td><td>The {@link ColorScheme} to use if the {@link EclipseTheme} is installed.</td></tr>
+     *  <tr><td>* {@link ScreenDockStation#EXPAND_ON_DOUBLE_CLICK} </td><td>Whether a double click on a child of a {@link ScreenDockStation} should maximize the child.</td></tr>
+     *  <tr><td>{@link FlatTheme#FLAT_COLOR_SCHEME} </td><td>The {@link ColorScheme} to use if the {@link FlatTheme} is installed.</td></tr>
+     *  <tr><td>{@link ScreenDockStation#FULL_SCREEN_STRATEGY} </td><td>Defines when a floating {@link Dockable} is considered to be in fullscreen mode.</td></tr>
+     *  <tr><td>{@link FlapDockStation#LAYOUT_MANAGER} </td><td>Tells the {@link FlapDockStation} the size and the hold property of its children.</td></tr>
+     *  <tr><td>{@link SplitDockStation#LAYOUT_MANAGER} </td><td>Logic of all {@link SplitDockStation}s, used when dropping a {@link Dockable} or resizing the station.</td></tr>
+     *  <tr><td>{@link TabPane#LAYOUT_MANAGER} </td><td>Defines the size and location of tabs of a stack.</td></tr>
+     *  <tr><td>{@link CombinedMenuContent#MENU_CONTENT} </td><td>The menu that shows overflowing {@link Dockable}s on a stack.</td></tr>
+     *  <tr><td>{@link FlapDockStation#MINIMUM_SIZE} </td><td>The mimimum size of the {@link Component} that represents the {@link FlapDockStation}.</td></tr>
+     *  <tr><td>* {@link LocationModeManager#MODE_ENABLEMENT} </td><td>Tells which {@link CDockable} is allowed to have which {@link ExtendedMode}.</td></tr>
+     *  <tr><td>{@link DockRelocatorMode#NO_COMBINATION_MASK} </td><td>What keys the user has to press during a drag and drop operation to prevent the framework from combining {@link Dockable}s.</td></tr>
+     *  <tr><td>{@link DockTitle#ORIENTATION_STRATEGY} </td><td>Tells how to rotate text on a {@link DockTitle}.</td></tr>
+     *  <tr><td>{@link EclipseTheme#PAINT_ICONS_WHEN_DESELECTED} </td><td>Whether to paint icons on unselected tabs if using the {@link EclipseTheme}.</td></tr>
+     *  <tr><td>{@link DockTheme#BACKGROUND_PAINT} </td><td>The default value of the {@link BackgroundPaint}.</td></tr>
+     *  <tr><td>{@link DockTheme#BORDER_MODIFIER} </td><td>The default value of the {@link BorderModifier}.</td></tr>
+     *  <tr><td>* {@link CControl#CCONTROL} </td><td>The {@link CControl} in whose realm the property is read, is a read-only property.</td></tr>
+     *  <tr><td>{@link StackDockStation#COMPONENT_FACTORY} </td><td>The factory creating the "tabbed panes" of the {@link StackDockStation}.</td></tr>
+     *  <tr><td>{@link PropertyKey#DOCK_STATION_ICON} </td><td>The default icon of {@link DockStation}s.</td></tr>
+     *  <tr><td>{@link PropertyKey#DOCK_STATION_TITLE} </td><td>The default title of {@link DockStation}s.</td></tr>
+     *  <tr><td>{@link PropertyKey#DOCK_STATION_TOOLTIP} </td><td>The default tooltip of {@link DockStation}s.</td></tr>
+     *  <tr><td>{@link PropertyKey#DOCKABLE_ICON} </td><td>The default icon of {@link Dockable}s.</td></tr>
+     *  <tr><td>{@link PropertyKey#DOCKABLE_TITLE} </td><td>The default title of {@link Dockable}s.</td></tr>
+     *  <tr><td>{@link PropertyKey#DOCKABLE_TOOLTIP} </td><td>The default tooltip of {@link Dockable}s.</td></tr>
+     *  <tr><td>* {@link DockFrontend#HIDE_ACCELERATOR} </td><td>The {@link KeyStore} that will call {@link DockFrontend#hide(Dockable)}</td></tr>
+     *  <tr><td>{@link DockableSelector#INIT_SELECTION} </td><td>The {@link KeyStore} that opens a window where the user can select a new {@link Dockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_CLOSE} </td><td>The {@link KeyStore} that closes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_EXTERNALIZED} </td><td>The {@link KeyStore} that externalizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_MAXIMIZED} </td><td>The {@link KeyStore} that maximizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_MINIMIZED} </td><td>The {@link KeyStore} that minimizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_NORMALIZED} </td><td>The {@link KeyStore} that normalizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_MAXIMIZE_CHANGE} </td><td>The {@link KeyStore} that either maximizes or normalizes a {@link CDockable}.</td></tr>
+     *  <tr><td>* {@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStore} that maximizes a child of a {@link SplitDockStation}.</td></tr>
+     *  <tr><td>{@link PlaceholderStrategy#PLACEHOLDER_STRATEGY} </td><td>A strategy that creates placeholders for {@link Dockable}s, see {@link CPlaceholderStrategy}.</td></tr>
+     *  <tr><td>{@link StackDockStation#TAB_CONTENT_FILTER} </td><td>A filter deciding what content to show on a tab of a {@link StackDockStation}.</td></tr>
+     *  <tr><td>{@link CControl#RESIZE_LOCK_CONFLICT_RESOLVER} </td><td>Tells what happens if two {@link CDockable}s have a locked size and the user is resizing the parent of these two elements.</td></tr>
+     *  <tr><td>{@link DockController#RESTRICTED_ENVIRONMENT} </td><td>Tells whether the application runs as applet/with webstart or as free or authenticated application.</td></tr>
+     *  <tr><td>{@link DockRelocatorMode#SCREEN_MASK} </td><td>The keys the user has to press during a drag and drop operation to ensure that the {@link Dockable} is added to a {@link ScreenDockStation}.</td></tr>
+     *  <tr><td>{@link SingleTabDecider#SINGLE_TAB_DECIDER} </td><td>Tells which {@link Dockable}s should be presented with a single tab - even if there is no reason to show a tab.</td></tr>
+     *  <tr><td>{@link DockTheme#STATION_PAINT} </td><td>The default value of {@link StationPaint}.</td></tr>
+     *  <tr><td>{@link AWTComponentCaptureStrategy#STRATEGY} </td><td>How to make an image of an AWT component.</td></tr>
+     *  <tr><td>{@link EclipseTheme#TAB_PAINTER} </td><td>The look of tabs if using the {@link EclipseTheme}.</td></tr>
+     *  <tr><td>{@link StackDockStation#TAB_PLACEMENT} </td><td>The location of the tabs on a {@link StackDockStation}.</td></tr>
+     *  <tr><td>{@link EclipseTheme#THEME_CONNECTOR} </td><td>Detailed instructions how to present a {@link Dockable} if using the {@link EclipseTheme}.</td></tr>
+     *  <tr><td>{@link FlapDockStation#WINDOW_FACTORY} </td><td>A factory creating {@link FlapWindow}s for the {@link FlapDockStation}.</td></tr>
+     *  <tr><td>{@link ScreenDockStation#WINDOW_FACTORY} </td><td>A factory creating {@link ScreenDockWindow}s for the {@link ScreenDockStation}.</td></tr>
+     * </table>
+     * 
+     * 
      * @param <A> the type of the value
      * @param key the name of the property
      * @param value the new value, can be <code>null</code>
@@ -2450,7 +2523,7 @@ public class CControl {
      * are un-maximized after a layout change. The default value of this property is <code>true</code>.<br>
      * The reasons behind forcing basic modes are:
      * <ul>
-     * 	<li>If the user changes the layout, he/she most likely would like to see the effects. A maximized {@link Dockable} would
+     * 	</td><td></td></tr>If the user changes the layout, he/she most likely would like to see the effects. A maximized {@link Dockable} would
      *  hide the effects.</li>
      *  <li>For the user re-maximizing an element requires no more than one click with the mouse. It's a cheap operation.</li>
      *  <li>It is an additional layer of security preventing {@link Dockable}s from being in the wrong position if the client
