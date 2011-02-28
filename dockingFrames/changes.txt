@@ -448,3 +448,7 @@
 - Bugfix: Glass Extension now also works if Common is not in the classpath
 - Bugfix: The default behavior of CControl was to set always "secure environment = false". The parameter is now set to the correct value depending on the environment in which an application runs.
 - Bugfix: Common, tabs are no longer reordered when maximizing or unmaximizing a stack of Dockables
+- Bugfix: FlapDockStation on JDesktopPane, invalid window remembers state and informs FlapDockStation that it cannot be used any longer. This prevents a bug where Dockables were selected but did not show up.
+- Bugfix: A NPE was thrown when applying Nimbus and other LookAndFeels
+! API: Several methods removed from DockUI including the LocaleListener (this functionality was replaced by the TextManager)
+! API: Removed the class Resources in Common (this functionality was replaced by the TextManager)

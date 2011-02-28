@@ -102,6 +102,10 @@ public final class Colors {
 	 * @return the new color
 	 */
 	public static Color deltaBrightness( Color c, double delta ){
+		if( c == null ){
+			return null;
+		}
+		
 		float[] hsb = Color.RGBtoHSB( c.getRed(), c.getBlue(), c.getGreen(), null );
 		hsb[2] += delta;
 		hsb[2] = Math.max( 0, Math.min( 1, hsb[2] ));
@@ -134,6 +138,10 @@ public final class Colors {
     }
     
     public static Color fuller( Color color, double factor ){
+    	if( color == null ){
+    		return null;
+    	}
+    	
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
@@ -163,6 +171,10 @@ public final class Colors {
     }
     
     public static Color undiffMirror( Color color, double factor ){
+    	if( color == null ){
+    		return null;
+    	}
+    	
         int sum = color.getRed() + color.getGreen() + color.getBlue();
         if( sum > (3*255/2.0) )
             return brighter( color, factor );
@@ -171,11 +183,38 @@ public final class Colors {
     }
     
     public static Color diffMirror( Color color, double factor ){
+    	if( color == null ){
+    		return null;
+    	}
         int sum = color.getRed() + color.getGreen() + color.getBlue();
         if( sum < (3*255/2.0) )
             return brighter( color, factor );
         else
             return darker( color, factor );
+    }
+
+    /**
+     * Helper methods calling {@link Color#darker()}.
+     * @param color some color to modify, can be <code>null</code>
+     * @return the darker color or <code>null</code>
+     */
+    public static Color darker( Color color ){
+    	if( color == null ){
+    		return null;
+    	}
+    	return color.darker();
+    }
+
+    /**
+     * Helper methods calling {@link Color#brighter()}.
+     * @param color some color to modify, can be <code>null</code>
+     * @return the brighter color or <code>null</code>
+     */
+    public static Color brighter( Color color ){
+    	if( color == null ){
+    		return null;
+    	}
+    	return color.darker();
     }
 }
 

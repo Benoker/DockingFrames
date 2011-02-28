@@ -40,9 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.JDesktopPane;
@@ -69,17 +67,14 @@ import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.TextManager;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 import bibliothek.gui.dock.util.laf.Nimbus6u10;
 import bibliothek.gui.dock.util.laf.Windows;
-import bibliothek.gui.dock.util.local.LocaleListener;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
 import bibliothek.util.container.Tuple;
 
@@ -87,22 +82,14 @@ import bibliothek.util.container.Tuple;
  * A list of icons, text and methods used by the framework. 
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.BREAK_MAJOR, target=Version.VERSION_1_1_0, priority=Todo.Priority.MAJOR,
-		description="Use an UIManager instead of bundles to handle text, also applies to the Common library")
 public class DockUI {
     /** An instance of DockUI */
 	private static DockUI ui;
 	
 	/** Key for an {@link Icon} stored in the {@link IconManager} for an overflow-menu */
-	@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_0,
-			description="Instead of just a simple icon allow clients more influence of what an overflow-menu can do. This key may remain, but its value may not be used all the time.")
+	@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
+		description="Instead of just a simple icon allow clients more influence of what an overflow-menu can do. This key may remain, but its value may not be used all the time.")
 	public static final String OVERFLOW_MENU_ICON = "overflow.menu";
-	
-	/** The resource bundle for some text shown in this framework */
-	private ResourceBundle bundle;
-	
-	/** the local used to load the {@link ResourceBundle} */
-	private Locale locale = Locale.getDefault();
 	
     /** A list of all available themes */
     private List<ThemeFactory> themes = new ArrayList<ThemeFactory>();
@@ -115,9 +102,6 @@ public class DockUI {
     
     /** a list of color listeners that is called from {@link #colorsListeners} */
     private List<LookAndFeelColorsListener> colorsListeners = new ArrayList<LookAndFeelColorsListener>();
-    
-    /** a list of listeners waiting for the language to change */
-    private List<LocaleListener> localeListeners = new ArrayList<LocaleListener>();
     
     /** whether this is a secure environment where global {@link AWTEventListener}s are not allowed */
     private Boolean secureEnvironment = null;
@@ -154,8 +138,6 @@ public class DockUI {
      * Creates a new DockUI
      */
     protected DockUI(){
-        setLocale( Locale.getDefault() );
-        
         registerThemes();
         
         registerColors();
@@ -336,119 +318,6 @@ public class DockUI {
      */
     public static Color getColor( String key ){
         return getDefaultDockUI().getColors().getColor( key );
-    }
-    
-    /**
-     * Gets the local resource bundle.
-     * @return the bundle
-     * @deprecated replaced by the {@link TextManager}
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    public ResourceBundle getBundle(){
-		return bundle;
-	}
-    
-    /**
-     * Gets a string of the current {@link #getBundle() bundle}.
-     * @param key the key of the string
-     * @return the string
-     * @deprecated replaced by the {@link TextManager}
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    public String getString( String key ){
-    	return getBundle().getString( key );
-    }
-    
-    /**
-     * Sets the locale for which a {@link #getBundle() ResourceBundle}
-     * should be loaded.
-     * @param locale the new locale, not <code>null</code>
-     * @deprecated replaced by the {@link TextManager}
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    public void setLocale( Locale locale ){
-    	if( locale == null )
-    		throw new IllegalArgumentException( "locale must not be null" );
-    	setBundle( locale );
-    }
-    
-    /**
-     * Gets the {@link Locale} for which {@link #getBundle() the ResourceBundle}
-     * was loaded.
-     * @return the locale, not <code>null</code>
-     * @deprecated replaced by the {@link TextManager}
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    public Locale getLocale(){
-		return locale;
-	}
-    
-    /**
-     * Adds a new {@link LocaleListener}.
-     * @param listener the new listener, not <code>null</code>
-     * @deprecated replaced by the {@link TextManager}
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    public void addLocaleListener( LocaleListener listener ){
-    	localeListeners.add( listener );
-    }
-
-    /**
-     * Removes <code>listener</code> from this {@link DockUI}.
-     * @param listener the listener to remove
-     * @deprecated replaced by the {@link TextManager}
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    public void removeLocaleListener( LocaleListener listener ){
-    	localeListeners.remove( listener );
-    }
-    
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    private LocaleListener[] localeListeners(){
-    	return localeListeners.toArray( new LocaleListener[ localeListeners.size() ] );
-    }
-    
-    /**
-     * Sets the resource bundle which should be used.
-     * @param bundle the bundle
-     * @deprecated replaced by the {@link TextManager}
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
-    		description="remove this method")
-    public void setBundle( ResourceBundle bundle ){
-		this.bundle = bundle;
-		
-		for( LocaleListener listener : localeListeners() )
-			listener.bundleChanged( this );
-	}
-    
-    /**
-     * Replaces the bundle of this DockUI using the given Locale
-     * @param locale the language of the DockUI
-     * @deprecated replaced by {@link #setLocale(Locale)}
-     */
-    @Deprecated
-    public void setBundle( Locale locale ){
-    	this.locale = locale;
-        setBundle( ResourceBundle.getBundle( "data.locale.text", locale, this.getClass().getClassLoader() ));
-        
-        for( LocaleListener listener : localeListeners() )
-        	listener.localeChanged( this );
     }
     
     /**

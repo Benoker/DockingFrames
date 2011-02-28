@@ -1122,7 +1122,7 @@ public class FlapDockStation extends AbstractDockableStation {
     private void setFlapWindow( FlapWindow window ){
     	if( this.window != null ){
     		this.window.setController( null );
-    		this.window.destory();
+    		this.window.destroy();
     	}
     	
         this.window = window;

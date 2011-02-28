@@ -25,10 +25,11 @@
  */
 package bibliothek.gui.dock.station.stack.tab.layouting;
 
+import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
- * Some side of a rectangle.
+ * Tells at which side tabs are placed on a {@link TabPane} (or a similar ui element).
  * @author Benjamin Sigg
  */
 public enum TabPlacement{

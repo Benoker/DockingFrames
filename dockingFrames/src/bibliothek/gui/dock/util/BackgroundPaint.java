@@ -31,6 +31,9 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockTheme;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link BackgroundPaint} is used to paint the background of various {@link Component}s of 
@@ -39,6 +42,8 @@ import bibliothek.gui.DockTheme;
  * because they already paint their background in a specific way. 
  * @author Benjamin Sigg
  */
+@Todo( target=Version.VERSION_1_1_1, compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR,
+		description="allow BackgroundPaint to enabled/disable transparency" )
 public interface BackgroundPaint {
 	/**
 	 * Informs this paint that is will be used by <code>component</code>.

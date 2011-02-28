@@ -63,7 +63,7 @@ public interface FlapWindow {
      * Informs this window that it is no longer used by its owner
      * and will never be used again.
      */
-    public void destory();
+    public void destroy();
     
     /**
      * Gets the current boundaries of this window in screen coordinates.

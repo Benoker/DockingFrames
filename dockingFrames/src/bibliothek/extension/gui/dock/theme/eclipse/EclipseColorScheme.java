@@ -41,8 +41,6 @@ import bibliothek.util.Todo.Version;
  * A {@link ColorScheme} used by the {@link EclipseTheme}.
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.BUG, target=Version.VERSION_1_1_0, 
-		description="LookAndFeel change seems not to change all colors, the top of a single-tab component does not change its color")
 public class EclipseColorScheme extends BasicColorScheme {
     /**
      * Creates the new color scheme

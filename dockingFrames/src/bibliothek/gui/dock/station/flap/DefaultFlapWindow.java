@@ -215,7 +215,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 					// by its former owner
 					SwingUtilities.invokeLater(new Runnable(){
 						public void run(){
-							window.destroy();
+							destroy();
 						}
 					});
 				}
@@ -234,20 +234,26 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	}
 	
 	public boolean isWindowVisible(){
-		return window.isVisible();
+		return window != null && window.isVisible();
 	}
 
 	public Rectangle getWindowBounds(){
 		return window.asComponent().getBounds();
 	}
 	
-	public void destory(){
-		setDockable(null);
-		window.destroy();
+	public void destroy(){
+		if( window != null ){
+			setController( null );
+			setDockable( null );
+			window.destroy();
+			window = null;
+		}
 	}
 	
 	public void repaint(){
-		window.asComponent().repaint();
+		if( window != null ){
+			window.asComponent().repaint();
+		}
 	}
 
 	/**
@@ -256,7 +262,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	 * @return whether this window is still valid
 	 */
 	public boolean isWindowValid(){
-		return window.isParentValid();
+		return window != null && window.isParentValid();
 	}
 
 	public boolean containsScreenPoint( Point point ){

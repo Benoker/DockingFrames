@@ -30,6 +30,7 @@ import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.color.DefaultColorScheme;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
+import bibliothek.util.Colors;
 
 /**
  * The {@link ColorScheme} that is used by the {@link BasicTheme}.
@@ -59,16 +60,16 @@ public class BasicColorScheme extends DefaultColorScheme{
         
         setColor( "title.flap.active", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ) );
         setColor( "title.flap.active.text", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ) );
-        setColor( "title.flap.active.knob.highlight", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ).brighter() );
-		setColor( "title.flap.active.knob.shadow", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ).darker() );
+        setColor( "title.flap.active.knob.highlight", Colors.brighter( DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ) ) );
+		setColor( "title.flap.active.knob.shadow", Colors.darker( DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND )) );
         setColor( "title.flap.inactive", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) );
         setColor( "title.flap.inactive.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ) );
-        setColor( "title.flap.inactive.knob.highlight", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).brighter() );
-		setColor( "title.flap.inactive.knob.shadow", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).darker() );
+        setColor( "title.flap.inactive.knob.highlight", Colors.brighter( DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) ) );
+		setColor( "title.flap.inactive.knob.shadow", Colors.darker( DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) ) );
         setColor( "title.flap.selected", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) );
         setColor( "title.flap.selected.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ) );
-        setColor( "title.flap.selected.knob.highlight", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).brighter() );
-		setColor( "title.flap.selected.knob.shadow", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ).darker() );
+        setColor( "title.flap.selected.knob.highlight", Colors.brighter( DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) ) );
+		setColor( "title.flap.selected.knob.shadow", Colors.darker( DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ) ) );
         
 		setColor( "stack.tab.foreground", null );
 		setColor( "stack.tab.foreground.selected", null );

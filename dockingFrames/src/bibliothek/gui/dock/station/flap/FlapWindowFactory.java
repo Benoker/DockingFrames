@@ -46,7 +46,7 @@ public interface FlapWindowFactory {
 	
 	/**
 	 * Tells whether <code>window</code> can still be used by <code>station</code>.
-	 * @param window a window create by this factory, was not yet {@link FlapWindow#destory() destroied}
+	 * @param window a window create by this factory, was not yet {@link FlapWindow#destroy() destroied}
 	 * @param station the owner of <code>window</code>
 	 * @return <code>true</code> if <code>station</code> can show another {@link Dockable} on
 	 * <code>window</code>
