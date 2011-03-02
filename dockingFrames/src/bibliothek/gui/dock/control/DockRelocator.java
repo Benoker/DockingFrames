@@ -37,6 +37,10 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.event.DockRelocatorListener;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A manager adding {@link java.awt.event.MouseListener} and
@@ -48,6 +52,8 @@ import bibliothek.gui.dock.event.DockRelocatorListener;
  * are added through {@link #addMode(DockRelocatorMode)} 
  * @author Benjamin Sigg
  */
+@Todo( priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0, compatibility=Compatibility.COMPATIBLE,
+		description="Add dome kind of veto-listener that cencels DnD operations before they start")
 public abstract class DockRelocator {
 	/** a set of listeners informed whenever a dockable is moved */
 	private List<DockRelocatorListener> listeners = new ArrayList<DockRelocatorListener>();
