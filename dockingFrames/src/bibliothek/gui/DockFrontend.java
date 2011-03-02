@@ -30,6 +30,7 @@ import java.awt.Window;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -141,6 +142,7 @@ import bibliothek.util.xml.XException;
  * @author Benjamin Sigg
  */
 public class DockFrontend {
+	/** This {@link KeyStore} calls {@link #hide(Dockable)} for the currently selected {@link Dockable}. */
     public static final PropertyKey<KeyStroke> HIDE_ACCELERATOR = 
         new PropertyKey<KeyStroke>( "frontend hide accelerator" );
     

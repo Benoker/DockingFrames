@@ -453,3 +453,6 @@
 - Bugfix: A NPE was thrown when applying Nimbus and other LookAndFeels
 ! API: Several methods removed from DockUI including the LocaleListener (this functionality was replaced by the TextManager)
 ! API: Removed the class Resources in Common (this functionality was replaced by the TextManager)
+
+[v.1.10p6b]
+- Bugfix: using a DockSituationIgnore often caused a NPE

@@ -53,7 +53,7 @@ public class PersistentLayoutExample {
 		DockFrontend frontend = new DockFrontend( frame );
 		frame.destroyOnClose( frontend );
 		frontend.getController().setTheme( new NoStackTheme( new SmoothTheme() ) );
-
+		
 		SplitDockStation station = new SplitDockStation();
 		frame.add( station );
 		frontend.addRoot( "split", station );

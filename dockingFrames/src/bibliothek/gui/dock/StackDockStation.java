@@ -737,7 +737,12 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, StationChildHandle dockable ){
     			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-    			item.putInt( "id", children.get( dockable.getDockable() ) );
+    			Integer id = children.get( dockable.getDockable() );
+    			if( id == null ){
+    				return null;
+    			}
+    			
+    			item.putInt( "id", id );
     			item.putInt( "index", index );
     			if( strategy != null ){
     				Path placeholder = strategy.getPlaceholderFor( dockable.getDockable() );

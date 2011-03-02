@@ -2396,7 +2396,7 @@
 	</pictures>
 	<resources>
 		<resource name="CLookAndFeelMenuPiece">
-			<index>0</index>
+			<index>3</index>
 		</resource>
 		<resource name="ccontrol.frontend">
 			<areas/>
@@ -2409,8 +2409,8 @@
 									<replacement id="rootccontrol center"/>
 									<delegate id="delegate_SplitDockStationFactory">
 										<fullscreen-action>false</fullscreen-action>
-										<node nodeId="1293551127564" orientation="VERTICAL" divider="0.75693287037037">
-											<node nodeId="1293533691140" orientation="HORIZONTAL" divider="0.3076923076923077">
+										<node nodeId="1293551127564" orientation="VERTICAL" divider="0.7571214392803598">
+											<node nodeId="1293533691140" orientation="HORIZONTAL" divider="0.38636363636363635">
 												<leaf id="1" nodeId="1293532777226">
 													<placeholders>
 														<placeholder>dock.single.PictureListDockable</placeholder>
@@ -2636,9 +2636,9 @@
 						<dockables>
 							<entry id="single PictureListDockable" current="dock.mode.normal">
 								<history>
-									<mode>dock.mode.maximized</mode>
 									<mode>dock.mode.externalized</mode>
 									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.maximized</mode>
 									<mode>dock.mode.normal</mode>
 								</history>
 								<properties>
@@ -2667,13 +2667,10 @@
 											<property factory="SplitDockPlaceholderProperty">
 												<placeholder>dock.single.PictureListDockable</placeholder>
 												<backup-path>
-													<node location="LEFT" size="0.7363572924647295" id="1293533691140"/>
+													<node location="TOP" size="0.7571214392803598" id="1293551127564"/>
+													<node location="LEFT" size="0.38636363636363635" id="1293533691140"/>
 													<leaf id="1293532777226"/>
 												</backup-path>
-											</property>
-											<property factory="StackDockPropertyFactory">
-												<index>1</index>
-												<placeholder>dock.single.PictureListDockable</placeholder>
 											</property>
 										</location>
 									</property>
@@ -2702,8 +2699,8 @@
 							</entry>
 							<entry id="multi 1 page" current="dock.mode.normal">
 								<history>
-									<mode>dock.mode.maximized</mode>
 									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.maximized</mode>
 									<mode>dock.mode.normal</mode>
 								</history>
 								<properties>
@@ -2932,7 +2929,7 @@
 				<child name="theme">
 					<child name="bubble">
 						<child name="colorscheme">
-							<value type="dock.choice">looAndFeel</value>
+							<value type="dock.choice">gbr</value>
 						</child>
 					</child>
 					<child name="eclipse">
@@ -2960,11 +2957,14 @@
 					<child name="actions">
 						<value type="dock.choice">theme</value>
 					</child>
+					<child name="filter">
+						<value type="dock.choice">theme</value>
+					</child>
 				</child>
 			</child>
 		</resource>
 		<resource name="dock.ui.ThemeMap">
-			<key>flat</key>
+			<key>bubble</key>
 		</resource>
 	</resources>
 </config>

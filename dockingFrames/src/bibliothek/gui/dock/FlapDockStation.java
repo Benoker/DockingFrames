@@ -166,7 +166,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * Key for all {@link DockTheme}s, tells the theme what content on the buttons
-     * should be visible. Note that some themes might ignore that setting. Chaning this property will call
+     * should be visible. Note that some themes might ignore that setting. Changing this property will call
      * {@link #recreateTitles()}, meaning all {@link DockTitle}s are removed and recreated.
      */
     public static final PropertyKey<ButtonContent> BUTTON_CONTENT = new PropertyKey<ButtonContent>(
@@ -1191,8 +1191,13 @@ public class FlapDockStation extends AbstractDockableStation {
     	return handles.toMap( new PlaceholderListItemAdapter<Dockable, DockableHandle>() {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, DockableHandle dockable ){
-	    		ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-	    		item.putInt( "id", children.get( dockable.getDockable() ) );
+    			Integer id = children.get( dockable.getDockable() );
+    			if( id == null ){
+    				return null;
+    			}
+    			
+    			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+	    		item.putInt( "id", id );
 	    		item.putInt( "index", index );
 	    		item.putBoolean( "hold", isHold( dockable.getDockable() ));
 	    		item.putInt( "size", getWindowSize( dockable.getDockable() ) );

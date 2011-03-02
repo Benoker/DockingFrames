@@ -534,9 +534,14 @@ public class ScreenDockStation extends AbstractDockStation {
     	return dockables.toMap( new PlaceholderListItemAdapter<Dockable, ScreenDockWindowHandle>() {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, ScreenDockWindowHandle dockable ) {
+    			Integer id = children.get( dockable.asDockable() );
+    			if( id == null ){
+    				return null;
+    			}
+    			
     			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
     			Rectangle bounds = dockable.getBounds();
-    			item.putInt( "id", children.get( dockable.asDockable() ) );
+    			item.putInt( "id", id );
     			item.putInt( "x", bounds.x );
     			item.putInt( "y", bounds.y );
     			item.putInt( "width", bounds.width );
