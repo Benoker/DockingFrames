@@ -456,3 +456,6 @@
 
 [v.1.10p6b]
 - Bugfix: using a DockSituationIgnore often caused a NPE
+
+[v1.1.0p6c]
+- Bugfix: PlaceholderMap.PlaceholderKey#shrink did not produce a valid key and let to NPEs.
