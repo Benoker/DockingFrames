@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -55,6 +56,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.gui.dock.station.LayoutLocked;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Path;
@@ -85,6 +87,9 @@ public class DockUtilities {
          */
         public void handleDockStation( DockStation station ){ /* do nothing */ }
     }
+    
+    /** whether {@link DockUtilities#checkLayoutLocked()} is enabled */
+    private static boolean checkLayoutLock = true;
     
     /**
      * Visits <code>dockable</code> and all its children.
@@ -621,5 +626,65 @@ public class DockUtilities {
     	System.arraycopy( base, 0, result, 0, base.length );
     	result[ base.length ] = placeholder;
     	return result;
+    }
+    
+    /**
+     * Ensures that {@link #checkLayoutLocked()} never prints out any warnings.
+     */
+    public static void disableCheckLayoutLocked(){
+    	checkLayoutLock = false;
+    }
+    
+    /**
+     * Searches for a class or interface that is marked with {@link LayoutLocked} in the current
+     * callstack and prints a warning if found.
+     */
+    public static void checkLayoutLocked(){
+    	if( checkLayoutLock ){
+	    	StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+	    	Set<Class<?>> tested = new HashSet<Class<?>>();
+	    	
+	    	for( StackTraceElement element : elements ){
+	    		try {
+					Class<?> clazz = Class.forName( element.getClassName() );
+					if( checkLayoutLocked( clazz, tested ) ){
+						return;
+					}
+				}
+				catch( ClassNotFoundException e ) {
+					// ignore and continue
+				}
+	    	}
+    	}
+    }
+    
+    private static boolean checkLayoutLocked( Class<?> clazz, Set<Class<?>> tested ){
+    	if( clazz != null && tested.add( clazz )){
+    		LayoutLocked locked = clazz.getAnnotation( LayoutLocked.class );
+    		if( locked != null ){
+    			if( locked.locked() ){
+					System.err.println( "Warning: layout should not be modified by subclasses of " + clazz.getName() );
+					System.err.println( " This is only an information, not an exception. If your code is actually safe you can:");
+					System.err.println( " - disabled the warning by calling DockUtilities.disableCheckLayoutLocked() )" );
+					System.err.println( " - mark your code as safe by setting the annotation 'LayoutLocked'" );
+					for( StackTraceElement item : Thread.currentThread().getStackTrace() ){
+						System.err.println( item );
+					}
+				}
+    			return true;
+    		}
+    		
+    		boolean result = checkLayoutLocked( clazz.getSuperclass(), tested );
+    		if( result ){
+    			return result;
+    		}
+    		for( Class<?> interfaze : clazz.getInterfaces() ){
+    			result = checkLayoutLocked( interfaze, tested );
+    			if( result ){
+    				return result;
+    			}
+    		}
+    	}
+    	return false;
     }
 }

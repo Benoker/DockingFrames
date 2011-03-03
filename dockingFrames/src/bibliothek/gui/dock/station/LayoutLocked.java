@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,26 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.station;
 
-package bibliothek.gui.dock.event;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import bibliothek.gui.dock.station.LayoutLocked;
+import bibliothek.gui.DockStation;
 
 /**
- * A listener that is added to a {@link bibliothek.gui.Dockable#addDockHierarchyListener(DockHierarchyListener) Dockable}
- * and is informed whenever the path of the element changes.
+ * Any method marked with this annotation is forbidden to modify the layout of a {@link DockStation}.
  * @author Benjamin Sigg
  */
-@LayoutLocked
-public interface DockHierarchyListener {
-	/**
-	 * Called when the path of the observed {@link bibliothek.gui.Dockable} has been changed.
-	 * @param event the new path
-	 */
-	public void hierarchyChanged( DockHierarchyEvent event );
-	
-	/**
-	 * Invoked whenever the controller of <code>dockable</code> has changed
-	 * @param event the current path and controller
-	 */
-	public void controllerChanged( DockHierarchyEvent event );
+@Documented
+@Retention( RetentionPolicy.RUNTIME )
+@Target( ElementType.TYPE )
+@Inherited
+public @interface LayoutLocked {
+	/** whether the layout is locked by this class. Overrides any value set by any superclass.*/
+	public boolean locked() default true;
 }

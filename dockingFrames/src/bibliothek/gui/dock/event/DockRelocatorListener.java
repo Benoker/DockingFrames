@@ -29,12 +29,12 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRelocator;
+import bibliothek.gui.dock.station.LayoutLocked;
 
 /**
  * A listener used by a {@link DockRelocator}
  * to inform when a {@link bibliothek.gui.Dockable} is moved around.
  * @author Benjamin Sigg
- *
  */
 public interface DockRelocatorListener {
     /**

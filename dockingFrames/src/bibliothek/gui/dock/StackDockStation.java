@@ -768,6 +768,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * @throws IllegalStateException if there are still children on this station
      */
     public void setPlaceholders( PlaceholderMap placeholders, final Map<Integer, Dockable> children ){
+    	DockUtilities.checkLayoutLocked();
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "there are children on this station" );
     	}
@@ -925,7 +926,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * if the child couldn't be added
      */
     public boolean drop( Dockable dockable, StackDockProperty property ){
-        DockUtilities.ensureTreeValidity( this, dockable );
+    	DockUtilities.checkLayoutLocked();
+    	DockUtilities.ensureTreeValidity( this, dockable );
         int index = property.getIndex();
         Path placeholder = property.getPlaceholder();
         
@@ -1041,6 +1043,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     public void move( Dockable dockable, DockableProperty property ) {
         if( property instanceof StackDockProperty ){
+        	DockUtilities.checkLayoutLocked();
+        	
             int index = indexOf( dockable );
             if( index < 0 )
                 throw new IllegalArgumentException( "dockable not child of this station" );
@@ -1054,6 +1058,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
     private void move( int source, int destination ){
     	if( source != destination ){
+    		DockUtilities.checkLayoutLocked();
+    		
     		dockables.dockables().move( source, destination );
     		stackComponent.moveTab( source, destination );
     		
@@ -1154,6 +1160,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
     
     public void replace( Dockable old, Dockable next, boolean station ) {
+    	DockUtilities.checkLayoutLocked();
+    	
     	DockController controller = getController();
     	try{
     		if( controller != null )
@@ -1198,6 +1206,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      */
     protected void add( Dockable dockable, int index, Path placeholder ){
         DockUtilities.ensureTreeValidity( this, dockable );
+        DockUtilities.checkLayoutLocked();
         
         listeners.fireDockableAdding( dockable );
         
@@ -1326,6 +1335,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         if( index < 0 || index >= dockables.dockables().size() )
             throw new IllegalArgumentException( "Index out of bounds" );
         
+        DockUtilities.checkLayoutLocked();
         StationChildHandle handle = dockables.dockables().get( index );
         Dockable dockable = handle.getDockable();
         

@@ -1370,7 +1370,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private boolean drop( Dockable dockable, final SplitDockProperty property, SplitNode root ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			DockUtilities.ensureTreeValidity(this, dockable);
 			if( getDockableCount() == 0 ) {
 				drop(dockable);
@@ -1530,7 +1530,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean drop( Dockable dockable, SplitDockPathProperty property ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			DockUtilities.ensureTreeValidity(this, dockable);
 	
 			// use the ids of the topmost nodes in the path to find a node of this station
@@ -1583,7 +1583,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean drop( Dockable dockable, SplitDockPlaceholderProperty property ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			DockUtilities.ensureTreeValidity(this, dockable);
 			validate();
 			return root().insert(property, dockable);
@@ -1603,7 +1603,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean drop( Dockable dockable, SplitDockFullScreenProperty property ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			DockUtilities.ensureTreeValidity(this, dockable);
 	
 			DockableProperty successor = property.getSuccessor();
@@ -1691,7 +1691,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private void drop( PutInfo putInfo, boolean fire ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			if( putInfo.getNode() == null ) {
 				if( fire ) {
 					DockUtilities.ensureTreeValidity(this, putInfo.getDockable());
@@ -1768,7 +1768,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	protected boolean dropOver( Leaf leaf, Dockable dockable, DockableProperty property, CombinerSource source, CombinerTarget target ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			DockUtilities.ensureTreeValidity(this, dockable);
 	
 			if( source == null || target == null ){
@@ -1820,7 +1820,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	protected void dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, Leaf leaf, double divider, boolean fire ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			if( fire ) {
 				DockUtilities.ensureTreeValidity(this, dockable);
 				dockStationListeners.fireDockableAdding(dockable);
@@ -1882,7 +1882,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void move(){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			Root root = root();
 			Leaf leaf = root.getLeaf(putInfo.getDockable());
 	
@@ -1941,7 +1941,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void dropTree( SplitDockTree<Dockable> tree, boolean checkValidity ){
 		if( tree == null )
 			throw new IllegalArgumentException("Tree must not be null");
-
+		DockUtilities.checkLayoutLocked();
 		DockController controller = getController();
 		try {
 			access.arm();
@@ -2230,6 +2230,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private void addDockable( Dockable dockable, boolean fire ){
 		try{
 			access.arm();
+			DockUtilities.checkLayoutLocked();
 			if( fire ) {
 				DockUtilities.ensureTreeValidity(this, dockable);
 				dockStationListeners.fireDockableAdding(dockable);
@@ -2274,7 +2275,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private void replace( Dockable previous, Dockable next, boolean station ){
 		try{
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			if( previous == null )
 				throw new NullPointerException("previous must not be null");
 			if( next == null )
@@ -2376,7 +2377,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		DockController controller = getController();
 		try {
 			access.arm();
-			
+			DockUtilities.checkLayoutLocked();
 			if( controller != null )
 				controller.freezeLayout();
 
@@ -2404,6 +2405,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void removeDockable( Dockable dockable ){
 		try{
 			access.arm();
+			DockUtilities.checkLayoutLocked();
 			Leaf leaf = root().getLeaf(dockable);
 			if( leaf != null ) {
 				leaf.setDockable(null, true, true, dockable.asDockStation() != null);

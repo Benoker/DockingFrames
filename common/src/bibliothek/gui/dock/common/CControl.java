@@ -38,7 +38,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1451,15 +1450,15 @@ public class CControl {
      *  <tr><td>{@link PropertyKey#DOCKABLE_ICON} </td><td>The default icon of {@link Dockable}s.</td></tr>
      *  <tr><td>{@link PropertyKey#DOCKABLE_TITLE} </td><td>The default title of {@link Dockable}s.</td></tr>
      *  <tr><td>{@link PropertyKey#DOCKABLE_TOOLTIP} </td><td>The default tooltip of {@link Dockable}s.</td></tr>
-     *  <tr><td>* {@link DockFrontend#HIDE_ACCELERATOR} </td><td>The {@link KeyStore} that will call {@link DockFrontend#hide(Dockable)}</td></tr>
-     *  <tr><td>{@link DockableSelector#INIT_SELECTION} </td><td>The {@link KeyStore} that opens a window where the user can select a new {@link Dockable}.</td></tr>
-     *  <tr><td>{@link CControl#KEY_CLOSE} </td><td>The {@link KeyStore} that closes a {@link CDockable}.</td></tr>
-     *  <tr><td>{@link CControl#KEY_GOTO_EXTERNALIZED} </td><td>The {@link KeyStore} that externalizes a {@link CDockable}.</td></tr>
-     *  <tr><td>{@link CControl#KEY_GOTO_MAXIMIZED} </td><td>The {@link KeyStore} that maximizes a {@link CDockable}.</td></tr>
-     *  <tr><td>{@link CControl#KEY_GOTO_MINIMIZED} </td><td>The {@link KeyStore} that minimizes a {@link CDockable}.</td></tr>
-     *  <tr><td>{@link CControl#KEY_GOTO_NORMALIZED} </td><td>The {@link KeyStore} that normalizes a {@link CDockable}.</td></tr>
-     *  <tr><td>{@link CControl#KEY_MAXIMIZE_CHANGE} </td><td>The {@link KeyStore} that either maximizes or normalizes a {@link CDockable}.</td></tr>
-     *  <tr><td>* {@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStore} that maximizes a child of a {@link SplitDockStation}.</td></tr>
+     *  <tr><td>* {@link DockFrontend#HIDE_ACCELERATOR} </td><td>The {@link KeyStroke} that will call {@link DockFrontend#hide(Dockable)}</td></tr>
+     *  <tr><td>{@link DockableSelector#INIT_SELECTION} </td><td>The {@link KeyStroke} that opens a window where the user can select a new {@link Dockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_CLOSE} </td><td>The {@link KeyStroke} that closes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_EXTERNALIZED} </td><td>The {@link KeyStroke} that externalizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_MAXIMIZED} </td><td>The {@link KeyStroke} that maximizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_MINIMIZED} </td><td>The {@link KeyStroke} that minimizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_GOTO_NORMALIZED} </td><td>The {@link KeyStroke} that normalizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_MAXIMIZE_CHANGE} </td><td>The {@link KeyStroke} that either maximizes or normalizes a {@link CDockable}.</td></tr>
+     *  <tr><td>* {@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStroke} that maximizes a child of a {@link SplitDockStation}.</td></tr>
      *  <tr><td>{@link PlaceholderStrategy#PLACEHOLDER_STRATEGY} </td><td>A strategy that creates placeholders for {@link Dockable}s, see {@link CPlaceholderStrategy}.</td></tr>
      *  <tr><td>{@link StackDockStation#TAB_CONTENT_FILTER} </td><td>A filter deciding what content to show on a tab of a {@link StackDockStation}.</td></tr>
      *  <tr><td>{@link CControl#RESIZE_LOCK_CONFLICT_RESOLVER} </td><td>Tells what happens if two {@link CDockable}s have a locked size and the user is resizing the parent of these two elements.</td></tr>

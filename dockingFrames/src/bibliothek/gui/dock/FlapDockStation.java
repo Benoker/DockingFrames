@@ -1223,6 +1223,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * @throws IllegalStateException if there are children left on this station
      */
     public void setPlaceholders( PlaceholderMap map, final Map<Integer, Dockable> children ){
+    	DockUtilities.checkLayoutLocked();
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "must not have any children" );
     	}
@@ -1454,7 +1455,8 @@ public class FlapDockStation extends AbstractDockableStation {
      * <code>false</code> if the child has been rejected
      */
     public boolean drop( final Dockable dockable, FlapDockProperty property ) {
-        DockUtilities.ensureTreeValidity( this, dockable );
+    	DockUtilities.checkLayoutLocked();
+    	DockUtilities.ensureTreeValidity( this, dockable );
         boolean result = false;
         
         final Path placeholder = property.getPlaceholder();
@@ -1529,45 +1531,6 @@ public class FlapDockStation extends AbstractDockableStation {
         
         return result;
     }
-//    
-//    private boolean combine( final Dockable oldDockable, final Dockable newDockable, final DockableProperty property ){
-//		CombinerSource source = new CombinerSource(){
-//			public boolean isMouseOverTitle(){
-//				return false;
-//			}
-//			
-//			public Dimension getSize(){
-//				return null;
-//			}
-//			
-//			public PlaceholderMap getPlaceholders(){
-//				return handles.getMap( placeholder );
-//			}
-//			
-//			public DockStation getParent(){
-//				return FlapDockStation.this;
-//			}
-//			
-//			public Dockable getOld(){
-//				return oldDockable;
-//			}
-//			
-//			public Dockable getNew(){
-//				return dockable;
-//			}
-//			
-//			public Point getMousePosition(){
-//				return null;
-//			}
-//		};
-//		
-//		CombinerTarget target = combiner.prepare( source, true );
-//		if( target != null ){
-//			combine( source, target, property.getSuccessor() );
-//			return true;
-//		}
-//		return false;
-//    }
     
     public DockableProperty getDockableProperty( Dockable dockable, Dockable target ) {
     	int index = indexOf( dockable );
@@ -1609,6 +1572,7 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     public void move( Dockable dockable, DockableProperty property ) {
+    	DockUtilities.checkLayoutLocked();
         if( property instanceof FlapDockProperty ){
             int index = indexOf( dockable );
             if( index < 0 )
@@ -1639,9 +1603,7 @@ public class FlapDockStation extends AbstractDockableStation {
         buttonPane.repaint();
     }
 
-    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
-            int y, D invoker, Dockable drop ) {
-        
+    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ) {
         Point mouse = new Point( x, y );
         SwingUtilities.convertPointFromScreen( mouse, buttonPane );
         if( buttonPane.contains( mouse ) && accept( drop ) && drop.accept( this ))
@@ -1726,6 +1688,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * @param index the index of the child that will be removed
      */
     public void remove( int index ){
+    	DockUtilities.checkLayoutLocked();
         Dockable dockable = getDockable( index );
         if( getFrontDockable() == dockable )
             setFrontDockable( null );
@@ -1766,6 +1729,7 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     private void add( Dockable dockable, int index, int listIndex ){
+    	DockUtilities.checkLayoutLocked();
         DockUtilities.ensureTreeValidity( this, dockable );
         
         listeners.fireDockableAdding( dockable );
@@ -1816,6 +1780,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * on this station)
      */
     public boolean combine( final Dockable child, Dockable append, DockableProperty property ){
+    	DockUtilities.checkLayoutLocked();
     	int index = indexOf( child );
         if( index < 0 )
             throw new IllegalArgumentException( "Child must be a child of this station" );
@@ -1851,6 +1816,7 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     private boolean combine( CombinerSource source, CombinerTarget target, DockableProperty property ){
+    	DockUtilities.checkLayoutLocked();
     	DockController controller = getController();
     	Dockable child = source.getOld();
     	Dockable append = source.getNew();
@@ -1925,6 +1891,7 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     private void replace( Dockable child, Dockable append, boolean station ){
+    	DockUtilities.checkLayoutLocked();
     	DockController controller = getController();
     	try{
     		if( controller != null )

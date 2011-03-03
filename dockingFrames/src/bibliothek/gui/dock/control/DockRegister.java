@@ -33,6 +33,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.station.LayoutLocked;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -40,8 +41,8 @@ import bibliothek.gui.dock.util.DockUtilities;
  * {@link bibliothek.gui.DockStation DockStations} currently used in the
  * system. 
  * @author Benjamin Sigg
- *
  */
+@LayoutLocked( locked=false )
 public class DockRegister {
 	/** the known stations */
     private List<DockStation> stations = new ArrayList<DockStation>();

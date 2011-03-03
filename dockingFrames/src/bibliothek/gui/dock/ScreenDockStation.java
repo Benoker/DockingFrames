@@ -561,6 +561,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     public void setPlaceholders( PlaceholderMap placeholders ){
+    	DockUtilities.checkLayoutLocked();
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "there are children on this station" );
     	}
@@ -590,6 +591,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * @throws IllegalStateException if there are children left on this station
      */
     public void setPlaceholders( PlaceholderMap map, final Map<Integer, Dockable> children ){
+    	DockUtilities.checkLayoutLocked();
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "must not have any children" );
     	}
@@ -982,6 +984,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
 
     public void move() {
+    	DockUtilities.checkLayoutLocked();
         if( dropInfo.combine != null ){
             combine( dropInfo, dropInfo.combiner, null );
         }
@@ -998,6 +1001,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     public void move( Dockable dockable, DockableProperty property ) {
+    	DockUtilities.checkLayoutLocked();
         if( property instanceof ScreenDockProperty ){
             ScreenDockWindow window = getWindow( dockable );
             if( window == null )
@@ -1025,9 +1029,7 @@ public class ScreenDockStation extends AbstractDockStation {
         }
     }
 
-    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
-            int y, D invoker, Dockable drop ) {
-        
+    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ) {
         return searchCombineDockable( x, y, drop, true ) != null;
     }
 
@@ -1081,6 +1083,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * @throws IllegalStateException if there is already a window associated with the group of <code>placeholder</code>
      */
     protected void addDockable( Dockable dockable, Rectangle bounds, Path placeholder, boolean boundsIncludeWindow ){
+    	DockUtilities.checkLayoutLocked();
         DockUtilities.ensureTreeValidity( this, dockable );
         
         if( bounds == null )
@@ -1159,6 +1162,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * otherwise.
      */
     public boolean drop( Dockable dockable, ScreenDockProperty property, boolean boundsIncludeWindow ){
+    	DockUtilities.checkLayoutLocked();
         DockUtilities.ensureTreeValidity( this, dockable );
         ScreenDockWindow best = null;
         double bestRatio = 0.0;
@@ -1353,6 +1357,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param property location information associated with the new {@link Dockable}, can be <code>null</code>
      */
     private void combine( CombinerSource source, CombinerTarget target, DockableProperty property ){
+    	DockUtilities.checkLayoutLocked();
     	Dockable lower = source.getOld();
     	Dockable upper = source.getNew();
     	
@@ -1415,6 +1420,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     public void replace( Dockable current, Dockable other, boolean station ){
+    	DockUtilities.checkLayoutLocked();
     	int index = indexOf( current );
     	if( index < 0 ){
     		throw new IllegalArgumentException( "current not known to this station" );
@@ -1464,6 +1470,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param index the index of the {@link Dockable} to remove
      */
     public void removeDockable( int index ){
+    	DockUtilities.checkLayoutLocked();
         ScreenDockWindowHandle handle = getWindowHandle( index );
         ScreenDockWindow window = handle.getWindow();
         Dockable dockable = window.getDockable();

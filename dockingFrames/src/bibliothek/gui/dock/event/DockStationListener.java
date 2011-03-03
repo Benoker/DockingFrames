@@ -31,6 +31,7 @@ import java.awt.Component;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.station.LayoutLocked;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
 
 /**
@@ -39,6 +40,7 @@ import bibliothek.gui.dock.station.support.DockableVisibilityManager;
  * changed.
  * @author Benjamin Sigg
  */
+@LayoutLocked
 public interface DockStationListener {    
     /**
      * Invoked before <code>dockable</code> is added to <code>station</code>.
