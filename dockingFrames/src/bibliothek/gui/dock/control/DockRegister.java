@@ -555,6 +555,9 @@ public class DockRegister {
         
         @Override
         public void dockableRemoved( DockStation station, Dockable dockable ) {
+        	if( dockable.getDockParent() != null && dockable.getDockParent() != station ){
+        		throw new IllegalStateException( "the parent of dockable is wrong: it is neither null nor '" + station + "'" );
+        	}
             dockable.setDockParent( null );
             
             DockStation asStation = dockable.asDockStation();

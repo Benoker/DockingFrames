@@ -616,12 +616,15 @@ public class ScreenDockStation extends AbstractDockStation {
 			}
 	    	
 	    	next.read( map, new PlaceholderListItemAdapter<Dockable, ScreenDockWindowHandle>(){
+	    		private DockHierarchyLock.Token token;
+	    		
 				@Override
 				public ScreenDockWindowHandle convert( ConvertedPlaceholderListItem item ){
 					int id = item.getInt( "id" );
 					Dockable dockable = children.get( id );
 					if( dockable != null ){
 						DockUtilities.ensureTreeValidity( ScreenDockStation.this, dockable );
+						token = DockHierarchyLock.acquireLinking( ScreenDockStation.this, dockable );
 						
 						int x = item.getInt( "x" );
 						int y = item.getInt( "y" );
@@ -648,11 +651,16 @@ public class ScreenDockStation extends AbstractDockStation {
 				
 				@Override
 				public void added( ScreenDockWindowHandle dockable ){
-					dockable.asDockable().setDockParent( ScreenDockStation.this );
-					for( ScreenDockStationListener listener : screenDockStationListeners() ){
-			        	listener.windowRegistering( ScreenDockStation.this, dockable.asDockable(), dockable.getWindow() );
-			        }
-					listeners.fireDockableAdded( dockable.asDockable() );
+					try{
+						dockable.asDockable().setDockParent( ScreenDockStation.this );
+						for( ScreenDockStationListener listener : screenDockStationListeners() ){
+				        	listener.windowRegistering( ScreenDockStation.this, dockable.asDockable(), dockable.getWindow() );
+				        }
+						listeners.fireDockableAdded( dockable.asDockable() );
+					}
+					finally{
+						token.release();
+					}
 				}
 			});
     	}
@@ -1085,46 +1093,51 @@ public class ScreenDockStation extends AbstractDockStation {
     protected void addDockable( Dockable dockable, Rectangle bounds, Path placeholder, boolean boundsIncludeWindow ){
     	DockUtilities.checkLayoutLocked();
         DockUtilities.ensureTreeValidity( this, dockable );
-        
-        if( bounds == null )
-            throw new IllegalArgumentException( "Bounds must not be null" );
-        
-        listeners.fireDockableAdding( dockable );
-        
-        ScreenDockWindow window = createWindow();
-        register( dockable, placeholder, window );
-        window.setDockable( dockable );
-        
-        bounds = new Rectangle( bounds );
-        if( !boundsIncludeWindow ){
-            window.validate();
-            Insets estimate = window.getDockableInsets();
-            if( estimate != null ){
-                bounds.x -= estimate.left;
-                bounds.y -= estimate.top;
-                bounds.width += estimate.left + estimate.right;
-                bounds.height += estimate.top + estimate.bottom;
-            }
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+        try{
+	        if( bounds == null )
+	            throw new IllegalArgumentException( "Bounds must not be null" );
+	        
+	        listeners.fireDockableAdding( dockable );
+	        
+	        ScreenDockWindow window = createWindow();
+	        register( dockable, placeholder, window );
+	        window.setDockable( dockable );
+	        
+	        bounds = new Rectangle( bounds );
+	        if( !boundsIncludeWindow ){
+	            window.validate();
+	            Insets estimate = window.getDockableInsets();
+	            if( estimate != null ){
+	                bounds.x -= estimate.left;
+	                bounds.y -= estimate.top;
+	                bounds.width += estimate.left + estimate.right;
+	                bounds.height += estimate.top + estimate.bottom;
+	            }
+	        }
+	        
+	        window.setWindowBounds( bounds, false );
+	        window.validate();
+	        
+	        if( !boundsIncludeWindow ){
+	            window.validate();
+	            Point offset = window.getOffsetDrop();
+	            if( offset != null ){
+	                Rectangle windowBounds = window.getWindowBounds();
+	                windowBounds = new Rectangle( windowBounds.x + offset.x, windowBounds.y + offset.y, windowBounds.width, windowBounds.height );
+	                window.setWindowBounds( windowBounds, false );
+	            }
+	        }
+	        
+	        if( isShowing() )
+	            window.setVisible( true );
+	        
+	        dockable.setDockParent( this );
+	        listeners.fireDockableAdded( dockable );
         }
-        
-        window.setWindowBounds( bounds, false );
-        window.validate();
-        
-        if( !boundsIncludeWindow ){
-            window.validate();
-            Point offset = window.getOffsetDrop();
-            if( offset != null ){
-                Rectangle windowBounds = window.getWindowBounds();
-                windowBounds = new Rectangle( windowBounds.x + offset.x, windowBounds.y + offset.y, windowBounds.width, windowBounds.height );
-                window.setWindowBounds( windowBounds, false );
-            }
+        finally{
+        	token.release();
         }
-        
-        if( isShowing() )
-            window.setVisible( true );
-        
-        dockable.setDockParent( this );
-        listeners.fireDockableAdded( dockable );
     }
     
     public boolean drop( Dockable dockable, DockableProperty property ){
@@ -1371,17 +1384,22 @@ public class ScreenDockStation extends AbstractDockStation {
         
         index = indexOf( lower );
         
-        listeners.fireDockableRemoving( lower );
         final Dockable old = window.getWindow().getDockable();
-        
         int listIndex = dockables.levelToBase( index, Level.DOCKABLE );
         DockablePlaceholderList<ScreenDockWindowHandle>.Item item = dockables.list().get( listIndex );
         final PlaceholderMap map = item.getPlaceholderMap();
-        item.setPlaceholderMap( null );
         
-        window.setDockable( null );
-        lower.setDockParent( null );
-        listeners.fireDockableRemoved( lower );
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, lower );
+        try{
+	        listeners.fireDockableRemoving( lower );
+	        item.setPlaceholderMap( null );
+	        window.setDockable( null );
+	        lower.setDockParent( null );
+	        listeners.fireDockableRemoved( lower );
+        }
+        finally{
+        	token.release();
+        }
         
         Dockable valid = combiner.combine( new CombinerSourceWrapper( source ){
         	@Override
@@ -1401,10 +1419,16 @@ public class ScreenDockStation extends AbstractDockStation {
         	}
         }
         
-        listeners.fireDockableAdding( valid );
-        window.setDockable( valid );
-        valid.setDockParent( this );
-        listeners.fireDockableAdded( valid );	
+        token = DockHierarchyLock.acquireLinking( this, valid );
+        try{
+	        listeners.fireDockableAdding( valid );
+	        window.setDockable( valid );
+	        valid.setDockParent( this );
+	        listeners.fireDockableAdded( valid );
+        }
+        finally{
+        	token.release();
+        }
     }    
     
     public boolean canReplace( Dockable old, Dockable next ) {
@@ -1436,15 +1460,27 @@ public class ScreenDockStation extends AbstractDockStation {
 	        item.setPlaceholderMap( current.asDockStation().getPlaceholders() );
         }
         
-        listeners.fireDockableRemoving( current );
-        window.setDockable( null );
-        current.setDockParent( null );
-        listeners.fireDockableRemoved( current );
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, current );
+        try{
+	        listeners.fireDockableRemoving( current );
+	        window.setDockable( null );
+	        current.setDockParent( null );
+	        listeners.fireDockableRemoved( current );
+        }
+        finally{
+        	token.release();
+        }
         
-        listeners.fireDockableAdding( other );
-        window.setDockable( other );
-        other.setDockParent( this );
-        listeners.fireDockableAdded( other );
+        token = DockHierarchyLock.acquireLinking( this, other );
+        try{
+	        listeners.fireDockableAdding( other );
+	        window.setDockable( other );
+	        other.setDockParent( this );
+	        listeners.fireDockableAdded( other );
+        }
+        finally{
+        	token.release();
+        }
     }
     
     /**
@@ -1475,14 +1511,20 @@ public class ScreenDockStation extends AbstractDockStation {
         ScreenDockWindow window = handle.getWindow();
         Dockable dockable = window.getDockable();
         
-        listeners.fireDockableRemoving( dockable );
-        
-        window.setVisible( false );
-        handle.setDockable( null );
-        deregister( dockable, window );
-        
-        dockable.setDockParent( null );
-        listeners.fireDockableRemoved( dockable );
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
+        try{
+	        listeners.fireDockableRemoving( dockable );
+	        
+	        window.setVisible( false );
+	        handle.setDockable( null );
+	        deregister( dockable, window );
+	        
+	        dockable.setDockParent( null );
+	        listeners.fireDockableRemoved( dockable );
+        }
+        finally{
+        	token.release();
+        }
     }
     
     /**

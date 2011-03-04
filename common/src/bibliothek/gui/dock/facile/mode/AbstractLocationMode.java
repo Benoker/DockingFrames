@@ -358,7 +358,6 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		for( LocationModeListener listener : listeners() ){
 			listener.applyDone( event );
 		}
-		
 	}
 	
 	/**

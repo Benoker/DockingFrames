@@ -42,6 +42,9 @@ public class StackGroupMovement implements CGroupMovement{
 	private Dockable dockable;
 	private ExtendedMode target;
 	
+	private DockStation currentStation;
+	private Dockable currentDockable;
+	
 	/**
 	 * Creates a new movement object.
 	 * @param dockParent the station that should be moved
@@ -81,26 +84,37 @@ public class StackGroupMovement implements CGroupMovement{
 			return;
 		}
 		
+		int missing = 0;
+		
 		// move all the items that were before dockable
 		for( int i = baseIndex - 1; i >= 0; i-- ){
+			currentDockable = children[i];
+			currentStation = dockable.getDockParent();
 			Location base = callback.getLocation( dockable );
-			Dockable moving = children[i];
-			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex + 1 ) );
-			callback.setLocation( moving, movingLocation );
+			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex + 1 + missing ) );
+			callback.setLocation( currentDockable, movingLocation );
 		}
 		
 		// move all the items that were after dockable
 		for( int i = baseIndex + 1; i < children.length; i++ ){
+			currentDockable = children[i];
+			currentStation = dockable.getDockParent();
 			Location base = callback.getLocation( dockable );
-			Dockable moving = children[i];
-			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex ) );
-			callback.setLocation( moving, movingLocation );
+			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex - missing ) );
+			callback.setLocation( currentDockable, movingLocation );
 		}
 		
 		DockStation newParent = dockable.getDockParent();
 		if( newParent instanceof StackDockStation ){
 			newParent.setFrontDockable( dockable );
 		}
+		
+		currentStation = null;
+		currentDockable = null;
+	}
+	
+	public boolean forceAccept( DockStation parent, Dockable child ){
+		return parent != currentStation || child != currentDockable;
 	}
 	
 	private DockableProperty copyAndSetStackLocation( DockableProperty property, int delta ){

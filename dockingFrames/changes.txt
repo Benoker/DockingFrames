@@ -460,3 +460,7 @@
 [v1.1.0p6c]
 - Bugfix: PlaceholderMap.PlaceholderKey#shrink did not produce a valid key and let to NPEs.
 - API: Printing a warning if modifying the contents of a DockStation while being in a listener.
+
+[v.1.1.0p6d]
+- API: while changing the hierarchy of Dockables and DockStations there is now a lock which prevents concurrent modifications
+- Bugfix: it is now much harder to remove a CDockable from its working-area by putting it into a stack and moving it around together with this stack

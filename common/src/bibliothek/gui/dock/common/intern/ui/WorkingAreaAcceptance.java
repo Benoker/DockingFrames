@@ -34,6 +34,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.group.CGroupMovement;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -66,9 +67,12 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     
     public boolean accept( DockStation parent, Dockable child ) {
     	CLocationModeManager manager = control.getLocationManager();
-    	if( manager.isOnTransaction() )
-            return true;
-    	
+    	if( manager.isOnTransaction() ){
+    		CGroupMovement action = manager.getCurrentAction();
+    		if( action == null || action.forceAccept( parent, child )){
+    			return true;
+    		}
+    	}
     	
     	ExtendedMode extendedMode = manager.childsExtendedMode( parent );
     	if( extendedMode == null ){

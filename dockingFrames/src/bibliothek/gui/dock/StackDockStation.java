@@ -786,6 +786,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	    	
 	    	dockables = next;
 	    	next.read( placeholders, new PlaceholderListItemAdapter<Dockable, StationChildHandle>() {
+	    		private DockHierarchyLock.Token token;
 	    		private int size = 0;
 	    		
 	    		@Override
@@ -797,6 +798,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	    			}
 	    			
 	    			DockUtilities.ensureTreeValidity( StackDockStation.this, dockable );
+	    			token = DockHierarchyLock.acquireLinking( StackDockStation.this, dockable );
 	    			
 	    			listeners.fireDockableAdding( dockable );
 	    			dockable.addDockableListener( listener );
@@ -807,12 +809,17 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	    		
 	    		@Override
 	    		public void added( StationChildHandle handle ){
-	    			Dockable dockable = handle.getDockable();
-	    			dockable.setDockParent( StackDockStation.this );
-	    			handle.updateDisplayer();
-	    			addToPanel( handle, size, size );
-	    			size++;
-	    			listeners.fireDockableAdded( dockable );
+	    			try{
+		    			Dockable dockable = handle.getDockable();
+		    			dockable.setDockParent( StackDockStation.this );
+		    			handle.updateDisplayer();
+		    			addToPanel( handle, size, size );
+		    			size++;
+		    			listeners.fireDockableAdded( dockable );
+	    			}
+	    			finally{
+	    				token.release();
+	    			}
 	    		}
 			});
 	    	
@@ -927,8 +934,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      */
     public boolean drop( Dockable dockable, StackDockProperty property ){
     	DockUtilities.checkLayoutLocked();
-    	DockUtilities.ensureTreeValidity( this, dockable );
-        int index = property.getIndex();
+    	int index = property.getIndex();
         Path placeholder = property.getPlaceholder();
         
         boolean acceptable = acceptable( dockable );
@@ -1207,29 +1213,34 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     protected void add( Dockable dockable, int index, Path placeholder ){
         DockUtilities.ensureTreeValidity( this, dockable );
         DockUtilities.checkLayoutLocked();
-        
-        listeners.fireDockableAdding( dockable );
-        
-        dockable.setDockParent( this );
-        
-        StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
-        handle.updateDisplayer();
-        
-        int inserted = placeholder == null ? -1 : dockables.put( placeholder, handle );
-        if( inserted == -1 ){
-        	dockables.dockables().add( index, handle );
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+        try{
+	        listeners.fireDockableAdding( dockable );
+	        
+	        dockable.setDockParent( this );
+	        
+	        StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
+	        handle.updateDisplayer();
+	        
+	        int inserted = placeholder == null ? -1 : dockables.put( placeholder, handle );
+	        if( inserted == -1 ){
+	        	dockables.dockables().add( index, handle );
+	        }
+	        else{
+	        	index = inserted;
+	        }
+	
+	        addToPanel( handle, index, dockables.dockables().size()-1 );
+	        
+	        dockable.addDockableListener( listener );
+	        
+	        listeners.fireDockableAdded( dockable );
+	        fireDockablesRepositioned( index+1 );
+	        fireDockableSelected();
         }
-        else{
-        	index = inserted;
+        finally{
+        	token.release();
         }
-
-        addToPanel( handle, index, dockables.dockables().size()-1 );
-        
-        dockable.addDockableListener( listener );
-        
-        listeners.fireDockableAdded( dockable );
-        fireDockablesRepositioned( index+1 );
-        fireDockableSelected();
     }
     
     /**
@@ -1339,36 +1350,42 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         StationChildHandle handle = dockables.dockables().get( index );
         Dockable dockable = handle.getDockable();
         
-       	listeners.fireDockableRemoving( dockable );
-        
-        if( dockables.dockables().size() == 1 ){
-        	if( singleTabStackDockComponent() ){
-        		stackComponent.remove( 0 );
-        	}
-        	else{
-        		panel.remove( dockables.dockables().get( 0 ).getDisplayer().getComponent() );
-        	}
-            dockables.remove( 0 );
-            panel.repaint();
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
+        try{
+	       	listeners.fireDockableRemoving( dockable );
+	        
+	        if( dockables.dockables().size() == 1 ){
+	        	if( singleTabStackDockComponent() ){
+	        		stackComponent.remove( 0 );
+	        	}
+	        	else{
+	        		panel.remove( dockables.dockables().get( 0 ).getDisplayer().getComponent() );
+	        	}
+	            dockables.remove( 0 );
+	            panel.repaint();
+	        }
+	        else if( dockables.dockables().size() == 2 && !singleTabStackDockComponent() ){
+	            panel.remove( stackComponent.getComponent() );
+	            dockables.remove( index );
+	            stackComponent.removeAll();
+	            panel.add( dockables.dockables().get( 0 ).getDisplayer().getComponent() );
+	        }
+	        else{
+	        	dockables.remove( index );
+	        	stackComponent.remove( index );
+	        }
+	
+	        handle.destroy();
+	        
+	        dockable.removeDockableListener( listener );
+	        panel.revalidate();
+	        
+	        dockable.setDockParent( null );
+	       	listeners.fireDockableRemoved( dockable );
         }
-        else if( dockables.dockables().size() == 2 && !singleTabStackDockComponent() ){
-            panel.remove( stackComponent.getComponent() );
-            dockables.remove( index );
-            stackComponent.removeAll();
-            panel.add( dockables.dockables().get( 0 ).getDisplayer().getComponent() );
+        finally{
+        	token.release();
         }
-        else{
-        	dockables.remove( index );
-        	stackComponent.remove( index );
-        }
-
-        handle.destroy();
-        
-        dockable.removeDockableListener( listener );
-        panel.revalidate();
-        
-        dockable.setDockParent( null );
-       	listeners.fireDockableRemoved( dockable );
         fireDockablesRepositioned( index );
         fireDockableSelected();
     }

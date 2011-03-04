@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.group;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 
@@ -49,5 +50,9 @@ public class SingleGroupMovement implements CGroupMovement{
 	
 	public void apply( CGroupBehaviorCallback callback ){
 		callback.setMode( dockable, target );	
+	}
+	
+	public boolean forceAccept( DockStation parent, Dockable child ){
+		return true;
 	}
 }

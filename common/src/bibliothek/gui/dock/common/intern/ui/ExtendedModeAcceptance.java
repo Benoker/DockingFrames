@@ -29,6 +29,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.group.CGroupMovement;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -54,8 +55,13 @@ public class ExtendedModeAcceptance implements DockAcceptance {
 	}
 
 	public boolean accept( DockStation parent, Dockable child ) {
-		if( control.getLocationManager().isOnTransaction() )
-			return true;
+		CLocationModeManager manager = control.getLocationManager();
+    	if( manager.isOnTransaction() ){
+			CGroupMovement action = manager.getCurrentAction();
+    		if( action == null || action.forceAccept( parent, child )){
+    			return true;
+    		}
+		}
 
 		CLocationModeManager locationManager = control.getLocationManager();
 

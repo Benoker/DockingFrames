@@ -272,7 +272,9 @@ public class CSplitDockStationHandle{
 				}
 				if( location == null ){
 					if( !DockUtilities.isAncestor( station.getStation(), dockable )){
-						getStation().drop( dockable );
+						if( getStation().accept( dockable ) && dockable.accept( getStation() ) && manager.getController().getAcceptance().accept( getStation(), dockable )){
+							getStation().drop( dockable );
+						}
 					}
 				}
 			}

@@ -1235,12 +1235,15 @@ public class FlapDockStation extends AbstractDockableStation {
     		}
     		
 	    	DockablePlaceholderList<DockableHandle> next = new DockablePlaceholderList<DockableHandle>( map, new PlaceholderListItemAdapter<Dockable, DockableHandle>(){
+	    		private DockHierarchyLock.Token token;
+	    		
 				@Override
 				public DockableHandle convert( ConvertedPlaceholderListItem item ){
 					int id = item.getInt( "id" );
 					Dockable dockable = children.get( id );
 					if( dockable != null ){
 						DockUtilities.ensureTreeValidity( FlapDockStation.this, dockable );
+						token = DockHierarchyLock.acquireLinking( FlapDockStation.this, dockable );
 						
 						boolean hold = item.getBoolean( "hold" );
 						int size = item.getInt( "size" );
@@ -1258,8 +1261,13 @@ public class FlapDockStation extends AbstractDockableStation {
 				
 				@Override
 				public void added( DockableHandle dockable ){
-					dockable.getDockable().setDockParent( FlapDockStation.this );
-					listeners.fireDockableAdded( dockable.getDockable() );
+					try{
+						dockable.getDockable().setDockParent( FlapDockStation.this );
+						listeners.fireDockableAdded( dockable.getDockable() );
+					}
+					finally{
+						token.release();
+					}
 				}
 			});
 			if( getController() != null ){
@@ -1456,8 +1464,7 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     public boolean drop( final Dockable dockable, FlapDockProperty property ) {
     	DockUtilities.checkLayoutLocked();
-    	DockUtilities.ensureTreeValidity( this, dockable );
-        boolean result = false;
+    	boolean result = false;
         
         final Path placeholder = property.getPlaceholder();
         DockableProperty successor = property.getSuccessor();
@@ -1696,15 +1703,21 @@ public class FlapDockStation extends AbstractDockableStation {
         if( oldFrontDockable == dockable )
             oldFrontDockable = null;
         
-        listeners.fireDockableRemoving( dockable );
-        dockable.setDockParent( null );
-        DockableHandle handle = handles.dockables().get( index );
-        handles.remove( index );
-        handle.setTitle( null );
-        dockable.removeDockableListener( dockableListener );
-        // race condition, only required if not called from the EDT
-        buttonPane.resetTitles();
-        listeners.fireDockableRemoved( dockable );
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
+        try{
+	        listeners.fireDockableRemoving( dockable );
+	        dockable.setDockParent( null );
+	        DockableHandle handle = handles.dockables().get( index );
+	        handles.remove( index );
+	        handle.setTitle( null );
+	        dockable.removeDockableListener( dockableListener );
+	        // race condition, only required if not called from the EDT
+	        buttonPane.resetTitles();
+	        listeners.fireDockableRemoved( dockable );
+        }
+        finally{
+        	token.release();
+        }
         
         fireDockablesRepositioned( index );
     }
@@ -1732,19 +1745,26 @@ public class FlapDockStation extends AbstractDockableStation {
     	DockUtilities.checkLayoutLocked();
         DockUtilities.ensureTreeValidity( this, dockable );
         
-        listeners.fireDockableAdding( dockable );
-        DockableHandle handle = link( dockable );
-        if( listIndex == -1 ){
-        	handles.dockables().add( index, handle );
-        }
-        else{
-        	handles.list().get( listIndex ).setDockable( handle );
-        }
-        dockable.setDockParent( this );
-        buttonPane.resetTitles(); // race condition, only required if not called from the EDT
-        listeners.fireDockableAdded( dockable );
+        DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+        try{
+	        listeners.fireDockableAdding( dockable );
+	        DockableHandle handle = link( dockable );
+	        if( listIndex == -1 ){
+	        	handles.dockables().add( index, handle );
+	        }
+	        else{
+	        	handles.list().get( listIndex ).setDockable( handle );
+	        }
+	        dockable.setDockParent( this );
+	        buttonPane.resetTitles(); // race condition, only required if not called from the EDT
         
-        fireDockablesRepositioned( index+1 );
+	        listeners.fireDockableAdded( dockable );
+        
+        	fireDockablesRepositioned( index+1 );
+        }
+        finally{
+        	token.release();
+        }
     }
     
     private DockableHandle link( Dockable dockable ){
@@ -1817,9 +1837,12 @@ public class FlapDockStation extends AbstractDockableStation {
     
     private boolean combine( CombinerSource source, CombinerTarget target, DockableProperty property ){
     	DockUtilities.checkLayoutLocked();
+    	
     	DockController controller = getController();
     	Dockable child = source.getOld();
     	Dockable append = source.getNew();
+    	
+    	DockUtilities.ensureTreeValidity( this, append );
     	
     	try{
     		if( controller != null )

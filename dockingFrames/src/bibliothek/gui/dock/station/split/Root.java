@@ -235,7 +235,7 @@ public class Root extends VisibleSplitNode{
             if( leaf == null )
                 return false;
             setChild( leaf );
-            leaf.setDockable( dockable, true );
+            leaf.setDockable( dockable, null );
             return true;
         }
         else

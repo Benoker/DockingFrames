@@ -33,9 +33,9 @@ import java.util.Map;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
@@ -114,11 +114,12 @@ public class Leaf extends VisibleSplitNode{
      * is registered in the {@link DockStation}
      * @param dockable the new element or <code>null</code> to remove the
      * old {@link Dockable}
-     * @param fire whether to inform {@link DockStationListener}s about the
-     * change or not. Clients should set fire = <code>true</code>.
+     * @param token if <code>null</code>, then a token will be acquired by this method
+     * and this method will fire events, otherwise this methods is executed silently. Clients should
+     * use <code>null</code>.
      */
-    public void setDockable( Dockable dockable, boolean fire ){
-    	setDockable( dockable, fire, true, false );
+    public void setDockable( Dockable dockable, DockHierarchyLock.Token token ){
+    	setDockable( dockable, token, true, false );
     }
     
     /**
@@ -126,14 +127,14 @@ public class Leaf extends VisibleSplitNode{
      * is registered in the {@link DockStation}
      * @param dockable the new element or <code>null</code> to remove the
      * old {@link Dockable}
-     * @param fire whether to inform {@link DockStationListener}s about the
-     * change or not. Clients should set fire = <code>true</code>.
+     * @param token if <code>null</code>, then a token will be acquired by this method
+     * and this method will fire events, otherwise this methods is executed silently
      * @param updatePlaceholders if <code>true</code>, the placeholder list of this leaf is
      * automatically updated
      * @param storePlaceholderMap if <code>true</code>, the current {@link PlaceholderMap} is
      * replaced by the map provided by the current {@link Dockable} which is a {@link DockStation}
      */
-    public void setDockable( Dockable dockable, boolean fire, boolean updatePlaceholders, boolean storePlaceholderMap ){
+    public void setDockable( Dockable dockable, DockHierarchyLock.Token token, boolean updatePlaceholders, boolean storePlaceholderMap ){
     	if( handle != null ){
     		if( updatePlaceholders ){
     			getAccess().getPlaceholderSet().set( this, handle.getDockable() );
@@ -147,7 +148,7 @@ public class Leaf extends VisibleSplitNode{
     			setPlaceholderMap( station.getPlaceholders() );
     		}
     		
-    		getAccess().removeHandle( handle, fire );
+    		getAccess().removeHandle( handle, token );
     		handle = null;
     	}
     	
@@ -158,7 +159,7 @@ public class Leaf extends VisibleSplitNode{
         		getAccess().getPlaceholderSet().set( null, dockable );
         	}
         	
-        	getAccess().addHandle( handle, fire );
+        	getAccess().addHandle( handle, token );
         }
         
         treeChanged();
@@ -446,7 +447,7 @@ public class Leaf extends VisibleSplitNode{
             }
             
             parent.setChild( split, location );
-            leaf.setDockable( dockable, true );
+            leaf.setDockable( dockable, null );
             return true;
         }
         else{

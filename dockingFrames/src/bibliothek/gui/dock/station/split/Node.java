@@ -585,7 +585,7 @@ public class Node extends VisibleSplitNode{
     		node.setRight( this );
     		
     		parent.setChild( node, location );
-    		leaf.setDockable( dockable, true );
+    		leaf.setDockable( dockable, null );
     		return true;
     	}
     	if( left != null && left.insert( property, dockable )){
@@ -669,7 +669,7 @@ public class Node extends VisibleSplitNode{
     					split.setDivider( 1-node.getSize() );
     				}
     				parent.setChild( split, location );
-    				leaf.setDockable( dockable, true );
+    				leaf.setDockable( dockable, null );
     				return true;
     			}
     			else{

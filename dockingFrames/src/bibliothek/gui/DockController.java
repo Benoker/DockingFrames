@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.accept.MultiDockAcceptance;
@@ -221,6 +222,9 @@ public class DockController {
     private WindowProviderWrapper rootWindowProvider;
     /** the current root window, can be <code>null</code> */
     private Window rootWindow;
+    
+    /** ensurance against concurrent modifications */
+    private DockHierarchyLock lock = new DockHierarchyLock();
     
     /**
      * Creates a new controller. 
@@ -506,6 +510,16 @@ public class DockController {
             this.remover.testAll( this );
         }
     }
+    
+    /**
+     * Gets a lock that prevents concurrent modification of the child-parent relationship
+     * of {@link Dockable}s and {@link DockStation}s. This lock should only be acquired by
+     * {@link DockStation}s.
+     * @return the lock
+     */
+    public DockHierarchyLock getHierarchyLock(){
+		return lock;
+	}
     
     /**
      * Freezes the layout. Normally if a client makes a change in the layout

@@ -105,6 +105,9 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	/** how to group dockables */
 	private CGroupBehavior behavior = new StackGroupBehavior();
 	
+	/** the action that is currently executing */
+	private CGroupMovement currentAction;
+	
 	/** the current {@link ExtendedModeEnablementFactory} */
 	private PropertyValue<ExtendedModeEnablementFactory> extendedModeFactory = new PropertyValue<ExtendedModeEnablementFactory>( MODE_ENABLEMENT ) {
 		@Override
@@ -256,6 +259,14 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	}
 	
 	/**
+	 * Gets the action that is currently carried out.
+	 * @return the current action, can be <code>null</code>
+	 */
+	public CGroupMovement getCurrentAction(){
+		return currentAction;
+	}
+	
+	/**
 	 * Executes <code>action</code> in a transaction assuming that the result of this action will lead to
 	 * <code>dockable</code> having the new mode <code>extendedMode</code>.
 	 * @param dockable the primary {@link Dockable}, this item may very well be the new focus owner
@@ -267,7 +278,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 			public void run( final AffectedSet set ){
 				try{
 					getController().getFocusController().freezeFocus();
-				
+					currentAction = action;
 					action.apply( new CGroupBehaviorCallback(){
 						public void setMode( Dockable element, ExtendedMode mode ){
 							apply( element, mode.getModeIdentifier(), false );
@@ -291,6 +302,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 					});
 				}
 				finally{
+					currentAction = null;
 					getController().getFocusController().meltFocus();
 				}
 				

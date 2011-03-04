@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -76,18 +77,18 @@ public interface SplitDockAccess {
      * Adds the new <code>handle</code> to the station and adds
      * the displayer to the station. Binds the <code>dockable</code>.
      * @param handle the new handle
-     * @param fire whether to inform {@link DockStationListener}s about
-     * the new element
+     * @param token if <code>null</code>, then a token will be acquired by this method
+     * and this method will fire events, otherwise this methods is executed silently
      */
-    public void addHandle( StationChildHandle handle, boolean fire );
+    public void addHandle( StationChildHandle handle, DockHierarchyLock.Token token );
     
     /**
      * Removes an element from the station.
      * @param handle the element to remove
-     * @param fire whether to inform {@link DockStationListener}s about
-     * the change
+     * @param token if <code>null</code>, then a token will be acquired by this method
+     * and this method will fire events, otherwise this methods is executed silently
      */
-    public void removeHandle( StationChildHandle handle, boolean fire );
+    public void removeHandle( StationChildHandle handle, DockHierarchyLock.Token token );
     
     /**
      * Tries to add <code>Dockable</code> such that the boundaries given

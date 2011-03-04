@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.group;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 
@@ -51,4 +52,15 @@ public interface CGroupMovement {
 	 * {@link Dockable}
 	 */
 	public void apply( CGroupBehaviorCallback callback );
+
+	/**
+	 * Tells some {@link DockAcceptance}s whether a check for <code>child</code> becoming a child of 
+	 * <code>parent</code> needs to be performed. The default result of this method should be <code>true</code>. 
+	 * A value of <code>true</code> does not prevent custom {@link DockAcceptance}s from preventing the
+	 * operation.
+	 * @param parent the future parent of <code>child</code>
+	 * @param child the future child of <code>parent</code>
+	 * @return <code>true</code> if this relation can be allowed without further checks
+	 */
+	public boolean forceAccept( DockStation parent, Dockable child );
 }
