@@ -41,6 +41,52 @@ public class DockHierarchyLock {
 	/** the current lock */
 	private volatile Token token = null;
 	
+	/** whether to throw an exception or just print one */
+	private boolean hardExceptions = true;
+	
+	/** if greater than 0, no exception is ever thrown */
+	private volatile int concurrent = 0;
+	
+	/**
+	 * Sets whether exceptions should be thrown or only printed.
+	 * @param hardExceptions <code>true</code> if the exceptions should be thrown
+	 */
+	public void setHardExceptions( boolean hardExceptions ){
+		this.hardExceptions = hardExceptions;
+	}
+	
+	/**
+	 * Tells whether hard exceptions should be thrown or only printed.
+	 * @return <code>true</code> if exceptions should be thrown
+	 * @see #setHardExceptions(boolean)
+	 */
+	public boolean isHardExceptions(){
+		return hardExceptions;
+	}
+	
+	/**
+	 * Tells this lock whether concurrent modifications are allowed or not. If allowed no exception will be thrown
+	 * due to a lock being acquired while a lock is already held. 
+	 * @param concurrent whether to allow concurrent modification or not
+	 */
+	public synchronized void setConcurrent( boolean concurrent ){
+		if( concurrent ){
+			this.concurrent++;
+		}
+		else{
+			this.concurrent--;
+		}
+	}
+	
+	/**
+	 * Whether this lock throws exceptions or is silent.
+	 * @return if <code>true</code>, then this lock is silent
+	 * @see #isConcurrent()
+	 */
+	public boolean isConcurrent(){
+		return concurrent > 0;
+	}
+	
 	/**
 	 * The same as calling {@link #acquireLink(DockStation, Dockable)} with the {@link DockHierarchyLock} of
 	 * the {@link DockController} of <code>station</code>. Returns a fake {@link Token} if <code>station</code> has
@@ -105,8 +151,13 @@ public class DockHierarchyLock {
 			throw new IllegalArgumentException( "dockable is null" );
 		}
 		ensureUnlinked( station, dockable );
+		
+		if( isConcurrent() ){
+			return new Token( this, station, dockable, true );
+		}
+		
 		if( token != null ){
-			throw new IllegalStateException( "the lock has already been acquired" );
+			throwException( new IllegalStateException( "the lock has already been acquired" ) );
 		}
 		token = new Token( this, station, dockable, true );
 		return token;
@@ -128,8 +179,13 @@ public class DockHierarchyLock {
 			throw new IllegalArgumentException( "dockable is null" );
 		}
 		ensureLinked( station, dockable );
+		
+		if( isConcurrent() ){
+			return new Token( this, station, dockable, false );
+		}
+		
 		if( token != null ){
-			throw new IllegalStateException( "the lock has already been acquired" );
+			throwException( new IllegalStateException( "the lock has already been acquired" ) );
 		}
 		token = new Token( this, station, dockable, false );
 		return token;
@@ -137,7 +193,8 @@ public class DockHierarchyLock {
 	
 	private void ensureLinked( DockStation station, Dockable dockable ){
 		if( dockable.getDockParent() != station ){
-			throw new IllegalStateException( "the parent of '" + dockable + "' is not '" + station + "' but '" + dockable.getDockParent() + "'" );
+			throwException( new IllegalStateException( "the parent of '" + dockable + "' is not '" + station + "' but '" + dockable.getDockParent() + "'" ) );
+			return;
 		}
 		boolean found = false;
 		for( int i = 0, n = station.getDockableCount(); i<n && !found; i++ ){
@@ -146,18 +203,30 @@ public class DockHierarchyLock {
 			}
 		}
 		if( !found ){
-			throw new IllegalStateException( "the station '" + station + "' does not know '" + dockable + "'" );
+			throwException( new IllegalStateException( "the station '" + station + "' does not know '" + dockable + "'" ) );
+			return;
 		}	
 	}
 	
 	private void ensureUnlinked( DockStation station, Dockable dockable ){
 		if( dockable.getDockParent() != null ){
-			throw new IllegalStateException( "The parent of '" + dockable + "' is not null but '" + dockable.getDockParent() + "'" );
+			throwException( new IllegalStateException( "The parent of '" + dockable + "' is not null but '" + dockable.getDockParent() + "'" ) );
+			return;
 		}
 		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
 			if( station.getDockable( i ) == dockable ){
-				throw new IllegalStateException( "The station '" + station + "' knows of '" + dockable + "'" );
+				throwException( new IllegalStateException( "The station '" + station + "' knows of '" + dockable + "'" ) );
+				return;
 			}
+		}
+	}
+	
+	private void throwException( RuntimeException exception ){
+		if( hardExceptions ){
+			throw exception;
+		}
+		else{
+			exception.printStackTrace();
 		}
 	}
 	
@@ -192,6 +261,17 @@ public class DockHierarchyLock {
 					else{
 						lock.ensureUnlinked( station, dockable );
 					}
+				}
+			}
+		}
+		
+		/**
+		 * Releases this lock without doing the usual checks.
+		 */
+		public void releaseNoCheck(){
+			synchronized( this ){
+				if( lock != null ){
+					lock.token = null;
 				}
 			}
 		}

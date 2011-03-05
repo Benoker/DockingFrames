@@ -409,6 +409,7 @@ public class DockUI {
     	DockController controller = station.getController();
     	if( controller != null ){
     		controller.getRegister().setStalled( true );
+    		controller.getHierarchyLock().setConcurrent( true );
     	}
     	try{
     	    for( int i = station.getDockableCount()-1; i >= 0; i-- ){
@@ -420,6 +421,7 @@ public class DockUI {
     	finally{
     		if( controller != null ){
     			controller.getRegister().setStalled( false );
+    			controller.getHierarchyLock().setConcurrent( false );
     		}
     	}
     }

@@ -51,7 +51,9 @@ public interface CGroupBehavior {
 	public static final CGroupBehavior STACKED = new StackGroupBehavior();
 	
 	/**
-	 * Calculates how the mode of <code>dockable</code> has to be changed such that it matches <code>target</code>.
+	 * Calculates how the mode of <code>dockable</code> has to be changed such that it matches <code>target</code>. 
+	 * Please note that some modules use directly {@link #getGroupElement(Dockable, ExtendedMode)} and do never call
+	 * this method. 
 	 * @param manager a manager which may be asked for additional information
 	 * @param dockable the element that was clicked by the user
 	 * @param target the extended mode intended for <code>dockable</code>

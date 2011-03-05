@@ -692,6 +692,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * @return <code>true</code> if combining is allowed
 	 */
 	protected boolean acceptable( Dockable next ){
+		if( !accept( next )){
+			return false;
+		}
 		if( !next.accept( this )){
 			return false;
 		}
@@ -1529,8 +1532,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 	
 			if( info.bestNode != null ) {
-				if( !accept(dockable) || !dockable.accept(this) )
+				if( !acceptable( dockable )){
 					return false;
+				}
 	
 				double divider = 0.5;
 				if( info.bestNodePut == PutInfo.Put.LEFT ) {
@@ -1893,7 +1897,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
      * @return <code>true</code> if the operation was a success, <code>false</code> otherwise
 	 */
 	protected boolean dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, Leaf leaf, double divider, DockHierarchyLock.Token token ){
-		if( !accept( dockable )){
+		if( !acceptable( dockable )){
 			return false;
 		}
 		

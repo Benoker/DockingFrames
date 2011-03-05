@@ -106,7 +106,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	private CGroupBehavior behavior = new StackGroupBehavior();
 	
 	/** the action that is currently executing */
-	private CGroupMovement currentAction;
+	private List<CGroupMovement> currentAction = new ArrayList<CGroupMovement>();
 	
 	/** the current {@link ExtendedModeEnablementFactory} */
 	private PropertyValue<ExtendedModeEnablementFactory> extendedModeFactory = new PropertyValue<ExtendedModeEnablementFactory>( MODE_ENABLEMENT ) {
@@ -263,7 +263,10 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	 * @return the current action, can be <code>null</code>
 	 */
 	public CGroupMovement getCurrentAction(){
-		return currentAction;
+		if( currentAction.isEmpty() ){
+			return null;
+		}
+		return currentAction.get( currentAction.size()-1 );
 	}
 	
 	/**
@@ -278,7 +281,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 			public void run( final AffectedSet set ){
 				try{
 					getController().getFocusController().freezeFocus();
-					currentAction = action;
+					currentAction.add( action );
 					action.apply( new CGroupBehaviorCallback(){
 						public void setMode( Dockable element, ExtendedMode mode ){
 							apply( element, mode.getModeIdentifier(), false );
@@ -302,7 +305,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 					});
 				}
 				finally{
-					currentAction = null;
+					currentAction.remove( action );
 					getController().getFocusController().meltFocus();
 				}
 				

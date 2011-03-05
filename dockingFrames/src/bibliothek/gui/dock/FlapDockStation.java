@@ -1266,7 +1266,7 @@ public class FlapDockStation extends AbstractDockableStation {
 						listeners.fireDockableAdded( dockable.getDockable() );
 					}
 					finally{
-						token.release();
+						token.releaseNoCheck();
 					}
 				}
 			});
