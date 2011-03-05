@@ -118,10 +118,13 @@ public class SingleParentRemover{
      */
     protected boolean test( DockStation station ){
         DockController controller = station.getController();
-        if( controller != null )
+        if( controller != null ){
             controller.getRegister().setStalled( true );
+            controller.getHierarchyLock().setConcurrent( true );
+        }
         
         try{
+        	
             if( !shouldTest( station ))
                 return false;
             
@@ -171,8 +174,10 @@ public class SingleParentRemover{
             }
         }
         finally{
-            if( controller != null )
+            if( controller != null ){
+            	controller.getHierarchyLock().setConcurrent( false );
                 controller.getRegister().setStalled( false );
+            }
         }
     }
     
@@ -185,6 +190,13 @@ public class SingleParentRemover{
         @Override
         public void dockableCycledRegister( DockController controller, Dockable dockable ) {
             testAll( controller );
+        }
+        
+        @Override
+        public void dockableRegistered( DockController controller, Dockable dockable ){
+        	if( !controller.getRelocator().isOnPut() ){
+                testAll( controller );
+            }
         }
         
         @Override

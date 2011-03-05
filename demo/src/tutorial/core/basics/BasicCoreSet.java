@@ -10,8 +10,6 @@ public class BasicCoreSet extends TutorialSet{
                 StationsExample.class,
                 SplitDockStationExample.class,
                 ThemesExample.class,
-                PersistentLayoutExample.class,
-                ActionsExample.class,
                 InternalExample.class,
                 BackgroundExample.class,
                 BorderModifierExample.class,

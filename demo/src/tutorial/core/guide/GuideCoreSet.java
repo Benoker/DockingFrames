@@ -6,6 +6,12 @@ import tutorial.support.sets.TutorialSet;
 @Tutorial(title="Core", id="GuideCore")
 public class GuideCoreSet extends TutorialSet{
 	public GuideCoreSet(){
-		super( DisplayerExample.class );
+		super(  PlaceholderExample.class,
+				PersistentLayoutExample.class,
+				PerspectiveExample.class,
+				ActionsExample.class,
+				GroupActionExample.class,
+				TitleExample.class,
+				DisplayerExample.class );
 	}
 }

@@ -8,16 +8,18 @@ All \src{Dockable}s can be associated with some actions. An action normally appe
 \label{fig:actions}
 \end{figure}
 
+\codebox{The example ``Actions'' shows how to set up some actions.}
+
 Actions are represented by the interface \src{DockAction}. Each \src{Dockable} has a list of them represented by a \src{DockActionSource}.
 
 If some component wants to show some actions it firsts asks a \src{Dockable} for its global \src{DockActionSource}. It then asks each \src{DockAction} of that list to create a view that fits to the component. A title will ask for another kind of view than a menu. At any time actions can be added or removed from the \src{DockActionSource} and any component showing actions will react on these events.
 
-\classbox{The interface \src{DockAction} is quite simple. Two methods to install (\src{bind}) and to uninstall (\src{unbind}) the action. One method to create new views (\src{createView}) and one method to trigger an action programatically (\src{trigger}). More useful are the many subclasses and subinterfaces. \src{StandardDockAction} introduces icons, text and tooltip. Five subinterfaces for \src{StandardDockAction} exist and for all of them a default-view is provided.}
+\classbox{The interface \src{DockAction} is quite simple. There are two methods to install (\src{bind}) and to uninstall (\src{unbind}) the action. One method to create new views (\src{createView}) and one method to trigger an action programatically (\src{trigger}). More useful are the many subclasses and subinterfaces. \src{StandardDockAction} introduces icons, text and tooltip. Several subinterfaces for \src{StandardDockAction} exist and for all of them a default-view is provided.}
 
 \designbox{There are three levels in the design of \src{DockAction} and its subclasses. First there is \src{DockAction} which allows almost any kind of \src{Component} to be used as view. Second there are subinterfaces for the standard tasks, the framework provides views for them. Third are real implementations of the second-level interfaces. Some interfaces are implemented in more than one action for different styles of aplication organization.}
 
 \subsection{Show Actions}
-Assuming one has a \src{DockAction} (more about different kind of actions is in the next chapter) how can the framework be advised to show it? 
+Assuming one has a \src{DockAction}, how can the framework be advised to show it? 
 
 \subsubsection{List of Actions}
 \src{DockAction}s never travel alone in this framework. They always travel with other actions in a \src{DockActionSource}. Actions can be added or removed from \src{DockActionSource}s at any time and modules showing actions will react on this.
@@ -42,10 +44,10 @@ Two mechanisms are responsible for collecting all the actions from these differe
 
 Clients can use \src{addActionOffer} and \src{setDefaultActionOffer} to change the offers of a \src{DockController}. The public method \src{listOffers} then advises the controller to use one of its offers.
 
- \item Modules which need a list of actions call \src{getGlobalActionOffers} from \src{Dockable}. This method is the ultimate piece of code which decides what to show. This method can ignore anything else that has been said in this chapter and introduce its very own mechanism to collect actions. 
+ \item Modules which need a list of actions call \src{getGlobalActionOffers} from \src{Dockable}. This method is the ultimate piece of code which decides what to show. Usually the method is implemented by returning an instance of \src{HierarchyDockActionSource}. However, this method can ignore anything that has been said in this chapter and introduce its very own mechanism to collect actions. 
 \end{itemize}
 
-Most \src{Dockable}s will utilize \src{HierarchyDockActionSource} instead of implementing \src{getGlobalActionOffers}. This special source observes the hierarchy of a \src{Dockable} and changes its content automatically. \src{Dockable}s using \src{HierarchyDockActionSource} should \src{bind} the source. They need to call \src{update} if their own local action source is exchanged. 
+\classbox{Most \src{Dockable}s will utilize \src{HierarchyDockActionSource} instead of implementing \src{getGlobalActionOffers}. This special source observes the hierarchy of a \src{Dockable} and changes its content automatically. \src{Dockable}s using \src{HierarchyDockActionSource} should \src{bind} the source. They need to call \src{update} if their own local action source is exchanged.}
 
 \warningbox{It is generally a bad idea to write \src{DockActionOffer}s or \src{getGlobalActionOffer} methods which do not just collect actions. There are already mechanisms to introduce \src{DockAction}s and they should suffice for every possible situation.}
 
@@ -131,6 +133,8 @@ The constructor (lines \src{7-20}) sets up the action. First the \src{GroupKeyGe
 
 A \src{Boolean} only has two states, both states will be used as key. So there is a ``true'' and a ``false'' group. The selected-state of the action should match the key of the group. In other words: if ``some property'' is \src{true} then the action is selected, if ``some property'' is \src{false} then it is not. Lines \src{15, 16} are responsible for this setting. The same behavior is enforced for the text of the action in lines \src{18, 19}.
 
+\codebox{Another example is ``Actions: GroupAction'' showing an action with more than two keys.}
+
 The standard behavior of a \src{SelectableDockAction} is to change its selected state as soon as the user triggers the action. If the action is used for many \src{Dockable}s than this behavior would look rather odd. All the actions would change their state and most of them would do so wrongly. By overriding the method \src{trigger} this problem can be prevented (lines \src{23-26}). Instead of changing the selected state of the action, the group of the \src{Dockable} is changed by invoking \src{setSelected} in line \src{24}. Since the two groups have different selection states the user will think that the action changed the state.
 
 By the way: the method \src{setSelected} in lines \src{29-32} needs to be overriden since the default behavior is to change the state of the action, not to change the group of a \src{Dockable}.
@@ -148,10 +152,10 @@ By the way: the method \src{setSelected} in lines \src{29-32} needs to be overri
 \end{itemize}}
 
 \subsection{Custom actions}
-Clients are free to implement new actions.
+Clients are free to implement new actions with new views.
 
 \subsubsection{Reuse existing view}
-Whenever possible an existing view should be reused. There are 6 kind of views defined in the framework. Each kind of view is represented through an instance of \src{ActionType}, each of them is stored as constant in \src{ActionType} itself. \src{ActionType} has one generic parameter. The view can force an action to implement some interface through that parameter. For example, the kind \src{ActionType.BUTTON} forces an action to implement \src{ButtonDockAction}. Actions can use an \src{ActionType} as key for a factory that is stored in the \src{ActionViewConverter}. 
+Whenever possible an existing view should be reused. There are six kind of views defined in the framework. Each kind of view is represented through an instance of \src{ActionType}, each of them is stored as constant in \src{ActionType} itself. \src{ActionType} has one generic parameter, the view can force an action to implement some interface through that parameter. For example, the kind \src{ActionType.BUTTON} forces an action to implement \src{ButtonDockAction}. Actions can use an \src{ActionType} as key for a factory that is stored in the \src{ActionViewConverter}. 
 
 An example for an action that uses an \src{ActionType} to create its view:
 \begin{lstlisting}

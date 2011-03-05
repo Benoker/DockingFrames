@@ -159,10 +159,16 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         
         Tuple<K, D> action = dockActions.remove( dockable );
         action.getB().unbind( dockable );
-        
-        if( removeEmptyGroups && action.getB().getBoundDockables().isEmpty() ){
-            groups.remove( action.getA() );
-            action.getB().removeDockActionListener( listener );
+        removeIfEmpty( action.getA() );
+    }
+    
+    private void removeIfEmpty( K key ){
+    	if( removeEmptyGroups ){
+	    	D group = getGroup( key );
+	    	if( group.getBoundDockables().isEmpty() ){
+	    		groups.remove( key );
+	    		group.removeDockActionListener( listener );
+	    	}
         }
     }
 
@@ -481,6 +487,8 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         
         D put = ensureGroup( key );
         old.getB().unbind( dockable );
+        removeIfEmpty( old.getA() );
+        
         put.bind( dockable );
         dockActions.put( dockable, new Tuple<K, D>( key, put ) );
         

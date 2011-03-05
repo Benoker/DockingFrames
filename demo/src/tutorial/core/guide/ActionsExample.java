@@ -1,4 +1,4 @@
-package tutorial.core.basics;
+package tutorial.core.guide;
 
 import java.awt.Color;
 import java.awt.Component;

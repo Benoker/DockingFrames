@@ -1,4 +1,4 @@
-package tutorial.core.basics;
+package tutorial.core.guide;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -33,7 +33,7 @@ import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
 
-@Tutorial(title="Persistent Layout", id="PersistentLayout")
+@Tutorial(title="Persistent Layout: Global", id="PersistentLayout")
 public class PersistentLayoutExample {
 	/* Assume you have written a big application with many Dockables. But the user complains because the 
 	 * layout is reset every time he restarts the application. Of course there is an answer: store

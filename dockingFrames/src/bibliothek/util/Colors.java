@@ -217,7 +217,3 @@ public final class Colors {
     	return color.darker();
     }
 }
-
-
-
-

@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import bibliothek.gui.dock.DefaultDockable;
 
 public class ColorDockable extends DefaultDockable{
-	private JPanel panel = new JPanel();
+	private JPanel panel;
 	
 	public ColorDockable( String title, Color color ){
 		this( title, color, 1.0f );
@@ -29,10 +29,13 @@ public class ColorDockable extends DefaultDockable{
 	}
 	
 	public void setColor( Color color ){
-		panel = new JPanel();
-		panel.setOpaque( true );
+		if( panel == null ){
+			panel = new JPanel();
+			panel.setOpaque( true );
+			add( panel );
+		}
+		
 		panel.setBackground( color );
-		add( panel );
 		setTitleIcon( new ColorIcon( color ) );
 	}
 	

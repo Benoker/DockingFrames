@@ -35,6 +35,14 @@ public class HelloWorld {
 	}
 }
 \end{lstlisting}
+
+\begin{figure}[h!]
+  \centering
+    \includegraphics[width=0.5\textwidth]{basics/HelloWorld}
+  \caption{The \src{HelloWorld} application.}
+\end{figure}
+
+
 What happens here? In line \src{10} a \src{DockController} is created. The controller will handle things like drag and drop. All elements will be in his realm. In line \src{12} a new \src{DockStation} is created and in line \src{13} this station is registered as root station at the \src{DockController}.
 
 Then in line \src{15-19} a few children for \src{station} are generated. To set the layout of those children a \src{SplitDockGrid} is used. \src{SplitDockGrid} takes a few \src{Dockable}s and their position and puts this information into a form that can be understood by \src{SplitDockStation} (line \src{19}). It would be possible to add the \src{Dockable}s directly to the station, but this is the easy way.
@@ -90,6 +98,12 @@ Some observations: \src{StackDockStation} is a \src{Dockable} as well, in line \
 \subsubsection{StackDockStation}
 This station is organized like a \src{JTabbedPane}. Only one child is visible, but another can be made visible by clicking some button. The framework will automatically create new \src{StackDockStation}s when a \src{Dockable} is dragged over another. Also \src{StackDockStation}s with only one child get automatically replaced by this child.
 
+\begin{figure}[h!]
+  \centering
+    \includegraphics[width=0.5\textwidth]{basics/StackDockStation}
+  \caption{A \src{StackDockStation} with four children on a frame.}
+\end{figure}
+
 \classbox{
 The station consists of four layers, as seen in the image below. There is a background panel (1) which just is some \src{Container} to put other things onto it. Then there is a selection layer (2), which is represented by an instance of \src{StackDockComponent}. Above that is a \src{DockableDisplayer} (3) for each \src{Dockable}. The displayers paint some decorations that depend on the \src{Dockables} in the topmost layer (4).
 
@@ -99,6 +113,11 @@ The station consists of four layers, as seen in the image below. There is a back
 \subsubsection{SplitDockStation}
 All the children of this station are visible. The user controls the children as if the station would consist of many \src{JSplitPane}s set into each other (hence the name). Internally the station is organized as tree, where a leaf is a \src{Dockable} and a node the gap between two sets of \src{Dockable}s. Furthermore this station offers a ``fullscreen mode'' where one of its children takes up the entire space and all other children are invisible.
 
+\begin{figure}[h!]
+  \centering
+    \includegraphics[width=0.5\textwidth]{basics/SplitDockStation}
+  \caption{A \src{SplitDockStation} with four children on a frame.}
+\end{figure}
 
 \classbox{
 Like the \src{StackDockStation}, this station consists of four layers. Layers 1, 3 and 4 are identical to the layers of the \src{StackDockStation}. A background panel (1), \src{DockableDisplayers} (3) to paint decorations and the children (4). Layer 2 is the logical tree which tells how to lay out the children. The nodes of this tree consist of \src{SplitNode}s and the root can be accessed through the method \src{getRoot}. Clients should never add or remove nodes from the tree directly.
@@ -109,6 +128,12 @@ Like the \src{StackDockStation}, this station consists of four layers. Layers 1,
 \subsubsection{FlapDockStation}
 This station is a list of buttons. If the user clicks on one of the buttons a window opens showing a child. Only one child can be shown at a time. This station can be used as sidebar to collect ``minimized'' \src{Dockables}. 
 
+\begin{figure}[h!]
+  \centering
+    \includegraphics[width=0.5\textwidth]{basics/FlapDockStation}
+  \caption{A \src{FlapDockStation} with three children on a frame. The selected child is a \src{StackDockStation} containing two more children.}
+\end{figure}
+
 \classbox{
 \src{FlapDockStation} consists of 5 layers. A background panel (1) as \src{Container} for other components. A set of buttons (2), each button is a \src{DockTitle}. Then there is the window that shows the current selection (3), an instance of \src{FlapWindow}. A displayer (4) to paint decorations and the \src{Dockable} child (5) that is selected.
 
@@ -117,6 +142,12 @@ This station is a list of buttons. If the user clicks on one of the buttons a wi
 
 \subsubsection{ScreenDockStation}
 The \src{ScreenDockStation} allows its children to float around freely on the screen. Each child is put onto its own window which is independent from any other window. This station also offers a ``fullscreen mode'' where a window is enlarged to fill the entire space of a screen.
+
+\begin{figure}[h!]
+  \centering
+    \includegraphics[width=0.5\textwidth]{basics/ScreenDockStation}
+  \caption{A \src{ScreenDockStation} with two children floating over a frame.}
+\end{figure}
 
 \classbox{
 This station is pretty simple and consists of only 3 layers. Some windows (1), instances of \src{ScreenDockWindow}, provide a container to show the children. On each window there is a \src{DockableDisplayer} (2) to paint decorations, and on top is one \src{Dockable} child (3).

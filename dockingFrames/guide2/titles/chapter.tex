@@ -44,6 +44,8 @@ There are some classes that can help implementing a custom title:
 
 \classbox{In order to use the popup menu of \src{ButtonPanel} some special code has to be written. First: the argument \src{menu} of the constructor of \src{ButtonPanel} has to be set to \src{true}. Second: the method \src{getPreferredSize} of \src{ButtonPanel} cannot be used, any standard \src{LayoutManager} will fail. Instead the method \src{doLayout} of the \src{Container} which shows the panel can be overriden. In this \src{doLayout} method the container should call \src{getPreferredSizes} to obtain a list of possible sizes of the panel. The $n$'th dimension in this array tells how big the \src{ButtonPanel} would be if it would show $n$ actions. The container should choose the biggest possible $n$ and call \src{setVisibleActions}.}
 
+\codebox{An example showing a custom title is ``DockTitle: Custom title''.}
+
 \subsubsection{Apply the title}
 There are several ways to introduce a custom title into the framework.
 

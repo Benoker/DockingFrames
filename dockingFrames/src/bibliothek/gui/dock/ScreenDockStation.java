@@ -1395,11 +1395,11 @@ public class ScreenDockStation extends AbstractDockStation {
 	        item.setPlaceholderMap( null );
 	        window.setDockable( null );
 	        lower.setDockParent( null );
-	        listeners.fireDockableRemoved( lower );
         }
         finally{
         	token.release();
         }
+        listeners.fireDockableRemoved( lower );
         
         Dockable valid = combiner.combine( new CombinerSourceWrapper( source ){
         	@Override

@@ -295,28 +295,32 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			}
 			
 			if( !simulate ){
-				Item item;
+				Item item = null;
 				if( dockable == null ){
-					item = new Item( paths );
+					if( paths != null && !paths.isEmpty() ){
+						item = new Item( paths );
+					}
 				}
 				else{
 					item = new Item( dockable, paths, null );
 				}
 	
-				if( map.contains( placeholders[i], "map" )){
-					item.setPlaceholderMap( map.getMap( placeholders[i], "map" ) );
-				}
-				
-				if( map.contains( placeholders[i], "item" )){
-					Object[] keys = map.getArray( placeholders[i], "item-keys" );
-					
-					for( Object itemKey : keys ){
-						String key = (String)itemKey;
-						item.put( key, map.get( placeholders[i], "item." + key ) );
+				if( item != null ){
+					if( map.contains( placeholders[i], "map" )){
+						item.setPlaceholderMap( map.getMap( placeholders[i], "map" ) );
 					}
+					
+					if( map.contains( placeholders[i], "item" )){
+						Object[] keys = map.getArray( placeholders[i], "item-keys" );
+						
+						for( Object itemKey : keys ){
+							String key = (String)itemKey;
+							item.put( key, map.get( placeholders[i], "item." + key ) );
+						}
+					}
+					
+					list().add( item );
 				}
-				
-				list().add( item );
 			}
 			if( dockable != null ){
 				converter.added( dockable );
