@@ -52,6 +52,11 @@ public class TreeLocationLeaf extends AbstractStackholdingLocation{
 		this.leafId = leafId;
 	}
 	
+	@Override
+	public CLocation getParent(){
+		return parent;
+	}
+	
 	/**
 	 * Gets the unique identifier of the leaf which is represented by this {@link TreeLocationLeaf}.
 	 * @return the identifier or -1

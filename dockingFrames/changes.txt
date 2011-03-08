@@ -466,3 +466,4 @@
 - Bugfix: it is now much harder to remove a CDockable from its working-area by putting it into a stack and moving it around together with this stack
 - Bugfix: PlaceholderList did throw NPE when reading an entry with no placeholders and no dockable
 - Bugfix: SingleParentRemover now also performs a check when elements have been added, this way invalid new DockStations can be found as well.
+- Bugfix: Some CLocations did return a wrong result on "findProperty". 

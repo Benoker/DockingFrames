@@ -172,13 +172,19 @@ public abstract class CLocation {
 	}
 	
 	/**
+	 * Gets the parent location of this location. Some root-locations may never have a parent.
+	 * @return the parent location, can be <code>null</code>
+	 */
+	public abstract CLocation getParent();
+	
+	/**
 	 * Gets the name of the station this location belongs to. This can be the id
 	 * of any {@link CStation}.
 	 * @return the name of the station or <code>null</code> if this location
 	 * does not have enough information to find the root
 	 */
 	public abstract String findRoot();
-	
+
 	/**
 	 * Gets the mode this location represents.
 	 * @return the mode or <code>null</code>

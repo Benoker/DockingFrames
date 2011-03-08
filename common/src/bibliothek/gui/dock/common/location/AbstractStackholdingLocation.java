@@ -26,9 +26,6 @@
 package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CLocation;
-import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
-import bibliothek.gui.dock.station.stack.StackDockProperty;
 
 /**
  * A location which can be parent of a stack (stack is also known as tabbed-pane).

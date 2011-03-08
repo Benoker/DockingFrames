@@ -49,6 +49,11 @@ public class CExtendedModeLocation extends CLocation{
 		this.mode = mode;
 	}
 	
+	@Override
+	public CLocation getParent(){
+		return null;
+	}
+	
 	public CLocation aside(){
 		return this;
 	}

@@ -74,6 +74,11 @@ public class CRectangleLocation extends AbstractStackholdingLocation{
 	}
 
 	@Override
+	public CLocation getParent(){
+		return parent;
+	}
+	
+	@Override
 	public ExtendedMode findMode(){
 		return ExtendedMode.NORMALIZED;
 	}

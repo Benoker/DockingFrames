@@ -55,6 +55,11 @@ public class CMaximizedLocation extends AbstractStackholdingLocation {
 	}
 	
 	@Override
+	public CLocation getParent(){
+		return null;
+	}
+	
+	@Override
 	public ExtendedMode findMode(){
 		return ExtendedMode.MAXIMIZED;
 	}

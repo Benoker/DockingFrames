@@ -29,7 +29,6 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.flap.FlapDockProperty;
 
 /**
  * A location which represents a {@link FlapDockStation}.
@@ -103,12 +102,14 @@ public class CFlapLocation extends CLocation{
 
     @Override
     public DockableProperty findProperty( DockableProperty successor ) {
-        FlapDockProperty property = new FlapDockProperty( Integer.MAX_VALUE );
-        property.setSuccessor( successor );
-        if( parent != null ){
-        	return parent.findProperty( property );
-        }
-        return property;
+    	return successor;
+    	
+//        FlapDockProperty property = new FlapDockProperty( Integer.MAX_VALUE );
+//        property.setSuccessor( successor );
+//        if( parent != null ){
+//        	return parent.findProperty( property );
+//        }
+//        return property;
     }
     
     @Override

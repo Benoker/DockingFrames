@@ -29,7 +29,6 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
-import bibliothek.gui.dock.station.split.SplitDockProperty;
 
 /**
  * This location is used to describe a {@link SplitDockStation}.
@@ -57,6 +56,11 @@ public class CSplitLocation extends CLocation{
     @Override
     public CLocation aside() {
         return this;
+    }
+    
+    @Override
+    public CLocation getParent(){
+    	return parent;
     }
 
     /**
@@ -195,12 +199,10 @@ public class CSplitLocation extends CLocation{
     
     @Override
     public DockableProperty findProperty( DockableProperty successor ) {
-        SplitDockProperty property = new SplitDockProperty( 0, 0, 1, 1 );
-        property.setSuccessor( successor );
         if( parent != null ){
-        	return parent.findProperty( property );
+        	return parent.findProperty( successor );
         }
-        return property;
+        return successor;
     }
     
     @Override

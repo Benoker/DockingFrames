@@ -53,6 +53,11 @@ public class CFlapIndexLocation extends AbstractStackholdingLocation{
         this.index = index;
     }
     
+    @Override
+    public CLocation getParent(){
+    	return parent;
+    }
+    
     /**
      * Gets the exact location of this location on its parent.
      * @return the exact location

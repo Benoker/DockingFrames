@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.location;
 
+import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 
 /**
@@ -50,6 +51,11 @@ public class TreeLocationNode extends AbstractTreeLocation {
 		this.parent = parent;
 	}
 
+	@Override
+	public CLocation getParent(){
+		return parent;
+	}
+	
 	@Override
 	protected SplitDockPathProperty findParentProperty(){
 		return parent.findProperty( null );

@@ -82,7 +82,7 @@ public interface CStation<S extends DockStation> {
     public String getUniqueId();
     
     /**
-     * Gets a location which represents directly {@link #getStation()}.
+     * Gets a location which represents directly {@link #getStation()}. 
      * @return the location that will always represent the {@link #getStation() station}
      */
     public CLocation getStationLocation();

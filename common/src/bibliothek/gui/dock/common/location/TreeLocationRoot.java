@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 
 /**
@@ -52,6 +53,11 @@ public class TreeLocationRoot extends AbstractTreeLocation{
 			throw new NullPointerException( "Parent must not be null" );
 		
 		this.root = root;
+	}
+	
+	@Override
+	public CLocation getParent(){
+		return root;
 	}
 	
 	@Override

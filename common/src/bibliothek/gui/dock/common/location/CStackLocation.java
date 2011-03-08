@@ -62,6 +62,14 @@ public class CStackLocation extends AbstractStackholdingLocation{
 		this.index = index;
 	}
 	
+	/**
+	 * Gets the parent location of this {@link CStackLocation}.
+	 * @return the parent location, not <code>null</code>
+	 */
+	public CLocation getParent(){
+		return parent;
+	}
+	
 	@Override
 	public String findRoot(){
 		return parent.findRoot();

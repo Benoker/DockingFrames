@@ -54,6 +54,11 @@ public class CBaseLocation extends CLocation{
 		return content;
 	}
 	
+	@Override
+	public CLocation getParent(){
+		return null;
+	}
+	
 	/**
 	 * Gets a location that points to the center of the {@link CContentArea}.
 	 * @return the location pointing to the center where normalized 

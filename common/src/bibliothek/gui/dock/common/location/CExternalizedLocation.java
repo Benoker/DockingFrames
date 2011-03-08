@@ -47,13 +47,18 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
         }
 
         @Override
+        public CLocation getParent(){
+        	return null;
+        }
+        
+        @Override
         public ExtendedMode findMode() {
             return ExtendedMode.EXTERNALIZED;
         }
 
         @Override
         public DockableProperty findProperty( DockableProperty successor ) {
-            return null;
+            return successor;
         }
 
         @Override

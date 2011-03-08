@@ -1432,10 +1432,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				public void handleLeaf( Leaf leaf ){
 					double intersection = leaf.intersection(property);
 					if( intersection > info.bestLeafIntersection ) {
-						if( acceptable( leaf.getDockable(), dockable )){
-							info.bestLeafIntersection = intersection;
-							info.bestLeaf = leaf;
-						}
+						info.bestLeafIntersection = intersection;
+						info.bestLeaf = leaf;
 					}
 	
 					handleNeighbour(leaf);
@@ -1714,7 +1712,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Drops the current {@link #putInfo}.
      * @param token if <code>null</code>, then a token will be acquired by this method
      * and this method will fire events, otherwise this methods is executed silently
-	 * @see #drop(PutInfo, boolean)
+	 * @see #drop(PutInfo, bibliothek.gui.dock.DockHierarchyLock.Token)
 	 */
 	private void drop( DockHierarchyLock.Token token ){
 		drop( putInfo, token );
@@ -2663,7 +2661,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * <b>Note</b>
 	 * <ul><li>that removing or adding children to the tree does not automatically
 	 * remove or add new {@link Dockable}s, that has to be explicitly done through
-	 * {@link Leaf#setDockable(Dockable, boolean)}.</li>
+	 * {@link Leaf#setDockable(Dockable, bibliothek.gui.dock.DockHierarchyLock.Token)}.</li>
 	 * <li>The tree should never be invalid. That means that each {@link Node}
 	 * should have two children, and each {@link Leaf} should have 
 	 * a {@link Dockable}.</li>
