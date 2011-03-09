@@ -43,6 +43,7 @@ import bibliothek.util.Path;
 /**
  * Represents a mode in which dockables are freely floating on the screen.
  * @author Benjamin Sigg
+ * @param <M> the areas that are managed by this mode
  */
 public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLocationMode<M>{
 	/** the unique identifier of this mode */

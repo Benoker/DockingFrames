@@ -90,6 +90,14 @@ public abstract class AbstractTreeLocation extends AbstractStackholdingLocation{
 	}
 	
 	/**
+	 * Gets the identifier of the node represented by this location.
+	 * @return the identifier or -1 is not set
+	 */
+	public long getNodeId(){
+		return nodeId;
+	}
+	
+	/**
 	 * Creates a new location which is based at the north side of this 
 	 * location.
 	 * @param size the relative size, a number between 0 and 1

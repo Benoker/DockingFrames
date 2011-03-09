@@ -54,7 +54,7 @@ public class CFlapIndexLocation extends AbstractStackholdingLocation{
     }
     
     @Override
-    public CLocation getParent(){
+    public CFlapLocation getParent(){
     	return parent;
     }
     
@@ -84,7 +84,6 @@ public class CFlapIndexLocation extends AbstractStackholdingLocation{
         FlapDockProperty property = new FlapDockProperty( index );
         property.setSuccessor( successor );
         
-        CLocation parent = this.parent.getParent();
         if( parent != null ){
         	return parent.findProperty( property );
         }

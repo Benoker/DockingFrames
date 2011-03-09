@@ -102,14 +102,11 @@ public class CFlapLocation extends CLocation{
 
     @Override
     public DockableProperty findProperty( DockableProperty successor ) {
-    	return successor;
+    	if( parent != null ){
+    		return parent.findProperty( successor );
+    	}
     	
-//        FlapDockProperty property = new FlapDockProperty( Integer.MAX_VALUE );
-//        property.setSuccessor( successor );
-//        if( parent != null ){
-//        	return parent.findProperty( property );
-//        }
-//        return property;
+    	return successor;
     }
     
     @Override

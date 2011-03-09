@@ -44,6 +44,14 @@ public class CGridAreaLocation extends CSplitLocation{
         
         this.area = area;
     }
+    
+    /**
+     * Gets the area which is represented by this location.
+     * @return the area, not <code>null</code>
+     */
+    public CGridArea getArea(){
+		return area;
+	}
 
     @Override
     public String findRoot() {

@@ -68,6 +68,38 @@ public class CRectangleLocation extends AbstractStackholdingLocation{
 		this.height = height;
 	}
 	
+	/**
+	 * Gets the relative x-coordinate
+	 * @return a value between 0 and 1
+	 */
+	public double getX(){
+		return x;
+	}
+	
+	/**
+	 * Gets the relative y-coordinate
+	 * @return a value between 0 and 1
+	 */
+	public double getY(){
+		return y;
+	}
+	
+	/**
+	 * Gets the relative width
+	 * @return a value between 0 and 1
+	 */
+	public double getWidth(){
+		return width;
+	}
+	
+	/**
+	 * Gest the relative height
+	 * @return a value between 0 and 1
+	 */
+	public double getHeight(){
+		return height;
+	}
+	
 	@Override
 	public String findRoot(){
 		return parent.findRoot();

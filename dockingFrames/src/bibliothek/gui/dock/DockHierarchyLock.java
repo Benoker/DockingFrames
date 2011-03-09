@@ -42,7 +42,7 @@ public class DockHierarchyLock {
 	private volatile Token token = null;
 	
 	/** whether to throw an exception or just print one */
-	private boolean hardExceptions = true;
+	private boolean hardExceptions = false;
 	
 	/** if greater than 0, no exception is ever thrown */
 	private volatile int concurrent = 0;

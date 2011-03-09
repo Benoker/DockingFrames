@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
  * A location aiming at minimized elements.
@@ -44,14 +45,27 @@ public class CMinimizedLocation extends CFlapLocation{
 	 * @param side the side this location is aiming at.
 	 */
 	public CMinimizedLocation( CBaseLocation parent, Side side ){
-		if( parent == null )
-			throw new NullPointerException( "parent is null" );
+		super( parent );
 		
 		if( side == null )
 			throw new NullPointerException( "side is null" );
 		
 		this.parent = parent;
 		this.side = side;
+	}
+	
+	/**
+	 * Gets the side of the {@link CContentArea} where this minimized-location
+	 * points to.
+	 * @return the side
+	 */
+	public Side getSide(){
+		return side;
+	}
+	
+	@Override
+	public ExtendedMode findMode(){
+		return ExtendedMode.MINIMIZED;
 	}
 	
 	@Override

@@ -70,6 +70,14 @@ public class CStackLocation extends AbstractStackholdingLocation{
 		return parent;
 	}
 	
+	/**
+	 * Gets the index to which this location points on a stack.
+	 * @return the index, may be {@link Integer#MAX_VALUE}
+	 */
+	public int getIndex(){
+		return index;
+	}
+	
 	@Override
 	public String findRoot(){
 		return parent.findRoot();

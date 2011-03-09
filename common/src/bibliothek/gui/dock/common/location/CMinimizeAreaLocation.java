@@ -45,6 +45,14 @@ public class CMinimizeAreaLocation extends CFlapLocation{
         this.area = area;
     }
     
+    /**
+     * Gets the {@link CMinimizeArea} which is represented by this location.
+     * @return the area, not <code>null</code>
+     */
+    public CMinimizeArea getArea(){
+		return area;
+	}
+    
     @Override
     public String findRoot() {
         return area.getUniqueId();

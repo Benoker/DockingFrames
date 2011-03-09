@@ -53,7 +53,7 @@ public class TreeLocationLeaf extends AbstractStackholdingLocation{
 	}
 	
 	@Override
-	public CLocation getParent(){
+	public AbstractTreeLocation getParent(){
 		return parent;
 	}
 	

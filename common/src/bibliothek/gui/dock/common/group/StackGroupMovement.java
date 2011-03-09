@@ -124,6 +124,10 @@ public class StackGroupMovement implements CGroupMovement{
 	}
 	
 	private DockableProperty copyAndSetStackLocation( DockableProperty property, int delta ){
+		if( property == null ){
+			return null;
+		}
+		
 		property = property.copy();
 		DockableProperty last = property;
 		while( last.getSuccessor() != null ){

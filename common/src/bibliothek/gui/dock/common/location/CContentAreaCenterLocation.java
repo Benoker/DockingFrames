@@ -46,6 +46,15 @@ public class CContentAreaCenterLocation extends CSplitLocation{
         this.base = base;
     }
 
+    /**
+     * Gets the location representing the {@link CContentArea} of which this
+     * location represents the center.
+     * @return the content-area
+     */
+    public CBaseLocation getBase(){
+		return base;
+	}
+    
     @Override
     public String findRoot() {
         CContentArea area = base.getContentArea();
