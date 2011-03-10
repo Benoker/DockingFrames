@@ -66,11 +66,14 @@ public class CMaximizedLocation extends AbstractStackholdingLocation {
 
 	@Override
 	public DockableProperty findProperty( DockableProperty successor ){
-		if( successor == null ){
-			return null;
-		}
 		SplitDockFullScreenProperty property = new SplitDockFullScreenProperty();
 		property.setSuccessor( successor );
+		
+		CLocation parent = getParent();
+		if( parent != null ){
+			return parent.findProperty( property );
+		}
+		
 		return property;
 	}
 	

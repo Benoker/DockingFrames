@@ -68,7 +68,7 @@ public class CExtendedModeLocation extends CLocation{
 	}
 
 	public DockableProperty findProperty( DockableProperty successor ){
-		return null;
+		return successor;
 	}
 
 	public String findRoot(){

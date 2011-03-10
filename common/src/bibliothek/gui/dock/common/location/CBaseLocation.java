@@ -195,7 +195,7 @@ public class CBaseLocation extends CLocation{
 	
 	@Override
 	public DockableProperty findProperty( DockableProperty successor ){
-		return null;
+		return successor;
 	}
 	
 	@Override
