@@ -158,7 +158,7 @@ public class BasicStackDockComponent extends DefaultStackDockComponent {
              * @param id the name of this color
              */
             public BasicTabColor( String id ){
-                super( id, station.getStation(), dockable, null );
+                super( id, station.getStackDockParent(), dockable, null );
             }
             
             @Override

@@ -242,7 +242,7 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 		 * @param backup the backup color used when the target is not found
 		 */
 		public BubbleMenuColor( String id, Color backup ){
-			super( id, station.getStation(), BubbleTabMenu.this, backup );
+			super( id, station.getStackDockParent(), BubbleTabMenu.this, backup );
 		}
 		
 		@Override

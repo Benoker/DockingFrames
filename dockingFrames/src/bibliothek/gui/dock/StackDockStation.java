@@ -364,7 +364,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         return new DefaultStackDockComponent();
     }
     
-    public DockStation getStation(){
+    public DockStation getStackDockParent(){
 	    return this;
     }
     
@@ -1217,8 +1217,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         try{
 	        listeners.fireDockableAdding( dockable );
 	        
-	        dockable.setDockParent( this );
-	        
 	        StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
 	        handle.updateDisplayer();
 	        
@@ -1231,6 +1229,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	        }
 	
 	        addToPanel( handle, index, dockables.dockables().size()-1 );
+	        dockable.setDockParent( this );
 	        
 	        dockable.addDockableListener( listener );
 	        

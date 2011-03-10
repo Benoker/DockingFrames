@@ -470,4 +470,6 @@
 
 [v1.1.0p6e]
 - API: missing getter methods for various CLocations
-- Bugfix: CLocation.findProperty should now be consistent for all properties 
+- Bugfix: CLocation.findProperty should now be consistent for all properties
+! API: renamed method in StackDockComponentParent to prevent conflicts with methods in other interfaces but with the same signature
+- API: StackDockStation now sets itself as parent of a Dockable after it has registered the child on itself

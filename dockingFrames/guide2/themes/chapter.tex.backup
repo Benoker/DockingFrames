@@ -88,14 +88,14 @@ More than 50\% of the frameworks source code is only used for painting stuff. No
 \infobox{Many of the mechanisms used by \src{DockTheme}s can be used by clients as well.}
 
 \subsubsection{UI-Properties} \label{sec:uiproperties}
-UI-properties is a concept to distribute properties to components. A property could be a \src{Color} and a component some \src{DockTitle} which uses that color to paints it background. The basic idea is to use a map. The keys are \src{String}s, the values are the properties. A \src{DockTheme} or a client can modify or put new key-value pairs into the map and components can read those values which are interesting for them.
+The \src{UIProperties} distribute properties like colors, texts or fonts in the framework. The basic idea is to use a map. The keys are \src{String}s, the values are the properties. A \src{DockTheme} or a client can modify or put new key-value pairs into the map and components can read those values which are interesting for them.
 
-Unfortunatelly a simple map is not enough. There needs to be a way to specify values that are used only by a subset of components.
+While \src{UIProperties} build upon a map, they can do more than an ordinary map. They report changes in the map through an observer mechanism represented by \src{UIValue}s. Further more they can filter their content through \src{UIBridge}s.
 
-The UI-properties provide the necessary features. The mechanism includes these classes, interfaces and generic parameters:
+The full list of classes and interfaces building the base for the UI-properties consists of:
 \begin{itemize}
-	\item \src{UIProperties}: the base map.
-	\item \src{V}: the generic values that have to be distributed, e.g. the class \src{Color}.
+	\item \src{UIProperties}: the map that connects properties, observers and filters.
+	\item \src{V}: the type of the properties, e.g. the class \src{Color}.
 	\item \src{UIValue}: A wrapper around \src{V}. Each component creates one \src{UIValue} for each query it will ask the \src{UIProperties}. In example a \src{DockTitle} would have to create and store exactly one \src{UIValue} to represent its background color. \src{UIValue}s also act as observer and the \src{UIProperties} notify an \src{UIValue} if its wrapped \src{V} gets changed.
 	\item \src{UIBridge}: An \src{UIBridge} is set between a set of \src{UIValue}s and the \linebreak \src{UIProperties}. \src{V} properties will not be handed directly from \linebreak \src{UIProperties} to \src{UIValue} if there is a bridge between. The bridge can modify the \src{V} property in any way it likes, since the \src{UIBridge} knows the destination of a \src{V} it can also use information derived from the \src{UIValue}.
 	\item{UIScheme}: a set of default properties and default \src{UIBridges}.
@@ -191,8 +191,16 @@ The views for \src{DockAction}s are changed through the \src{ActionViewConverter
 Any \src{Border} can be modified or replaced by a \src{BorderModifier}. \src{BorderModifier}s can be set by the \src{ThemeManager}.
 
 \subsubsection{Background}
+The usual background of a \src{Component} is either grey or transparent. Clients can set a painting algorithm for the background with help of the interface \src{BackgroundPaint}. Instances of \src{BackgroundPaint} are applied through the \src{ThemeManager}.
+
+The method \src{paint} of \src{BackgroundPaint} is called every time when a component has to be repainted. The method receives a \src{PaintableComponent} which offers the standard algorithms to paint border, children and other stuff. The \src{BackgroundPaint} can freely decide what to paint and in which order to paint.
+
 \subsubsection{Drag and drop decorations}
+During drag and drop operations \src{DockStation}s use a \src{StationPaint} to paint decorations. The \src{StationPaint} can be set through the \src{ThemeManager}.
+
 \subsubsection{Combining}
+
+
 
 \subsubsection{Displayers}
 A \src{DockableDisplayer} is a wrapper around a \src{Dockable} painting some decorations like a title or some border. All \src{DockStation}s make use of \linebreak \src{DockableDisplayer}s to paint their children. \src{DockableDisplayer}s are created by \src{DisplayerFactory}s which are accessible through the \src{ThemeManager}.

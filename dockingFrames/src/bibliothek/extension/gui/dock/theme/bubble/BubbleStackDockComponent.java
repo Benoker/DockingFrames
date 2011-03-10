@@ -57,7 +57,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	 * @return the parent of this component
 	 */
 	public DockStation getStation(){
-		return station.getStation();
+		return station.getStackDockParent();
 	}
 	
 	@Override

@@ -88,23 +88,23 @@ More than 50\% of the frameworks source code is only used for painting stuff. No
 \infobox{Many of the mechanisms used by \src{DockTheme}s can be used by clients as well.}
 
 \subsubsection{UI-Properties} \label{sec:uiproperties}
-UI-properties is a concept to distribute properties to components. A property could be a \src{Color} and a component some \src{DockTitle} which uses that color to paints it background. The basic idea is to use a map. The keys are \src{String}s, the values are the properties. A \src{DockTheme} or a client can modify or put new key-value pairs into the map and components can read those values which are interesting for them.
+The \src{UIProperties} distribute properties like colors, texts or fonts in the framework. The basic idea is to use a map. The keys are \src{String}s, the values are the properties. A \src{DockTheme} or a client can modify or put new key-value pairs into the map and components can read those values which are interesting for them.
 
-Unfortunatelly a simple map is not enough. There needs to be a way to specify values that are used only by a subset of components.
+While \src{UIProperties} build upon a map, they can do more than an ordinary map. They report changes in the map through an observer mechanism represented by \src{UIValue}s. Further more they can filter their content through \src{UIBridge}s.
 
-The UI-properties provide the necessary features. The mechanism includes these classes, interfaces and generic parameters:
+The full list of classes and interfaces building the base for the UI-properties consists of:
 \begin{itemize}
-	\item \src{UIProperties}: the base map.
-	\item \src{V}: the generic values that have to be distributed, e.g. the class \src{Color}.
-	\item \src{UIValue}: A wrapper around \src{V}. Each component creates one \src{UIValue} for each query it will ask the \src{UIProperties}. In example a \src{DockTitle} would have to create and store exactly one \src{UIValue} to represent its background color. \src{UIValue}s also act as observer and the \src{UIProperties} notify an \src{UIValue} if its wrapped \src{V} gets changed.
-	\item \src{UIBridge}: An \src{UIBridge} is set between a set of \src{UIValue}s and the \linebreak \src{UIProperties}. \src{V} properties will not be handed directly from \linebreak \src{UIProperties} to \src{UIValue} if there is a bridge between. The bridge can modify the \src{V} property in any way it likes, since the \src{UIBridge} knows the destination of a \src{V} it can also use information derived from the \src{UIValue}.
+	\item \src{UIProperties}: The map that connects properties, observers and filters.
+	\item \src{V}: The type of the properties, e.g. the class \src{Color}.
+	\item \src{UIValue}: An observer that is attached to \src{UIProperties} and receives an event if a property changes. The \src{UIValue} has to provide information to the filters, that means an \src{UIValue} represents the component that is using the property.
+	\item \src{UIBridge}: An \src{UIBridge} is a filter between the \src{UIProperties} and the \src{UIValue}s. An \src{UIBridge} can decide to inform an \src{UIValue} about a changed property at any time. Depending on the target \src{UIValue} an \src{UIBridge} may filter the property in different ways.
 	\item{UIScheme}: a set of default properties and default \src{UIBridges}.
 \end{itemize}
 
 The implementation gets more complex:
 \begin{itemize}
-	\item For each key several \src{V} properties can be put into the base map. Each value gets assigned another priority (``default'', ``theme'' or ``client'') and only the one with the highest priority is used.
-	\item Each \src{UIValue} is associated with a \src{Path}. The \src{Path} tells what an \src{UIValue} will do with the \src{V} property. The \src{Path} also tells what kind of type the \src{UIValue} has.
+	\item For each key several \src{V} properties can be put into the map. Each value gets assigned another priority (``default'', ``theme'' or ``client'') and only the one with the highest priority is used.
+	\item Each \src{UIValue} is associated with a \src{Path}. The \src{Path} tells what type the \src{UIValue} has.
 	\item \src{UIBridge}s are also associated with a \src{Path}. An \src{UIBridge} is responsible to handle all those \src{UIValue}s that are associated either with the same \src{Path} or a \src{Path} that has the bridges \src{Path} as prefix.
 \end{itemize}
 
@@ -118,7 +118,7 @@ There are several subclasses of \src{UIProperties}, each of these classes handle
  \item \src{FontManager} handles \src{Font}s. Rather than distributing \src{Font}s directly, this class distributes \src{FontModifiers}. A \src{FontModifier} can use the default font of a component slightly modify it (e.g. make it italic), or just replace the font.
  \item \src{IconManager} handles \src{Icon}s.
  \item \src{TextManager} handles language dependent text.
- \item \src{ThemeManager} is responsible for distributing factories and strategies used all over the framework.
+ \item \src{ThemeManager} is not directly a subclass, but offers a similar interface. It is responsible for distributing factories and strategies used all over the framework.
 \end{itemize}
 
 \subsubsection{Colors}
@@ -155,6 +155,8 @@ colors.publish( Priority.CLIENT, TitleColor.KIND_TITLE_COLOR, new ColorBridge(){
 Here a \src{ColorBridge} for the \src{Path} \src{KIND\_TITLE\_COLOR} is installed in line \src{3}. This path is only used by \src{UIValue}s that implement \src{TitleColor}. Hence the unchecked cast from \src{DockColor} to \src{TitleColor} in line \src{11} is safe. The methods \src{add} (line \src{4-6}) and \src{remove} (line \src{7-9}) are called by \src{UIProperties} when a \src{UIValue} gets added or removed to it. These methods can be ignored as long as the bridge does not change the color on its own. Otherwise the \src{DockColor}s could be stored in some list and their method \src{set} could be called whenever the color needs to be exchanged.
 
 This bridge searches for a specific \src{Dockable} called ``somevalue'' (line \src{12}). The bridge returns \src{GREEN} for all colors used by any title of this \src{Dockable}. There is no distinction between the colors for background, foreground or other usages.
+
+\codebox{An example showing the same things as the snippets is ``UI Properties: Color''}
 
 \infobox{There is no global list of keys and every \src{DockTheme} uses different keys. All the modules that need colors are annotated with \src{ColorCodes} and expose their own list of keys to the API-documentation. Also the various implementations of \src{ColorScheme} can be used to find keys.}
 
@@ -197,10 +199,6 @@ The method \src{paint} of \src{BackgroundPaint} is called every time when a comp
 
 \subsubsection{Drag and drop decorations}
 During drag and drop operations \src{DockStation}s use a \src{StationPaint} to paint decorations. The \src{StationPaint} can be set through the \src{ThemeManager}.
-
-\subsubsection{Combining}
-
-
 
 \subsubsection{Displayers}
 A \src{DockableDisplayer} is a wrapper around a \src{Dockable} painting some decorations like a title or some border. All \src{DockStation}s make use of \linebreak \src{DockableDisplayer}s to paint their children. \src{DockableDisplayer}s are created by \src{DisplayerFactory}s which are accessible through the \src{ThemeManager}.

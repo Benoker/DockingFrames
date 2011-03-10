@@ -111,3 +111,7 @@ These restrictions are implemented through acceptance tests. An acceptance test 
 \designbox{Acceptance tests are performed by the potential destination \src{DockStation}. The \src{DockStation} is the first module that knows where a \src{Dockable} will land. Handling acceptance tests allows the station to cut down the amount of work it does, and to try alternative actions (e.g. a ``put'' instead of a ``merge'' action) if some future configuration does not pass the tests.
 
 The drawback is, that a \src{DockStation} can break the mechanism by just not performing the tests.}
+
+\subsubsection{Combining}
+If the user drags a \src{Dockable} over another \src{Docakble} they get combined. Combining means that the old \src{Dockable} gets replaced by a newly created \src{DockStation}, this station has the two combined \src{Dockable}s as children.
+

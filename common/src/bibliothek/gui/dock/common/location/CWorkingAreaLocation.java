@@ -29,6 +29,7 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.split.SplitDockProperty;
 
 /**
  * A location representing a {@link CWorkingArea}.
@@ -68,6 +69,9 @@ public class CWorkingAreaLocation extends CSplitLocation{
 
     @Override
     public DockableProperty findProperty( DockableProperty successor ) {
+    	if( successor == null ){
+    		return new SplitDockProperty( 0, 0, 1, 1 );
+    	}
         return successor;
     }
 

@@ -37,7 +37,7 @@ public interface StackDockComponentParent {
 	 * Gets the station this parent represents.
 	 * @return the station
 	 */
-	public DockStation getStation();
+	public DockStation getStackDockParent();
 	
 	/**
 	 * Gets the index of <code>dockable</code> in the list of dockables

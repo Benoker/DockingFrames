@@ -12,6 +12,7 @@ public class GuideCoreSet extends TutorialSet{
 				ActionsExample.class,
 				GroupActionExample.class,
 				TitleExample.class,
+				ColorExample.class,
 				DisplayerExample.class );
 	}
 }

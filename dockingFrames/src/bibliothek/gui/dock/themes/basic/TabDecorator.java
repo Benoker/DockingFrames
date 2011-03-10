@@ -94,7 +94,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		this.station = station;
 	}
 	
-	public DockStation getStation(){
+	public DockStation getStackDockParent(){
 		return station;
 	}
 	

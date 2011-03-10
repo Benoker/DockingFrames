@@ -156,7 +156,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         setColorSchemeKey( ECLIPSE_COLOR_SCHEME );
         setStackDockComponentFactory( new StackDockComponentFactory(){
             public StackDockComponent create( StackDockComponentParent station ){
-            	return new EclipseTabPane( EclipseTheme.this, station.getStation() );
+            	return new EclipseTabPane( EclipseTheme.this, station.getStackDockParent() );
             }
         }, Priority.DEFAULT );
         setDisplayerFactory( new EclipseDisplayerFactory( this ), Priority.DEFAULT );

@@ -106,6 +106,6 @@ public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, C
 	}
 	
 	public DockStation getStation(){
-		return station.getStation();
+		return station.getStackDockParent();
 	}
 }

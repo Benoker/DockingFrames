@@ -27,6 +27,8 @@ package bibliothek.gui.dock.common.location;
 
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.split.SplitDockProperty;
 
 /**
  * This location points to the center of a {@link CContentArea}.
@@ -54,6 +56,14 @@ public class CContentAreaCenterLocation extends CSplitLocation{
     public CBaseLocation getBase(){
 		return base;
 	}
+    
+    @Override
+    public DockableProperty findProperty( DockableProperty successor ){
+    	if( successor == null ){
+    		return new SplitDockProperty( 0, 0, 1, 1 );
+    	}
+    	return successor;
+    }
     
     @Override
     public String findRoot() {
