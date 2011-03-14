@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.theme.eclipse;
 import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnectorListener;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
@@ -60,7 +61,7 @@ public class CommonEclipseThemeConnector extends DefaultEclipseThemeConnector {
 		
 		private void fire( CDockable cdockable ){
 			Dockable dockable = cdockable.intern();
-			TitleBar bar = getTitleBarKind( dockable );
+			TitleBar bar = getTitleBarKind( dockable.getDockParent(), dockable );
 			for( EclipseThemeConnectorListener listener : listeners() ){
 				listener.titleBarChanged( CommonEclipseThemeConnector.this, dockable, bar );
 			}
@@ -101,8 +102,8 @@ public class CommonEclipseThemeConnector extends DefaultEclipseThemeConnector {
 	}
 	
 	@Override
-	public TitleBar getTitleBarKind( Dockable dockable ){
-		if( dockable.getDockParent() instanceof StackDockStation )
+	public TitleBar getTitleBarKind( DockStation parent, Dockable dockable ){
+		if( parent instanceof StackDockStation )
 			return TitleBar.NONE;
 		
 		if( dockable instanceof CommonDockable ){
@@ -114,6 +115,6 @@ public class CommonEclipseThemeConnector extends DefaultEclipseThemeConnector {
 			}
 		}
 		
-		return super.getTitleBarKind( dockable );
+		return super.getTitleBarKind( parent, dockable );
 	}
 }

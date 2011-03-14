@@ -106,7 +106,7 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 		bordered = bar == TitleBar.NONE_BORDERED || bar == TitleBar.NONE_HINTED_BORDERED;
 		respectHints = bar == TitleBar.NONE_HINTED || bar == TitleBar.NONE_HINTED_BORDERED;
 		
-		observer = new TitleBarObserver( dockable, bar ){
+		observer = new TitleBarObserver( station, dockable, bar ){
 			@Override
 			protected void invalidated(){
 				for( DockableDisplayerListener listener : listeners() ){

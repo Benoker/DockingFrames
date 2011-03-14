@@ -147,10 +147,10 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	 * @param station the parent of this displayer, not <code>null</code>
 	 * @param dockable the element shown on this displayer, may be <code>null</code>
 	 */
-	public EclipseDockableDisplayer(EclipseTheme theme, DockStation station, Dockable dockable) {
+	public EclipseDockableDisplayer( EclipseTheme theme, DockStation station, Dockable dockable ){
 		super(theme, station);
 		
-		observer = new TitleBarObserver( dockable, TitleBar.ECLIPSE ){
+		observer = new TitleBarObserver( station, dockable, TitleBar.ECLIPSE ){
 			@Override
 			protected void invalidated(){
 				for( DockableDisplayerListener listener : displayerListeners() ){

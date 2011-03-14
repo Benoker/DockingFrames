@@ -35,7 +35,7 @@ import bibliothek.gui.Dockable;
  */
 public interface EclipseThemeConnectorListener {
 	/**
-	 * Called if the result of {@link EclipseThemeConnector#getTitleBarKind(Dockable)}
+	 * Called if the result of {@link EclipseThemeConnector#getTitleBarKind(bibliothek.gui.DockStation, Dockable)}
 	 * has changed.
 	 * @param source the source of the event
 	 * @param dockable the affected dockable

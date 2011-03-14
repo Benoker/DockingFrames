@@ -43,7 +43,7 @@ import bibliothek.gui.dock.title.DockTitle;
 /**
  * This factory makes use of a {@link EclipseThemeConnector} to decide which
  * kind of {@link DockableDisplayer} to create. To be more exact: the displayer
- * depends on the {@link TitleBar}-value returned by {@link EclipseThemeConnector#getTitleBarKind(Dockable)}.
+ * depends on the {@link TitleBar}-value returned by {@link EclipseThemeConnector#getTitleBarKind(DockStation, Dockable)}.
  * @author Janni Kovacs
  */
 public class EclipseDisplayerFactory implements DisplayerFactory {
@@ -57,8 +57,8 @@ public class EclipseDisplayerFactory implements DisplayerFactory {
 		this.theme = theme;
 	}
 
-	public DockableDisplayer create(DockStation station, Dockable dockable, DockTitle title) {
-		TitleBar bar = theme.getThemeConnector( station.getController() ).getTitleBarKind( dockable );
+	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
+		TitleBar bar = theme.getThemeConnector( station.getController() ).getTitleBarKind( station, dockable );
 		
 		switch( bar ){
 		    case NONE:

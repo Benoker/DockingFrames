@@ -66,8 +66,8 @@ public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
 		return !listeners.isEmpty();
 	}
 	
-	public TitleBar getTitleBarKind( Dockable dockable ) {
-    	if( dockable.getDockParent() instanceof StackDockStation )
+	public TitleBar getTitleBarKind( DockStation parent, Dockable dockable ){
+    	if( parent instanceof StackDockStation )
     		return TitleBar.NONE;
     	
         if( dockable.asDockStation() == null )

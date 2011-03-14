@@ -43,7 +43,7 @@ public interface EclipseThemeConnector {
     /**
      * Describes which kind of title, and which kind of {@link DockableDisplayer} 
      * should be used for a {@link Dockable} or a {@link DockStation}. This
-     * enumeration is mainly used by {@link EclipseThemeConnector#getTitleBarKind(Dockable)}
+     * enumeration is mainly used by {@link EclipseThemeConnector#getTitleBarKind(DockStation, Dockable)}
      * @author Benjamin Sigg
      */
     public enum TitleBar{
@@ -96,10 +96,12 @@ public interface EclipseThemeConnector {
      * Tells which kind of title and {@link DockableDisplayer} should be 
      * shown for <code>dockable</code> assuming everything can be chosen
      * freely.
+     * @param parent the future or current parent of <code>dockable</code> that will 
+     * show the {@link DockableDisplayer}. May be <code>null</code>.
      * @param dockable the element that stands alone on a {@link DockStation}
      * @return which kind of title and displayer should be used
      */
-	public TitleBar getTitleBarKind( Dockable dockable );
+	public TitleBar getTitleBarKind( DockStation parent, Dockable dockable );
 		
 	/**
 	 * Tells whether <code>action</code> should be displayed on the tab

@@ -8,7 +8,7 @@ import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
  * A {@link DockTitleFactory} that calls another factory but only
- * if the method {@link EclipseThemeConnector#getTitleBarKind(Dockable)} returns
+ * if the method {@link EclipseThemeConnector#getTitleBarKind(bibliothek.gui.DockStation, Dockable)} returns
  * {@link TitleBar#BASIC} for the {@link Dockable} whose title should be
  * created.
  * @author Benjamin Sigg
@@ -46,7 +46,7 @@ public class EclipseDockTitleFactory implements DockTitleFactory{
     }
     
     public void request( DockTitleRequest request ){
-        TitleBar bar = theme.getThemeConnector( request.getVersion().getController() ).getTitleBarKind( request.getTarget() );
+        TitleBar bar = theme.getThemeConnector( request.getVersion().getController() ).getTitleBarKind( request.getParent(), request.getTarget() );
         if( bar == TitleBar.BASIC || bar == TitleBar.BASIC_BORDERED ){
         	factory.request( request );
         }

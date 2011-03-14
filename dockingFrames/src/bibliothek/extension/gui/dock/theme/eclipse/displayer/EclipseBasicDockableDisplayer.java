@@ -45,7 +45,7 @@ public class EclipseBasicDockableDisplayer extends BasicDockableDisplayer{
 	public EclipseBasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, Location location, TitleBar bar ){
 		super( station, dockable, title, location );
 		
-		observer = new TitleBarObserver( dockable, bar ){
+		observer = new TitleBarObserver( station, dockable, bar ){
 			@Override
 			protected void invalidated(){
 				for( DockableDisplayerListener listener : listeners() ){

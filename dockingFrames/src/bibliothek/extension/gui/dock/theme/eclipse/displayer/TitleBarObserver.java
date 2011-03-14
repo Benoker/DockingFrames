@@ -30,6 +30,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnectorListener;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -42,6 +43,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  */
 public abstract class TitleBarObserver {
 	private DockController controller;
+	private DockStation station;
 	private TitleBar titleBar;
 	private Dockable dockable;
 	
@@ -66,7 +68,7 @@ public abstract class TitleBarObserver {
 			}
 			
 			if( connector != null && controller != null && dockable != null && newValue != null ){
-				if( titleBar != newValue.getTitleBarKind( dockable )){
+				if( titleBar != newValue.getTitleBarKind( station, dockable )){
 					destroy();
 					invalidated();
 				}
@@ -80,10 +82,12 @@ public abstract class TitleBarObserver {
 	
 	/**
 	 * Creates a new observer.
+	 * @param station the current or future parent of <code>dockable</code>
 	 * @param dockable the dockable whose {@link TitleBar} is checked
 	 * @param titleBar the value that is valid
 	 */
-	public TitleBarObserver( Dockable dockable, TitleBar titleBar ){
+	public TitleBarObserver( DockStation station, Dockable dockable, TitleBar titleBar ){
+		this.station = station;
 		this.dockable = dockable;
 		this.titleBar = titleBar;
 	}
