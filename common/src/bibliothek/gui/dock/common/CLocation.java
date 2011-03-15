@@ -204,7 +204,7 @@ public abstract class CLocation {
 	 * Gets a path describing this location in terms of the 
 	 * DockingFrames.
 	 * @param successor the path of the elements above this location or <code>null</code>
-	 * @return the path to this location or <code>null</code>
+	 * @return the path to this location or <code>null</code>, can also be <code>successor</code>
 	 */
 	public abstract DockableProperty findProperty( DockableProperty successor );
 	

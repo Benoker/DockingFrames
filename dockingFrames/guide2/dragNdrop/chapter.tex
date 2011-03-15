@@ -1,18 +1,12 @@
 \section{Drag and Drop}
-To drag a \src{Dockable} to a new location and drop it there is the most important feature of any docking framework. Surprisingly the implementation of this part is very small.
+Naturally, draging and droping of \src{Dockable}s is a key feature of the framework. Funny enough, the code actually involved in DnD is rather small compared to other modules of the framework.
 
 \subsection{Relocator}
-The sourcecode that detects drag gestures, searches for the target station and makes sure that the user has some visual feedback is located in the \linebreak \src{DefaultDockRelocator}. \src{DefaultDockRelocator} itself extends from \linebreak \src{DockRelocator} which just allows to register some listeners and set some useful properties. Clients seldomly need to implement a new \src{DockRelocator}. If they do, then they have to implement a new \src{DockControllerFactory}. The code will look like this:
+The sourcecode that detects drag gestures, searches for the target station and makes sure that the user has some visual feedback is located in the \linebreak \src{DefaultDockRelocator}. \src{DefaultDockRelocator} itself extends from \linebreak \src{DockRelocator} which just allows to register some listeners and set some useful properties.
 
-\begin{lstlisting}
-public class MyDockControllerFactory extends DefaultDockControllerFactory{
-  @Override
-  public DockRelocator createRelocator( DockController controller ) {
-    return new MyDockReloactor();
-  }
-}
-\end{lstlisting}
-This factory has then to be given to the constructor of a \src{DockController}. For the remainder of this chapter it is assumed, that the default relocator is in use.
+\classbox{Clients seldomly need to implement their own \src{DockRelocator}. If they do, they have to implement a new \src{DockControllerFactory} in order to install their customized class. The method \src{createRelocator} is responsible for creating the new object.
+
+This factory has then to be given to the constructor of a \src{DockController}.}
 
 The \src{DockRelocator} that is in use can be accessed through the method \src{getRelocator} of \src{DockController}.
 

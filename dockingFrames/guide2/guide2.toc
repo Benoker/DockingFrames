@@ -67,8 +67,7 @@
 \contentsline {subsubsection}{\numberline {6.3.8}Border}{48}
 \contentsline {subsubsection}{\numberline {6.3.9}Background}{48}
 \contentsline {subsubsection}{\numberline {6.3.10}Drag and drop decorations}{48}
-\contentsline {subsubsection}{\numberline {6.3.11}Combining}{48}
-\contentsline {subsubsection}{\numberline {6.3.12}Displayers}{48}
+\contentsline {subsubsection}{\numberline {6.3.11}Displayers}{48}
 \contentsline {section}{\numberline {7}Drag and Drop}{50}
 \contentsline {subsection}{\numberline {7.1}Relocator}{50}
 \contentsline {subsection}{\numberline {7.2}Sources}{50}
@@ -80,6 +79,7 @@
 \contentsline {subsection}{\numberline {7.4}Influences}{53}
 \contentsline {subsubsection}{\numberline {7.4.1}Modes}{53}
 \contentsline {subsubsection}{\numberline {7.4.2}Restrictions}{53}
+\contentsline {subsubsection}{\numberline {7.4.3}Combining}{54}
 \contentsline {section}{\numberline {8}Preferences}{55}
 \contentsline {subsection}{\numberline {8.1}Model}{55}
 \contentsline {subsubsection}{\numberline {8.1.1}Preference}{55}

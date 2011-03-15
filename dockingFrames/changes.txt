@@ -476,3 +476,6 @@
 
 [v1.1.0p6f]
 ! Bugfix: added the parameter "station" to EclipseThemeConnector.getTitleBarKind in order to allow the connector to select the correct title-bar before the dockable station relation has been made.
+
+[v1.1.0p6g]
+- Bugfix: trying to drop the child of a SplitDockStation on itself if there is no other child no longer produces a NPE.

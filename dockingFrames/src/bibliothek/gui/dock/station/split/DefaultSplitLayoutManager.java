@@ -154,6 +154,9 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         if( station.getDockableCount() == 0 )
             return null;
         
+        if( station.getDockableCount() == 1 && station.getDockable( 0 ) == drop )
+        	return null;
+        
         PutInfo info;
         
         if( SplitNode.above( 0, 0, station.getWidth(), station.getHeight(), x, y )){
@@ -179,17 +182,19 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         
         if( leaf != null && station.getRoot().getChild() instanceof Node){
             Node node = (Node)station.getRoot().getChild();
-            if( info.getPut() == PutInfo.Put.TOP && node.getOrientation() == Orientation.VERTICAL && node.getLeft() == leaf )
-                return null;
-            
-            if( info.getPut() == PutInfo.Put.BOTTOM && node.getOrientation() == Orientation.VERTICAL && node.getLeft() == leaf )
-                return null;
-            
-            if( info.getPut() == PutInfo.Put.LEFT && node.getOrientation() == Orientation.HORIZONTAL && node.getLeft() == leaf )
-                return null;
-            
-            if( info.getPut() == PutInfo.Put.RIGHT && node.getOrientation() == Orientation.HORIZONTAL && node.getLeft() == leaf )
-                return null;
+            if( node.getLeft().isVisible() && node.getRight().isVisible() ){
+	            if( info.getPut() == PutInfo.Put.TOP && node.getOrientation() == Orientation.VERTICAL && node.getLeft() == leaf )
+	                return null;
+	            
+	            if( info.getPut() == PutInfo.Put.BOTTOM && node.getOrientation() == Orientation.VERTICAL && node.getRight() == leaf )
+	                return null;
+	            
+	            if( info.getPut() == PutInfo.Put.LEFT && node.getOrientation() == Orientation.HORIZONTAL && node.getLeft() == leaf )
+	                return null;
+	            
+	            if( info.getPut() == PutInfo.Put.RIGHT && node.getOrientation() == Orientation.HORIZONTAL && node.getRight() == leaf )
+	                return null;
+            }
         }
         
         return info;

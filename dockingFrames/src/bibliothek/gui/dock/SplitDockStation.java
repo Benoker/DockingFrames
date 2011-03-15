@@ -1979,17 +1979,30 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			Root root = root();
 			Leaf leaf = root.getLeaf(putInfo.getDockable());
 	
-			if( leaf.getParent() == putInfo.getNode() ) {
-				if( putInfo.getNode() == root ) {
-					// no movement possible
-					return;
-				}
-				else {
-					Node node = (Node) putInfo.getNode();
-					if( node.getLeft() == leaf )
-						putInfo.setNode(node.getRight());
-					else
-						putInfo.setNode(node.getLeft());
+			SplitNode parent = putInfo.getNode();
+			
+			if( leaf.getParent() == parent ) {
+				while( parent != null ){
+					if( parent == root ) {
+						// no movement possible
+						return;
+					}
+					else {
+						Node node = (Node)parent;
+						SplitNode next;
+						
+						if( node.getLeft() == leaf ){
+							next = node.getRight();
+						}
+						else{
+							next = node.getLeft();
+						}
+						if( next.isVisible() ){
+							putInfo.setNode( next );
+							break;
+						}
+						parent = parent.getParent();
+					}
 				}
 			}
 	
