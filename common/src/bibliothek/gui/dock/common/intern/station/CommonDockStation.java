@@ -44,7 +44,7 @@ public interface CommonDockStation<S extends DockStation, C extends CommonDockSt
 	public S getDockStation();
 	
 	/**
-	 * Returns <code>this</code> as station of type <code>S</code>. This method
+	 * Returns <code>this</code> as station of type <code>C</code>. This method
 	 * is not allowed to return <code>null</code>.
 	 * @return <code>this</code>
 	 */
