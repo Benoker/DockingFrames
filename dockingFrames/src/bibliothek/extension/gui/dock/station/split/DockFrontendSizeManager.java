@@ -44,6 +44,8 @@ import bibliothek.gui.dock.event.DockFrontendListener;
 import bibliothek.gui.dock.event.DockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.layout.AdjacentDockFactory;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitNode;
@@ -110,7 +112,11 @@ public class DockFrontendSizeManager implements SizeManager{
         public boolean interested( DockElement element ) {
             return sizes.containsKey( element );
         }
-
+        
+        public boolean interested( PerspectiveElement element ){
+        	return false;
+        }
+        
         public String getID() {
             return "dock.extension.DockFrontendSizeManager.sizes";
         }
@@ -119,6 +125,10 @@ public class DockFrontendSizeManager implements SizeManager{
             return sizes.get( element );
         }
 
+        public Double getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
+        	return null;
+        }
+        
         public Double read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {
             return in.readDouble();
         }

@@ -114,6 +114,8 @@ import bibliothek.gui.dock.common.perspective.CDockablePerspective;
 import bibliothek.gui.dock.common.perspective.CStackPerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
+import bibliothek.gui.dock.common.perspective.DefaultMissingPerspectiveFactory;
+import bibliothek.gui.dock.common.perspective.MissingPerspectiveStrategy;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.common.theme.eclipse.CommonEclipseThemeConnector;
 import bibliothek.gui.dock.control.DockRegister;
@@ -272,6 +274,9 @@ public class CControl {
 
     /** Access to the internal methods of this control */
     private CControlAccess access = new Access();
+    
+    /** A strategy that can create missing {@link CStationPerspective} */
+    private MissingPerspectiveStrategy missingPerspectiveStrategy = new DefaultMissingPerspectiveFactory();
 
     /** manager used to store and read configurations */
     private ApplicationResourceManager resources = new ApplicationResourceManager();
@@ -1275,10 +1280,11 @@ public class CControl {
             throw new NullPointerException( "uniqueId must not be null" );
 
         for( CContentArea center : register.getContentAreas() ){
-            if( center.getUniqueId().equals( uniqueId ))
+            if( center.getUniqueId().equals( uniqueId )){
                 throw new IllegalArgumentException( "There exists already a CContentArea with the unique id " + uniqueId );
+            }
         }
-
+        
         DockStation defaultStation = frontend.getDefaultStation();
 
         boolean noDefaultStation = defaultStation == null || defaultStation instanceof ScreenDockStation;
@@ -1286,8 +1292,9 @@ public class CControl {
         CContentArea center = new CContentArea( this, uniqueId );
         addContentArea( center );
 
-        if( noDefaultStation )
+        if( noDefaultStation ){
             frontend.setDefaultStation( center.getCenter() );
+        }
 
         return center;
     }
@@ -1305,11 +1312,13 @@ public class CControl {
     @Todo( priority=Todo.Priority.MAJOR, compatibility=Compatibility.BREAK_MAJOR, target=Todo.Version.VERSION_1_1_0,
     		description="remove this method, replace by something better" )
     public void addContentArea( CContentArea content ){
-        if( content == null )
+        if( content == null ){
             throw new NullPointerException( "content is null" );
+        }
 
-        if( content.getControl() != this )
+        if( content.getControl() != this ){
             throw new IllegalArgumentException( "content was not created using this CControl" );
+        }
 
         register.addContentArea( content );
 
@@ -2361,12 +2370,32 @@ public class CControl {
     }
     
     /**
+     * Sets a strategy that creates missing {@link CStationPerspective}s.
+     * @param missingPerspectiveStrategy the strategy, not <code>null</code>
+     */
+    public void setMissingPerspectiveStrategy( MissingPerspectiveStrategy missingPerspectiveStrategy ){
+    	if( missingPerspectiveStrategy == null ){
+    		throw new IllegalArgumentException( "strategy must not be null" );
+    	}
+		this.missingPerspectiveStrategy = missingPerspectiveStrategy;
+	}
+    
+    /**
+     * Gets the strategy that is used to create missing {@link CStationPerspective}.
+     * @return the strategy, not <code>null</code>
+     */
+    public MissingPerspectiveStrategy getMissingPerspectiveStrategy(){
+		return missingPerspectiveStrategy;
+	}
+    
+    /**
      * Grants access to the perspective API which allows clients to build complex layouts without
      * the need to create any {@link CDockable dockables} or {@link CStation stations}.
      * @return access a wrapper around this {@link CControl} allowing to inspect and modify the layouts
      * that are available
      * @see #load(String)
      * @see #save(String)
+     * @see #setMissingPerspectiveStrategy(MissingPerspectiveStrategy)
      */
     public CControlPerspective getPerspectives(){
     	return new CControlPerspective( access );
@@ -2760,6 +2789,9 @@ public class CControl {
                 }
                 else{
                     locationManager.setLocation( dockable.intern(), location );
+                    if( !frontend.isShown( dockable.intern() )){
+                    	frontend.show( dockable.intern(), false );
+                    }
                 }
                 locationManager.ensureValidLocation( dockable );
             }

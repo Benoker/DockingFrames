@@ -479,3 +479,14 @@
 
 [v1.1.0p6g]
 - Bugfix: trying to drop the child of a SplitDockStation on itself if there is no other child no longer produces a NPE.
+
+[v1.1.0p7]
+- API: Added methods to DockHierarchyLock that allow code to be executed directly after the lock has been released.
+- API: Added MissingPerspectiveStrategy to CControl, this allows clients to create missing CStationPerspectives
+- Bugfix: If a CStationPerspective is missing in a CPerspective, then no NPE will be thrown when loading a layout. Instead the data for the missing station will silently be dropped.
+- Bugfix: Making a CDockable visible when a DockAcceptance forbids the location of the CDockable will force the CDockable to appear on the default DockStation - even if that station is forbidden by the DockAcceptance as well.
+! API: CControlFactory has now to create CommonStations instead of DockStations.
+! API: CommonStation no longer extends CommonDockable, all DockStations used by the Common framework now implement CommonStation
+! API: New interface CommonElement, changed the types of several methods in CommonStation/CommonDockable, added generics. The type system should now enforce the correct implementation of all the different methods.
+- API: CContentArea is now based on CGridArea and CMinimizedArea which greatly reduces complexity
+! API: AdjacentDockFactorys can now also write meta data for PerspectiveElements

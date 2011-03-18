@@ -33,7 +33,7 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.station.CommonStation;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.util.WindowProvider;
 
@@ -71,22 +71,18 @@ public interface CControlFactory {
      * @param expansion a {@link Component} which will be some parent of
      * the result, the {@link FlapDockStation#getExpansionBounds()} should 
      * act as if <code>expansion</code> were the whole station
+     * @param delegate some methods that can be used by the created station
      * @return the new station
      */
-    public FlapDockStation createFlapDockStation( Component expansion );
+    public CommonDockStation<FlapDockStation,?> createFlapDockStation( Component expansion, CommonStationDelegate<FlapDockStation> delegate );
     
     /**
      * Creates a new {@link ScreenDockStation}.
      * @param owner the owner of the dialogs of the station
+     * @param delegate some methods that can be used by the created station
      * @return the new station
      */
-    public ScreenDockStation createScreenDockStation( WindowProvider owner );
-    
-    /**
-     * Creates a new {@link SplitDockStation}.
-     * @return the new station
-     */
-    public SplitDockStation createSplitDockStation();
+    public CommonDockStation<ScreenDockStation,?> createScreenDockStation( WindowProvider owner, CommonStationDelegate<ScreenDockStation> delegate );
     
     /**
      * Creates a new {@link SplitDockStation} that implements {@link CommonDockable}
@@ -94,5 +90,5 @@ public interface CControlFactory {
      * @param delegate some methods that can be used by the created station
      * @return the new station
      */
-    public CommonStation<SplitDockStation> createSplitDockStation( CommonStationDelegate delegate );
+    public CommonDockStation<SplitDockStation,?> createSplitDockStation( CommonStationDelegate<SplitDockStation> delegate );
 }

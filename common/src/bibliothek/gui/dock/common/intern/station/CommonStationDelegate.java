@@ -25,31 +25,33 @@
  */
 package bibliothek.gui.dock.common.intern.station;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
- * Implements several methods that could be used by a {@link CommonStation}. Instances
- * of this interface are most times used as delegate by a {@link CommonStation}.
+ * Implements several methods that could be used by a {@link CommonDockStation}. Instances
+ * of this interface are most times used as delegate by a {@link CommonDockStation}.
  * @author Benjamin Sigg
+ * @param <S> the type of {@link DockStation} this delegate represents
  */
-public interface CommonStationDelegate {
+public interface CommonStationDelegate<S extends DockStation> {
 	/**
-	 * Gets a result for {@link CommonStation#getDockable()}.
+	 * Gets a result for {@link CommonDockStation#getDockable()}.
 	 * @return the dockable as it is seen by Common
 	 */
 	public CDockable getDockable();
 	
 	/**
-	 * Gets a result for {@link CommonStation#getStation()}.
+	 * Gets a result for {@link CommonDockStation#getStation()}.
 	 * @return the station as it is seen by Common
 	 */
-	public CStation<?> getStation();
+	public CStation<S> getStation();
 	
 	/**
-	 * Gets a result for {@link CommonStation#getSources()}.
+	 * Gets a result for {@link CommonDockStation#getSources()}.
 	 * @return the sources for the owner of this delegate
 	 */
 	public DockActionSource[] getSources();

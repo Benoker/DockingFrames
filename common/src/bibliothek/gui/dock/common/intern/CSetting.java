@@ -33,17 +33,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.frontend.Setting;
+import bibliothek.gui.dock.layout.DockLayout;
+import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockSituation;
+import bibliothek.gui.dock.layout.PredefinedDockSituation;
+import bibliothek.gui.dock.layout.PredefinedLayout;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.util.FrameworkOnly;
+import bibliothek.util.Todo;
 import bibliothek.util.Version;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -95,6 +104,49 @@ public class CSetting extends Setting{
      */
     public List<String> getMultipleFactoryDockables( String factoryId ){
         return multiFactoryDockables.get( factoryId );
+    }
+    
+    /**
+     * Tries to find the layout of a {@link DockStation} which was predefined with the unique
+     * identifier <code>id</code>.
+     * @param id the identifier to search
+     * @return the layout or <code>null</code> if not found
+     */
+    public DockLayoutComposition getPredefinedStation( String id ){
+    	for( String root : getRootKeys() ){
+    		DockLayoutComposition result = getPredefinedStation( id, getRoot( root ));
+    		if( result != null ){
+    			return result;
+    		}
+    	}
+    	return null;
+    }
+    
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MINOR, target=Todo.Version.VERSION_1_1_0,
+    		description="this code heavily depends on the internal implementation of other classes, it should be more generic" )
+    private DockLayoutComposition getPredefinedStation( String id, DockLayoutComposition current ){
+    	// check self
+    	DockLayout<?> layout = current.getLayout().getDataLayout();
+    	if( layout != null && layout.getFactoryID().equals( "predefined" )){
+    		PredefinedLayout predefined = (PredefinedLayout) layout.getData();
+    		String preloadedId = predefined.getPredefined();
+    		String root = DockFrontend.ROOT_KEY_PREFIX;
+    		if( preloadedId.length() == id.length()+root.length() && preloadedId.startsWith( root ) && preloadedId.endsWith( id )){
+    			return current;
+    		}
+    	}
+    	
+    	// check children
+    	List<DockLayoutComposition> children = current.getChildren();
+    	if( children != null ){
+    		for( DockLayoutComposition child : children ){
+    			DockLayoutComposition result = getPredefinedStation( id, child );
+    			if( result != null ){
+    				return result;
+    			}
+    		}
+    	}
+    	return null;
     }
     
     @Override

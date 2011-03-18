@@ -82,6 +82,9 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	
 	/** whether this perspective acts as working area */
 	private boolean workingArea;
+	
+	/** The type of this perspective */
+	private Path typeId;
 
 	/** identifiers children that are in normal mode */
 	private CModeAreaPerspective normalMode = new CModeAreaPerspective(){
@@ -127,26 +130,33 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
+	 * @param typeId the type of this station, can be <code>null</code>
 	 */
-	public CGridPerspective( String id ){
-		this( id, false );
+	public CGridPerspective( String id, Path typeId ){
+		this( id, typeId, false );
 	}
 
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
+	 * @param typeId the type of this station, can be <code>null</code>
 	 * @param workingArea whether this station should be treated as {@link CStation#isWorkingArea() working area} or not.
 	 */
-	public CGridPerspective( String id, boolean workingArea ){
+	public CGridPerspective( String id, Path typeId, boolean workingArea ){
 		super( id );
 		delegate = new CommonSplitDockPerspective();
 		delegate.setHasFullscreenAction( false );
 		setWorkingArea( workingArea );
 		gridClear();
+		this.typeId = typeId;
 	}
 	
 	public boolean isWorkingArea(){
 		return workingArea;
+	}
+	
+	public Path getTypeId(){
+		return typeId;
 	}
 	
 	/**

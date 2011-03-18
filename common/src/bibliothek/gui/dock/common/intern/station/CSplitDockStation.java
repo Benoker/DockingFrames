@@ -37,15 +37,14 @@ import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.util.FrameworkOnly;
 
 /**
- * An implementation of {@link SplitDockStation} that also satisfies the
- * {@link CommonDockable} interface.
+ * An implementation of {@link SplitDockStation} that also satisfies the {@link CommonDockStation} interface.
  * @author Benjamin Sigg
  */
 @FrameworkOnly
-public class CSplitDockStation extends SplitDockStation implements CommonStation<SplitDockStation>{
-	private CommonStationDelegate delegate;
+public class CSplitDockStation extends SplitDockStation implements CommonDockStation<SplitDockStation,CSplitDockStation>, CommonDockable{
+	private CommonStationDelegate<SplitDockStation> delegate;
 
-	public CSplitDockStation( CommonStationDelegate delegate ){
+	public CSplitDockStation( CommonStationDelegate<SplitDockStation> delegate ){
 		this.delegate = delegate;
 
 		getDockable().addCDockablePropertyListener( new CDockableAdapter(){
@@ -60,12 +59,21 @@ public class CSplitDockStation extends SplitDockStation implements CommonStation
 		return delegate.getDockable();
 	}
 
-	public CStation<?> getStation(){
+	public CStation<SplitDockStation> getStation(){
 		return delegate.getStation();
 	}
 	
+	public SplitDockStation getDockStation(){
+		return this;
+	}
+	
 	@Override
-	public SplitDockStation asDockStation(){
+	public CSplitDockStation asDockStation(){
+		return this;
+	}
+	
+	@Override
+	public CommonDockable asDockable(){
 		return this;
 	}
 

@@ -51,7 +51,7 @@ import bibliothek.gui.dock.station.support.PlaceholderStrategy;
  * and the methods which receive a <code>L</code> should use 
  * <code>instanceof</code> before casting the argument.
  */
-public interface DockFactory<D extends DockElement, P extends PerspectiveElement, L> extends DockConverter<D, L>{
+public interface DockFactory<D extends DockElement, P extends PerspectiveElement, L> extends DockConverter<D, P, L>{
 	/**
 	 * Tries to estimate the {@link DockableProperty}s of the children of the
 	 * station which is represented by <code>layout</code>.<br>
@@ -112,21 +112,4 @@ public interface DockFactory<D extends DockElement, P extends PerspectiveElement
      * station are going to be ignored.
      */
     public void layoutPerspective( P perspective, L layout, Map<Integer, PerspectiveDockable> children );
-    
-	
-	/**
-	 * Gets the layout information that is associated with <code>element</code>.
-	 * The layout information can be any {@link Object}. The only restriction
-	 * of the object is, that the associated {@link DockFactory} understands
-	 * how to read that object.<br>
-	 * This method may return <code>null</code> if and only if {@link #layoutPerspective(Object, Map)} always returns
-	 * <code>null</code>.
-	 * @param element the element whose layout information is asked.
-	 * @param children a map providing identifiers for the children of this element. The
-	 * identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.), 
-	 * the exact same identifiers would be given to {@link DockConverter#getLayout(bibliothek.gui.dock.DockElement, Map)}.
-	 * Is <code>null</code> if the children of this station should be ignored.
-	 * @return the layout information
-	 */
-	public L getPerspectiveLayout( P element, Map<PerspectiveDockable, Integer> children );
 }

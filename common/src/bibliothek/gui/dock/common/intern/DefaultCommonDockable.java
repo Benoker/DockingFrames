@@ -34,6 +34,7 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.action.CActionSource;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -82,6 +83,16 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
     
     public CDockable getDockable(){
         return dockable;
+    }
+    
+    @Override
+    public CommonDockable asDockable(){
+	    return this;
+    }
+    
+    @Override
+    public CommonDockStation<?,?> asDockStation(){
+    	return null;
     }
     
     public CStation<?> getStation(){

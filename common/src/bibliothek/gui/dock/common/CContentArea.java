@@ -29,7 +29,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -37,21 +36,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
-import bibliothek.gui.dock.common.event.ResizeRequestListener;
-import bibliothek.gui.dock.common.intern.AbstractCStation;
-import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
-import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CBaseLocation;
 import bibliothek.gui.dock.common.location.CMinimizedLocation;
 import bibliothek.gui.dock.common.location.Side;
-import bibliothek.gui.dock.common.mode.CLocationModeManager;
-import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
-import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
-import bibliothek.gui.dock.common.perspective.CGridPerspective;
-import bibliothek.gui.dock.common.perspective.CMinimizePerspective;
-import bibliothek.gui.dock.common.perspective.CStationPerspective;
+import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -72,6 +61,13 @@ import bibliothek.util.Todo.Version;
 @Todo( priority=Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, 
 		description="Introduce some interface 'MultiCStation' or similar: a set of CStations, CContentArea would implement this interface" )
 public class CContentArea extends JPanel{
+	
+	/** The result of {@link CStation#getTypeId()} for the center station */
+	public static final Path TYPE_ID_CENTER = new Path( "dock", "CContentArea", "center" );
+	
+	/** The result of {@link CStation#getTypeId()} for the minimize stations */
+	public static final Path TYPE_ID_MINIMIZE = new Path( "dock", "CContentArea", "minimize" );
+	
 	/**
 	 * References a corner of a panel.
 	 * @author Benjamin Sigg
@@ -88,25 +84,16 @@ public class CContentArea extends JPanel{
 	}
 
 	/** the child in the center */
-	private SplitDockStation center;
+	private CenterStation center;
 
 	/** the child at the north border */
-	private FlapDockStation north;
+	private MinimizeStation north;
 	/** the child at the south border */
-	private FlapDockStation south;
+	private MinimizeStation south;
 	/** the child at the east border */
-	private FlapDockStation east;
+	private MinimizeStation east;
 	/** the child at the west border */
-	private FlapDockStation west;
-
-	/** the component at the north side */
-	private JComponent northComponent;
-	/** the component at the south side */
-	private JComponent southComponent;
-	/** the component at the east side */
-	private JComponent eastComponent;
-	/** the component at the west side */
-	private JComponent westComponent;
+	private MinimizeStation west;
 
 	/** the components in the corners */
 	private Component[] cornerComponents = new Component[8];
@@ -128,51 +115,34 @@ public class CContentArea extends JPanel{
 	public CContentArea( CControl control, String uniqueId ){
 		this.control = control;
 		this.uniqueId = uniqueId;
-		center = control.getFactory().createSplitDockStation();
-		center.setExpandOnDoubleclick( false );
-
-		northComponent = new JPanel( new BorderLayout() );
-		southComponent = new JPanel( new BorderLayout() );
-		eastComponent = new JPanel( new BorderLayout() );
-		westComponent = new JPanel( new BorderLayout() );
-
-		north = control.getFactory().createFlapDockStation( northComponent );
-		south = control.getFactory().createFlapDockStation( southComponent );
-		east = control.getFactory().createFlapDockStation( eastComponent );
-		west = control.getFactory().createFlapDockStation( westComponent );
-
-		north.setAutoDirection( false );
-		north.setDirection( Direction.SOUTH );
-
-		south.setAutoDirection( false );
-		south.setDirection( Direction.NORTH );
-
-		east.setAutoDirection( false );
-		east.setDirection( Direction.WEST );
-
-		west.setAutoDirection( false );
-		west.setDirection( Direction.EAST );
-
-		setLayout( new BorderLayout() );
-		northComponent.add( north.getComponent(), BorderLayout.CENTER );
-		southComponent.add( south.getComponent(), BorderLayout.CENTER );
-		eastComponent.add( east.getComponent(), BorderLayout.CENTER );
-		westComponent.add( west.getComponent(), BorderLayout.CENTER );
-		add( center, BorderLayout.CENTER );
-		add( northComponent, BorderLayout.NORTH );
-		add( southComponent, BorderLayout.SOUTH );
-		add( eastComponent, BorderLayout.EAST );
-		add( westComponent, BorderLayout.WEST );
+		
 
 		CBaseLocation base = new CBaseLocation( this );
 
-		stations = new CStation[]{
-				new CenterStation( center, getCenterIdentifier(), base.normal() ),
-				new MinimizeStation( north, getNorthIdentifier(), new CMinimizedLocation( base, Side.NORTH ) ),
-				new MinimizeStation( south, getSouthIdentifier(), new CMinimizedLocation( base, Side.SOUTH ) ),
-				new MinimizeStation( east, getEastIdentifier(), new CMinimizedLocation( base, Side.EAST ) ),
-				new MinimizeStation( west, getWestIdentifier(), new CMinimizedLocation( base, Side.WEST ) )
-		};
+		center = new CenterStation( getCenterIdentifier(), base.normal() );
+		north = new MinimizeStation( getNorthIdentifier(), new CMinimizedLocation( base, Side.NORTH ) );
+		south = new MinimizeStation( getSouthIdentifier(), new CMinimizedLocation( base, Side.SOUTH ) );
+		east = new MinimizeStation( getEastIdentifier(), new CMinimizedLocation( base, Side.EAST ) );
+		west = new MinimizeStation( getWestIdentifier(), new CMinimizedLocation( base, Side.WEST ) );
+		
+		center.getStation().setExpandOnDoubleclick( false );
+
+		north.setDirection( Direction.SOUTH );
+
+		south.setDirection( Direction.NORTH );
+
+		east.setDirection( Direction.WEST );
+
+		west.setDirection( Direction.EAST );
+
+		setLayout( new BorderLayout() );
+		add( center.getStation(), BorderLayout.CENTER );
+		add( north, BorderLayout.NORTH );
+		add( south, BorderLayout.SOUTH );
+		add( east, BorderLayout.EAST );
+		add( west, BorderLayout.WEST );
+
+		stations = new CStation[]{ center, north, south, east, west };
 	}
 
 	/**
@@ -227,34 +197,34 @@ public class CContentArea extends JPanel{
 			switch( corner ){
 				case NORTH_WEST:
 					if( horizontal ){
-						northComponent.remove( cornerComponents[ index ] );
+						north.remove( cornerComponents[ index ] );
 					}
 					else{
-						westComponent.remove( cornerComponents[ index ] );
+						west.remove( cornerComponents[ index ] );
 					}
 					break;
 				case NORTH_EAST:
 					if( horizontal ){
-						northComponent.remove( cornerComponents[ index ] );
+						north.remove( cornerComponents[ index ] );
 					}
 					else{
-						eastComponent.remove( cornerComponents[ index ] );
+						east.remove( cornerComponents[ index ] );
 					}
 					break;
 				case SOUTH_WEST:
 					if( horizontal ){
-						southComponent.remove( cornerComponents[ index ] );
+						south.remove( cornerComponents[ index ] );
 					}
 					else{
-						westComponent.remove( cornerComponents[ index ] );
+						west.remove( cornerComponents[ index ] );
 					}
 					break;
 				case SOUTH_EAST:
 					if( horizontal ){
-						southComponent.remove( cornerComponents[ index ] );
+						south.remove( cornerComponents[ index ] );
 					}
 					else{
-						eastComponent.remove( cornerComponents[ index ] );
+						east.remove( cornerComponents[ index ] );
 					}
 					break;
 			}
@@ -265,34 +235,34 @@ public class CContentArea extends JPanel{
 			switch( corner ){
 				case NORTH_WEST:
 					if( horizontal ){
-						northComponent.add( component, BorderLayout.WEST );
+						north.add( component, BorderLayout.WEST );
 					}
 					else{
-						westComponent.add( component, BorderLayout.NORTH );
+						west.add( component, BorderLayout.NORTH );
 					}
 					break;
 				case NORTH_EAST:
 					if( horizontal ){
-						northComponent.add( component, BorderLayout.EAST );
+						north.add( component, BorderLayout.EAST );
 					}
 					else{
-						eastComponent.add( component, BorderLayout.NORTH );
+						east.add( component, BorderLayout.NORTH );
 					}
 					break;
 				case SOUTH_WEST:
 					if( horizontal ){
-						southComponent.add( component, BorderLayout.WEST );
+						south.add( component, BorderLayout.WEST );
 					}
 					else{
-						westComponent.add( component, BorderLayout.SOUTH );
+						west.add( component, BorderLayout.SOUTH );
 					}
 					break;
 				case SOUTH_EAST:
 					if( horizontal ){
-						southComponent.add( component, BorderLayout.EAST );
+						south.add( component, BorderLayout.EAST );
 					}
 					else{
-						eastComponent.add( component, BorderLayout.SOUTH );
+						east.add( component, BorderLayout.SOUTH );
 					}
 					break;
 			}
@@ -334,14 +304,30 @@ public class CContentArea extends JPanel{
 	 * @return the central station
 	 */
 	public SplitDockStation getCenter(){
+		return center.getStation();
+	}
+	
+	/**
+	 * Gets the station in the center of this {@link CContentArea}.
+	 * @return the central station
+	 */
+	public CGridArea getCenterArea(){
 		return center;
+	}
+	
+	/**
+	 * Gets the station in the north of this {@link CContentArea}
+	 * @return the station in the north
+	 */
+	public FlapDockStation getNorth(){
+		return north.getStation();
 	}
 
 	/**
 	 * Gets the station in the north of this {@link CContentArea}
 	 * @return the station in the north
 	 */
-	public FlapDockStation getNorth(){
+	public CMinimizeArea getNorthArea(){
 		return north;
 	}
 
@@ -350,6 +336,14 @@ public class CContentArea extends JPanel{
 	 * @return the station in the south
 	 */
 	public FlapDockStation getSouth(){
+		return south.getStation();
+	}
+
+	/**
+	 * Gets the station in the south of this {@link CContentArea}
+	 * @return the station in the south
+	 */
+	public CMinimizeArea getSouthArea(){
 		return south;
 	}
 
@@ -358,6 +352,14 @@ public class CContentArea extends JPanel{
 	 * @return the station in the east
 	 */
 	public FlapDockStation getEast(){
+		return east.getStation();
+	}
+	
+	/**
+	 * Gets the station in the east of this {@link CContentArea}
+	 * @return the station in the east
+	 */
+	public CMinimizeArea getEastArea(){
 		return east;
 	}
 
@@ -366,6 +368,14 @@ public class CContentArea extends JPanel{
 	 * @return the station in the west
 	 */
 	public FlapDockStation getWest(){
+		return west.getStation();
+	}
+
+	/**
+	 * Gets the station in the west of this {@link CContentArea}
+	 * @return the station in the west
+	 */
+	public CMinimizeArea getWestArea(){
 		return west;
 	}
 
@@ -462,29 +472,21 @@ public class CContentArea extends JPanel{
 	 * areas.
 	 * @author Benjamin Sigg
 	 */
-	private static class MinimizeStation extends AbstractCStation<FlapDockStation>{
-		private ResizeRequestListener handler;
-		private CFlapDockStationHandle modeManagerHandle;
+	private class MinimizeStation extends CMinimizeArea{
+		private CLocation location;
 		
-		public MinimizeStation( FlapDockStation station, String id, CLocation location ){
-			super( station, id, location );
-			handler = new FlapResizeRequestHandler( station );
-			modeManagerHandle = new CFlapDockStationHandle( this );
-		}
-
-		@Override
-		protected void install( CControlAccess access ) {
-			access.getOwner().addResizeRequestListener( handler );
-			access.getLocationManager().getMinimizedMode().add( modeManagerHandle );
-		}
-		@Override
-		protected void uninstall( CControlAccess access ) {
-			access.getOwner().removeResizeRequestListener( handler );
-			access.getLocationManager().getMinimizedMode().remove( modeManagerHandle.getUniqueId() );
+		public MinimizeStation( String id, CLocation location ){
+			super( control, id );
+			this.location = location;
 		}
 		
-		public CStationPerspective createPerspective(){
-			return new CMinimizePerspective( getUniqueId() );
+		public Path getTypeId(){
+			return TYPE_ID_MINIMIZE;
+		}
+		
+		@Override
+		public CLocation getStationLocation(){
+			return location;
 		}
 	}
 
@@ -493,33 +495,20 @@ public class CContentArea extends JPanel{
 	 * of the area.
 	 * @author Benjamin Sigg
 	 */
-	private class CenterStation extends AbstractCStation<SplitDockStation>{
-		private ResizeRequestListener handler;
-		private CSplitDockStationHandle modeManagerHandle;
+	private class CenterStation extends CGridArea {
+		private CLocation location;
 
-		public CenterStation( SplitDockStation station, String id, CLocation location ){
-			super( station, id, location );
-			handler = new SplitResizeRequestHandler( station );
-			modeManagerHandle = new CSplitDockStationHandle( this, control.getLocationManager() );
+		public CenterStation( String id, CLocation location ){
+			super( control, id );
 		}
 
-		@Override
-		protected void install( CControlAccess access ) {
-			access.getOwner().addResizeRequestListener( handler );
-			CLocationModeManager manager = access.getLocationManager();
-			manager.getNormalMode().add( modeManagerHandle.asNormalModeArea() );
-			manager.getMaximizedMode().add( modeManagerHandle.asMaximziedModeArea() );
-		}
-		@Override
-		protected void uninstall( CControlAccess access ) {
-			access.getOwner().removeResizeRequestListener( handler );
-			CLocationModeManager manager = access.getLocationManager();
-			manager.getNormalMode().remove( modeManagerHandle.asNormalModeArea().getUniqueId() );
-			manager.getMaximizedMode().remove( modeManagerHandle.asMaximziedModeArea().getUniqueId() );
+		public Path getTypeId(){
+			return TYPE_ID_CENTER;
 		}
 		
-		public CStationPerspective createPerspective(){
-			return new CGridPerspective( getUniqueId(), isWorkingArea() );
+		@Override
+		public CLocation getStationLocation(){
+			return location;
 		}
 	}
 }

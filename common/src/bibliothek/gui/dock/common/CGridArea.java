@@ -38,7 +38,7 @@ import bibliothek.gui.dock.common.intern.AbstractDockableCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.common.intern.station.CommonStation;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CGridAreaLocation;
@@ -48,6 +48,7 @@ import bibliothek.gui.dock.common.perspective.CGridPerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Path;
 
 /**
  * In a {@link CGridArea} normalized {@link CDockable} can be shown. Clients
@@ -56,6 +57,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  */
 public class CGridArea extends AbstractDockableCStation<SplitDockStation> implements SingleCDockable {
+	/** The result of {@link #getTypeId()} */
+	public static final Path TYPE_ID = new Path( "dock", "CGridArea" );
+	
 	/** the unique identifier of this area */
 	private String uniqueId;
 	/** the station representing this area */
@@ -96,10 +100,10 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 			throw new NullPointerException( "id must not be null" );
 		
 		this.uniqueId = uniqueId;
-		CommonStation<SplitDockStation> station = control.getFactory().createSplitDockStation( new Delegate() );
+		CommonDockStation<SplitDockStation,?> station = control.getFactory().createSplitDockStation( new Delegate() );
 		
-		this.station = station.asDockStation();
-		init( station );
+		this.station = station.getDockStation();
+		init( station.asDockable() );
 		
 		setTitleShown( false );
 		this.station.setExpandOnDoubleclick( false );
@@ -132,7 +136,7 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 	}
 	
 	public CStationPerspective createPerspective(){
-		return new CGridPerspective( getUniqueId(), isWorkingArea() );
+		return new CGridPerspective( getUniqueId(), getTypeId(), isWorkingArea() );
 	}
 
     /**
@@ -147,6 +151,10 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 		return new CGridAreaLocation( this );
 	}
 
+	public Path getTypeId(){
+		return TYPE_ID;
+	}
+	
 	/**
 	 * Sets the text that is shown as title.
 	 * @param text the title
@@ -285,7 +293,7 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 	  * of this area.
 	  * @author Benjamin Sigg
 	  */
-	 private class Delegate implements CommonStationDelegate{
+	 private class Delegate implements CommonStationDelegate<SplitDockStation>{
 		public CDockable getDockable(){
 			return CGridArea.this;
 		}

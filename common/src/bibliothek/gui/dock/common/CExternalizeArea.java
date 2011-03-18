@@ -26,9 +26,12 @@
 package bibliothek.gui.dock.common;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.intern.AbstractCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
+import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.common.mode.CExternalizedMode;
@@ -39,6 +42,8 @@ import bibliothek.gui.dock.common.mode.station.CScreenDockStationHandle;
 import bibliothek.gui.dock.common.perspective.CExternalizePerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
+import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Path;
 
 /**
  * This {@link CStation} handles those {@link CDockable}s whose mode is
@@ -46,6 +51,9 @@ import bibliothek.gui.dock.facile.station.screen.WindowProviderVisibility;
  * @author Benjamin Sigg
  */
 public class CExternalizeArea extends AbstractCStation<ScreenDockStation> {
+	/** The result of {@link #getTypeId()} */
+	public static final Path TYPE_ID = new Path( "dock", "CExternalizeArea" );
+	
 	/** responsible for handling resize requests */
     private ScreenResizeRequestHandler handler;
     /** responsible for representing this in the {@link CLocationModeManager} */
@@ -59,18 +67,31 @@ public class CExternalizeArea extends AbstractCStation<ScreenDockStation> {
      * @param id the unique identifier of this area
      */
     public CExternalizeArea( CControl control, String id ){
-    	this( control.getFactory().createScreenDockStation( control.getRootWindow() ), id, CExternalizedLocation.STATION );
+    	init( control, id );
     }
     
-    /**
-     * Creates a new area.
-     * @param station the station which is used as delegate by this area
-     * @param id the unique identifier of this area
-     * @param location a location that points directly to this station, is used as starting location
-     * when building the {@link CLocation} object for a child of this station
-     */
-    public CExternalizeArea( ScreenDockStation station, String id, CLocation location ){
-    	super( station, id, location );
+    
+    private void init( CControl control, String id ){
+    	CommonDockStation<ScreenDockStation,?> station = control.getFactory().createScreenDockStation( control.getRootWindow(), new CommonStationDelegate<ScreenDockStation>(){
+			public boolean isTitleDisplayed( DockTitleVersion title ){
+				return false;
+			}
+			
+			public CStation<ScreenDockStation> getStation(){
+				return CExternalizeArea.this;
+			}
+			
+			public DockActionSource[] getSources(){
+				return new DockActionSource[]{};
+			}
+			
+			public CDockable getDockable(){
+				return null;
+			}
+		});
+    	
+    	init( station.getDockStation(), id, CExternalizedLocation.STATION );
+    	
     	handler = new ScreenResizeRequestHandler( getStation() );
     	visibility = new WindowProviderVisibility( getStation() );
     	getStation().setShowing( false );
@@ -108,6 +129,10 @@ public class CExternalizeArea extends AbstractCStation<ScreenDockStation> {
     }
     
     public CStationPerspective createPerspective(){
-	    return new CExternalizePerspective( getUniqueId() );
+	    return new CExternalizePerspective( getUniqueId(), getTypeId() );
+    }
+    
+    public Path getTypeId(){
+	    return TYPE_ID;
     }
 }

@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,26 +23,25 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.perspective;
+package bibliothek.gui.dock.common.perspective;
 
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.util.Path;
 
 /**
- * A helper class that can tell for some {@link PerspectiveElement}s what their unique identifier is,
- * and that can convert the unique identifier to a {@link PerspectiveElement}.
+ * This strategy is used by a {@link CControl} or a {@link CControlPerspective} to create
+ * {@link CStationPerspective}s for root-stations that are not (yet) registered at the 
+ * {@link CControl}.
  * @author Benjamin Sigg
  */
-public interface PredefinedMap{
+public interface MissingPerspectiveStrategy {
 	/**
-	 * Given <code>element</code>, tells what unique identifier <code>element</code> has.
-	 * @param element the element whose identifier is searched
-	 * @return the unique identifier or <code>null</code> if <code>element</code> is not known to this map
+	 * Creates the root station that represented <code>id</code>.
+	 * @param id the root
+	 * @param typeId the type of the station, this is the identifier that was returned by {@link CStation#getTypeId()},
+	 * can be <code>null</code>
+	 * @return the new perspective, can be <code>null</code>
 	 */
-	public String get( PerspectiveElement element );
-	
-	/**
-	 * Given a unique identifier <code>id</code>, tells what {@link PerspectiveElement} belongs to that id.
-	 * @param id the unique identifier
-	 * @return the matching element, can be <code>null</code> if <code>id</code> is unknown
-	 */
-	public PerspectiveElement get( String id );
+	public CStationPerspective createRoot( String id, Path typeId );
 }

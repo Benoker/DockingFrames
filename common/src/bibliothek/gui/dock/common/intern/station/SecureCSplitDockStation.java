@@ -32,6 +32,7 @@ import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.security.SecureSplitDockStation;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.util.FrameworkOnly;
@@ -49,10 +50,10 @@ import bibliothek.util.Todo.Version;
 @Todo( priority=Priority.ENHANCEMENT, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_1,
 		description="Remove this class" )
 @Deprecated
-public class SecureCSplitDockStation extends SecureSplitDockStation implements CommonStation<SplitDockStation>{
-	private CommonStationDelegate delegate;
+public class SecureCSplitDockStation extends SecureSplitDockStation implements CommonDockStation<SplitDockStation,SecureCSplitDockStation>, CommonDockable{
+	private CommonStationDelegate<SplitDockStation> delegate;
 
-	public SecureCSplitDockStation( CommonStationDelegate delegate ){
+	public SecureCSplitDockStation( CommonStationDelegate<SplitDockStation> delegate ){
 		this.delegate = delegate;
 
 		getDockable().addCDockablePropertyListener( new CDockableAdapter(){
@@ -67,12 +68,21 @@ public class SecureCSplitDockStation extends SecureSplitDockStation implements C
 		return delegate.getDockable();
 	}
 
-	public CStation<?> getStation(){
+	public CStation<SplitDockStation> getStation(){
 		return delegate.getStation();
 	}
 	
+	public SplitDockStation getDockStation(){
+		return this;
+	}
+	
 	@Override
-	public SplitDockStation asDockStation(){
+	public SecureCSplitDockStation asDockStation(){
+		return this;
+	}
+	
+	@Override
+	public CommonDockable asDockable(){
 		return this;
 	}
 

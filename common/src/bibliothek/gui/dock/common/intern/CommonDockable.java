@@ -36,7 +36,7 @@ import bibliothek.gui.dock.common.SingleCDockable;
  * A {@link Dockable} which is a wrapper for a {@link CDockable}.
  * @author Benjamin Sigg
  */
-public interface CommonDockable extends Dockable{
+public interface CommonDockable extends Dockable, CommonElement{
 	/**
 	 * Gets the model of this dockable.
 	 * @return the model

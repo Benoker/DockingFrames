@@ -26,24 +26,33 @@
 package bibliothek.gui.dock.common.intern.station;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.CommonElement;
 
 /**
- * An interface that can be implemented by classes that extend a {@link DockStation},
- * are {@link Dockable}s and that should implement {@link CommonDockable}
- * as well. This interface guarantees type safety but does not specify any
- * additional features.
+ * An interface that can be implemented by classes that extend a {@link DockStation} and
+ * that represent a {@link CStation}.
  * @author Benjamin Sigg
- *
+
  * @param <S> the kind of station this wrapps
  */
-public interface CommonStation<S extends DockStation> extends CommonDockable{
-
+public interface CommonDockStation<S extends DockStation, C extends CommonDockStation<S,C>> extends CommonElement, DockStation{
+	/**
+	 * Gets <code>this</code> as <code>S</code>.
+	 * @return <code>this</code>
+	 */
+	public S getDockStation();
+	
 	/**
 	 * Returns <code>this</code> as station of type <code>S</code>. This method
 	 * is not allowed to return <code>null</code>.
 	 * @return <code>this</code>
 	 */
-	public S asDockStation();
+	public C asDockStation();
+	
+	/**
+	 * Gets the model of this station.
+	 * @return the model, may not be <code>null</code>
+	 */
+	public CStation<S> getStation();
 }

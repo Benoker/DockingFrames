@@ -33,6 +33,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1371,5 +1372,14 @@ public class DockSituation {
      */
     public AdjacentDockFactory<?> getAdjacentFactory( String id ){
         return adjacent.get( id );
+    }
+    
+    /**
+     * Gets all the adjacent factories that are currently registered at this {@link DockSituation},
+     * the returned {@link Map} is unmodifiable.
+     * @return an unmodifiable map containing all {@link AdjacentDockFactory}s.
+     */
+    public Map<String, AdjacentDockFactory<?>> getAdjacentFactorys(){
+    	return Collections.unmodifiableMap( adjacent );
     }
 }

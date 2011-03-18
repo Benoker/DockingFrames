@@ -53,6 +53,9 @@ public class CExternalizePerspective implements CStationPerspective{
 	/** the owner of this object */
 	private CPerspective perspective;
 	
+	/** The type of this perspective */
+	private Path typeId;
+	
 	/** identifiers children that are in normal mode */
 	private CModeAreaPerspective extenalMode = new CModeAreaPerspective() {
 		public String getUniqueId(){
@@ -91,17 +94,23 @@ public class CExternalizePerspective implements CStationPerspective{
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
+	 * @param typeId the type of this station, can be <code>null</code>
 	 */
-	public CExternalizePerspective( String id ){
+	public CExternalizePerspective( String id, Path typeId ){
 		if( id == null ){
 			throw new IllegalArgumentException( "id is null" );
 		}
 		this.id = id;
+		this.typeId = typeId;
 		delegate = new CommonScreenDockPerspective();
 	}
 	
 	public String getUniqueId(){
 		return id;
+	}
+	
+	public Path getTypeId(){
+		return typeId;
 	}
 
 	public void setPerspective( CPerspective perspective ){

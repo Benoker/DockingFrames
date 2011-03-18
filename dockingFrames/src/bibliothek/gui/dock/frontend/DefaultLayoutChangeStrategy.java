@@ -197,8 +197,8 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
         }
         
         perspective.put( new PredefinedMap(){
-			public PerspectiveElement get( String id ){
-				if( id.startsWith( DockFrontend.DOCKABLE_KEY_PREFIX )){
+        	public PerspectiveElement get( String id ){
+        		if( id.startsWith( DockFrontend.DOCKABLE_KEY_PREFIX )){
 					return cache.get( id.substring( DockFrontend.DOCKABLE_KEY_PREFIX.length() ), false );
 				}
 				else if( id.startsWith( DockFrontend.ROOT_KEY_PREFIX )){

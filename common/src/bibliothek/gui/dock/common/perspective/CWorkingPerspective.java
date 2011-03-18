@@ -33,6 +33,7 @@ import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Entry;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.EntryListener;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Leaf;
+import bibliothek.util.Path;
 
 /**
  * A representation of a {@link CWorkingArea}. When using this perspective to handle the children of a {@link CWorkingArea} 
@@ -57,9 +58,10 @@ public class CWorkingPerspective extends CGridPerspective{
 	/**
 	 * Creates a new working area.
 	 * @param id the unique identifier of this area
+	 * @param typeId the type of this station, can be <code>null</code>
 	 */
-	public CWorkingPerspective( String id ){
-		super( id, true );
+	public CWorkingPerspective( String id, Path typeId ){
+		super( id, typeId, true );
 	}
 	
 	/**

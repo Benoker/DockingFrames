@@ -26,28 +26,38 @@
 package bibliothek.gui.dock.common;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 
 import javax.swing.JPanel;
 
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
+import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CMinimizeAreaLocation;
 import bibliothek.gui.dock.common.mode.CMinimizedModeArea;
 import bibliothek.gui.dock.common.mode.station.CFlapDockStationHandle;
 import bibliothek.gui.dock.common.perspective.CMinimizePerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
+import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Path;
 
 /**
- * An area where {@link CDockable}s can be stored in their minimized state.
- * This class is a subclass of {@link JPanel} and can be added anywhere in any
- * frame or dialog.
+ * An area where {@link CDockable}s can be stored in their minimized state. This class is a subclass of {@link JPanel} and 
+ * can be added anywhere in any frame or dialog. This {@link JPanel} uses a {@link BorderLayout} and clients may add
+ * additional {@link Component}s to it, the {@link Component}s the size and location of the opening window will always
+ * depend on this {@link JPanel}.
  * @author Benjamin Sigg
  */
 public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
-    private FlapDockStation station;
+	/** The result of {@link #getTypeId()} */
+	public static final Path TYPE_ID = new Path( "dock", "CMinimizeArea" );
+	
+    private CommonDockStation<FlapDockStation,?> station;
     private ResizeRequestListener request;
     private CControlAccess access;
     private String uniqueId;
@@ -63,10 +73,27 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
         
         setLayout( new BorderLayout() );
         
-        station = control.getFactory().createFlapDockStation( this );
-        request = new FlapResizeRequestHandler( station );
+        station = control.getFactory().createFlapDockStation( this, new CommonStationDelegate<FlapDockStation>(){
+			public boolean isTitleDisplayed( DockTitleVersion title ){
+				return true;
+			}
+			
+			public CStation<FlapDockStation> getStation(){
+				return CMinimizeArea.this;
+			}
+			
+			public DockActionSource[] getSources(){
+				return new DockActionSource[]{};
+			}
+			
+			public CDockable getDockable(){
+				return null;
+			}
+		});
         
-        add( station.getComponent(), BorderLayout.CENTER );
+        request = new FlapResizeRequestHandler( station.getDockStation() );
+        
+        add( getStation().getComponent(), BorderLayout.CENTER );
         
         setDirection( null );
         
@@ -94,13 +121,17 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
     public String getUniqueId() {
         return uniqueId;
     }
-    
+
+	public Path getTypeId(){
+		return TYPE_ID;
+	}
+	
     public FlapDockStation getStation(){
-        return station;
+        return station.getDockStation();
     }
     
     public CStationPerspective createPerspective(){
-    	return new CMinimizePerspective( getUniqueId() );
+    	return new CMinimizePerspective( getUniqueId(), getTypeId() );
     }
     
     public CLocation getStationLocation() {
@@ -121,6 +152,8 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
      * decide automatically
      */
     public void setDirection( FlapDockStation.Direction direction ){
+    	FlapDockStation station = getStation();
+    	
         if( direction == null ){
             station.setAutoDirection( true );
         }

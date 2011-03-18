@@ -64,6 +64,7 @@ public class CDockFrontend extends DockFrontend{
         super( controller );
         this.control = control;
         setLayoutChangeStrategy( new CLayoutChangeStrategy( control.getOwner() ) );
+        registerAdjacentFactory( new RootStationAdjacentFactory() );
     }
     
     /**

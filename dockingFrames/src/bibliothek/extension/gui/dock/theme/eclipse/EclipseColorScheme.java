@@ -32,10 +32,6 @@ import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.basic.BasicColorScheme;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 import bibliothek.util.Colors;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A {@link ColorScheme} used by the {@link EclipseTheme}.

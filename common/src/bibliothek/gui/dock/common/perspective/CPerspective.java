@@ -187,19 +187,19 @@ public class CPerspective {
 		ensureType( west, CMinimizePerspective.class );
 		
 		if( getRoot( center ) == null ){
-			addRoot( new CGridPerspective( center, false ));
+			addRoot( new CGridPerspective( center, CContentArea.TYPE_ID_CENTER, false ));
 		}
 		if( getRoot( north ) == null ){
-			addRoot( new CMinimizePerspective( north ));
+			addRoot( new CMinimizePerspective( north, CContentArea.TYPE_ID_MINIMIZE ));
 		}
 		if( getRoot( south ) == null ){
-			addRoot( new CMinimizePerspective( south ));
+			addRoot( new CMinimizePerspective( south, CContentArea.TYPE_ID_MINIMIZE ));
 		}
 		if( getRoot( east ) == null ){
-			addRoot( new CMinimizePerspective( east ));
+			addRoot( new CMinimizePerspective( east, CContentArea.TYPE_ID_MINIMIZE ));
 		}
 		if( getRoot( west ) == null ){
-			addRoot( new CMinimizePerspective( west ));
+			addRoot( new CMinimizePerspective( west, CContentArea.TYPE_ID_MINIMIZE ));
 		}
 		return new CContentPerspective( this, id );
 	}

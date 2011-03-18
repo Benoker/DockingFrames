@@ -26,6 +26,11 @@
 
 package bibliothek.gui.dock;
 
+import java.awt.EventQueue;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -46,6 +51,12 @@ public class DockHierarchyLock {
 	
 	/** if greater than 0, no exception is ever thrown */
 	private volatile int concurrent = 0;
+	
+	/** the {@link Runnable}s to execute once a {@link Token} is released */
+	private Queue<Runnable> onRelease = new LinkedList<Runnable>();
+	
+	/** whether a {@link Runnable} from {@link #onRelease} is currently executed */
+	private boolean onReleaseRunning = false;
 	
 	/**
 	 * Sets whether exceptions should be thrown or only printed.
@@ -85,6 +96,81 @@ public class DockHierarchyLock {
 	 */
 	public boolean isConcurrent(){
 		return concurrent > 0;
+	}
+	
+	/**
+	 * Executes <code>run</code> once no {@link Token} is acquired anymore. The exact order of how and when
+	 * the {@link Runnable}s are executed is:
+	 * <ul>
+	 * 	<li>Any token acquired while {@link #isConcurrent()} returns <code>true</code> will be ignored.</li>
+	 *  <li>There is a queue of {@link Runnable}s, <code>run</code> will be added to the end of that queue. The queue
+	 *  will be executed from the beginning to the end, this order cannot be changed.</li>
+	 *  <li>If this is a recursive call, then <code>run</code> will never be executed directly.</li>
+	 *  <li>If currently no {@link Token} is acquired, then <code>run</code> is executed immediatelly.</li>
+	 *  <li><code>run</code> is always executed in the EDT, other {@link Thread}s may be blocked until <code>run</code>
+	 *  is completed</li>
+	 * </ul>
+	 * @param run the {@link Runnable} to executed, not <code>null</code>
+	 * @throws IllegalArgumentException if <code>run</code> is <code>null</code>
+	 * @throws IllegalStateException if an {@link InterruptedException} is caought
+	 */
+	public void onRelease( Runnable run ){
+		if( run == null ){
+			throw new IllegalArgumentException( "run must not be null" );
+		}
+	
+		synchronized( onRelease ) {
+			onRelease.add( run );
+		}
+		
+		runOnRelease();
+	}
+	
+	private void runOnRelease(){
+		if( EventQueue.isDispatchThread() ){
+			if( !onReleaseRunning ){
+				synchronized( this ) {
+					if( token != null ){
+						return;
+					}
+				}
+				
+				try{
+					onReleaseRunning = true;
+					
+					while( true ){
+						Runnable run = null;
+						synchronized( onRelease ){
+							run = onRelease.poll();
+						}
+						if( run == null ){
+							break;
+						}
+						
+						run.run();
+					}
+					
+				}
+				finally{
+					onReleaseRunning = false;
+				}
+			}
+		}
+		else{
+			try {
+				EventQueue.invokeAndWait( new Runnable(){
+					public void run(){
+						runOnRelease();
+					}
+				});
+			}
+			catch( InterruptedException e ) {
+				throw new IllegalStateException( e );
+			}
+			catch( InvocationTargetException e ) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
@@ -250,16 +336,26 @@ public class DockHierarchyLock {
 		 * Releases the lock.
 		 * @throws IllegalStateException if the state is not as suggested by the
 		 * acquierer when acquiering the lock
+		 * @throws IllegalStateException if blocking access to the EDT was required and an {@link InterruptedException}
+		 * occured
 		 */
 		public void release(){
 			synchronized( this ){
 				if( lock != null ){
-					lock.token = null;
+					boolean release = lock.token == this;
+					if( release ){
+						lock.token = null;
+					}
+					
 					if( link ){
 						lock.ensureLinked( station, dockable );
 					}
 					else{
 						lock.ensureUnlinked( station, dockable );
+					}
+					
+					if( release ){
+						lock.runOnRelease();
 					}
 				}
 			}

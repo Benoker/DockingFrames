@@ -37,6 +37,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.layout.AdjacentDockFactory;
 import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
@@ -189,7 +190,21 @@ public abstract class Perspective {
 			info.setPlaceholder( dockable.getPlaceholder() );
 		}
 		
-		return new DockLayoutComposition( info, null, children, ignoreChildren );
+		List<DockLayout<?>> adjacentLayouts = null;
+		for( AdjacentDockFactory<?> adjacent : situation.getAdjacentFactorys().values() ){
+			if( adjacent.interested( element )){
+				data = adjacent.getPerspectiveLayout( element, ids );
+				if( data != null ){
+					layout = new DockLayout<Object>( adjacent.getID(), data );
+					if( adjacentLayouts == null ){
+						adjacentLayouts = new ArrayList<DockLayout<?>>();
+					}
+					adjacentLayouts.add( layout );
+				}
+			}
+		}
+		
+		return new DockLayoutComposition( info, adjacentLayouts, children, ignoreChildren );
 	}
 
 	/**

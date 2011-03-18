@@ -30,8 +30,11 @@ import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
+import bibliothek.gui.dock.common.perspective.MissingPerspectiveStrategy;
 import bibliothek.gui.dock.facile.mode.ModeArea;
+import bibliothek.util.Path;
 
 /**
  * A {@link CStation} is an element onto which {@link CDockable}s can be dropped.
@@ -61,6 +64,7 @@ public interface CStation<S extends DockStation> {
      * does not need to set any content of the new perspective. Basically this method just needs to tell
      * the framework what type of {@link CStationPerspective} is needed, not what its content is.
      * @return the new, empty perspective
+     * @see #getTypeId()
      */
     public CStationPerspective createPerspective();
     
@@ -80,6 +84,15 @@ public interface CStation<S extends DockStation> {
      * @return the unique identifier
      */
     public String getUniqueId();
+    
+    /**
+     * Gets a unique path denoting the type of this station. This path will be given
+     * to {@link MissingPerspectiveStrategy#createRoot(String, Path)} when loading a layout
+     * as a {@link CPerspective}.
+     * @return the type of this station. Paths starting with "dock." are reserved for the
+     * framework. A value of <code>null</code> will just be ignored.
+     */
+    public Path getTypeId();
     
     /**
      * Gets a location which represents directly {@link #getStation()}. 

@@ -34,6 +34,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
@@ -47,7 +49,7 @@ import bibliothek.util.xml.XElement;
  * @param <D> the kind of {@link DockElement} this converter handles
  * @param <L> the kind of data this converter uses as intermediate format
  */
-public interface DockConverter <D extends DockElement, L>{
+public interface DockConverter <D extends DockElement, P extends PerspectiveElement, L>{
     /**
      * Gets the unique name of this converter. Please note that unique identifiers
      * starting with "dock." should not be used by clients.
@@ -71,6 +73,22 @@ public interface DockConverter <D extends DockElement, L>{
      * @return the newly created, independent layout object.
      */
     public L getLayout( D element, Map<Dockable, Integer> children );
+
+	/**
+	 * Gets the layout information that is associated with <code>element</code>.
+	 * The layout information can be any {@link Object}. The only restriction
+	 * of the object is, that the associated {@link DockFactory} understands
+	 * how to read that object.<br>
+	 * This method may return <code>null</code> if and only if {@link #layoutPerspective(Object, Map)} always returns
+	 * <code>null</code>.
+	 * @param element the element whose layout information is asked.
+	 * @param children a map providing identifiers for the children of this element. The
+	 * identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.), 
+	 * the exact same identifiers would be given to {@link DockConverter#getLayout(bibliothek.gui.dock.DockElement, Map)}.
+	 * Is <code>null</code> if the children of this station should be ignored.
+	 * @return the layout information
+	 */
+	public L getPerspectiveLayout( P element, Map<PerspectiveDockable, Integer> children );
     
     /**
      * Reads the contents of <code>layout</code> and changes the layout of

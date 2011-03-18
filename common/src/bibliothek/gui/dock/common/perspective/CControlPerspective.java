@@ -41,11 +41,15 @@ import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.common.intern.RootStationAdjacentFactory;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.Setting;
+import bibliothek.gui.dock.layout.DockLayout;
+import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.util.Path;
 
 /**
  * A {@link CControlPerspective} is a wrapper around a {@link CControl} allowing
@@ -137,7 +141,7 @@ public class CControlPerspective {
     	CSetting setting = new CSetting();
     	
     	// layout
-    	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective ) );
+    	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective, null ) );
     	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
@@ -159,7 +163,7 @@ public class CControlPerspective {
     
     private CPerspective convert( CSetting setting, boolean includeWorkingAreas ){
     	CPerspective cperspective = createEmptyPerspective();
-    	Perspective perspective = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( cperspective ) );
+    	Perspective perspective = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( cperspective, setting ) );
     	
     	// layout
     	for( String key : setting.getRootKeys() ){
@@ -178,14 +182,18 @@ public class CControlPerspective {
      */
     private class PerspectiveElementFactory implements FrontendPerspectiveCache{
     	private CPerspective perspective;
+    	private CSetting setting;
     	private Map<String, SingleCDockablePerspective> dockables = new HashMap<String, SingleCDockablePerspective>();
     	
     	/**
     	 * Creates a new factory.
     	 * @param perspective the perspective for which items are required
+    	 * @param setting the source where information is read from, may be <code>null</code> if this
+    	 * factory is used to write
     	 */
-    	public PerspectiveElementFactory( CPerspective perspective ){
+    	public PerspectiveElementFactory( CPerspective perspective, CSetting setting ){
     		this.perspective = perspective;
+    		this.setting = setting;
     		Iterator<PerspectiveElement> elements = perspective.elements();
     		while( elements.hasNext() ){
     			PerspectiveElement element = elements.next();
@@ -216,9 +224,30 @@ public class CControlPerspective {
 			throw new IllegalArgumentException( "The intern DockFrontend of the CControl has elements registered that are not SingleCDockables: " + id + "=" + element );
 		}
 		
+		@SuppressWarnings("unchecked")
 		public PerspectiveElement get( String id, boolean rootStation ){
 			if( rootStation ){
-				return perspective.getRoot( id ).intern();
+				DockLayoutComposition root = setting.getPredefinedStation( id );
+				Path stationType = null;
+				
+				if( root != null ){
+					DockLayout<Path> layout = (DockLayout<Path>)root.getAdjacent( RootStationAdjacentFactory.FACTORY_ID );
+					if( layout != null){
+						stationType = layout.getData();
+					}
+				}
+				
+				CStationPerspective station = perspective.getRoot( id );
+				if( station == null ){
+					station = control.getOwner().getMissingPerspectiveStrategy().createRoot( id, stationType );
+					if( station != null ){
+						perspective.addRoot( station );
+					}
+				}
+				if( station == null ){
+					return null;
+				}
+				return station.intern();
 			}
 			else{
 				if( control.getRegister().isSingleId( id )){

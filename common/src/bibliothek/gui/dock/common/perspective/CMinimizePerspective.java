@@ -33,6 +33,7 @@ import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.flap.FlapDockPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.util.Path;
 
 /**
  * This {@link PerspectiveStation} represents a {@link CMinimizeArea}.
@@ -47,6 +48,9 @@ public class CMinimizePerspective implements CStationPerspective{
 	
 	/** the owner of this object */
 	private CPerspective perspective;
+
+	/** The type of this perspective */
+	private Path typeId;
 	
 	/** the mode this station represents */
 	private CModeAreaPerspective mode = new CModeAreaPerspective() {
@@ -61,12 +65,14 @@ public class CMinimizePerspective implements CStationPerspective{
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
+	 * @param typeId the type of this station, can be <code>null</code>
 	 */
-	public CMinimizePerspective( String id ){
+	public CMinimizePerspective( String id, Path typeId ){
 		if( id == null ){
 			throw new IllegalArgumentException( "id is null" );
 		}
 		this.id = id;
+		this.typeId = typeId;
 		delegate = new CommonFlapDockPerspective();
 	}
 
@@ -80,6 +86,10 @@ public class CMinimizePerspective implements CStationPerspective{
 			CMinimizedModePerspective mode = (CMinimizedModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.MINIMIZED );
 			mode.add( this.mode );
 		}
+	}
+
+	public Path getTypeId(){
+		return typeId;
 	}
 	
 	/**

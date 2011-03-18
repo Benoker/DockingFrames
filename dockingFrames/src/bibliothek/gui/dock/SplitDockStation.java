@@ -1411,6 +1411,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			access.arm();
 			DockUtilities.checkLayoutLocked();
 			if( getDockableCount() == 0 ) {
+				if( !acceptable( dockable )){
+					return false;
+				}
+				
 				drop(dockable);
 				return true;
 			}

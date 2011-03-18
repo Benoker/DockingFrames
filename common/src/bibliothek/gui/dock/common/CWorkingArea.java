@@ -32,6 +32,7 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
 import bibliothek.gui.dock.common.perspective.CWorkingPerspective;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
+import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -46,6 +47,8 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  */
 public class CWorkingArea extends CGridArea{
+	/** The result of {@link #getTypeId()} */
+	public static final Path TYPE_ID = new Path( "dock", "CWorkingArea" );
     
     /**
      * Creates a new area.
@@ -69,7 +72,7 @@ public class CWorkingArea extends CGridArea{
     
     @Override
     public CWorkingPerspective createPerspective(){
-    	return new CWorkingPerspective( getUniqueId() );
+    	return new CWorkingPerspective( getUniqueId(), getTypeId() );
     }
     
     /**
@@ -152,5 +155,10 @@ public class CWorkingArea extends CGridArea{
 			description="remove this method" )
 	public boolean isSuppressTitle() {
 		return !isTitleShown();
+	}
+	
+	@Override
+	public Path getTypeId(){
+		return TYPE_ID;
 	}
 }

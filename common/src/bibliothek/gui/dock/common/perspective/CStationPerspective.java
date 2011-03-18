@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.util.FrameworkOnly;
+import bibliothek.util.Path;
 
 /**
  * A representation of a {@link CStation}.
@@ -38,6 +39,13 @@ public interface CStationPerspective extends CElementPerspective{
 	 * @return the unique identifier
 	 */
 	public String getUniqueId();
+	
+	/**
+	 * Gets the unique id denoting the type of this {@link CStation}, this should be the
+	 * exact same result as {@link CStation#getTypeId()} will return.
+	 * @return the type id, can be <code>null</code>
+	 */
+	public Path getTypeId();
 	
 	/**
 	 * Informs this station by which perspective it is used. 

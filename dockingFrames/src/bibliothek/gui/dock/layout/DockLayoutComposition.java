@@ -82,6 +82,22 @@ public class DockLayoutComposition {
     }
     
     /**
+     * Searches for the {@link DockLayout} whose factory is set to <code>factoryId</code>.
+     * @param factoryId the name of some {@link AdjacentDockFactory}.
+     * @return the matching layout or <code>null</code> if not found
+     */
+    public DockLayout<?> getAdjacent( String factoryId ){
+    	if( adjacent != null ){
+	    	for( DockLayout<?> layout : adjacent ){
+	    		if( layout.getFactoryID().equals( factoryId )){
+	    			return layout;
+	    		}
+	    	}
+    	}
+    	return null;
+    }
+    
+    /**
      * Gets the list of all known children of this composition.
      * @return the list of children
      */
