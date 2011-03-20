@@ -490,3 +490,5 @@
 ! API: New interface CommonElement, changed the types of several methods in CommonStation/CommonDockable, added generics. The type system should now enforce the correct implementation of all the different methods.
 - API: CContentArea is now based on CGridArea and CMinimizedArea which greatly reduces complexity
 ! API: AdjacentDockFactorys can now also write meta data for PerspectiveElements
+- Bugfix: changing the LookAndFeel now again updates all the colors
+- Bugfix: Colors.brighter did make a color darker
