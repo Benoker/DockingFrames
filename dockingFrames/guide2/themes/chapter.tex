@@ -176,12 +176,14 @@ The \src{FontManager} does not distribute \src{Font}-objects but \src{FontModifi
 \classbox{Clients that want to use a \src{FontModifier} might be interested in the classes \src{DLabel} and \src{DPanel} which already modify their font. Also the class \src{FontUpdater} can be used to create new \src{JComponent}s with the capability to modify their font.}
 
 \subsubsection{Icons}
-\src{Icon}s can be modified through the \src{IconManager}. The \src{IconManager} can be accessed through the method \src{getIcons} of \src{DockController}. It is an \src{UIProperties} and offers all the methods that are known from colors and fonts.
+\src{Icon}s can be modified through the \src{IconManager}. The \src{IconManager} can be accessed through the method \src{getIcons} of \src{DockController}. It is an \linebreak \src{UIProperties} and offers all the methods that are known from colors and fonts.
 
 There is no global list of keys in the source code. However the file ``icons.ini'' contains a list of keys and paths of all the default icons.
 
 \subsubsection{Text}
 Language dependend text is distributed by the \src{TextManager}, it can be accessed through \src{DockController.getTexts()}. The \src{TextManager} is an \src{UIProperties} and offers all the methods that are known from colors and fonts.
+
+The default text for different languages is stored in several \src{*.properties} files. These files can be loaded by \src{ResourceBundle}s. Clients can make use of the class \src{DefaultTextScheme} to load additional languages into the framework.
 
 \subsubsection{Actions}
 The views for \src{DockAction}s are changed through the \src{ActionViewConverter}. Please read chapter \ref{sec:actions} for more information.
@@ -190,7 +192,9 @@ The views for \src{DockAction}s are changed through the \src{ActionViewConverter
 \src{DockTitle}s are managed by the \src{DockTitleManager}. Please read chapter \ref{sec:titles} for more information.
 
 \subsubsection{Border}
-Any \src{Border} can be modified or replaced by a \src{BorderModifier}. \src{BorderModifier}s can be set by the \src{ThemeManager}.
+Any \src{Border} can be modified or replaced by a \src{BorderModifier}. 
+
+\src{BorderModifier}s can be set by the \src{ThemeManager}. The \src{BorderModifier} interface works in the same way as the \src{FontModifier} interface.
 
 \subsubsection{Background}
 The usual background of a \src{Component} is either grey or transparent. Clients can set a painting algorithm for the background with help of the interface \src{BackgroundPaint}. Instances of \src{BackgroundPaint} are applied through the \src{ThemeManager}.

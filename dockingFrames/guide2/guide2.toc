@@ -70,32 +70,30 @@
 \contentsline {subsubsection}{\numberline {6.3.11}Displayers}{48}
 \contentsline {section}{\numberline {7}Drag and Drop}{50}
 \contentsline {subsection}{\numberline {7.1}Relocator}{50}
-\contentsline {subsection}{\numberline {7.2}Sources}{50}
+\contentsline {subsection}{\numberline {7.2}Deciding what element to drag}{50}
 \contentsline {subsubsection}{\numberline {7.2.1}DockElementRepresentative}{50}
 \contentsline {subsubsection}{\numberline {7.2.2}Remote control}{51}
-\contentsline {subsection}{\numberline {7.3}Destinations}{51}
+\contentsline {subsection}{\numberline {7.3}Deciding where to drop an element}{51}
 \contentsline {subsubsection}{\numberline {7.3.1}Search}{52}
 \contentsline {subsubsection}{\numberline {7.3.2}Drop}{52}
-\contentsline {subsection}{\numberline {7.4}Influences}{53}
-\contentsline {subsubsection}{\numberline {7.4.1}Modes}{53}
-\contentsline {subsubsection}{\numberline {7.4.2}Restrictions}{53}
-\contentsline {subsubsection}{\numberline {7.4.3}Combining}{54}
+\contentsline {subsection}{\numberline {7.4}Restricing}{53}
+\contentsline {subsection}{\numberline {7.5}Modes}{54}
 \contentsline {section}{\numberline {8}Preferences}{55}
 \contentsline {subsection}{\numberline {8.1}Model}{55}
 \contentsline {subsubsection}{\numberline {8.1.1}Preference}{55}
 \contentsline {subsubsection}{\numberline {8.1.2}PreferenceModel}{56}
 \contentsline {subsubsection}{\numberline {8.1.3}PreferenceTreeModel}{56}
-\contentsline {subsection}{\numberline {8.2}View}{56}
+\contentsline {subsection}{\numberline {8.2}View}{57}
 \contentsline {subsubsection}{\numberline {8.2.1}Editors}{57}
 \contentsline {subsubsection}{\numberline {8.2.2}Operations}{57}
-\contentsline {subsection}{\numberline {8.3}Storage}{57}
+\contentsline {subsection}{\numberline {8.3}Storage}{58}
 \contentsline {subsection}{\numberline {8.4}Lifecycle}{58}
 \contentsline {section}{\numberline {9}Extensions}{60}
-\contentsline {subsubsection}{\numberline {9.0.1}Glass Extension}{60}
-\contentsline {subsubsection}{\numberline {9.0.2}Extension Points}{60}
+\contentsline {subsection}{\numberline {9.1}Extension Points}{60}
+\contentsline {subsection}{\numberline {9.2}Glass Extension}{60}
 \contentsline {section}{\numberline {10}Properties}{61}
 \contentsline {subsection}{\numberline {10.1}Themes}{61}
-\contentsline {subsection}{\numberline {10.2}Stations}{62}
-\contentsline {subsection}{\numberline {10.3}Controlling}{64}
-\contentsline {subsection}{\numberline {10.4}Legacy}{65}
-\contentsline {subsection}{\numberline {10.5}Gimmicks}{65}
+\contentsline {subsection}{\numberline {10.2}Stations}{63}
+\contentsline {subsection}{\numberline {10.3}Controlling}{66}
+\contentsline {subsection}{\numberline {10.4}Legacy}{67}
+\contentsline {subsection}{\numberline {10.5}Gimmicks}{67}

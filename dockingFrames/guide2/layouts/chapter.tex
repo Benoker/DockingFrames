@@ -3,8 +3,8 @@ The layout of an application consists of the location, size and relationship of 
 
 \src{DockingFrames} distinguishes between local and global layout information:
 \begin{enumerate}
- \item Local information describes the relationship between one \src{Dockable} and its parent(s). Local information is represented by a chain of \src{DockableProperty}s, and each \src{DockStation} offers a method \src{getDockableProperty} to find the location of one of its children.
- \item Global information describes the relationship of an entire tree of \src{Dockable}s and \src{DockStation}s. The class \src{DockSituation} offers methods to extract and to apply this data.
+ \item Local information describes the relationship between one \src{Dockable} and its parent(s). Local information is represented by a chain of \linebreak \src{DockableProperty}s, and each \src{DockStation} offers a method \linebreak \src{getDockableProperty} to find the location of one of its children.
+ \item Global information describes the relationship of an entire tree of \linebreak \src{Dockable}s and \src{DockStation}s. The class \src{DockSituation} offers methods to extract and to apply this data.
 \end{enumerate}
 
 It should be notet that applications need to handle both local and global information in order to create a truly persistent layout. Local information is needed to store the location of \src{Dockable}s which are invisible (not in the tree), global information is needed when stopping and starting the application. There are no algorithms implemented to create global information out of local information, and there are only basic algorithms which create local information out of global information. In any case, conversion between these two formats should be considered not to be possible.

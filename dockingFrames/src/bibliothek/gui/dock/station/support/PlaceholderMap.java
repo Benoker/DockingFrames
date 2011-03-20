@@ -1085,7 +1085,7 @@ public class PlaceholderMap {
 				return null;
 			}
 			
-			Path[] copy = new Path[ remain.length ];
+			Path[] copy = new Path[ count ];
 			int index = 0;
 			for( int i = 0; i < copy.length; i++ ){
 				if( remain[i] ){

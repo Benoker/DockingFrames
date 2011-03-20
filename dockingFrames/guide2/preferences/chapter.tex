@@ -8,15 +8,17 @@ The preference system allows the user to change settings which are otherwise not
 \label{fig:preferences}
 \end{figure}
 
+Additionaly the prerefence API offers mechanism to persistently store preferences.
+
 \subsection{Model}
-This section explains how the model is organized.
+The model is an adapter to the view and presents some properties as a list of modifiable items. Whether the model represents properties of the framework or custom properties is unimportant for the view or the persistent storage mechanism to work.
 
 \subsubsection{Preference}
 A preference is an abstract concept. One preference represents some property of the framework (or of the client). A preference is a set of meta-informations about a property:
 \begin{description}
- \item[Path] A unique identifier
- \item[TypePath] Tells how to work with \src{Value}. For example how to present the value to the user (as text, as image...) or how to store the value. An object of type \src{Path} is used to represent the \src{TypePath}.
+ \item[Path] A unique identifier, is used by the persistent storage to identify a property.
  \item[Value] The current value of the property.
+ \item[TypePath] Tells how to work with \src{Value}. For example how to present the value to the user (as text, as image...) or how to store the value. An object of type \src{Path} is used to represent the \src{TypePath}.
  \item[ValueInfo] Information about the value, e.g. the maximum value for an \linebreak \src{Integer}-property. The exact meaning of this information depends on the \src{TypePath}.
 \end{description}
 

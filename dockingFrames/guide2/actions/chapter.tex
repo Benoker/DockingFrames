@@ -155,7 +155,7 @@ By the way: the method \src{setSelected} in lines \src{29-32} needs to be overri
 Clients are free to implement new actions with new views.
 
 \subsubsection{Reuse existing view}
-Whenever possible an existing view should be reused. There are six kind of views defined in the framework. Each kind of view is represented through an instance of \src{ActionType}, each of them is stored as constant in \src{ActionType} itself. \src{ActionType} has one generic parameter, the view can force an action to implement some interface through that parameter. For example, the kind \src{ActionType.BUTTON} forces an action to implement \src{ButtonDockAction}. Actions can use an \src{ActionType} as key for a factory that is stored in the \src{ActionViewConverter}. 
+Whenever possible an existing view should be reused. There are six kind of views defined in the framework. Each kind of view is represented through an instance of \src{ActionType}, each of them is stored as constant in \src{ActionType} itself. \src{ActionType} has one generic parameter, the view can force an action to implement some interface through that parameter. For example, the kind \src{ActionType.BUTTON} forces an action to implement \src{ButtonDockAction}. Actions can use an \src{ActionType} as key for a factory that is stored in the \linebreak \src{ActionViewConverter}. 
 
 An example for an action that uses an \src{ActionType} to create its view:
 \begin{lstlisting}

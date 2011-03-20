@@ -18,13 +18,12 @@ There are a number of keys and the remainder of this chapter will list all of th
  \property{EclipseTheme.THEME\_CONNECTOR}{EclipseThemeConnector}{An instance of \src{DefaultEclipseThemeConnector}}{Tells how a lonly \src{Dockable} gets presented in \src{EclipseTheme}. \linebreak Whether it has a border and a title. Also tells which \src{DockAction}s are to be shown on tabs. Changing this entry will not affect decisions that were made by the previous connector.}
  \property{SingleTabDecider.SINGLE\_TAB\_DECIDER}{SingleTabDecider}{\src{SingleTabDecider.NONE}}{Tells whether a single tab should be painted for some \src{Dockable}s. This makes the \src{Dockable}s look as if they were a child of a \linebreak \src{StackDockStation} even if there is no such station around.}
  \property{DockTitle.ORIENTATION\_STRATEGY}{OrientationToRotationConverter}{\src{OrientationToRotationConverter.DEFAULT}}{Tells how to rotate text on a \src{DockTitle}.}
+
  \property{DockTheme.COMBINER}{Combiner}{An instance of \src{ThemeCombiner}}{The default value of the \src{Combiner}.}
  \property{DockTheme.DISPLAYER\_FACTORY}{DisplayerFactory}{An instance of \src{ThemeDisplayerFactory}}{The default value of the \src{DisplayerFactory}.}
  \property{DockTheme.DOCKABLE\_MOVING\_IMAGE\_FACTORY}{DockableMovingImageFactory}{An instance of \src{ThemeDockableMovingImageFactory}}{The defeault value of the \src{DockableMovingImageFactory}.}
- \property{DockTheme.DOCKABLE\_SELECTION}{DockableSelection}{An instance of \src{ThemeDockableSelection}}{The default value of the \src{DockableSelection}.}
- \property{DockTheme.BACKGROUND\_PAINT}{BackgroundPaint}{\src{null}}{The default \src{BackgroundPaint}.}
- \property{DockTheme.BORDER\_MODIFIER}{BorderModifier}{\src{null}}{The default \src{BorderModifier}.}
- \property{DockTheme.STATION\_PAINT}{StationPaint}{An instance of \src{ThemeStationPaint}}{The default value of the \src{StationPaint}.}
+ \src{DockTheme.DOCKABLE\_SELECTION}{DockableSelection}{An instance of \src{ThemeDockableSelection}}{The default value of the \src{DockableSelection}.}
+
 \end{description}
 
 \subsection{Stations}
@@ -33,10 +32,7 @@ There are a number of keys and the remainder of this chapter will list all of th
  \property{FlapDockStation.BUTTON\_CONTENT}{ButtonContent}{\src{ButtonContent.THEME\_DEPENDENT}}{Tells which information to display on the buttons that represent \src{Dockable}s on a \src{FlapDockStation}. Any mix of icons, text and \src{DockAction}s is possible.}
  \property{FlapDockStation.BUTTON\_CONTENT\_FILTER}{ButtonContentFilter}{DefaultButtonContentFilter}{Tells which \src{DockAction}s should be shown on a button that represents a \src{Dockable} on a \src{FlapDockStation}.}
  \property{FlapDockStation.MINIMUM\_SIZE}{Dimension}{\src{10, 10}}{The minimal size of a \src{FlapDockStation} if it does not have any children.}
- \property{FlapDockStation.WINDOW\_FACTORY}{FlapWindowFactory}{An instance of \src{DefaultFlapWindowFactory}}{A factory that creates the windows used by the \src{FlapDockStation}}
  \property{ScreenDockStation.BOUNDARY\_RESTRICTION}{BoundaryRestriction}{\src{BoundaryRestriction.FREE}}{Decides about the shape and location a \src{ScreenDockWindow} is allowed to have. E.g. \src{BoundaryRestriction} might force windows to be visible only on one of many screens.}
- \property{ScreenDockStation.EXPAND\_ON\_DOUBLE\_CLICK}{Boolean}{\src{true}}{Whether fullscreen mode should be activated if the user double clicks on the title of a child of the \src{ScreenDockStation}.}
- \property{ScreenDockStation.FULL\_SCREEN\_STRATEGY}{ScreenDockFullscreenStrategy}{An instance of \src{DefaultScreenDockFullscreenStrategy}}{Defines to the \src{ScreenDockStation} what ``fullscreen'' means.}
  \property{ScreenDockStation.WINDOW\_FACTORY}{ScreenDockWindowFactory}{An instance of \src{DefaultScreenDockWindowFactory}}{The factory used to create new windows for \src{ScreenDockStation}. Changing this property has no effect on existing windows. \linebreak \src{DefaultScreenDockWindowFactory} can be customized and should be preferred over newly written factories.}
  \property{ScreenDockStation.EXPAND\_ON\_DOUBLE\_CLICK}{Boolean}{\src{true}}{Whether a double click onto a title changes the fullscreen-mode of a child of a \src{ScreenDockStation}.}
  \property{ScreenDockStation.FULL\_SCREEN\_STRATEGY}{ScreenDockFullscreenStrategy}{An instance of \src{DefaultScreenDockFullscreenStrategy}}{Defines how a full-screen window looks like and how to switch between normal and full-screen mode.}
@@ -51,7 +47,6 @@ There are a number of keys and the remainder of this chapter will list all of th
 
 \subsection{Controlling}
 \begin{description}
- \property{DockController.RESTRICTED\_ENVIRONMENT}{Boolean}{depends on environment}{Tells whether the application runs in a restricted environment where global listening for \src{AWTEvent}s is not allowed.}
  \property{DockableSelector.INIT\_SELECTION}{KeyStroke}{\src{ctrl+shift+e}}{Hitting these keys will open a window where the user can select the focused \src{Dockable}.}
  \property{DockRelocatorMode.SCREEN\_MASK}{ModifierMask}{\src{shift}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.SCREEN\_ONLY} gets activated. This will \linebreak force the \src{Dockable} to be dropped onto a \src{ScreenDockStation}.}
  \property{DockRelocatorMode.NO\_COMBINATION\_MASK}{ModifierMask}{\src{alt}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.NO\_COMBINATION} gets activated. This will prevent the dropped \src{Dockable} from merging with another \src{Dockable}.}
@@ -71,5 +66,4 @@ There are a number of keys and the remainder of this chapter will list all of th
  \property{PropertyKey.DOCK\_STATION\_ICON}{Icon}{\src{null}}{This icon is shown for any \src{DockStation} that has no icon set.}
  \property{PropertyKey.DOCK\_STATION\_TITLE}{String}{\src{null}}{This text is shown for any \src{DockStation} that has no title set.}
  \property{PropertyKey.DOCK\_STATION\_TOOLTIP}{String}{\src{null}}{This text is shown for any \src{DockStation} for which no tooltip was set. }
- \property{DockTitle.ORIENTATION\_STRATEGY}{OrientationToRotationStrategy}{\src{OrientationToRotationStrategy.DEFAULT}}{Tells \src{DockTitle}s how much they have to rotate their text depending on their orientation.}
 \end{description}
