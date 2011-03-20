@@ -214,6 +214,6 @@ public final class Colors {
     	if( color == null ){
     		return null;
     	}
-    	return color.darker();
+    	return color.brighter();
     }
 }

@@ -38,7 +38,12 @@ public class TutorialTreeModel implements TreeModel{
 	}
 
 	public int getChildCount( Object parent ){
-		return ((Node)parent).children.length;
+		TutorialTreeModel.Node[] children = ((Node)parent).children;
+		if( children == null ){
+			return 0;
+		}
+		
+		return children.length;
 	}
 
 	public int getIndexOfChild( Object parent, Object child ){

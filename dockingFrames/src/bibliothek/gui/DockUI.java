@@ -284,6 +284,7 @@ public class DockUI {
                 next.bind();
                 lookAndFeelColor.addListener( colorsListener );
             }
+            colorsListener.colorsChanged();
         }
     }
     

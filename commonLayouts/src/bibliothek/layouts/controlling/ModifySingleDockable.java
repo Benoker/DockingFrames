@@ -87,7 +87,7 @@ public class ModifySingleDockable extends DefaultSingleCDockable{
         }
 
         public Path getPath() {
-            return new Path( "single." + id );
+            return new Path( "single", id );
         }
 
         public Path getTypePath() {

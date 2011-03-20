@@ -47,6 +47,7 @@ import bibliothek.util.xml.XElement;
  * can then be written as byte-stream or in xml.
  * @author Benjamin Sigg
  * @param <D> the kind of {@link DockElement} this converter handles
+ * @param <P> the kind of {@link PerspectiveElement} that represents <code>D</code>
  * @param <L> the kind of data this converter uses as intermediate format
  */
 public interface DockConverter <D extends DockElement, P extends PerspectiveElement, L>{
@@ -79,14 +80,12 @@ public interface DockConverter <D extends DockElement, P extends PerspectiveElem
 	 * The layout information can be any {@link Object}. The only restriction
 	 * of the object is, that the associated {@link DockFactory} understands
 	 * how to read that object.<br>
-	 * This method may return <code>null</code> if and only if {@link #layoutPerspective(Object, Map)} always returns
-	 * <code>null</code>.
 	 * @param element the element whose layout information is asked.
 	 * @param children a map providing identifiers for the children of this element. The
 	 * identifiers are in the range from 0 (incl.) to <code>children.size()</code> (excl.), 
 	 * the exact same identifiers would be given to {@link DockConverter#getLayout(bibliothek.gui.dock.DockElement, Map)}.
 	 * Is <code>null</code> if the children of this station should be ignored.
-	 * @return the layout information
+	 * @return the layout information, may be <code>null</code> if this converter does not support perspectives
 	 */
 	public L getPerspectiveLayout( P element, Map<PerspectiveDockable, Integer> children );
     

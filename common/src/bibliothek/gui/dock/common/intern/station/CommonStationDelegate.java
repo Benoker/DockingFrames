@@ -29,6 +29,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -39,7 +40,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  */
 public interface CommonStationDelegate<S extends DockStation> {
 	/**
-	 * Gets a result for {@link CommonDockStation#getDockable()}.
+	 * Gets a result for {@link CommonDockable#getDockable()}.
 	 * @return the dockable as it is seen by Common
 	 */
 	public CDockable getDockable();
@@ -51,7 +52,7 @@ public interface CommonStationDelegate<S extends DockStation> {
 	public CStation<S> getStation();
 	
 	/**
-	 * Gets a result for {@link CommonDockStation#getSources()}.
+	 * Gets a result for {@link CommonDockable#getSources()}.
 	 * @return the sources for the owner of this delegate
 	 */
 	public DockActionSource[] getSources();

@@ -187,7 +187,7 @@ public class ModifyMultiDockable extends DefaultSingleCDockable{
         }
 
         public Path getPath() {
-            return new Path( "factory." + id );
+            return new Path( "factory", id );
         }
 
         public Path getTypePath() {
