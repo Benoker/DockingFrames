@@ -500,6 +500,7 @@ public class CContentArea extends JPanel{
 
 		public CenterStation( String id, CLocation location ){
 			super( control, id );
+			this.location = location;
 		}
 
 		public Path getTypeId(){
