@@ -492,3 +492,6 @@
 ! API: AdjacentDockFactorys can now also write meta data for PerspectiveElements
 - Bugfix: changing the LookAndFeel now again updates all the colors
 - Bugfix: Colors.brighter did make a color darker
+
+[v1.1.0p7a]
+- Bugfix: location of center area of CContentArea is no longer null
