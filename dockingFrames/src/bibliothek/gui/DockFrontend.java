@@ -1062,7 +1062,7 @@ public class DockFrontend {
      * @return <code>true</code> if <code>dockable</code> is visible
      */
     public boolean isShown( Dockable dockable ){
-        return dockable.getController() != null;
+        return controller.getRegister().willBeRegistered( dockable );
     }
     
     /**

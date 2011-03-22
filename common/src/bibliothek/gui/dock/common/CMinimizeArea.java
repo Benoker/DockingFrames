@@ -69,6 +69,23 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
      * @param uniqueId the unique uniqueId of this area
      */
     public CMinimizeArea( CControl control, String uniqueId ){
+    	init( control, uniqueId );
+    }
+    
+    /**
+     * Default constructor doing nothing, subclasses must call {@link #init(CControl, String)}
+     * after calling this method
+     */
+    protected CMinimizeArea(){
+    	// nothing
+    }
+    
+    /**
+     * Initializes the new area, should be called only once by subclasses
+     * @param control the control for which this area will be used
+     * @param uniqueId the unique uniqueId of this area
+     */
+    protected void init( CControl control, String uniqueId ){
         this.uniqueId = uniqueId;
         
         setLayout( new BorderLayout() );

@@ -61,6 +61,12 @@ public class DockRegister {
     /** tells whether register and unregister-events should be stalled or not */
     private int stalled = 0;
     
+	/** the current state of changing elements */
+	private Map<Dockable, Status> changeMap = new HashMap<Dockable, Status>();
+	
+	/** the order in which the elements of {@link #changeMap} first appeared */
+	private LinkedList<Dockable> changeQueue = new LinkedList<Dockable>();
+    
     /**
      * Creates a new register.
      * @param controller the controller for which the dockables and stations
@@ -236,6 +242,40 @@ public class DockRegister {
      */
     public Dockable getDockable( int index ){
         return dockables.get( index );
+    }
+    
+    /**
+     * Tells whether <code>dockable</code> is known to this register.
+     * @param dockable the dockable to search
+     * @return <code>true</code> if <code>dockable</code> was found
+     */
+    public boolean isRegistered( Dockable dockable ){
+    	return dockables.contains( dockable );
+    }
+    
+    /**
+     * Tells whether <code>dockable</code> will be registered after the currently
+     * stalled events have been fired. The result of this method may change with any
+     * new stalled event. Returns the same result as {@link #isRegistered(Dockable)} if there are no stalled
+     * events currently.
+     * @param dockable the element to search
+     * @return whether <code>dockable</code> will be known to this register
+     */
+    public boolean willBeRegistered( Dockable dockable ){
+    	Status status = changeMap.get( dockable );
+    	if( status == null ){
+    		return isRegistered( dockable );
+    	}
+    	switch( status ){
+    		case ADDED:
+    		case REMOVED_AND_ADDED:
+    			return true;
+    		case ADDED_AND_REMOVED:
+    		case REMOVED:
+    			return false;
+    			
+    		default: throw new IllegalStateException( "unexpected state: " + status );
+    	}
     }
     
     /**
@@ -438,10 +478,6 @@ public class DockRegister {
      * @author Benjamin Sigg
      */
     private class StationListener extends DockStationAdapter{
-    	/** the current state of changing elements */
-    	private Map<Dockable, Status> changeMap = new HashMap<Dockable, Status>();
-    	/** the order in which the elements of {@link #changeMap} first appeared */
-    	private LinkedList<Dockable> changeQueue = new LinkedList<Dockable>();
     	
         /** whether this listener is currently firing the stalled events */
         private boolean firing = false;

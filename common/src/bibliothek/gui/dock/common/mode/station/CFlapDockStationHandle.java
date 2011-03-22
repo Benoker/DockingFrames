@@ -60,6 +60,10 @@ public class CFlapDockStationHandle extends FlapDockStationHandle implements CMi
 	 */
 	public CFlapDockStationHandle( String id, FlapDockStation station, CLocation location ){
 		super( id, station );
+		if( location == null ){
+			throw new IllegalArgumentException( "location must not be null" );
+		}
+		
 		this.location = location;
 	}
 	

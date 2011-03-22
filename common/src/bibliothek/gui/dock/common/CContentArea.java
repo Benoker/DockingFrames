@@ -476,8 +476,8 @@ public class CContentArea extends JPanel{
 		private CLocation location;
 		
 		public MinimizeStation( String id, CLocation location ){
-			super( control, id );
 			this.location = location;
+			init( control, id );
 		}
 		
 		public Path getTypeId(){

@@ -495,3 +495,7 @@
 
 [v1.1.0p7a]
 - Bugfix: location of center area of CContentArea is no longer null
+
+[v.1.1.0p7b]
+- Bugfix: DockFrontend.isShown is now more accurate and no longer delayed until all events concerning the DockRegister have been fired
+- Bugfix: CContentArea now properly initializes its MinimizeStation and no NPE is thrown when minimizing a CDockable
