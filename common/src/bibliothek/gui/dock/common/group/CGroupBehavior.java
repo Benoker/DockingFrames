@@ -51,11 +51,12 @@ public interface CGroupBehavior {
 	
 	/**
 	 * Calculates how the mode of <code>dockable</code> has to be changed such that it matches <code>target</code>. 
-	 * Please note that some modules use directly {@link #getGroupElement(Dockable, ExtendedMode)} and do never call
+	 * Please note that some modules use directly {@link #getGroupElement(LocationModeManager, Dockable, ExtendedMode)} and do never call
 	 * this method. 
 	 * @param manager a manager which may be asked for additional information
 	 * @param dockable the element that was clicked by the user
 	 * @param target the extended mode intended for <code>dockable</code>
+	 * @return the operation to execute, may be <code>null</code>
 	 */
 	public CGroupMovement prepare( LocationModeManager<? extends LocationMode> manager, Dockable dockable, ExtendedMode target );
 
@@ -65,7 +66,7 @@ public interface CGroupBehavior {
      * is returned, or a parent {@link DockStation} of <code>dockable</code>.
      * @param manager a manager which may be asked for additional information
      * @param dockable some element, not <code>null</code>
-     * @param enablement a strategy telling which {@link ExtendedMode}s are enabled for which {@link Dockable}s
+     * @param mode the target mode
      * @return the element that must be repositioned, might be <code>dockable</code>
      * itself, not <code>null</code>
      */

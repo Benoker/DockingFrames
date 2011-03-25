@@ -499,6 +499,7 @@
 [v.1.1.0p7b]
 - Bugfix: DockFrontend.isShown is now more accurate and no longer delayed until all events concerning the DockRegister have been fired
 - Bugfix: CContentArea now properly initializes its MinimizeStation and no NPE is thrown when minimizing a CDockable
+- Bugfix: The operation to drag a CDockable to a minimize area is no longer overriden by the center area
 
 [v.1.1.0p7c]
 ! API: All methods of the CGroupBehavior now have access to the LocationModeManager, the checks CStackGroupBehavior performs are now more generic and do no longer depend on internal knowledge of when which method is called. 
@@ -507,4 +508,4 @@
 - API: DockFrontend.isHiddenRootStation tells whether some DockElement is a root-station and a dockable without parent
 - API: CDockable.hasParent tells whether a CDockable is visible and not a root station
 - API/Bugfix: Invoking "setVisible" now checks "hasParent" and not "isVisible", as a result invoking "setVisible(true)" on a root CStation now places the station somewhere.
-- API/Bugfix: DockFrontend.show is now also executed for hidden root-stations 
+- API/Bugfix: DockFrontend.show is now also executed for hidden root-stations
