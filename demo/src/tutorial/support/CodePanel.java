@@ -29,7 +29,7 @@ public class CodePanel {
 		"if", "else", "while", "do", "for", "switch", "case", "return", "new",
 		"volatile", "transient", "final", "static",
 		"byte", "short", "char", "int", "long", "float", "double", "boolean", "null", "true", "false", "void",
-		"try", "catch", "finally",
+		"try", "catch", "finally", "this"
 	};
 	
 	public CodePanel(){

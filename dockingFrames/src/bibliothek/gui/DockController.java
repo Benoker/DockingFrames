@@ -794,11 +794,16 @@ public class DockController {
      * Adds a station to this controller. The controller allows the user to
      * drag and drop children from and to <code>station</code>. If
      * the children of <code>station</code> are stations itself, then
-     * they will be added automatically
+     * they will be added automatically. The station will be treated as root-station, meaning
+     * that <code>station</code> remains registered until it is explicitely removed from the 
+     * {@link DockRegister}. On the other hand child stations may be removed automatically at any time.<br>
+     * Even if <code>station</code> is already known to this controller or a child of a root-station, then
+     * <code>station</code> is promoted to root-station.
      * @param station the new station
      */
     public void add( DockStation station ){
     	register.add( station );
+    	register.setProtected( station, true );
     }
     
     /**

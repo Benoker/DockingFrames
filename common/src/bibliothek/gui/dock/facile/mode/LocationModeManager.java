@@ -522,7 +522,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
     	MultiDockActionSource result = new MultiDockActionSource();
     	
     	for( LocationMode other : modes() ){
-    		if( behavior.shouldForwardActions( station, selected, other.getExtendedMode(), enablement ) ){
+    		if( behavior.shouldForwardActions( this, station, selected, other.getExtendedMode() ) ){
     			DockActionSource source = other.getActionsFor( selected, mode );
     			if( source != null ){
     				result.add( source );

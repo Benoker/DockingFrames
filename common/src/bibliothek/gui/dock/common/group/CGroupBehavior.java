@@ -31,7 +31,6 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
-import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 
 /**
  * A {@link CGroupBehavior} allows to define groups of {@link CDockable}. Groups normaly
@@ -64,31 +63,34 @@ public interface CGroupBehavior {
      * Gets the element whose location or mode must be changed in order to apply
      * <code>mode</code> to <code>dockable</code>. Normally <code>dockable</code> itself
      * is returned, or a parent {@link DockStation} of <code>dockable</code>.
+     * @param manager a manager which may be asked for additional information
      * @param dockable some element, not <code>null</code>
+     * @param enablement a strategy telling which {@link ExtendedMode}s are enabled for which {@link Dockable}s
      * @return the element that must be repositioned, might be <code>dockable</code>
      * itself, not <code>null</code>
      */
-	public Dockable getGroupElement( Dockable dockable, ExtendedMode mode );
+	public Dockable getGroupElement( LocationModeManager<? extends LocationMode> manager, Dockable dockable, ExtendedMode mode );
 	
     /**
      * Gets the element which would replace <code>old</code> if <code>old</code> is currently
      * in <code>mode</code>, and <code>dockable</code> is or will not be in <code>mode</code>.<br>
+     * @param manager a manager which may be asked for additional information
      * @param old some element
      * @param dockable some element, might be <code>old</code>
      * @param mode the mode in which <code>old</code> is
      * @return the element which would be maximized if <code>dockable</code> is
      * no longer in <code>mode</code>, can be <code>null</code>
      */
-	public Dockable getReplaceElement( Dockable old, Dockable dockable, ExtendedMode mode );
+	public Dockable getReplaceElement( LocationModeManager<? extends LocationMode> manager, Dockable old, Dockable dockable, ExtendedMode mode );
 	
 	/**
 	 * Tells whether the actions of <code>dockable</code> for mode <code>mode</code> should be
 	 * shown on <code>station</code> too.
+	 * @param manager a manager which may be asked for additional information
 	 * @param station the parent of <code>dockable</code>
 	 * @param dockable the element whose actions will be shown
 	 * @param mode the mode for which the actions are requested
-	 * @param enablement a strategy telling which {@link ExtendedMode}s are enabled for which {@link Dockable}s
 	 * @return <code>true</code> if the actions should be forwarded
 	 */
-	public boolean shouldForwardActions( DockStation station, Dockable dockable, ExtendedMode mode, ExtendedModeEnablement enablement );
+	public boolean shouldForwardActions( LocationModeManager<? extends LocationMode> manager, DockStation station, Dockable dockable, ExtendedMode mode );
 }

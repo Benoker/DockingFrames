@@ -142,7 +142,7 @@ public class CContentArea extends JPanel{
 		add( east, BorderLayout.EAST );
 		add( west, BorderLayout.WEST );
 
-		stations = new CStation[]{ center, north, south, east, west };
+		stations = new CStation[]{ north, south, east, west, center };
 	}
 
 	/**

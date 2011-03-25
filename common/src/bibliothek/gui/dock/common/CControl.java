@@ -2757,7 +2757,7 @@ public class CControl {
         }
 
         public void show( CDockable dockable ){
-        	if( dockable.isVisible() )
+        	if( dockable.hasParent() )
         		return;
         	
             DockRegister register = frontend.getController().getRegister();
@@ -2799,9 +2799,16 @@ public class CControl {
                 register.setStalled( false );
             }
         }
-
+        
         public boolean isVisible( CDockable dockable ){
-            return frontend.isShown( dockable.intern() );
+        	return frontend.isShown( dockable.intern() );
+        }
+        
+        public boolean hasParent( CDockable dockable ){
+        	if( frontend.isHiddenRootStation( dockable.intern() )){
+        		return false;
+        	}
+        	return isVisible( dockable );
         }
 
         public String getFactoryId( MultipleCDockableFactory<?,?> factory ){

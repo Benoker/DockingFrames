@@ -224,10 +224,14 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			area = getDefaultArea();
 
 		String id = getManager().getKey( maximizing );
-		LocationMode current = getManager().getCurrentMode( dockable );
+		LocationMode current = getManager().getCurrentMode( maximizing );
 
+		if( id == null && current == null ){
+			throw new IllegalStateException( "an unidentified dockable without location has been found, all dockables except true root-station must have a location, true root-stations can never be used in this method." );
+		}
+		
 		if( id == null && current != null ){
-			lastMaximizedLocation.put( area.getUniqueId(), current.current( dockable ) );
+			lastMaximizedLocation.put( area.getUniqueId(), current.current( maximizing ) );
 			lastMaximizedMode.put( area.getUniqueId(), current.getUniqueIdentifier() );
 		}
 		else{
@@ -271,7 +275,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	
 								// try to apply the last mode
 								if( lastMaximizedLocation.get( key ) != null ){
-									done = true;
 									done = getManager().apply( 
 											element,
 											lastMaximizedMode.remove( key ),
@@ -429,7 +432,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * itself, not <code>null</code>
 	 */
 	public Dockable getMaximizingElement( Dockable dockable ){
-		return getManager().getGroupBehavior().getGroupElement( dockable, getExtendedMode() );
+		return getManager().getGroupBehavior().getGroupElement( getManager(), dockable, getExtendedMode() );
 	}
 
 	/**
@@ -441,7 +444,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * no longer maximized, can be <code>null</code>
 	 */
 	public Dockable getMaximizingElement( Dockable old, Dockable dockable ){
-		return getManager().getGroupBehavior().getReplaceElement( old, dockable, getExtendedMode() );
+		return getManager().getGroupBehavior().getReplaceElement( getManager(), old, dockable, getExtendedMode() );
 	}
 
 	protected void applyStarting( LocationModeEvent event ){

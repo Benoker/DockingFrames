@@ -30,7 +30,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
-import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 
 /**
  * This most simple {@link CGroupBehavior} just set the mode of the one
@@ -42,17 +41,17 @@ public class TopMostGroupBehavior implements CGroupBehavior{
 		return new SingleGroupMovement( dockable, target );
 	}
 	
-	public Dockable getGroupElement( Dockable dockable, ExtendedMode mode ){
+	public Dockable getGroupElement( LocationModeManager<? extends LocationMode> manager, Dockable dockable, ExtendedMode mode ){
 		return dockable;
 	}
 	
-	public Dockable getReplaceElement( Dockable old, Dockable dockable, ExtendedMode mode ){
+	public Dockable getReplaceElement( LocationModeManager<? extends LocationMode> manager, Dockable old, Dockable dockable, ExtendedMode mode ){
 		if( dockable == old )
 			return null;
 		return old;
 	}
 	
-	public boolean shouldForwardActions( DockStation station, Dockable dockable, ExtendedMode mode, ExtendedModeEnablement enablement ){
+	public boolean shouldForwardActions( LocationModeManager<? extends LocationMode> manager, DockStation station, Dockable dockable, ExtendedMode mode ){
 		return true;
 	}
 }

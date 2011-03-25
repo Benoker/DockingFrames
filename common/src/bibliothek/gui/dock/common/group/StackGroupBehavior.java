@@ -29,12 +29,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
-import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -74,17 +71,20 @@ public class StackGroupBehavior implements CGroupBehavior {
 		return false;
 	}
 	
-	public Dockable getGroupElement( Dockable dockable, ExtendedMode mode ){
+	public Dockable getGroupElement( LocationModeManager<? extends LocationMode> manager, Dockable dockable, ExtendedMode mode  ){
 		DockStation parent = dockable.getDockParent();
 		
 		if( parent instanceof StackDockStation ){
+			if( parent.asDockable().getDockParent() == null ){
+				// cannot move around a dockable without location
+				return dockable;
+			}
+			
 			for( int i = 0, n = parent.getDockableCount(); i<n; i++ ){
 				Dockable check = parent.getDockable( i );
 				if( check != dockable ){
-					if( check instanceof CommonDockable ){
-						CDockable fdock = ((CommonDockable)check).getDockable();
-						if( !fdock.isMaximizable() )
-							return dockable;
+					if( !manager.isModeAvailable( check, mode ) ){
+						return dockable;
 					}
 				}
 			}
@@ -94,7 +94,7 @@ public class StackGroupBehavior implements CGroupBehavior {
 		return dockable;
 	}
 	
-	public Dockable getReplaceElement( Dockable old, Dockable dockable, ExtendedMode mode ){
+	public Dockable getReplaceElement( LocationModeManager<? extends LocationMode> manager, Dockable old, Dockable dockable, ExtendedMode mode ){
 		if( old == dockable )
 			return null;
 		
@@ -115,10 +115,10 @@ public class StackGroupBehavior implements CGroupBehavior {
 		return old;
 	}
 	
-	public boolean shouldForwardActions( DockStation station, Dockable dockable, ExtendedMode mode, ExtendedModeEnablement enablement ){
+	public boolean shouldForwardActions( LocationModeManager<? extends LocationMode> manager, DockStation station, Dockable dockable, ExtendedMode mode ){
 		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
 			Dockable child = station.getDockable( i );
-			if( !enablement.isAvailable( child, mode )){
+			if( !manager.isModeAvailable( child, mode ) ){
 				return false;
 			}
 		}

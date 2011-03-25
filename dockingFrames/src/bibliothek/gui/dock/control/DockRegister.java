@@ -44,6 +44,8 @@ import bibliothek.gui.dock.util.DockUtilities;
  */
 @LayoutLocked( locked=false )
 public class DockRegister {
+	/** these protected stations can never be removed through a drag and drop operation */
+	private Set<DockStation> protectedStations = new HashSet<DockStation>();
 	/** the known stations */
     private List<DockStation> stations = new ArrayList<DockStation>();
     /** the known dockables */
@@ -117,6 +119,35 @@ public class DockRegister {
     }
     
     /**
+     * Marks <code>station</code> as protected. Any {@link DockStation} can be protected, a protected {@link DockStation}
+     * will never be automatically unregistered due to loosing its parent. Instead of unregistering, a protected
+     * <code>station</code> is promoted to root-station. This property is only stored for {@link DockStation}s which
+     * are already registered, it will be deleted if <code>station</code> is removed.  
+     * @param station the station to protect
+     * @param protect the new protection state
+     */
+    public void setProtected( DockStation station, boolean protect ){
+    	if( stations.contains( station )){
+	    	if( protect ){
+	    		protectedStations.add( station );
+	    	}
+	    	else{
+	    		protectedStations.remove( station );
+	    	}
+    	}
+    }
+    
+    /**
+     * Tells whether <code>station</code> is protected.
+     * @param station the station to search
+     * @return the protected state
+     * @see #setProtected(DockStation, boolean)
+     */
+    public boolean isProtected( DockStation station ){
+    	return protectedStations.contains( station );
+    }
+    
+    /**
      * Adds a station to this register. The associated controller allows the user to
      * drag and drop children from and to <code>station</code>. If
      * the children of <code>station</code> are stations itself, then
@@ -165,6 +196,7 @@ public class DockRegister {
      */
     public void remove( DockStation station ){
         if( stations.contains( station )){
+        	setProtected( station, false );
             Dockable dock = station.asDockable();
             if( dock != null ){
                 DockStation parent = dock.getDockParent();
@@ -173,13 +205,25 @@ public class DockRegister {
             }
             
             DockUtilities.visit( station, new DockUtilities.DockVisitor(){
+            	private List<DockStation> ignored = new ArrayList<DockStation>();
+            	
                 @Override
                 public void handleDockable( Dockable dockable ) {
+                	for( DockStation station : ignored ){
+                		if( DockUtilities.isAncestor( station, dockable )){
+                			return;
+                		}
+                	}
                     unregister( dockable );
                 }
                 @Override
                 public void handleDockStation( DockStation station ) {
-                    unregister( station );
+                	if( isProtected( station )){
+                		ignored.add( station );
+                	}
+                	else{
+                		unregister( station );
+                	}
                 }
             });
         }
@@ -257,7 +301,7 @@ public class DockRegister {
      * Tells whether <code>dockable</code> will be registered after the currently
      * stalled events have been fired. The result of this method may change with any
      * new stalled event. Returns the same result as {@link #isRegistered(Dockable)} if there are no stalled
-     * events currently.
+     * events waiting.
      * @param dockable the element to search
      * @return whether <code>dockable</code> will be known to this register
      */
@@ -351,7 +395,7 @@ public class DockRegister {
      */
     protected void unregister( DockStation station ){
         if( stations.remove( station ) ){
-            station.setController( null );
+        	station.setController( null );
             station.removeDockStationListener( stationListener );
             
             fireDockStationUnregistered( station );

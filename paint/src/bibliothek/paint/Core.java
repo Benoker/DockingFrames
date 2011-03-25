@@ -93,7 +93,7 @@ public class Core {
         frame.setIconImage( Resources.toImage( Resources.getIcon( "application" ) ) );
         
         final CControl control = new CControl( frame, secure );
-                
+
         RootMenuPiece settings = new RootMenuPiece( "View", false );
         settings.add( new SingleCDockableListMenuPiece( control ));
         settings.add( new SeparatingMenuPiece( new CLayoutChoiceMenuPiece( control, false ), true, false, false ));

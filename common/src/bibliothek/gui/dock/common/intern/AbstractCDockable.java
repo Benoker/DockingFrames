@@ -300,6 +300,15 @@ public abstract class AbstractCDockable implements CDockable {
             return control.isVisible( this );
     }
     
+    public boolean hasParent(){
+	    if( control == null ){
+	    	return false;
+	    }
+	    else{
+	    	return control.hasParent( this );
+	    }
+    }
+    
     public boolean isDockableVisible(){
     	return intern().isDockableVisible();
     }

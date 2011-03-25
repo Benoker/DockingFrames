@@ -280,10 +280,8 @@ public interface CDockable {
 	
 	/**
 	 * Shows or hides this <code>CDockable</code>. If this <code>CDockable</code> is not visible and
-	 * is made visible, then the framework tries to set its location at
-	 * the last known position.<br>
-	 * Subclasses should call {@link CControlAccess#show(CDockable)} or
-	 * {@link CControlAccess#hide(CDockable)}.
+	 * is made visible, then the framework tries to set its location at the last known position.<br>
+	 * Subclasses should call {@link CControlAccess#show(CDockable)} or {@link CControlAccess#hide(CDockable)}.
 	 * @param visible the new visibility state
 	 * @see #isVisible()
 	 * @throws IllegalStateException if this dockable can't be made visible
@@ -292,16 +290,27 @@ public interface CDockable {
 	
 	/**
 	 * Tells whether this <code>CDockable</code> is currently visible or not. Visibility
-	 * means that this <code>CDockable</code> is in the tree structure of DockingFrames. Being
-	 * in the structure does not imply being visible on the screen. If some
+	 * means that this <code>CDockable</code> is in the tree structure of DockingFrames and has a parent. Being
+	 * in the structure does not imply being visible on the screen: If some
 	 * <code>JFrame</code> is not shown, or some <code>DockStation</code> not
 	 * properly added to a parent component, then a visible <code>CDockable</code> can
-	 * be invisible for the user.<br>
+	 * be invisible for the user. For {@link CDockable}s that are also root-{@link CStation} this method will 
+	 * always return <code>true</code>.
 	 * Subclasses should return the result of {@link CControlAccess#isVisible(CDockable)}.
 	 * @return <code>true</code> if this <code>CDockable</code> can be accessed by the user
 	 * through a graphical user interface.
+	 * @see #hasParent()
 	 */
 	public boolean isVisible();
+	
+	/**
+	 * Tells whether this {@link CDockable} has a location in the tree. Having a location in the tree
+	 * implies {@link #isVisible()}. For root-{@link CStation} this method will return <code>false</code> if
+	 * they do not have a parent.<br>
+	 * Subclasses should return the result of {@link CControlAccess#hasParent(CDockable)}.
+	 * @return <code>true</code> if this dockable has a parent and is in the tree
+	 */
+	public boolean hasParent();
 	
 	/**
 	 * Tells whether this <code>CDockable</code> is currently visible to the user. A <code>CDockable</code>

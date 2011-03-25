@@ -65,6 +65,13 @@ public interface CControlAccess {
 	public boolean isVisible( CDockable dockable );
 	
 	/**
+	 * Tells whether <code>dockable</code> has a parent and is registered.
+	 * @param dockable the dockable to check
+	 * @return <code>true</code> if <code>dockable</code> is in the tree and not a root
+	 */
+	public boolean hasParent( CDockable dockable );
+	
+	/**
 	 * Gets the id of <code>factory</code>.
 	 * @param factory the factory to search
 	 * @return the id or <code>null</code>

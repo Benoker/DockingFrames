@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -35,7 +35,7 @@ import bibliothek.gui.dock.action.DropDownAction;
  */
 public interface DropDownFilterFactory {
 	/**
-	 * Creates a new filter. The filters <code>setXYZ</code>-methods will be
+	 * Creates a new filter. The filters <code></code>-methods will be
 	 * called by some unknown source, and the filter can then decide which
 	 * of the values to forward to the <code>view</code>.
 	 * @param action the action for which the filter will be used

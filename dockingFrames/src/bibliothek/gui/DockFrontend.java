@@ -721,7 +721,7 @@ public class DockFrontend {
         if( roots.containsKey( name ))
         	throw new IllegalArgumentException( "There is already a station registered with name " + name );
         
-        controller.getRegister().add( station );
+        controller.add( station );
         roots.put( name, new RootInfo( station, name ));
     }
     
@@ -909,7 +909,7 @@ public class DockFrontend {
         		defaultStation = null;
         	
             roots.remove( info.getName() );
-            controller.getRegister().remove( station );
+            controller.remove( station );
         }
     }
     
@@ -1048,21 +1048,44 @@ public class DockFrontend {
     }
     
     /**
-     * Tells whether <code>dockable</code> is hidden or not.
+     * Tells whether <code>dockable</code> is hidden or not. A {@link Dockable} is hidden if either
+     * {@link #isHiddenRootStation(DockElement)} is <code>true</code> or if {@link #isShown(Dockable)} is <code>false</code>.<br>
      * @param dockable the element whose state is asked
      * @return <code>true</code> if <code>dockable</code> is not visible
+     * @see #isHiddenRootStation(DockElement)
      */
     public boolean isHidden( Dockable dockable ){
-        return dockable.getController() == null;
+    	return !isShown( dockable );
     }
     
     /**
-     * Tells whether <code>dockable</code> is visible or not.
+     * Tells whether <code>dockable</code> is visible or not. A {@link Dockable} is visible if it is or will
+     * be registered. A root-station is always visible.
      * @param dockable the element whose state is asked
      * @return <code>true</code> if <code>dockable</code> is visible
+     * @see #isHiddenRootStation(DockElement)
      */
     public boolean isShown( Dockable dockable ){
-        return controller.getRegister().willBeRegistered( dockable );
+    	return controller.getRegister().willBeRegistered( dockable );
+    }
+    
+    /**
+     * Tells whether <code>element</code> is a root-station and at the same time a {@link Dockable}
+     * without parent.
+     * @param element the element to check
+     * @return <code>true</code> if <code>element</code> is a root-station and a dockable without parent
+     */
+    public boolean isHiddenRootStation( DockElement element ){
+    	Dockable dockable = element.asDockable();
+    	DockStation station = element.asDockStation();
+    	if( station == null || dockable == null ){
+    		return false;
+    	}
+    	DockRegister register = controller.getRegister();
+    	if( register.isProtected( station )){
+    		return dockable.getDockParent() == null;
+    	}
+    	return false;
     }
     
     /**
@@ -1256,7 +1279,7 @@ public class DockFrontend {
         try{
             onAutoFire++;
         
-            if( isHidden( dockable )){
+            if( isHidden( dockable ) || isHiddenRootStation( dockable )){
                 if( veto.expectToShow( dockable, cancelable )){
                     DockInfo info = getInfo( dockable );
                     if( info == null ){
