@@ -509,3 +509,5 @@
 - API: CDockable.hasParent tells whether a CDockable is visible and not a root station
 - API/Bugfix: Invoking "setVisible" now checks "hasParent" and not "isVisible", as a result invoking "setVisible(true)" on a root CStation now places the station somewhere.
 - API/Bugfix: DockFrontend.show is now also executed for hidden root-stations
+- Bugfix: Glass Extension: should now throw less exceptions if a tab is smaller than 1x1 pixels.
+- Bugfix: The ArchGradientPainter and CGlassEclipseTabPainter now update their field "wasPreviousSelected" every time "update" is executed. This prevents a bug where the wrong size of the tabs was calculated because of the property having the wrong value.

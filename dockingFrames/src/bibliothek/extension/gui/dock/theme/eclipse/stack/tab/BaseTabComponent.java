@@ -792,10 +792,10 @@ public abstract class BaseTabComponent extends BackgroundPanel implements TabCom
     public Dimension getPreferredSize(){
     	if( label == null )
     		return new Dimension( 1, 1 );
-    	
+
     	Dimension labelSize = label.getPreferredSize();
     	Dimension buttonSize = buttons.getPreferredSize();
-    	
+
     	if( orientation.isHorizontal() ){
     		return new Dimension(
     				labelSize.width + buttonSize.width + labelInsets.left + labelInsets.right + buttonInsets.left + buttonInsets.right,

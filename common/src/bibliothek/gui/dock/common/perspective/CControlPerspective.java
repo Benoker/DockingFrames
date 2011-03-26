@@ -36,6 +36,7 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.intern.CDockFrontend;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -49,6 +50,7 @@ import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.util.ClientOnly;
 import bibliothek.util.Path;
 
 /**
@@ -56,6 +58,7 @@ import bibliothek.util.Path;
  * access to various {@link CPerspective}s.
  * @author Benjamin Sigg
  */
+@ClientOnly
 public class CControlPerspective {
 	private CControlAccess control;
 	
@@ -135,6 +138,44 @@ public class CControlPerspective {
      */
     public void setPerspective( String name, CPerspective perspective ){
     	control.getOwner().intern().setSetting( name, convert( perspective, false ) );
+    }
+    
+    /**
+     * Deletes the perspective with name <code>name</code>.
+     * @param name the name of the perspective
+     */
+    public void removePerspective( String name ){
+    	control.getOwner().delete( name );
+    }
+    
+    /**
+     * Renames the perspective <code>source</code> to <code>destination</code>. If there is already a 
+     * layout with name <code>destination</code> it will be overriden. This operation works directly on the
+     * {@link CControl}, already existing {@link CPerspective}s will not be affected by invoking this method.
+     * @param source the name of the source
+     * @param destination the name of the destination
+     * @throws IllegalArgumentException if <code>source</code> does not point to an existing layout
+     * @throws IllegalArgumentException if either <code>source</code> or <code>destination</code> are <code>null</code>
+     */
+    public void renamePerspective( String source, String destination ){
+    	if( source == null ){
+    		throw new IllegalArgumentException( "source is null" );
+    	}
+    	if( destination == null ){
+    		throw new IllegalArgumentException( "destination is null" );
+    	}
+    	
+    	CDockFrontend frontend = control.getOwner().intern();
+    	Setting layout = frontend.getSetting( source );
+    	if( layout == null ){
+    		throw new IllegalArgumentException( "no perspective registered with name '" + source + "'" );
+    	}
+    	frontend.setSetting( destination, layout );
+    	frontend.delete( source );
+    	
+    	if( source.equals( frontend.getCurrentSetting() )){
+    		frontend.setCurrentSettingName( destination );
+    	}
     }
     
     private Setting convert( CPerspective perspective, boolean includeWorkingAreas ){

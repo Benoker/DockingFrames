@@ -169,12 +169,21 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    public Dimension getPreferredSize () {
       boolean previousSelected = isPreviousTabSelected();
       if (wasPreviousSelected != previousSelected) {
-         wasPreviousSelected = previousSelected;
          update();
       }
 
       return super.getPreferredSize();
    }
+   
+   @Override
+	public Dimension getMinimumSize(){
+	      boolean previousSelected = isPreviousTabSelected();
+	      if (wasPreviousSelected != previousSelected) {
+	         update();
+	      }
+
+	      return super.getMinimumSize();	
+	}
 
    @Override
    public void updateFocus () {
@@ -238,7 +247,8 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
          }
       }
 
-      if (isPreviousTabSelected()) {
+      wasPreviousSelected = isPreviousTabSelected();
+      if (wasPreviousSelected) {
          if (horizontal) {
             labelInsets.left += TAB_OVERLAP;
          }
@@ -387,7 +397,7 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       int w = getWidth();
       int h = getHeight();
 
-      if (w != 0 && h != 0) {
+      if (w > 0 && h > 0) {
          Graphics2D g2d = (Graphics2D)g.create();
          g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -454,7 +464,7 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       int h = getHeight();
       Dimension dImg;
 
-      if (w != 0 && h != 0) {
+      if (w > 0 && h > 0) {
          Shape sTab = createSelectedTabShape(w, h, false);
 
          Color lineColor = colorStackBorder.value();
@@ -552,21 +562,24 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
 
       BufferedImage bimg = null;
       dImg = new Dimension(isHorizontal() ? r.width + CORNER_RADIUS : getHeight() + CORNER_RADIUS, isHorizontal() ? getHeight() : r.width);
-      try {
-         bimg = glass.RenderBufferedImage(VALUE_PLAIN, dImg, true);
-      }
-      catch (Exception e) {
-         bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_DARKENED_PLAIN, dImg, true);
-      }
-
-      if ( !isHorizontal()) {
-         AffineTransform atTrans = AffineTransform.getTranslateInstance(/*r.width*/0, CORNER_RADIUS/*-getHeight()*/);
-         atTrans.concatenate(COutlineHelper.tRot90CCW);
-
-         g2d.drawImage(bimg, atTrans, null);
-      }
-      else {
-         g2d.drawImage(bimg, -r.width, 0, null);
+      
+      if( dImg.width > 0 && dImg.height > 0 ){
+    	  try {
+	         bimg = glass.RenderBufferedImage(VALUE_PLAIN, dImg, true);
+	      }
+	      catch (Exception e) {
+	         bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_DARKENED_PLAIN, dImg, true);
+	      }
+	
+	      if ( !isHorizontal()) {
+	         AffineTransform atTrans = AffineTransform.getTranslateInstance(/*r.width*/0, CORNER_RADIUS/*-getHeight()*/);
+	         atTrans.concatenate(COutlineHelper.tRot90CCW);
+	
+	         g2d.drawImage(bimg, atTrans, null);
+	      }
+	      else {
+	         g2d.drawImage(bimg, -r.width, 0, null);
+	      }
       }
    }
 

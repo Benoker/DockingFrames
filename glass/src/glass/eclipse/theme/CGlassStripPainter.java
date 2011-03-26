@@ -92,7 +92,7 @@ public class CGlassStripPainter implements TabPanePainter {
    }
 
    protected void paintBackground (Graphics g, int x, int y, int w, int h, boolean horizontal) {
-      if (w != 0 && h != 0) {
+      if (w > 0 && h > 0) {
          Graphics2D g2d = (Graphics2D)g.create();
 
          BufferedImage img = null;

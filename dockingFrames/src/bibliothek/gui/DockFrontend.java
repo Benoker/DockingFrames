@@ -1034,6 +1034,16 @@ public class DockFrontend {
     	else
     		save( setting );
     }
+    
+    /**
+     * Changes the name of the current setting. This is not a renaming operation, no layout is loaded, removed or 
+     * renamed, this method only changes the result of {@link #getCurrentSetting()}. This method does not fire
+     * any events as nothing happens.
+     * @param setting the name to use, can be <code>null</code>
+     */
+    public void setCurrentSettingName( String setting ){
+    	currentSetting = setting;
+    }
 
     /**
      * Stores the setting <code>setting</code> with the given name.

@@ -109,12 +109,14 @@ public class DefaultColorScheme extends AbstractColorScheme{
      * @param color the color or <code>null</code>
      */
     public void setColor( final String id, Color color ){
-        if( color == null ){
-            colors.remove( id );
-        }
-        else{
-            colors.put( id, color );
-        }
+    	synchronized( colors ){
+	        if( color == null ){
+	            colors.remove( id );
+	        }
+	        else{
+	            colors.put( id, color );
+	        }
+    	}
         
         UISchemeEvent<Color, DockColor, ColorBridge> event = new UISchemeEvent<Color, DockColor, ColorBridge>(){
 			public UIScheme<Color, DockColor, ColorBridge> getScheme(){
@@ -154,19 +156,22 @@ public class DefaultColorScheme extends AbstractColorScheme{
      * @return a color that matches id or <code>null</code>, the color may not be stored with the exact identifier <code>id</code>
      */
     public Color getColor( String id ) {
-        Color color = colors.get( id );
-        if( color != null )
-            return color;
-        
-        int best = -1;
-        for( Map.Entry<String, Color> entry : colors.entrySet() ){
-            if( id.startsWith( entry.getKey() )){
-                if( entry.getKey().length() > best ){
-                    best = entry.getKey().length();
-                    color = entry.getValue();
-                }
-            }
-        }
+    	Color color;
+    	synchronized( colors ){
+	        color = colors.get( id );
+	        if( color != null )
+	            return color;
+	        
+	        int best = -1;
+	        for( Map.Entry<String, Color> entry : colors.entrySet() ){
+	            if( id.startsWith( entry.getKey() )){
+	                if( entry.getKey().length() > best ){
+	                    best = entry.getKey().length();
+	                    color = entry.getValue();
+	                }
+	            }
+	        }
+    	}
         
         return color;
     }

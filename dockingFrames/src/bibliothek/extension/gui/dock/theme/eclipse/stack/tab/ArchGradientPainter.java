@@ -157,11 +157,20 @@ public class ArchGradientPainter extends BaseTabComponent {
 	public Dimension getPreferredSize(){
 		boolean previousSelected = isPreviousTabSelected();
 		if( wasPreviousSelected != previousSelected ){
-			wasPreviousSelected = previousSelected;
 			update();
 		}
 		
 		return super.getPreferredSize();
+	}
+	
+	@Override
+	public Dimension getMinimumSize(){
+		boolean previousSelected = isPreviousTabSelected();
+		if( wasPreviousSelected != previousSelected ){
+			update();
+		}
+		
+		return super.getMinimumSize();
 	}
 	
 	@Override
@@ -192,6 +201,8 @@ public class ArchGradientPainter extends BaseTabComponent {
 	 * Updates the layout information of this painter.
 	 */
 	protected void update(){
+		wasPreviousSelected = isPreviousTabSelected();
+		
 		Insets labelInsets = null;
 		Insets buttonInsets = null;
 		
@@ -217,13 +228,12 @@ public class ArchGradientPainter extends BaseTabComponent {
 				buttonInsets.bottom += 35;
 		}
 		
-		if( isPreviousTabSelected() ){
+		if( wasPreviousSelected ){
 			if( horizontal )
 				labelInsets.left += TAB_OVERLAP;
 			else
 				labelInsets.top += TAB_OVERLAP;
 		}
-		
 		getLabel().setForeground( getTextColor() );
 		setLabelInsets( labelInsets );
 		setButtonInsets( buttonInsets );

@@ -9,3 +9,6 @@
 (- Introduce concept of "DockGroup" a set of Dockables which should not be mixed)
 (- Preference pages for colors and keystrokes?) 
 - [done] Allow default locations for CDockables (for example allow to set, that a CDockable should be minimized to the left area)
+
+- Allow saving layouts in more than one file
+- Reserve width for DockActions on StackDockStations: show more important actions longer
