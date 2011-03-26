@@ -511,3 +511,4 @@
 - API/Bugfix: DockFrontend.show is now also executed for hidden root-stations
 - Bugfix: Glass Extension: should now throw less exceptions if a tab is smaller than 1x1 pixels.
 - Bugfix: The ArchGradientPainter and CGlassEclipseTabPainter now update their field "wasPreviousSelected" every time "update" is executed. This prevents a bug where the wrong size of the tabs was calculated because of the property having the wrong value.
+- Bugfix: Again updated the PlaceholderMap.PlaceholderKey.shrink methods, now they should work

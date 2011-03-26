@@ -205,16 +205,19 @@ public class DockRegister {
             }
             
             DockUtilities.visit( station, new DockUtilities.DockVisitor(){
-            	private List<DockStation> ignored = new ArrayList<DockStation>();
+            	private Set<DockStation> ignored = new HashSet<DockStation>();
             	
                 @Override
                 public void handleDockable( Dockable dockable ) {
-                	for( DockStation station : ignored ){
-                		if( DockUtilities.isAncestor( station, dockable )){
-                			return;
-                		}
+                	DockStation station = dockable.asDockStation();
+                	if( station == null || !isProtected( station )){
+	                	for( DockStation parent : ignored ){
+	                		if( DockUtilities.isAncestor( parent, dockable )){
+	                			return;
+	                		}
+	                	}
+	                    unregister( dockable );
                 	}
-                    unregister( dockable );
                 }
                 @Override
                 public void handleDockStation( DockStation station ) {

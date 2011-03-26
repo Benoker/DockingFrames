@@ -304,9 +304,9 @@ public interface CDockable {
 	public boolean isVisible();
 	
 	/**
-	 * Tells whether this {@link CDockable} has a location in the tree. Having a location in the tree
-	 * implies {@link #isVisible()}. For root-{@link CStation} this method will return <code>false</code> if
-	 * they do not have a parent.<br>
+	 * Tells whether this {@link CDockable} has a root station as parent. Having a root station as parent
+	 * implies {@link #isVisible()}. For root-{@link CStation} this method will return <code>false</code> if they
+	 * do not have a parent, they are not considered to be parents of themselves.<br>
 	 * Subclasses should return the result of {@link CControlAccess#hasParent(CDockable)}.
 	 * @return <code>true</code> if this dockable has a parent and is in the tree
 	 */

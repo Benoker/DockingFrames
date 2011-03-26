@@ -1052,7 +1052,7 @@ public class PlaceholderMap {
 			
 			Path[] copy = new Path[ count ];
 			int index = 0;
-			for( int i = 0; i < copy.length; i++ ){
+			for( int i = 0; i < placeholders.length; i++ ){
 				if( remain[i] ){
 					copy[ index++ ] = placeholders[i];
 				}
@@ -1087,7 +1087,7 @@ public class PlaceholderMap {
 			
 			Path[] copy = new Path[ count ];
 			int index = 0;
-			for( int i = 0; i < copy.length; i++ ){
+			for( int i = 0; i < placeholders.length; i++ ){
 				if( remain[i] ){
 					copy[ index++ ] = placeholders[i];
 				}
