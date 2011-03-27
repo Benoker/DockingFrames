@@ -759,18 +759,16 @@ public abstract class BaseTabComponent extends BackgroundPanel implements TabCom
 	}
 	
 	private void setSelection( TabComponent[] tabs ){
-		Dockable selected = getPane().getSelectedDockable();
-		
 		for( int i = 0; i < tabs.length; i++ ){
 			if( tabs[i] == this ){
 				if( i > 0 ){
 					if( tabs[i-1] instanceof BaseTabComponent ){
-						setPreviousTabSelected( ((BaseTabComponent)tabs[i-1]).getDockable() == selected );
+						setPreviousTabSelected( ((BaseTabComponent)tabs[i-1]).isSelected() );
 					}
 				}
 				if( i+1 < tabs.length ){
 					if( tabs[i+1] instanceof BaseTabComponent ){
-						setNextTabSelected( ((BaseTabComponent)tabs[i+1]).getDockable() == selected );
+						setNextTabSelected( ((BaseTabComponent)tabs[i+1]).isSelected() );
 					}
 				}
 				break;

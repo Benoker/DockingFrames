@@ -28,7 +28,7 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 import java.util.Arrays;
 
 /**
- * An arch is a mathematical description of an curve, the curve is within a
+ * An arch is a mathematical description of a curve, the curve is within a
  * given rectangle, starting at the top left and ending at the bottom right
  * edge. The curve is horizontal at the beginning and at the end. The curve 
  * is within a discrete space, and there is exactly one y-value for each given

@@ -485,8 +485,13 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 		private void insert( Tab tab, int index ){
 			tabs[ index ] = tab;
 			Tab[] visibleTabs = getVisibleTabs();
-			minimum[ index ] = tab.getMinimumSize( visibleTabs );
-			preferred[ index ] = tab.getPreferredSize( visibleTabs );
+			
+			for( int i = 0; i < tabs.length; i++ ){
+				if( tabs[i] != null ){
+					minimum[ i ] = tabs[i].getMinimumSize( visibleTabs );
+					preferred[ i ] = tabs[i].getPreferredSize( visibleTabs );
+				}
+			}
 			
 			boolean horizontal = getOrientation().isHorizontal();
 			

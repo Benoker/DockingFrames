@@ -198,11 +198,6 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    }
 
    @Override
-   protected void updatePaintIcon () {
-      update();
-   }
-
-   @Override
    protected void updateSelected () {
       update();
       updateBorder();
@@ -218,6 +213,8 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
     * Updates the layout information of this painter.
     */
    protected void update () {
+	  wasPreviousSelected = isPreviousTabSelected();
+	   
       Insets labelInsets = null;
       Insets buttonInsets = null;
 
@@ -247,7 +244,6 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
          }
       }
 
-      wasPreviousSelected = isPreviousTabSelected();
       if (wasPreviousSelected) {
          if (horizontal) {
             labelInsets.left += TAB_OVERLAP;

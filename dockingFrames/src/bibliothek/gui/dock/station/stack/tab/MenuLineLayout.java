@@ -527,8 +527,7 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayout.Layo
 				}
 				else{
 					// not enough space for all elements
-					double shrinkFactor = space / (double)available.width;
-					
+					double shrinkFactor = space / (double)available.width;				
 					int x = available.x;
 					int width = (int)(shrinkFactor * tabSpace);
 					

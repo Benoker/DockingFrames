@@ -8,7 +8,7 @@ This guide does not claim to be complete nor that all of its parts are relevant.
 
 You can utilize \src{Common} without understanding \src{Core}, but knowing at least some basics about \src{Core} will make life much easier.
 
-\subsection{The current version}
+\subsection{Previous versions: 1.0.8}
 Version 1.0.8 is an important milestone: for the first time the framework contains all the code necessary to handle ``real world'' applications:\begin{itemize}
  \item Due to the new placeholder-mechanism, stored locations are now very stable and any layout can be recreated anytime.
  \item Due to the new \src{CLocationModeManager} \src{Common} is now much flexibler, the new real-fullscreen-maximization feature for free floating panels already makes use of this flexibility.
@@ -17,5 +17,13 @@ Version 1.0.8 is an important milestone: for the first time the framework contai
  \item And there are many more small improvements and bugfixes, have a look at the \src{transition.pdf} document that comes alongside the framework.
 \end{itemize}
 
-Looking at the questions of our forum \footnote{\url{http://forum.byte-welt.de/forumdisplay.php?f=69&langid=2}} the framework is now feature complete. So the next version is 1.1.0, it will address the issues mentioned in chapter \ref{sec:suggestions} which could not be addressed in 1.0.8.\\
-\\
+Looking at the questions of our forum \footnote{\url{http://forum.byte-welt.de/forumdisplay.php?f=69&langid=2}} the framework is now feature complete. So the next version is 1.1.0, it will address the issues mentioned in chapter \ref{sec:suggestions} which could not be addressed in 1.0.8.
+
+\subsection{The current version: 1.1.0}
+In version 1.1.0 it is all about refining existing features and making interaction more smooth. With version 1.1.0 the framework has reached a mature state. The most important features of this release are:
+\begin{itemize}
+ \item The end of the ``secure'' packages. From now on unsigned applets and webstart applications are supported by the basic classes, the framework is able to switch between a ``restricted mode'' and a ``free mode'' at any time.
+ \item Almost all properties are now handled by \src{UIProperties} (a class from the \src{Core} project), this allows clients to replace almost all properties.
+ \item New listeners like the \src{CDockableLocationListener} can keep track of the visibility of dockables, and in this case ``visibility'' means whether the user can actually see the item or not.
+ \item And the ``perspective'' API allows clients to analyze and modify a layout without the need to create \src{CStation}s and \src{CDockable}s.
+\end{itemize}

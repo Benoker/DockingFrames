@@ -512,3 +512,12 @@
 - Bugfix: Glass Extension: should now throw less exceptions if a tab is smaller than 1x1 pixels.
 - Bugfix: The ArchGradientPainter and CGlassEclipseTabPainter now update their field "wasPreviousSelected" every time "update" is executed. This prevents a bug where the wrong size of the tabs was calculated because of the property having the wrong value.
 - Bugfix: Again updated the PlaceholderMap.PlaceholderKey.shrink methods, now they should work
+
+[v1.1.0p7c]
+- Bugfix: CGlassEclipseTabPainter did not update the icon correct, as a result the size of the tab was calculated wrong
+
+
+[Todo]
+- Import/Export Perspectives from file
+- DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
+- Tabs: replace icon of drop down action showing overflowing Dockables by icon that dynamically shows the size of the menu
