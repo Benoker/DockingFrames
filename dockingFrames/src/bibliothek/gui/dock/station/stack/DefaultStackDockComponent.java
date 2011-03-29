@@ -214,9 +214,8 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	/**
 	 * Representation of a single tab of this {@link StackDockComponent}.
 	 * @author Benjamin Sigg
-	 *
 	 */
-	protected class Tab extends ActionPopup{
+	public class Tab extends ActionPopup{
 	    /** the element on the tab */
 	    protected Dockable dockable;
 	    /** used to drag and drop the tab */
@@ -254,10 +253,15 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	    	}
 	    }
 	    
-		protected DockActionSource getSource(){
+		protected DockActionSource getActions(){
 			return dockable.getGlobalActionOffers();
 		}
 
+		@Override
+		protected Object getSource(){
+			return this;
+		}
+		
 		protected boolean isEnabled(){
 			return true;
 		}

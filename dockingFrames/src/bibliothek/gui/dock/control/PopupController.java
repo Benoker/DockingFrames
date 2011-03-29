@@ -37,12 +37,16 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.ActionPopup;
+import bibliothek.gui.dock.action.ActionPopupSuppressor;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.popup.DefaultActionPopupMenuFactory;
+import bibliothek.gui.dock.action.popup.ActionPopupMenuFactory;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 
 /**
- * Adds listeners to all {@link DockElementRepresentative}s.
- * Opens a popup-menu when the user triggers the popup-action.
+ * Manages the popup menus, adds a listeners to all {@link DockElementRepresentative}s to open popup menus
+ * when the user makes a right click.
  * @author Benjamin Sigg
  */
 public class PopupController implements DockControllerRepresentativeListener{
@@ -52,6 +56,18 @@ public class PopupController implements DockControllerRepresentativeListener{
     
     /** the controller for which this popup-controller works */
     private DockController controller;
+    
+    /** this factory creates the menus that are popping up */
+    private ActionPopupMenuFactory factory = new DefaultActionPopupMenuFactory();
+    
+    /** tells which popups are to be shown */
+    private ActionPopupSuppressor popupSuppressor = ActionPopupSuppressor.ALLOW_ALWAYS;
+    
+    /** if set, then popup menus may be opened during drag and drop operations */
+    private boolean allowOnMove = false;
+    
+    /** if set, then empty menus can be opened */
+    private boolean allowEmpty = false;
     
     /**
      * Creates a new popup-controller.
@@ -88,6 +104,79 @@ public class PopupController implements DockControllerRepresentativeListener{
      */
     public DockController getController(){
 		return controller;
+	}
+    
+    /**
+     * Sets the factoy which creates new menus that pop up.
+     * @param factory the factory creating menus, not <code>null</code>
+     */
+    public void setPopupMenuFactory( ActionPopupMenuFactory factory ){
+    	if( factory == null ){
+    		throw new IllegalArgumentException( "the factory must not be null" );
+    	}
+    	this.factory = factory;
+    }
+    
+    /**
+     * Gets the factory which is responsible for creating new menus.
+     * @return the factory, never <code>null</code>
+     */
+    public ActionPopupMenuFactory getPopupMenuFactory(){
+		return factory;
+	}
+
+    /**
+     * Gets the guard which decides, which popups should be allowed.
+     * @return the guard
+     * @see #setPopupSuppressor(ActionPopupSuppressor)
+     */
+    public ActionPopupSuppressor getPopupSuppressor() {
+        return popupSuppressor;
+    }
+    
+    /**
+     * Sets the guard which decides, which popups with {@link DockAction DockActions}
+     * are allowed to show up, and which popups will be suppressed.
+     * @param popupSuppressor the guard
+     */
+    public void setPopupSuppressor( ActionPopupSuppressor popupSuppressor ) {
+        if( popupSuppressor == null )
+            throw new IllegalArgumentException( "suppressor must not be null" );
+        this.popupSuppressor = popupSuppressor;
+    }
+    
+    /**
+     * If set, then empty menus are still opened. The {@link ActionPopupSuppressor} or the
+     * {@link ActionPopupMenuFactory} may however catch the empty menu and hide it.
+     * @param allowEmpty if set to <code>false</code>, empty menus can never be shown
+     */
+    public void setAllowEmptyMenu( boolean allowEmpty ){
+		this.allowEmpty = allowEmpty;
+	}
+    
+    /**
+     * Tells whether empty menus can be shown.
+     * @return <code>true</code> if empty menus can be shown
+     */
+    public boolean isAllowEmptyMenu(){
+		return allowEmpty;
+	}
+    
+    /**
+     * Sets whether menus can be opened during drag and drop operations. This property should
+     * be remain <code>false</code> and only be set to <code>true</code> for very special occasions.
+     * @param allowOnMove whether menus can be opened during drag and drop operations
+     */
+    public void setAllowOnMove( boolean allowOnMove ){
+		this.allowOnMove = allowOnMove;
+	}
+    
+    /**
+     * Tells whether menus can be opened during drag and drop operations
+     * @return <code>true</code> if menus can be opened all the time
+     */
+    public boolean isAllowOnMove(){
+		return allowOnMove;
 	}
     
     /**
@@ -145,8 +234,13 @@ public class PopupController implements DockControllerRepresentativeListener{
         }
 
         @Override
-        protected DockActionSource getSource() {
+        protected DockActionSource getActions() {
             return getDockable().getGlobalActionOffers();
+        }
+        
+        @Override
+        protected Object getSource(){
+	        return representative;
         }
 
         @Override

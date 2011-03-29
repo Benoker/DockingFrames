@@ -50,7 +50,7 @@ public class BasicMenuHandler extends BasicHandler<MenuDockAction> {
     @Override
     public void triggered(){
         final DockActionSource source = getAction().getMenu( getDockable() );
-        if( source != null && source.getDockActionCount() > 0 ){
+        if( source != null ){
             ActionPopup popup = new ActionPopup( false ){
                 @Override
                 protected Dockable getDockable() {
@@ -58,8 +58,13 @@ public class BasicMenuHandler extends BasicHandler<MenuDockAction> {
                 }
 
                 @Override
-                protected DockActionSource getSource() {
+                protected DockActionSource getActions() {
                     return source;
+                }
+                
+                @Override
+                protected Object getSource(){
+                	return getAction();
                 }
 
                 @Override

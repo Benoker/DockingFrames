@@ -57,6 +57,7 @@ import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.ActionPopupSuppressor;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.popup.ActionPopupMenuFactory;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.control.ComponentHierarchyObserver;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
@@ -68,6 +69,7 @@ import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.DoubleClickController;
 import bibliothek.gui.dock.control.KeyboardController;
+import bibliothek.gui.dock.control.PopupController;
 import bibliothek.gui.dock.control.SingleParentRemover;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
@@ -197,8 +199,9 @@ public class DockController {
     
     /** behavior which dockable can be dropped over which station */
     private MultiDockAcceptance acceptance = new MultiDockAcceptance();
-    /** tells which popups are to be shown */
-    private ActionPopupSuppressor popupSuppressor = ActionPopupSuppressor.ALLOW_ALWAYS;
+    
+    /** controlls the popup menus */
+    private PopupController popupController;
    
     /** remover of stations with none or one child */
     private SingleParentRemover remover;
@@ -310,7 +313,7 @@ public class DockController {
     	if( focus != null )
     		register.addDockRegisterListener( focus );
     	
-    	factory.createPopupController( this, setup );
+    	popupController = factory.createPopupController( this, setup );
     	
     	DockRegisterListener binder = factory.createActionBinder( this, setup );
     	if( binder != null )
@@ -604,7 +607,7 @@ public class DockController {
      * @see #setPopupSuppressor(ActionPopupSuppressor)
      */
     public ActionPopupSuppressor getPopupSuppressor() {
-        return popupSuppressor;
+    	return popupController.getPopupSuppressor();
     }
     
     /**
@@ -613,10 +616,33 @@ public class DockController {
      * @param popupSuppressor the guard
      */
     public void setPopupSuppressor( ActionPopupSuppressor popupSuppressor ) {
-        if( popupSuppressor == null )
-            throw new IllegalArgumentException( "suppressor must not be null" );
-        this.popupSuppressor = popupSuppressor;
+    	popupController.setPopupSuppressor( popupSuppressor );
     }
+    
+    /**
+     * Gets the factory which creates new popup menus.
+     * @return the factory for creating popup menus, never <code>null</code>
+     */
+    public ActionPopupMenuFactory getPopupMenuFactory(){
+    	return popupController.getPopupMenuFactory();
+    }
+    
+    /**
+     * Sets the factory which creates new popup menus.
+     * @param factory the factory, not <code>null</code>
+     */
+    public void setPopupMenuFactory( ActionPopupMenuFactory factory ){
+    	popupController.setPopupMenuFactory( factory );
+    }
+    
+    /**
+     * Gets the {@link PopupController} which is responsible for managing the
+     * popup menus.
+     * @return the controller, never <code>null</code>
+     */
+    public PopupController getPopupController(){
+		return popupController;
+	}
     
     /**
      * Gets the factory for a {@link DockActionSource} which is used

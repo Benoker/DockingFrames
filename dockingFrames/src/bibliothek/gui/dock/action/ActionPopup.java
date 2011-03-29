@@ -27,17 +27,16 @@
 package bibliothek.gui.dock.action;
 
 import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.themes.basic.action.menu.MenuMenuHandler;
+import bibliothek.gui.dock.action.popup.ActionPopupMenu;
+import bibliothek.gui.dock.action.popup.ActionPopupMenuFactory;
+import bibliothek.gui.dock.action.popup.ActionPopupMenuListener;
+import bibliothek.gui.dock.control.PopupController;
 
 /**
  * A mouse-listener that may be added to any component. When
@@ -50,7 +49,7 @@ public abstract class ActionPopup extends MouseInputAdapter{
     private boolean suppressable;
     
     /** The menu that is currently shown */
-    private JPopupMenu menu;
+    private ActionPopupMenu menu;
     
     /**
      * Constructs a new ActionPopup
@@ -111,7 +110,13 @@ public abstract class ActionPopup extends MouseInputAdapter{
      * Gets the actions, that will be displayed
      * @return The actions
      */
-    protected abstract DockActionSource getSource();
+    protected abstract DockActionSource getActions();
+    
+    /**
+     * Gets the source object, the object which is responsible for showing the current menu.
+     * @return the source object, may be <code>null</code>
+     */
+    protected abstract Object getSource();
     
     /**
      * Shows the popup of this ActionPopup. This method is normally 
@@ -147,6 +152,14 @@ public abstract class ActionPopup extends MouseInputAdapter{
     }
     
     /**
+     * Gets the factory which should be used for creating new popup menus.
+     * @return the factory, not <code>null</code>
+     */
+    protected ActionPopupMenuFactory getFactory(){
+    	return getDockable().getController().getPopupController().getPopupMenuFactory();
+    }
+    
+    /**
      * Pops up this menu.
      * @param owner the owner of the menu
      * @param x x-coordinate
@@ -162,42 +175,31 @@ public abstract class ActionPopup extends MouseInputAdapter{
         if( dockable.getController() == null )
             return false;
         
-        if( dockable.getController().getRelocator().isOnMove() )
+        PopupController popup = dockable.getController().getPopupController();
+        
+        if( !popup.isAllowOnMove() && dockable.getController().getRelocator().isOnMove() )
             return false;
                     
-        DockActionSource source = getSource();
+        DockActionSource actions = getActions();
         
-        if( source.getDockActionCount() == 0 )
+        if( !popup.isAllowEmptyMenu() && actions.getDockActionCount() == 0 )
             return false;
         
-        if( isSuppressable() && dockable.getController().getPopupSuppressor().suppress( dockable, source ))
+        if( isSuppressable() && dockable.getController().getPopupSuppressor().suppress( dockable, actions ))
             return false;
         
-        final JPopupMenu methodMenu = new JPopupMenu();
+        final ActionPopupMenu methodMenu = getFactory().createMenu( owner, dockable, actions, getSource() );
+        if( methodMenu == null ){
+        	return false;
+        }
         menu = methodMenu;
-        final MenuMenuHandler handler = new MenuMenuHandler( source, dockable, menu );
-        handler.bind();
-        
-        menu.addPopupMenuListener( new PopupMenuListener(){
-            public void popupMenuWillBecomeInvisible( PopupMenuEvent e ) {
-            	EventQueue.invokeLater( new Runnable(){
-            		public void run(){
-            			// Delay destruction of handler to the time after the action is executed. This way
-            			// events depending on the view can still be processed, e.g. change the selection of
-            			// a SimpleDropDownButton
-            			handler.unbind();
-                        if( methodMenu == menu )
-                            menu = null;		
-            		}
-            	});
-            }
-            public void popupMenuCanceled( PopupMenuEvent e ) {
-                // do nothing
-            }
-            public void popupMenuWillBecomeVisible( PopupMenuEvent e ) {
-            	// do nothing
-            }
-        });
+        menu.addListener( new ActionPopupMenuListener(){
+			public void closed( ActionPopupMenu menu ){
+				if( methodMenu == menu ){
+					ActionPopup.this.menu = null;
+				}
+			}
+		});
         
         menu.show( owner, location.x, location.y );
         return true;
