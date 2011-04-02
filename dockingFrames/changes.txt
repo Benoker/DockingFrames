@@ -516,6 +516,8 @@
 [v1.1.0p7c]
 - Bugfix: CGlassEclipseTabPainter did not update the icon correct, as a result the size of the tab was calculated wrong
 ! API: the PopupController is now accessible for clients through DockController.getPopupController. Clients can install their custom DockPopupMenuFactories for changing the way the popup menu behaves
+! API: DockRelocator is now an interface.
+- API: New VetoableDockRelocatorListener can be added to DockRelocator and receives events when something happens that involves a drag and drop operation
 
 [Todo]
 - Import/Export Perspectives from file

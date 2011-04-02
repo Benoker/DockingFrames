@@ -29,13 +29,22 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRelocator;
-import bibliothek.gui.dock.station.LayoutLocked;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A listener used by a {@link DockRelocator}
  * to inform when a {@link bibliothek.gui.Dockable} is moved around.
  * @author Benjamin Sigg
+ * @deprecated please use {@link VetoableDockRelocatorListener} instead. This interface will be
+ * removed in a future release
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_2,
+		description="remove this interface")
 public interface DockRelocatorListener {
     /**
      * Invoked when a drag and drop operation is initiated. This method is

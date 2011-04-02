@@ -27,7 +27,6 @@ package bibliothek.gui.dock.control.relocator;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.control.DefaultDockRelocator;
 import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
