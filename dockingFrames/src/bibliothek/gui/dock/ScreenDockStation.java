@@ -177,6 +177,9 @@ public class ScreenDockStation extends AbstractDockStation {
     /** An action to enable or disable fullscreen mode of some window */
     private ListeningDockAction fullscreenAction;
 
+    /** tells how much two windows must overlap in order for them to be merged */
+    private double dropOverRatio = 0.75;
+    
     /** the restrictions of the boundaries of this window*/
     private PropertyValue<BoundaryRestriction> restriction =
         new PropertyValue<BoundaryRestriction>( ScreenDockStation.BOUNDARY_RESTRICTION ){
@@ -1233,7 +1236,7 @@ public class ScreenDockStation extends AbstractDockStation {
 		                double ratio = size / max;
 		                
 		                if( ratio > bestRatio ){
-		                    bestRatio = max;
+		                    bestRatio = ratio;
 		                    best = window;
 		                }
 		            }
@@ -1243,7 +1246,7 @@ public class ScreenDockStation extends AbstractDockStation {
         
         boolean done = false;
         
-        if( bestRatio > 0.75 ){
+        if( bestRatio >= dropOverRatio ){
             DockableProperty successor = property.getSuccessor();
             Dockable dock = best.getDockable();
             if( successor != null ){
@@ -1765,6 +1768,28 @@ public class ScreenDockStation extends AbstractDockStation {
         for( ScreenDockWindowHandle window : dockables.dockables() )
             window.getWindow().checkWindowBounds();
     }
+    
+    /**
+     * Tells the current overlapping two windows must have in order to be merged.
+     * @return the overlapping, a number between 0 and 1
+     * @see #setDropOverRatio(double)
+     */
+    public double getDropOverRatio(){
+		return dropOverRatio;
+	}
+    
+    /**
+     * Sets how much two windows must overlap in order to be merged. This property is only used when
+     * {@link #drop(Dockable, ScreenDockProperty, boolean) dropping} a {@link Dockable}. A value of 0 means that
+     * the windows don't have to overlap, a value of 1 indicates a perfect match. The default value is 0.75.
+     * @param dropOverRatio the new ratio, a value between 0 and 1 inclusive
+     */
+    public void setDropOverRatio( double dropOverRatio ){
+    	if( dropOverRatio < 0 || dropOverRatio > 1 ){
+    		throw new IllegalArgumentException( "dropOverRatio must be between 0 and 1" );
+    	}
+		this.dropOverRatio = dropOverRatio;
+	}
     
     /**
      * Information where a {@link Dockable} will be dropped. This class
