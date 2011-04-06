@@ -4,9 +4,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DefaultDockControllerFactory;
-import bibliothek.gui.dock.control.DefaultDockRelocator;
 import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
 
 /**
  * A controller which replaces its {@link DockRelocator} in order to start
