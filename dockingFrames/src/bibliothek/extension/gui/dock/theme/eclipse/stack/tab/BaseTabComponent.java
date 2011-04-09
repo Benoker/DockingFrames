@@ -641,6 +641,7 @@ public abstract class BaseTabComponent extends BackgroundPanel implements TabCom
     
     public void setTooltip( String tooltip ){
 	    setToolTipText( tooltip );	
+	    label.setToolTipText( tooltip );
     }
     
     /**

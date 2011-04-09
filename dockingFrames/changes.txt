@@ -520,6 +520,9 @@
 - API: New VetoableDockRelocatorListener can be added to DockRelocator and receives events when something happens that involves a drag and drop operation
 - Bugfix: mmodelski found a bug in the ScreenDockStation.drop method. Also added the "drop over ratio" property because of his suggestion.
 
+[v1.1.0p7d]
+- Bugfix: Title-Tooltips are now supported by the EclipseTheme
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
