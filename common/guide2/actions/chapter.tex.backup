@@ -19,10 +19,21 @@ To separate a group actions from another group a separator is needed. The method
 An action is not a \src{Component}, it can appear at the same time at different locations with different views. For example an action can be seen as button in a title and at the same time as menu-item in a popup-menu.
 
 \subsection{CButton}
-\src{CButton}s are actions that can be triggered many times by the user and will always behave the same way. \src{CButton} itselfs is much like \src{JButton}s and offer many methods that can also be found in \src{JButton}s. E.g. clients can add an \src{ActionListener} to the \src{CButton} in order to be informed when the user clicks onto the button.
+\src{CButton}s are actions that can be triggered many times by the user and will always behave the same way. \src{CButton}s need to be subclassed, its abstract method \src{action} will be called whenever the button is triggered. An example:
+\begin{lstlisting}
+public class SomeAction extends CButton{
+	public SomeAction(){
+		setText( "Something" );
+	}
+	
+	protected void action(){
+		...
+	}
+}
+\end{lstlisting}
 
 \subsection{CCheckBox}
-This action has a state, it is either selected or not selected (\src{true} or \src{false}). Whenever the user triggers the action the state changes. \src{CCheckBox} is abstract and clients must create a subclass, the method \src{changed} will be called when the state changes. An example:
+This action has a state, it is either selected or not selected (\src{true} or \src{false}). Whenever the user triggers the action the state changes. Like \src{CButton} is must be subclassed. The method \src{changed} will be called when the state changes. An example:
 \begin{lstlisting}
 public class SomeAction extends CCheckBox{
 	public SomeAction(){

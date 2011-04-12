@@ -33,7 +33,7 @@ The \src{FontModifier} \src{italic} will change the italic flag of the original 
 Every \src{dockable} has a width and a height. Some \src{dockable}s are flexibel in their size, others would be better of with a constant size. There is a feature to lock the size and a feature to set a specific size.
 
 \subsubsection{Lock the size}
-Every \src{AbstractCDockable} has the method \src{setResizeLocked}. If the size is locked through this method than any station will try not to change the size of the \src{dockable}. There are also methods to lock only width or height \linebreak (\src{setResizeLockedHorizontally} and \src{setResizeLockedVertically}).
+Every \src{AbstractCDockable} has the method \src{setResizeLocked}. If the size is locked then the framework will try not to change the size of the \src{dockable}. There are also methods to lock only the width or the height \linebreak (\src{setResizeLockedHorizontally} and \src{setResizeLockedVertically}).
 
 \warningbox{Locking the size does not prevent the user from manually resizing the \src{dockable}. And sometimes a station needs to violate the locking as well, e.g.: when a grid-area has only one child the size cannot be choosen freely. }
 
@@ -53,23 +53,23 @@ control.handleResizeRequests();
 \end{lstlisting}
 In this example two resize requests are handled at the same time. In line \src{6} the resize request of \src{a} is set to $200, 300$, the argument \src{false} tells \src{a} not yet to process the request. In line \src{7} the resize request of \src{b} is set, \src{b} should have the width $500$ but should not care about its height. Finally in line \src{9} all the requests are processed together. If the second parameter in line \src{7} would be \src{true} instead of \src{false}, then line \src{9} would not be necessary.
 
-\designbox{Not processing a request directly, but collect them, allows requests to interact with each other. Assume three \src{dockable}s in a line and the task to resize the two elements at the begin and end of the line. If one resize request is handled before the other, than the second request might destroy the work of the first one.}
+\designbox{Not processing a request directly, but collect them, allows requests to interact with each other. Assume there are three \src{dockable}s in a line and the task is to resize the two elements at the begining and the end of the line. If one resize request is handled before the other, then the second request might destroy the work of the first one.}
 
 \classbox{Every object can add a \src{ResizeRequestListener} to \src{CControl}, this listener will be called when resize requests need to be processed. Most of the \src{CStation}s add such a listener. The only station on which requests can have complex interactions is the \src{CGridArea} (and the \src{CContentArea}). With the \src{PropertyKey} \src{RESIZE\_LOCK\_CONFLICT\_RESOLVER}, defined in \src{CControl}, clients can set the algorithm that is used to solve contradictions in a \src{CGridArea}.}
 
-\subsection{Maximizing}
-When maximizing a \src{CDockable} first the global \src{CMaximizeBehavior} is asked for the real element to maximize. If for example a \src{dockable} is part of a whole stack of \src{dockable}s, then the maximize-behavior might decide to maximize the whole stack instead of the single \src{dockable}. In a second step the tree of stations and \src{dockable}s is traversed upwards until a \src{MaximizeArea} is found, the element is then shown on this area. If no \src{MaximizeArea} can be found in the ancestors, then a default area is taken.
+\subsection{Grouping}
+If the user clicks on one of the extended-mode actions (like ``maximize'') of a \src{CDockable}, then the \src{CGroupBehavior} will be asked to define the actual sequence of events to happen. Some \src{CGroupBehavior}s might decide to move around entire stacks of \src{CDockable}s, others might decide to move just one \src{CDockable}.
 
-Clients are not (yet) able to influence the second step, but they can change the \src{CMaximizeBehavior}:
+Clients may change the behavior by calling \src{CControl.setGroupBehavior} like in this example:
 \begin{lstlisting}
 CControl control = ...
-CMaximizeBehaviour behaviour = ...
+CGroupBehavior behaviour = ...
 
-control.getStateManager().setMaximizeBehavior( behavior );
+control.setGroupBehavior( behavior );
 \end{lstlisting}
 In line \src{2} a custom behavior is declared, in line \src{4} the behavior is set.
 
-\classbox{Most the things that need to be done for changing the extended mode (like the ``maximized mode'') are handled by the \src{CStateManager}.}
+\classbox{The old \src{CMaximizingBehavior} has been replaced by the \src{CGroupBehavior}. Two default behaviors are available and defined as constants in the \src{CGroupBehavior} itself.}
 
 \subsection{Preferences} \label{sec:preferences}
 Common allows users to set some properties like the keys that need to be pressed in order to maximize a \src{dockable} (\src{ctrl+m}). Normally this mechanism is deactivated and clients first need to activate it:

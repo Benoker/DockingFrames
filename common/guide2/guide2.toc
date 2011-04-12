@@ -44,7 +44,7 @@
 \contentsline {subsection}{\numberline {7.3}Size}{30}
 \contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{30}
 \contentsline {subsubsection}{\numberline {7.3.2}Request a size}{30}
-\contentsline {subsection}{\numberline {7.4}Maximizing}{31}
+\contentsline {subsection}{\numberline {7.4}Grouping}{31}
 \contentsline {subsection}{\numberline {7.5}Preferences}{31}
 \contentsline {subsection}{\numberline {7.6}Themes}{32}
 \contentsline {subsection}{\numberline {7.7}LookAndFeel}{33}
