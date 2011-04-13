@@ -142,7 +142,7 @@ public class DefaultIconScheme extends AbstractIconScheme {
 	 * @param resources a list of files with "key=path" lines telling key and path of the icons to load. If a key
 	 * appears more than once, then the last occurance of the key wins
 	 */
-	@Todo( priority=Priority.MAJOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+	@Todo( priority=Priority.MAJOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_1,
 			description="get rid of the Overflow-menu-icon")
 	public DefaultIconScheme( DockController controller, IconResource... resources ){
 		super( controller );

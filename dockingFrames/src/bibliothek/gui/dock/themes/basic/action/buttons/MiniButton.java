@@ -388,7 +388,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     }
     
     @Override
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
     		description="dont hardcode the minimum size")
     public Dimension getPreferredSize() {
     	if( isPreferredSizeSet() )

@@ -48,7 +48,7 @@ import bibliothek.util.Todo.Version;
  * strategy should work with most implementations that are based on a {@link Window}.
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.BUG, target=Version.VERSION_1_1_0,
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.BUG, target=Version.VERSION_1_1_1,
 	description="handle taskbar, check multi-screen (does not work properly)" )
 public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreenStrategy {
 	public void install( ScreenDockStation station ) {

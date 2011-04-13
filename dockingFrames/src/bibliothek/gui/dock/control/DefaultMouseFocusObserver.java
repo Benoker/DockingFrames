@@ -44,7 +44,7 @@ import bibliothek.util.Todo.Version;
  * {@link Toolkit} to receive events which may change the focus. 
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_0,
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
 		description="Some kind of strategy to decide which child Component of a Dockable should be focused")
 public class DefaultMouseFocusObserver extends AbstractMouseFocusObserver{
     /** The listener to all AWT events*/

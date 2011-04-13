@@ -53,7 +53,7 @@ public class IconManager extends UIProperties<Icon, DockIcon, DockIconBridge>{
     public IconManager( DockController controller ){
     	super( controller );
     	
-    	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_0,
+    	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_1,
     			description="load these icons somewhere else, for example in the DockControllerFactory")
     	DefaultIconScheme scheme = new DefaultIconScheme( "data/icons.ini", controller );
     	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );

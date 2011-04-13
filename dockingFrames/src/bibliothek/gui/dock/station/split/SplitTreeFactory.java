@@ -68,7 +68,7 @@ public interface SplitTreeFactory<N> {
      * @param placeholders the placeholders associated with this node, can be empty
      * @param placeholderMap placeholder information of a child {@link DockStation}
      * @param visible whether this node is visible to the user or not. A node is only visible to the user
-     * if both its children are visible
+     * if at least one of its children is visible
      * @return the representation of this node, might be <code>null</code>
      */
     public N horizontal( N left, N right, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible );
@@ -82,7 +82,7 @@ public interface SplitTreeFactory<N> {
      * @param placeholders the placeholders associated with this node, can be empty
      * @param placeholderMap placeholder information of a child {@link DockStation}
      * @param visible whether this node is visible to the user or not. A node is only visible to the user
-     * if both its children are visible
+     * if at least one of its children is visible
      * @return the representation of this node, might be <code>null</code>
      */
     public N vertical( N top, N bottom, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible );

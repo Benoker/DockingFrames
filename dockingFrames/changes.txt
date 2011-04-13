@@ -513,15 +513,20 @@
 - Bugfix: The ArchGradientPainter and CGlassEclipseTabPainter now update their field "wasPreviousSelected" every time "update" is executed. This prevents a bug where the wrong size of the tabs was calculated because of the property having the wrong value.
 - Bugfix: Again updated the PlaceholderMap.PlaceholderKey.shrink methods, now they should work
 
-[v1.1.0p7c]
+[v1.1.0p7d]
 - Bugfix: CGlassEclipseTabPainter did not update the icon correct, as a result the size of the tab was calculated wrong
 ! API: the PopupController is now accessible for clients through DockController.getPopupController. Clients can install their custom DockPopupMenuFactories for changing the way the popup menu behaves
 ! API: DockRelocator is now an interface.
 - API: New VetoableDockRelocatorListener can be added to DockRelocator and receives events when something happens that involves a drag and drop operation
 - Bugfix: mmodelski found a bug in the ScreenDockStation.drop method. Also added the "drop over ratio" property because of his suggestion.
 
-[v1.1.0p7d]
+[v1.1.0p7e]
 - Bugfix: Title-Tooltips are now supported by the EclipseTheme
+! API: moved some methods from MutableCControlRegister to CControlRegister
+- API: Added methods to CGrid to add placeholders for SingleCDockables and MultipleCDockables
+- API: Divided SimpleDropDownAction into two classes, clients can subclass AbstractSimpleDropDownAction if a custom DockActionSource should be used
+- API: CButton is no longer abstract and clients can now add ActionListeners instead of subclassing the action (which is still an option)
+- Todo: Reclassified several "todo"s to be in version 1.1.1 instead of 1.1.0, allowing final 1.1.0 to be finished soon.
 
 [Todo]
 - Import/Export Perspectives from file

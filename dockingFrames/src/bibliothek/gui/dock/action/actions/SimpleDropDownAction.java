@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -26,81 +26,21 @@
 
 package bibliothek.gui.dock.action.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.*;
-import bibliothek.gui.dock.action.dropdown.DefaultDropDownFilter;
-import bibliothek.gui.dock.action.dropdown.DropDownFilterFactory;
-import bibliothek.gui.dock.action.view.ActionViewConverter;
-import bibliothek.gui.dock.action.view.ViewTarget;
-import bibliothek.gui.dock.event.DropDownActionListener;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
+import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.action.StandardDockAction;
 
 /**
  * A dropdown action that has the same properties for all Dockables.
  * @author Benjamin Sigg
  */
-@Todo(priority=Priority.ENHANCEMENT, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0,
-		description="Allow clients to set the DockActionSource directly")
-public class SimpleDropDownAction extends SimpleDockAction implements DropDownAction {
-	/** the currently selected action */
-	private DockAction selection;
-
-	/** the listeners that were added to this action */
-	private List<DropDownActionListener> listeners = 
-		new ArrayList<DropDownActionListener>();
-	
+public class SimpleDropDownAction extends AbstractSimpleDropDownAction implements DropDownAction {
 	/** the menu */
 	private DefaultDockActionSource actions = new DefaultDockActionSource();
-	
-	/** the factory used to create new filter */
-	private DropDownFilterFactory filter = DefaultDropDownFilter.FACTORY;
-	
-	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
-		return converter.createView( ActionType.DROP_DOWN, this, target, dockable );
-	}
-	
-	public DockAction getSelection( Dockable dockable ){
-		return selection;
-	}
-	
-	public void setSelection( Dockable dockable, DockAction selection ){
-		setSelection( selection );
-	}
-	
-	/**
-	 * Changes the selection of this drop-down-action.
-	 * @param selection the newly selected action
-	 */
-	public void setSelection( DockAction selection ){
-		if( this.selection != selection ){
-			this.selection = selection;
-			fireSelectionChanged();
-		}
-	}
-	
-	/**
-	 * Sets the filter that will be used to filter text, icon, tooltips, etc.
-	 * if a view has to decide, which elements of this action, or its selected
-	 * action have to be shown.
-	 * @param filter the filter, not <code>null</code>
-	 */
-	public void setFilter( DropDownFilterFactory filter ){
-		if( filter == null )
-			throw new IllegalArgumentException( "Filter must not be null" );
-		this.filter = filter;
-	}
-	
-	public DropDownFilterFactory getFilter( Dockable dockable ){
-		return filter;
-	}
-	
+
 	/**
 	 * Adds an action to the menu.
 	 * @param action the action to add
@@ -135,8 +75,9 @@ public class SimpleDropDownAction extends SimpleDockAction implements DropDownAc
 		DockAction action = actions.getDockAction( index );
 		actions.remove( index );
 		
-		if( selection == action )
-			setSelection( (Dockable)null, (StandardDockAction)null );		
+		if( getSelection() == action ){
+			setSelection( (StandardDockAction)null );
+		}
 	}
 	
 	/**
@@ -154,46 +95,15 @@ public class SimpleDropDownAction extends SimpleDockAction implements DropDownAc
 	public void remove( DockAction action ){
 		actions.remove( action );
 		
-		if( selection == action )
+		if( getSelection() == action )
 			setSelection( (Dockable)null, (StandardDockAction)null );
 	}
 	
-	public DefaultDockActionSource getSubActions( Dockable dockable ){
+	protected DockActionSource getSubActions(){
 		return actions;
 	}
-		
-	public void addDropDownActionListener( DropDownActionListener listener ){
-		listeners.add( listener );
-	}
 	
-	public void removeDropDownActionListener( DropDownActionListener listener ){
-		listeners.remove( listener );
-	}
-
-	/**
-	 * Gets an array of all listeners that are registered to this action.
-	 * @return the array of listeners
-	 */
-	protected DropDownActionListener[] getListeners(){
-		return listeners.toArray( new DropDownActionListener[ listeners.size() ] );
-	}
-	
-	/**
-	 * Informs all listeners that the selection has changed.
-	 */
-	protected void fireSelectionChanged(){
-		Set<Dockable> dockables = getBoundDockables();
-		for( DropDownActionListener listener : getListeners() )
-			listener.selectionChanged( this, dockables, selection );
-	}
-	
-	public boolean trigger( Dockable dockable ) {
-	    if( !isEnabled( dockable ))
-            return false;
-        
-        if( selection != null )
-            return selection.trigger( dockable );
-        
-        return false;
+	public DefaultDockActionSource getSubActions( Dockable dockable ){
+		return (DefaultDockActionSource)super.getSubActions( dockable );
 	}
 }

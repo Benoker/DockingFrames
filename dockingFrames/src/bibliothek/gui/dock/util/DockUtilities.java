@@ -405,12 +405,11 @@ public class DockUtilities {
      * @param dockable a Dockable for which a Component has to be found
      * @return a showing component or <code>null</code>
      */
-    @Todo( priority=Todo.Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0, 
+    @Todo( priority=Todo.Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_1, 
         	description="Make use of DockElementRepresentative" )
     public static Component getShowingComponent( Dockable dockable ){
         Component component = dockable.getComponent();
         if( !component.isShowing() ){
-            
             for( DockTitle title : dockable.listBoundTitles() ){
                 component = title.getComponent();
                 if( component.isShowing() )

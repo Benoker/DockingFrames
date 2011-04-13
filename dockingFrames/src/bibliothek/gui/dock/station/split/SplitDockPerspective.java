@@ -330,13 +330,13 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		return children.size();
 	}
 	
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
 			description="implementation pending")
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		// ignore, SplitDockStation does not support placeholder maps
 	}
 	
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
 			description="implementation pending")
 	public PlaceholderMap getPlaceholders(){
 		return null;

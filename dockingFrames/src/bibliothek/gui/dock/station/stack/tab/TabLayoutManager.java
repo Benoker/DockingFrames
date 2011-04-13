@@ -41,7 +41,7 @@ import bibliothek.util.Todo.Version;
  * its algorithms.
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
 		description="Make some more LayoutManagers to put tabs in the {left, middle, right} or {top, middle, bottom}")
 public interface TabLayoutManager {
 	/**

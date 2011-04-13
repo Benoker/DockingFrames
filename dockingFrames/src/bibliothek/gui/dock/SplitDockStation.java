@@ -1319,14 +1319,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return true;
 	}
 
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
 			description="implement this method")
 	public PlaceholderMap getPlaceholders(){
 		// ignore for now TODO
 		return null;
 	}
 
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
 			description="implement this method")
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		// ignore for now TODO	
