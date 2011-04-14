@@ -25,13 +25,20 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import java.awt.*;
+import java.awt.Rectangle;
+
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * Restricts the boundaries of a {@link ScreenDockDialog}, a restriction might be,
  * that the dialog can't be placed outside the screen.
  * @author Benjamin Sigg
  */
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+		description="restrict maximum size of windows" )
 public interface BoundaryRestriction {
     /** A restriction that allows all boundaries. */
     public BoundaryRestriction FREE = new BoundaryRestriction(){
