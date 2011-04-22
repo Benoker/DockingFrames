@@ -13,12 +13,6 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 
 /*
- * There are two libraries: "core" and "common". Core provides some
- * basic features and "common" expands on them. This tutorial will
- * use both libraries.
- */
-
-/*
  * Hello World - with the core library
  */
 @Tutorial(title="Hello World", id="HelloWorld")
