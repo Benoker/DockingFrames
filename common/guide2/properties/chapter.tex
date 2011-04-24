@@ -26,8 +26,9 @@ The following properties are intended to be used by the client only, the keys ar
 Some additional properties are reserved for more detailed customization.
 
 \begin{description}
+\property{CControl.CCONTROL}{CControl}{The \src{CControl} itself}{This unmodifiable property allows access to the \src{CControl} even if only a \src{DockController} is available.}
 \property{CControl.RESIZE\_LOCK\_CONFLICT\_RESOLVER}{ConflictResolver<RequestDimension>}{an instance of \src{DefaultConflictResolver}}{Tells how to distribute space when two or more \src{dockable}s have conflicting size requests. See also chapter \ref{sec:size}.}
-\property{LocationModeManager.DOUBLE\_CLICK\_STRATEGY}{DoubleClockLocationStrategy}{\src{DoubleClickLocationStrategy.DEFAULT}}{This strategy tells to what extended-mode a \src{Dockable} changes if the user double clicks on it.}
+\property{LocationModeManager.DOUBLE\_CLICK\_STRATEGY}{DoubleClickLocationStrategy}{\src{DoubleClickLocationStrategy.DEFAULT}}{This strategy tells to what extended-mode a \src{Dockable} changes if the user double clicks on it.}
 \property{LocationModeManager.MODE\_ENABLEMENT}{ExtendedModeEnablementFactory}{\src{DefaultExtendedModeEnablement.FACTORY}}{This strategy tells what extended-modes are available for each \src{Dockable}.}
 \property{CControl.CCONTROL}{CControl}{The \src{CControl} in whose realm the query was asked}{Used internally for items which have access to a \src{DockController} but not to its \src{CControl}.This property cannot be modified.}
 \end{description}

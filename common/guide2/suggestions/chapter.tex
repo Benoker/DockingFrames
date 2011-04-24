@@ -52,7 +52,7 @@ Putting the pieces together the areas that will make the framework better are mo
 
 
 \subsubsection{Of the developers}
-Some of the issues of 1.0.7 have been addressed. Most  The \src{StateManager} got replaced by the \src{CLocationModeManager}. Customization still is an issue.
+Some of the issues of 1.0.7 have been addressed. Mostly the \src{StateManager} got replaced by the \src{CLocationModeManager}. Customization still is an issue.
 
 \begin{itemize}
  \item There is an annotation \src{Todo}, Interfaces, classes or methods that need to be changed are marked with this annotation.
@@ -66,4 +66,29 @@ Some of the issues of 1.0.7 have been addressed. Most  The \src{StateManager} go
 \end{itemize}
 
 
+\section{Version 1.1.0}
+\subsection{Of the people using the framework}
+This time there is no question that is asked by many people. Almost all questions are about little things. So the list below contains only some example questions.
+\begin{itemize}
+ \qa{When will the framework be bugfree?}{Never. But the number of bugs is slowly decreasing. Your questions and bug reports can help speeding up that process. Always include the stacktrace (yes, really, you might not have guessed but they so much help finding bugs...)} and/or a description how to reproduce the bug.
+ \qa{What about transparent background?}{Does not have a high priority, as transparancy can already be simulated.}
+ \qa{How does the \src{CGrid} work, how do I add or remove \src{Dockable}s from a \src{CControl}.}{There is still much confusion about the \src{CGrid}. \src{CGrid} can be used one time to setup the initial layout, afterwards the method \linebreak \src{setVisible} of \src{CDockable} has to be used to make new \src{Dockable}s visible. You need to add (\src{addDockable}) any \src{Dockable} to the \src{CControl} unless you added it through the \src{CGrid}.}
+\end{itemize}
+
+\subsection{Of the developers}
+With version 1.1.0 the framework moves from ``beta'' to ``release''. There were many small enhancements, notably the complete elimination of the ``secure'' packages and the introduction of perspectives.
+\begin{itemize}
+ \item Customization is now much easier due to existence of the \src{ThemeManager} and the various subclasses of \src{UIProperties}. What remains missing are some examples how to use the new features, this will be addressed in version 1.1.1.
+ \item A lot small ``todo''s have been collected in version 1.1.0, and version 1.1.1 is mostly dedicated on solving this open issues.
+ \item While perspectives are already a powerfull tool they lack features like exporting/importing from a file and an easy way to modify them.
+ \begin{enumerate}
+  \item Ideally clients should be able to define a default perspective, modify the perspective (e.g. adding additional \src{Dockable}s) and the framework would extrapolate the current layout by comparing the original default perspective with the modified one. If and how this feature could be supported is yet open to debate.
+  \item An editor to inspect and modify the perspectives of an application might also be a handy tool. At the moment this is more science fiction than reality.
+ \end{enumerate}
+\end{itemize}
  
+
+
+
+
+

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.layout;
 
 import java.awt.Dimension;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.util.ClientOnly;
 
@@ -36,6 +37,37 @@ import bibliothek.util.ClientOnly;
  */
 @ClientOnly
 public class RequestDimension implements Cloneable{
+	/**
+	 * Creates a {@link RequestDimension} only affecting the width of a {@link Dockable}. This
+	 * method is equivalent of calling <code>new RequestDimension( width, true )</code>.
+	 * @param width the requested width
+	 * @return the new request
+	 */
+	public static RequestDimension requestWidth( int width ){
+		return new RequestDimension( width, true );
+	}
+
+	/**
+	 * Creates a {@link RequestDimension} only affecting the height of a {@link Dockable}. This
+	 * method is equivalent of calling <code>new RequestDimension( height, false )</code>.
+	 * @param height the requested height
+	 * @return the new request
+	 */
+	public static RequestDimension requestHeight( int height ){
+		return new RequestDimension( height, false );
+	}
+	
+	/**
+	 * Creates a {@link RequestDimension} affecting the width and height of a {@link Dockable}. This
+	 * method is equivalent of calling <code>new RequestDimension( width, height )</code>.
+	 * @param width the requested width
+	 * @param height the requested height
+	 * @return the new request
+	 */
+	public static RequestDimension request( int width, int height ){
+		return new RequestDimension( width, height );
+	}
+	
     /** the preferred width */
     private int width;
     /** whether the preferred width is set */

@@ -2,18 +2,22 @@
 This chapter focuses on the foundation of \src{Common}: \src{CControl}, the \src{station}s and \src{dockable}s.
 
 \subsection{Dockables}
-A \src{CDockable}s is not much more than a set of properties like a ``title-icon'' and some \src{Component} which is to be shown to the user. A \src{CDockable} does not paint any decorations (like a title), handle any \src{MouseEvent}s or interacts with the user in any other way. Such jobs are handled by various manager-objects, factories and delegates. These objects need to know the \src{CDockable}s they work with and they need to be able to store information about them. To accomplish that each \src{CDockable} must be registered at a \src{CControl} and is associated with a unique identifier. Registering a \src{CDockable} is possible with one of the \src{add}-methods \src{CControl} offers.
+A \src{CDockable}s is not much more than a set of properties like a ``title-icon'' and some \src{Component} which is to be shown to the user. A \src{CDockable} does not paint any decorations (like a title), handle any \src{MouseEvent}s or interacts with the user in any other way. Such jobs are handled by various manager-objects, factories and delegates. These objects need to know the \src{CDockable}s they work with and they need to be able to store information about them. To accomplish that each \src{CDockable} must be registered at a \src{CControl} and is associated with a unique identifier. Registering a \src{CDockable} is possible with one of the \src{addDockable}-methods \src{CControl} offers.
 
-The unique identifier of a \src{CDockable} is either chosen by the client, in which case we speak of a \src{single-dockable}, or by the framework itself, in that case we speak of a \src{multi-dockable}. The user won't notice a difference for these two types of \src{dockable}, but internally they are handled quite differently. The framework assumes that the client knows of all the \src{single-dockable}s and that the client registers either factories or \src{dockable}s when the application starts up. On the other hand the framework assumes that the client does not know how many \src{multi-dockable}s exist and what their content is. The client has to provide a factory for different types of \src{multi-dockable}s and the framework will create new \src{dockable}s when necessary.
+There are two types of \src{CDockable}s, \src{single-dockable}s and \linebreak \src{multi-dockable}s. The user usually won't notice any difference between these two types of dockables:
+\begin{itemize}
+ \item \src{Single-dockable}s are the ``tool windows''. There number is limited and the framework can assume that the client always knows all the possible ``tool windows''. When starting up, the client can either register all \src{SingleCDockable}s or the client can register some factories of type  \src{SingleCDockableFactory}. Also the client is responsible for storing the contents of \src{single-dockable}s.
+ \item \src{Multi-dockable}s are the ``editor windows''. Their numbers are unlimited, and the framework assumes that the client does not know which editor windows exist. The client however knows what types of ``editor windows'' exist and has to provide factories of type \src{MultipleCDockableFactory}.
+\end{itemize}
 
-When a \src{CDockable} is created it is without location and it is invisible. Read chapter \src{sec:location} to learn about locations and call \src{CDockable.setVisible} to show the \src{CDockable}.
+When a \src{CDockable} is created it is without location and it is invisible. Read chapter \ref{sec:location} to learn about locations and call \src{CDockable.setVisible} to show the \src{CDockable}.
 
 \designbox{The interface \src{CDockable} has some awkward methods whose implementation is already described in the documentation. \src{CDockable} is not intended to be implemented by clients, but to be used by them. There is a subclass \src{AbstractCDockable} which provides the correct implementation for these awkward methods. Even in the framework itself no class (except \src{AbstractCDockable}) implements \src{CDockable} directly. The only reason for the existence of \src{CDockable} is to provide an abstraction from the implementation.}
 
 \infobox{A \src{CDockable} is not a \src{Dockable}, but internally references a \src{Dockable}. This \src{Dockable} is always of type \src{CommonDockable}. It can be accessed through the method \src{intern} of \src{CDockable}. \src{DefaultCDockable} offers a method \src{createCommonDockable} which creates a new \src{DefaultCommonDockable}. Clients may override this method and provide their own implementation of \src{DefaultCommonDockable}. }
 
 \subsubsection{SingleCDockable}
-A \src{single-dockable} is created once, added to the controller and made visible. It remains in memory until explicitly removed from the \src{CControl} or the application terminates. Alternatively a \src{SingleCDockableBackupFactory} can be used to lazily create a \src{dockable} once it is required.
+A \src{single-dockable} is created once, added to the controller and made visible. It remains in memory until explicitly removed from the \src{CControl} or the application terminates. Alternatively a \src{SingleCDockableFactory} can be used to lazily create a \src{dockable} once it is required.
 
 The interface \src{SingleCDockable} represents a \src{single-dockable}, the class \src{DefaultSingleCDockable} is a convenient implementation of the interface. The class offers methods similar to those known from a \src{JFrame}, e.g. it has a content-pane where clients can add some \src{Component}s.
 
@@ -24,7 +28,7 @@ Examples for \src{single-dockable}s could be:
 \end{itemize}
 
 \subsubsection{MultipleCDockable}
-A set of \src{multi-dockable}s is used if the exact number of instances is not known prior to runtime. Before a \src{multi-dockable} can be used its factory (of type \src{MultipleCDockableFactory}) must be registered at a \src{CControl}. The factory offers methods to store and load the layout of a \src{dockable}. Of course there can be more than one \src{multi-dockable} per factory. Once the factory is registered, clients can add and remove \linebreak \src{multi-dockable}s at any time.
+A set of \src{multi-dockable}s is used if the exact number of instances is not known prior to runtime. Before a \src{multi-dockable} can be used its factory (of type \src{MultipleCDockableFactory}) must be registered at a \src{CControl}. The factory offers methods to store and load the layout of a \src{dockable}. Of course there can be more than one \src{multi-dockable} per factory. Once the factory is registered, clients can add and remove \src{multi-dockable}s at any time.
 
 The interface describing all \src{multi-dockable}s is \src{MultipleCDockable}, a convenient implementation is \src{DefaultMultipleCDockable}. This class offers most of the methods and properties a client should ever need.
 Implementing a matching \src{MultipleCDockableFactory} is easy. There is a method to read and to write meta-information from or to a \src{MultipleCDockable}. Meta-information itself is a \src{MultipleCDockableLayout} which has methods to write or read its content to a stream (e.g. to file). There are no restrictions to what meta-information really is.
@@ -47,6 +51,8 @@ control.add( dockable );
 \end{lstlisting}
 Notice that in line \src{4} a unique identifier needs to be assigned to the factory.
 
+\codebox{A more sophisticated example can be found in the tutorial project. The name of the example is ``Guide/Common/Editors: MultipleCDockable''.}
+
 Examples for \src{multiple-dockable}s are:
 \begin{itemize}
  \item A text-editor can show many documents at the same time. Each document is shown in its own \src{dockable}.
@@ -56,8 +62,10 @@ Examples for \src{multiple-dockable}s are:
 \designbox{Why the distinction between \src{single-} and \src{multi-dockable}s? The algorithms to store and load the layout (place and size of \src{dockable}s) can either use existing objects or create new \src{dockable}s. Using existing objects is preferred because the overhead of creation can be - at least for complex views - high. \src{Single-} and \src{multi-dockable}s represent this gap.}
 
 \subsubsection{Visibility}
-A \src{dockable} is either visible or invisible, the user can only interact with the \src{dockable} if it is visible. Visibility can change through a set of events:
+Visibility has two meanings, ``logical visibility`` and ``true visibility``. If not stated otherwise, this document and all documentation always uses ``vsibility'' as an alias for ``logical visibility''.
 
+\paragraph{Logical visibility}
+A \src{dockable} is (logical) visible if it is either a child of a visible root-station or a registered root-station. With other words, logical visibility means that the \src{dockable} is somehow accessible to the user, it does not even imply that the user actually can see the \src{dockable} on the screen. Visibility can change through a set of events:
 \begin{itemize}
  \item Obviosly, calling \src{setVisible} of \src{CDockable} will change the visibility. If possible, the location of a \src{CDockable} will remembered and reused.
  \item Adding a \src{CDockable} to a station makes the \src{CDockable} visible. This may happen for example if using a \src{CGrid} (see chapter \ref{sec:location}).
@@ -75,6 +83,13 @@ The second listener is the \src{CVetoClosingListener}. It receives a \linebreak 
 \classbox{The close-action can be replaced by calling \src{putAction} with the key \src{ACTION\_KEY\_CLOSE} of \src{CDockable}. The action can be replaced at any time. Read more about actions in chapter \ref{sec:action}.}
 
 \infobox{If the method \src{setLocation} of \src{AbstractCDockable} is called before the \src{dockable} is made visible, then the \src{dockable} is made visible at the supplied location. Read more about locations in chapter \ref{sec:location}.}
+
+\paragraph{True visibility}
+A \src{dockable} is truelly visible if the user can actually see the element on the screen. Clients can use the method \src{isDockableVisible} of \src{CDockable} to find out whether a \src{dockable} is truelly visible. Also the \src{CDockableLocationListener} can help clients to keep track of the true visibility.
+
+It should be noted that logical visibility is required for the framework to acknowledge true visibility. Also the framework will not take things like ``is the main-frame minimized'' into account.
+
+\warningbox{The \src{CDockableLocationListener} works asynchronously. Events not originating in the \src{EventDispatcherThread} may let the listener receive confusing if not plain wrong events.}
 
 \subsubsection{Mode}
 If a \src{CDockable} is visible then it always is in an extended-mode. The extended mode tells something about the behaviour of the \src{dockable} and where it is placed. The framework offers four default extended modes:
@@ -106,6 +121,8 @@ In general clients can introduce new stations, but a developer needs a lot of ti
 \end{enumerate}
 Conclusion: don't do this unless you have a lot of time to spare.
 }
+
+\classbox{The \src{DockStation} that is used by a \src{CStation} always implements the interface \src{CommonDockStation}.}
 
 \subsubsection{All in one: CContentArea}
 The preferred way to create stations is to use a \src{CContentArea}. A \src{CContentArea} is not a single \src{CStation} but a panel containing many stations. Each content-area has a center area where \src{dockable}s are layed out in a grid, and four small areas at the border where \src{dockable}s show up when they are minimized.

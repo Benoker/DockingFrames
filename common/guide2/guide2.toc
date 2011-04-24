@@ -14,53 +14,58 @@
 \contentsline {subsubsection}{\numberline {4.1.1}SingleCDockable}{12}
 \contentsline {subsubsection}{\numberline {4.1.2}MultipleCDockable}{12}
 \contentsline {subsubsection}{\numberline {4.1.3}Visibility}{13}
-\contentsline {subsubsection}{\numberline {4.1.4}Mode}{14}
+\contentsline {paragraph}{Logical visibility}{14}
+\contentsline {paragraph}{True visibility}{14}
+\contentsline {subsubsection}{\numberline {4.1.4}Mode}{15}
 \contentsline {subsection}{\numberline {4.2}Stations}{15}
-\contentsline {subsubsection}{\numberline {4.2.1}All in one: CContentArea}{15}
-\contentsline {subsubsection}{\numberline {4.2.2}Center area: CGridArea}{16}
-\contentsline {subsubsection}{\numberline {4.2.3}Minimized: CMinimizeArea}{17}
-\contentsline {subsubsection}{\numberline {4.2.4}Grouping Dockables: CWorkingArea}{17}
-\contentsline {section}{\numberline {5}Locations}{18}
-\contentsline {subsection}{\numberline {5.1}For a single dockable: CLocation}{18}
-\contentsline {subsection}{\numberline {5.2}For a group of dockables: CGrid}{19}
-\contentsline {subsection}{\numberline {5.3}For all dockables: persistent storage}{20}
-\contentsline {subsubsection}{\numberline {5.3.1}Persistant Storage}{21}
-\contentsline {subsubsection}{\numberline {5.3.2}Dealing with lazy creation and missing dockables}{21}
-\contentsline {subsubsection}{\numberline {5.3.3}Perspectives}{22}
-\contentsline {subsection}{\numberline {5.4}The frameworks viewpoint}{23}
-\contentsline {section}{\numberline {6}Actions}{25}
-\contentsline {subsection}{\numberline {6.1}CButton}{25}
-\contentsline {subsection}{\numberline {6.2}CCheckBox}{25}
-\contentsline {subsection}{\numberline {6.3}CRadioButton}{26}
-\contentsline {subsection}{\numberline {6.4}CMenu}{26}
-\contentsline {subsection}{\numberline {6.5}CDropDownButton}{26}
-\contentsline {subsection}{\numberline {6.6}CPanelPopup}{27}
-\contentsline {subsection}{\numberline {6.7}CBlank}{27}
-\contentsline {subsection}{\numberline {6.8}System Actions}{27}
-\contentsline {subsection}{\numberline {6.9}Custom Actions}{28}
-\contentsline {section}{\numberline {7}Other Effects}{29}
-\contentsline {subsection}{\numberline {7.1}Color}{29}
-\contentsline {subsection}{\numberline {7.2}Font}{29}
-\contentsline {subsection}{\numberline {7.3}Size}{30}
-\contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{30}
-\contentsline {subsubsection}{\numberline {7.3.2}Request a size}{30}
-\contentsline {subsection}{\numberline {7.4}Grouping}{31}
-\contentsline {subsection}{\numberline {7.5}Preferences}{31}
-\contentsline {subsection}{\numberline {7.6}Themes}{32}
-\contentsline {subsection}{\numberline {7.7}LookAndFeel}{33}
-\contentsline {subsection}{\numberline {7.8}Menus}{33}
-\contentsline {subsubsection}{\numberline {7.8.1}Themes}{35}
-\contentsline {subsubsection}{\numberline {7.8.2}LookAndFeel}{35}
-\contentsline {subsubsection}{\numberline {7.8.3}Layout}{35}
-\contentsline {subsubsection}{\numberline {7.8.4}List of Dockables}{35}
-\contentsline {subsubsection}{\numberline {7.8.5}Preferences}{36}
-\contentsline {section}{\numberline {8}Suggestions, Questions and Remarks}{37}
-\contentsline {subsection}{\numberline {8.1}Version 1.0.7}{37}
-\contentsline {subsubsection}{\numberline {8.1.1}Of people using the library}{37}
-\contentsline {subsubsection}{\numberline {8.1.2}Of the developers}{38}
-\contentsline {subsection}{\numberline {8.2}Version 1.0.8}{39}
-\contentsline {subsubsection}{\numberline {8.2.1}Of people using the library}{39}
-\contentsline {subsubsection}{\numberline {8.2.2}Of the developers}{39}
-\contentsline {section}{\numberline {A}Properties}{41}
-\contentsline {subsection}{\numberline {A.1}Client specific properties}{41}
-\contentsline {subsection}{\numberline {A.2}Advanced properties}{42}
+\contentsline {subsubsection}{\numberline {4.2.1}All in one: CContentArea}{16}
+\contentsline {subsubsection}{\numberline {4.2.2}Center area: CGridArea}{17}
+\contentsline {subsubsection}{\numberline {4.2.3}Minimized: CMinimizeArea}{18}
+\contentsline {subsubsection}{\numberline {4.2.4}Grouping Dockables: CWorkingArea}{18}
+\contentsline {section}{\numberline {5}Locations}{19}
+\contentsline {subsection}{\numberline {5.1}For a single dockable: CLocation}{19}
+\contentsline {subsection}{\numberline {5.2}For a group of dockables: CGrid}{20}
+\contentsline {subsection}{\numberline {5.3}For all dockables: persistent storage}{21}
+\contentsline {subsubsection}{\numberline {5.3.1}Persistant Storage}{22}
+\contentsline {subsubsection}{\numberline {5.3.2}Dealing with lazy creation and missing dockables}{22}
+\contentsline {subsubsection}{\numberline {5.3.3}Perspectives}{23}
+\contentsline {subsection}{\numberline {5.4}The frameworks viewpoint}{24}
+\contentsline {section}{\numberline {6}Actions}{26}
+\contentsline {subsection}{\numberline {6.1}CButton}{26}
+\contentsline {subsection}{\numberline {6.2}CCheckBox}{26}
+\contentsline {subsection}{\numberline {6.3}CRadioButton}{27}
+\contentsline {subsection}{\numberline {6.4}CMenu}{27}
+\contentsline {subsection}{\numberline {6.5}CDropDownButton}{27}
+\contentsline {subsection}{\numberline {6.6}CPanelPopup}{28}
+\contentsline {subsection}{\numberline {6.7}CBlank}{28}
+\contentsline {subsection}{\numberline {6.8}System Actions}{28}
+\contentsline {subsection}{\numberline {6.9}Custom Actions}{29}
+\contentsline {section}{\numberline {7}Other Effects}{30}
+\contentsline {subsection}{\numberline {7.1}Color}{30}
+\contentsline {subsection}{\numberline {7.2}Font}{30}
+\contentsline {subsection}{\numberline {7.3}Size}{31}
+\contentsline {subsubsection}{\numberline {7.3.1}Lock the size}{31}
+\contentsline {subsubsection}{\numberline {7.3.2}Request a size}{31}
+\contentsline {subsection}{\numberline {7.4}Grouping}{32}
+\contentsline {subsection}{\numberline {7.5}Preferences}{32}
+\contentsline {subsection}{\numberline {7.6}Themes}{33}
+\contentsline {subsection}{\numberline {7.7}LookAndFeel}{34}
+\contentsline {subsection}{\numberline {7.8}Menus}{34}
+\contentsline {subsubsection}{\numberline {7.8.1}Themes}{36}
+\contentsline {subsubsection}{\numberline {7.8.2}LookAndFeel}{36}
+\contentsline {subsubsection}{\numberline {7.8.3}Layout}{36}
+\contentsline {subsubsection}{\numberline {7.8.4}List of Dockables}{36}
+\contentsline {subsubsection}{\numberline {7.8.5}Preferences}{37}
+\contentsline {section}{\numberline {8}Suggestions, Questions and Remarks}{38}
+\contentsline {subsection}{\numberline {8.1}Version 1.0.7}{38}
+\contentsline {subsubsection}{\numberline {8.1.1}Of people using the library}{38}
+\contentsline {subsubsection}{\numberline {8.1.2}Of the developers}{39}
+\contentsline {subsection}{\numberline {8.2}Version 1.0.8}{40}
+\contentsline {subsubsection}{\numberline {8.2.1}Of people using the library}{40}
+\contentsline {subsubsection}{\numberline {8.2.2}Of the developers}{40}
+\contentsline {section}{\numberline {9}Version 1.1.0}{41}
+\contentsline {subsection}{\numberline {9.1}Of the people using the framework}{41}
+\contentsline {subsection}{\numberline {9.2}Of the developers}{41}
+\contentsline {section}{\numberline {A}Properties}{43}
+\contentsline {subsection}{\numberline {A.1}Client specific properties}{43}
+\contentsline {subsection}{\numberline {A.2}Advanced properties}{44}
