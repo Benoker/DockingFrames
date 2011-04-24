@@ -24,7 +24,7 @@
 \newcommand{\why}{\item[Reason]}
 \newcommand{\clients}{\item[Clients]}
 
-\title{DockingFrames 1.0.8 - Transition}
+\title{DockingFrames 1.1.0 - Transition}
 \author{Benjamin Sigg}
 
 \begin{document}
@@ -1343,6 +1343,241 @@ A list of new API elements and changes that affect the layout.
 \subsubsection{SplitDockStation: cursor}
 \begin{description}
  \short Cursor should no longer remain arrow when moved away from a divider of a \src{SplitDockStation}.
+\end{description}
+
+\section{Version 1.1.0}
+From this version on only incompatible changes will be listed in the document. The compatible changes and bugfixes either do not affect clients, or can be found in the \src{changes.txt} file already.
+\subsection{Incompatibilities}
+
+\subsubsection{SincleCDockableBackupFactory}
+\begin{description}
+ \short \src{SingleCDockableBackupFactory} was replaced by the new \linebreak \src{SingleCDockableFactory}.
+ \why There is no reason to call it a ``backup'' factory anymore. It is now just a factory like any other factory.
+ \clients Have to replace the interface wherever it appears, the methods remain the same.
+\end{description}
+
+\subsubsection{Interface Combiner updated}
+\begin{description}
+ \short The interface \src{Combiner} has been completely rewritten.
+ \why The \src{Combiner} has now much more control of how two \src{Dockable}s are going to be merged. It can even paint on the \src{DockStation} during a drag and drop operation.
+ \clients Any implementation of \src{Combiner} has to be implemented anew from scratch.
+\end{description}
+
+\subsubsection{PlaceholderList update}
+\begin{description}
+ \short \src{PlaceholderList} is now abstract and has more generic arguments.
+ \why This allows subclasses which are used by the API for perspectives.
+ \clients Can use \src{DockablePlaceholderList} instead of \src{PlaceholderList}.
+\end{description}
+
+\subsubsection{DockFactory has new methods}
+\begin{description}
+ \short \src{DockFactory} has additional methods and new generic arguments.
+ \why All these changes are to support the perspective API.
+ \clients Can either ignore the new methods (e.g. always return \src{null}) or have to implement the new methods if they want to use perspectives.
+\end{description}
+
+\subsubsection{Various new generic parameters and abstractions}
+\begin{description}
+ \short Various classes and interfaces have new generic parameters and/or were made abstract.
+ \why These changes where necessary in order to support the new perspective API.
+ \clients Can either ignore the changes if they do not use the perspective API, or implement missing parts. However, most clients should not notice these changes as they were made in a layer that is not accessed by most clients.
+\end{description}
+
+\subsubsection{Working-area set during loading}
+\begin{description}
+ \short Common now stores the identifier of the working-area which owns a \src{SingleCDockable} and changes the working-area property when loading a layout.
+ \why This was required by the perspective API, otherwise working-areas could not have been supported.
+ \clients Should not be affected by this change as clients normally do not change the working-area of a \src{Dockable}.
+\end{description}
+
+\subsubsection{UIProperties depend on UIScheme}
+\begin{description}
+ \short \src{UIProperties} now depend on \src{UIScheme}.
+ \why \src{UIScheme}s are a good way set the default values of an \src{UIProperties}. The mechanism was first introduced for the \src{ColorManager} but is now generalized.
+ \clients The API of the \src{ColorScheme} has changed and clients may need to reimplemented classes based on \src{ColorScheme}.
+\end{description}
+
+\subsubsection{Introducing ThemeManager}
+\begin{description}
+ \short The importance of the interface \src{DockTheme} has much decreased.
+ \why The new \src{ThemeManager} allows clients to override properties related to a \src{DockTheme} without the need to access the \src{DockTheme}.
+ \clients Clients will not notice any change as the API for \src{DockTheme} remaines unchanged. However, developers should be aware of the \src{ThemeManager} which is much more convenient to use then subclassing \src{DockTheme}s.
+\end{description}
+ 
+\subsubsection{``secure'' classes obsolete}
+\begin{description}
+ \short All ``secure'' classes are obsolete, instead the property ``restricted environment'' in \src{DockController} is to be used.
+ \why This change reduces complexity as the same code can now be used in a standard application and in an unsigned applet.
+ \clients The old classes have been marked \src{deprecated}, clients should remove any references to the old ``secure`` classes.
+\end{description}
+ 
+\subsubsection{SplitDockStationFactory}
+\begin{description}
+ \short \src{SplitDockStationFactory} now stores whether a \src{SplitDockStation} did have a fullscreen-action or not.
+ \why Otherwise the setting could be corrupted when loading a layout.
+ \clients Should treat this like a bugfix.
+\end{description}
+
+\subsubsection{Renaming in focus API}
+\begin{description}
+ \short Renamed: \src{FocusController} to \src{VisibilityFocusObserver}, \linebreak \src{DockController.getFocusObserver} to \src{getMouseFocusObserver} and \linebreak added new interface \src{FocusController}.
+ \why Part of an ongoing effort to hide all controller-classes behind interfaces.
+ \clients Most clients are not affected. Clients implementing a focus system have to use the new interface.
+\end{description}
+
+\subsubsection{FocusVetoListener added to FocusController}
+\begin{description}
+ \short \src{FocusVetoListener} is now added to \src{FocusController} instead of \linebreak \src{MouseFocusObserver}.
+ \why Part of an ongoing effort to hide all controller-classes behind interfaces. Also the listener is now asked more often for a veto.
+ \clients May need to replace references to \src{MouseFocusObserver} by references to \src{FocusController}.
+\end{description}
+
+\subsubsection{ButtonContent is now a class}
+\begin{description}
+ \short The enum \src{ButtonContent} is now a class.
+ \why The new class allows much finer control of what is to be displayed on a \src{FlapDockStation}
+ \clients The old constants remain available, clients have to update their \src{import} statements  since \src{ButtonContent} is now a top-level class.
+\end{description}
+
+\subsubsection{ButtonContentPreference replaced}
+\begin{description}
+ \short \src{ButtonContentPreference} got replaced by the new \linebreak \src{ButtonContentPreferenceModel}.
+ \why Because the \src{ButtonContent} class now offers much more options that before.
+ \clients Have to update any reference to \src{ButtonContentPreference}.
+\end{description}
+
+\subsubsection{IconManager and DockIcon}
+\begin{description}
+ \short The \src{IconManager} now extends \src{UIProperties}.
+ \why Allows much more control over the icons.
+ \clients All icons have now to be accessed through a \src{DockIcon}, direct access of the icons is deprecated.
+\end{description}
+
+\subsubsection{IconManager handles all icons}
+\begin{description}
+ \short All icons are now handled by the \src{IconManager}, \src{DockUI} and \src{Resources} are no longer handling any icons.
+ \why This more centralized approach makes customization of icons much easier.
+ \clients Any access to icons has now to go through the \src{IconManager}.
+\end{description}
+
+\subsubsection{Unique identifiers of SplitNodes}
+\begin{description}
+ \short The unique identifier of a \src{SplitNode} may change if a new child is added to the tree.
+ \why Required in order to resolve collisions of identifiers.
+ \clients Clients should not treat the unique identifier as a constant.
+\end{description}
+
+\subsubsection{TextManager}
+\begin{description}
+ \short All the text that appears on buttons/titles/etc. is now handled by the \src{TextManager}.
+ \why This allows clients to modify the text, or even load additional language packages.
+ \clients Any access to text has now to go through the \src{TextManager}.
+\end{description}
+
+\subsubsection{DockStationListener updated}
+\begin{description}
+ \short \src{DockStationListener} has an additional method \linebreak \src{dockableRepositioned}.
+ \why Allows the framework and clients to better keep track of the location of a \src{Dockable}.
+ \clients Any class implementing \src{DockStationListener} has to implement the new method. Any class implementing \src{DockStation} has to invoke the new method.
+\end{description}
+
+\subsubsection{Class Resources removed}
+\begin{description}
+ \short The class \src{Resources} has been removed.
+ \why Icons are now handled by the \src{IconManager}, text is now handled by the \src{TextManager} and the default bundle is now loaded in \src{CControl.initTexts} using a \src{DefaultTextScheme}.
+ \clients Must use \src{IconManager} and \src{TextManager} instead.
+\end{description}
+
+\subsubsection{CDockableStateListener updated}
+\begin{description}
+ \short \src{CDockableStateListener} no longer has one method for each \linebreak \src{ExtendedMode}, instead one method handles all possible \src{ExtendedMode}s.
+ \why This keeps the option of new \src{ExtendedMode}s open.
+ \clients Clients can extend \src{CDockableAdapter} to keep the old API.
+\end{description}
+
+\subsubsection{DockSituation uses two PlaceholderStrategies}
+\begin{description}
+ \short \src{DockSituation} can now use a \src{PlaceholderStrategy} to load the intermediate format and another strategy to load the final \src{DockElement}s.
+ \why Allows more flexibility.
+ \clients May need to set the \src{PlaceholderStrategy} twice in order to have the desired effect.
+\end{description}
+
+\subsubsection{DockRelocator updated}
+\begin{description}
+ \short \src{DockRelocator} has two additional methods \src{getRemote} and \linebreak \src{getDirectRemote} with a parameter \src{forceDrag}.
+ \why Allows clients to force start a drag and drop operation.
+ \clients Clients implementing the \src{DockRelocator} interface need to implement the new methods as well.
+\end{description}
+
+\subsubsection{New CGroupMovement}
+\begin{description}
+ \short \src{CGroupBehavior} now creates a \src{CGroupMovement} instead of executing its changes directly.
+ \why Allows to reuse existing code much easier.
+ \clients Clients implementing a \src{CGroupBehavior} may now need to implement a \src{CGroupMovement} as well.
+\end{description}
+
+\subsubsection{CMaximizedBehavior removed}
+\begin{description}
+ \short \src{CMaximizedBehavior} and all associated methods have been removed.
+ \why All the functionality of \src{CMaximizeBehavior} is now implemented by the \src{CGroupBehavior}.
+ \clients Clients implementing a \src{CMaximizedBehavior} must now implement a \src{CGroupBehavior} instead.
+\end{description}
+
+\subsubsection{DockUI updated}
+\begin{description}
+ \short Several methods of \src{DockUI} have been removed, this includes the \linebreak \src{LocaleListener}.
+ \why This functionality was replaced by the \src{ThemeManager} and the \linebreak \src{TextManager}.
+ \clients Have to use the managers instead of \src{DockUI}.
+\end{description}
+
+\subsubsection{Methods renamed in StackDockComponentParent}
+\begin{description}
+ \short Some methods in StackDockComponentParent renamed.
+ \why Prevents conflicts with methods in other interfaces that have the same signature but different usage.
+ \clients Must rename these methods as well.
+\end{description}
+
+\subsubsection{CControlFactory updated}
+\begin{description}
+ \short \src{CControlFactory} now creates \src{CommonStation} instead of \src{DockStation}s.
+ \why All \src{DockStation}s used by a \src{CStation} now implement the interface \src{CommonStation}.
+ \clients Clients implementing \src{CControlFactory} have to implement the new methods as well.
+\end{description}
+
+\subsubsection{CommonStation updated}
+\begin{description}
+ \short \src{CommonStation} no longer extends \src{CommonDockable}.
+ \why Because not every \src{DockStation} is to be treated like a \src{Dockable}.
+ \clients Any code assuming that a \src{CommonStation} is a \src{CommonDockable} has to be updated.
+\end{description}
+
+\subsubsection{New interface CommonElement}
+\begin{description}
+ \short The interface \src{CommonElement} is the parent interface of \src{CommonDockable} and \src{CommonStation}.
+ \why Represents the \src{DockElement}.
+ \clients The type system should now enfoce the correct implementation of all the different methods. Clients may need to update custom \src{DockStation}s.
+\end{description}
+
+\subsubsection{AdjacentDockFactories and PerspectiveElements}
+\begin{description}
+ \short \src{AdjacentDockFactory}s can now also write meta data for \linebreak \src{PerspectiveElement}s.
+ \why More support for the perspective API.
+ \clients Clients implement \src{AdjacendDockFactory} may need to update the implementation.
+\end{description}
+
+\subsubsection{PopupController accessible}
+\begin{description}
+ \short The \src{PopupController} is now accessible for clients by calling \linebreak \src{getPopupController}, a method of \src{DockController}.
+ \why Allows customization of the popups.
+ \clients Clients can now install their custom \src{DockPopupMenuFactory} and change the way popup menus behave.
+\end{description}
+
+\subsubsection{DockRelocator updated}
+\begin{description}
+ \short \src{DockRelocator} is now an interface.
+ \why Part of an ongoing effort to hide all controller classes behind interfaces.
+ \clients Clients may need to extend from one of the subclasses of \src{DockRelocator} instead of \src{DockRelocator} directly.
 \end{description}
 
 \end{document}

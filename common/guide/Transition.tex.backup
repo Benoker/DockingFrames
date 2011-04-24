@@ -1,6 +1,7 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{url}
 
 \lstset{language=Java}
 \lstset{breaklines=true, numbers=left}
@@ -869,26 +870,26 @@ A list of new API elements and changes that affect the layout.
 \section{Version 1.0.8}
 This version brings many new feautures: the \src{CLocationModeManager} handles the location of \src{CDockable}s, placeholders store the location of \src{Dockable}s much more precise than the old system, tabs can be placed at any side.
 
+The changes are ordered by the time when they were introduced.
+
 \subsection{Incompatibilities}
 The changes that need special care.
 
 \subsubsection{DockableDisplayerListener}
 \begin{description}
- \short \src{DockableDisplayer}s can now be observed by \src{DockableDisplayerListener}s.
- \why This allows a \src{DockableDisplayer} to mark itself as obsolete, \src{DockStation}s then can create new displayers.
+ \short \src{DockableDisplayer}s can now be observed by \linebreak \src{DockableDisplayerListeners}.
+ \why This allows a \src{DockableDisplayer} to mark itself as obsolete, \linebreak \src{DockStations} then can create new displayers.
  \clients Any class that uses \src{DockableDislayer}s should add the listener and react on its events.
 \end{description}
 
 \subsubsection{EclipseThemeConnectorListener}
 \begin{description}
- \short \src{EclipseThemeConnector} can be observed by a \src{EclipseThemeConnectorListener}.
+ \short \src{EclipseThemeConnector} can be observed by a \linebreak \src{EclipseThemeConnectorListener}.
  \why This allows to change properties even after asking the connector for them
  \clients Clients implementing a \src{EclipseThemeConnector} have to call the listener
 \end{description}
 
 \subsubsection{FocusObserver: veto}
-! API: FocusObserver calls additional method "handleVeto" if a veto was spoken, the method currently consumes the event making it invisible for the application
-! API: FocusVetoListener returns a more details description how to handle a veto.
 \begin{description}
  \short Focus transfer when clicking the mouse can now be canceled. The \src{MouseFocusObserver} calls a methode \src{handleVeto} which cancels an event.
  \why A feature request by a user, should be used with care.
@@ -906,8 +907,8 @@ The changes that need special care.
 \subsubsection{CLocationModeManager}
 \begin{description}
  \short \src{CStateManager} got replaced by \src{CLocationModeManager}.
- \why The \src{CLocationModeManager} is built much more generic than \src{CStateManager} allowing new \src{DockStation}s and new extended-modes.
- \clients The method \src{CControl.getStateManager} was renamed to \src{getLocationManager}.
+ \why The \src{CLocationModeManager} is built much more generic than \linebreak \src{CStateManager} allowing new \src{DockStation}s and new extended-modes.
+ \clients The method \src{CControl.getStateManager} was renamed to \linebreak \src{getLocationManager}.
 \end{description}
 
 \subsubsection{SplitDockStation: leaf id}
@@ -920,14 +921,14 @@ The changes that need special care.
 \subsubsection{DockTitleRequest}
 \begin{description}
  \short \src{DockTitleFactory} has been changed. Now a \src{DockTitleRequest} is installed on the factory, the factory may trigger this request anytimes (also more than once). The new class \src{StationChildHandle} manages the interaction between \src{Dockable}, \src{DockableDisplayer}, \src{DockTitle} and \src{DockTitleRequest}.
- \why The API is now much more consistent. Also anyone knowing a \src{DockTitleRequest} can update/replace the title at any time.
+ \why The API is now much more consistent. Also anyone knowing a \linebreak \src{DockTitleRequest} can update/replace the title at any time.
  \clients Please read chapter 5 ``Titles'' of the guide for Core.
 \end{description}
 
 \subsubsection{DockFrontend: methods moved}
 \begin{description}
- \short Some methods of \src{DockFrontend} have been moved to \src{DefaultLayoutChangeStrategy}.
- \why Allows \src{Common} to handle its special needs, e.g. to reuse \src{MultipleCDockable}s when the layout changes.
+ \short Some methods of \src{DockFrontend} have been moved to \linebreak \src{DefaultLayoutChangeStrategy}.
+ \why Allows \src{Common} to handle its special needs, e.g. to reuse \linebreak \src{MultipleCDockable}s when the layout changes.
  \clients This API was used internally, clients should not be affected.
 \end{description}
 
@@ -976,353 +977,634 @@ A list of new API elements and changes that affect the layout.
 
 \subsubsection{Tab placement}
 \begin{description}
- \short New property \src{StackDockStation.TAB_PLACEMENT} globally sets where to put tabs 
- \why 
+ \short New property \src{StackDockStation.TAB\_PLACEMENT} globally sets where to put tabs. Must be supported by the current \src{TabLayoutManager}.
+ \why Allows clients more customization.
 \end{description}
-- API: new TabLayoutManager to handle the positioning of tabs on a StackDockStation
-\subsubsection{}
+
+\subsubsection{TabLayoutManager}
 \begin{description}
- \short 
- \why 
+ \short New class \src{TabLayoutManager} to handle the positioning of tabs on a \src{StackDockStation}.
+ \why Decoupling of looks (tabs) and logic (their position). 
 \end{description}
-- API: New action "CPanelPopup" in common provides an easy way to create a popup-action with an arbitrary component as content.
-\subsubsection{}
+
+\subsubsection{CPanelPopup}
 \begin{description}
- \short 
- \why 
+ \short New action \src{CPanelPopup} in \src{Common} provides an easy way to create a popup-action with an arbitrary \src{Component} as content.
+ \why Allows more customization.
 \end{description}
-- API: CDockable has new method "getAction" and "getActionCount" to access CActions that were added.
-\subsubsection{}
+
+\subsubsection{Access to actions of CDockable}
 \begin{description}
- \short 
- \why 
+ \short \src{CDockable} has new methods \src{getAction} and \src{getActionCount} to access \src{CAction}s that were added. 
+ \why Clients no longer have to remember what actions they added.
 \end{description}
-- API: CContentArea.setMinimumAreaSize and FlapDockStation.setMinimumSize allow to set the minimum size of a FlapDockStation
-\subsubsection{}
+
+- API: 
+\subsubsection{Minimum size on FlapDockStation}
 \begin{description}
- \short 
- \why 
+ \short New key \src{FlapDockStation.MINIMUM\_SIZE} sets the default minimum size of \src{FlapDockStation}s.
+ \why To make sure a \src{Dockable} does not get too small.
 \end{description}
-- API: the new key FlapDockStation.MINIMUM_SIZE sets the default minimum size of FlapDockStations
-\subsubsection{}
+
+\subsubsection{CContentArea.setMinimumAreaSize}
 \begin{description}
- \short 
- \why 
+ \short \src{CContentArea.setMinimumAreaSize} set the minimum size of minimized \src{CDockable}s.
+ \why To make sure a \src{CDockable} does not get too small.
 \end{description}
-- API: AbstractDockable has a new method "add/removeKeyListener" to register any KeyEvent that is related to a Dockable (children are ignored)
-\subsubsection{}
+
+\subsubsection{AbstractDockable: KeyListener}
 \begin{description}
- \short 
- \why 
+ \short \src{AbstractDockable} has new method \src{add/removeKeyListener}.
+ \why Allows to observe any \src{KeyEvent} that is related to a \src{Dockable}. Children of dockable \src{DockStation}s are ignored.
 \end{description}
-- API: CVetoClosingListener can be added to CControl or CDockable and gets informed before a CDockable (or a set of CDockables) is closed. It may also stop the operation. 
-\subsubsection{}
+
+\subsubsection{CVetoClosingListener}
 \begin{description}
- \short 
- \why 
+ \short A \src{CVetoClosingListener} can be added to \src{CControl} or \src{CDockable}.
+ \why The listener is called before a \src{Dockable} or a set of \src{Dockable}s is closed. The listener may cancel the operation.
 \end{description}
-- API: AbstractCDockable has a new method "createCommonDockable". Clients can use this method to use a customized Dockable as intern representation of a CDocakble.
-\subsubsection{}
+
+\subsubsection{AbstractCDockable: createCommonDockable}
 \begin{description}
- \short 
- \why 
+ \short \src{AbstractCDockable} has a new method \src{createCommonDockable}.
+ \why Clients can override the method and thus customize the \src{Dockable} which represents the \src{CDockable}.
 \end{description}
-- Feature: The new Merger interface allows two DockStations to be merged automatically. It is used by the DockableRelocator class. The implementation StackMerger merges two StackDockStations into one, it is installed per default.
-\subsubsection{}
+
+\subsubsection{Merger}
 \begin{description}
- \short 
- \why 
+ \short The interface \src{Merger} allows two \src{DockStation}s to be merged automatically.
+ \why The implementation \src{StackMerger} merges to \src{StackDockStation}s. \linebreak This allows to drag a stack of \src{Dockable}s at a new location.
 \end{description}
-- API: A StackDockStation with only one child can still show a tab depending on the type of StackDockComponent
-\subsubsection{}
+
+\subsubsection{StackDockStation: single tab}
 \begin{description}
- \short 
- \why 
+ \short A \src{StackDockStation} with only one child can still show a tab depending on the type of \src{StackDockComponent}
+ \why A feature request by a developer.
 \end{description}
+
 - API: ScreenDockStation now supports fullscreen mode for its children. What "fullscreen" means can be influenced by a ScreenDockFullscreenStrategy.
-\subsubsection{}
+
+\subsubsection{ScreenDockStation: fullscreen mode}
 \begin{description}
- \short 
- \why 
+ \short \src{ScreenDockStation} now supports fullscreen mode for its children. The exact meaning of ``fullscreen'' is defined by a \linebreak \src{ScreenDockFullscreenStrategy}.
+ \why Because it was really missing.
 \end{description}
-- API: EclipseDockableDisplayer now also respects TabContentFilter
-\subsubsection{}
+
+\subsubsection{TabContentFilter}
 \begin{description}
- \short 
- \why 
+ \short The new interface \src{TabContentFilter} tells the framework what to show on a tab.
+ \why Allows some more customization, e.g. show only short titles.
 \end{description}
-- API: FlapDockStation supports factory for creating the window
-\subsubsection{}
+
+\subsubsection{FlapDockStation: factory}
 \begin{description}
- \short 
- \why 
+ \short \src{FlapDockStation} supports factory for creating the window 
+ \why To use \src{FlapDockStation} on a \src{JInternalFrame}.
 \end{description}
-- API: StackDockComponent now offers a method "createDefaultRepresentation". This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
-\subsubsection{}
+
+\subsubsection{StackDockComponent: default representation}
 \begin{description}
- \short 
- \why 
+ \short \src{StackDockComponent} now offers a method \linebreak \src{createDefaultRepresentation}.
+ \why This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
 \end{description}
-- API/Bugfix: Clicking on a child action of a DropDownMenu that is shown as submenu now changes the selection of the button as well  
-\subsubsection{}
+
+\subsubsection{DropDownMenu: selection if submenu}
 \begin{description}
- \short 
- \why 
+ \short Clicking on a child action of a \src{DropDownAction} that is shown as submenu now changes the selection of the button as well.
+ \why That is the expected behavior.
+\end{description}
+
+\subsubsection{SplitDockFullScreenProperty}
+\begin{description}
+ \short New property \src{SplitDockFullScreenProperty}.
+ \why This property points to a fullscreen \src{Dockable} on a \src{SplitDockStation} and can be used to merge that element with another \src{Dockable}.
+\end{description}
+
+\subsubsection{CMaximizedLocation}
+\begin{description}
+ \short Extends now \src{AbstractStackholdingLocation}.
+ \why Allows to combine a maximized \src{Dockable} with another \src{Dockable}
+\end{description}
+
+\subsubsection{OrientationToRotationStrategy}
+\begin{description}
+ \short New interface \src{OrientationToRotationStrategy}.
+ \why The strategy allows clients to specify how to rotate text on a \src{DockTitle}
 \end{description}
 
 \subsection{Bugfixes}
+\subsubsection{EclipseStackDockComponent: Exception}
+\begin{description}
+ \short \src{EclipseStackDockComponent} contained an unnecessary and not correctly updated list of \src{Dockable}s causing an \src{IndexOutOfBoundsException} on JREs of version 1.5.0\_12 or higher.
+\end{description}
 
-- Bugfix: EclipseStackDockComponent contained an unnecessary and not correctly updated list of dockables causing an IndexOutOfBoundsException on JREs of version <= 1.5.0_12
-\subsubsection{}
+\subsubsection{AWT and Glass-Pane}
 \begin{description}
- \short 
+ \short Workaround for bug \url{http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587} , AWT components not painted properly if behind a glass-pane.
 \end{description}
-- Bugfix: workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane
-\subsubsection{}
+
+\subsubsection{Check before drop}
 \begin{description}
- \short 
+ \short \src{DockStation}s check whether dropping some \src{Dockable} would create an invalid \src{Component}-tree, and forbid such drag and drop operations
+ \end{description}
+
+\subsubsection{SimpleDockACtion: unbinding}
+\begin{description}
+ \short \src{SimpleDockAction} did not unbind itself correctly due of events fired in an unfortunate order. Repaired thanks to an anonymous user.
 \end{description}
-- Bugfix: DockStations check whether dropping some Dockable would create an invalid Component-tree, and forbid such drag and drop operations
-\subsubsection{}
+
+\subsubsection{StackDockStation: reselect}
 \begin{description}
- \short 
+ \short When making a selected \src{Dockable} on a \src{StackDockStation} invisible, a new \src{Dockable} should be properly selected.
 \end{description}
-- Bugfix: SimpleDockAction did not unbind itself correctly due of events fired in an unfortunate order. Repaired thanks to an anonymous user.
-\subsubsection{}
+
+\subsubsection{RequestDimension: constructor}
 \begin{description}
- \short 
+ \short \src{RequestDimension( int, boolean )} did not set the height property.
 \end{description}
-- Bugfix: when making an selected Dockable on a StackDockStation invisible, a new Dockable should be properly selected.
-\subsubsection{}
+
+\subsubsection{MultiDockActionSource: exception}
 \begin{description}
- \short 
+ \short Wrong index in \src{MultiDockActionSource.add( DockActionSource )} could lead to \src{IndexOutOfBoundsException}.
 \end{description}
-- Bugfix: RequestDimension( int, boolean ) did not set the height property.
-\subsubsection{}
+
+\subsubsection{SplitDockStation: cursor}
 \begin{description}
- \short 
+ \short Cursor on the \src{SplitDockStation} sometimes does not change from arrow to default cursor. Should happen less often now, patch by Eduardo Born.
 \end{description}
-- Bugfix: Wrong index in MultiDockActionSource.add( DockActionSource ) could lead to IndexOutOfBoundsException
-\subsubsection{}
+
+\subsubsection{FlatTab: mouse events}
 \begin{description}
- \short 
+ \short \src{FlatTab} did not react on mouse-dragged events if in a "secure environment".
 \end{description}
-- Bugfix: Cursor on the SplitDockStation sometimes does not change from arrow to default cursor. Should happen less often now, patch by Eduardo Born.
-\subsubsection{}
+
+\subsubsection{StackDockStation: not removed}
 \begin{description}
- \short 
+ \short \src{StackDockStation} was not always removed if it had only one child \linebreak and this one child was a \src{CDockable} associated with a \src{CWorkingArea}.
 \end{description}
-- Bugfix: FlatTab did not react on mouse-dragged events in a "secure environment".
-\subsubsection{}
+
+\subsubsection{FlapDockStation: exception on move}
 \begin{description}
- \short 
+ \short Moving a \src{Dockable} on a \src{FlapDockStation} did throw an exception if the destination index was too big.
 \end{description}
-- Bugfix: StackDockStation was not always removed if it had only one child and this one child was a CDockable associated with a CWorkingArea
-\subsubsection{}
+
+\subsubsection{Location of missing CDockable}
 \begin{description}
- \short 
+ \short If a \src{CDockable} is removed and the \src{CMissingDockableStrategy} tells to store information about that \src{Dockable}, then its location remains now stored.
 \end{description}
-- Bugfix: moving a Dockable on a FlapDockStation did throw an exception if the destination index was too big
-\subsubsection{}
+
+\subsubsection{Tabs: wrong size}
 \begin{description}
- \short 
+ \short If \src{TabPlacement} was ``left'' or ``right'', then new tabs in a \linebreak \src{StackDockStation} could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that \src{TabPlacement} was ``top''.
 \end{description}
-- Bugfix: if a CDockable is removed and the CMissingDockableStrategy tells to store information about that dockable, then its location remains stored.
-\subsubsection{}
+
+\subsubsection{Tabs: missing tabs}
 \begin{description}
- \short 
+ \short \src{StackDockStation} did not add its children correctly to the \linebreak \src{StackDockComponent}, leading to some missing tabs
 \end{description}
-- Bugfix: If TabPlacement was "left" or "right", then new tabs in a StackDockStation could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that TabPlacement was "top".     
-\subsubsection{}
+
+\subsubsection{Exception on normalizing}
 \begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation did not add its children correctly to the StackDockComponent, leading to some missing tabs.    
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Normalizing a externalized CDockable could throw an Exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation could not be moved around in Common even if children would allow it
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Dragging a station away from another station did not store placeholders
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: During drag&drop, dragging the mouse over a tab of a StackDockStation could exchange the selected Dockable
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: dragging a Dockable over a child of a ScreenDockStation could throw an exception (in the Common framework).
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation did not fire dockable-selected event properly when using the DefaultStackDockComponent
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Tabs with unequal height were positioned strangely
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Popup menus are now enabled for tabs on a DefaultStackDockComponent
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: If DockRegister was stalled and a DockStation was added/removed to the register and later Dockables added/removed from that station, then the DockRegister could miss these modifications and store too many/few Dockables.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CActionSource did not fire events when removing or replacing actions
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CLocationModeManager#setLocation(Dockable,ExtendedMode,CLocation) did not compare the correct objects and has always thrown an exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Minimized CDockables did not appear at the correct location if corner components were used
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Dragging a maximized CDockable could throw an exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Dragging a tab from a BasicStackDockComponent could throw an exception
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Path did not encode non-java identifiers right.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: EclipseMenu did not update its icon automatically
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: StackDockStation.move(Dockable,DockableProperty) could throw exception if destination index was too big
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: AbstractScreenDockWindow.setDockable did call updateTitleIcon instead of updateTitleText
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: DockTitleTab caused exception when uninstalled
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Instead of doing nothing, PropertyPreferences now load their default value if they cannot read any other value
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: When deploying a CGrid some Dockables did not appear: the tree of the SplitDockStation was cleaned up too early before all Dockables had been inserted, leading to a corrupted tree
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SplitDockStation did assign leaf-id to node when using drop(SplitDockPathProperty). As a result unmaximizing a stack of CDockables could destroy the stack.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SplitDockStation does now always update the boundaries of its tree before dropping a dockable. Wrong boundaries did lead to Dockables dropped at the wrong location even if the used DockableProperty was correct.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: Path now encodes its content when using "toString" and decodes contents on creation. Meaning inside a Path object the items are never encoded.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: MouseFocusObserver no longer calls "component.requestFocusInWindow" if the component does not belong to a Dockable
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SplitDockStation is now much more strict when it comes to enforcing the uniqueness of placeholders
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: If a CStation was registered at a CControl and later the same object was registered as a SingleCDockable, then CControl did not assign a unique identifier to that Station/Dockable.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: SimpleDockAction.KeyForwarder caused a memory leak by not removing its listeners properly
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CLocations returning null as root but have an ExtendedMode are (again) supported.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: When moving/dragging a Dockable from a SplitDockStation with size-locked Dockables, the locked Dockables got resized even if it was not necessary.
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix (by ilvisne, Beni): SimpleDockAction did not unregister itself completely, as a result there was a memory leak
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: DockUI now stalls all events rather than setting the SingleParentRemover to null when updating the DockTheme of a station
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CLayoutChangeStrategy.replaceMultipleDockables could throw a NPE
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix: CDockable.getBaseLocation did return null when a location was actually available
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix (by Thomas): Glass Extension no longer throws Exception if width or height of tab is 0
-\subsubsection{}
-\begin{description}
- \short 
-\end{description}
-- Bugfix (by Thomas): Cursor should no longer remain arrow when moved away from a divider of a SplitDockStation
-\subsubsection{}
-\begin{description}
- \short 
+ \short Normalizing a externalized \src{CDockable} could throw an Exception
 \end{description}
 
 
+\subsubsection{StackDockStation: move}
+\begin{description}
+ \short \src{StackDockStation} could not be moved around in Common even if children would allow it.
+\end{description}
+
+\subsubsection{Placeholders: missing}
+\begin{description}
+ \short Dragging a station away from another station did not store placeholders
+\end{description}
+
+\subsubsection{StackDockStation: selection changes}
+\begin{description}
+ \short During drag and drop, dragging the mouse over a tab of a \linebreak \src{StackDockStation} could exchange the selected \src{Dockable}.
+\end{description}
+
+\subsubsection{ScreenDockStation: exception}
+\begin{description}
+ \short Dragging a \src{Dockable} over a child of a \src{ScreenDockStation} could throw an exception (in \src{Common}).
+\end{description}
+
+
+\subsubsection{StackDockStation: no event}
+\begin{description}
+ \short \src{StackDockStation} did not fire dockable-selected event properly when using the \src{DefaultStackDockComponent}.
+\end{description}
+
+\subsubsection{Tabs: strange position}
+\begin{description}
+ \short Tabs with unequal height were positioned strangely.
+\end{description}
+
+\subsubsection{DefaultStackDockComponent: popup menus}
+\begin{description}
+ \short Popup menus are now enabled for tabs on a \linebreak \src{DefaultStackDockComponent}
+\end{description}
+
+\subsubsection{DockRegister: missing events}
+\begin{description}
+ \short If \src{DockRegister} was stalled and a \src{DockStation} was added/removed to the register and later \src{Dockables} added/removed from that station, then the \src{DockRegister} could miss these modifications and store too many/few \src{Dockables}.
+\end{description}
+
+
+\subsubsection{CActionSource: missing events}
+\begin{description}
+ \short \src{CActionSource} did not fire events when removing or replacing actions
+\end{description}
+ 
+\subsubsection{CLocationModeManager: exception}
+\begin{description}
+ \short \src{CLocationModeManager.setLocation} did not compare the correct objects and has always thrown an exception.
+\end{description}
+
+\subsubsection{Corner components: wrong location}
+\begin{description}
+ \short Minimized \src{CDockables} did not appear at the correct location if corner components were used
+\end{description}
+
+\subsubsection{Maximized CDockable: exception}
+\begin{description}
+ \short Dragging a maximized \src{CDockable} could throw an exception
+\end{description}
+
+
+\subsubsection{BasicStackDockComponent: exception}
+\begin{description}
+ \short Dragging a tab from a \src{BasicStackDockComponent} could throw an exception
+\end{description}
+
+\subsubsection{Path: wrong encoding}
+\begin{description}
+ \short \src{Path} did not encode non-java identifiers right.
+\end{description}
+
+\subsubsection{EclipseMenu: update icon}
+\begin{description}
+ \short \src{EclipseMenu} did not update its icon automatically
+\end{description}
+
+\subsubsection{StackDockStation: move}
+\begin{description}
+ \short \src{StackDockStation.move(Dockable,DockableProperty)} could throw \linebreak exception if destination index was too big.
+\end{description}
+
+
+\subsubsection{AbstractScreenDockWindow: wrong update}
+\begin{description}
+ \short \src{AbstractScreenDockWindow.setDockable} did call \src{updateTitleIcon} instead of \src{updateTitleText}.
+\end{description}
+
+\subsubsection{DockTitleTab: exception}
+\begin{description}
+ \short \src{DockTitleTab} caused exception when uninstalled
+\end{description}
+
+
+\subsubsection{PropertyPreference: load default}
+\begin{description}
+ \short Instead of doing nothing, \src{PropertyPreferences} now load their default value if they cannot read any other value.
+\end{description}
+
+\subsubsection{CGrid: missing Dockables}
+\begin{description}
+ \short When deploying a \src{CGrid} some \src{Dockables} did not appear: the tree of the \src{SplitDockStation} was cleaned up too early before all \src{Dockable}s had been inserted, leading to a corrupted tree.
+\end{description}
+
+\subsubsection{SplitDockStation: wrong id}
+\begin{description}
+ \short \src{SplitDockStation} did assign leaf-id to node when using \linebreak \src{drop(SplitDockPathProperty)}. As a result unmaximizing a stack of \src{CDockables} could destroy the stack.
+\end{description}
+
+\subsubsection{SplitDockStation: update layout}
+\begin{description}
+ \short \src{SplitDockStation} does now always update the boundaries of its tree before dropping a \src{Dockable}. Wrong boundaries did lead to \src{Dockable}s dropped at the wrong location even if the used \src{DockableProperty} was correct.
+\end{description}
+
+\subsubsection{Path: encoding}
+\begin{description}
+ \short \src{Path} now encodes its content when using \src{toString} and decodes contents on creation. Meaning inside a \src{Path} object the items are never encoded.
+\end{description}
+
+\subsubsection{MouseFocusObserver: request focus}
+\begin{description}
+ \short \src{MouseFocusObserver} no longer calls \src{requestFocusInWindow} if a \linebreak \src{Component} does not belong to a \src{Dockable}
+\end{description}
+
+\subsubsection{SplitDockStation: placeholders}
+\begin{description}
+ \short \src{SplitDockStation} is now much more strict when it comes to enforcing the uniqueness of placeholders
+\end{description}
+
+\subsubsection{Dockable CStation issue}
+\begin{description}
+ \short If a \src{CStation} was registered at a \src{CControl} and later the same object was registered as a \src{SingleCDockable}, then \src{CControl} did not assign a unique identifier to that Station/Dockable. 
+\end{description}
+
+\subsubsection{SimpleDockAction: memory leak}
+\begin{description}
+ \short \src{SimpleDockAction.KeyForwarder} caused a memory leak by not removing its listeners properly.
+\end{description}
+
+\subsubsection{CLocation: null root}
+\begin{description}
+ \short \src{CLocation}s returning \src{null} as root but having an \src{ExtendedMode} are (again) supported.
+\end{description}
+
+\subsubsection{SplitDockStation: locked size}
+\begin{description}
+ \short When moving/dragging a \src{Dockable} from a \src{SplitDockStation} with size-locked \src{Dockable}s, the locked \src{Dockable}s got resized even if it was not necessary.
+\end{description}
+
+\subsubsection{DockUI: stalls events}
+\begin{description}
+ \short \src{DockUI} now stalls all events rather than setting the \linebreak \src{SingleParentRemover} to \src{null} when updating the \src{DockTheme} of a station.
+\end{description}
+
+
+\subsubsection{CLayoutChangeStrategy: exception}
+\begin{description}
+ \short \src{CLayoutChangeStrategy.replaceMultipleDockables} could throw a \linebreak \src{NullPointerException}.
+\end{description}
+
+\subsubsection{CDockable: base location}
+\begin{description}
+ \short \src{CDockable.getBaseLocation} did return \src{null} when a location was actually available
+\end{description}
+
+\subsubsection{Glass Extension}
+\begin{description}
+ \short Glass Extension no longer throws Exception if width or height of tab is equal to 0.
+\end{description}
+
+\subsubsection{SplitDockStation: cursor}
+\begin{description}
+ \short Cursor should no longer remain arrow when moved away from a divider of a \src{SplitDockStation}.
+\end{description}
+
+\section{Version 1.1.0}
+From this version on only incompatible changes will be listed in the document. The compatible changes and bugfixes either do not affect clients, or can be found in the \src{changes.txt} file already.
+\subsection{Incompatibilities}
+
+\subsubsection{SincleCDockableBackupFactory}
+\begin{description}
+ \short \src{SingleCDockableBackupFactory} replaced by \src{SingleCDockableFactory}.
+ \why There is no reason to call it a ``backup'' factory anymore. It is now just a factory like any other factory.
+ \clients Have to replace the interface wherever it appears, the methods remain the same.
+\end{description}
+
+\subsubsection{Interface Combiner updated}
+\begin{description}
+ \short The interface \src{Combiner} has been completely rewritten.
+ \why The \src{Combiner} has now much more control of how two \src{Dockable}s are going to be merged. It can even paint on the \src{DockStation} during a drag and drop operation.
+ \clients Any implementation of \src{Combiner} has to be implemented anew from scratch.
+\end{description}
+
+\subsubsection{PlaceholderList update}
+\begin{description}
+ \short \src{PlaceholderList} is now abstract and has more generic arguments.
+ \why This allows subclasses which are used by the API for perspectives.
+ \clients Can use \src{DockablePlaceholderList} instead of \src{PlaceholderList}.
+\end{description}
+
+\subsubsection{DockFactory has new methods}
+\begin{description}
+ \short \src{DockFactory} has additional methods and new generic arguments.
+ \why All these changes are to support the perspective API.
+ \clients Can either ignore the new methods (e.g. always return \src{null}) or have to implement the new methods if they want do use perspectives.
+\end{description}
+
+\subsubsection{Various new generic parameters and abstractions}
+\begin{description}
+ \short Various classes and interfaces have new generic parameters are were made abstract.
+ \why These changes where necessary in order to support the new perspective API.
+ \clients Can either ignore the changes if they do not use the perspective API, or implement missing parts. However, most clients should not notice these changes as they were made in a layer that is not accessed by most clients.
+\end{description}
+
+\subsubsection{Working-area set during loading}
+\begin{description}
+ \short Common now stores the identifier of the working-area which owns a \src{SingleCDockable} and changes the working-area property when loading a layout.
+ \why This was required by the perspective API, otherwise working-areas could not have been supported.
+ \clients Should not be affected by this change as clients normally do not change the working-area of a \src{Dockable}.
+\end{description}
+
+\subsubsection{UIProperties depend on UIScheme}
+\begin{description}
+ \short \src{UIProperties} now depend on \src{UIScheme}.
+ \why \src{UIScheme}s are a good way set the default values of an \src{UIProperties}. The mechanism was first introduced for the \src{ColorManager} but is now generalized.
+ \clients The API of the \src{ColorScheme} has changed and clients may need to reimplemented classes based on \src{ColorScheme}.
+\end{description}
+
+\subsubsection{Introducing ThemeManager}
+\begin{description}
+ \short The importance of the interface \src{DockTheme} has much decreased.
+ \why The new \src{ThemeManager} allows clients to override properties related to a \src{DockTheme} without the need to access the \src{DockTheme}.
+ \clients Clients will not notice any change as the API for \src{DockTheme} remaines unchanged. However, developers should be aware of the \src{ThemeManager} which is much more convenient to use then subclassing \src{DockTheme}s.
+\end{description}
+ 
+\subsubsection{``secure'' classes obsolete}
+\begin{description}
+ \short All ``secure'' classes are obsolete, instead the property ``restricted environment'' in \src{DockController} is to be used.
+ \why This change reduces complexity as the same code can now be used in a standard application and in an unsigned applet.
+ \clients The old classes have been marked \src{deprecated}, clients should remove any references to the old ``secure`` classes.
+\end{description}
+ 
+\subsubsection{SplitDockStationFactory}
+\begin{description}
+ \short \src{SplitDockStationFactory} now stores whether a \src{SplitDockStation} did have a fullscreen-action or not.
+ \why Otherwise the setting could be corrupted when loading a layout.
+ \clients Should treat this like a bugfix.
+\end{description}
+
+\subsubsection{Renaming in focus API}
+\begin{description}
+ \short Renamed: \src{FocusController} to \src{VisibilityFocusObserver}, \src{DockController.getFocusObserver} to \src{DockController.getMouseFocusObserver} and added new interface \src{FocusController}.
+ \why Part of an ongoing effort to hide all controller-classes behind interfaces.
+ \clients Most clients are not affected. Clients implementing a focus system have to use the new interface.
+\end{description}
+
+\subsubsection{FocusVetoListener added to FocusController}
+\begin{description}
+ \short \src{FocusVetoListener} is now added to \src{FocusController} instead of \src{MouseFocusObserver}.
+ \why Part of an ongoing effort to hide all controller-classes behind interfaces. Also the listener is now asked more often for a veto.
+ \clients May need to replace references to \src{MouseFocusObserver} by references to \src{FocusController}.
+\end{description}
+
+\subsubsection{ButtonContent is now a class}
+\begin{description}
+ \short The enum \src{ButtonContent} is now a class.
+ \why The new class allows much finer control of what is to be displayed on a \src{FlapDockStation}
+ \clients The old constants remain available, clients have to update their \src{import}s however since \src{ButtonContent} is now a top-level class.
+\end{description}
+
+\subsubsection{ButtonContentPreference replaced}
+\begin{description}
+ \short \src{ButtonContentPreference} got replaced by \src{ButtonContentPreferenceModel}.
+ \why Because the \src{ButtonContent} class now offers much more options that before.
+ \clients Have to update any reference to \src{ButtonContentPreference}.
+\end{description}
+
+\subsubsection{IconManager and DockIcon}
+\begin{description}
+ \short The \src{IconManager} now extends \src{UIProperties}.
+ \why Allows much more control over the icons.
+ \clients All icons have now to be accessed through a \src{DockIcon}, direct access of the icons is deprecated.
+\end{description}
+
+\subsubsection{IconManager handles all icons}
+\begin{description}
+ \short All icons are now handled by the \src{IconManager}, \src{DockUI} and \src{Resources} are no longer handling any icons.
+ \why This more centralized approach makes customization of icons much easier.
+ \clients Any access to icons has now to go through the \src{IconManager}.
+\end{description}
+
+\subsubsection{Unique identifiers of SplitNodes}
+\begin{description}
+ \short The unique identifier of a \src{SplitNode} may change if a new child is added to the tree.
+ \why Required in order to resolve collisions of identifiers.
+ \clients Clients should not treat the unique identifier as a constant.
+\end{description}
+
+\subsubsection{TextManager}
+\begin{description}
+ \short All the text that appears on buttons/titles/etc. is now handled by the \src{TextManager}.
+ \why This allows clients to modify the text, or even load additional language packages.
+ \clients Any access to text has now to go through the \src{TextManager}.
+\end{description}
+
+\subsubsection{DockStationListener updated}
+\begin{description}
+ \short \src{DockStationListener} has an additional method \src{dockableRepositioned}.
+ \why Allows the framework and clients to better keep track of the location of a \src{Dockable}.
+ \clients Any class implementing \src{DockStationListener} has to implement the new method. Any class implementing \src{DockStation} has to invoke the new method.
+\end{description}
+
+\subsubsection{Class Resources removed}
+\begin{description}
+ \short The class \src{Resources} has been removed.
+ \why Icons are now handled by the \src{IconManager}, text is now handled by the \src{TextManager} and the default bundle is now loaded in \src{CControl.initTexts} using a \src{DefaultTextScheme}.
+ \clients Must use \src{IconManager} and \src{TextManager} instead.
+\end{description}
+
+\subsubsection{CDockableStateListener updated}
+\begin{description}
+ \short \src{CDockableStateListener} no longer has one method for each \src{ExtendedMode}, instead one method handles all possible \src{ExtendedMode}s.
+ \why This keeps the option of new \src{ExtendedMode}s open.
+ \clients Clients can extend \src{CDockableAdapter} to keep the old API.
+\end{description}
+
+\subsubsection{DockSituation uses two PlaceholderStrategies}
+\begin{description}
+ \short \src{DockSituation} can now use a \src{PlaceholderStrategy} to load the intermediate format and another strategy to load the final \src{DockElement}s.
+ \why Allows more flexibility.
+ \clients May need to set the \src{PlaceholderStrategy} twice in order to have the desired effect.
+\end{description}
+
+\subsubsection{DockRelocator updated}
+\begin{description}
+ \short \src{DockRelocator} has two additional methods \src{getRemote} and \src{getDirectRemote} with a parameter \src{forceDrag}.
+ \why Allows clients to force start a drag and drop operation.
+ \clients Clients implementing the \src{DockRelocator} interface need to implement the new methods as well.
+\end{description}
+
+\subsubsection{New CGroupMovement}
+\begin{description}
+ \short \src{CGroupBehavior} now creates a \src{CGroupMovement} instead of executing its changes directly.
+ \why Allows to reuse existing code much easier.
+ \clients Clients implementing a \src{CGroupBehavior} may now need to implement a \src{CGroupMovement} as well.
+\end{description}
+
+\subsubsection{CMaximizedBehavior removed}
+\begin{description}
+ \short \src{CMaximizedBehavior} and all associated methods have been removed.
+ \why All the functionality of \src{CMaximizeBehavior} is now implemented by the \src{CGroupBehavior}.
+ \clients Clients implementing a \src{CMaximizedBehavior} must now implement a \src{CGroupBehavior} instead.
+\end{description}
+
+\subsubsection{DockUI updated}
+\begin{description}
+ \short Several methods of \src{DockUI} have been removed, this includes the \src{LocaleListener}.
+ \why This functionality was replaced by the \src{ThemeManager} and the \src{TextManager}.
+ \clients Have to use the managers instead of \src{DockUI}.
+\end{description}
+
+\subsubsection{Methods renamed in StackDockComponentParent}
+\begin{description}
+ \short Some methods in StackDockComponentParent renamed.
+ \why Prevents conflicts with methods in other interfaces that have the same signature but different usage.
+ \clients Must rename these methods as well.
+\end{description}
+
+\subsubsection{CControlFactory updated}
+\begin{description}
+ \short \src{CControlFactory} now creates \src{CommonStation} instead of \src{DockStation}s.
+ \why All \src{DockStation}s used by a \src{CStation} now implement \src{CommonStation}.
+ \clients Clients implementing \src{CControlFactory} have to implement the new methods as well.
+\end{description}
+
+\subsubsection{CommonStation updated}
+\begin{description}
+ \short \src{CommonStation} no longer extends \src{CommonDockable}.
+ \why Because not every \src{DockStation} is to be treated like a \src{Dockable}.
+ \clients Any code assuming that a \src{CommonStation} is a \src{CommonDockable} has to be updated.
+\end{description}
+
+\subsubsection{New interface CommonElement}
+\begin{description}
+ \short The interface \src{CommonElement} is the parent interface of \src{CommonDockable} and \src{CommonStation}.
+ \why Represents the \src{DockElement}.
+ \clients The type system should now enfoce the correct implementation of all the different methods. Clients may need to update custom \src{DockStation}s.
+\end{description}
+
+\subsubsection{}
+\begin{description}
+ \short 
+ \why 
+ \clients 
+\end{description}
+! API: AdjacentDockFactorys can now also write meta data for PerspectiveElements
+\subsubsection{}
+\begin{description}
+ \short 
+ \why 
+ \clients 
+\end{description}
+\subsubsection{}
+\begin{description}
+ \short 
+ \why 
+ \clients 
+\end{description}
+! API: All methods of the CGroupBehavior now have access to the LocationModeManager, the checks CStackGroupBehavior performs are now more generic and do no longer depend on internal knowledge of when which method is called. 
+\subsubsection{}
+\begin{description}
+ \short 
+ \why 
+ \clients 
+\end{description}
+! API: the PopupController is now accessible for clients through DockController.getPopupController. Clients can install their custom DockPopupMenuFactories for changing the way the popup menu behaves
+\subsubsection{}
+\begin{description}
+ \short 
+ \why 
+ \clients 
+\end{description}
+! API: DockRelocator is now an interface.
+\subsubsection{}
+\begin{description}
+ \short 
+ \why 
+ \clients 
+\end{description}
+! API: moved some methods from MutableCControlRegister to CControlRegister
+\subsubsection{}
+\begin{description}
+ \short 
+ \why 
+ \clients 
+\end{description}
 
 \end{document}

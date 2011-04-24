@@ -528,6 +528,10 @@
 - API: CButton is no longer abstract and clients can now add ActionListeners instead of subclassing the action (which is still an option)
 - Todo: Reclassified several "todo"s to be in version 1.1.1 instead of 1.1.0, allowing final 1.1.0 to be finished soon.
 
+[v1.1.0]
+No changes to 1.1.0p7e
+
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
