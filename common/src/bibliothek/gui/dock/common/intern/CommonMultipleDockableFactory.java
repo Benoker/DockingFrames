@@ -148,7 +148,7 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return flayout;
     }
     
-    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.BUG, target=Todo.Version.VERSION_1_1_0,
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.BUG, target=Todo.Version.VERSION_1_1_1,
     		description="does the working-area really work this way? Or can some working areas be missed?")
 	public void layoutPerspective( CommonElementPerspective perspective, CommonMultipleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
     	MultipleCDockablePerspective multiple = (MultipleCDockablePerspective) perspective.getElement();

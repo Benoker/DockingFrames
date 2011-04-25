@@ -56,7 +56,7 @@ import bibliothek.util.xml.XElement;
  * Clients should use {@link #getDefaultList()} to get a list of {@link LookAndFeel}s
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_0,
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_1,
 		description="persistent storage: use string identifier instead of integer")
 public class LookAndFeelList{
 	/** global list of look and feels */

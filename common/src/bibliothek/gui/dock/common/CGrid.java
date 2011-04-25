@@ -28,12 +28,12 @@ package bibliothek.gui.dock.common;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.perspective.CControlPerspective;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Version;
+import bibliothek.util.Path;
 
 /**
  * A {@link CGrid} is a mechanism to layout a set of {@link CDockable} on
@@ -60,8 +60,6 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  *
  */
-@Todo( priority=Todo.Priority.MAJOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_0,
-		description="Allow using identifiers instead of CDockables to fill up the grid, create the dockables lazily" )
 public class CGrid {
     /** the internal representation of this grid */
     private SplitDockGrid grid = new SplitDockGrid();
@@ -71,16 +69,21 @@ public class CGrid {
     
     /**
      * Creates a new grid.
+     * @deprecated Use {@link #CGrid(CControl)} with an argument of <code>null</code> instead. This
+     * method may be removed in a future release.
      */
+    @Deprecated
     public CGrid(){
         // do nothing
     }
     
     /**
-     * Creates a new grid. New {@link CDockable}s will be registered at
-     * <code>control</code>.
-     * @param control the control where this grid should register new
-     * {@link CDockable}s.
+     * Creates a new grid. If {@link CDockable}s is not <code>null</code>, then new {@link CDockable}s
+     * will be registered at <code>control</code>. While a value of <code>null</code> is valid,
+     * for most clients a non-<code>null</code> value will be the better choice. Please note that
+     * some methods will not work if <code>control</code> is <code>null</code>.
+     * @param control the control where this grid should register new {@link CDockable}s,
+     * should not be <code>null</code> for most clients
      */
     public CGrid( CControl control ){
         this.control = control;
@@ -125,6 +128,72 @@ public class CGrid {
         }
         
         grid.addDockable( x, y, width, height, intern );
+    }
+    
+    /**
+     * Adds some placeholders for {@link SingleCDockable}s to this {@link CGrid}. This method does not make any checks concerning
+     * the validity of the placeholders, the placeholders will however be checked once the {@link CGrid} is deployed.<br>
+     * This method will assume that the {@link CPlaceholderStrategy} is installed and use the method {@link CPlaceholderStrategy#getSingleDockablePlaceholder(String)}<br>
+     * Please note that placeholders are always placed after the real existing {@link CDockable}s, if 
+     * order is important then clients must use a {@link CControlPerspective} to create the layout.
+     * to convert the identifiers into placeholders.
+     * @param x the x-coordinate of the dockables
+     * @param y the y-coordinate of the dockables
+     * @param width the width of the dockables
+     * @param height the height of the dockables
+     * @param identifiers the identifiers that would be returned by {@link SingleCDockable#getUniqueId()}
+     * @throws IllegalStateException if this {@link CGrid} does not have access to the a {@link CControl}
+     */
+    public void addSingle( double x, double y, double width, double height, String... identifiers ){
+    	if( control == null ){
+    		throw new IllegalStateException( "This method is only available if the CGrid was constructed with a CControl" );
+    	}
+    	
+    	Path[] placeholders = new Path[ identifiers.length ];
+    	for( int i = 0; i < placeholders.length; i++ ){
+    		placeholders[i] = CPlaceholderStrategy.getSingleDockablePlaceholder( control.getRegister().toSingleId( identifiers[i] ) );
+    	}
+    }
+
+    /**
+     * Adds some placeholders for {@link MultipleCDockable}s to this {@link CGrid}. This method does not make any checks concerning
+     * the validity of the placeholders, the placeholders will however be checked once the {@link CGrid} is deployed.<br>
+     * This method will assume that the {@link CPlaceholderStrategy} is installed and use the method {@link CPlaceholderStrategy#getMultipleDockablePlaceholder(String)}
+     * to convert the identifiers into placeholders.<br>
+     * Please note that placeholders are always placed after the real existing {@link CDockable}s, if 
+     * order is important then clients must use a {@link CControlPerspective} to create the layout.
+     * @param x the x-coordinate of the dockables
+     * @param y the y-coordinate of the dockables
+     * @param width the width of the dockables
+     * @param height the height of the dockables
+     * @param identifiers the identifiers that are used when calling {@link CControl#addDockable(String, MultipleCDockable)}
+     * @throws IllegalStateException if this {@link CGrid} does not have access to the a {@link CControl}
+     */
+    public void addMulti( double x, double y, double width, double height, String... identifiers ){
+    	if( control == null ){
+    		throw new IllegalStateException( "This method is only available if the CGrid was constructed with a CControl" );
+    	}
+    	
+    	Path[] placeholders = new Path[ identifiers.length ];
+    	for( int i = 0; i < placeholders.length; i++ ){
+    		placeholders[i] = CPlaceholderStrategy.getMultipleDockablePlaceholder( control.getRegister().toMultiId( identifiers[i] ) );
+    	}
+    }
+    
+    /**
+     * Adds some placeholders to this {@link CGrid}. This method does not make any checks concerning
+     * the validity of the placeholders, the placeholders will however be checked once the {@link CGrid} 
+     * is deployed.<br>
+     * Please note that placeholders are always placed after the real existing {@link CDockable}s, if 
+     * order is important then clients must use a {@link CControlPerspective} to create the layout.
+     * @param x the x-coordinate of the dockables
+     * @param y the y-coordinate of the dockables
+     * @param width the width of the dockables
+     * @param height the height of the dockables
+     * @param placeholders the list of new placeholders
+     */
+    public void addPlaceholders( double x, double y, double width, double height, Path... placeholders ){
+    	grid.addPlaceholders( x, y, width, height, placeholders );
     }
     
     /**

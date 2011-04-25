@@ -48,7 +48,7 @@ public interface MultipleCDockable extends CDockable{
 	 * Gets the factory that created this dockable.
 	 * @return the factory, not <code>null</code>
 	 */
-	@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
+	@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
 			description="Allow null or a constant 'NULL' as factory: that would be the 'do not store this dockable'-factory")
 	public MultipleCDockableFactory<?,?> getFactory();
 	

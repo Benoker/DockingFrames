@@ -27,23 +27,22 @@ package bibliothek.gui.dock.common.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.intern.action.CDropDownItem;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A simple button, the user clicks onto the button and {@link #action()} is called.
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
-		description="Allow some listener (ActionListener?) instead of action method. Remove 'abstract'.")
-public abstract class CButton extends CDropDownItem {
+public class CButton extends CDropDownItem {
+	/** all the registered {@link ActionListener} */
+	private List<ActionListener> listeners = new ArrayList<ActionListener>();
+	
     /**
      * Creates the new button
      */
@@ -68,7 +67,41 @@ public abstract class CButton extends CDropDownItem {
     }
     
     /**
-     * Invoked when the user clicks onto this button.
+     * Adds <code>listener</code> to this button, <code>listener</code> will be called
+     * whenever this button it triggered.
+     * @param listener the new listener, not <code>null</code>
      */
-    protected abstract void action();
+    public void addActionListener( ActionListener listener ){
+    	if( listener == null ){
+    		throw new IllegalArgumentException( "listener must not be null" );
+    	}
+    	listeners.add( listener );
+    }
+    
+    /**
+     * Removes <code>listener</code> from this button.
+     * @param listener the listener to remove
+     */
+    public void removeActionListener( ActionListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
+     * Invoked when the user clicks onto this button. The default behavior
+     * is to call {@link #fire()}.
+     */
+    protected void action(){
+    	fire();
+    }
+    
+    /**
+     * Informs all {@link ActionListener}s that this button was clicked.
+     */
+    protected void fire(){
+    	ActionEvent event = new ActionEvent( this, ActionEvent.ACTION_PERFORMED, null );
+    	
+    	for( ActionListener listener : listeners.toArray( new ActionListener[ listeners.size() ] )){
+    		listener.actionPerformed( event );
+    	}
+    }
 }

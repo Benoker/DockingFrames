@@ -453,8 +453,9 @@ public interface CDockable {
 	 * should not use this method unless they know exactly what they are doing.
 	 * @return the control
 	 */
-	@Todo( priority=Priority.MINOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_0,
+	@Todo( priority=Priority.MINOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_1,
 			description="Return CControl instead of CControlAccess" )
+	@FrameworkOnly
 	public CControlAccess getControl();
 	
 	/**

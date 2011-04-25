@@ -140,4 +140,58 @@ public interface CControlRegister {
      * @return the list of ids, never <code>null</code>
      */
     public Set<String> listSingleDockables();
+    
+    /**
+     * Transforms an identifier to an identifier for a {@link SingleCDockable}.<br>
+     * Note that this method must never create an identifier that passes 
+     * {@link #isMultiId(String)}.
+     * @param id some identifier
+     * @return an identifier marked as being for a {@link SingleCDockable}
+     */
+    public String toSingleId( String id );
+    
+    /**
+     * Checks whether <code>id</code> could be created by {@link #toSingleId(String)}.
+     * @param id the id to check
+     * @return <code>true</code> if there is an input for {@link #toSingleId(String)}
+     * that would result in <code>id</code>
+     */
+    public boolean isSingleId( String id );
+    
+    /**
+     * Undoes the changes of {@link #toSingleId(String)}. It must be <code>true</code>
+     * that <code>singleToNormalId( toSingleId( id )) = id</code>. The behavior
+     * of this method is unspecified if {@link #isSingleId(String)} returns
+     * <code>false</code> for <code>id</code>.
+     * @param id some id create by {@link #toSingleId(String)}.
+     * @return the original id
+     */
+    public String singleToNormalId( String id );
+    
+    /**
+     * Transforms an identifier to an identifier for a {@link MultipleCDockable}.<br>
+     * Note that this method must never create an identifier that passes 
+     * {@link #isSingleId(String)}.
+     * @param id some identifier
+     * @return an identifier marked as being for a {@link MultipleCDockable}
+     */
+    public String toMultiId( String id );
+    
+    /**
+     * Checks whether <code>id</code> could be created by {@link #toMultiId(String)}.
+     * @param id the id to check
+     * @return <code>true</code> if there is an input for {@link #toMultiId(String)}
+     * that would result in <code>id</code>
+     */
+    public boolean isMultiId( String id );
+    
+    /**
+     * Undoes the changes of {@link #toMultiId(String)}. It must be <code>true</code>
+     * that <code>multiToNormalId( toMultiId( id )) = id</code>. The behavior
+     * of this method is unspecified if {@link #isMultiId(String)} returns
+     * <code>false</code> for <code>id</code>.
+     * @param id some id create by {@link #toMultiId(String)}.
+     * @return the original id
+     */
+    public String multiToNormalId( String id );
 }

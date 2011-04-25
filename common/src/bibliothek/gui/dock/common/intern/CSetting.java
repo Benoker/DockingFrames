@@ -122,7 +122,7 @@ public class CSetting extends Setting{
     	return null;
     }
     
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MINOR, target=Todo.Version.VERSION_1_1_0,
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
     		description="this code heavily depends on the internal implementation of other classes, it should be more generic" )
     private DockLayoutComposition getPredefinedStation( String id, DockLayoutComposition current ){
     	// check self
