@@ -1220,7 +1220,14 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	        StationChildHandle handle = new StationChildHandle( this, getDisplayers(), dockable, title );
 	        handle.updateDisplayer();
 	        
-	        int inserted = placeholder == null ? -1 : dockables.put( placeholder, handle );
+	        int inserted = -1;
+	        if( placeholder != null && dockables.getDockableAt( placeholder ) == null ){
+	        	inserted = dockables.put( placeholder, handle );	
+	        }
+	        else if( placeholder != null ){
+	        	index = dockables.getDockableIndex( placeholder );
+	        }
+	        
 	        if( inserted == -1 ){
 	        	dockables.dockables().add( index, handle );
 	        }
