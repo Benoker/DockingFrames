@@ -28,7 +28,12 @@ package bibliothek.gui.dock.facile.station.split;
 import java.awt.Rectangle;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.split.*;
+import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
+import bibliothek.gui.dock.station.split.Leaf;
+import bibliothek.gui.dock.station.split.Node;
+import bibliothek.gui.dock.station.split.Root;
+import bibliothek.gui.dock.station.split.SplitLayoutManager;
+import bibliothek.gui.dock.station.split.SplitNode;
 
 /**
  * A {@link SplitLayoutManager} that can lock the size of some {@link Dockable}s
@@ -82,18 +87,38 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
         Rectangle current = root.getCurrentBounds();
         Rectangle bounds = root.getBounds();
         
-        boolean resize = !current.equals( bounds ) || root.hasTreeChanged();
+        boolean resize = isResize( root ); 
 
         if( resize ){
             resize = current.width > 10 && current.height > 10 && bounds.width > 10 && bounds.height > 10;
         }
-                
-        if( !resize ){
-            super.updateBounds( root, x, y, factorW, factorH );
+        
+        if( resize ){
+        	try{
+	        	root.setBaseBounds( current );
+	        	super.updateBounds( root, x, y, factorW, factorH );
+        	}
+        	finally{
+        		root.setBaseBounds( null );
+        	}
+        	updateBoundsLocked( root, x, y, factorW, factorH );
         }
-        else{
-            updateBoundsLocked( root, x, y, factorW, factorH );
+        else{ 
+        	super.updateBounds( root, x, y, factorW, factorH );
         }
+    }
+
+    /**
+     * Tells whether the current operation is a resize operation. The locked sizes will only be respected if
+     * the operation is a resize operation.
+     * @param root the item that is going to be updated
+     * @return whether a resize operation is in progress
+     */
+    protected boolean isResize( Root root ){
+    	Rectangle current = root.getCurrentBounds();
+        Rectangle bounds = root.getBounds();
+        
+        return !current.equals( bounds ); // || root.hasTreeChanged();
     }
 
     /**

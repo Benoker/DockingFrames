@@ -26,9 +26,13 @@
 
 package bibliothek.gui.dock.station.split;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.util.Map;
+
+import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
@@ -44,6 +48,9 @@ public class Root extends VisibleSplitNode{
     
     /** tells whether the subtree has changed since the last reset */
     private boolean treeChanged = true;
+    
+    /** The result of {@link #getBaseBounds()} */
+    private Rectangle baseBounds = null;
     
     /**
      * Creates a new root.
@@ -170,8 +177,10 @@ public class Root extends VisibleSplitNode{
      * @return the horizontal stretch factor
      */
     public double getWidthFactor(){
-        Insets insets = getAccess().getOwner().getInsets();
-        return getAccess().getOwner().getWidth() - insets.left - insets.right;
+    	return getBaseBounds().getWidth();
+    	
+//        Insets insets = getAccess().getOwner().getInsets();
+//        return getAccess().getOwner().getWidth() - insets.left - insets.right;
     }
     
     /**
@@ -180,8 +189,48 @@ public class Root extends VisibleSplitNode{
      * @return the vertical stretch factor
      */
     public double getHeightFactor(){
-        Insets insets = getAccess().getOwner().getInsets();
-        return getAccess().getOwner().getHeight() - insets.top - insets.bottom;
+    	return getBaseBounds().getHeight();
+    	
+//        Insets insets = getAccess().getOwner().getInsets();
+//        return getAccess().getOwner().getHeight() - insets.top - insets.bottom;
+    }
+    
+    /**
+     * Sets the result of {@link #getBaseBounds()}, a value of <code>null</code> allows
+     * this {@link Root} to calculate the base bounds anew.
+     * @param baseBounds the result of {@link #setBaseBounds(Rectangle)} or <code>null</code> 
+     * if the boundaries should be calculated automatically
+     */
+    public void setBaseBounds( Rectangle baseBounds ){
+		this.baseBounds = baseBounds;
+	}
+    
+    /**
+     * Gets the location and size of the area which can be occupied by the children.
+     * @return the boundaries of the base {@link Component}
+     * @see #setBaseBounds(Rectangle)
+     */
+    public Rectangle getBaseBounds(){
+    	if( baseBounds != null ){
+    		return baseBounds;
+    	}
+    	
+        JComponent base = getAccess().getOwner().getBasePane();
+        
+        Insets insets = base.getInsets();
+        
+        int x = 0;
+        int y = 0;
+        int width = base.getWidth();
+        int height = base.getHeight();
+        if( insets != null ){
+            x = insets.left;
+            y = insets.top;
+            width -= insets.left + insets.right;
+            height -= insets.top + insets.bottom;
+        }
+        
+        return new Rectangle( x, y, width, height );
     }
     
     /**

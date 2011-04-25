@@ -529,8 +529,8 @@
 - Todo: Reclassified several "todo"s to be in version 1.1.1 instead of 1.1.0, allowing final 1.1.0 to be finished soon.
 
 [v1.1.0]
-No changes to 1.1.0p7e
-
+- Bugfix: Dropping a Dockable on a FlapDockStation could remove another child if the placeholders had a bad order
+- Bugfix: Dropping a Dockable on a SplitDockStation with children that have a fixed size and have an outstanding resize operation now updates the boundaries of the children twice: the first time to reflect the new child, the second time to reflect the resized station
 
 [Todo]
 - Import/Export Perspectives from file

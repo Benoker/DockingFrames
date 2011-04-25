@@ -1749,10 +1749,10 @@ public class FlapDockStation extends AbstractDockableStation {
         try{
 	        listeners.fireDockableAdding( dockable );
 	        DockableHandle handle = link( dockable );
-	        if( listIndex == -1 ){
+	        if( listIndex == -1 || handles.list().get( listIndex ).getDockable() != null ){
 	        	handles.dockables().add( index, handle );
 	        }
-	        else{
+	        else if( handles.list().get( listIndex ).getDockable() == null ){
 	        	handles.list().get( listIndex ).setDockable( handle );
 	        }
 	        dockable.setDockParent( this );
