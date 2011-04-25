@@ -653,6 +653,9 @@ public class DockUtilities {
 				catch( ClassNotFoundException e ) {
 					// ignore and continue
 				}
+				catch( SecurityException e ){
+					// ignore and continue
+				}
 	    	}
     	}
     }
