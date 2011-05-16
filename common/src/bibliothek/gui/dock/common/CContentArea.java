@@ -293,10 +293,10 @@ public class CContentArea extends JPanel{
 	 * @see FlapDockStation#MINIMUM_SIZE
 	 */
 	public void setMinimumAreaSize( Dimension size ){
-		north.setMinimumSize( size );
-		south.setMinimumSize( size );
-		west.setMinimumSize( size );
-		east.setMinimumSize( size );
+		north.getStation().setMinimumSize( size );
+		south.getStation().setMinimumSize( size );
+		west.getStation().setMinimumSize( size );
+		east.getStation().setMinimumSize( size );
 	}
 	
 	/**
