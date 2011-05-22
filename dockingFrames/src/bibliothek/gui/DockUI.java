@@ -53,21 +53,12 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
-import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.BasicTheme;
-import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
-import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.ThemePropertyFactory;
-import bibliothek.gui.dock.themes.basic.BasicCombiner;
-import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
-import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.laf.DefaultLookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
@@ -75,7 +66,6 @@ import bibliothek.gui.dock.util.laf.Nimbus6u10;
 import bibliothek.gui.dock.util.laf.Windows;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Version;
 import bibliothek.util.container.Tuple;
 
 /**
@@ -319,70 +309,6 @@ public class DockUI {
      */
     public static Color getColor( String key ){
         return getDefaultDockUI().getColors().getColor( key );
-    }
-    
-    /**
-     * Gets a {@link StationPaint} for <code>station</code>.
-     * @param paint a default value, may be <code>null</code>
-     * @param station the station for which a paint is searched
-     * @return <code>paint</code> or another StationPaint, not <code>null</code>
-     * @deprecated since the {@link ThemeManager} exists, this method should no longer be used. Instead an
-     * {@link UIValue} should be registered at the {@link ThemeManager}, see {@link DefaultStationPaintValue}.
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="remove this methode")
-    public static StationPaint getPaint( StationPaint paint, DockStation station ){
-        if( paint != null )
-            return paint;
-        
-        DockTheme theme = station.getTheme();
-        if( theme == null )
-        	return new BasicStationPaint();
-        
-        return theme.getPaint(station);
-    }
-    
-    /**
-     * Gets a {@link DisplayerFactory} for <code>station</code>.
-     * @param factory a default value, may be <code>null</code>
-     * @param station the station for which a factory is searched
-     * @return <code>factory</code> or another DisplayerFactory, not <code>null</code>
-     * @deprecated this method is no longer used, clients should use the {@link ThemeManager} to retrieve such resources
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="remove this methode")
-    public static DisplayerFactory getDisplayerFactory( DisplayerFactory factory, DockStation station ){
-    	if( factory != null )
-    		return factory;
-    	
-    	DockTheme theme = station.getTheme();
-        if( theme == null )
-        	return new BasicDisplayerFactory();
-        
-        return theme.getDisplayFactory(station);
-    }
-    
-    /**
-     * Gets a {@link Combiner} for <code>station</code>.
-     * @param combiner a default value, may be <code>null</code>
-     * @param station the station for which a combiner is searched
-     * @return <code>combiner</code> or another Combiner, not <code>null</code>
-     * @deprecated this method is no longer used, clients should use the {@link ThemeManager} to retrieve such resources
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="remove this methode")
-    public static Combiner getCombiner( Combiner combiner, DockStation station ){
-        if( combiner != null )
-            return combiner;
-        
-        DockTheme theme = station.getTheme();
-        if( theme == null )
-        	return new BasicCombiner();
-        
-        return theme.getCombiner(station);
     }
     
     /**

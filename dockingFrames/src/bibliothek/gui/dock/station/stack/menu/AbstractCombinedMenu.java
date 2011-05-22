@@ -37,6 +37,7 @@ import bibliothek.gui.dock.station.stack.CombinedHandler;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabMenu;
+import bibliothek.gui.dock.station.stack.tab.TabMenuListener;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPaneMenuBackgroundComponent;
@@ -76,6 +77,9 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 	
 	/** handler for making this menu visible or invisible */
 	private CombinedHandler<? super AbstractCombinedMenu> handler;
+	
+	/** All the listeners that were added to this menu */
+	private List<TabMenuListener> listeners = new ArrayList<TabMenuListener>();
 	
 	/**
 	 * Creates a new menu.
@@ -152,6 +156,25 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 		return controller;
 	}
 	
+	public void addTabMenuListener( TabMenuListener listener ){
+		if( listener == null ){
+			throw new IllegalArgumentException( "listener must not be null" );
+		}
+		listeners.add( listener );	
+	}
+	
+	public void removeTabMenuListener( TabMenuListener listener ){
+		listeners.remove( listener );	
+	}
+	
+	/**
+	 * Gets all the {@link TabMenuListener} that are currently registered at this menu.
+	 * @return all the listeners
+	 */
+	protected TabMenuListener[] tabMenuListeners(){
+		return listeners.toArray( new TabMenuListener[ listeners.size() ] );
+	}
+	
 	public void setPaneVisible( boolean visible ){
 		handler.setVisible( this, visible );
 	}
@@ -198,12 +221,21 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 		entry.text = dockable.getTitleText();
 		entry.tooltip = dockable.getTitleToolTip();
 		entries.add( index, entry );
+		
+		for( TabMenuListener listener : tabMenuListeners() ){
+			listener.dockablesAdded( this, index, 1 );
+		}
 	}
 	
 	public void remove( Dockable dockable ){
 		for( int i = 0, n = entries.size(); i<n; i++ ){
 			if( entries.get( i ).dockable == dockable ){
 				entries.remove( i );
+				
+				for( TabMenuListener listener : tabMenuListeners() ){
+					listener.dockablesRemoved( this, i, 1 );
+				}
+				
 				return;
 			}
 		}

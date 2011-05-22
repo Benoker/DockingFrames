@@ -28,9 +28,11 @@ package bibliothek.gui.dock.common.intern;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.MissingCDockableStrategy;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
+import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
  * Gives access to the internal methods of a {@link bibliothek.gui.dock.common.CControl}.<br>
@@ -137,4 +139,12 @@ public interface CControlAccess {
 	 * @param setting the setting to fill
 	 */
 	public void fillMultiFactories( CSetting setting );
+	
+	/**
+	 * Gets the default result for {@link CDockable#getAutoBaseLocation()}.
+	 * @param dockable the element whose location is searched
+	 * @param noBackwardTransformation if <code>true</code>, then no {@link DockableProperty} should be converted to a {@link CLocation}
+	 * @return the location or <code>null</code> if not available
+	 */
+	public CLocation getAutoBaseLocation( CDockable dockable, boolean noBackwardTransformation );
 }

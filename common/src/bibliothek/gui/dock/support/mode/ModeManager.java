@@ -1124,7 +1124,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	 * intermediate format.
 	 * @return the new empty settings
 	 */
-	protected <B> ModeSettings<H, B> createModeSettings( ModeSettingsConverter<H, B> converter ){
+	public <B> ModeSettings<H, B> createModeSettings( ModeSettingsConverter<H, B> converter ){
 		return new ModeSettings<H, B>( converter );
 	}
 	

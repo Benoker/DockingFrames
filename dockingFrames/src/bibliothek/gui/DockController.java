@@ -411,18 +411,6 @@ public class DockController {
     }
     
     /**
-     * Gets the current focus manager that tracks the mouse.
-     * @return the controller
-     * @deprecated replaced by {@link #getMouseFocusObserver()}
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Version.VERSION_1_1_1,
-    		description="remove this method")
-    public MouseFocusObserver getFocusObserver(){
-		return getMouseFocusObserver();
-	}
-    
-    /**
      * Gets the manager which is responsible for transfering focus between {@link Dockable}s.
      * @return the manager, not <code>null</code>
      */
@@ -1312,49 +1300,6 @@ public class DockController {
         
         for( DockableSelectionListener listener : dockableSelectionListeners() )
             listener.dockableSelected( event );
-    }
-
-    /**
-     * Adds an {@link UIListener} to this controller, the listener gets
-     * notified when the graphical user interface needs an update because
-     * the {@link LookAndFeel} changed.
-     * @param listener the new listener
-     * @deprecated please use {@link #getThemeManager()} to handle {@link UIListener}s, this method will be 
-     * removed in a future release.
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="remove this method")
-    public void addUIListener( UIListener listener ){
-        theme.addUIListener( listener );
-    }
-    
-    /**
-     * Removes a listener from this controller.
-     * @param listener the listener to remove
-     * @deprecated please use {@link #getThemeManager()} to handle {@link UIListener}s, this method will be 
-     * removed in a future release.
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="remove this method")
-    public void removeUIListener( UIListener listener ){
-        theme.removeUIListener( listener );
-    }
-    
-    /**
-     * Informs all registered {@link UIListener}s that the user interface
-     * needs an update because the {@link LookAndFeel} changed.
-     * @see #addUIListener(UIListener)
-     * @see #removeUIListener(UIListener)
-     * @deprecated please use {@link #getThemeManager()} to call a similar named method, this method will be 
-     * removed in a future release.
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="remove this method")
-    public void updateUI(){
-    	theme.updateUI();
     }
     
     /**

@@ -84,6 +84,12 @@ public interface CDockablePropertyListener {
     public void minimizeSizeChanged( CDockable dockable );
     
     /**
+     * Called when the property {@link CDockable#isMinimizedHoldSwitchable()} has changed.
+     * @param dockable the source of the event
+     */
+    public void minimizedHoldSwitchableChanged( CDockable dockable );
+    
+    /**
      * Called when the property {@link CDockable#isTitleShown()} has changed.
      * @param dockable the source of the event
      */

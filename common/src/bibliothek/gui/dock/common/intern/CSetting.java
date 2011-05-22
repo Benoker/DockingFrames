@@ -44,7 +44,6 @@ import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockSituation;
-import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.layout.PredefinedLayout;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.support.mode.ModeSettings;

@@ -60,7 +60,7 @@ public class CMinimizedMode extends MinimizedMode<CMinimizedModeArea> implements
 	}
 	
 	public CLocation getCLocation( Dockable dockable, Location location ){
-		CMinimizedModeArea area = get( dockable );
+		CMinimizedModeArea area = get( location.getRoot() );
 		if( area == null )
 			return null;
 			

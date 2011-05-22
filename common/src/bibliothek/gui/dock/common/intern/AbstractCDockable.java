@@ -83,6 +83,9 @@ public abstract class AbstractCDockable implements CDockable {
     /** whether to remain visible when minimized and unfocused or not */
     private boolean minimizeHold = false;
     
+    /** whether {@link #minimizeHold} can be switched by the user */
+    private boolean minimizeHoldSwitchable = true;
+    
     /** the preferred size when minimized */
     private Dimension minimizeSize = new Dimension( -1, -1 );
     
@@ -342,6 +345,14 @@ public abstract class AbstractCDockable implements CDockable {
         return location;
     }
     
+    public CLocation getAutoBaseLocation( boolean noBackwardsTransformation ){
+        if( control == null || isVisible() ){
+	    	return null;
+	    }
+	    
+	    return control.getAutoBaseLocation( this, noBackwardsTransformation );
+    }
+    
     public void setExtendedMode( ExtendedMode extendedMode ){
         if( extendedMode == null )
             throw new NullPointerException( "extendedMode must not be null" );
@@ -503,6 +514,17 @@ public abstract class AbstractCDockable implements CDockable {
     
     public boolean isMinimizedHold() {
         return minimizeHold;
+    }
+    
+    public void setMinimizedHoldSwitchable( boolean minimizeHoldSwitchable ){
+    	if( this.minimizeHoldSwitchable != minimizeHoldSwitchable ){
+    		this.minimizeHoldSwitchable = minimizeHoldSwitchable;
+    		listenerCollection.getCDockablePropertyListener().minimizedHoldSwitchableChanged( this );
+    	}
+	}
+    
+    public boolean isMinimizedHoldSwitchable(){
+	    return minimizeHoldSwitchable;
     }
     
     public void setMinimizedSize( Dimension size ) {
@@ -685,10 +707,15 @@ public abstract class AbstractCDockable implements CDockable {
                     return uniqueId;
                 }
                 
-                public CLocation internalLocation(){
-                    CLocation loc = location;
-                    location = null;
-                    return loc;
+                public CLocation internalLocation( boolean reset ){
+                	if( reset ){
+	                    CLocation loc = location;
+	                    location = null;
+	                    return loc;
+                	}
+                	else{
+                		return location;
+                	}
                 }
             });
         }

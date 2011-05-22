@@ -40,6 +40,7 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.station.flap.AbstractFlapLayoutManager;
 import bibliothek.gui.dock.station.flap.FlapLayoutManager;
 import bibliothek.util.FrameworkOnly;
 
@@ -49,7 +50,7 @@ import bibliothek.util.FrameworkOnly;
  * @author Benjamin Sigg
  */
 @FrameworkOnly
-public class CFlapLayoutManager implements FlapLayoutManager {
+public class CFlapLayoutManager extends AbstractFlapLayoutManager implements FlapLayoutManager {
     /**
      * A listener added to each {@link FlapDockStation}.
      */
@@ -88,6 +89,12 @@ public class CFlapLayoutManager implements FlapLayoutManager {
             DockStation parent = dockable.intern().getDockParent();
             if( parent instanceof FlapDockStation ){
                 ((FlapDockStation)parent).updateWindowSize( dockable.intern() );
+            }
+        }
+        public void minimizedHoldSwitchableChanged( CDockable dockable ){
+        	DockStation parent = dockable.intern().getDockParent();
+            if( parent instanceof FlapDockStation ){
+                fireHoldSwitchableChanged( (FlapDockStation)parent, dockable.intern() );
             }
         }
     };
@@ -175,5 +182,14 @@ public class CFlapLayoutManager implements FlapLayoutManager {
         else{
             holds.put( dockable, hold );
         }
+    }
+    
+    public boolean isHoldSwitchable( FlapDockStation station, Dockable dockable ){
+    	if( dockable instanceof CommonDockable ){
+    		return ((CommonDockable)dockable).getDockable().isMinimizedHoldSwitchable();
+    	}
+    	else{
+    		return true;
+    	}
     }
 }

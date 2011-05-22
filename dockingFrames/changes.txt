@@ -532,6 +532,32 @@
 - Bugfix: Dropping a Dockable on a FlapDockStation could remove another child if the placeholders had a bad order
 - Bugfix: Dropping a Dockable on a SplitDockStation with children that have a fixed size and have an outstanding resize operation now updates the boundaries of the children twice: the first time to reflect the new child, the second time to reflect the resized station
 
+[v1.1.1]
+- Bugfix: If a CDockable is made visible without a known location, then the default location stored in CLocationModeManager is checked as well.
+- Bugfix: CLocationMode.getCLocation did return null even if there was enough information to return a non-null result.
+- API: MultipleCDockables are now registered at the DockFrontend just like SingleCDockables. This adds better support for persistent location storage to MultipleCDockable.
+- API: CDockable has new method "getAutoBaseLocation" which tells where exactly an invisible dockable will appear.
+- Bugfix: The identifier for storing meta information of missing MultipleCDockables was calculated the wrong way resulting in an invalid identifier. This prevented the framework from storing location information. 
+- API: CControlPerspective has additional methods to write and read a single perspective, aka "import/export feature".
+- API: DefaultMultipleCDockable now accepts "null" as factory, null will be replaced by "NullMultipleCDockableFactory.NULL" 
+! API: FlapLayoutManager has an additional property "isHoldSwitchable" that tells whether the "sticky" button is visible for some Dockable
+- API: CDockable has a new property "isMinimizedHoldSwitchable" that tells whether the "sticky" button is visible for some Dockable
+- API: CDockable has a new action key "ACTION_KEY_MINIMIZED_HOLD" which allows client to replace the sticky action shown when a dockable is minimized
+- Bugfix: DockHierarchyLock.runOnRelease has a timeout for how long the method blocks if not called from the EDT. This prevents a deadlock if some unfortunate chain of events happened. 
+- Bugfix: LockedResizeLayoutManager should no longer throw NPEs when accessed in a multi threading application
+- API: DefaultIconScheme now also stores custom DockIconBridges
+- API: The icon used when there are too many Dockables on a StackDockStation and the EclipseTheme is used, now depends on the actual number of overflowing Dockables. Clients can use their own icon by installing a DockIconBridge for type TabMenuDockIcon.KIND_TAB_MENU. 
+
+{Removal of deprecated items}
+! API: SizeManager and all subclasses have been removed without replacement. They were created to support persistentl storage of the layout of a SplitDockStation, this job is now done by placeholders.
+! API: DockFrontend.add replaced by addDockable
+! API: CControl removed several methods to add/remove dockables and factories
+! API: CWorkingArea removed methods "isTitleSuppressed/setTitleSuppressed", these methods are replaced by "is/setTitleShown"
+! API: SingleCDockableBackupFactory replaced by SingleCDockableFactory
+! API: Methods related to UIListener moved from DockController to ThemeManager
+! API: DockController.getFocusObserver replaced by getMouseFocusObserver
+! API: Server methods from DockUI (like "getCombiner") replaced by methods from the ThemeManager
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

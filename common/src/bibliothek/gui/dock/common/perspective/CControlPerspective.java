@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.common.perspective;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -43,6 +46,8 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
 import bibliothek.gui.dock.common.intern.RootStationAdjacentFactory;
+import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockLayout;
@@ -50,8 +55,13 @@ import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.gui.dock.support.mode.ModeSettings;
+import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.util.ClientOnly;
 import bibliothek.util.Path;
+import bibliothek.util.Version;
+import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XException;
 
 /**
  * A {@link CControlPerspective} is a wrapper around a {@link CControl} allowing
@@ -178,6 +188,164 @@ public class CControlPerspective {
     	}
     }
     
+    /**
+     * Writes the contents of <code>perspective</code> into <code>root</code> using the factories provided
+     * by this {@link CControlPerspective}.
+     * @param root the element to write into, not <code>null</code>
+     * @param perspective the perspective to write, not <code>null</code>
+     */
+    public void writeXML( XElement root, CPerspective perspective ){
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, new PerspectiveElementFactory( perspective, null ) );
+    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
+    	
+    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, perspective ) );
+    	}
+    	
+    	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
+    	for( String key : perspective.getRootKeys() ){
+    		CStationPerspective station = perspective.getRoot( key );
+    		stations.put( key, conversion.convert( station.intern() ));
+    	}
+    	
+    	conversion.getSituation().writeCompositionsXML( stations, root.addElement( "stations" ) );
+    	
+    	
+    	ModeSettings<Location, ?> settings = perspective.getLocationManager().writeModes( control );
+    	
+    	settings.writeXML( root.addElement( "modes" ) );
+    }
+    
+    /**
+     * Writes the contents of <code>perspective</code> into <code>out</code> using the factories provided
+     * by this {@link CControlPerspective}.
+     * @param out the stream to write into, not <code>null</code>
+     * @param perspective the perspective to write, not <code>null</code>
+     * @throws IOException if <code>out</code> is not writeable
+     */
+    public void write( DataOutputStream out, CPerspective perspective ) throws IOException{
+    	Version.write( out, Version.VERSION_1_1_1 );
+    	
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, new PerspectiveElementFactory( perspective, null ) );
+    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
+    	
+    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, perspective ) );
+    	}
+    	
+    	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
+    	for( String key : perspective.getRootKeys() ){
+    		CStationPerspective station = perspective.getRoot( key );
+    		stations.put( key, conversion.convert( station.intern() ));
+    	}
+    	
+    	conversion.getSituation().writeCompositions( stations, out );
+    	
+    	
+    	ModeSettings<Location, ?> settings = perspective.getLocationManager().writeModes( control );
+    	
+    	settings.write( out );
+    }
+    
+    /**
+     * Creates a new {@link CPerspective} using the information stored in <code>root</code>. While this method
+     * uses the factories provided by this {@link CControlPerspective}, the new {@link CPerspective} is not registered
+     * anywhere. It is the clients responsibility to call {@link #setPerspective(String, CPerspective)} or
+     * {@link #setPerspective(CPerspective, boolean)} to actually use the result of this method.
+     * @param root the element which contains information about a perspective
+     * @return the new perspective
+     * @throws XException if the structure of <code>root</code> is not as expected
+     */
+    public CPerspective readXML( XElement root ) throws XException{
+    	CPerspective perspective = createEmptyPerspective();
+    	
+    	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective, null );
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, factory );
+    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
+    	
+    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, perspective ) );
+    	}
+    	
+    	XElement xstations = root.getElement( "stations" );
+    	if( xstations == null ){
+    		throw new XException( "missing element 'stations'" );
+    	}
+    	
+    	Map<String, DockLayoutComposition> stations = conversion.getSituation().readCompositionsXML( xstations );
+    	factory.setStations( stations );
+    	
+    	for( DockLayoutComposition composition : stations.values() ){
+    		PerspectiveElement station = conversion.convert( composition );
+    		if( station instanceof CommonElementPerspective ){
+    			CStationPerspective stationPerspective = ((CommonElementPerspective)station).getElement().asStation();
+    			if( stationPerspective != null ){
+    				perspective.addRoot( stationPerspective );
+    			}
+    		}
+    	}
+    	
+    	XElement xmodes = root.getElement( "modes" );
+    	if( xmodes == null ){
+    		throw new XException( "missing element 'modes'" );
+    	}
+    	
+    	ModeSettingsConverter<Location, Location> converter = new LocationSettingConverter();
+    	ModeSettings<Location, Location> modes = control.getOwner().getLocationManager().createModeSettings( converter );
+    	modes.readXML( xmodes );
+    	
+    	perspective.getLocationManager().readModes( modes, perspective, control );
+    	
+    	return perspective;
+    }
+
+    /**
+     * Creates a new {@link CPerspective} using the information stored in <code>in</code>. While this method
+     * uses the factories provided by this {@link CControlPerspective}, the new {@link CPerspective} is not registered
+     * anywhere. It is the clients responsibility to call {@link #setPerspective(String, CPerspective)} or
+     * {@link #setPerspective(CPerspective, boolean)} to actually use the result of this method.
+     * @param in the stream to read data from
+     * @return the new perspective
+     * @throws IOException if <code>in</code> is not readable or in the wrong format
+     */
+    public CPerspective read( DataInputStream in ) throws IOException{
+    	Version version = Version.read( in );
+    	if( !version.equals( Version.VERSION_1_1_1 )){
+    		throw new IOException( "unknown version: " + version );
+    	}
+    	
+    	CPerspective perspective = createEmptyPerspective();
+    	
+    	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective, null );
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, factory );
+    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
+    	
+    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, perspective ) );
+    	}
+    	
+    	Map<String, DockLayoutComposition> stations = conversion.getSituation().readCompositions( in );
+    	factory.setStations( stations );
+    	
+    	for( DockLayoutComposition composition : stations.values() ){
+    		PerspectiveElement station = conversion.convert( composition );
+    		if( station instanceof CommonElementPerspective ){
+    			CStationPerspective stationPerspective = ((CommonElementPerspective)station).getElement().asStation();
+    			if( stationPerspective != null ){
+    				perspective.addRoot( stationPerspective );
+    			}
+    		}
+    	}
+    	
+    	ModeSettingsConverter<Location, Location> converter = new LocationSettingConverter();
+    	ModeSettings<Location, Location> modes = control.getOwner().getLocationManager().createModeSettings( converter );
+    	modes.read( in );
+    	
+    	perspective.getLocationManager().readModes( modes, perspective, control );
+    	
+    	return perspective;
+    }
+    
     private Setting convert( CPerspective perspective, boolean includeWorkingAreas ){
     	CSetting setting = new CSetting();
     	
@@ -225,6 +393,7 @@ public class CControlPerspective {
     	private CPerspective perspective;
     	private CSetting setting;
     	private Map<String, SingleCDockablePerspective> dockables = new HashMap<String, SingleCDockablePerspective>();
+    	private Map<String, DockLayoutComposition> stations;
     	
     	/**
     	 * Creates a new factory.
@@ -244,6 +413,10 @@ public class CControlPerspective {
     			}
     		}
     	}
+    	
+    	public void setStations( Map<String, DockLayoutComposition> stations ){
+			this.stations = stations;
+		}
     	
 		public PerspectiveElement get( String id, DockElement element, boolean isRootStation ){
 			if( isRootStation ){
@@ -268,7 +441,13 @@ public class CControlPerspective {
 		@SuppressWarnings("unchecked")
 		public PerspectiveElement get( String id, boolean rootStation ){
 			if( rootStation ){
-				DockLayoutComposition root = setting.getPredefinedStation( id );
+				DockLayoutComposition root = null;
+				if( stations != null ){
+					root = stations.get( id );
+				}
+				if( root == null && setting != null ){
+					root = setting.getPredefinedStation( id );
+				}
 				Path stationType = null;
 				
 				if( root != null ){

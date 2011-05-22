@@ -49,7 +49,7 @@ public @interface Todo {
 		ENHANCEMENT
 	}
 	
-	/** Tells whether an {@link Todo} is backwards compatible */
+	/** Tells whether a {@link Todo} is backwards compatible */
 	public static enum Compatibility{
 		/** The modification affects only a method or class, noone will notice the change */
 		COMPATIBLE, 
@@ -59,7 +59,7 @@ public @interface Todo {
 		BREAK_MAJOR
 	}
 	
-	/** Tells when an {@link Todo} is scheduled to be implemented */
+	/** Tells when a {@link Todo} is scheduled to be implemented */
 	public static enum Version{
 		VERSION_1_1_0,
 		VERSION_1_1_1,

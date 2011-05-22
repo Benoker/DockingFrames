@@ -38,7 +38,7 @@ import bibliothek.gui.dock.event.DockStationAdapter;
  * children of one {@link FlapDockStation}.
  * @author Benjamin Sigg
  */
-public class DefaultFlapLayoutManager implements FlapLayoutManager{
+public class DefaultFlapLayoutManager extends AbstractFlapLayoutManager implements FlapLayoutManager{
     /**
      * The properties of different stations.
      */
@@ -74,6 +74,26 @@ public class DefaultFlapLayoutManager implements FlapLayoutManager{
         stations.get( station ).size = size;
     }
 
+    public boolean isHoldSwitchable( FlapDockStation station, Dockable dockable ){
+    	Boolean result = stations.get( station ).switchable.get( dockable );
+    	if( result == null ){
+    		return true;
+    	}
+    	return result;
+    }
+    
+    /**
+     * Sets the result of {@link #isHoldSwitchable(FlapDockStation, Dockable)}. The result will be
+     * reset to <code>true</code> if <code>dockable</code> is removed from <code>station</code>.
+     * @param station the station for which the setting should be changed
+     * @param dockable a child of <code>station</code>
+     * @param switchable whether the hold property of <code>dockable</code> is switchable
+     */
+    public void setHoldSwitchable( FlapDockStation station, Dockable dockable, boolean switchable ){
+    	stations.get( station ).switchable.put( dockable, switchable );
+    	fireHoldSwitchableChanged( station, dockable );
+    }
+    
     /**
      * A set of properties used for one {@link FlapDockStation}
      * @author Benjamin Sigg
@@ -81,12 +101,16 @@ public class DefaultFlapLayoutManager implements FlapLayoutManager{
     private static class Station extends DockStationAdapter{
         /** which children are hold open */
         public Map<Dockable, Boolean> hold = new HashMap<Dockable, Boolean>();
+        /** the result of {@link DefaultFlapLayoutManager#isHoldSwitchable(FlapDockStation, Dockable)} */
+        public Map<Dockable, Boolean> switchable = new HashMap<Dockable, Boolean>();
+        
         /** the size of the station */
         public int size;
         
         @Override
         public void dockableRemoved( DockStation station, Dockable dockable ) {
             hold.remove( dockable );
+            switchable.remove( dockable );
         }
     }
 }

@@ -53,10 +53,9 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
-import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.DockStationAdapter;
@@ -80,8 +79,10 @@ import bibliothek.gui.dock.station.flap.DefaultFlapWindowFactory;
 import bibliothek.gui.dock.station.flap.FlapDockHoldToggle;
 import bibliothek.gui.dock.station.flap.FlapDockProperty;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
+import bibliothek.gui.dock.station.flap.FlapDockStationSource;
 import bibliothek.gui.dock.station.flap.FlapDropInfo;
 import bibliothek.gui.dock.station.flap.FlapLayoutManager;
+import bibliothek.gui.dock.station.flap.FlapLayoutManagerListener;
 import bibliothek.gui.dock.station.flap.FlapWindow;
 import bibliothek.gui.dock.station.flap.FlapWindowFactory;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
@@ -190,17 +191,33 @@ public class FlapDockStation extends AbstractDockableStation {
     public static final PropertyKey<FlapWindowFactory> WINDOW_FACTORY = new PropertyKey<FlapWindowFactory>("flap dock station window factory",
     		new ConstantPropertyFactory<FlapWindowFactory>( new DefaultFlapWindowFactory() ), true );
     
+
+    /**
+     * A listener that is added to the current {@link #layoutManager}
+     */
+    private FlapLayoutManagerListener layoutManagerListener = new FlapLayoutManagerListener(){
+		public void holdSwitchableChanged( FlapLayoutManager manager, FlapDockStation station, Dockable dockable ){
+			if( station == null || station == FlapDockStation.this ){
+				updateIsHoldSwitchable( dockable );
+			}
+		}
+	};
+    
     /**
      * The layoutManager which is responsible to layout this station
      */
     private PropertyValue<FlapLayoutManager> layoutManager = new PropertyValue<FlapLayoutManager>( LAYOUT_MANAGER ){
         @Override
         protected void valueChanged( FlapLayoutManager oldValue, FlapLayoutManager newValue ) {
-            if( oldValue != null )
+            if( oldValue != null ){
+            	oldValue.removeListener( layoutManagerListener );
                 oldValue.uninstall( FlapDockStation.this );
+            }
             
-            if( newValue != null )
+            if( newValue != null ){
+            	newValue.addListener( layoutManagerListener );
                 newValue.install( FlapDockStation.this );
+            }
         }
     };
     
@@ -1022,6 +1039,14 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     /**
+     * Gets the currently used {@link FlapLayoutManager}.
+     * @return the current manager
+     */
+    public FlapLayoutManager getCurrentFlapLayoutManager(){
+    	return layoutManager.getValue();
+    }
+    
+    /**
      * Gets the {@link PlaceholderStrategy} that is currently in use.
      * @return the current strategy, may be <code>null</code>
      */
@@ -1067,13 +1092,27 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     @Override
-    public DefaultDockActionSource getDirectActionOffers( Dockable dockable ) {
-    	if( holdAction == null )
+    public DockActionSource getDirectActionOffers( Dockable dockable ) {
+    	int index = indexOf( dockable );
+    	if( index < 0 )
     		return null;
+    	
+    	DockableHandle handle = handles.dockables().get( index );
+    	return handle.getActions();
+    }
+    
+    private void updateIsHoldSwitchable( Dockable dockable ){
+    	if( dockable == null ){
+    		for( DockableHandle handle : handles.dockables() ){
+    			handle.getActions().updateHoldSwitchable();
+    		}
+    	}
     	else{
-    		DefaultDockActionSource source = new DefaultDockActionSource(new LocationHint( LocationHint.DIRECT_ACTION, LocationHint.LITTLE_LEFT ));
-            source.add( holdAction );
-            return source;
+    		int index = indexOf( dockable );
+        	if( index >= 0 ){
+	        	DockableHandle handle = handles.dockables().get( index );
+	        	handle.getActions().updateHoldSwitchable();
+        	}
     	}
     }
     
@@ -1768,11 +1807,35 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     private DockableHandle link( Dockable dockable ){
-    	DockableHandle handle = new DockableHandle( dockable );
+    	DockableHandle handle = createHandle( dockable );
         handle.setTitle( buttonVersion );
         dockable.addDockableListener( dockableListener );
         return handle;
     }
+    
+    /**
+     * Creates a new wrapper around <code>dockable</code>, the wrapper is used as internal representation
+     * of <code>dockable</code>.
+     * @param dockable the element for which a new wrapper is created
+     * @return the new wrapper, must not be <code>null</code>
+     */
+    protected DockableHandle createHandle( Dockable dockable ){
+    	return new DockableHandle( dockable );
+    }
+    
+    /**
+     * Gets the wrapper of <code>dockable</code>.
+     * @param dockable a child of this station
+     * @return the wrapper or <code>null</code> if not yet created or if
+     * <code>dockable</code> is not a child of this station
+     */
+    protected DockableHandle getHandle( Dockable dockable ){
+		int index = indexOf( dockable );
+		if( index < 0 ){
+			return null;
+		}
+		return handles.dockables().get( index );
+	}
     
     /**
      * Creates a combination out of <code>child</code>, which must be a
@@ -2027,20 +2090,57 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     /**
-     * Handles title and listeners that are associated with a {@link Dockable}.
+     * Handles title, listeners and actions that are associated with a {@link Dockable}.
      * @author Benjamin Sigg
      */
-    private class DockableHandle implements PlaceholderListItem<Dockable>{
+    protected class DockableHandle implements PlaceholderListItem<Dockable>{
     	/** the element that is handled by this handler */
     	private Dockable dockable;
     	/** the title used */
     	private DockTitleRequest title;
     	/** the listener that gets added to the title of this handle */
     	private ButtonListener buttonListener;
+    	/** the actions added by this station to {@link #dockable} */
+    	private FlapDockStationSource actions;
     	
+    	/**
+    	 * Creates a new wrapper around <code>dockable</code>
+    	 * @param dockable the dockable to wrap
+    	 */
     	public DockableHandle( Dockable dockable ){
+    		this( dockable, false );
+    	}
+    	
+    	/**
+    	 * Creates a new wrapper around <code>dockable</code>
+    	 * @param dockable the dockable to wrap
+    	 * @param forceActionSourceCreation whether {@link #getActions()} must always return a value other
+    	 * than <code>null</code>
+    	 */
+    	public DockableHandle( Dockable dockable, boolean forceActionSourceCreation ){
     		this.dockable = dockable;
     		buttonListener = new ButtonListener( dockable );
+    		if( holdAction != null || forceActionSourceCreation ){
+    			actions = new FlapDockStationSource( FlapDockStation.this, dockable, holdAction );
+    		}
+    	}
+    	
+    	/**
+    	 * Gets the {@link DockActionSource} that should be shown on the {@link Dockable}.
+    	 * @return the action source, can be <code>null</code>
+    	 */
+    	public FlapDockStationSource getActions(){
+			return actions;
+		}
+    	
+    	/**
+    	 * Sets the action of {@link #getActions()} back to the action that was created
+    	 * by {@link FlapDockStation#createHoldAction()}.
+    	 */
+    	public void resetHoldAction(){
+    		if( actions != null ){
+    			actions.setHoldAction( holdAction );
+    		}
     	}
     	
     	public Dockable getDockable(){

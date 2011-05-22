@@ -31,11 +31,16 @@ import java.awt.Rectangle;
 
 import javax.swing.SwingUtilities;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
@@ -46,6 +51,7 @@ import bibliothek.gui.dock.title.DockTitleRequest;
 public class CFlapDockStation extends FlapDockStation implements CommonDockStation<FlapDockStation, CFlapDockStation>{
 	private CommonStationDelegate<FlapDockStation> delegate;
 	private Component expansion;
+	private CHoldActionHandler actionHandler = new CHoldActionHandler();
 	
 	/**
 	 * Creates a new station.
@@ -56,6 +62,8 @@ public class CFlapDockStation extends FlapDockStation implements CommonDockStati
 	public CFlapDockStation( Component expansion, CommonStationDelegate<FlapDockStation> delegate ){
 		this.expansion = expansion;
 		this.delegate = delegate;
+		
+		addDockStationListener( new HoldActionHandler() );
 	}
 	
 	public CDockable getDockable(){
@@ -85,6 +93,28 @@ public class CFlapDockStation extends FlapDockStation implements CommonDockStati
 	}
 	
 	@Override
+	protected DockableHandle createHandle( Dockable dockable ){
+		if( dockable instanceof CommonDockable ){
+			DockableHandle handle = new DockableHandle( dockable, true );
+			update( handle, ((CommonDockable)dockable).getDockable() );
+			return handle;
+		}
+		else{
+			return super.createHandle( dockable );
+		}
+	}
+	
+	private void update( DockableHandle handle, CDockable dockable ){
+		CAction action = dockable.getAction( CDockable.ACTION_KEY_MINIMIZE_HOLD );
+		if( action == null ){
+			handle.resetHoldAction();
+		}
+		else{
+			handle.getActions().setHoldAction( action.intern() );
+		}
+	}
+	
+	@Override
 	public Rectangle getExpansionBounds() {
 		if( expansion == null ){
 			return super.getExpansionBounds();
@@ -101,6 +131,39 @@ public class CFlapDockStation extends FlapDockStation implements CommonDockStati
 		}
 		else{
 			request.answer( null );
+		}
+	}
+	
+	/**
+	 * This listener is added to this {@link CFlapDockStation} and keeps track of the current
+	 * {@link Dockable}s. This listener is responsible for reading the action {@link CDockable#ACTION_KEY_MINIMIZE_HOLD}.
+	 * @author Benjamin Sigg
+	 */
+	private class HoldActionHandler extends DockStationAdapter{
+		@Override
+		public void dockableAdded( DockStation station, Dockable dockable ){
+			if( dockable instanceof CommonDockable ){
+				((CommonDockable)dockable).getDockable().addCDockablePropertyListener( actionHandler );
+			}
+		}
+		
+		@Override
+		public void dockableRemoved( DockStation station, Dockable dockable ){
+			if( dockable instanceof CommonDockable ){
+				((CommonDockable)dockable).getDockable().removeCDockablePropertyListener( actionHandler );
+			}
+		}
+	}
+	
+	private class CHoldActionHandler extends CDockableAdapter{
+		@Override
+		public void actionChanged( CDockable dockable, String key, CAction oldAction, CAction newAction ){
+			if( key.equals( CDockable.ACTION_KEY_MINIMIZE_HOLD )){
+				DockableHandle handle = getHandle( dockable.intern() );
+				if( handle != null ){
+					update( handle, dockable );
+				}
+			}
 		}
 	}
 }

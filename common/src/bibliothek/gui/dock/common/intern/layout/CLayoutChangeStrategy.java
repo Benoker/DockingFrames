@@ -41,6 +41,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
+import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.event.CVetoClosingEvent;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -85,6 +86,16 @@ public class CLayoutChangeStrategy extends DefaultLayoutChangeStrategy {
 		}
 		situation.setPlaceholderStrategy( control.getProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) );
 		return situation;
+	}
+	
+	@Override
+	protected boolean shouldPredefine( Dockable dockable ){
+		if( dockable instanceof CommonDockable ){
+			return ((CommonDockable)dockable).getDockable() instanceof SingleCDockable; 
+		}
+		else{
+			return true;
+		}
 	}
 	
 	@Override

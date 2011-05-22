@@ -31,16 +31,18 @@ import javax.swing.Icon;
 
 import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.TabMenuDockIcon;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.gui.dock.themes.icon.TabMenuOverflowIconBridge;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
- * A menu used by the {@link EclipseTabPane} to select {@link Dockable}s.
+ * A menu used by the {@link EclipseTabPane} to select {@link Dockable}s.<br>
+ * The icon of the menu is {@link TabMenuOverflowIconBridge#ICON_KEY}, and thus changes automatically
+ * when the number of children changes.
  * @author Benjamin Sigg
  */
 public class EclipseMenu extends AbstractCombinedMenu{
@@ -58,7 +60,7 @@ public class EclipseMenu extends AbstractCombinedMenu{
 		super( pane, pane.getMenuHandler() );
 		this.pane = pane;
 		
-		icon = new TabMenuDockIcon( DockUI.OVERFLOW_MENU_ICON, this ){
+		icon = new TabMenuDockIcon( TabMenuOverflowIconBridge.ICON_KEY, this ){
 			protected void changed( Icon oldValue, Icon newValue ){
 				currentIcon = newValue;
 				if( button != null ){

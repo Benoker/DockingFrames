@@ -83,7 +83,7 @@ public class CNormalMode extends NormalMode<CNormalModeArea> implements CLocatio
 	}
 	
 	public CLocation getCLocation( Dockable dockable, Location location ){
-		CModeArea area = get( dockable );
+		CModeArea area = get( location.getRoot() );
 		if( area == null )
 			return null;
 			

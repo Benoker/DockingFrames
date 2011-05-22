@@ -54,7 +54,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param actions the actions shown in the title, can be <code>null</code>.
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
@@ -65,7 +65,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param content a <code>Component</code> which will be shown in the middle
      * of this dockable, can be <code>null</code>.
      * @param actions the actions shown in the title, can be <code>null</code>.
@@ -78,7 +78,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param title the text shown in the title, can be <code>null</code>
      * @param content a <code>Component</code> which will be shown in the middle
      * of this dockable, can be <code>null</code>.
@@ -92,7 +92,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param icon the icon shown in the title, can be <code>null</code>
      * @param content a <code>Component</code> which will be shown in the middle
      * of this dockable, can be <code>null</code>.
@@ -106,7 +106,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param icon the icon shown in the title, can be <code>null</code>
      * @param title the text shown in the title, can be <code>null</code>
      * @param content a <code>Component</code> which will be shown in the middle
@@ -121,7 +121,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param title the text shown in the title, can be <code>null</code>
      * @param actions the actions shown in the title, can be <code>null</code>.
      * A separator is inserted for every entry that is <code>null</code> of this array.
@@ -133,7 +133,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param icon the icon shown in the title, can be <code>null</code>
      * @param actions the actions shown in the title, can be <code>null</code>.
      * A separator is inserted for every entry that is <code>null</code> of this array.
@@ -145,7 +145,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param icon the icon shown in the title, can be <code>null</code>
      * @param title the text shown in the title, can be <code>null</code>
      * @param actions the actions shown in the title, can be <code>null</code>.
@@ -158,7 +158,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
-     * kind of dockable.
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
      * @param icon the icon shown in the title, can be <code>null</code>
      * @param title the text shown in the title, can be <code>null</code>
      * @param content a <code>Component</code> which will be shown in the middle
@@ -170,8 +170,9 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Icon icon, String title, Component content, Permissions permissions, CAction... actions ){
         super( permissions == null ? Permissions.DEFAULT : permissions );
-        if( factory == null )
-            throw new NullPointerException( "factory must not be null" );
+        if( factory == null ){
+        	factory = NullMultipleCDockableFactory.NULL;
+        }
         this.factory = factory;
         
         if( icon != null ){

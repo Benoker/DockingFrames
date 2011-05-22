@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,22 +23,27 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.common;
-
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
+package bibliothek.gui.dock.station.stack.tab;
 
 /**
- * Backwards compatibility layer for {@link SingleCDockableFactory}, should not be used by clients.
- * @deprecated This interface is no longer used anywhere and gets replaced by {@link SingleCDockableFactory}. This
- * interface will be removed in a future release.
+ * This listener can be added to a {@link TabMenu} and keeps track of the number of
+ * children the menu has.
  * @author Benjamin Sigg
  */
-@Deprecated
-@Todo(compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
-		description="Remove this interface")
-public interface SingleCDockableBackupFactory extends SingleCDockableFactory{
-    // nothing
+public interface TabMenuListener {
+	/**
+	 * Called after some children have been added to <code>source</code>.
+	 * @param source the source of the event
+	 * @param offset the index of the first new child
+	 * @param length the number of children that were added, at least 1
+	 */
+	public void dockablesAdded( TabMenu source, int offset, int length );
+	
+	/**
+	 * Called after some children have been removed from <code>source</code>.
+	 * @param source the source of the event
+	 * @param offset the index of the first removed child
+	 * @param length the number of children that were removed, at least 1
+	 */
+	public void dockablesRemoved( TabMenu source, int offset, int length );
 }

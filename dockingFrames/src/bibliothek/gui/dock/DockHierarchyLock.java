@@ -27,9 +27,9 @@
 package bibliothek.gui.dock;
 
 import java.awt.EventQueue;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -38,8 +38,8 @@ import bibliothek.gui.Dockable;
 /**
  * The {@link DockHierarchyLock} allows {@link DockStation}s to defend
  * themselfs against concurrent modifications of the hierarchy. At any time only
- * one {@link DockStation} in the realm of a {@link DockController} can acquire
- * the lock.
+ * one {@link DockStation} or a class working with {@link DockStation}s in the realm 
+ * of a {@link DockController} can acquire the lock.
  * @author Benjamin Sigg
  */
 public class DockHierarchyLock {
@@ -157,18 +157,32 @@ public class DockHierarchyLock {
 			}
 		}
 		else{
-			try {
-				EventQueue.invokeAndWait( new Runnable(){
-					public void run(){
-						runOnRelease();
+			final AtomicBoolean blocking = new AtomicBoolean( true );
+			
+			EventQueue.invokeLater( new Runnable(){
+				public void run(){
+					runOnRelease();
+					synchronized(blocking){
+						blocking.set( false );
+						blocking.notifyAll();
 					}
-				});
-			}
-			catch( InterruptedException e ) {
-				throw new IllegalStateException( e );
-			}
-			catch( InvocationTargetException e ) {
-				e.printStackTrace();
+				}
+			});
+			
+			long timeout = System.currentTimeMillis() + 1000;
+			synchronized( blocking ){
+				while( blocking.get() ){
+					long now = System.currentTimeMillis();
+					if( timeout <= now ){
+						break;
+					}
+					try {
+						blocking.wait( timeout - now );
+					}
+					catch( InterruptedException e ) {
+						// ignore
+					}
+				}
 			}
 		}
 	}
@@ -214,11 +228,37 @@ public class DockHierarchyLock {
 	}
 	
 	/**
+	 * The same as calling {@link #acquire(DockStation)} with the {@link DockHierarchyLock} of
+	 * the {@link DockController} of <code>station</code>. Returns a fake {@link Token} if <code>station</code> has
+	 * no {@link DockController}.
+	 * @param station the station to lock
+	 * @return the acquired token to release the lock
+	 * @throws IllegalStateException if a lock has already been acquired
+	 */
+	public static Token acquiring( DockStation station ){
+		DockController controller = station.getController();
+		if( controller == null ){
+			return new Token( null, station );
+		}
+		else{
+			return controller.getHierarchyLock().acquire( station );
+		}
+	}
+	
+	/**
 	 * Acquires a fake token which does not lock anything. This method never throws an exception.
 	 * @return the fake token
 	 */
 	public static Token acquireFake(){
 		return new Token( null, null, null, false );
+	}
+	
+	private String defaultMessage(){
+		return "During an operation the framework attempted to acquire the same lock twice. There are two possible explanations:\n" +
+				"1. In a multi-threaded application one or both operations are not executed in the EventDispatchThread, or\n" +
+				"2. The operations are calling each other, which should not happen.\n" +
+				"Please verify that this application is not accessing the framework from different threads, and fill a bug" +
+				"report if you feel that this exception is not caused by your application.";
 	}
 	
 	/**
@@ -243,7 +283,7 @@ public class DockHierarchyLock {
 		}
 		
 		if( token != null ){
-			throwException( new IllegalStateException( "the lock has already been acquired" ) );
+			throwException( new IllegalStateException( defaultMessage() ) );
 		}
 		token = new Token( this, station, dockable, true );
 		return token;
@@ -271,9 +311,29 @@ public class DockHierarchyLock {
 		}
 		
 		if( token != null ){
-			throwException( new IllegalStateException( "the lock has already been acquired" ) );
+			throwException( new IllegalStateException( defaultMessage() ) );
 		}
 		token = new Token( this, station, dockable, false );
+		return token;
+	}
+	
+	/**
+	 * Acquires a lock describing the entire contents of <code>station</code>. This
+	 * method is intended in situations where the layout of <code>station</code> gets
+	 * modified and this modification must not be interrupted.
+	 * @param station the station for which a lock is requested
+	 * @return the acquired token to release the lock
+	 * @throws IllegalStateException if the lock is already acquired
+	 */
+	public synchronized Token acquire( DockStation station ){
+		if( isConcurrent() ){
+			return new Token( this, station );
+		}
+		
+		if( token != null ){
+			throwException( new IllegalStateException( defaultMessage() ) );
+		}
+		token = new Token( this, station );
 		return token;
 	}
 	
@@ -325,6 +385,11 @@ public class DockHierarchyLock {
 		private Dockable dockable;
 		private boolean link;
 		
+		private Token( DockHierarchyLock lock, DockStation station ){
+			this.lock = lock;
+			this.station = station;
+		}
+		
 		private Token( DockHierarchyLock lock, DockStation station, Dockable dockable, boolean link ){
 			this.lock = lock;
 			this.station = station;
@@ -347,11 +412,13 @@ public class DockHierarchyLock {
 						lock.token = null;
 					}
 					
-					if( link ){
-						lock.ensureLinked( station, dockable );
-					}
-					else{
-						lock.ensureUnlinked( station, dockable );
+					if( dockable != null ){
+						if( link ){
+							lock.ensureLinked( station, dockable );
+						}
+						else{
+							lock.ensureUnlinked( station, dockable );
+						}
 					}
 					
 					if( release ){

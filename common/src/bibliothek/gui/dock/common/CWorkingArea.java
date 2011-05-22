@@ -130,32 +130,6 @@ public class CWorkingArea extends CGridArea{
         }
         return dockable;
     }
-    
-
-	/**
-	 * Sets whether this working-area should suppress its title or not. 
-	 * @param suppressTitle <code>true</code> if this area should try
-	 * not to have a title.
-	 * @deprecated use {@link #setTitleShown(boolean)} instead
-	 */
-	@Deprecated
-	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
-			description="remove this method" )
-	public void setSuppressTitle( boolean suppressTitle ) {
-		setTitleShown( !suppressTitle );
-	}
-
-	/**
-	 * Tells whether this working-area suppresses its title.
-	 * @return <code>true</code> if this area normally has no title
-	 * @deprecated use {@link #isTitleShown()} instead
-	 */
-	@Deprecated
-	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
-			description="remove this method" )
-	public boolean isSuppressTitle() {
-		return !isTitleShown();
-	}
 	
 	@Override
 	public Path getTypeId(){

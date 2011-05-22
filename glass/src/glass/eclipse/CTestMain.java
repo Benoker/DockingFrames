@@ -54,9 +54,9 @@ public class CTestMain {
       SingleCDockable blue = create("Blue ", Color.BLUE);
       SingleCDockable blue2 = create("Blue2 ", Color.BLUE);
 
-      control.add(red);
-      control.add(green);
-      control.add(blue);
+      control.addDockable(red);
+      control.addDockable(green);
+      control.addDockable(blue);
 
       updateTheme(control);
 

@@ -151,7 +151,7 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
         };
         
         for( DockInfo info : frontend.getDockables() ){
-            if( info.getDockable() != null ){
+            if( info.getDockable() != null && shouldPredefine( info.getDockable() )){
                 situation.put( DockFrontend.DOCKABLE_KEY_PREFIX + info.getKey(), info.getDockable() );
             }
         }
@@ -178,6 +178,16 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
         	situation.setIgnore( frontend.getFrontend().getIgnoreForFinal() );
         
         return situation;
+    }
+    
+    /**
+     * Tells whether the element <code>dockable</code> should be added as predefined element to the {@link PredefinedDockSituation}
+     * that is created by {@link #createSituation(DockFrontendInternals, boolean, boolean)}.
+     * @param dockable the element which may need to be predefined
+     * @return <code>true</code> if <code>dockable</code> is to be predefined
+     */
+    protected boolean shouldPredefine( Dockable dockable ){
+    	return true;
     }
     
     public PredefinedPerspective createPerspective( DockFrontendInternals frontend, boolean entry, final FrontendPerspectiveCache cache ){

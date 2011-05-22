@@ -100,10 +100,7 @@ import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
-import bibliothek.util.Todo;
 import bibliothek.util.Version;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -528,48 +525,24 @@ public class DockFrontend {
      * unique.
      */
     public void addDockable( String id, Dockable dockable ){
-        add( dockable, id );
-    }
-    
-    /**
-     * Adds a Dockable to this frontend. The frontend provides a "close"-button
-     * for <code>dockable</code>. The frontend also assumes that <code>dockable</code>
-     * can be reused when reading a setting. That means, that the factory which
-     * matches the key of <code>dockable</code> does not create a new instance
-     * when reading the preferences of <code>dockable</code>. You should note that
-     * the frontend does not support {@link Dockable Dockables} whose lifespan
-     * ends when they are made invisible.
-     * @param dockable the new Dockable
-     * @param name the unique name of the Dockable
-     * @throws IllegalArgumentException if either of <code>dockable</code> or
-     * <code>name</code> is <code>null</code>, or if <code>name</code> is not
-     * unique.
-     * @deprecated replaced by {@link #addDockable(String, Dockable)}, since <code>name</code>
-     * is used as key in a map, it should come first. Note: this method might
-     * be removed in future releases.
-     */
-    @Deprecated
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
-    		description="Replace this method with addDockable")
-    public void add( Dockable dockable, String name ){
         if( dockable == null )
             throw new IllegalArgumentException( "Dockable must not be null" );
         
-        if( name == null )
+        if( id == null )
             throw new IllegalArgumentException( "name must not be null" );
         
-        DockInfo info = dockables.get( name );
+        DockInfo info = dockables.get( id );
         if( info != null ){
             if( info.getDockable() == null ){
                 info.setDockable( dockable );
                 info.updateHideAction();
             }
             else
-                throw new IllegalArgumentException( "There is already a dockable registered with name " + name );
+                throw new IllegalArgumentException( "There is already a dockable registered with name " + id );
         }
         else{
-            info = new DockInfo( dockable, name );
-            dockables.put( name, info );    
+            info = new DockInfo( dockable, id );
+            dockables.put( id, info );    
         }
         
         DockLayoutComposition layout = info.getLayout();
@@ -926,6 +899,21 @@ public class DockFrontend {
     	
     	if( isShown( dockable ))
     		return true;
+    	
+    	return info.root != null && info.location != null;
+    }
+    
+    /**
+     * Tells whether this {@link DockFrontend} stores location information for a {@link Dockable} with
+     * id <code>id</code>. This method does not check whether there actuall is a visible dockable with the
+     * given id.
+     * @param id the id of some entry
+     * @return <code>true</code> if there is an entry for <code>id</code> and this entry has a location attached
+     */
+    public boolean hasLocation( String id ){
+    	DockInfo info = getInfo( id );
+    	if( info == null )
+    		return false;
     	
     	return info.root != null && info.location != null;
     }
@@ -1699,6 +1687,16 @@ public class DockFrontend {
      */
     public FrontendEntry getFrontendEntry( String key ){
         return dockables.get( key );
+    }
+    
+    /**
+     * Gets all the information known about the registered <code>dockable</code>.
+     * @param dockable some dockable that may be registered at this {@link DockFrontend}
+     * @return any available information about <code>dockable</code>, <code>null</code> if
+     * <code>dockable</code> is unknown to this frontend
+     */
+    public FrontendEntry getFrontendEntry( Dockable dockable ){
+    	return getInfo( dockable );
     }
     
     /**

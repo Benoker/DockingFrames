@@ -63,11 +63,11 @@ public interface CDockableAccess {
     public String getUniqueId();
     
     /**
-     * Gets the user set location of this dockable. Sets the location
-     * to <code>null</code>.
+     * Gets the user set location of this dockable. Sets the location to <code>null</code>.
+     * @param reset if <code>true</code>, then the location is reset to <code>null</code>
      * @return the location
      */
-    public CLocation internalLocation();
+    public CLocation internalLocation( boolean reset );
     
     /**
      * A focus listener which will be informed whenever the owner of this

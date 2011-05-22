@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.location.CBaseLocation;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
@@ -40,9 +41,26 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 
 /**
- * A class describing the location of a {@link CDockable}. {@link CLocation}s
- * are combined, and a whole path of <code>CLocation</code>s describes an actual
- * location. Some examples how to create a path of locations:<br>
+ * A class describing the current location of a {@link CDockable}. {@link CLocation}s
+ * are combined, and a whole path of <code>CLocation</code>s describes an actual location. 
+ * <br>
+ * Some warnings:
+ * <ul>
+ * <li>A {@link CLocation} is a very short living object: it does not have any ties to the
+ * actual layout of the application. Meaning that any change in the layout may invalidate a {@link CLocation}. For
+ * this reason clients are strongly encouraged not to store {@link CLocation}s in any kind of collection for later use.</li>
+ * <li>There is no code available for storing {@link CLocation} persistently. This is deliberate, as {@link CLocation}s
+ * are only good for a momentary snapshot of the location. The framework itself provides facilities to persistently store
+ * the location of a {@link Dockable} for a long time. You may have a look at {@link CControl#writeXML(java.io.File)} and
+ * {@link CControl#setMissingStrategy(MissingCDockableStrategy)}.</li>
+ * <li>While {@link CLocation} and {@link DockableProperty} both store the location of {@link CDockable} or
+ * a {@link Dockable}, they are not exactly the same thing. A {@link CLocation} expresses the current location of a 
+ * {@link CDockable} independent from the <code>dockable</code> itself. A {@link DockableProperty} however may also
+ * store information that is specific to a {@link Dockable}, namely the placeholder. This means that while every
+ * {@link CLocation} can be converted to a {@link DockableProperty}, not every {@link DockableProperty} can be
+ * converted to a {@link CLocation} without loosing some information.</li>
+ * </ul>
+ * Some examples showing how to create a path of locations:<br>
  * <pre>
  * 	// an externalized element
  * 	CLocation location = CLocation.external( 20, 20, 400, 300 );
@@ -58,7 +76,8 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * 	CLocation location = CLocation.base( area ).normalRectangle( 0.25, 0.25, 0.5, 0.5 );
  * </pre>
  * Two {@link CLocation}s are to be considered equal if {@link #findRoot()}, {@link #findMode()} and
- * {@link #findProperty()} return the same value.
+ * {@link #findProperty()} return the same value.<br>
+ *    
  * @author Benjamin Sigg
  */
 public abstract class CLocation {

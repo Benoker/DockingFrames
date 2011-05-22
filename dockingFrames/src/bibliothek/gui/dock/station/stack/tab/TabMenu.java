@@ -51,4 +51,16 @@ public interface TabMenu extends TabPaneComponent{
 	 * @return the number of items
 	 */
 	public int getDockableCount();
+	
+	/**
+	 * Adds a new listener to this menu.
+	 * @param listener the new listener, not <code>null</code>
+	 */
+	public void addTabMenuListener( TabMenuListener listener );
+	
+	/**
+	 * Removes <code>listener</code> from this menu.
+	 * @param listener the listener to remove
+	 */
+	public void removeTabMenuListener( TabMenuListener listener );
 }

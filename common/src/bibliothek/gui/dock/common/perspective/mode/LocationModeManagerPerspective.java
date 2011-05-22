@@ -194,6 +194,11 @@ public class LocationModeManagerPerspective {
 		return new Location( mode.getModeIdentifier(), root.getUniqueId(), location );
 	}
 	
+	/**
+	 * Writes the contents of this {@link LocationModeManagerPerspective} into a new {@link ModeSettings}.
+	 * @param control access to factories that may be used for writing the contents
+	 * @return the contents of this object
+	 */
 	public ModeSettings<Location, ?> writeModes( CControlAccess control ){
 		ModeSettings<Location, ?> modes = new CLocationModeSettings<Location>( new LocationSettingConverter() );
     	

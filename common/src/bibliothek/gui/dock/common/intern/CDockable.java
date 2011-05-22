@@ -30,6 +30,7 @@ import java.awt.Dimension;
 
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
@@ -50,6 +51,7 @@ import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
@@ -114,6 +116,12 @@ public interface CDockable {
 	 * <code>false</code>.
      */
 	public static final String ACTION_KEY_CLOSE = "cdockable.close";
+	
+	/**
+	 * Key for an action of {@link #getAction(String)}. The action behind
+	 * this key should toggle {@link CDockable#setMinimizedHold(boolean)}.
+     */
+	public static final String ACTION_KEY_MINIMIZE_HOLD = "cdockable.hold";
 	
 	/**
 	 * Adds a state listener to this dockable, the listener will be informed of
@@ -343,6 +351,38 @@ public interface CDockable {
 	 */
 	public CLocation getBaseLocation();
 	
+	/**
+	 * Tries to find out at which location this {@link CDockable} may appear if it would be made visible. The default
+	 * implementation of this method has severe limitations:
+	 * <ul> 
+	 * 	<li>Random placements are not considered and the result will be <code>null</code></li>
+	 * 	<li>Placeholders are not considered, if this {@link CDockable} is associated with a placeholder, then the
+	 * 	placeholder information will be completely lost.</li>
+	 *  <li>This {@link CDockable} must not be visible and it must be registered at a {@link CControl}.</li>
+	 * </ul>
+	 * To be more precise: the location returned by this method may not be the actual location where this dockable
+	 * appears because this method does not consider all circumstances.<br>
+	 * Clients can make use of this method in two ways:
+	 * <ul>
+	 * 	<li>They can find out whether the dockable has a location, or will be placed randomly (in which case the result
+	 * 	of this method is <code>null</code>)</li>
+	 *  <li>They can override this method in which case the {@link CDockable} will appear at the exact location that
+	 *  is returned by this method ignoring any other settings.</li>
+	 * </ul>
+	 * 
+	 * @param noBackwardsTransformation if <code>true</code>, then this method should not convert any {@link DockableProperty}
+	 * back to a {@link CLocation}, instead it should return <code>null</code> if such a conversion would be necessary. This
+	 * way the method does return <code>null</code> in any case where information (e.g. placeholders) could be lost
+	 * due to the limitations of {@link CLocation}
+	 * 
+	 * @return The expected location of this invisible {@link CDockable}, this may either be the location that was set
+	 * by calling {@link #setLocation(CLocation)}, the last location of this dockable when it was visible, the
+	 * {@link CControl#getDefaultLocation() default location} of the <code>CControl</code> or the default location for the
+	 * {@link ExtendedMode#NORMALIZED normalized extended mode}. A value of <code>null</code> is returned if this 
+	 * {@link CDockable} would appear at a random location, is not registered at a {@link CControl} or is already visible.
+	 */
+	public CLocation getAutoBaseLocation( boolean noBackwardsTransformation );
+	
     /**
      * Sets how and where this <code>CDockable</code> should be shown. Conflicts with
      * {@link #isExternalizable()}, {@link #isMaximizable()} and {@link #isMinimizable()}
@@ -403,6 +443,21 @@ public interface CDockable {
      * otherwise 
      */
     public boolean isMinimizedHold();
+    
+    /**
+     * Sets whether the user can switch the {@link #isMinimizedHold()} property by clicking
+     * on a button that is presented by the {@link FlapDockStation}.
+     * @param switchable whether the user is able to switch the hold property
+     */
+    public void setMinimizedHoldSwitchable( boolean switchable );
+    
+    /**
+     * Tells whether the {@link #isMinimizedHold()} property can be changed by the user
+     * by clicking a button that is displayed on the {@link FlapDockStation}.
+     * @return <code>true</code> if the user is able to switch the property, <code>false</code>
+     * otherwise
+     */
+    public boolean isMinimizedHoldSwitchable();
     
     /**
      * Tells whether this <code>CDockable</code> shows its title or not. Note that some

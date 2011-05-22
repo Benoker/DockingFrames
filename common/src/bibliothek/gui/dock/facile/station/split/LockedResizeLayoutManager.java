@@ -173,16 +173,19 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
     	}
         if( node instanceof Node ){
         	Node real = (Node)node;
-        	boolean leftVisible = real.getLeft().isVisible();
-        	boolean rightVisible = real.getRight().isVisible();
+        	SplitNode left = real.getLeft();
+        	SplitNode right = real.getRight();
+        	
+        	boolean leftVisible = left == null ? false : left.isVisible();
+        	boolean rightVisible = right == null ? false : right.isVisible();
         	if( leftVisible && rightVisible ){
         		return new ResizeNode<T>( this, parent, (Node)node );
         	}
         	if( leftVisible ){
-        		return toElement( parent, real.getLeft().getVisible() );
+        		return toElement( parent, left.getVisible() );
         	}
         	if( rightVisible ){
-        		return toElement( parent, real.getRight().getVisible() );
+        		return toElement( parent, right.getVisible() );
         	}
         	return null;
         }

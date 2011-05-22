@@ -182,7 +182,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	}
 
     @Override
-    protected <B> ModeSettings<Location, B> createModeSettings( ModeSettingsConverter<Location, B> converter ){
+    public <B> ModeSettings<Location, B> createModeSettings( ModeSettingsConverter<Location, B> converter ){
     	return new CLocationModeSettings<B>( converter );
     }
     
@@ -322,7 +322,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     	
     	return mode.getCLocation( dockable );
     }
-
+    
     /**
      * Assuming that <code>dockable</code> is currently not in mode <code>mode</code>,
      * then this method searches for the previously stored location of <code>dockable</code>.

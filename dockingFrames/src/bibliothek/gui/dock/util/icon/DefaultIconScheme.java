@@ -41,6 +41,8 @@ import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.station.stack.tab.TabMenuDockIcon;
+import bibliothek.gui.dock.themes.icon.TabMenuOverflowIconBridge;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.UIProperties;
 import bibliothek.gui.dock.util.UIScheme;
@@ -59,6 +61,7 @@ import bibliothek.util.Todo.Version;
  */
 public class DefaultIconScheme extends AbstractIconScheme {
 	private Map<String, Icon> icons;
+	private Map<Path, DockIconBridge> bridges;
 	
 	/**
 	 * A helper class describing a source for icons
@@ -148,12 +151,22 @@ public class DefaultIconScheme extends AbstractIconScheme {
 		super( controller );
 		
 		icons = new HashMap<String, Icon>();
+		bridges = new HashMap<Path, DockIconBridge>();
+		
+		initHardcoded();
 		
 		for( int i = resources.length-1; i >= 0; i-- ){
 			icons.putAll( DockUtilities.loadIcons( resources[i].getFileName(), resources[i].getPath(), icons.keySet(), resources[i].getLoader() ) );
 		}
+	}
+	
+	/**
+	 * Called by the constructor of this class, initializes some hard coded icons.
+	 */
+	protected void initHardcoded(){
+		setBridge( TabMenuDockIcon.KIND_TAB_MENU, new TabMenuOverflowIconBridge() );
 		
-        icons.put( DockUI.OVERFLOW_MENU_ICON, new Icon(){
+		setIcon( DockUI.OVERFLOW_MENU_ICON, new Icon(){
 			public int getIconHeight(){
 				return 7;
 			}
@@ -176,11 +189,55 @@ public class DefaultIconScheme extends AbstractIconScheme {
 	}
 
 	public DockIconBridge getBridge( Path name, UIProperties<Icon, DockIcon, DockIconBridge> properties ){
-		return null;
+		return bridges.get( name );
 	}
 
 	public Icon getResource( String name, UIProperties<Icon, DockIcon, DockIconBridge> properties ){
 		return icons.get( name );
+	}
+	
+	/**
+	 * Changes the icon with name <code>name</code> to <code>icon</code>. Please note that if
+	 * <code>name</code> was {@link #link(bibliothek.gui.dock.util.PropertyKey, String) linked}, the newly
+	 * set value may be overriden again.
+	 * @param name the unique key of the icon
+	 * @param icon the new icon, can be <code>null</code>
+	 */
+	public void setIcon( String name, Icon icon ){
+		changed( name, icon );
+	}
+	
+	/**
+	 * Sets the {@link DockIconBridge} with type <code>type</code>.
+	 * @param type the unique identifier of the type that should be handled by the new bridge
+	 * @param bridge the new bridge or <code>null</code>
+	 */
+	public void setBridge( final Path type, DockIconBridge bridge ){
+		if( bridge == null ){
+			bridges.remove( type );
+		}
+		else{
+			bridges.put( type, bridge );
+		}
+		
+		fire( new UISchemeEvent<Icon, DockIcon, DockIconBridge>(){
+			public Collection<Path> changedBridges( Set<Path> names ){
+				List<Path> result = new ArrayList<Path>();
+				if( names == null || names.contains( type )){
+					result.add( type );
+				}
+				return result;
+			}
+
+			public Collection<String> changedResources( Set<String> names ){
+				return Collections.emptySet();
+			}
+
+			public UIScheme<Icon, DockIcon, DockIconBridge> getScheme(){
+				return DefaultIconScheme.this;
+			}
+			
+		});
 	}
 	
 	@Override
@@ -199,7 +256,7 @@ public class DefaultIconScheme extends AbstractIconScheme {
 			
 			public Collection<String> changedResources( Set<String> names ){
 				List<String> list = new ArrayList<String>( 1 );
-				if( names.contains( id )){
+				if( names == null || names.contains( id )){
 					list.add( id );
 				}
 				return list;
