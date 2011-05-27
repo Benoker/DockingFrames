@@ -33,6 +33,7 @@ import java.util.Set;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.DockRelocatorMode;
@@ -66,6 +67,9 @@ public abstract class AbstractDockRelocator implements DockRelocator{
     
     /** Algorithm to merge two {@link DockStation}s */
     private Merger merger = null;
+    
+    /** whether to prevent dropping a {@link Dockable} on itself. */
+    private boolean preventMoveover = true;
     
 	/**
 	 * Creates a new manager.
@@ -197,44 +201,29 @@ public abstract class AbstractDockRelocator implements DockRelocator{
 		}
 	}
     
-    /**
-     * Tells whether dockables can only be dragged through their title or not.
-     * @return <code>true</code> if a Dockable must be dragged through their
-     * titles, <code>false</code> if every part of the dockable can be
-     * grabbed by the mouse.
-     * @see #setDragOnlyTitel(boolean)
-     */
     public boolean isDragOnlyTitel(){
 		return dragOnlyTitel;
 	}
     
-    /**
-     * Tells whether dockables can only be dragged through their title or not. 
-     * @param dragOnlyTitel <code>true</code> if a Dockable must be dragged through its
-     * title, <code>false</code> if every part of the dockable can be
-     * grabbed by the mouse.
-     */
     public void setDragOnlyTitel( boolean dragOnlyTitel ){
 		this.dragOnlyTitel = dragOnlyTitel;
 	}
     
-    /**
-     * Gets the distance the user must move the mouse in order to begin a 
-     * drag operation.
-     * @return the distance in pixel
-     */
     public int getDragDistance(){
 		return dragDistance;
 	}
 
-    /**
-     * Sets the distance the user must move the mouse in order to begin a 
-     * drag operation.
-     * @param dragDistance the distance in pixel
-     */
     public void setDragDistance( int dragDistance ){
 		this.dragDistance = dragDistance;
 	}
+    
+    public boolean isPreventMoveover(){
+    	return preventMoveover;
+    }
+    
+    public void setPreventMoveover( boolean prevent ){
+	    this.preventMoveover = prevent;	
+    }
     
     /**
      * Gets an algorithm useful for merging two {@link DockStation}s.

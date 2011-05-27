@@ -548,6 +548,8 @@
 - API: DefaultIconScheme now also stores custom DockIconBridges
 - API: The icon used when there are too many Dockables on a StackDockStation and the EclipseTheme is used, now depends on the actual number of overflowing Dockables. Clients can use their own icon by installing a DockIconBridge for type TabMenuDockIcon.KIND_TAB_MENU.
 ! API: Added method "dragged", "dragging", and "searched" to VetoableDockRelocatorListener, the method "draging" was removed and got replaced by "searched". 
+- API: It is no longer possible to drop a Dockable over itself. Clients can reenable the old behavior by calling "DockRelocator.setPreventMoveover( false )".
+- API: New method DockController.getRepresentative searches for all DockElementRepresentatives of a DockElement. Also DockUtilities.getShowingComponent now checks the DockElementRepresentatives as well.
 
 {Removal of deprecated items}
 ! API: SizeManager and all subclasses have been removed without replacement. They were created to support persistent storage of the layout of a SplitDockStation, this job is now done by placeholders.

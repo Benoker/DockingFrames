@@ -73,8 +73,6 @@ import bibliothek.util.Todo.Version;
  * for a {@link DockController}.
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_0,
-		description="Moving a dockable over itself should cancel the drag operation. This setting should be configurable.")
 public class DefaultDockRelocator extends AbstractDockRelocator{
 	/** <code>true</code> as long as the user drags a title or a Dockable */
     private boolean onMove = false;
@@ -296,30 +294,71 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         List<DockStation> result = new LinkedList<DockStation>();
         DockStation movedStation = moved.asDockStation();
         DockController controller = getController();
-                
-        for( DockStation station : controller.getRegister().listDockStations() ){   
-            if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
-                if( station.isStationVisible() && isStationValid( station ) ){
-                    Rectangle bounds = station.getStationBounds();
-                    if( bounds == null || bounds.contains( x, y )){
-                        int index = 0;
-                        
-                        // insertion sort
-                        for( DockStation resultStation : result ){
-                            int compare = compare( resultStation, station );
-                            if( compare < 0 )
-                                break;
-                            else
-                                index++;
-                        }
-                        
-                        result.add( index, station );
-                    }
-                }
-            }
-        }        
-        return result;
+        
+        if( !isCancelLocation( x, y, moved )){
+	        for( DockStation station : controller.getRegister().listDockStations() ){   
+	            if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
+	                if( station.isStationVisible() && isStationValid( station ) ){
+	                    Rectangle bounds = station.getStationBounds();
+	                    if( bounds == null || bounds.contains( x, y )){
+	                        int index = 0;
+	                        
+	                        // insertion sort
+	                        for( DockStation resultStation : result ){
+	                            int compare = compare( resultStation, station );
+	                            if( compare < 0 )
+	                                break;
+	                            else
+	                                index++;
+	                        }
+	                        
+	                        result.add( index, station );
+	                    }
+	                }
+	            }
+	        }        
+        }
+	    return result;
     }    
+    
+    /**
+     * Checks whether the mouse is at a location that cancels a drag and drop operation. This method just calls
+     * {@link #isCancelLocation(int, int, DockElementRepresentative)} with all the {@link DockElementRepresentative}
+     * that can be found for <code>moved</code>.
+     * @param x x-coordinate on the screen
+     * @param y y-coordinate on the screen
+     * @param moved the item that was moved around
+     * @return <code>true</code> if the current location can never result in a valid drop operation
+     */
+    protected boolean isCancelLocation( int x, int y, Dockable moved ){
+    	if( isCancelLocation( x, y, (DockElementRepresentative)moved )){
+    		return true;
+    	}
+    	DockController controller = moved.getController();
+    	for( DockElementRepresentative item : controller.getRepresentatives( moved ) ){
+    		if( isCancelLocation( x, y, item )){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    /**
+     * Checks whether the mouse is at a location that cancels a drag and drop operation
+     * @param x x-coordinate on the screen
+     * @param y y-coordinate on the screen
+     * @param moved the item that was moved around
+     * @return <code>true</code> if the current location can never result in a valid drop operation
+     */
+    protected boolean isCancelLocation( int x, int y, DockElementRepresentative item ){
+    	if( isPreventMoveover() ){
+	    	Component component = item.getComponent();
+	    	Point point = new Point( 0, 0 );
+	    	SwingUtilities.convertPointToScreen( point, component );
+	    	return point.x <= x && point.x + component.getWidth() > x && point.y <= y && point.y + component.getHeight() > y;
+    	}
+    	return false;
+    }
     
     /**
      * Only stations passing this test are considered during drag and drop operation as new parent. Subclasses 

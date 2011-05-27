@@ -65,6 +65,20 @@ public interface DockRelocator {
      * grabbed by the mouse.
      */
     public void setDragOnlyTitel( boolean dragOnlyTitel );
+
+    /**
+     * Tells whether dropping a {@link Dockable} over itself should result in 
+     * canceling the drag and drop operation.
+     * @return <code>true</code> if dragging over itself is prevented
+     */
+    public boolean isPreventMoveover();
+    
+    /**
+     * Tells this {@link DockRelocator} that dropping a {@link Dockable} over itself should
+     * result in canceling the drag and drop operation.
+     * @param prevent whether to prevent self merging or not
+     */
+    public void setPreventMoveover( boolean prevent );
     
     /**
      * Gets the distance the user must move the mouse in order to begin a 

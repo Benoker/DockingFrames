@@ -46,6 +46,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
@@ -60,9 +61,6 @@ import bibliothek.gui.dock.station.LayoutLocked;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Version;
 
 /**
  * A list of methods which can be used for different purposes. Methods
@@ -400,13 +398,11 @@ public class DockUtilities {
     /**
      * Searches a {@link Component} which is {@link Component#isShowing() showing}
      * and has something to do with <code>dockable</code>.<br>
-     * This method only checks {@link Dockable} and {@link DockTitle}s, it does not
-     * check {@link DockElementRepresentative}s.
+     * This method first checks {@link Dockable} and {@link DockTitle}s, then it checks
+     * all {@link DockElementRepresentative}s.
      * @param dockable a Dockable for which a Component has to be found
      * @return a showing component or <code>null</code>
      */
-    @Todo( priority=Todo.Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_1, 
-        	description="Make use of DockElementRepresentative" )
     public static Component getShowingComponent( Dockable dockable ){
         Component component = dockable.getComponent();
         if( !component.isShowing() ){
@@ -414,6 +410,17 @@ public class DockUtilities {
                 component = title.getComponent();
                 if( component.isShowing() )
                     break;
+            }
+            if( !component.isShowing() ){
+            	DockController controller = dockable.getController();
+            	if( controller != null ){
+            		for( DockElementRepresentative item : controller.getRepresentatives( dockable )){
+            			if( item.getComponent().isShowing() ){
+            				component = item.getComponent();
+            				break;
+            			}
+            		}
+            	}
             }
         }
         

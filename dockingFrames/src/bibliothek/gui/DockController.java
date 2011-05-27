@@ -43,7 +43,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.dock.DockElement;
@@ -87,7 +86,6 @@ import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DockableSelectionEvent;
 import bibliothek.gui.dock.event.DockableSelectionListener;
-import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -109,9 +107,6 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.text.DefaultTextScheme;
 import bibliothek.gui.dock.util.text.TextBridge;
 import bibliothek.gui.dock.util.text.TextValue;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Version;
 
 /**
  * A controller connects all the {@link DockStation}s, {@link Dockable}s and
@@ -802,6 +797,21 @@ public class DockController {
     	}
     	
     	return null;
+    }
+    
+    /**
+     * Searches all registered {@link DockElementRepresentative} whose element is <code>element</code>.
+     * @param element the element whose {@link DockElementRepresentative} are searched
+     * @return the representatives, may include <code>element</code> as well
+     */
+    public DockElementRepresentative[] getRepresentatives( DockElement element ){
+    	List<DockElementRepresentative> result = new ArrayList<DockElementRepresentative>();
+    	for( DockElementRepresentative representative : componentToDockElements.values() ){
+    		if( representative.getElement() == element ){
+    			result.add( representative );
+    		}
+    	}
+    	return result.toArray( new DockElementRepresentative[ result.size() ] );
     }
     
     /**
