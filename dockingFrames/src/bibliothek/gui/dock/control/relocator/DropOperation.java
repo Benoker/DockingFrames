@@ -56,30 +56,18 @@ public class DropOperation implements RelocateOperation{
 		return new Dockable[]{};
 	}
 	
-	public void execute( Dockable selection, VetoableDockRelocatorListener listener ){
-		DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, station );
-		listener.dropping( event );
-		if( event.isCanceled() || event.isForbidden() ){
-			event = new DefaultDockRelocatorEvent( controller, selection, station ); 
-			event.cancel();
-			listener.canceled( event );
-			return;
-		}
-		
+	public boolean execute( Dockable selection, VetoableDockRelocatorListener listener ){
 		DockStation parent = selection.getDockParent();
 		if( parent != null ){
-			event = new DefaultDockRelocatorEvent( controller, selection, station );
+			DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station );
 			listener.dragging( event );
 			if( event.isCanceled() || event.isForbidden() ){
-				event = new DefaultDockRelocatorEvent( controller, selection, station ); 
-				event.cancel();
-				listener.canceled( event );
-				return;
+				return false;
 			}
 			parent.drag( selection );
-			listener.dragged( new DefaultDockRelocatorEvent( controller, selection, station ) );
+			listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station ) );
 		}
         station.drop();
-        listener.dropped( new DefaultDockRelocatorEvent( controller, selection, station ) );	
+        return true;	
 	}
 }

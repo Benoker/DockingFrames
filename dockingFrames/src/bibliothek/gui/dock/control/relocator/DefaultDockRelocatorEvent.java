@@ -47,16 +47,6 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	 * Creates a new event.
 	 * @param controller the controller in whose realm the event happens
 	 * @param dockable the element that is moved around
-	 * @param target the potential parent of <code>dockable</code>
-	 */
-	public DefaultDockRelocatorEvent( DockController controller, Dockable dockable, DockStation target ){
-		this( controller, dockable, new Dockable[]{}, target );
-	}
-	
-	/**
-	 * Creates a new event.
-	 * @param controller the controller in whose realm the event happens
-	 * @param dockable the element that is moved around
 	 * @param implicit the elements that change their position too
 	 * @param target the potential parent of <code>dockable</code>
 	 */

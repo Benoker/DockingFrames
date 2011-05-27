@@ -63,29 +63,17 @@ public class MergeOperation implements RelocateOperation{
 		return children;
 	}
 	
-	public void execute( Dockable selection, VetoableDockRelocatorListener listener ){
+	public boolean execute( Dockable selection, VetoableDockRelocatorListener listener ){
 		DockStation child = selection.asDockStation();
 		DockStation parent = selection.getDockParent();
 
 		Dockable[] children = getImplicit( selection );
 		
-		DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, children, station );
-		listener.dropping( event );
-		if( event.isCanceled() || event.isForbidden() ){
-			event = new DefaultDockRelocatorEvent( controller, selection, children, station ); 
-			event.cancel();
-			listener.canceled( event );
-			return;
-		}
-		
 		if( parent != null && parent != station ){
-			event = new DefaultDockRelocatorEvent( controller, selection, children, station );
+			DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, children, station );
 			listener.dragging( event );
 			if( event.isCanceled() || event.isForbidden() ){
-				event = new DefaultDockRelocatorEvent( controller, selection, children, station ); 
-				event.cancel();
-				listener.canceled( event );
-				return;
+				return false;
 			}
 		}
 		
@@ -96,6 +84,6 @@ public class MergeOperation implements RelocateOperation{
 			parent.drag( selection );
 		}
 		
-		listener.dropped( new DefaultDockRelocatorEvent( controller, selection, children, station ) );
+		return true;
 	}
 }

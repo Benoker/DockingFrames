@@ -56,25 +56,14 @@ public class MoveOperation implements RelocateOperation{
 		return new Dockable[]{};
 	}
 	
-	public void execute( Dockable selection, VetoableDockRelocatorListener listener ){
-		DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, station );
-		listener.dropping( event );
-		if( event.isCanceled() || event.isForbidden() ){
-			event = new DefaultDockRelocatorEvent( controller, selection, station ); 
-			event.cancel();
-			listener.canceled( event );
-			return;
-		}
-		event = new DefaultDockRelocatorEvent( controller, selection, station );
+	public boolean execute( Dockable selection, VetoableDockRelocatorListener listener ){
+		DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station );
 		listener.dragging( event );
 		if( event.isCanceled() || event.isForbidden() ){
-			event = new DefaultDockRelocatorEvent( controller, selection, station ); 
-			event.cancel();
-			listener.canceled( event );
-			return;
+			return false;
 		}
 		station.move();
-		listener.dragged( new DefaultDockRelocatorEvent( controller, selection, station ) );
-        listener.dropped( new DefaultDockRelocatorEvent( controller, selection, station ) );
+		listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station ) );
+		return true;
 	}
 }

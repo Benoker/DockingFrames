@@ -47,9 +47,14 @@ public interface RelocateOperation {
 	public Dockable[] getImplicit( Dockable selection );
 	
 	/**
-	 * Executes this operation.
+	 * Executes this operation. This method must only call the methods 
+	 * {@link VetoableDockRelocatorListener#dragging(DockRelocatorEvent) dragging} and
+	 * {@link VetoableDockRelocatorListener#dragged(DockRelocatorEvent) dragged} of <code>listener</code>, all other
+	 * methods will throw an {@link IllegalStateException}. 
 	 * @param selection the element that is moved around
 	 * @param listener a listener to be informed about events happening because of this operation
+	 * @return <code>true</code> if the operation was a success, <code>false</code> if the operation was
+	 * canceled
 	 */
-	public void execute( Dockable selection, VetoableDockRelocatorListener listener );
+	public boolean execute( Dockable selection, VetoableDockRelocatorListener listener );
 }
