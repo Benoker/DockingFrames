@@ -25,15 +25,38 @@
  */
 package bibliothek.gui.dock.control.relocator;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DirectRemoteRelocator;
 import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator;
+import bibliothek.gui.dock.event.DockHierarchyListener;
+import bibliothek.gui.dock.event.DockRegisterListener;
 
 /**
  * This listener can be added to a {@link DockRelocator} and will receive an event
  * whenever the user, a {@link RemoteRelocator} or a {@link DirectRemoteRelocator} moves
- * around a {@link Dockable}.
+ * around a {@link Dockable}. <br>
+ * <b>Note:</b> this listener is intended to monitor the users actions. This listener will never be informed about events
+ * that are triggered indirectly or by the client itself. It must not be used to keep track of the layout
+ * of the entire application, {@link DockRegisterListener} and {@link DockHierarchyListener}s are much better fit for 
+ * that job.
+ * <br>
+ * A successfull drag and drop operation of a {@link Dockable} will cause these events:
+ * <ol>
+ * 	<li> {@link #grabbing(DockRelocatorEvent)} right before the operation starts.</li>
+ *  <li> {@link #grabbed(DockRelocatorEvent)} once the operation started.</li>
+ *  <li> {@link #searched(DockRelocatorEvent)} every time when the user moves the mouse. </li>
+ *  <li> {@link #dropping(DockRelocatorEvent)} once the user released the mouse and the {@link Dockable} is about to
+ *  change its position. </li>
+ *  <li> optional: {@link #dragging(DockRelocatorEvent)} before the {@link Dockable} is removed from its current parent. </li>
+ *  <li> optional: {@link #dragged(DockRelocatorEvent)} if the {@link Dockable} was removed from its parent. </li>
+ *  <li> {@link #dropped(DockRelocatorEvent)} once the operation completed. </li>
+ * </ol>
+ * 
+ * Other combinations of these event may happen in the future.
+ * 
+ * The event {@link #canceled(DockRelocatorEvent)} may be called at any time.
  * @author Benjamin Sigg
  */
 public interface VetoableDockRelocatorListener {
@@ -52,21 +75,37 @@ public interface VetoableDockRelocatorListener {
 	public void grabbed( DockRelocatorEvent event );
 
 	/**
-	 * Called whenever the user moves the mouse during a drag and drop operation.
+	 * Called after the mouse has moved, the {@link Dockable} may have a new target {@link DockStation}.
+	 * @param event further description
+	 */
+	public void searched( DockRelocatorEvent event );
+	
+	/**
+	 * Called when the user released the mouse, but the {@link Dockable} was not
+	 * yet moved. After the drop operation completed the {@link Dockable} will either be a child
+	 * of {@link DockRelocatorEvent#getTarget() the target station}, of its current parent or has no parent at all.
 	 * @param event further description of the event
+	 */
+	public void dropping( DockRelocatorEvent event );
+
+	/**
+	 * Called before the {@link Dockable} is removed from its parent. This event may even be called, if the future
+	 * parent of the {@link Dockable} is identical to the current parent.
+	 * @param event further description of the event
+	 */
+	public void dragging( DockRelocatorEvent event );
+	
+	/**
+	 * Called after the {@link Dockable} was removed from its parent. It is possible that the {@link Dockable}
+	 * already has a new parent. It is even possible that the new parent is the old parent. This event can neither be canceled nor forbidden.
+	 * @param event further description
 	 */
 	public void dragged( DockRelocatorEvent event );
 	
 	/**
-	 * Called when the user released the mouse, but the {@link Dockable} was not
-	 * yet moved.
-	 * @param event further description of the event
-	 */
-	public void dropping( DockRelocatorEvent event );
-	
-	/**
 	 * Called after a drag and drop operation finished. The {@link Dockable} was moved
-	 * by the operation.
+	 * by the operation. Please note that the actual parent of the {@link Dockable} does not have to be
+	 * {@link DockRelocatorEvent#getTarget() the target station}. This event can neither be canceled nor forbidden.
 	 * @param event further description of the event
 	 */
 	public void dropped( DockRelocatorEvent event );

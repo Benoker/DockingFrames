@@ -19,8 +19,9 @@ import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
 import bibliothek.gui.dock.common.mode.CNormalModeArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.event.DockRelocatorAdapter;
-import bibliothek.gui.dock.event.DockRelocatorListener;
+import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationMode;
@@ -83,9 +84,10 @@ public class CSplitDockStationHandle{
 	 * This listener calls {@link MaximizedMode#unmaximize(Dockable, AffectedSet)} if some element is dropped
 	 * onto this station.
 	 */
-	private DockRelocatorListener relocatorListener = new DockRelocatorAdapter() {
-		public void drop( DockController controller, Dockable dockable, DockStation station ){
-			MaximizedModeArea next = maximizedMode.getNextMaximizeArea( station );
+	private VetoableDockRelocatorListener relocatorListener = new VetoableDockRelocatorAdapter() {
+		@Override
+		public void dropped( DockRelocatorEvent event ){
+			MaximizedModeArea next = maximizedMode.getNextMaximizeArea( event.getTarget() );
 			
 			if( next == maximal ){
 				manager.runTransaction( new AffectingRunnable() {
@@ -323,11 +325,11 @@ public class CSplitDockStationHandle{
 		
 		public void setController( DockController controller ){
 			if( this.controller != null ){
-				this.controller.getRelocator().removeDockRelocatorListener( relocatorListener );
+				this.controller.getRelocator().removeVetoableDockRelocatorListener( relocatorListener );
 			}
 			this.controller = controller;
 			if( controller != null ){
-				controller.getRelocator().addDockRelocatorListener( relocatorListener );
+				controller.getRelocator().addVetoableDockRelocatorListener( relocatorListener );
 			}
 		}
 		

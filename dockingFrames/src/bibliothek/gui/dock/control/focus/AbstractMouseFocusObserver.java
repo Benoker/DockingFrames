@@ -37,8 +37,11 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
+import bibliothek.gui.dock.control.DockRelocator;
+import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
 import bibliothek.gui.dock.event.ControllerSetupListener;
-import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -50,10 +53,24 @@ import bibliothek.gui.dock.util.DockUtilities;
  * will automatically transfer the focus to the dropped {@link Dockable}.  
  * @author Benjamin Sigg
  */
-public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, DockRelocatorListener{
+public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
     
     /** The controller to be informed about changes */
     private DockController controller;
+    
+    /** 
+     * Listener added to the {@link DockRelocator}, updates the focused {@link Dockable} after a 
+     * drag and drop operation completed. 
+     */
+    private VetoableDockRelocatorListener relocatorListener = new VetoableDockRelocatorAdapter(){
+    	public void dropped( final DockRelocatorEvent event ){
+    		EventQueue.invokeLater( new Runnable(){
+                public void run(){
+                    controller.setFocusedDockable( event.getDockable(), null, true );
+                }
+            });
+    	};
+	};
 
     /**
      * Creates a new FocusController.
@@ -66,7 +83,7 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
         this.controller = controller;
         setup.add( new ControllerSetupListener(){
             public void done( DockController controller ) {
-                controller.getRelocator().addDockRelocatorListener( AbstractMouseFocusObserver.this );
+                controller.getRelocator().addVetoableDockRelocatorListener( relocatorListener );
             }
         });
     }
@@ -76,7 +93,7 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
      * its listeners and become ready for the garbage collector. 
      */
     public void kill(){
-        getController().getRelocator().removeDockRelocatorListener( this );
+        getController().getRelocator().removeVetoableDockRelocatorListener( relocatorListener );
     }
     
     /**
@@ -219,26 +236,6 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver, 
                 controller.setFocusedDockable( dock, component, false, ensureFocus, element.shouldTransfersFocus() );
         	}
         }
-    }
-    
-    public void init( DockController controller, Dockable dockable ) {
-        // do nothing
-    }
-    
-    public void cancel( DockController controller, Dockable dockable ) {
-        // do nothing
-    }
-    
-    public void drag( DockController controller, Dockable dockable, DockStation station ) {
-        // do nothing
-    }
-    
-    public void drop( final DockController controller, final Dockable dockable, DockStation station ) {
-        EventQueue.invokeLater( new Runnable(){
-            public void run(){
-                controller.setFocusedDockable( dockable, null, true );
-            }
-        });
     }
     
     /**

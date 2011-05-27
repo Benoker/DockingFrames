@@ -30,8 +30,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
-import bibliothek.gui.dock.event.DockRelocatorAdapter;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -44,6 +45,9 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  */
 public class SingleParentRemover{
+	/** the controller using the remover */
+	private DockController controller;
+	
     /** observers a {@link DockRelocator} and searches for changes */
     private DockRelocatorObserver dockRelocatorObserver = new DockRelocatorObserver();
     /** observers a {@link DockRegister} and searches for changes */
@@ -57,7 +61,12 @@ public class SingleParentRemover{
      * @param controller a controller to observe
      */
     public void install( DockController controller ){
-        controller.getRelocator().addDockRelocatorListener( dockRelocatorObserver );
+    	if( this.controller != null ){
+    		throw new IllegalStateException( "a controller is already installed" );
+    	}
+    	this.controller = controller;
+    	
+        controller.getRelocator().addVetoableDockRelocatorListener( dockRelocatorObserver );
         controller.getRegister().addDockRegisterListener( dockRegisterObserver );
         testAll( controller );
     }
@@ -68,8 +77,12 @@ public class SingleParentRemover{
      * @param controller a controller
      */
     public void uninstall( DockController controller ){
-        controller.getRelocator().removeDockRelocatorListener( dockRelocatorObserver );
+    	if( this.controller != controller ){
+    		throw new IllegalArgumentException( "controller is not installed" );
+    	}
+        controller.getRelocator().removeVetoableDockRelocatorListener( dockRelocatorObserver );
         controller.getRegister().removeDockRegisterListener( dockRegisterObserver );
+        this.controller = null;
     }
     
     /**
@@ -226,10 +239,10 @@ public class SingleParentRemover{
      * if the structure of the dock-tree changes.
      * @author Benjamin Sigg
      */
-    private class DockRelocatorObserver extends DockRelocatorAdapter{
-        @Override
-        public void drop( DockController controller, Dockable dockable, DockStation station ) {
-            testAll( controller );
+    private class DockRelocatorObserver extends VetoableDockRelocatorAdapter{
+    	@Override
+    	public void dropped( DockRelocatorEvent event ){
+    	    testAll( controller );
         }
     }
 }

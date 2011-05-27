@@ -29,7 +29,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
-import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
  * The {@link DockRelocator} is responsible for executing and managing the basic drag and drop
@@ -37,23 +36,6 @@ import bibliothek.gui.dock.event.DockRelocatorListener;
  * @author Benjamin Sigg
  */
 public interface DockRelocator {
-	/**
-	 * Adds a listener to this manager. The listener will be informed whenever
-	 * a {@link Dockable} is moved.
-	 * @param listener the new listener
-	 * @deprecated will be removed in a future release
-	 */
-	@Deprecated
-	public void addDockRelocatorListener( DockRelocatorListener listener );
-	
-	/**
-	 * Removes a listener from this manager.
-	 * @param listener the listener to remove
-	 * @deprecated will be removed in a future release
-	 */
-	@Deprecated
-	public void removeDockRelocatorListener( DockRelocatorListener listener );
-
 	/**
 	 * Adds a listener to this manager. The listener will be informed whenever
 	 * a {@link Dockable} is moved.

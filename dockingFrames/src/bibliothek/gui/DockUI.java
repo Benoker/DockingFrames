@@ -53,6 +53,7 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.NoStackTheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
@@ -64,8 +65,6 @@ import bibliothek.gui.dock.util.laf.LookAndFeelColors;
 import bibliothek.gui.dock.util.laf.LookAndFeelColorsListener;
 import bibliothek.gui.dock.util.laf.Nimbus6u10;
 import bibliothek.gui.dock.util.laf.Windows;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.container.Tuple;
 
 /**
@@ -76,9 +75,10 @@ public class DockUI {
     /** An instance of DockUI */
 	private static DockUI ui;
 	
-	/** Key for an {@link Icon} stored in the {@link IconManager} for an overflow-menu */
-	@Todo(compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_1,
-		description="Instead of just a simple icon allow clients more influence of what an overflow-menu can do. This key may remain, but its value may not be used all the time.")
+	/** 
+	 * Key for an {@link Icon} stored in the {@link IconManager} for the action-overflow-menu. This menu is shown if there
+	 * are too many {@link DockAction}s to show. 
+	 */
 	public static final String OVERFLOW_MENU_ICON = "overflow.menu";
 	
     /** A list of all available themes */

@@ -44,10 +44,11 @@ import bibliothek.gui.dock.common.group.CGroupMovement;
 import bibliothek.gui.dock.common.group.StackGroupBehavior;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
-import bibliothek.gui.dock.event.DockRelocatorAdapter;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
@@ -171,7 +172,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	public LocationModeManager( DockController controller ){
 		super( controller );
 		registerListener.connect( controller );
-		controller.getRelocator().addDockRelocatorListener( relocatorListener );
+		controller.getRelocator().addVetoableDockRelocatorListener( relocatorListener );
 		
 		updateEnablement();
 		extendedModeFactory.setProperties( controller );
@@ -184,7 +185,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	public void destroy(){
 		registerListener.connect( null );
 		DockController controller = getController();
-		controller.getRelocator().removeDockRelocatorListener( relocatorListener );
+		controller.getRelocator().removeVetoableDockRelocatorListener( relocatorListener );
 		controller.getDoubleClickController().removeListener( doubleClickListener );
 		
 		for( LocationMode mode : this.modes() ){
@@ -636,10 +637,13 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	 * Detects the drag-operation and calls {@link LocationModeManager#store(Dockable)}.
 	 * @author Benjamin Sigg
 	 */
-	private class RelocatorListener extends DockRelocatorAdapter{
+	private class RelocatorListener extends VetoableDockRelocatorAdapter{
 		@Override
-        public void drag( DockController controller, Dockable dockable, DockStation station ) {
-			store( dockable );
+		public void dragging( DockRelocatorEvent event ){
+			store( event.getDockable() );
+			for( Dockable dockable : event.getImplicitDockables() ){
+				store( dockable );
+			}
         }
 	}
 }

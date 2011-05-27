@@ -41,7 +41,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.print.DocFlavor.READER;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -61,7 +60,6 @@ import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
-import bibliothek.gui.dock.event.DockRelocatorListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.ClientOnly;
@@ -154,21 +152,37 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         disableAllModes();
         
         try{
-        	operation.execute( dockable, new DockRelocatorListener() {
-				public void init( DockController controller, Dockable dockable ){
-					fireInit( dockable );
+        	operation.execute( dockable, new VetoableDockRelocatorListener(){
+				public void searched( DockRelocatorEvent event ){
+					fireSearched( event );
 				}
 				
-				public void drop( DockController controller, Dockable dockable, DockStation station ){
-					fireDrop( dockable, station );
+				public void grabbing( DockRelocatorEvent event ){
+					fireGrabbing( event );
 				}
 				
-				public void drag( DockController controller, Dockable dockable, DockStation station ){
-					fireDrag( dockable, station );
+				public void grabbed( DockRelocatorEvent event ){
+					fireGrabbed( event );
 				}
 				
-				public void cancel( DockController controller, Dockable dockable ){
-					fireCancel( dockable );
+				public void dropping( DockRelocatorEvent event ){
+					fireDropping( event );
+				}
+				
+				public void dropped( DockRelocatorEvent event ){
+					fireDropped( event );	
+				}
+				
+				public void dragging( DockRelocatorEvent event ){
+					fireDragging( event );	
+				}
+				
+				public void dragged( DockRelocatorEvent event ){
+					fireDragged( event );
+				}
+				
+				public void canceled( DockRelocatorEvent event ){
+					fireCanceled( event );	
 				}
 			});
         }
@@ -466,7 +480,6 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         else if( pressPointScreen != null ){
             titleDragCancel();
             disableAllModes();
-            fireCancel( dockable );
             
             DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, operation == null ? null : operation.getStation() );
             event.cancel();
@@ -574,8 +587,6 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             }
             
             onMove = true;
-            
-            fireInit( dockable );
             
             event = new DefaultDockRelocatorEvent( getController(), dockable, null );
             fireGrabbed( event );
@@ -701,7 +712,6 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, null );
             	event.cancel();
             	fireCanceled( event );
-                fireCancel( dockable );
                 
                 if( wasDragging )
                     return Reaction.BREAK_CONSUMED;
@@ -728,8 +738,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                             dockable );
                     
                     if( next != null ){
-                    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, next.getStation() );
-                    	fireDragged( event );
+                    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, next.getImplicit( dockable ), next.getStation() );
+                    	fireCanceled( event );
                     	if( event.isCanceled() || event.isForbidden() ){
                     		next = null;
                     	}
@@ -793,7 +803,6 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     private void cancel(Dockable dockable){
     	titleDragCancel();
-    	fireCancel( dockable );
     	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, null );
 		event.cancel();
 		fireCanceled( event );

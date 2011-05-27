@@ -31,7 +31,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRelocator;
 
 /**
- * An event created by the {@link DockRelocator} and forwarded to the {@link VetoableDockRelocatorListener}.
+ * An event created by the {@link DockRelocator} and forwarded to the {@link VetoableDockRelocatorListener}. This event
+ * represents what the users sees on the screen, internally the drag and drop operation may trigger additional events.
  * @author Benjamin Sigg
  */
 public interface DockRelocatorEvent {
@@ -54,8 +55,20 @@ public interface DockRelocatorEvent {
 	public Dockable getDockable();
 	
 	/**
+	 * Gets a set of {@link Dockable}s that will also change their parent due to this
+	 * event. This list contains only the set of {@link Dockable}s that are <i>directly</i> affected by this event.
+	 * Elements that are affected indirectly, e.g. because a {@link DockStation} remains that has only one child and
+	 * thus gets removed, are not included. 
+	 * @return the items whose position is about to change too, can be empty but not <code>null</code>
+	 */
+	public Dockable[] getImplicitDockables();
+	
+	/**
 	 * Gets the current target of the drag and drop operation, if the operation would finish
-	 * now, {@link #getDockable() the dockable} would be dropped onto this station.
+	 * now, {@link #getDockable() the dockable} would be dropped onto this station.<br>
+	 * Please note that this field does not take into consideration, that the <code>dockable</code> may
+	 * be forced onto another parent. Clients should always ask the {@link Dockable} directly for its
+	 * real parent.
 	 * @return the current target or <code>null</code> if either the drag and drop operation is
 	 * not yet started or if there is no target selected
 	 */

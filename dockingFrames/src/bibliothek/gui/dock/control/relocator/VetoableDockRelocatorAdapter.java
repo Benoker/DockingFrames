@@ -34,11 +34,19 @@ public abstract class VetoableDockRelocatorAdapter implements VetoableDockReloca
 	public void canceled( DockRelocatorEvent event ){
 		// nothing
 	}
-
+	
 	public void dragged( DockRelocatorEvent event ){
+		// nothing
+	}	
+	
+	public void dragging( DockRelocatorEvent event ){
 		// nothing
 	}
 
+	public void searched( DockRelocatorEvent event ){
+		// noting
+	}
+	
 	public void dropped( DockRelocatorEvent event ){
 		// nothing	
 	}

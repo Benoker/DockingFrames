@@ -36,14 +36,14 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockActionSourceListener;
-import bibliothek.gui.dock.event.DockAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 
 /**
  * A manager which ensures that every {@link DockAction} is bound to its {@link Dockable}s.
  * @author Benjamin Sigg
  *
  */
-public class ActionBinder extends DockAdapter{
+public class ActionBinder extends DockRegisterAdapter{
     /** the observers of each Dockable that is known to this manager */
     private Map<Dockable, SourceObserver> observers = new HashMap<Dockable, SourceObserver>();
     

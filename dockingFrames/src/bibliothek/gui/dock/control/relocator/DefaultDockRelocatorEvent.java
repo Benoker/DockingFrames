@@ -40,6 +40,7 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	private boolean forbid;
 	private DockController controller;
 	private Dockable dockable;
+	private Dockable[] implicit;
 	private DockStation target;
 	
 	/**
@@ -49,6 +50,18 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	 * @param target the potential parent of <code>dockable</code>
 	 */
 	public DefaultDockRelocatorEvent( DockController controller, Dockable dockable, DockStation target ){
+		this( controller, dockable, new Dockable[]{}, target );
+	}
+	
+	/**
+	 * Creates a new event.
+	 * @param controller the controller in whose realm the event happens
+	 * @param dockable the element that is moved around
+	 * @param implicit the elements that change their position too
+	 * @param target the potential parent of <code>dockable</code>
+	 */
+	public DefaultDockRelocatorEvent( DockController controller, Dockable dockable, Dockable[] implicit, DockStation target ){
+		this.implicit = implicit;
 		this.controller = controller;
 		this.dockable = dockable;
 		this.target = target;
@@ -74,6 +87,10 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 		return dockable;
 	}
 
+	public Dockable[] getImplicitDockables(){
+		return implicit;
+	}
+	
 	public DockRelocator getSource(){
 		return controller.getRelocator();
 	}

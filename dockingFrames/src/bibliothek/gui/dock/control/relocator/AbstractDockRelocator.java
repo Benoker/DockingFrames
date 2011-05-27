@@ -33,12 +33,9 @@ import java.util.Set;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
-import bibliothek.gui.dock.control.DirectRemoteRelocator;
 import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.DockRelocatorMode;
-import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
  * A manager adding {@link java.awt.event.MouseListener} and
@@ -51,10 +48,6 @@ import bibliothek.gui.dock.event.DockRelocatorListener;
  * @author Benjamin Sigg
  */
 public abstract class AbstractDockRelocator implements DockRelocator{
-	/** a set of listeners informed whenever a dockable is moved */
-	@Deprecated
-	private List<DockRelocatorListener> listeners = new ArrayList<DockRelocatorListener>();
-	
 	/** a set of listeners that are informed when a drag and drop operation happens */
 	private List<VetoableDockRelocatorListener> vetoableListeners = new ArrayList<VetoableDockRelocatorListener>();
 	
@@ -93,63 +86,6 @@ public abstract class AbstractDockRelocator implements DockRelocator{
 		return controller;
 	}
 	
-	@Deprecated
-	public void addDockRelocatorListener( DockRelocatorListener listener ){
-		listeners.add( listener );
-	}
-	
-	@Deprecated
-	public void removeDockRelocatorListener( DockRelocatorListener listener ){
-		listeners.remove( listener );
-	}
-	
-	/**
-	 * Gets a list of all currently registered listeners.
-	 * @return the list of listeners
-	 */
-	protected DockRelocatorListener[] listListeners(){
-		return listeners.toArray( new DockRelocatorListener[ listeners.size() ] );
-	}
-	
-	/**
-	 * Informs all listeners that the drag-gesture has been made.
-	 * @param dockable the element that will be dragged.
-	 */
-	protected void fireInit( Dockable dockable ){
-	    for( DockRelocatorListener listener : listListeners() )
-	        listener.init( controller, dockable );
-	}
-	
-	/**
-	 * Informs all listeners that a drag and drop operation has been canceled.
-	 * @param dockable the element that was grabbed
-	 */
-	protected void fireCancel( Dockable dockable ){
-	    for( DockRelocatorListener listener : listListeners() )
-	        listener.cancel( controller, dockable );
-	}
-	
-    /**
-     * Informs all listeners that <code>dockable</code> will be dragged.
-     * @param dockable the dragged Dockable
-     * @param station the parent of <code>dockable</code>
-     */
-    protected void fireDrag( Dockable dockable, DockStation station ){
-        for( DockRelocatorListener listener : listListeners() )
-            listener.drag( controller, dockable, station );
-    }
-    
-    /**
-     * Informs all listeners that <code>dockable</code> was dropped on
-     * <code>station</code>.
-     * @param dockable the dropped Dockable
-     * @param station the new owner of <code>dockable</code>
-     */
-    protected void fireDrop( Dockable dockable, DockStation station ){
-        for( DockRelocatorListener listener : listListeners() )
-            listener.drop( controller, dockable, station );
-    }
-    
 	public void addVetoableDockRelocatorListener( VetoableDockRelocatorListener listener ){
 		if( listener == null ){
 			throw new IllegalArgumentException( "listener must not be null" );
@@ -191,6 +127,19 @@ public abstract class AbstractDockRelocator implements DockRelocator{
 		}
 	}
 	
+	
+	/**
+	 * Calls {@link VetoableDockRelocatorListener#searched(DockRelocatorEvent)} on
+	 * all listeners that are currently registered.
+	 * @param event the event to forward
+	 */
+	protected void fireSearched( DockRelocatorEvent event ){
+		for( VetoableDockRelocatorListener listener : vetoableListeners() ){
+			listener.searched( event );
+		}
+	}
+	
+	
 	/**
 	 * Calls {@link VetoableDockRelocatorListener#dragged(DockRelocatorEvent)} on
 	 * all listeners that are currently registered.
@@ -201,6 +150,19 @@ public abstract class AbstractDockRelocator implements DockRelocator{
 			listener.dragged( event );
 		}
 	}
+	
+	
+	/**
+	 * Calls {@link VetoableDockRelocatorListener#dragging(DockRelocatorEvent)} on
+	 * all listeners that are currently registered.
+	 * @param event the event to forward
+	 */
+	protected void fireDragging( DockRelocatorEvent event ){
+		for( VetoableDockRelocatorListener listener : vetoableListeners() ){
+			listener.dragging( event );
+		}
+	}
+	
 	
 	/**
 	 * Calls {@link VetoableDockRelocatorListener#dropping(DockRelocatorEvent)} on

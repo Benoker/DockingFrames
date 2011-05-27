@@ -28,7 +28,6 @@ package bibliothek.gui.dock.control.relocator;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
  * Uses a {@link Merger} to merge two {@link DockStation}s.
@@ -55,24 +54,48 @@ public class MergeOperation implements RelocateOperation{
 		return station;
 	}
 	
-	public void execute( Dockable selection, DockRelocatorListener listener ){
+	public Dockable[] getImplicit( Dockable selection ){
 		DockStation child = selection.asDockStation();
-		
 		Dockable[] children = new Dockable[ child.getDockableCount() ];
 		for( int i = 0; i < children.length; i++ ){
 			children[i] = child.getDockable( i );
-			listener.drag( controller, children[i], child );
+		}
+		return children;
+	}
+	
+	public void execute( Dockable selection, VetoableDockRelocatorListener listener ){
+		DockStation child = selection.asDockStation();
+		DockStation parent = selection.getDockParent();
+
+		Dockable[] children = getImplicit( selection );
+		
+		DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, children, station );
+		listener.dropping( event );
+		if( event.isCanceled() || event.isForbidden() ){
+			event = new DefaultDockRelocatorEvent( controller, selection, children, station ); 
+			event.cancel();
+			listener.canceled( event );
+			return;
+		}
+		
+		if( parent != null && parent != station ){
+			event = new DefaultDockRelocatorEvent( controller, selection, children, station );
+			listener.dragging( event );
+			if( event.isCanceled() || event.isForbidden() ){
+				event = new DefaultDockRelocatorEvent( controller, selection, children, station ); 
+				event.cancel();
+				listener.canceled( event );
+				return;
+			}
 		}
 		
 		merger.merge( station, child );
 		
-		for( Dockable dockable : children ){
-			listener.drop( controller, dockable, station );
-		}
-		
-		DockStation parent = selection.getDockParent();
+		parent = selection.getDockParent();
 		if( parent != null && parent != station ){
 			parent.drag( selection );
 		}
+		
+		listener.dropped( new DefaultDockRelocatorEvent( controller, selection, children, station ) );
 	}
 }

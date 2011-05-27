@@ -33,29 +33,27 @@ import bibliothek.gui.Dockable;
  * An implementation of {@link DockListener}, doing nothing whenever receiving
  * an event.
  * @author Benjamin Sigg
+ * @deprecated clients should use the required listener or adapter class directly
  */
+@Deprecated
 public class DockAdapter implements DockListener {
     public void dockableFocused( DockableFocusEvent event ) {
         // do nothing
     }
 
-    public void dockStationRegistered( DockController controller,
-            DockStation station ) {
+    public void dockStationRegistered( DockController controller, DockStation station ) {
         // do nothing
     }
 
-    public void dockStationRegistering( DockController controller,
-            DockStation station ) {
+    public void dockStationRegistering( DockController controller, DockStation station ) {
         // do nothing
     }
 
-    public void dockStationUnregistered( DockController controller,
-            DockStation station ) {
+    public void dockStationUnregistered( DockController controller, DockStation station ) {
         // do nothing
     }
 
-    public void dockableCycledRegister( DockController controller,
-            Dockable dockable ) {
+    public void dockableCycledRegister( DockController controller, Dockable dockable ) {
         // do nothing
     }
 
@@ -63,13 +61,11 @@ public class DockAdapter implements DockListener {
         // do nothing
     }
 
-    public void dockableRegistering( DockController controller,
-            Dockable dockable ) {
+    public void dockableRegistering( DockController controller, Dockable dockable ) {
         // do nothing
     }
 
-    public void dockableUnregistered( DockController controller,
-            Dockable dockable ) {
+    public void dockableUnregistered( DockController controller, Dockable dockable ) {
         // do nothing
     }
 
@@ -77,13 +73,11 @@ public class DockAdapter implements DockListener {
         // do nothing
     }
 
-    public void drag( DockController controller, Dockable dockable,
-            DockStation station ) {
+    public void drag( DockController controller, Dockable dockable, DockStation station ) {
         // do nothing
     }
 
-    public void drop( DockController controller, Dockable dockable,
-            DockStation station ) {
+    public void drop( DockController controller, Dockable dockable, DockStation station ) {
         // do nothing
     }
 

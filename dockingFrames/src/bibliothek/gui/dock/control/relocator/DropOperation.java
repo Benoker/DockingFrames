@@ -28,7 +28,6 @@ package bibliothek.gui.dock.control.relocator;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
  * This operation calls {@link DockStation#drop()}
@@ -53,13 +52,34 @@ public class DropOperation implements RelocateOperation{
 		return station;
 	}
 	
-	public void execute( Dockable selection, DockRelocatorListener listener ){
+	public Dockable[] getImplicit( Dockable selection ){
+		return new Dockable[]{};
+	}
+	
+	public void execute( Dockable selection, VetoableDockRelocatorListener listener ){
+		DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, station );
+		listener.dropping( event );
+		if( event.isCanceled() || event.isForbidden() ){
+			event = new DefaultDockRelocatorEvent( controller, selection, station ); 
+			event.cancel();
+			listener.canceled( event );
+			return;
+		}
+		
 		DockStation parent = selection.getDockParent();
 		if( parent != null ){
-			listener.drag( controller, selection, parent );
-            parent.drag( selection );
+			event = new DefaultDockRelocatorEvent( controller, selection, station );
+			listener.dragging( event );
+			if( event.isCanceled() || event.isForbidden() ){
+				event = new DefaultDockRelocatorEvent( controller, selection, station ); 
+				event.cancel();
+				listener.canceled( event );
+				return;
+			}
+			parent.drag( selection );
+			listener.dragged( new DefaultDockRelocatorEvent( controller, selection, station ) );
 		}
         station.drop();
-        listener.drop( controller, selection, station );	
+        listener.dropped( new DefaultDockRelocatorEvent( controller, selection, station ) );	
 	}
 }

@@ -27,7 +27,6 @@ package bibliothek.gui.dock.control.relocator;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockRelocatorListener;
 
 /**
  * Describes the action that a {@link DefaultDockRelocator} will execute.
@@ -41,9 +40,16 @@ public interface RelocateOperation {
 	public DockStation getStation();
 	
 	/**
+	 * Gets the {@link Dockable}s whose parent will change due to this operation.
+	 * @param selection the element that is moved around
+	 * @return the items, must not be <code>null</code> but can be empty
+	 */
+	public Dockable[] getImplicit( Dockable selection );
+	
+	/**
 	 * Executes this operation.
 	 * @param selection the element that is moved around
 	 * @param listener a listener to be informed about events happening because of this operation
 	 */
-	public void execute( Dockable selection, DockRelocatorListener listener );
+	public void execute( Dockable selection, VetoableDockRelocatorListener listener );
 }

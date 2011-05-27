@@ -546,10 +546,11 @@
 - Bugfix: DockHierarchyLock.runOnRelease has a timeout for how long the method blocks if not called from the EDT. This prevents a deadlock if some unfortunate chain of events happened. 
 - Bugfix: LockedResizeLayoutManager should no longer throw NPEs when accessed in a multi threading application
 - API: DefaultIconScheme now also stores custom DockIconBridges
-- API: The icon used when there are too many Dockables on a StackDockStation and the EclipseTheme is used, now depends on the actual number of overflowing Dockables. Clients can use their own icon by installing a DockIconBridge for type TabMenuDockIcon.KIND_TAB_MENU. 
+- API: The icon used when there are too many Dockables on a StackDockStation and the EclipseTheme is used, now depends on the actual number of overflowing Dockables. Clients can use their own icon by installing a DockIconBridge for type TabMenuDockIcon.KIND_TAB_MENU.
+! API: Added method "dragged", "dragging", and "searched" to VetoableDockRelocatorListener, the method "draging" was removed and got replaced by "searched". 
 
 {Removal of deprecated items}
-! API: SizeManager and all subclasses have been removed without replacement. They were created to support persistentl storage of the layout of a SplitDockStation, this job is now done by placeholders.
+! API: SizeManager and all subclasses have been removed without replacement. They were created to support persistent storage of the layout of a SplitDockStation, this job is now done by placeholders.
 ! API: DockFrontend.add replaced by addDockable
 ! API: CControl removed several methods to add/remove dockables and factories
 ! API: CWorkingArea removed methods "isTitleSuppressed/setTitleSuppressed", these methods are replaced by "is/setTitleShown"
@@ -557,6 +558,7 @@
 ! API: Methods related to UIListener moved from DockController to ThemeManager
 ! API: DockController.getFocusObserver replaced by getMouseFocusObserver
 ! API: Server methods from DockUI (like "getCombiner") replaced by methods from the ThemeManager
+! API: DockRelocatorListener got completely replaced by VetoableDockRelocatorListener
 
 [Todo]
 - Import/Export Perspectives from file

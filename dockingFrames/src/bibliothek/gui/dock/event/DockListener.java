@@ -30,7 +30,9 @@ import bibliothek.gui.DockController;
 /**
  * A collection of listeners that observe most events of a {@link DockController}. 
  * @author Benjamin Sigg
+ * @deprecated clients should use the listeners they require directly
  */
-public interface DockListener extends DockableFocusListener, DockRegisterListener, DockRelocatorListener{
+@Deprecated
+public interface DockListener extends DockableFocusListener, DockRegisterListener {
 
 }
