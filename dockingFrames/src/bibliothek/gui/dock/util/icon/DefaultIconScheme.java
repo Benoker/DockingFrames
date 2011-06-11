@@ -48,10 +48,6 @@ import bibliothek.gui.dock.util.UIProperties;
 import bibliothek.gui.dock.util.UIScheme;
 import bibliothek.gui.dock.util.UISchemeEvent;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * This default implementation of an {@link UIScheme} for {@link Icon}s reads an ini-file

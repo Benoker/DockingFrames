@@ -120,9 +120,10 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		
 		Insets insets = getMaxBorderInsets();
 		Dimension icon = getModel().getMaxIconSize();
+		Dimension min = getMinimumIconSize();
         
-        icon.width = Math.max( icon.width, 16 );
-        icon.height = Math.max( icon.height, 16 );
+        icon.width = Math.max( icon.width, min.width );
+        icon.height = Math.max( icon.height, min.height );
 		
 		if( getModel().getOrientation().isHorizontal() ){
 			int width = insets.left + 2*insets.right + icon.width;
@@ -130,7 +131,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			
 			int height = dropIcon.getIconHeight();
 			if( icon == null )
-				height = Math.max( height, 16 );
+				height = Math.max( height, min.height );
 			else
 				height = Math.max( height, icon.height );
 			
@@ -143,7 +144,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			
 			int width = dropIcon.getIconWidth();
 			if( icon == null )
-				width = Math.max( width, 16 );
+				width = Math.max( width, min.width );
 			else
 				width = Math.max( width, icon.width );
 			

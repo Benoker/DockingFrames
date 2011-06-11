@@ -35,6 +35,7 @@ import java.awt.event.FocusListener;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.FocusAwareComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
@@ -43,6 +44,8 @@ import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.Colors;
 
 /**
@@ -53,6 +56,14 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
     private BasicButtonModel model;
     private Runnable afterFocusRequest;
     
+    /** the expected minimum size of icons */
+    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
+    	@Override
+    	protected void valueChanged( Dimension oldValue, Dimension newValue ){
+    		revalidate();
+    	}
+	};
+	
     /**
      * Creates a new roundrect button.
      * @param trigger a trigger which gets informed when the user clicks the
@@ -72,6 +83,16 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
         			requestFocusInWindow();
         			invokeAfterFocusRequest();
         		}
+        	}
+        	
+        	@Override
+        	public void bound( BasicButtonModel model, DockController controller ){
+	        	minimumIconSize.setProperties( controller );
+        	}
+        	
+        	@Override
+        	public void unbound( BasicButtonModel model, DockController controller ){
+        		minimumIconSize.setProperties( (DockController)controller );
         	}
         });
         
@@ -134,8 +155,10 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
             return super.getPreferredSize();
         
         Dimension size = model.getMaxIconSize();
-        size.width = Math.max( 10, size.width + 4 );
-        size.height = Math.max( 10, size.height + 4 );
+        Dimension min = minimumIconSize.getValue();
+        
+        size.width = Math.max( min.width, size.width + 4 );
+        size.height = Math.max( min.height, size.height + 4 );
         return size;
     }
     

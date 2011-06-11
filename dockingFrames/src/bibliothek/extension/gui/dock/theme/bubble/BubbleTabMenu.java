@@ -27,24 +27,19 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.stack.CombinedHandler;
-import bibliothek.gui.dock.station.stack.CombinedMenu;
-import bibliothek.gui.dock.station.stack.StackDockComponentParent;
-import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
-import bibliothek.gui.dock.station.stack.tab.TabPane;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.station.stack.menu.ButtonCombinedMenu;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
+import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.color.MenuColor;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -60,146 +55,77 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "stack.menu.background.bottom",
     "stack.menu.border"
 })
-public class BubbleTabMenu extends AbstractCombinedMenu{
-	private StackDockComponentParent station;
-	
-	private BubbleMenuColor colorTopMouse;
-	private BubbleMenuColor colorBottomMouse;
-	private BubbleMenuColor colorBorderMouse;
-
-	private BubbleMenuColor colorTop;
-	private BubbleMenuColor colorBottom;
-	private BubbleMenuColor colorBorder;
-	
-	private BubbleColorAnimation animation;
-	
-	private boolean mouseOver;
-	
+public class BubbleTabMenu extends ButtonCombinedMenu<RoundButton>{
+	private BubbleStackDockComponent pane;
 	private int borderSize = 3;
 	
-	/**
-	 * Creates a new tab menu.
-	 * @param station the owner of this menu
-	 * @param parent the pane on which the menu is shown
-	 * @param visibility handles the visibility of this menu
-	 */
-	public BubbleTabMenu( StackDockComponentParent station, TabPane parent, CombinedHandler<CombinedMenu> visibility ){
-		super( parent, visibility );
-		this.station = station;
-		
-		colorTopMouse = new BubbleMenuColor( "stack.menu.background.top.mouse", Color.RED.brighter() );
-		colorBottomMouse = new BubbleMenuColor( "stack.menu.background.bottom.mouse", Color.RED.darker() );
-		colorBorderMouse = new BubbleMenuColor( "stack.menu.border.mouse", Color.RED.darker().darker() );
-		
-		colorTop = new BubbleMenuColor( "stack.menu.background.top", Color.RED.brighter() );
-		colorBottom = new BubbleMenuColor( "stack.menu.background.bottom", Color.RED.darker() );
-		colorBorder = new BubbleMenuColor( "stack.menu.border", Color.RED.darker().darker() );
-		
-		animation = new BubbleColorAnimation();
+	public BubbleTabMenu( BubbleStackDockComponent pane ){
+		super( pane, pane.getMenuHandler() );
+		this.pane = pane;
+	}
+
+	@Override
+	protected RoundButton createButton( BasicTrigger trigger ){
+		return new Button( trigger );
+	}
 	
-		animate();
-		animation.kick();
+	@Override
+	protected BasicButtonModel getModel( RoundButton button ){
+		return button.getModel();
 	}
 	
 	@Override
 	public void setController( DockController controller ){
 		super.setController( controller );
-		
-		colorTopMouse.connect( controller );
-		colorBottomMouse.connect( controller );
-		colorBorderMouse.connect( controller );
-		
-		colorTop.connect( controller );
-		colorBottom.connect( controller );
-		colorBorder.connect( controller );
-		
-		animate();
-		animation.kick();
-	}
-	
-	/**
-	 * Stops any animation of this menu.
-	 */
-	public void stopAnimation(){
-		animation.stop();
-	}
-	
-	/**
-	 * Tells whether the mouse is currently over this menus button.
-	 * @return <code>true</code> if the mouse is over the button
-	 */
-	public boolean isMouseOver(){
-		return mouseOver;
-	}
-	
-	/**
-	 * Ensures that the animation uses the correct set of colors.
-	 */
-	private void animate(){
-		if( isMouseOver() ){
-			animation.putColor( "top", colorTopMouse.color() );
-			animation.putColor( "bottom", colorBottomMouse.color() );
-			animation.putColor( "border", colorBorderMouse.color() );
+		RoundButton button = getButton();
+		if( button != null ){
+			button.setController( controller );
 		}
-		else{
-			animation.putColor( "top", colorTop.color() );
-			animation.putColor( "bottom", colorBottom.color() );
-			animation.putColor( "border", colorBorder.color() );
-		}
-	}
-	
-	@Override
-	protected Component createComponent(){
-		return new Button();
 	}
 
-	@Override
-	protected void selected( Dockable dockable ){
-		// ignore
-	}
-	
-	/**
-	 * A round button, when clicked calls {@link AbstractCombinedMenu#open()}.
-	 * @author Benjamin Sigg
-	 */
-	private class Button extends BackgroundPanel implements Runnable{
-		/**
-		 * Creates a new button.
-		 */
-		public Button(){
-			super( false, false );
-			setOpaque( false );
-			setBackground( BubbleTabMenu.this.getBackground() );
-			animation.addTask( this );
-			
-			setPreferredSize( new Dimension( 20, 20 ) );
-			
-			addMouseListener( new MouseAdapter(){
-				@Override
-				public void mouseEntered( MouseEvent e ){
-					mouseOver = true;
-					animate();
-				}
-				
-				@Override
-				public void mouseExited( MouseEvent e ){
-					mouseOver = false;
-					animate();
-				}
-				
-				@Override
-				public void mouseClicked( MouseEvent e ){
-					open();
-				}
-			});
+	private class Button extends RoundButton{
+		public Button( BasicTrigger trigger ){
+			super( trigger, null, null, null );
+			setController( BubbleTabMenu.this.getController() );
+			setPaintFocusBorder( false );
 		}
-		
-		public void run(){
-			repaint();
+
+		@Override
+		protected AbstractDockColor[] createColors( Dockable dockable, DockAction action ){
+			return new AbstractDockColor[]{
+					createColor( "stack.menu.background.top.mouse", dockable, action, Color.WHITE ),
+					createColor( "stack.menu.background.bottom.mouse", dockable, action, Color.WHITE ),
+					createColor( "stack.menu.border.mouse", dockable, action, Color.BLACK ),
+					
+					createColor( "stack.menu.background.top", dockable, action, Color.WHITE ),
+					createColor( "stack.menu.background.bottom", dockable, action, Color.WHITE ),
+					createColor( "stack.menu.border", dockable, action, Color.BLACK )
+			};
 		}
 		
 		@Override
-		public void paintBackground( Graphics g ){
+		protected AbstractDockColor createColor( String key, Dockable dockable, DockAction action, Color backup ){
+			return new BubbleMenuColor( key, backup );
+		}
+		
+		@Override
+		protected void updateColors(){
+			if( getModel().isMouseInside() || getModel().isMousePressed() ){
+				animate( "top", "stack.menu.background.top.mouse" );
+				animate( "bottom", "stack.menu.background.bottom.mouse" );
+				animate( "border", "stack.menu.border.mouse" );
+			}
+			else{
+				animate( "top", "stack.menu.background.top" );
+				animate( "bottom", "stack.menu.background.bottom" );
+				animate( "border", "stack.menu.border" );
+			}
+		}
+		
+		@Override
+		protected void doPaintBackground( Graphics g ){
+			BubbleColorAnimation animation = getAnimation();
+			
 			Color top = animation.getColor( "top" );
 			Color bottom = animation.getColor( "bottom" );
 			Color border = animation.getColor( "border" );
@@ -229,25 +155,25 @@ public class BubbleTabMenu extends AbstractCombinedMenu{
 			
 			g2.dispose();
 		}
-	}
-
-	/**
-	 * Link to a color that is used to paint this button.
-	 * @author Benjamin Sigg
-	 */
-	protected class BubbleMenuColor extends MenuColor{
-		/**
-		 * Creates a new link.
-		 * @param id the unique identifier of the target
-		 * @param backup the backup color used when the target is not found
-		 */
-		public BubbleMenuColor( String id, Color backup ){
-			super( id, station.getStackDockParent(), BubbleTabMenu.this, backup );
-		}
 		
-		@Override
-		protected void changed( Color oldValue, Color newValue ){
-			animate();
+		/**
+		 * Link to a color that is used to paint this button.
+		 * @author Benjamin Sigg
+		 */
+		protected class BubbleMenuColor extends MenuColor{
+			/**
+			 * Creates a new link.
+			 * @param id the unique identifier of the target
+			 * @param backup the backup color used when the target is not found
+			 */
+			public BubbleMenuColor( String id, Color backup ){
+				super( id, pane.getStation(), BubbleTabMenu.this, backup );
+			}
+			
+			@Override
+			protected void changed( Color oldValue, Color newValue ){
+				updateColors();
+			}
 		}
 	}
 }

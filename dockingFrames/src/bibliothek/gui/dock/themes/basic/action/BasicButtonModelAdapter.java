@@ -27,13 +27,15 @@ package bibliothek.gui.dock.themes.basic.action;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
  * A simple implementation of {@link BasicButtonModelListener} forwarding
- * any event to {@link #changed()}.
+ * any event expect {@link #triggered()}, {@link #bound(BasicButtonModel, DockController)} and
+ * {@link #unbound(BasicButtonModel, DockController)} to {@link #changed()}.
  * @author Benjamin Sigg
  */
 public class BasicButtonModelAdapter implements BasicButtonModelListener{
@@ -86,6 +88,15 @@ public class BasicButtonModelAdapter implements BasicButtonModelListener{
 		changed();
 	}
 
+	public void bound( BasicButtonModel model, DockController controller ){
+		// nothing
+	}
+	
+	public void unbound( BasicButtonModel model, DockController controller ){
+		// nothing
+	}
+	
+	
 	public void triggered(){
 		// nothing
 	}

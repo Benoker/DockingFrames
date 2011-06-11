@@ -38,15 +38,11 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
-import bibliothek.util.Todo;
 import bibliothek.util.Version;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -56,8 +52,6 @@ import bibliothek.util.xml.XElement;
  * Clients should use {@link #getDefaultList()} to get a list of {@link LookAndFeel}s
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_1,
-		description="persistent storage: use string identifier instead of integer")
 public class LookAndFeelList{
 	/** global list of look and feels */
 	private static LookAndFeelList list;
@@ -296,6 +290,46 @@ public class LookAndFeelList{
     }
     
     /**
+     * Gets the {@link LookAndFeel} whose unique identifier is <code>key</code>.
+     * @param key the key to search
+     * @return the handler of the {@link LookAndFeel} or <code>null</code> if <code>key</code> was not found
+     */
+    public Info getFull( String key ){
+    	if( "s.default".equals( key ))
+    		return getDefault();
+    	
+    	if( "s.system".equals( key ))
+    		return getSystem();
+    	
+    	for( Info info : infos ){
+    		if( key.equals( keyOfFullNormal( info ) )){
+    			return info;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    /**
+     * Gets a unique identifier for <code>info</code>.
+     * @param info the item whose identifier is searched
+     * @return a unique identifier describing <code>info</code>
+     */
+    public String keyOfFull( Info info ){
+    	if( info == defaultInfo )
+    		return "s.default";
+    	
+    	if( info == systemInfo )
+    		return "s.system";
+    	
+    	return keyOfFullNormal( info );
+    }
+    
+    private String keyOfFullNormal( Info info ){
+    	return "l." + info.getName().length() + "." + info.getName() + "." + info.className;
+    }
+    
+    /**
      * Removes the {@link LookAndFeel} at location <code>index</code> from 
      * this list.
      * @param info the LookAndFeel to remove
@@ -412,8 +446,8 @@ public class LookAndFeelList{
      * @throws IOException if the method can't write into <code>out</code>
      */
     public void write( DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_4 );
-        out.writeInt( indexOfFull( getLookAndFeel() ) );
+        Version.write( out, Version.VERSION_1_1_1 );
+        out.writeUTF( keyOfFull( getLookAndFeel() ) );
     }
     
     /**
@@ -427,13 +461,28 @@ public class LookAndFeelList{
         Version version = Version.read( in );
         version.checkCurrent();
         
-        int index = in.readInt();
-        if( !hasRead || !allowReadOnlyOnce ){
-            if( index >= 0 && index < size()+2 ){
-                setLookAndFeel( getFull( index ) );
-            }
+        if( version.equals( Version.VERSION_1_0_4 )){
+	        int index = in.readInt();
+	        if( !hasRead || !allowReadOnlyOnce ){
+	            if( index >= 0 && index < size()+2 ){
+	                setLookAndFeel( getFull( index ) );
+	            }
+	        }
+	        hasRead = true;
         }
-        hasRead = true;
+        else{
+        	String key = in.readUTF();
+        	if( !hasRead || !allowReadOnlyOnce ){
+        		Info laf = getFull( key );
+        		if( laf == null ){
+        			laf = getDefault();
+        		}
+        		if( laf != null ){
+        			setLookAndFeel( laf );
+        		}
+        	}
+        	hasRead = true;
+        }
     }
     
     /**
@@ -442,7 +491,7 @@ public class LookAndFeelList{
      * <code>element</code> will not be changed.
      */
     public void writeXML( XElement element ){
-        element.addElement( "index" ).setInt( indexOfFull( getLookAndFeel() ) );
+        element.addElement( "key" ).setString( keyOfFull( getLookAndFeel() ) );
     }
     
     /**
@@ -453,9 +502,25 @@ public class LookAndFeelList{
      */
     public void readXML( XElement element ){
         if( !hasRead || !allowReadOnlyOnce ){
-            int index = element.getElement( "index" ).getInt();
-            if( index >= 0 && index < size()+2 ){
-                setLookAndFeel( getFull( index ) );
+        	XElement xkey = element.getElement( "key" );
+        	Info info = null;
+        	
+        	if( xkey == null ){
+        		XElement xindex = element.getElement( "index" );
+        		int index = xindex.getInt();
+        		if( index >= 0 && index < size()+2 ){
+                    info = getFull( index );
+                }
+        		info = getFull( xindex.getInt() );
+        	}
+        	else{
+        		info = getFull( xkey.getString() );
+        	}
+        	if( info == null ){
+        		info = getDefault();
+        	}
+        	if( info != null ){
+                setLookAndFeel( info );
             }
         }
         hasRead = true;

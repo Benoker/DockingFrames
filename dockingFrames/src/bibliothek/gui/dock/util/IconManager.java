@@ -26,15 +26,15 @@
 
 package bibliothek.gui.dock.util;
 
+import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.util.icon.DefaultIconScheme;
-import bibliothek.gui.dock.util.icon.DockIconBridge;
 import bibliothek.gui.dock.util.icon.DockIcon;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Version;
+import bibliothek.gui.dock.util.icon.DockIconBridge;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * A map of icons which are used by various objects. The icon is stored
@@ -46,19 +46,21 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  */
 public class IconManager extends UIProperties<Icon, DockIcon, DockIconBridge>{
+	/**
+	 * What size the framework should expect the smallest icon to be. This number is used to calculate the
+	 * minimum and the preferred size of various {@link Component}s. This is not a hard boundary, just expect any
+	 * icon smaller than this constant to be surrounded by some addional empty space. The default size
+	 * is 16x16 pixels.
+	 */
+	public static final PropertyKey<Dimension> MINIMUM_ICON_SIZE = new PropertyKey<Dimension>( "dock.icon.minimumSize", 
+			new ConstantPropertyFactory<Dimension>( new Dimension( 16, 16 )), true );
+	
     /**
      * Creates a new {@link IconManager}.
      * @param controller the owner of this map
      */
     public IconManager( DockController controller ){
     	super( controller );
-    	
-    	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MAJOR, target=Version.VERSION_1_1_1,
-    			description="load these icons somewhere else, for example in the DockControllerFactory")
-    	DefaultIconScheme scheme = new DefaultIconScheme( "data/icons.ini", controller );
-    	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
-    	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );
-    	setScheme( Priority.DEFAULT, scheme );
     }
     
     /**

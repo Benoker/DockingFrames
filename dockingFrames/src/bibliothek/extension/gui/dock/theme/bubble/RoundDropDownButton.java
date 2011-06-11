@@ -43,7 +43,13 @@ import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A button which can be pressed by the user either to execute 
@@ -97,6 +103,14 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
     
     /** the colors used on this button */
     private RoundActionColor[] colors;
+    
+    /** the expected minimum size of any icon */
+    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
+		@Override
+		protected void valueChanged( Dimension oldValue, Dimension newValue ){
+			revalidate();
+		}
+	};
     
     /**
      * Creates a new button
@@ -177,6 +191,7 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         }
         
         animation.kick();
+        minimumIconSize.setProperties( controller );
     }
     
     public BasicDropDownButtonModel getModel() {
@@ -199,8 +214,10 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             return super.getPreferredSize();
         
         Dimension icon = model.getMaxIconSize();
-        int w = Math.max( icon.width, 10 );
-        int h = Math.max( icon.height, 10 );
+        Dimension min = minimumIconSize.getValue();
+        
+        int w = Math.max( icon.width, min.width );
+        int h = Math.max( icon.height, min.height );
         
         if( model.getOrientation().isHorizontal() )
             return new Dimension( (int)(1.5 * w + 1 + 1.5*dropIcon.getIconWidth()), (int)(1.5 * h));
@@ -357,6 +374,8 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
      * Creates an icon that is shown in the smaller subbutton of this button.
      * @return the icon
      */
+    @Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
+    		description="make this icon dependent on the size of the button" )
     protected Icon createDropIcon(){
         return new Icon(){
             public int getIconHeight(){
@@ -392,12 +411,13 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         int rh = getHeight();
         
         Dimension icon = model.getMaxIconSize();
+        Dimension min = minimumIconSize.getValue();
         
-        int iconWidth = icon.width < 10 ? 10 : icon.width;
-        int iconHeight = icon.height < 10 ? 10 : icon.height;
+        int iconWidth = icon.width < min.width ? min.width : icon.width;
+        int iconHeight = icon.height < min.height ? min.height : icon.height;
         
-        int dropIconWidth = dropIcon == null ? 5 : dropIcon.getIconWidth();
-        int dropIconHeight = dropIcon == null ? 5 : dropIcon.getIconHeight();
+        int dropIconWidth = dropIcon == null ? (min.width/2) : dropIcon.getIconWidth();
+        int dropIconHeight = dropIcon == null ? (min.height/2) : dropIcon.getIconHeight();
         
         if( model.getOrientation().isHorizontal() ){
         	int mx = rx + (int)( 0.5 * 1.25 * iconWidth + 0.5 * (rw - 1.25 * dropIconWidth) );

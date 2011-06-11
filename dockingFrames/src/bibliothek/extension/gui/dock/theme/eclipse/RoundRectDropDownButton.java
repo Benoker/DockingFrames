@@ -36,6 +36,7 @@ import java.awt.event.FocusListener;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.control.focus.FocusAwareComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
@@ -46,6 +47,8 @@ import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.Colors;
 
 /**
@@ -67,6 +70,14 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
     /** a piece of code that will be executed after this component requests focus */
     private Runnable afterFocusRequest;
     
+    /** the expected minimum size of icons */
+    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
+    	@Override
+    	protected void valueChanged( Dimension oldValue, Dimension newValue ){
+    		revalidate();
+    	}
+	};
+	
     /**
      * Creates a new button
      * @param handler a handler used to announce that this button is clicked
@@ -96,6 +107,15 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         			requestFocusInWindow();
         			invokeAfterFocusRequest();
         		}
+        	}
+        	@Override
+        	public void bound( BasicButtonModel model, DockController controller ){
+	        	minimumIconSize.setProperties( controller );
+        	}
+        	
+        	@Override
+        	public void unbound( BasicButtonModel model, DockController controller ){
+        		minimumIconSize.setProperties( (DockController)controller );
         	}
         });
         
@@ -150,8 +170,10 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
             return super.getPreferredSize();
         
         Dimension icon = model.getMaxIconSize();
-        int w = Math.max( icon.width+4, 10 );
-        int h = Math.max( icon.height+4, 10 );
+        Dimension min = minimumIconSize.getValue();
+        
+        int w = Math.max( icon.width+4, min.width );
+        int h = Math.max( icon.height+4, min.height );
         
         if( model.getOrientation().isHorizontal() )
             return new Dimension( w + 6 + dropIcon.getIconWidth(), h );

@@ -548,8 +548,16 @@
 - API: DefaultIconScheme now also stores custom DockIconBridges
 - API: The icon used when there are too many Dockables on a StackDockStation and the EclipseTheme is used, now depends on the actual number of overflowing Dockables. Clients can use their own icon by installing a DockIconBridge for type TabMenuDockIcon.KIND_TAB_MENU.
 ! API: Added method "dragged", "dragging", and "searched" to VetoableDockRelocatorListener, the method "draging" was removed and got replaced by "searched". 
-- API: It is no longer possible to drop a Dockable over itself. Clients can reenable the old behavior by calling "DockRelocator.setPreventMoveover( false )".
 - API: New method DockController.getRepresentative searches for all DockElementRepresentatives of a DockElement. Also DockUtilities.getShowingComponent now checks the DockElementRepresentatives as well.
+- API: The default set of icons is now loaded in DockController.createDefaultIconScheme
+- API: New property IconManager.MINIMUM_ICON_SIZE tells the framework how small icons can get. The size of some Components does not shrink below this number.
+- Bugfix: The unique identifier for LookAndFeels known to the LookAndFeelList no longer depends on the order in which the LookAndFeels are found.
+! API: Extracted inner classes of MenuLineLayout for more flexibility. 
+! API: TabsLayoutBlock is now an interface. The new factory MenuLineLayoutFactory creates the different LayoutBlocks used by the MenuLineLayout, clients can make use of the MenuLineLayoutFactory to alter the behavior of a single block of components.
+- API: If using the MenuLineLayout: the new MenuLineOrder (created by MenuLineLayoutFactory) defines order, weight, alignment and extend of tabs, menus and info component
+- API: FlatTheme and BubbleTheme now also support the MenuLineLayout, they now install a MenuLineLayout instead of a RowLayout
+- Bugfix: Calling CControlPerspective.getPerspective on an application with no Dockables failed.
+- Bugfix: DefaultSplitLayoutManager should no longer throw NPE when a node returns "null" as minimum size
 
 {Removal of deprecated items}
 ! API: SizeManager and all subclasses have been removed without replacement. They were created to support persistent storage of the layout of a SplitDockStation, this job is now done by placeholders.

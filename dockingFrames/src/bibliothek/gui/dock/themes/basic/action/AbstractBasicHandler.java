@@ -132,6 +132,9 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
         		model.setBorder( handle.id, handle.modifier );
         	}
         }
+        if( bound ){
+        	model.setController( dockable.getController() );
+        }
     }
     
 
@@ -145,6 +148,8 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
 	        for( BorderHandle handle : borders.values() ){
 	        	handle.setController( controller );
 	        }
+	        
+	        model.setController( controller );
     	}
     }
     
@@ -157,6 +162,8 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
 	        for( BorderHandle handle : borders.values() ){
 	        	handle.setController( null );
 	        }
+	        
+	        model.setController( null );
     	}
     }
     

@@ -230,16 +230,18 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 			PerspectiveDockable[] dockables = tree.getDockables( key );
 			PerspectiveDockable dockable = null;
 			
-			if( dockables.length == 1 ){
-				dockable = dockables[0];
-			}
-			else if( dockables.length > 1 ){
-				dockable = combine( dockables, tree.getSelected( key ) );
-			}
-			
-			if( dockable != null ){
-				DockUtilities.ensureTreeValidity( this, dockable );
-				dockable.setParent( this );
+			if( dockables != null && dockables.length != 0 ){
+				if( dockables.length == 1 ){
+					dockable = dockables[0];
+				}
+				else if( dockables.length > 1 ){
+					dockable = combine( dockables, tree.getSelected( key ) );
+				}
+				
+				if( dockable != null ){
+					DockUtilities.ensureTreeValidity( this, dockable );
+					dockable.setParent( this );
+				}
 			}
 			
 			return new Leaf( dockable, toSet( tree.getPlaceholders( key ) ), tree.getPlaceholderMap( key ), key.getNodeId() );

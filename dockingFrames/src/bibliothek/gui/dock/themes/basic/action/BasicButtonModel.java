@@ -122,6 +122,9 @@ public class BasicButtonModel {
     /** a list of borders to use by the associated button */
     private Map<String, BorderModifier> borders = new HashMap<String, BorderModifier>();
     
+    /** the controller in whose realm this model is used */
+    private DockController controller;
+    
     /**
      * Creates a new model.
      * @param owner the view of this model
@@ -209,6 +212,27 @@ public class BasicButtonModel {
     	if( listener == null )
     		throw new NullPointerException( "listener must not be null" );
     	listeners.add( listener );
+    }
+    
+    /**
+     * Informs this model about the {@link DockController} in whose realm it is used.
+     * @param controller the realm in which this model works
+     */
+    public void setController( DockController controller ){
+    	if( this.controller != null ){
+    		DockController old = this.controller;
+    		this.controller = null;
+    		for( BasicButtonModelListener listener : listeners() ){
+    			listener.unbound( this, old );
+    		}
+    	}
+    	
+    	if( controller != null ){
+    		this.controller = controller;
+    		for( BasicButtonModelListener listener : listeners() ){
+    			listener.bound( this, this.controller );
+    		}
+    	}
     }
     
     /**

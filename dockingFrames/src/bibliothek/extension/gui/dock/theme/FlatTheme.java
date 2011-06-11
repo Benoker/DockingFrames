@@ -56,6 +56,8 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.tab.MenuLineLayout;
+import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
@@ -136,6 +138,8 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         		request.answer( new FlatButtonTitle( request.getTarget(), request.getVersion() ) );
         	}
         });
+        
+        controller.getProperties().set( TabPane.LAYOUT_MANAGER, new MenuLineLayout(), Priority.THEME );
 
         controller.getActionViewConverter().putTheme( ActionType.BUTTON, ViewTarget.TITLE, 
                 new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
@@ -213,6 +217,8 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         controller.getActionViewConverter().putTheme( ActionType.MENU, ViewTarget.TITLE, null );
         controller.getActionViewConverter().putTheme( ActionType.RADIO, ViewTarget.TITLE, null );
         controller.getActionViewConverter().putTheme( ActionType.DROP_DOWN, ViewTarget.TITLE, null );
+        
+        controller.getProperties().unset( TabPane.LAYOUT_MANAGER, Priority.THEME );
     }
 
 //    @Override

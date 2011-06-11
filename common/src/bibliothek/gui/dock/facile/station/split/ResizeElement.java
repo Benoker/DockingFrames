@@ -116,6 +116,23 @@ public abstract class ResizeElement<T>{
     }
     
     /**
+     * Checks whether this {@link ResizeElement} is valid. A valid {@link ResizeElement} has no children
+     * that are <code>null</code>.
+     * @return <code>true</code> if this element can actually be used
+     */
+    public boolean isValid(){
+    	ResizeElement<T>[] children = getChildren();
+        if( children != null ){
+            for( ResizeElement<T> child : children ){
+                if( child == null ){
+                	return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
      * Adapts the size of the children of this element given the size change
      * the parent could provide.
      * @param deltaWidth the change of this elements width

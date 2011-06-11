@@ -92,6 +92,13 @@ public interface TabPane {
 	public Dockable getSelectedDockable();
 	
 	/**
+	 * Sets the dockable which is current selected on this pane. Must be
+	 * called with a {@link Dockable} that is already a child of this pane.
+	 * @param dockable the newly selected dockable
+	 */
+	public void setSelectedDockable( Dockable dockable );
+	
+	/**
 	 * Tells at which side tabs are to be displayed. This property is
 	 * intended for a {@link TabLayoutManager}, but may be ignored. 
 	 * @return the side, not <code>null</code>

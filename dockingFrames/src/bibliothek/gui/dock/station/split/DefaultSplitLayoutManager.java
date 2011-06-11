@@ -297,18 +297,25 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
     public double validateDivider( SplitDockStation station, double divider, Node node ){
         divider = Math.min( 1, Math.max( 0, divider ));
         
-        Dimension leftMin;
-        Dimension rightMin;
+        SplitNode left = node.getLeft();
+        SplitNode right = node.getRight();
         
-        if( node.getLeft() == null )
-            leftMin = new Dimension();
-        else
-            leftMin = node.getLeft().getMinimumSize();
+        Dimension leftMin = null;
+        Dimension rightMin = null;
         
-        if( node.getRight() == null )
-            rightMin = new Dimension();
-        else
-            rightMin = node.getRight().getMinimumSize();
+        if( left != null ){
+        	leftMin = left.getMinimumSize();
+        }
+        if( right != null ){
+        	rightMin = right.getMinimumSize();
+        }
+        
+        if( leftMin == null ){
+        	leftMin = new Dimension();
+        }
+        if( rightMin == null ){
+        	rightMin = new Dimension();
+        }
         
         return validateDivider( station, divider, leftMin, rightMin, node.getOrientation(), node.getWidth(), node.getHeight() );
     }
@@ -317,21 +324,14 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
      * Tests whether the specified <code>divider</code>-value is legal or not.
      * @param station the station for which the divider is intended
      * @param divider the value of a divider on a {@link Node}
-     * @param minimumLeft the minimal number of pixels on the left or top
-     * side of the divider
-     * @param minimumRight the minimal number of pixels on the right or bottom
-     * side of the divider
+     * @param minimumLeft the minimal number of pixels on the left or top side of the divider
+     * @param minimumRight the minimal number of pixels on the right or bottom side of the divider
      * @param orientation the orientation of the divider
-     * @param width the relative width of the base (in respect to the size of
-     * this station)
-     * @param height the relative height of the base (in respect to the size of
-     * this station)
+     * @param width the relative width of the base (in respect to the size of this station)
+     * @param height the relative height of the base (in respect to the size of this station)
      * @return a legal value as near as possible to <code>divider</code>
      */
-    protected double validateDivider( SplitDockStation station, double divider,
-            Dimension minimumLeft, Dimension minimumRight,
-            Orientation orientation, double width, double height ){
-        
+    protected double validateDivider( SplitDockStation station, double divider, Dimension minimumLeft, Dimension minimumRight, Orientation orientation, double width, double height ){
         double factor;
         double size;
         

@@ -28,13 +28,16 @@ package bibliothek.gui.dock.station.stack.tab;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
  * This layout puts all tabs in one, or if there is not enough space, in many,
  * rows. This {@link TabLayoutManager} does never create menus and ignores the 
- * info panel.
+ * info panel.<br>
+ * Please do note that this manager is no longer used by any of the default
+ * {@link DockTheme}s. It remains however in the framework for future uses.
  * @author Benjamin Sigg
  */
 public class RowLayout implements TabLayoutManager{

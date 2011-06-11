@@ -100,7 +100,10 @@ import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.util.Todo;
 import bibliothek.util.Version;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -1501,6 +1504,8 @@ public class DockFrontend {
      * @return the new perspective, not <code>null</code>
      * @see #getPerspective(boolean, FrontendPerspectiveCache)
      */
+    @Todo( target=Todo.Version.VERSION_1_1_1, priority=Priority.ENHANCEMENT, compatibility=Compatibility.COMPATIBLE, 
+    		description="The result of this method should be a type of perspective with which clients can actually work, e.g. they should be able to access the predefined elements")
     public Perspective getPerspective( boolean entry ){
     	return getPerspective( entry, new DefaultFrontendPerspectiveCache( this ) );
     }

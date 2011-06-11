@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.Icon;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
@@ -103,6 +104,9 @@ import bibliothek.gui.dock.util.WindowProviderWrapper;
 import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.extension.ExtensionManager;
 import bibliothek.gui.dock.util.font.FontManager;
+import bibliothek.gui.dock.util.icon.DefaultIconScheme;
+import bibliothek.gui.dock.util.icon.DockIcon;
+import bibliothek.gui.dock.util.icon.DockIconBridge;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.text.DefaultTextScheme;
 import bibliothek.gui.dock.util.text.TextBridge;
@@ -269,6 +273,7 @@ public class DockController {
         properties = new DockProperties( this );
         theme = new ThemeManager( this );
         icons = new IconManager( this );
+        icons.setScheme( Priority.DEFAULT, createDefaultIconScheme() );
         colors = new ColorManager( this );
         fonts = new FontManager( this );
         dockTitles = new DockTitleManager( this );
@@ -353,6 +358,17 @@ public class DockController {
         
         for( ControllerSetupListener listener : setupListeners )
             listener.done( this );
+    }
+    
+    /**
+     * Creates the default {@link UIScheme} for the {@link IconManager}.
+     * @return the default {@link UIScheme}, should not be <code>null</code>
+     */
+    protected UIScheme<Icon, DockIcon, DockIconBridge> createDefaultIconScheme(){
+    	DefaultIconScheme scheme = new DefaultIconScheme( "data/icons.ini", this );
+    	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
+    	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );
+    	return scheme;
     }
     
     /**

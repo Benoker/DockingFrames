@@ -46,7 +46,6 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -122,8 +121,7 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     public void layoutPerspective( FlapDockPerspective perspective, FlapDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
 	    perspective.read( layout.getPlaceholders(), children );	
     }
-    
-    @Todo
+
     public FlapDockStationLayout getPerspectiveLayout( FlapDockPerspective element, Map<PerspectiveDockable, Integer> children ){
     	boolean autoDirection = true;
     	Direction direction = Direction.SOUTH;

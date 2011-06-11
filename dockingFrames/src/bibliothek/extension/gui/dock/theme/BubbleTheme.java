@@ -57,6 +57,8 @@ import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.tab.MenuLineLayout;
+import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
@@ -123,6 +125,8 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
                 FlapDockStation.BUTTON_TITLE_ID, 
                 BubbleButtonDockTitle.FACTORY );
 
+        controller.getProperties().set( TabPane.LAYOUT_MANAGER, new MenuLineLayout(), Priority.THEME );
+        
         controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/bubble/icons.ini", BubbleTheme.class.getClassLoader(), controller ) );
 
         ActionViewConverter converter = controller.getActionViewConverter();
@@ -162,7 +166,8 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     public void uninstall( DockController controller ){
         super.uninstall( controller );
         controllers.remove( controller );
-
+        controller.getProperties().unset( TabPane.LAYOUT_MANAGER, Priority.THEME );
+        
         controller.getDockTitleManager().clearThemeFactories();
 
         controller.getIcons().setScheme( Priority.THEME, null );

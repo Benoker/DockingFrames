@@ -314,7 +314,7 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( 0, 1, 0, height );
 				g2d.setPaint( normalBackground );
 				// left
-				if (tabIndex != 0) {
+				if (tabIndex != 0 || getX() >= 1) {
 					g2d.drawLine(1, 0, 1, 0);
 					g2d.drawLine(0, 1, 0, height);
 				}
@@ -327,7 +327,7 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( 0, height-2, 0, 0 );
 				g2d.setPaint( normalBackground );
 				// left
-				if (tabIndex != 0) {
+				if (tabIndex != 0 || getX() >= 1) {
 					g2d.drawLine(1, height-1, 1, height-1 );
 					g2d.drawLine(0, height-2, 0, 0 );
 				}
@@ -340,7 +340,7 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( 1, 0, width, 0 );
 				g2d.setPaint( normalBackground );
 				// left
-				if (tabIndex != 0) {
+				if (tabIndex != 0 || getY() >= 1) {
 					g2d.drawLine( 0, 1, 0, 1 );
 					g2d.drawLine( 1, 0, width, 0 );
 				}
@@ -353,7 +353,7 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( 0, 0, width-1, 0 );
 				g2d.setPaint( normalBackground );
 				// left
-				if (tabIndex != 0) {
+				if (tabIndex != 0 || getY() >= 1) {
 					g2d.drawLine( width-1, 1, width-1, 1 );
 					g2d.drawLine( 0, 0, width-2, 0 );
 				}

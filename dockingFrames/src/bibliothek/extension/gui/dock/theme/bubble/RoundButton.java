@@ -49,7 +49,11 @@ import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.util.color.DockColor;
 
 /**
  * A round button is a button that has a oval form. Clients should call
@@ -80,14 +84,23 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	
     private BasicButtonModel model;
 	
-    private RoundActionColor[] colors;
+    private AbstractDockColor[] colors;
+    
+    private boolean paintFocusBorder = true;
+    
+    /** the expected minimum size of any icon */
+    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
+		@Override
+		protected void valueChanged( Dimension oldValue, Dimension newValue ){
+			revalidate();
+		}
+	};
     
     /**
      * Creates a new round button.
      * @param trigger a trigger which gets informed when the user clicks the
      * button.
      * @param initializer a strategy to lazily initialize resources, can be <code>null</code>
-     * 
      * @param dockable the dockable for which this button is used
      * @param action the action for which this button is used
      */
@@ -96,25 +109,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		
 		animation = new BubbleColorAnimation();
 		
-		colors = new RoundActionColor[]{
-		        new RoundActionColor( "action.button", dockable, action, Color.WHITE ),
-		        new RoundActionColor( "action.button.enabled", dockable, action, Color.LIGHT_GRAY ),
-		        new RoundActionColor( "action.button.selected", dockable, action, Color.YELLOW ),
-		        new RoundActionColor( "action.button.selected.enabled", dockable, action, Color.ORANGE ),
-		        new RoundActionColor( "action.button.mouse.enabled", dockable, action, Color.RED ),
-		        new RoundActionColor( "action.button.mouse.selected.enabled", dockable, action, new Color( 128, 0, 0) ),
-		        new RoundActionColor( "action.button.pressed.enabled", dockable, action, Color.BLUE ),
-		        new RoundActionColor( "action.button.pressed.selected.enabled", dockable, action, Color.MAGENTA ),
-		        
-		        new RoundActionColor( "action.button.focus", dockable, action, Color.DARK_GRAY ),
-		        new RoundActionColor( "action.button.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		        new RoundActionColor( "action.button.selected.focus", dockable, action, Color.DARK_GRAY ),
-		        new RoundActionColor( "action.button.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		        new RoundActionColor( "action.button.mouse.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		        new RoundActionColor( "action.button.mouse.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		        new RoundActionColor( "action.button.pressed.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		        new RoundActionColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		};
+		colors = createColors( dockable, action );
 		
         model = new BasicButtonModel( this, trigger, initializer ){
             @Override
@@ -150,17 +145,76 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		    }
 		});
 	}
-    
+	
+	protected AbstractDockColor[] createColors( Dockable dockable, DockAction action ){
+		return new AbstractDockColor[]{
+		        createColor( "action.button", dockable, action, Color.WHITE ),
+		        createColor( "action.button.enabled", dockable, action, Color.LIGHT_GRAY ),
+		        createColor( "action.button.selected", dockable, action, Color.YELLOW ),
+		        createColor( "action.button.selected.enabled", dockable, action, Color.ORANGE ),
+		        createColor( "action.button.mouse.enabled", dockable, action, Color.RED ),
+		        createColor( "action.button.mouse.selected.enabled", dockable, action, new Color( 128, 0, 0) ),
+		        createColor( "action.button.pressed.enabled", dockable, action, Color.BLUE ),
+		        createColor( "action.button.pressed.selected.enabled", dockable, action, Color.MAGENTA ),
+		        
+		        createColor( "action.button.focus", dockable, action, Color.DARK_GRAY ),
+		        createColor( "action.button.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        createColor( "action.button.selected.focus", dockable, action, Color.DARK_GRAY ),
+		        createColor( "action.button.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        createColor( "action.button.mouse.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        createColor( "action.button.mouse.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        createColor( "action.button.pressed.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        createColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY )};
+	}
+	
+	/**
+	 * Creates a new {@link DockColor} representing one color used by this button.
+	 * @param key the unique identifier of the color
+	 * @param dockable the dockable for which the color is used, may be <code>null</code>
+	 * @param action the action represented by this button, may be <code>null</code>
+	 * @param backup the backup color that is used if no other color was found
+	 * @return the new {@link DockColor}
+	 */
+	protected AbstractDockColor createColor( String key, Dockable dockable, DockAction action, Color backup ){
+		return new RoundActionColor( key, dockable, action, backup );
+	}
+	
+	/**
+	 * Access to the {@link BubbleColorAnimation} which is responsible for repainting this button. Subclasses
+	 * may use this method to insert or modify custom colors.
+	 * @return the animtation
+	 */
+	protected BubbleColorAnimation getAnimation(){
+		return animation;
+	}
+	
+	/**
+	 * Sets whether a special border should be painted if this button is focused.
+	 * @param paintFocusBorder whether to paint the border
+	 */
+	public void setPaintFocusBorder( boolean paintFocusBorder ){
+		this.paintFocusBorder = paintFocusBorder;
+	}
+	
+	/**
+	 * Tells whether a special border is painted if this button is focused.
+	 * @return whether to paint a special border
+	 */
+	public boolean isPaintFocusBorder(){
+		return paintFocusBorder;
+	}
+	
 	/**
 	 * Connects this button with a controller, that is necessary to get the
 	 * colors for this button.
 	 * @param controller the controller, can be <code>null</code>
 	 */
 	public void setController( DockController controller ){
-	    for( RoundActionColor color : colors )
+	    for( AbstractDockColor color : colors )
 	        color.connect( controller );
 	    
 	    animation.kick();
+	    minimumIconSize.setProperties( controller );
 	}
 	
     public BasicButtonModel getModel() {
@@ -200,8 +254,10 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	@Override
 	public Dimension getPreferredSize() {
 	    Dimension icon = model.getMaxIconSize();
-        icon.width = Math.max( icon.width, 10 );
-        icon.height = Math.max( icon.height, 10 );
+	    Dimension min = minimumIconSize.getValue();
+	    
+        icon.width = Math.max( icon.width, min.width );
+        icon.height = Math.max( icon.height, min.height );
 
         return new Dimension((int)(icon.width*1.5),(int)(icon.height*1.5));
 	}
@@ -254,13 +310,21 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		g2.dispose();
 	}
 	
-	private void doPaintBackground( Graphics g ){
+	/**
+	 * Paints the background of this button.
+	 * @param g the graphics context to use
+	 */
+	protected void doPaintBackground( Graphics g ){
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(animation.getColor("button"));
 		g2.fillOval( 0, 0, getWidth(), getHeight() );
 	}
 	
-	private void doPaintForeground( Graphics g ){
+	/**
+	 * Paints the foreground of this button.
+	 * @param g the graphics context to use
+	 */
+	protected void doPaintForeground( Graphics g ){
 		Graphics2D g2 = (Graphics2D)g;
 		
         Icon icon = model.getPaintIcon();
@@ -270,7 +334,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 					(getHeight() - icon.getIconHeight()) / 2 );
 		}
 
-		if( hasFocus() && isFocusable() && isEnabled() ){
+		if( paintFocusBorder && hasFocus() && isFocusable() && isEnabled() ){
 		    Stroke stroke = g2.getStroke();
             g2.setStroke( new BasicStroke( 3f ) );
 		    g2.setColor( animation.getColor( "focus" ) );
@@ -279,14 +343,18 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		}
 	}
 
-    private void updateColors() {
+	/**
+	 * Reads all {@link DockColor}s of this {@link RoundButton} and updates the animation
+	 * if necessary.
+	 */
+    protected void updateColors() {
     	String postfix="";
     	boolean mousePressed = model.isMousePressed();
         boolean mouseEntered = model.isMouseInside();
         boolean selected = model.isSelected();
         boolean enabled = model.isEnabled();
         
-    	if( enabled&&mousePressed )
+    	if( enabled && mousePressed )
     		postfix = ".pressed";
     	
     	if( enabled && mouseEntered && !mousePressed )
@@ -298,20 +366,35 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     	if( enabled )
     		postfix += ".enabled";
     	
-    	String key = "action.button"+ postfix;
-    	for( RoundActionColor color : colors ){
+    	String key = "action.button" + postfix;
+    	for( AbstractDockColor color : colors ){
     	    if( key.equals( color.getId() )){
     	        animation.putColor( "button", color.value() );
     	        break;
     	    }
     	}
         key += ".focus";
-        for( RoundActionColor color : colors ){
+        for( AbstractDockColor color : colors ){
             if( key.equals( color.getId() )){
                 animation.putColor( "focus", color.value() );
                 break;
             }
         }       
+    }
+    
+    /**
+     * Searches for the {@link AbstractDockColor} with id <code>color</code> and sets this
+     * color in the {@link #getAnimation() animation}.
+     * @param key the key of the color in the animation
+     * @param color the key of the {@link AbstractDockColor}
+     */
+    protected void animate( String key, String color ){
+    	for( AbstractDockColor value : colors ){
+    		if( value.getId().equals( color )){
+    			animation.putColor( key, value.color() );
+    			return;
+    		}
+    	}
     }
     
     /**

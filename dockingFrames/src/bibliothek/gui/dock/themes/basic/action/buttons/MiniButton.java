@@ -39,6 +39,7 @@ import javax.swing.JComponent;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
@@ -46,10 +47,8 @@ import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
+import bibliothek.gui.dock.util.IconManager;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * A small {@link Component} used as view of a {@link BasicButtonModel}.
@@ -88,6 +87,14 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     /** the model storing the properties for this button */
     private M model;
     
+    /** the expected minimum size of icons */
+    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
+    	@Override
+    	protected void valueChanged( Dimension oldValue, Dimension newValue ){
+    		revalidate();
+    	}
+	};
+    
     /** a listener to {@link #model} */
     private BasicButtonModelAdapter listener = new BasicButtonModelAdapter(){
     	@Override
@@ -113,6 +120,16 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     	@Override
     	public void borderChanged( BasicButtonModel model, String key, BorderModifier oldBorder, BorderModifier newBorder ){
     		updateBorder();
+    	}
+    	
+    	@Override
+    	public void bound( BasicButtonModel model, DockController controller ){
+    		minimumIconSize.setProperties( controller );
+    	}
+    	
+    	@Override
+    	public void unbound( BasicButtonModel model, DockController controller ){
+    		minimumIconSize.setProperties( (DockController)null );
     	}
     };
     
@@ -387,18 +404,25 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         g.drawLine( x, y+h-2, x,   y+h-2 );
     }
     
+    /**
+     * Gets the expected minimum size of any icon.
+     * @return the expected minimum size of any icon
+     */
+    protected Dimension getMinimumIconSize(){
+    	return minimumIconSize.getValue();
+    }
+    
     @Override
-    @Todo(compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="dont hardcode the minimum size")
     public Dimension getPreferredSize() {
     	if( isPreferredSizeSet() )
     		return super.getPreferredSize();
     	
     	Insets max = getMaxBorderInsets();
     	Dimension size = model.getMaxIconSize();
+    	Dimension min = getMinimumIconSize();
         
-        size.width = Math.max( size.width, 16 );
-        size.height = Math.max( size.height, 16 );
+        size.width = Math.max( size.width, min.width );
+        size.height = Math.max( size.height, min.height );
         
         size.width += max.left + max.right + 2;
         size.height += max.top + max.bottom + 2;

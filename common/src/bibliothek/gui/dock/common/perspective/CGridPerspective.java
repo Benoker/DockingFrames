@@ -344,22 +344,24 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	}
 
 	private void handle( Entry entry, double x, double y, double width, double height ){
-		if( entry.asLeaf() != null ) {
-			PerspectiveDockable dockable = entry.asLeaf().getDockable();
-			if( dockable != null ) {
-				grid.addDockable( x, y, width, height, dockable );
-			}
-		}
-		else{
-			Node node = entry.asNode();
-			double divider = node.getDivider();
-			if( node.getOrientation() == Orientation.HORIZONTAL ){
-				handle( node.getChildA(), x, y, width*divider, height );
-				handle( node.getChildB(), x+width*divider, y, width*(1-divider), height );
+		if( entry != null ){
+			if( entry.asLeaf() != null ) {
+				PerspectiveDockable dockable = entry.asLeaf().getDockable();
+				if( dockable != null ) {
+					grid.addDockable( x, y, width, height, dockable );
+				}
 			}
 			else{
-				handle( node.getChildA(), x, y, width, height*divider );
-				handle( node.getChildB(), x, y+height*divider, width, height*(1-divider) );
+				Node node = entry.asNode();
+				double divider = node.getDivider();
+				if( node.getOrientation() == Orientation.HORIZONTAL ){
+					handle( node.getChildA(), x, y, width*divider, height );
+					handle( node.getChildB(), x+width*divider, y, width*(1-divider), height );
+				}
+				else{
+					handle( node.getChildA(), x, y, width, height*divider );
+					handle( node.getChildB(), x, y+height*divider, width, height*(1-divider) );
+				}
 			}
 		}
 	}

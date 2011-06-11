@@ -41,7 +41,7 @@ import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
  * This {@link TabsLayoutBlock} orders its tabs in a line.
  * @author Benjamin Sigg
  */
-public class LineTabsLayoutBlock extends TabsLayoutBlock{
+public class LineTabsLayoutBlock extends AbstractTabsLayoutBlock{
 	/**
 	 * If set then all tabs will have the same height (if the line is horizontal),
 	 * otherwise the preferred/minimum height is used whenever possible 
@@ -64,6 +64,18 @@ public class LineTabsLayoutBlock extends TabsLayoutBlock{
 	 */
 	public void setSameSize( boolean sameSize ){
 		this.sameSize = sameSize;
+	}
+	
+	public boolean isAllTabs( Size size ){
+		return ((LineSize)size).isAllTabs();
+	}
+	
+	public Tab[] getTabs( Size size ){
+		return ((LineSize)size).getTabs();
+	}
+	
+	public int getTabsCount( Size size ){
+		return ((LineSize)size).getTabCount();
 	}
 	
 	/**

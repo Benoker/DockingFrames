@@ -51,7 +51,7 @@ import bibliothek.util.Colors;
 
 
 /**
- * This {@link TabComponent} draws uses an {@link Arch} to paint the right end of a tab.
+ * This {@link TabComponent} uses an {@link Arch} to paint the right end of a tab.
  * @author Janni Kovacs
  */
 @ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
@@ -410,9 +410,11 @@ public class ArchGradientPainter extends BaseTabComponent {
 		
 		// draw shadow
 		if ( firstTab ){
-			if( orientation.isHorizontal() )
+			// draw under border if near border
+			// ... this is not a very good solution ...
+			if( orientation.isHorizontal() && getX() <= 1 )
 				left.translate( -1, 0 );
-			else
+			else if( orientation.isVertical() && getY() <= 1 )
 				left.translate( 0, -1 );
 		}
 		

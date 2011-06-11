@@ -143,6 +143,7 @@ public class LookAndFeelMenuPiece extends BaseMenuPiece{
     		list.addComponentCollector( frameCollector );
     	}
     	list.addLookAndFeelListener( listListener );
+    	changed();
     }
     
     private void uninstall(){

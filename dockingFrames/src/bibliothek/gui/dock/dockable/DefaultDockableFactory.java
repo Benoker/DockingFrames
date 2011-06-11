@@ -76,9 +76,7 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Defa
     	// nothing to do
     }
     
-    public Object getLayout( DefaultDockable element,
-            Map<Dockable, Integer> children ) {
-        
+    public Object getLayout( DefaultDockable element, Map<Dockable, Integer> children ) {
         return new Object();
     }
     

@@ -168,6 +168,33 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
      * @return some root, node, leaf or <code>null</code>
      */
     public ResizeElement<T> toElement( ResizeElement<T> parent, SplitNode node ){
+    	for( int i = 0; i < 5; i++ ){
+    		ResizeElement<T> result = asyncToElement( parent, node );
+    		if( result == null || result.isValid() ){
+    			return result;
+    		}
+    		
+    		try {
+				Thread.sleep( 20 );
+			}
+			catch( InterruptedException e ) {
+				// ignore
+			}
+    	}
+    	
+    	System.err.println( "LockedResizeLayoutManager.toElement: Potential race condition detected, converting SplitNode to ResizeElement failed 5 times in a row. The node is ignored." );
+    	return null;
+    }
+    
+    /**
+     * Called by {@link #toElement(ResizeElement, SplitNode)}, tries to create a {@link ResizeElement} out of
+     * <code>node</code> in an environment where race conditions are possible. This is a best effort method, callers
+     * should check the result using the method {@link ResizeElement#isValid()}.
+     * @param parent the parent of the new element
+     * @param node some root, node, leaf or <code>null</code>
+     * @return some root, node, leaf or <code>null</code>
+     */
+    protected ResizeElement<T> asyncToElement( ResizeElement<T> parent, SplitNode node ){
     	if( node instanceof Root ){
             return new ResizeRoot<T>( this, (Root)node );
     	}

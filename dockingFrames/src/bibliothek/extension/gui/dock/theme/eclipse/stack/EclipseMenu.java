@@ -25,19 +25,12 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.stack;
 
-import java.awt.Component;
-
-import javax.swing.Icon;
-
 import bibliothek.extension.gui.dock.theme.eclipse.RoundRectButton;
-import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
-import bibliothek.gui.dock.station.stack.tab.TabMenuDockIcon;
+import bibliothek.gui.dock.station.stack.menu.ButtonCombinedMenu;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.icon.TabMenuOverflowIconBridge;
-import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPaint;
 
 /**
  * A menu used by the {@link EclipseTabPane} to select {@link Dockable}s.<br>
@@ -45,76 +38,22 @@ import bibliothek.gui.dock.util.BackgroundPaint;
  * when the number of children changes.
  * @author Benjamin Sigg
  */
-public class EclipseMenu extends AbstractCombinedMenu{
-	private EclipseTabPane pane;
-	private RoundRectButton button;
-	
-	private TabMenuDockIcon icon;
-	private Icon currentIcon;
-	
+public class EclipseMenu extends ButtonCombinedMenu<RoundRectButton>{
 	/**
 	 * Creates a new menu.
 	 * @param pane the owner of this menu
 	 */
 	public EclipseMenu( EclipseTabPane pane ){
 		super( pane, pane.getMenuHandler() );
-		this.pane = pane;
-		
-		icon = new TabMenuDockIcon( TabMenuOverflowIconBridge.ICON_KEY, this ){
-			protected void changed( Icon oldValue, Icon newValue ){
-				currentIcon = newValue;
-				if( button != null ){
-					button.getModel().setIcon( newValue );
-				}
-			}
-		};
 	}
 	
 	@Override
-	public void setController( DockController controller ){
-		super.setController( controller );
-		if( controller == null ){
-			icon.setManager(  null );
-		}
-		else{
-			icon.setManager( controller.getIcons() );
-		}
+	protected RoundRectButton createButton( BasicTrigger trigger ){
+		return new RoundRectButton( trigger, null );
 	}
 	
 	@Override
-	protected void backgroundChanged( BackgroundPaint paint ){
-		if( button != null ){
-			button.getModel().setBackground( paint, getBackground() );
-		}
-	}
-	
-	@Override
-	protected Component createComponent(){
-		BasicTrigger trigger = new BasicTrigger(){
-        	public void triggered(){
-        		open();
-        	}
-        };
-        
-        button = new RoundRectButton( trigger, null );
-        
-        button.getModel().setIcon( currentIcon );
-        
-        return button;
-	}
-	
-	@Override
-	protected void ensureComponent(){
-		boolean set = button == null;
-		super.ensureComponent();
-		if( set ){
-			BackgroundAlgorithm background = getBackground();
-	        button.getModel().setBackground( background.getPaint(), background );
-		}
-	}
-
-	@Override
-	protected void selected( Dockable dockable ){
-		pane.setSelectedDockable( dockable );		
+	protected BasicButtonModel getModel( RoundRectButton button ){
+		return button.getModel();
 	}
 }

@@ -29,15 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import bibliothek.gui.Dockable;
-
 /**
  * This layout manager creates a common interface to store information for each
  * {@link TabPane} individually.
  * @author Benjamin Sigg
  * @param <I> how information about {@link TabPane}s gets represented
  */
-public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManager.PaneInfo> implements TabLayoutManager{
+public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManagerPane> implements TabLayoutManager{
 	/** informations about {@link TabPane}s */
 	private List<I> infos = new ArrayList<I>();
 	
@@ -85,51 +83,5 @@ public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManage
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Information about a {@link TabPane} that gets laid out by 
-	 * this {@link AbstractTabLayoutManager}. This class implements 
-	 * {@link TabPaneListener}, the listener is added and removed from
-	 * the {@link TabPane} automatically.
-	 * @author Benjamin Sigg
-	 */
-	protected static class PaneInfo implements TabPaneListener{
-		/** the panel itself */
-		private TabPane pane;
-		
-		/**
-		 * Creates a new info.
-		 * @param pane the owner
-		 */
-		public PaneInfo( TabPane pane ){
-			if( pane == null )
-				throw new IllegalStateException( "pane must not be null" );
-			this.pane = pane;
-		}
-		
-		/**
-		 * Gets the owner of this info.
-		 * @return the owner, not <code>null</code>
-		 */
-		public TabPane getPane(){
-			return pane;
-		}
-
-		public void added( TabPane pane, Dockable dockable ){
-			// ignore
-		}
-
-		public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
-			// ignore
-		}
-
-		public void removed( TabPane pane, Dockable dockable ){
-			// ignore
-		}
-
-		public void selectionChanged( TabPane pane ){
-			// ignore
-		}
-	}
+	} 
 }

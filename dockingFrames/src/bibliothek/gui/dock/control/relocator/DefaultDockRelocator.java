@@ -63,10 +63,6 @@ import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.ClientOnly;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * Default implementation of a handler that performs the drag & drop operations
@@ -344,19 +340,14 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     }
     
     /**
-     * Checks whether the mouse is at a location that cancels a drag and drop operation
+     * Checks whether the mouse is at a location that cancels a drag and drop operation. The default implementation
+     * of this method always returns <code>false</code>.
      * @param x x-coordinate on the screen
      * @param y y-coordinate on the screen
      * @param moved the item that was moved around
      * @return <code>true</code> if the current location can never result in a valid drop operation
      */
     protected boolean isCancelLocation( int x, int y, DockElementRepresentative item ){
-    	if( isPreventMoveover() ){
-	    	Component component = item.getComponent();
-	    	Point point = new Point( 0, 0 );
-	    	SwingUtilities.convertPointToScreen( point, component );
-	    	return point.x <= x && point.x + component.getWidth() > x && point.y <= y && point.y + component.getHeight() > y;
-    	}
     	return false;
     }
     

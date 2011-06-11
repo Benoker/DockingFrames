@@ -76,7 +76,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	
 	@Override
 	public BubbleTabMenu newMenu(){
-		BubbleTabMenu menu = new BubbleTabMenu( station, this, getMenuHandler() );
+		BubbleTabMenu menu = new BubbleTabMenu( this );
 		menu.setController( getController() );
 		return menu;
 	}
@@ -84,7 +84,6 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	@Override
 	protected void menuRemoved( BubbleTabMenu menu ){
 		menu.setController( null );
-		menu.stopAnimation();
 	}
 	
 	@Override

@@ -25,161 +25,37 @@
  */
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.stack.menu.AbstractCombinedMenu;
-import bibliothek.gui.dock.themes.color.MenuColor;
-import bibliothek.gui.dock.util.BackgroundPanel;
-import bibliothek.gui.dock.util.color.ColorCodes;
+import bibliothek.gui.dock.station.stack.menu.ButtonCombinedMenu;
+import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
+import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 
 /**
  * A menu that contains a list of {@link Dockable}s to select.
  * @author Benjamin Sigg
  */
-@ColorCodes({
-	"stack.menu.edge",
-	"stack.menu.middle",
-	"stack.menu.edge.selected",
-	"stack.menu.middle.selected"
-})
-public class FlatMenu extends AbstractCombinedMenu{
-	private FlatTabPane pane;
-	private Component component;
-	
-	private FlatMenuColor buttonEdge = new FlatMenuColor( "stack.menu.edge" );
-	private FlatMenuColor buttonMiddle = new FlatMenuColor( "stack.menu.middle" );
-	private FlatMenuColor buttonEdgeSelected = new FlatMenuColor( "stack.menu.edge.selected" );
-	private FlatMenuColor buttonMiddleSelected = new FlatMenuColor( "stack.menu.middle.selected" );
-	
+public class FlatMenu extends ButtonCombinedMenu<BasicMiniButton>{
 	/**
 	 * Creates a new {@link FlatMenu}.
 	 * @param parent the panel for which this menu is used
 	 */
 	public FlatMenu( FlatTabPane parent ){
 		super( parent, parent.getMenuHandler() );
-		this.pane = parent;
 	}
 	
 	@Override
-	protected Component createComponent(){
-		component = new Button();
-		return component;
+	protected BasicMiniButton createButton( BasicTrigger trigger ){
+        BasicMiniButton button = new BasicMiniButton( trigger, null );
+        button.setMouseOverBorder( BorderFactory.createEtchedBorder() );
+        button.setNormalSelectedBorder( BorderFactory.createEtchedBorder() );
+        return button;
 	}
 	
 	@Override
-	protected void selected( Dockable dockable ){
-		pane.setSelectedDockable( dockable );
-	}
-	
-	@Override
-	public void setController( DockController controller ){
-		super.setController( controller );
-		buttonEdge.connect( controller );
-		buttonMiddle.connect( controller );
-		buttonEdgeSelected.connect( controller );
-		buttonMiddleSelected.connect( controller );
-	}
-	
-	
-	
-	/**
-	 * The button shown for this menu.
-	 * @author Benjamin Sigg
-	 */
-	private class Button extends BackgroundPanel{
-		/** whether the mouse is currently over this button */
-		private boolean mouseInsideButton = false;
-		
-		/**
-		 * Creates a new button.
-		 */
-		public Button(){
-			super( true, false );
-			setBackground( FlatMenu.this.getBackground() );
-			addMouseListener( new MouseAdapter(){
-				@Override
-				public void mouseEntered( MouseEvent e ){
-					mouseInsideButton = true;
-					repaint();
-				}
-				@Override
-				public void mouseExited( MouseEvent e ){
-					mouseInsideButton = false;
-					repaint();
-				}
-				@Override
-				public void mouseClicked( MouseEvent e ){
-					open();
-				}
-			});
-			
-			setPreferredSize( new Dimension( 20, 20 ));
-		}
-		
-		@Override
-		public void paintBackground( Graphics g ){
-			super.paintComponent( g );
-			
-			Color edge = null;
-			Color middle = null;
-			
-			if( mouseInsideButton ){
-				edge = buttonEdgeSelected.color();
-				middle = buttonMiddleSelected.color();
-			}
-			
-			if( edge == null )
-				edge = buttonEdge.color();
-			if( middle == null )
-				middle = buttonMiddleSelected.color();
-			
-			if( edge == null )
-				edge = getBackground();
-			if( middle == null )
-				middle = getBackground();
-			
-			Graphics2D g2 = (Graphics2D)g;
-			
-			int width = getWidth();
-			int height = getHeight();
-			
-			g2.setPaint( new GradientPaint( 0, 0, edge, (width+1)/2, 0, middle ));
-			g2.drawLine( 0, 0, width, 0 );
-			g2.drawLine( 0, height-1, width, height-1 );
-			
-			g2.setPaint( new GradientPaint( 0, 0, edge, 0, (height+1)/2, middle ));
-			g2.drawLine( 0, 0, 0, height );
-			g2.drawLine( width-1, 0, width-1, height );
-		}
-	}
-
-	/**
-	 * A color used on this menu.
-	 * @author Benjamin Sigg
-	 */
-	private class FlatMenuColor extends MenuColor{
-		/**
-		 * Creates a new color.
-		 * @param id a unique identifier
-		 */
-		public FlatMenuColor( String id ){
-			super( id, pane.getStation(), FlatMenu.this, null );
-		}
-		
-		@Override
-		protected void changed( Color oldValue, Color newValue ){
-			if( component != null ){
-				component.repaint();
-			}
-		}
+	protected BasicButtonModel getModel( BasicMiniButton button ){
+		return button.getModel();
 	}
 }

@@ -124,7 +124,7 @@ import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.event.DockAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
@@ -161,6 +161,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.AWTComponentCaptureStrategy;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DirectWindowProvider;
+import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -471,7 +472,7 @@ public class CControl {
 
         frontend.getController().addActionOffer( new CActionOffer( this ) );
         
-        frontend.getController().getRegister().addDockRegisterListener( new DockAdapter(){
+        frontend.getController().getRegister().addDockRegisterListener( new DockRegisterAdapter(){
             @Override
             public void dockableRegistered( DockController controller, Dockable dockable ) {
                 if( dockable instanceof CommonDockable ){
@@ -1466,6 +1467,7 @@ public class CControl {
      *  <tr><td>{@link TabPane#LAYOUT_MANAGER} </td><td>Defines the size and location of tabs of a stack.</td></tr>
      *  <tr><td>*&nbps;{@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStroke} that maximizes a child of a {@link SplitDockStation}.</td></tr>
      *  <tr><td>{@link CombinedMenuContent#MENU_CONTENT} </td><td>The menu that shows overflowing {@link Dockable}s on a stack.</td></tr>
+     *  <tr><td>{@link IconManager#MINIMUM_ICON_SIZE}</td><td>The expected minimal size of all icons. </td></tr>
      *  <tr><td>{@link FlapDockStation#MINIMUM_SIZE} </td><td>The mimimum size of the {@link Component} that represents the {@link FlapDockStation}.</td></tr>
      *  <tr><td>*&nbps;{@link LocationModeManager#MODE_ENABLEMENT} </td><td>Tells which {@link CDockable} is allowed to have which {@link ExtendedMode}.</td></tr>
      *  <tr><td>{@link DockRelocatorMode#NO_COMBINATION_MASK} </td><td>What keys the user has to press during a drag and drop operation to prevent the framework from combining {@link Dockable}s.</td></tr>

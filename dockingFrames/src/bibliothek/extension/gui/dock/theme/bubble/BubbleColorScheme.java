@@ -122,6 +122,13 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.foreground",                       color( distribution, 100, 100, 100 ));
         setColor( "stack.tab.foreground.mouse",                 color( distribution, 25, 25, 25 ));
         
+        // stack menu
+        setColor( "stack.menu.border",                           color( distribution, 100, 100, 100 ) );
+        setColor( "stack.menu.border.mouse",                     color( distribution, 200, 100, 100 ) );
+        setColor( "stack.menu.background.top",                   color( distribution, 150, 150, 150 ) );
+        setColor( "stack.menu.background.top.mouse",             color( distribution, 255, 100, 100 ) );
+        setColor( "stack.menu.background.bottom",                color( distribution, 200, 200, 200 ) );
+        setColor( "stack.menu.background.bottom.mouse",          color( distribution, 255, 200, 200 ) );
         
         // title
         setColor( "title.background.top.active",               color( distribution, 200, 0, 0 ) );

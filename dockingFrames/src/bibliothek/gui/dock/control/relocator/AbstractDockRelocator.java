@@ -33,7 +33,6 @@ import java.util.Set;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.DockRelocatorMode;
@@ -67,9 +66,6 @@ public abstract class AbstractDockRelocator implements DockRelocator{
     
     /** Algorithm to merge two {@link DockStation}s */
     private Merger merger = null;
-    
-    /** whether to prevent dropping a {@link Dockable} on itself. */
-    private boolean preventMoveover = true;
     
 	/**
 	 * Creates a new manager.
@@ -216,14 +212,6 @@ public abstract class AbstractDockRelocator implements DockRelocator{
     public void setDragDistance( int dragDistance ){
 		this.dragDistance = dragDistance;
 	}
-    
-    public boolean isPreventMoveover(){
-    	return preventMoveover;
-    }
-    
-    public void setPreventMoveover( boolean prevent ){
-	    this.preventMoveover = prevent;	
-    }
     
     /**
      * Gets an algorithm useful for merging two {@link DockStation}s.

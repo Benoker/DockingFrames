@@ -41,7 +41,6 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
 
 /**
  * A representation of a {@link FlapDockStation} in a {@link Perspective}.<br>
@@ -66,7 +65,6 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	 * @param map the placeholders
 	 * @param children the possible children of this perspective
 	 */
-	@Todo
 	public void read( PlaceholderMap map, final Map<Integer, PerspectiveDockable> children ){
 		dockables.read( map, new PlaceholderListItemAdapter<PerspectiveDockable, Item>(){
 			@Override

@@ -81,10 +81,5 @@ public class FlatColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.background.bottom", border );
             
         setColor( "stack.tab.foreground", DockUI.getColor( LookAndFeelColors.PANEL_FOREGROUND ));
-        
-        setColor( "stack.menu.edge", null );
-        setColor( "stack.menu.middle", null );
-        setColor( "stack.menu.edge.selected", Colors.darker( border ) );
-        setColor( "stack.menu.middle.selected", Colors.brighter( border ) );
     }
 }

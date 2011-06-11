@@ -27,6 +27,7 @@ package bibliothek.gui.dock.themes.basic.action;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundPaint;
@@ -130,6 +131,20 @@ public interface BasicButtonModelListener {
 	 * @param newBorder the new border, can be <code>null</code>
 	 */
 	public void borderChanged( BasicButtonModel model, String key, BorderModifier oldBorder, BorderModifier newBorder );
+	
+	/**
+	 * Called after <code>controller</code> was installed on <code>model</code>.
+	 * @param model the source of this event
+	 * @param controller the controller that was installed
+	 */
+	public void bound( BasicButtonModel model, DockController controller );
+	
+	/**
+	 * Called after <code>controller</code> was uninstalled from <code>model</code>.
+	 * @param model the source of this event
+	 * @param controller the controller that was removed
+	 */
+	public void unbound( BasicButtonModel model, DockController controller );
 	
 	/**
 	 * Called if the user triggered the action.
