@@ -195,7 +195,7 @@ public class CControlPerspective {
      * @param perspective the perspective to write, not <code>null</code>
      */
     public void writeXML( XElement root, CPerspective perspective ){
-    	Perspective conversion = control.getOwner().intern().getPerspective( true, new PerspectiveElementFactory( perspective, null ) );
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, new PerspectiveElementFactory( perspective, null ) ).getPerspective();
     	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
@@ -226,7 +226,7 @@ public class CControlPerspective {
     public void write( DataOutputStream out, CPerspective perspective ) throws IOException{
     	Version.write( out, Version.VERSION_1_1_1 );
     	
-    	Perspective conversion = control.getOwner().intern().getPerspective( true, new PerspectiveElementFactory( perspective, null ) );
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, new PerspectiveElementFactory( perspective, null ) ).getPerspective();
     	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
@@ -260,7 +260,7 @@ public class CControlPerspective {
     	CPerspective perspective = createEmptyPerspective();
     	
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective, null );
-    	Perspective conversion = control.getOwner().intern().getPerspective( true, factory );
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, factory ).getPerspective();
     	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
@@ -317,7 +317,7 @@ public class CControlPerspective {
     	CPerspective perspective = createEmptyPerspective();
     	
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective, null );
-    	Perspective conversion = control.getOwner().intern().getPerspective( true, factory );
+    	Perspective conversion = control.getOwner().intern().getPerspective( true, factory ).getPerspective();
     	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
@@ -350,7 +350,7 @@ public class CControlPerspective {
     	CSetting setting = new CSetting();
     	
     	// layout
-    	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective, null ) );
+    	Perspective conversion = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( perspective, null ) ).getPerspective();
     	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
@@ -372,7 +372,7 @@ public class CControlPerspective {
     
     private CPerspective convert( CSetting setting, boolean includeWorkingAreas ){
     	CPerspective cperspective = createEmptyPerspective();
-    	Perspective perspective = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( cperspective, setting ) );
+    	Perspective perspective = control.getOwner().intern().getPerspective( !includeWorkingAreas, new PerspectiveElementFactory( cperspective, setting ) ).getPerspective();
     	
     	// layout
     	for( String key : setting.getRootKeys() ){

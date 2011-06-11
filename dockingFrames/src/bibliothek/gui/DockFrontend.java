@@ -64,6 +64,7 @@ import bibliothek.gui.dock.event.VetoableDockFrontendListener;
 import bibliothek.gui.dock.frontend.DefaultFrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.DockFrontendInternals;
+import bibliothek.gui.dock.frontend.DockFrontendPerspective;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.LayoutChangeStrategy;
@@ -100,10 +101,7 @@ import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
-import bibliothek.util.Todo;
 import bibliothek.util.Version;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -714,6 +712,14 @@ public class DockFrontend {
         return info.getStation();
     }
      
+    /**
+     * Gets the keys for all the root {@link DockStation}s known to this frontend.
+     * @return the keys of all root stations
+     */
+    public String[] getRootNames(){
+    	return roots.keySet().toArray( new String[ roots.size() ] );
+    }
+    
     /**
      * Gets a modifiable array containing all {@link DockStation}s which are
      * registered as root.
@@ -1504,9 +1510,7 @@ public class DockFrontend {
      * @return the new perspective, not <code>null</code>
      * @see #getPerspective(boolean, FrontendPerspectiveCache)
      */
-    @Todo( target=Todo.Version.VERSION_1_1_1, priority=Priority.ENHANCEMENT, compatibility=Compatibility.COMPATIBLE, 
-    		description="The result of this method should be a type of perspective with which clients can actually work, e.g. they should be able to access the predefined elements")
-    public Perspective getPerspective( boolean entry ){
+    public DockFrontendPerspective getPerspective( boolean entry ){
     	return getPerspective( entry, new DefaultFrontendPerspectiveCache( this ) );
     }
     
@@ -1525,7 +1529,7 @@ public class DockFrontend {
      * @see #setSetting(Setting, boolean)
      * @see #setSetting(String, Setting)
      */
-    public Perspective getPerspective( boolean entry, FrontendPerspectiveCache factory ){
+    public DockFrontendPerspective getPerspective( boolean entry, FrontendPerspectiveCache factory ){
     	return layoutChangeStrategy.createPerspective( new Internals(), entry, factory );
     }
     

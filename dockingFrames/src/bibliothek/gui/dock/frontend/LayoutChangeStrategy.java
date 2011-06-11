@@ -89,7 +89,7 @@ public interface LayoutChangeStrategy {
      * also offers methods to convert ids and {@link PerspectiveElement}s directly
      * @return the new perspective
 	 */
-	public Perspective createPerspective( DockFrontendInternals frontend, boolean entry, FrontendPerspectiveCache cache );
+	public DockFrontendPerspective createPerspective( DockFrontendInternals frontend, boolean entry, FrontendPerspectiveCache cache );
 	
 	/**
 	 * Creates a converter for reading and writing {@link DockableProperty}s.

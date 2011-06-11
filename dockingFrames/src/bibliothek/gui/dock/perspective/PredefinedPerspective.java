@@ -80,6 +80,14 @@ public abstract class PredefinedPerspective extends Perspective{
 		stringToElement.put( key, element );
 		elementToString.put( element, key );
 	}
+	
+	/**
+	 * Gets all the keys known to this perspective.
+	 * @return all the keys
+	 */
+	public String[] getKeys(){
+		return stringToElement.keySet().toArray( new String[ stringToElement.size() ] );
+	}
 
 	/**
 	 * Gets the key for <code>element</code>.

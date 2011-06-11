@@ -190,7 +190,7 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
     	return true;
     }
     
-    public PredefinedPerspective createPerspective( DockFrontendInternals frontend, boolean entry, final FrontendPerspectiveCache cache ){
+    public DockFrontendPerspective createPerspective( DockFrontendInternals frontend, boolean entry, final FrontendPerspectiveCache cache ){
         PredefinedDockSituation situation = createSituation( frontend, entry );
 	    PredefinedPerspective perspective = situation.createPerspective();
 
@@ -234,7 +234,7 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
 			}
 		});
 
-        return perspective;
+        return new DefaultDockFrontendPerspective( frontend.getFrontend(), perspective, entry );
     }
     
     public PropertyTransformer createTransformer( DockFrontendInternals frontend ){

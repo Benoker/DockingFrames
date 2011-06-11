@@ -558,6 +558,7 @@
 - API: FlatTheme and BubbleTheme now also support the MenuLineLayout, they now install a MenuLineLayout instead of a RowLayout
 - Bugfix: Calling CControlPerspective.getPerspective on an application with no Dockables failed.
 - Bugfix: DefaultSplitLayoutManager should no longer throw NPE when a node returns "null" as minimum size
+! API: New interface DockFrontendPerspective should allow clients to modify a perspective related to a DockFrontend more easily
 
 {Removal of deprecated items}
 ! API: SizeManager and all subclasses have been removed without replacement. They were created to support persistent storage of the layout of a SplitDockStation, this job is now done by placeholders.
