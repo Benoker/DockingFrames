@@ -344,7 +344,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * of this method always returns <code>false</code>.
      * @param x x-coordinate on the screen
      * @param y y-coordinate on the screen
-     * @param moved the item that was moved around
+     * @param item the item that was moved around
      * @return <code>true</code> if the current location can never result in a valid drop operation
      */
     protected boolean isCancelLocation( int x, int y, DockElementRepresentative item ){

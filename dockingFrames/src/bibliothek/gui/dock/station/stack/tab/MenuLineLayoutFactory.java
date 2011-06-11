@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.stack.tab;
 
+import bibliothek.gui.dock.station.stack.tab.layouting.AbstractTabsLayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.MenuLayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabsLayoutBlock;
@@ -47,7 +48,7 @@ public interface MenuLineLayoutFactory {
 	
 	/**
 	 * Creates a new {@link LayoutBlock} representing the tabs of <code>pane</code>. This method
-	 * must call {@link TabsLayoutBlock#setPane(TabPane)} with <code>pane</code>.
+	 * may call {@link AbstractTabsLayoutBlock#setPane(TabPane)} with <code>pane</code>.
 	 * @param layout the layout requesting the block
 	 * @param pane the panel on which the tabs will be shown
 	 * @return the tabs, not <code>null</code>

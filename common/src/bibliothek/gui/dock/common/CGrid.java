@@ -55,7 +55,7 @@ import bibliothek.util.Path;
  * the tree - changes to the grid will not be forwarded to the tree.<br>
  * <br>
  * If the <code>CGrid</code> was created using the constructor {@link #CGrid(CControl)},
- * then the method {@link CControl#add(SingleCDockable)} or {@link CControl#add(MultipleCDockable)}
+ * then the method {@link CControl#addDockable(SingleCDockable)} or {@link CControl#addDockable(MultipleCDockable)}
  * is called for any new {@link CDockable}.
  * @author Benjamin Sigg
  *

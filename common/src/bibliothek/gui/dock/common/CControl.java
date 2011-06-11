@@ -1704,7 +1704,7 @@ public class CControl {
     /**
      * Removes <code>dockable</code> from this control. The location information
      * for <code>dockable</code> remains stored if either there is a 
-     * {@link #addSingleBackupFactory(String, SingleCDockableFactory) SingleCDockableBackupFactory}
+     * {@link #addSingleDockableFactory(String, SingleCDockableFactory) SingleCDockableFactory}
      * registered or the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
      * tells to store the values.
      * @param dockable the element to remove
@@ -1717,7 +1717,7 @@ public class CControl {
     /**
      * Removes <code>dockable</code> from this control. The location information
      * for <code>dockable</code> remains stored if either there is a 
-     * {@link #addSingleBackupFactory(String, SingleCDockableFactory) SingleCDockableBackupFactory}
+     * {@link #addSingleDockableFactory(String, SingleCDockableFactory) SingleCDockableFactory}
      * registered or the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
      * tells to store the values.
      * @param dockable the element to remove
@@ -1853,11 +1853,11 @@ public class CControl {
     
     /**
      * Removes a factory from this control. Location information for
-     * <code>id</code> will be deleted if neither a {@link #add(SingleCDockable) SingleCDockable}
+     * <code>id</code> will be deleted if neither a {@link #addDockable(SingleCDockable) SingleCDockable}
      * is added nor the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
      * tells to store the information.
      * @param id the name of the factory
-     * @see #addSingleBackupFactory(String, SingleCDockableFactory)
+     * @see #addSingleDockableFactory(String, SingleCDockableFactory)
      */
     public void removeSingleDockableFactory( String id ){
         register.getBackupFactory().remove( id );

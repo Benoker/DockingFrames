@@ -39,7 +39,7 @@ import bibliothek.util.Path;
 /**
  * A {@link CStation} is an element onto which {@link CDockable}s can be dropped.
  * Each station can, but does not have to be, a {@link CDockable} itself. Stations
- * are added to the {@link CControl} through {@link CControl#add(CStation, boolean)}.
+ * are added to the {@link CControl} through {@link CControl#addStation(CStation, boolean)}.
  * A station is either a root-station (meaning that it has no parent) or 
  * {@link CDockable}. It is possible to use a {@link CDockable} as root-station.
  * @author Benjamin Sigg

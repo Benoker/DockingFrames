@@ -33,7 +33,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
@@ -48,8 +47,8 @@ import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * This abstract implementation of a {@link MouseFocusObserver} offers methods to handle
- * {@link FocusVetoListener}s and registers itself as {@link DockRelocatorListener}. On a
- * {@link DockRelocatorListener#drop(DockController, Dockable, DockStation) drop event} this observer
+ * {@link FocusVetoListener}s and registers a {@link VetoableDockRelocatorListener}. On a
+ * {@link VetoableDockRelocatorListener#dropped(DockRelocatorEvent) drop event} this observer
  * will automatically transfer the focus to the dropped {@link Dockable}.  
  * @author Benjamin Sigg
  */

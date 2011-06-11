@@ -123,7 +123,7 @@ import bibliothek.util.xml.XException;
  * </ul><br>
  * The frontend has a list of Dockables. It assumes that these Dockables never
  * change. The frontend can add a "close"-button to these Dockables. The location
- * of these Dockables is stored as well. Dockables which are not {@link #add(Dockable, String) added}
+ * of these Dockables is stored as well. Dockables which are not {@link #addDockable(String, Dockable) added}
  * to this frontend, are just ignored.<br>
  * <b>Note:</b> Clients must provide a set of root stations 
  * ({@link #addRoot(DockStation, String) addRoot}). The frontend will only 
@@ -625,7 +625,7 @@ public class DockFrontend {
     }
     
     /**
-     * Gets the {@link Dockable} which was {@link #add(Dockable, String) added}
+     * Gets the {@link Dockable} which was {@link #addDockable(String, Dockable) added}
      * to this frontend with the name <code>name</code>.
      * @param name the name of a {@link Dockable}
      * @return the element or <code>null</code>
@@ -637,7 +637,7 @@ public class DockFrontend {
     
     /**
      * Searches the name of <code>dockable</code> as it was given to
-     * {@link #add(Dockable, String)}.
+     * {@link #addDockable(String, Dockable)}.
      * @param dockable some element whose name is searched
      * @return the name or <code>null</code>
      */

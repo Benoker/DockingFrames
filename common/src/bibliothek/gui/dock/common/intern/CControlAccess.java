@@ -141,7 +141,7 @@ public interface CControlAccess {
 	public void fillMultiFactories( CSetting setting );
 	
 	/**
-	 * Gets the default result for {@link CDockable#getAutoBaseLocation()}.
+	 * Gets the default result for {@link CDockable#getAutoBaseLocation(boolean)}.
 	 * @param dockable the element whose location is searched
 	 * @param noBackwardTransformation if <code>true</code>, then no {@link DockableProperty} should be converted to a {@link CLocation}
 	 * @return the location or <code>null</code> if not available
