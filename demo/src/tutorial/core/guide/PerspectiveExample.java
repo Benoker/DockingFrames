@@ -8,10 +8,8 @@ import tutorial.support.Tutorial;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.frontend.DockFrontendPerspective;
 import bibliothek.gui.dock.frontend.FrontendDockablePerspective;
-import bibliothek.gui.dock.frontend.Setting;
-import bibliothek.gui.dock.layout.DockLayoutComposition;
-import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.split.SplitDockPerspective;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
@@ -30,14 +28,9 @@ public class PerspectiveExample {
 		frame.add( station );
 		
 		/* The Perspective object is needed to convert the layout to the perspective-format. */
-		Perspective perspective = frontend.getPerspective( false );
-		/* A setting contains all the properties a DockFrontend needs to describe one layout. Here we
-		 * read the current setting. */
-		Setting setting = frontend.getSetting( false );
-		/* This DockLayoutComposition is the layout of "station" in the intermediate format. */
-		DockLayoutComposition stationComposition = setting.getRoot( "station" );
-		/* And trough the Perspective object we convert the intermediate format to a client friendly format. */
-		SplitDockPerspective stationPerspective = (SplitDockPerspective)perspective.convert( stationComposition );
+		DockFrontendPerspective perspective = frontend.getPerspective( false );
+		/* And trough the Perspective object we can directly access the root stations. */
+		SplitDockPerspective stationPerspective = (SplitDockPerspective)perspective.getRoot( "station" );
 		
 		/* We are now creating the representation of the Dockables we are later going to add */
 		PerspectiveDockable dockableRed = new FrontendDockablePerspective( "red" );
@@ -58,12 +51,8 @@ public class PerspectiveExample {
 		frontend.addDockable( "green", new ColorDockable( "Green", Color.GREEN ) );
 		frontend.addDockable( "blue", new ColorDockable( "Blue", Color.BLUE ) );
 		
-		/* Finally the perspective is converted back into the intermediate format... */
-		stationComposition = perspective.convert( stationPerspective );
-		/* ... the frontends layout object is modified ... */
-		setting.putRoot( "station", stationComposition );
-		/* ... and the new layout is loaded. */
-		frontend.setSetting( setting, false );
+		/* Finally the perspective is applied to the DockFrontend */
+		perspective.apply();
 		
 		frame.setVisible( true );
 	}

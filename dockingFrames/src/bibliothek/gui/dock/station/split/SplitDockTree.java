@@ -502,6 +502,20 @@ public abstract class SplitDockTree<D>{
 		return key.asNode().divider;
 	}
 	
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append( getClass().getName() + "[root=\n" );
+		if( root == null ){
+			builder.append( "null" );
+		}
+		else{
+			root.toString( builder, 1 );
+		}
+		builder.append( "\n]" );
+		return builder.toString();
+	}
+	
 	/**
 	 * A key that represents either a node or a leaf. Clients should not
 	 * subclass this class.
@@ -535,6 +549,13 @@ public abstract class SplitDockTree<D>{
 				this.placeholderMap = placeholderMap.copy();
 			}
 		}
+		
+		/**
+		 * Converts this key and all its children into a {@link String}.
+		 * @param builder the builder to which the content of this key is to be added
+		 * @param depth the depth of this key (number of parents)
+		 */
+		protected abstract void toString( StringBuilder builder, int depth );
 		
 		/**
 		 * Gets the tree which is the owner of this node or leaf.
@@ -624,6 +645,22 @@ public abstract class SplitDockTree<D>{
         public Leaf asLeaf(){
 			return this;
 		}
+		
+		@Override
+		protected void toString( StringBuilder builder, int depth ){
+			for( int i = 0; i < depth; i++ ){
+				builder.append( "\t" );
+			}
+			builder.append( "Leaf[dockables: ").append( dockables == null ? 0 : dockables.length );
+			Path[] placeholders = getPlaceholders( this );
+			if( placeholders != null ){
+				builder.append( ", placeholders: " );
+				for( Path placeholder : placeholders ){
+					builder.append( placeholder );
+				}
+			}
+			builder.append( "]" );
+		}
 	}
 	
 	/**
@@ -688,6 +725,24 @@ public abstract class SplitDockTree<D>{
 		@Override
 		protected Node asNode(){
 			return this;
+		}
+		
+		protected void toString( StringBuilder builder, int depth ){
+			for( int i = 0; i < depth; i++ ){
+				builder.append( "\t" );
+			}
+			builder.append( "Node[divider: ").append( divider );
+			Path[] placeholders = getPlaceholders( this );
+			if( placeholders != null ){
+				builder.append( ", placeholders: " );
+				for( Path placeholder : placeholders ){
+					builder.append( placeholder );
+				}
+			}
+			builder.append( "]\n" );
+			keyA.toString( builder, depth+1 );
+			builder.append( "\n" );
+			keyB.toString( builder, depth+1 );
 		}
 	}
 }

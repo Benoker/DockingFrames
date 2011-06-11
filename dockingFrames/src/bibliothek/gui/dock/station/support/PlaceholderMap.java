@@ -226,6 +226,10 @@ public class PlaceholderMap {
 				write( item, out );
 			}
 		}
+		else if( value instanceof Path ){
+			out.writeByte( 7 );
+			out.writeUTF( ((Path)value).toString() );
+		}
 		else{
 			throw new IOException( "unknown type: " + value.getClass() );
 		}
@@ -247,6 +251,7 @@ public class PlaceholderMap {
 					result[i] = read( in, strategy );
 				}
 				return result;
+			case 7: return new Path( in.readUTF() );
 		}
 		throw new IOException( "illegal format" );
 	}
@@ -303,6 +308,10 @@ public class PlaceholderMap {
 				write( item, out.addElement( "item" ) );
 			}
 		}
+		else if( value instanceof Path ){
+			out.addString( "type", "t" );
+			out.setString( ((Path)value).toString() );
+		}
 		else{
 			throw new XException( "unknown type: " + value.getClass() );
 		}
@@ -335,6 +344,9 @@ public class PlaceholderMap {
 				result[i] = read( xitems[i], strategy );
 			}
 			return result;
+		}
+		if( "t".equals( type )){
+			return new Path( in.getString() );
 		}
 		else{
 			throw new XException( "unknown type: " + type );
@@ -661,6 +673,18 @@ public class PlaceholderMap {
 	public void putString( Key placeholder, String key, String value ){
 		put( placeholder, key, value );
 	}
+
+	/**
+	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
+	 * <code>placeholder</code> if necessary, overrides the value stored at
+	 * <code>key</code> if existent.
+	 * @param placeholder the placeholder for which <code>value</code> is stored
+	 * @param key the unique identifier of the value
+	 * @param value the new value, not <code>null</code>
+	 */
+	public void putPath( Key placeholder, String key, Path value ){
+		put( placeholder, key, value );
+	}
 	
 	/**
 	 * Stores the value <code>value</code> in this map, {@link #add(Key) adds}
@@ -765,6 +789,7 @@ public class PlaceholderMap {
 				value instanceof Long ||
 				value instanceof Double ||
 				value instanceof Boolean ||
+				value instanceof Path ||
 				value instanceof PlaceholderMap ){
 			return null;
 		}
@@ -819,6 +844,23 @@ public class PlaceholderMap {
 		Object data = get( placeholder, key );
 		if( data instanceof String ){
 			return (String)data;
+		}
+		else{
+			throw new IllegalArgumentException();
+		}
+	}
+
+	/**
+	 * Gets the {@link Path} that is stored under <code>key</code>
+	 * @param placeholder the placeholder in whose realm to search
+	 * @param key the unique identifier of the searched data
+	 * @return the data, not <code>null</code>
+	 * @throws IllegalArgumentException if either the value is of the wrong type or missing
+	 */
+	public Path getPath( Key placeholder, String key ){
+		Object data = get( placeholder, key );
+		if( data instanceof Path ){
+			return (Path)data;
 		}
 		else{
 			throw new IllegalArgumentException();

@@ -98,6 +98,7 @@ import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitDockAccess;
 import bibliothek.gui.dock.station.split.SplitDockCombinerSource;
 import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
+import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
@@ -109,6 +110,7 @@ import bibliothek.gui.dock.station.split.SplitFullScreenAction;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.split.SplitNodeVisitor;
+import bibliothek.gui.dock.station.split.SplitPlaceholderConverter;
 import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
@@ -138,10 +140,6 @@ import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * This station shows all its children at once. The children are separated
@@ -1319,17 +1317,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return true;
 	}
 
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-			description="implement this method")
 	public PlaceholderMap getPlaceholders(){
-		// ignore for now TODO
-		return null;
+		return createPlaceholderConverter().getPlaceholders();
 	}
-
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-			description="implement this method")
+	
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		// ignore for now TODO	
+		createPlaceholderConverter().setPlaceholders( placeholders );
+	}
+	
+	/**
+	 * Creates the algorithm that is used by {@link #getPlaceholders()} and {@link #setPlaceholders(PlaceholderMap)}.
+	 * @return the algorithm to handle {@link PlaceholderMap}s, not <code>null</code>
+	 */
+	protected SplitPlaceholderConverter createPlaceholderConverter(){
+		return new SplitPlaceholderConverter( this );
 	}
 
 	public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
@@ -2028,6 +2029,17 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		// do nothing
 	}
 
+	/**
+	 * Copies the layout of <code>grid</code>. Any changes to <code>grid</code>
+	 * afterwards will not affect this station, nor will changes on this station
+	 * affect <code>grid</code>. 
+	 * @param grid the layout to drop, not <code>null</code>
+	 * @see #dropTree(SplitDockTree)
+	 */
+	public void dropGrid( SplitDockGrid grid ){
+		dropTree( grid.toTree() );
+	}
+	
 	/**
 	 * Removes all children from this station and then adds the contents
 	 * that are stored in <code>tree</code>. Calling this method is equivalent
