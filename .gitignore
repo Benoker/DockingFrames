@@ -1,0 +1,11 @@
+.svn
+.project
+.classpath
+.settings/
+
+bin/
+target/
+logs/
+
+release.properties
+pom.xml.releaseBackup
