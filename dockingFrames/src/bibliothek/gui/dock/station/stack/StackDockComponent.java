@@ -173,7 +173,14 @@ public interface StackDockComponent {
      * Sets at which side tabs should be displayed.
      * @param tabSide the side, not <code>null</code>
      */
-    public void setTabPlacement( TabPlacement tabSide );
+    public void setDockTabPlacement( TabPlacement tabSide );
+    
+    /**
+     * Tells at which side tabs should be displayer.
+     * @return the placement, not <code>null</code>
+     * @see #setDockTabPlacement(TabPlacement)
+     */
+    public TabPlacement getDockTabPlacement();
     
     /**
      * Gets a {@link Component} on which the children of this

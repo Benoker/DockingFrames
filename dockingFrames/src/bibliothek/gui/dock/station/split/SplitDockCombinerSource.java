@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
@@ -90,6 +91,14 @@ public class SplitDockCombinerSource implements CombinerSource{
 
 	public Dockable getOld(){
 		return old;
+	}
+	
+	public DockableDisplayer getOldDisplayer(){
+		SplitNode node = info.getNode();
+		if( node instanceof Leaf ){
+			return ((Leaf)node).getDisplayer();
+		}
+		return null;
 	}
 
 	public DockStation getParent(){

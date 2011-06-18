@@ -46,9 +46,6 @@ public abstract class FlapDropInfo implements CombinerSource {
     /** the owner of this info */
     private FlapDockStation station;
     
-    /** <code>true</code> if information should be painted */
-    private boolean draw = false;
-    
     /** Tells how to combine {@link #dockable} with an existing Dockable */
     private CombinerTarget combineTarget = null;
     
@@ -85,25 +82,6 @@ public abstract class FlapDropInfo implements CombinerSource {
      */
     public Dockable getDockable() {
         return dockable;
-    }
-
-    /**
-     * Gets the <code>draw</code> property
-     * @return the property
-     * @see #setDraw(boolean)
-     */
-    public boolean isDraw() {
-        return draw;
-    }
-
-    /**
-     * Sets the <code>draw</code> property. If this property is true, the
-     * station will paint some information where the {@link #getDockable() Dockable}
-     * will be inserted. This information is only a help to the user.
-     * @param draw <code>true</code> if the station should paint something
-     */
-    public void setDraw( boolean draw ) {
-        this.draw = draw;
     }
 
     /**

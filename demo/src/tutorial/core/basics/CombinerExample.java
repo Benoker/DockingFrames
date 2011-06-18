@@ -20,6 +20,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
@@ -145,6 +146,11 @@ public class CombinerExample {
 						g.setColor( new Color( 0, 150, 0 ) );
 						g.fillOval( mouse.x-5, mouse.y-5, 10, 10 );
 					}
+				}
+				
+				public DisplayerCombinerTarget getDisplayerCombination(){
+					/* Some meta data that we can ignore */
+					return null;
 				}
 			};
 		}

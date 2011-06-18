@@ -28,17 +28,18 @@ package bibliothek.gui.dock.control.relocator;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
  * This merger takes two {@link StackDockStation}s and merges them into one.
  * @author Benjamin Sigg
  */
 public class StackMerger implements Merger{
-	public boolean canMerge( DockStation parent, DockStation child ){
+	public boolean canMerge( StationDropOperation operation, DockStation parent, DockStation child ){
 		return parent instanceof StackDockStation && child instanceof StackDockStation; 
 	}
 	
-	public void merge( DockStation parent, DockStation child ){
+	public void merge( StationDropOperation operation, DockStation parent, DockStation child ){
 		merge( (StackDockStation)parent, (StackDockStation)child );
 	}
 	

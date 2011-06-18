@@ -28,6 +28,7 @@ package bibliothek.gui.dock.control.relocator;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
  * Uses a {@link Merger} to merge two {@link DockStation}s.
@@ -37,21 +38,32 @@ public class MergeOperation implements RelocateOperation{
 	private DockController controller;
 	private Merger merger;
 	private DockStation station;
+	private StationDropOperation operation;
 	
 	/**
 	 * Creates a new operation.
 	 * @param controller the controller in whose realm this operation works
 	 * @param merger the merger that will be used to merge the stations
 	 * @param station the target of this operation
+	 * @param operation the operation that would be executed by the station
 	 */
-	public MergeOperation( DockController controller, Merger merger, DockStation station ){
+	public MergeOperation( DockController controller, Merger merger, DockStation station, StationDropOperation operation ){
 		this.controller = controller;
 		this.merger = merger;
 		this.station = station;
+		this.operation = operation;
 	}
 	
 	public DockStation getStation(){
 		return station;
+	}
+	
+	public StationDropOperation getOperation(){
+		return operation;
+	}
+	
+	public void destroy(){
+		operation.destroy();
 	}
 	
 	public Dockable[] getImplicit( Dockable selection ){
@@ -77,7 +89,7 @@ public class MergeOperation implements RelocateOperation{
 			}
 		}
 		
-		merger.merge( station, child );
+		merger.merge( operation, station, child );
 		
 		parent = selection.getDockParent();
 		if( parent != null && parent != station ){

@@ -102,7 +102,7 @@ public class MenuLineLayoutPossibility {
 		int width = tabSize.getWidth();
 		int height = tabSize.getHeight();
 		
-		if( getPane().getPane().getTabPlacement().isHorizontal() ){
+		if( getPane().getPane().getDockTabPlacement().isHorizontal() ){
 			if( menuSize != null ){
 				width += menuSize.getWidth();
 				height = Math.max( height, menuSize.getHeight() );
@@ -134,7 +134,7 @@ public class MenuLineLayoutPossibility {
 		TabPane pane = layout.getPane();
 		MenuLineLayoutOrder order = layout.getLayout().getFactory().createOrder( layout.getLayout(), pane );
 		AxisConversion conversion = layout.getLayout().getConversion( pane );
-		TabPlacement orientation = pane.getTabPlacement();
+		TabPlacement orientation = pane.getDockTabPlacement();
 		
 		// update visibility and layout
 		MenuLayoutBlock menu = layout.getMenu();

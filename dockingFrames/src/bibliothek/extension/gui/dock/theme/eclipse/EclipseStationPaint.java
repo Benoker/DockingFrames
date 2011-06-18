@@ -57,7 +57,6 @@ public class EclipseStationPaint implements StationPaint {
 		g2d.setColor( color.value() );
 		g2d.setStroke(new BasicStroke(2f));
 		g2d.drawLine(x1, y1, x2, y2);
-		g2d.dispose();
 		
 		color.connect( null );
 	}
@@ -82,7 +81,6 @@ public class EclipseStationPaint implements StationPaint {
 		g2d.setColor( color.value() );
 		g2d.setStroke(new BasicStroke(2f));
 		g2d.drawRect(dockableBounds.x+1, dockableBounds.y+1, dockableBounds.width-2, dockableBounds.height-2 );
-		g2d.dispose();
 		
 		color.connect( null );
 	}

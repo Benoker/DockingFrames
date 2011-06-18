@@ -127,7 +127,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
         controller.getProperties().set( TabPane.LAYOUT_MANAGER, new MenuLineLayout(), Priority.THEME );
         
-        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/bubble/icons.ini", BubbleTheme.class.getClassLoader(), controller ) );
+        controller.getIcons().setScheme( Priority.THEME, new DefaultIconScheme( "data/bibliothek/gui/dock/core/bubble/icons.ini", BubbleTheme.class.getClassLoader(), controller ) );
 
         ActionViewConverter converter = controller.getActionViewConverter();
 

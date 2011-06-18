@@ -140,6 +140,6 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayoutPane>
 	 * @return the new conversion
 	 */
 	protected AxisConversion getConversion( TabPane pane ){
-		return new DefaultAxisConversion( pane.getAvailableArea(), pane.getTabPlacement() );
+		return new DefaultAxisConversion( pane.getAvailableArea(), pane.getDockTabPlacement() );
 	}
 }

@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.FocusManager;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
@@ -731,8 +732,8 @@ public class CControl {
      */
     protected void initIcons(){
     	DefaultIconScheme scheme = new DefaultIconScheme( getController(),
-    			new DefaultIconScheme.IconResource( "data/icons.ini", null, DockController.class.getClassLoader() ),
-    			new DefaultIconScheme.IconResource( "data/bibliothek/gui/dock/icons/icons.ini", "data/bibliothek/gui/dock/icons/", CControl.class.getClassLoader() ));
+    			new DefaultIconScheme.IconResource( "data/bibliothek/gui/dock/core/icons.ini", null, DockController.class.getClassLoader() ),
+    			new DefaultIconScheme.IconResource( "data/bibliothek/gui/dock/common/icons/icons.ini", null, CControl.class.getClassLoader() ));
     	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
     	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );
     	getController().getIcons().setScheme( Priority.DEFAULT, scheme );
@@ -758,8 +759,8 @@ public class CControl {
      * @param locale what language to use
      */
     protected void initTexts( Locale locale ){
-    	ResourceBundle bundleCore = ResourceBundle.getBundle( "data.locale.text", locale, DockController.class.getClassLoader() );
-    	ResourceBundle bundleCommon = ResourceBundle.getBundle( "data.bibliothek.gui.dock.locale.common", locale, CControl.class.getClassLoader() );
+    	ResourceBundle bundleCore = ResourceBundle.getBundle( "data.bibliothek.gui.dock.core.locale.text", locale, DockController.class.getClassLoader() );
+    	ResourceBundle bundleCommon = ResourceBundle.getBundle( "data.bibliothek.gui.dock.common.locale.common", locale, CControl.class.getClassLoader() );
     	
     	getController().getTexts().setScheme( Priority.DEFAULT, new DefaultTextScheme( bundleCommon, bundleCore ) );
     }
@@ -1456,6 +1457,7 @@ public class CControl {
      *  <tr><td>{@link ScreenDockStation#FULL_SCREEN_STRATEGY} </td><td>Defines when a floating {@link Dockable} is considered to be in fullscreen mode.</td></tr>
      *  <tr><td>*&nbps;{@link DockFrontend#HIDE_ACCELERATOR} </td><td>The {@link KeyStroke} that will call {@link DockFrontend#hide(Dockable)}</td></tr>
      *  <tr><td>{@link DockableSelector#INIT_SELECTION} </td><td>The {@link KeyStroke} that opens a window where the user can select a new {@link Dockable}.</td></tr>
+     *  <tr><td>{@link StackDockStation#IMMUTABLE_SELECTION_INDEX} </td><td>Prevents the {@link StackDockStation} from switching the selected index on a drop operation (but does not prevent the {@link FocusManager} from switching the focus!).</td></tr>
      *  <tr><td>{@link CControl#KEY_CLOSE} </td><td>The {@link KeyStroke} that closes a {@link CDockable}.</td></tr>
      *  <tr><td>{@link CControl#KEY_GOTO_EXTERNALIZED} </td><td>The {@link KeyStroke} that externalizes a {@link CDockable}.</td></tr>
      *  <tr><td>{@link CControl#KEY_GOTO_MAXIMIZED} </td><td>The {@link KeyStroke} that maximizes a {@link CDockable}.</td></tr>

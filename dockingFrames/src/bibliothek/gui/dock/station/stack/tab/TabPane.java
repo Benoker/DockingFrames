@@ -103,7 +103,7 @@ public interface TabPane {
 	 * intended for a {@link TabLayoutManager}, but may be ignored. 
 	 * @return the side, not <code>null</code>
 	 */
-	public TabPlacement getTabPlacement();
+	public TabPlacement getDockTabPlacement();
 	
 	/**
 	 * Gets all the tabs that are currently visible on this pane.

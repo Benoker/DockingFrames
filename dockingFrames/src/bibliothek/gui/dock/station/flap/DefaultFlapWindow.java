@@ -123,7 +123,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		contentContainer = new SecureContainer(){
 			@Override
 			protected void paintOverlay( Graphics g ){
-				if( dropInfo != null && dropInfo.getCombineTarget() != null && dropInfo.isDraw() ) {
+				if( dropInfo != null && dropInfo.getCombineTarget() != null ) {
 					Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
 					StationPaint paint = DefaultFlapWindow.this.station.getPaint().get();
 					if( paint != null ){

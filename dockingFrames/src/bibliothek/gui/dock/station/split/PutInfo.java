@@ -37,7 +37,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * Carries information where to put a {@link Dockable} onto a {@link SplitDockStation}.
  * @author Benjamin Sigg
  */
-public class PutInfo{
+public class PutInfo {
     /**
      * Information where the mouse is.
      * @author Benjamin Sigg
@@ -61,8 +61,6 @@ public class PutInfo{
     private SplitNode node;
     /** The location of the mouse in respect to {@link #node} */
     private Put put;
-    /** <code>true</code> if some lines should be painted onto the station */
-    private boolean draw;
     /** The {@link Dockable} which will be dropped */
     private Dockable dockable;
     /** The location of the divider if the {@link #dockable} is put aside the {@link #node} */
@@ -154,24 +152,6 @@ public class PutInfo{
      */
     public double getDivider() {
         return divider;
-    }
-    
-    /**
-     * Sets whether the station should paint some lines to indicate where the 
-     * {@link #getDockable() dockable} will be added, or not.
-     * @param draw <code>true</code> if the station should paint something
-     */
-    public void setDraw( boolean draw ) {
-        this.draw = draw;
-    }
-    
-    /**
-     * Tells whether the station should paint some lines.
-     * @return <code>true</code> if the station should paint
-     * @see #setDraw(boolean)
-     */
-    public boolean isDraw() {
-        return draw;
     }
     
     /**

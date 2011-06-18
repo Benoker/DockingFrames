@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,36 +23,28 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.support;
+package bibliothek.gui.dock.displayer;
 
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
-import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.support.CombinerSource;
 
 /**
- * Created by a {@link Combiner}, this object tells how two {@link Dockable}s
- * are going to be merged. Clients must call {@link #destroy()} if they no longer use
- * this target.
+ * Created by a {@link DockableDisplayer}, tells how exactly a {@link Dockable} is dropped
+ * over a {@link DockableDisplayer}. 
  * @author Benjamin Sigg
  */
-public interface CombinerTarget {
+public interface DisplayerCombinerTarget {
 	/**
-	 * Paints some lines on the screen that allow the user to understand of what is
-	 * going to happen if he/she releases the mouse now.<br>
-	 * Implementations interested in painting something in relation to the position of the mouse
-	 * can use the following piece of code to get the mouse position:
-	 * <pre><code>
-	 * CombinerSource source = ... // the source that was used to create this target
-	 * Point mouse = source.getMousePosition();
-	 * if( mouse != null ){ 
-	 *   mouse = SwingUtilities.convertPoint( source.getOld().getComponent(), mouse, component );</code></pre>	
+	 * Allows this operation to paint some markings onto the screen.
 	 * @param g the graphics context to use
 	 * @param component the component on which <code>g</code> paints.
 	 * @param paint painting algorithms fitting to the current {@link DockTheme}
@@ -67,10 +59,12 @@ public interface CombinerTarget {
 	public void paint( Graphics g, Component component, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds );
 	
 	/**
-	 * Some {@link Combiner}s may use the combining feature of {@link DockableDisplayer}s
-	 * ({@link DockableDisplayer#prepareCombination(bibliothek.gui.dock.station.support.CombinerSource, boolean)})
-	 * to combine some {@link Dockable}s. This method returns the information that was provided by the displayer.
-	 * @return the information or <code>null</code>, <code>null</code> is always a valid result
+	 * Executes this operation. Usually that means to invoke some method like
+	 * {@link DockStation#drag(Dockable)}.<br>
+	 * @param source the source of information to use for the execution, this may not be the same object as was used to create
+	 * this {@link DisplayerCombinerTarget}.
+	 * @throws IllegalStateException if the tree of {@link DockElement}s changed or if this method was already called.
+	 * @return the replacement {@link Dockable} for the old item
 	 */
-	public DisplayerCombinerTarget getDisplayerCombination();
+	public Dockable execute( CombinerSource source );
 }

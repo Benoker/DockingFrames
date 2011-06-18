@@ -39,7 +39,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -269,14 +269,11 @@ public interface DockStation extends DockElement{
     public DockableProperty getDockableProperty( Dockable child, Dockable target );
     
     /**
-     * Prepares this station to get the new child <code>dockable</code>. The
-     * station has to store a possible location of the child, and should draw
-     * some indicators where the child will be put. The station can refuse
-     * <code>dockable</code>, in this case nothing has to be painted and
-     * this method returns <code>false</code>.<br>
+     * Prepares this station to get the new child <code>dockable</code> or to move around the known child <code>dockable</code>.
+     * The station can refuse <code>dockable</code>, in this case nothing this method just returns <code>null</code>.
      * There are some constraints:
      * <ul>
-     * <li>The result should be <code>false</code> if this station is dockable,
+     * <li>The result should be <code>null</code> if this station is dockable,
      * <code>checkOverrideZone</code> is <code>true</code> and the mouse is in
      * the override-zone. of the parent. However, that condition is just "good manners" and may
      * be broken.</li>
@@ -289,10 +286,7 @@ public interface DockStation extends DockElement{
      * This method gets two points: <code>mouseX/mouseY</code> is the location
      * of the mouse, <code>titleX/titleY</code> is the location of the dragged
      * title. The second point may be interesting if the title of a dropped
-     * child should have the same coordinates as the image of the dragged title.<br>
-     * This method is never called if <code>dockable</code> is a child of this
-     * station. In such a case {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove}
-     * is invoked. 
+     * child should have the same coordinates as the image of the dragged title.
      * @param mouseX the x-coordinate of the mouse on the screen
      * @param mouseY the y-coordinate of the mouse on the screen
      * @param titleX the x-location of the dragged title or <code>mouseX</code> if no
@@ -302,19 +296,10 @@ public interface DockStation extends DockElement{
      * @param checkOverrideZone whether this station has to check if the mouse
      * is in the override-zone of its parent
      * @param dockable the element which will be dropped
-     * @return <code>true</code> if <code>dockable</code> can be added at the
-     * current location, <code>false</code> otherwise.
+     * @return an object describing where the {@link Dockable} can be dropped or <code>null</code> if
+     * no drop operation is possible
      */
-    public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
-    
-    /**
-     * Adds the {@link Dockable} of the last run of
-     * {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop} to this station.
-     * This method is only called if the new child and this station accepted
-     * each other, <code>prepareDrop</code> returned <code>true</code> and
-     * the new child is not yet a child of this station.
-     */
-    public void drop();
+    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
     
     /**
      * Adds <code>dockable</code> to this station. The station can decide
@@ -339,32 +324,6 @@ public interface DockStation extends DockElement{
     public boolean drop( Dockable dockable, DockableProperty property );
     
     /**
-     * Prepares the station that one of its children is moved from one
-     * location to another location. See {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop}
-     * for detailed information about the behavior of this method. The only
-     * difference between this method and <code>prepareDrop</code> is, that
-     * <code>dockable</code> is a child of this station.
-     * @param mouseX the x-coordinate of the mouse on the screen
-     * @param mouseY the y-coordinate of the mouse on the screen
-     * @param titleX the x-location of the dragged title or <code>mouseX</code> if no
-     * title is dragged
-     * @param titleY the y-location of the dragged title or <code>mouseY</code> if no
-     * title is dragged
-     * @param checkOverrideZone whether this station has to check if the
-     * mouse is in the override-zone of its parent
-     * @param dockable the element which will be moved
-     * @return <code>true</code> if <code>dockable</code> can be added at the
-     * current location, <code>false</code> otherwise.
-     */
-    public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
-    
-    /**
-     * Moves a child of this station to a new location according to the
-     * information gathered by {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove}.
-     */
-    public void move();
-    
-    /**
      * Tries to move the child <code>dockable</code> in such a way, that
      * {@link DockStation#getDockableProperty(Dockable, Dockable)} would return a
      * {@link DockableProperty} that equals <code>property</code>.<br>
@@ -375,26 +334,6 @@ public interface DockStation extends DockElement{
      * @param property the preferred position of <code>dockable</code>
      */
     public void move( Dockable dockable, DockableProperty property );
-    
-    /**
-     * Informs this station that the information gathered by 
-     * {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop} or
-     * {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove} should
-     * be painted somehow onto this station.<br>
-     * The station should use the {@link StationPaint} of its theme
-     * to draw.
-     */
-    public void draw();
-    
-    /**
-     * Tells this station that a possible drop or move on this station 
-     * was canceled. The station can throw away any information gathered by
-     * the last call {@link #prepareDrop(int, int, int, int, boolean, Dockable) prepareDrop} 
-     * or {@link #prepareMove(int, int, int, int, boolean, Dockable) prepareMove}<br>
-     * If the station is drawing some markings because of a call to
-     * {@link #draw()}, than the station can throw away these markings too.
-     */
-    public void forget();
     
     /**
      * If the controller asks a station if a child could be dropped or moved,

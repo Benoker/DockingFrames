@@ -82,7 +82,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         setOpaque( false );
     }
     
-    public void setTabPlacement( TabPlacement tabSide ){
+    public void setDockTabPlacement( TabPlacement tabSide ){
 	    switch( tabSide ){
 	    	case BOTTOM_OF_DOCKABLE:
 	    		setTabPlacement( BOTTOM );
@@ -97,6 +97,21 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	    		setTabPlacement( RIGHT );
 	    		break;
 	    }
+    }
+    
+    public TabPlacement getDockTabPlacement(){
+    	switch( getTabPlacement() ){
+    		case BOTTOM:
+    			return TabPlacement.BOTTOM_OF_DOCKABLE;
+    		case LEFT:
+    			return TabPlacement.LEFT_OF_DOCKABLE;
+    		case RIGHT:
+    			return TabPlacement.RIGHT_OF_DOCKABLE;
+    		case TOP:
+    			return TabPlacement.TOP_OF_DOCKABLE;
+    	}
+    	
+    	throw new IllegalStateException( "unknown position: " + getTabPlacement() );
     }
     
     public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index) {

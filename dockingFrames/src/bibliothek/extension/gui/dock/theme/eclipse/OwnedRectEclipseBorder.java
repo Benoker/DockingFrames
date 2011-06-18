@@ -30,7 +30,7 @@ public class OwnedRectEclipseBorder extends RectEclipseBorder{
 	
 	@Override
 	public void paintBorder( Component c, Graphics g, int x, int y, int width, int height ){
-		TabPlacement placement = owner.getTabPlacement();
+		TabPlacement placement = owner.getDockTabPlacement();
 		if( placement != null ){
 			switch( placement ){
 				case TOP_OF_DOCKABLE:

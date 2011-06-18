@@ -60,6 +60,7 @@ import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.ClientOnly;
@@ -182,7 +183,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 			});
         }
         finally{
-        	operation.getStation().forget();
+        	operation.destroy();
         	operation = null;
             onPut = false;
             controller.getRegister().setStalled( false );
@@ -206,25 +207,15 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             boolean checkOverrideZone = i == 0;
             
             for( DockStation station : list ){
-            	boolean merge = canMerge( station, dockable );
+            	StationDropOperation operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable );
             	
-                if( dockable.getDockParent() == station ){
-                    // just a move
-                    if( station.prepareMove( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable ) ){
-                    	if( merge ){
-                    		return new MergeOperation( getController(), getMerger(), station );
-                    	}
-                        return new MoveOperation( getController(), station );
-                    }
-                }
-                else{
-                    // perhaps a drop
-                	if( station.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable )){
-                    	if( merge ){
-                    		return new MergeOperation( getController(), getMerger(), station );
-                    	}
-                        return new DropOperation( getController(), station );
-                    }
+            	boolean merge = canMerge( operation, station, dockable );
+            	            	
+                if( operation != null ){
+                   	if( merge ){
+                   		return new MergeOperation( getController(), getMerger(), station, operation );
+                   	}
+                   	return new DropOperation( getController(), station, operation );
                 }
             }
         }
@@ -235,11 +226,12 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     /**
      * Checks whether the current {@link #getMerger() Merger} can merge <code>parent</code>
      * with <code>child</code>.
+     * @param operation the operation that would be exected
      * @param parent the new parent for the children of <code>child</code>
      * @param selection the element whose children are to be removed
      * @return <code>true</code> if a merge is possible
      */
-    protected boolean canMerge( DockStation parent, Dockable selection ){
+    protected boolean canMerge( StationDropOperation operation, DockStation parent, Dockable selection ){
     	Merger merger = getMerger();
     	if( merger == null ){
     		return false;
@@ -274,7 +266,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     		}
     	}
     	
-    	return merger.canMerge( parent, child );
+    	return merger.canMerge( operation, parent, child );
     }
     
     /**
@@ -662,15 +654,13 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         }
         else{
             if( operation != null ){
-	            if( next == null || next.getStation() != operation.getStation() ){
-	                operation.getStation().forget();
-	            }
+	            operation.destroy();
             }
             
             this.operation = next;
             
             if( next != null ){
-            	next.getStation().draw();
+            	next.getOperation().draw();
             }
         }
         return null;
@@ -778,7 +768,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                     }
 
                     if( operation != null && (next == null || operation.getStation() != next.getStation() )){
-                        operation.getStation().forget();
+                        operation.destroy();
                     }
                     
                     operation = next;
@@ -790,7 +780,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 	event.drop();
                 	fireDropping( event );
                 	if( event.isCanceled() || event.isForbidden() ){
-                		operation.getStation().forget();
+                		operation.destroy();
                 		operation = null;
                 	}
                 }
@@ -799,7 +789,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 	consume = true;
                 	Dockable[] implicit = operation.getImplicit( dockable );
                     boolean canceled = !executeOperation( dockable, operation );
-                    operation.getStation().forget();
+                    operation.destroy();
                     this.operation = null;
                     
                     dropped = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation.getStation() );
@@ -854,7 +844,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     	if( !isOnPut() ){
     		// if it is on put, than it is too late to stop
 	        if( operation != null ){
-	            operation.getStation().forget();
+	            operation.destroy();
 	            operation = null;
 	        }
 	        

@@ -48,7 +48,7 @@ public class NoStackAcceptance extends AbstractAcceptance{
             	if( controller != null ){
             		Merger merger = controller.getRelocator().getMerger();
             		if( merger != null ){
-            			return merger.canMerge( parent, child.asDockStation() );
+            			return merger.canMerge( null, parent, child.asDockStation() );
             		}
             	}
 

@@ -575,6 +575,16 @@ public class DockUtilities {
             properties.load( in );
             in.close();
             
+            int index = list.lastIndexOf( '/' );
+            if( index > 0 ){
+            	if( path == null ){
+            		path = list.substring( 0, index+1 );
+            	}
+            	else{
+            		path = list.substring( 0, index+1 ) + path;
+            	}
+            }
+            
             Map<String, Icon> result = new HashMap<String, Icon>();
             for( Map.Entry<Object, Object> entry : properties.entrySet() ){
                 String key = (String)entry.getKey();

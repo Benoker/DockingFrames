@@ -51,18 +51,18 @@ public class RowLayout implements TabLayoutManager{
 	
 	/**
 	 * Creates a conversion for converting a layout that is
-	 * {@link TabPlacement#TOP_OF_DOCKABLE} to the current {@link TabPane#getTabPlacement() orientation}.
+	 * {@link TabPlacement#TOP_OF_DOCKABLE} to the current {@link TabPane#getDockTabPlacement() orientation}.
 	 * @param pane the pane for which the conversion is required
 	 * @return the conversion
 	 */
 	private AxisConversion getConversion( TabPane pane ){
-		return new DefaultAxisConversion( pane.getAvailableArea(), pane.getTabPlacement() );
+		return new DefaultAxisConversion( pane.getAvailableArea(), pane.getDockTabPlacement() );
 	}
 
 	public void layout( TabPane pane ){
 		AxisConversion conversion = getConversion( pane );
 		
-		TabPlacement orientation = pane.getTabPlacement();
+		TabPlacement orientation = pane.getDockTabPlacement();
 		Rectangle available = conversion.viewToModel( pane.getAvailableArea() );
 		
         int maxwidth = available.width;

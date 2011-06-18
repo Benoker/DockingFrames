@@ -138,7 +138,7 @@ public class ButtonPane extends SecureContainer{
     
     @Override
     protected void paintOverlay( Graphics g ) {
-       if( dropInfo != null && dropInfo.isDraw() && dropInfo.getCombineTarget() == null ){
+       if( dropInfo != null && dropInfo.getCombineTarget() == null ){
             int left = dropInfo.getIndex()-1;
             int right = left+1;
             

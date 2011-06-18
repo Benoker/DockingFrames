@@ -130,8 +130,7 @@ public class CBubbleTheme extends CDockTheme<BubbleTheme>{
         super.install( controller );
         IconManager manager = controller.getIcons();
         Map<String, Icon> icons = DockUtilities.loadIcons(
-                "data/bibliothek/gui/dock/icons/bubble/icons.ini",
-                "data/bibliothek/gui/dock/icons/bubble/", CBubbleTheme.class.getClassLoader() );
+                "data/bibliothek/gui/dock/common/icons/bubble/icons.ini", null, CBubbleTheme.class.getClassLoader() );
         for( Map.Entry<String, Icon> entry : icons.entrySet() ){
             manager.setIconTheme( entry.getKey(), entry.getValue() );
         }

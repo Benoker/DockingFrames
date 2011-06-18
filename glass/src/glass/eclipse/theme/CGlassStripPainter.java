@@ -138,7 +138,7 @@ public class CGlassStripPainter implements TabPanePainter {
 
       g.setColor(color.value());
 
-      switch (pane.getTabPlacement()) {
+      switch (pane.getDockTabPlacement()) {
          case TOP_OF_DOCKABLE:
             paintHorizontal(g, available, bounds, bounds.y + bounds.height - 1);
             break;

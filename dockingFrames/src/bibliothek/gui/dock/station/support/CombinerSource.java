@@ -31,6 +31,7 @@ import java.awt.Point;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DockableDisplayer;
 
 /**
  * A set of information intended for a {@link Combiner}. This set of data allows the {@link Combiner} to merge the two
@@ -45,6 +46,12 @@ public interface CombinerSource {
 	 * @return the old {@link Dockable}, never <code>null</code>
 	 */
 	public Dockable getOld();
+	
+	/**
+	 * Gets the {@link DockableDisplayer} which manages the old {@link Dockable}.
+	 * @return the displayer or <code>null</code>
+	 */
+	public DockableDisplayer getOldDisplayer();
 	
 	/**
 	 * Gets the new {@link Dockable}, the one {@link Dockable} which is currently dragged around

@@ -191,6 +191,13 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     	return handle.getDockable();
     }
 
+    public DockableDisplayer getDockableDisplayer(){
+	    if( handle == null ){
+	    	return null;
+	    }
+	    return handle.getDisplayer();
+    }
+    
     public void setDockable( Dockable dockable ) {
     	// remove old displayer
         if( handle != null ){
