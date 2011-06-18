@@ -119,7 +119,7 @@ public class CEclipseBorder implements Border {
    }
 
    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-      TabPlacement placement = owner.getTabPlacement();
+      TabPlacement placement = owner.getDockTabPlacement();
       if (placement != null) {
          switch (placement) {
             case TOP_OF_DOCKABLE:

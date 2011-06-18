@@ -27,6 +27,7 @@ package bibliothek.gui.dock.control.relocator;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
  * Describes the action that a {@link DefaultDockRelocator} will execute.
@@ -38,6 +39,18 @@ public interface RelocateOperation {
 	 * @return the target, not <code>null</code>
 	 */
 	public DockStation getStation();
+	
+	/**
+	 * Gets the operation that would be executed by the {@link #getStation() dock station}.
+	 * @return the operation, not <code>null</code>
+	 */
+	public StationDropOperation getOperation();
+	
+	/**
+	 * Informs this operation that it will never be used (again) and that it should release any
+	 * resources it has acquired.
+	 */
+	public void destroy();
 	
 	/**
 	 * Gets the {@link Dockable}s whose parent will change due to this operation.

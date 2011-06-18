@@ -55,7 +55,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 			
 			if( newValue != null ){
 				component = newValue.create( TabDecorator.this );
-				component.setTabPlacement( tabPlacement.getValue() );
+				component.setDockTabPlacement( tabPlacement.getValue() );
 				
 				component.setController( controller );
 				if( dockable != null ){
@@ -74,7 +74,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		@Override
 		protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
 			if( component != null ){
-				component.setTabPlacement( newValue );
+				component.setDockTabPlacement( newValue );
 			}
 		}
 	};

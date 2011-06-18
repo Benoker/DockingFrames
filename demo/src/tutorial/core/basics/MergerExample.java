@@ -13,6 +13,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.control.relocator.MultiMerger;
 import bibliothek.gui.dock.control.relocator.StackMerger;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 
@@ -67,7 +68,7 @@ public class MergerExample {
 	public static class CustomMerger implements Merger{
 		/* This method tells whether this Merger can do something meaningful with the
 		 * given parent and child of a dropping operation */
-		public boolean canMerge( DockStation parent, DockStation child ){
+		public boolean canMerge( StationDropOperation operation, DockStation parent, DockStation child ){
 			if( parent instanceof SplitDockStation && child instanceof StackDockStation ){
 				SplitDockStation station = (SplitDockStation)parent;
 				PutInfo put = station.getDropInfo();
@@ -81,7 +82,7 @@ public class MergerExample {
 		}
 
 		/* And this is our custom merging algorithm */
-		public void merge( DockStation parent, DockStation child ){
+		public void merge( StationDropOperation operation, DockStation parent, DockStation child ){
 			merge( (SplitDockStation)parent, (StackDockStation)child );
 		}
 		

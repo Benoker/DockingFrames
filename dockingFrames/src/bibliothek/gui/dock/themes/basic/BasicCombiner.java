@@ -33,7 +33,9 @@ import java.awt.Rectangle;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -47,6 +49,14 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  */
 public class BasicCombiner implements Combiner {
 	public CombinerTarget prepare( final CombinerSource source, boolean force ){
+		DockableDisplayer displayer = source.getOldDisplayer();
+		if( displayer != null ){
+			DisplayerCombinerTarget operation = displayer.prepareCombination( source, force );
+			if( operation != null ){
+				return new DisplayerTarget( operation );
+			}
+		}
+		
 		if( !force ){
 			return null;
 		}
@@ -55,22 +65,58 @@ public class BasicCombiner implements Combiner {
 			public void paint( Graphics g, Component component, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
 				paint.drawInsertion( g, source.getParent(), stationBounds, dockableBounds );	
 			}
+			public DisplayerCombinerTarget getDisplayerCombination(){
+				return null;
+			}
 		};
 	}
 	
 	public Dockable combine( CombinerSource source, CombinerTarget target ){
-		DockStation parent = source.getParent();
-		PlaceholderMap placeholders = source.getPlaceholders();
-		
-	    StackDockStation stack = new StackDockStation( parent.getTheme() );
-        stack.setController( parent.getController() );
-        if( placeholders != null ){
-        	stack.setPlaceholders( placeholders );
-        }
-        
-        stack.drop( source.getOld() );
-        stack.drop( source.getNew() );
-        
-        return stack;
+		if( target instanceof DisplayerTarget ){
+			return ((DisplayerTarget)target).execute( source );
+		}
+		else{
+			DockStation parent = source.getParent();
+			PlaceholderMap placeholders = source.getPlaceholders();
+			
+		    StackDockStation stack = new StackDockStation( parent.getTheme() );
+	        stack.setController( parent.getController() );
+	        if( placeholders != null ){
+	        	stack.setPlaceholders( placeholders );
+	        }
+	        
+	        stack.drop( source.getOld() );
+	        stack.drop( source.getNew() );
+	        
+	        return stack;
+		}
     }
+	
+	private class DisplayerTarget implements CombinerTarget{
+		private DisplayerCombinerTarget operation;
+		
+		/**
+		 * Creates a new target
+		 * @param operation the operation which is represented by this target
+		 */
+		public DisplayerTarget( DisplayerCombinerTarget operation ){
+			this.operation = operation;
+		}
+		
+		/**
+		 * Executes and disposes the {@link #operation}.
+		 * @param source the source to use for the execution
+		 */
+		public Dockable execute( CombinerSource source ){
+			return operation.execute( source );
+		}
+		
+		public void paint( Graphics g, Component component, StationPaint paint, Rectangle stationBounds, Rectangle dockableBounds ){
+			operation.paint( g, component, paint, stationBounds, dockableBounds );
+		}
+		
+		public DisplayerCombinerTarget getDisplayerCombination(){
+			return operation;
+		}
+	}
 }

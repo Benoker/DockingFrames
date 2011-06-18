@@ -50,6 +50,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockStation;
@@ -57,6 +58,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockFullscreenStrategy;
@@ -711,13 +713,12 @@ public class ScreenDockStation extends AbstractDockStation {
             listeners.fireDockableSelected( oldSelected, newSelected );
     }
 
-    public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        return prepare( x, y, titleX, titleY, dockable, true );
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+        return prepare( x, y, titleX, titleY, dockable, dockable.getDockParent() != this );
     }
     
-    public boolean prepare( int x, int y, int titleX, int titleY, Dockable dockable, boolean drop ) {
-        if( dropInfo == null )
-            dropInfo = new DropInfo();
+    public StationDropOperation prepare( int x, int y, int titleX, int titleY, Dockable dockable, boolean drop ) {
+    	DropInfo dropInfo = new DropInfo();
         
         ScreenDockWindow oldCombine = dropInfo.combine;
         
@@ -726,6 +727,7 @@ public class ScreenDockStation extends AbstractDockStation {
         dropInfo.titleX = titleX;
         dropInfo.titleY = titleY;
         dropInfo.dockable = dockable;
+        dropInfo.move = !drop;
         
         boolean force = true;
         dropInfo.combine = searchCombineDockable( x, y, dockable, true );
@@ -752,34 +754,33 @@ public class ScreenDockStation extends AbstractDockStation {
         	dropInfo.combine.setPaintCombining( dropInfo.combiner );
         }
 
-        
-        checkDropInfo();
-        return dropInfo != null;
+        if( !checkDropInfo( dropInfo ) ){
+        	dropInfo = null;
+        }
+        return dropInfo;
     }
 
-    
     /**
-     * Ensures that the desired location where to insert the next child is valid
-     * If not, then {@link #dropInfo} is set to <code>null</code>
+     * Ensures that the desired location where to insert the next child is valid.
+     * @param  <code>true</code> if <code>dropInfo</code> is valid, <code>false</code> otherwise
      */
-    private void checkDropInfo(){
-        if( dropInfo != null ){
-            if( dropInfo.combine != null ){
-                if( !accept( dropInfo.dockable ) || 
-                        !dropInfo.dockable.accept( this, dropInfo.combine.getDockable() ) ||
-                        !dropInfo.combine.getDockable().accept( this, dropInfo.dockable ) ||
-                        !getController().getAcceptance().accept( this, dropInfo.combine.getDockable(), dropInfo.dockable )){
-                    dropInfo = null;
-                }
-            }
-            else{
-                if( !accept( dropInfo.dockable ) ||
-                        !dropInfo.dockable.accept( this ) ||
-                        !getController().getAcceptance().accept( this, dropInfo.dockable )){
-                    dropInfo = null;
-                }
+    private boolean checkDropInfo( DropInfo dropInfo ){
+        if( dropInfo.combine != null ){
+            if( !accept( dropInfo.dockable ) || 
+                    !dropInfo.dockable.accept( this, dropInfo.combine.getDockable() ) ||
+                    !dropInfo.combine.getDockable().accept( this, dropInfo.dockable ) ||
+                    !getController().getAcceptance().accept( this, dropInfo.combine.getDockable(), dropInfo.dockable )){
+                return false;
             }
         }
+        else{
+            if( !accept( dropInfo.dockable ) ||
+                    !dropInfo.dockable.accept( this ) ||
+                    !getController().getAcceptance().accept( this, dropInfo.dockable )){
+                return false;
+            }
+        }
+        return true;
     }
 
     
@@ -823,17 +824,6 @@ public class ScreenDockStation extends AbstractDockStation {
         return null;
     }
     
-    public void drop() {
-        if( dropInfo.combine != null ){
-            combine( dropInfo, dropInfo.combiner, null );
-        }
-        else{
-            Component component = dropInfo.dockable.getComponent();
-            Rectangle bounds = new Rectangle( dropInfo.titleX, dropInfo.titleY, component.getWidth(), component.getHeight() );
-            addDockable( dropInfo.dockable, bounds, false );
-        }
-    }
-
     public void drop( Dockable dockable ) {
         Window owner = getOwner();
         
@@ -990,27 +980,6 @@ public class ScreenDockStation extends AbstractDockStation {
     	return expandOnDoubleClick.getValue();
     }
     
-    public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        return prepare( x, y, titleX, titleY, dockable, false );
-    }
-
-    public void move() {
-    	DockUtilities.checkLayoutLocked();
-        if( dropInfo.combine != null ){
-            combine( dropInfo, dropInfo.combiner, null );
-        }
-        else{
-            ScreenDockWindow window = getWindow( dropInfo.dockable );
-            Point zero = window.getOffsetMove();
-            if( zero == null )
-                zero = new Point( 0, 0 );
-            
-            Rectangle bounds = window.getWindowBounds();
-            bounds = new Rectangle( dropInfo.titleX - zero.x, dropInfo.titleY - zero.y, bounds.width, bounds.height );
-            window.setWindowBounds( bounds, true );
-        }
-    }
-    
     public void move( Dockable dockable, DockableProperty property ) {
     	DockUtilities.checkLayoutLocked();
         if( property instanceof ScreenDockProperty ){
@@ -1021,22 +990,6 @@ public class ScreenDockStation extends AbstractDockStation {
             ScreenDockProperty bounds = (ScreenDockProperty)property;
             
             window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ), false );
-        }
-    }
-
-    public void draw() {
-        if( dropInfo == null )
-            dropInfo = new DropInfo();
-        
-        if( dropInfo.combine != null )
-            dropInfo.combine.setPaintCombining( dropInfo.combiner );
-    }
-
-    public void forget() {
-        if( dropInfo != null ){
-            if( dropInfo.combine != null )
-                dropInfo.combine.setPaintCombining( null );
-            dropInfo = null;
         }
     }
 
@@ -1796,7 +1749,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * is used only while a Dockable is dragged and this station has answered
      * as possible parent.
      */
-    private class DropInfo implements CombinerSource{
+    private class DropInfo implements CombinerSource, StationDropOperation{
         /** The Dockable which is dragged */
         public Dockable dockable;
         /** Location of the mouse */
@@ -1808,11 +1761,52 @@ public class ScreenDockStation extends AbstractDockStation {
         
         /** Information about how to combine {@link #combine} with {@link #dockable} */
         public CombinerTarget combiner;
+        
+        /** whether this is a move operation or not */
+        public boolean move;
 
 		public Point getMousePosition(){
 			Point point = new Point( x, y );
 			SwingUtilities.convertPointFromScreen( point, combine.getDockable().getComponent() );
 			return point;
+		}
+		
+		public void draw(){
+			dropInfo = this;
+		        
+	        if( combine != null ){
+	            combine.setPaintCombining( dropInfo.combiner );
+	        }
+		}
+		
+		public void destroy(){
+            if( combine != null ){
+                combine.setPaintCombining( null );
+            }
+			
+			if( dropInfo == this ){	
+				dropInfo = null;
+			}
+		}
+		
+		public DockStation getTarget(){
+			return ScreenDockStation.this;
+		}
+		
+		public Dockable getItem(){
+			return dockable;
+		}
+		
+		public CombinerTarget getCombination(){
+			return combiner;
+		}
+		
+		public DisplayerCombinerTarget getDisplayerCombination(){
+			CombinerTarget target = getCombination();
+			if( target == null ){
+				return null;
+			}
+			return target.getDisplayerCombination();
 		}
 		
 		public Dimension getSize(){
@@ -1831,6 +1825,10 @@ public class ScreenDockStation extends AbstractDockStation {
 			return combine.getDockable();
 		}
 
+		public DockableDisplayer getOldDisplayer(){
+			return combine.getDockableDisplayer();
+		}
+		
 		public DockStation getParent(){
 			return ScreenDockStation.this;
 		}
@@ -1844,6 +1842,47 @@ public class ScreenDockStation extends AbstractDockStation {
 			}
 			return null;
 		}
+		
+		public boolean isMove(){
+			return move;
+		}
+		
+		public void execute(){
+			if( isMove() ){
+				move();
+			}
+			else{
+				drop();
+			}
+		}
+		
+	    private void move() {
+	    	DockUtilities.checkLayoutLocked();
+	        if( combine != null ){
+	            combine( dropInfo, combiner, null );
+	        }
+	        else{
+	            ScreenDockWindow window = getWindow( dockable );
+	            Point zero = window.getOffsetMove();
+	            if( zero == null )
+	                zero = new Point( 0, 0 );
+	            
+	            Rectangle bounds = window.getWindowBounds();
+	            bounds = new Rectangle( titleX - zero.x, titleY - zero.y, bounds.width, bounds.height );
+	            window.setWindowBounds( bounds, true );
+	        }
+	    }
+
+	    private void drop() {
+	        if( combine != null ){
+	            combine( dropInfo, combiner, null );
+	        }
+	        else{
+	            Component component = dockable.getComponent();
+	            Rectangle bounds = new Rectangle( titleX, titleY, component.getWidth(), component.getHeight() );
+	            addDockable( dockable, bounds, false );
+	        }
+	    }
     }
     
     /**

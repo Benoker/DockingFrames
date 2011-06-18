@@ -32,6 +32,8 @@ import java.awt.Insets;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -162,4 +164,17 @@ public interface DockableDisplayer {
      * @return the component
      */
     public Component getComponent();
+    
+    /**
+     * This method tells how this displayer would like to combine itself with a {@link Dockable} that is dropped
+     * over it. This method is usually called by a {@link Combiner} or by a {@link DockStation}, but other modules
+     * may call this method as well.
+     * @param source information about the dockable that is dropped, the location of the mouse, etc...
+     * @param force if <code>false</code>, then this method should return <code>null</code> unless the mouse is
+     * at a very special, visually marked spot where an operation does not surprise the user. If <code>true</code>, then
+     * this method may or may not return <code>null</code>.
+     * @return the operation that could be performed or <code>null</code> if this displayer does not
+     * have any specific information
+     */
+    public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force );
 }

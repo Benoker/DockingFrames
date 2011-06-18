@@ -33,6 +33,7 @@ import java.awt.Rectangle;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -111,6 +112,12 @@ public interface FlapWindow {
      * @return The {@link Dockable} or <code>null</code>
      */
     public Dockable getDockable();
+    
+    /**
+     * Gets the {@link DockableDisplayer} which manages {@link #getDockable() the dockable}.
+     * @return the displayer or <code>null</code>
+     */
+    public DockableDisplayer getDisplayer();
     
     /**
      * Informs this {@link FlapWindow} about the {@link DockController} in whose realm

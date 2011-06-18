@@ -365,7 +365,7 @@ public class DockController {
      * @return the default {@link UIScheme}, should not be <code>null</code>
      */
     protected UIScheme<Icon, DockIcon, DockIconBridge> createDefaultIconScheme(){
-    	DefaultIconScheme scheme = new DefaultIconScheme( "data/icons.ini", this );
+    	DefaultIconScheme scheme = new DefaultIconScheme( "data/bibliothek/gui/dock/core/icons.ini", this );
     	scheme.link( PropertyKey.DOCKABLE_ICON, "dockable.default" );
     	scheme.link( PropertyKey.DOCK_STATION_ICON, "dockStation.default" );
     	return scheme;
@@ -376,7 +376,7 @@ public class DockController {
      * @return the default {@link UIScheme}, should not be <code>null</code>
      */
     protected UIScheme<String, TextValue, TextBridge> createDefaultTextScheme(){
-    	ResourceBundle bundle = ResourceBundle.getBundle( "data.locale.text", Locale.getDefault(), this.getClass().getClassLoader() );
+    	ResourceBundle bundle = ResourceBundle.getBundle( "data.bibliothek.gui.dock.core.locale.text", Locale.getDefault(), this.getClass().getClassLoader() );
     	return new DefaultTextScheme( bundle );
     }
     

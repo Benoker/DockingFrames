@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
  * A set of {@link Merger}s.
@@ -73,19 +74,19 @@ public class MultiMerger implements Merger{
 		return mergers.get( index );
 	}
 	
-	public boolean canMerge( DockStation parent, DockStation child ){
+	public boolean canMerge( StationDropOperation operation, DockStation parent, DockStation child ){
 		for( Merger merger : mergers ){
-			if( merger.canMerge( parent, child )){
+			if( merger.canMerge( operation, parent, child )){
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public void merge( DockStation parent, DockStation child ){
+	public void merge( StationDropOperation operation, DockStation parent, DockStation child ){
 		for( Merger merger : mergers ){
-			if( merger.canMerge( parent, child )){
-				merger.merge( parent, child );
+			if( merger.canMerge( operation, parent, child )){
+				merger.merge( operation, parent, child );
 				return;
 			}
 		}

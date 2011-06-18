@@ -48,10 +48,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.displayer.DisplayerDockBorder;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
@@ -59,6 +61,7 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.Todo;
 
 /**
  * A {@link DockableDisplayer} which is not able to show the {@link DockTitle} of
@@ -220,7 +223,7 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 		}
 	}
 	
-	public TabPlacement getTabPlacement(){
+	public TabPlacement getDockTabPlacement(){
 		if( controller == null )
 			return null;
 		return controller.getProperties().get( StackDockStation.TAB_PLACEMENT );
@@ -341,6 +344,11 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 
 	public boolean titleContains( int x, int y ){
 		return false;
+	}
+
+	@Todo
+	public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
+		return null;
 	}
 	
 	/**

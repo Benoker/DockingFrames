@@ -47,6 +47,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
@@ -59,7 +60,9 @@ import bibliothek.gui.dock.station.stack.TabContent;
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.basic.TabDisplayerCombinerTarget;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
@@ -85,7 +88,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 	private PropertyValue<TabPlacement> tabPlacement = new PropertyValue<TabPlacement>( StackDockStation.TAB_PLACEMENT ){
 		@Override
 		protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
-			setTabPlacement( newValue );
+			setDockTabPlacement( newValue );
 		}
 	};
 	
@@ -305,6 +308,14 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 
 	public void setTitleLocation( Location location ){
 		this.location = location;
+	}
+	
+	public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
+		TabDisplayerCombinerTarget target = new TabDisplayerCombinerTarget( this, this, source, force );
+		if( target.isValid() ){
+			return target;
+		}
+		return null;
 	}
 	
 	@Override

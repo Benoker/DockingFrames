@@ -45,5 +45,5 @@ public interface BorderedComponent {
 	 * @return the side at which tabs are displayed or <code>null</code> if
 	 * this component does not show tabs
 	 */
-	public TabPlacement getTabPlacement();
+	public TabPlacement getDockTabPlacement();
 }

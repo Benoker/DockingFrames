@@ -36,6 +36,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
@@ -209,6 +210,10 @@ public class SplitCombiner extends BasicCombiner{
 			}
 			
 			paint.drawInsertion( g, station, dockableBounds, destination );
+		}
+		
+		public DisplayerCombinerTarget getDisplayerCombination(){
+			return null;
 		}
 	}
 }

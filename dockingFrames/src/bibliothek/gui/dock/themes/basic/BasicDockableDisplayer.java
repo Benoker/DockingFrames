@@ -46,6 +46,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.displayer.DisplayerDockBorder;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
@@ -55,6 +56,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.title.DockTitle;
@@ -62,6 +64,7 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIValue;
+import bibliothek.util.Todo;
 
 
 /**
@@ -762,6 +765,17 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     	if( contentBorder != null ){
     		contentBorder.setBorder( border );
     	}
+    }
+    
+    @Todo
+    public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
+    	if( decorator instanceof TabDecorator ){
+    		TabDisplayerCombinerTarget target = new TabDisplayerCombinerTarget( this, ((TabDecorator)decorator).getStackComponent(), source, force );
+    		if( target.isValid() ){
+    			return target;
+    		}
+    	}
+    	return null;
     }
     
     /**

@@ -41,6 +41,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -951,6 +952,10 @@ public abstract class SplitNode{
 			return child;
 		}
 
+		public DockableDisplayer getOldDisplayer(){
+			return null;
+		}
+		
 		public DockStation getParent(){
 			return access.getOwner();
 		}

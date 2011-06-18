@@ -58,6 +58,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableAdapter;
@@ -72,6 +73,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.ButtonPane;
 import bibliothek.gui.dock.station.flap.DefaultFlapLayoutManager;
@@ -1328,10 +1330,11 @@ public class FlapDockStation extends AbstractDockableStation {
 		buttonPane.resetTitles();
     }
 
-    public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    	boolean move = dockable.getDockParent() == this;
+    	
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
-    		setDropInfo( null );
-    		return false;
+    		return null;
     	}
         
         Point mouse = new Point( mouseX, mouseY );
@@ -1367,7 +1370,7 @@ public class FlapDockStation extends AbstractDockableStation {
             DockStation parent = getDockParent();
             if( parent != null ){
                 if( checkOverrideZone && parent.isInOverrideZone( mouseX, mouseY, this, dockable ))
-                    return false;
+                    return null;
             }
         }
         
@@ -1386,7 +1389,7 @@ public class FlapDockStation extends AbstractDockableStation {
         }
         
         if( dropInfo != null && dockable == getFrontDockable() )
-            return false;
+            return null;
         
         if( dropInfo == null ){
             if( dockable.accept( this ) &&
@@ -1402,6 +1405,10 @@ public class FlapDockStation extends AbstractDockableStation {
 						return null;
 					}
 
+					public DockableDisplayer getOldDisplayer(){
+						return null;
+					}
+					
 					public PlaceholderMap getPlaceholders(){
 						return null;
 					}
@@ -1418,8 +1425,7 @@ public class FlapDockStation extends AbstractDockableStation {
             }
         }
         
-        setDropInfo( dropInfo );
-        return dropInfo != null;
+        return new FlapDropOperation( dropInfo, move );
         
     }
     
@@ -1434,6 +1440,8 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     private FlapDropInfo prepareCombine( Dockable dockable, FlapWindow window, final Point mouseOnScreen, final boolean mouseOverTitle, boolean force ){
     	final Dockable child = window.getDockable();
+    	final DockableDisplayer displayer = window.getDisplayer();
+    	
     	FlapDropInfo info = new FlapDropInfo( this, dockable ){
 			public boolean isMouseOverTitle(){
 				return mouseOverTitle;
@@ -1462,6 +1470,10 @@ public class FlapDockStation extends AbstractDockableStation {
 			public Dockable getOld(){
 				return child;
 			}
+			
+			public DockableDisplayer getOldDisplayer(){
+				return displayer;
+			}
 		};
 		
 		CombinerTarget target = combiner.prepare( info, force );
@@ -1470,15 +1482,6 @@ public class FlapDockStation extends AbstractDockableStation {
 		}
 		info.setCombineTarget( target );
 		return info;
-    }
-
-    public void drop(){
-    	if( dropInfo.getCombineTarget() != null ){
-            combine( dropInfo, dropInfo.getCombineTarget(), null );
-        }
-        else{
-            add( dropInfo.getDockable(), dropInfo.getIndex() );
-        }
     }
 
     public void drop( Dockable dockable ) {
@@ -1595,28 +1598,6 @@ public class FlapDockStation extends AbstractDockableStation {
         return new FlapDockProperty( index, holding, size, placeholder );
     }
 
-    public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY,
-            boolean checkOverrideZone, Dockable dockable ){
-        
-        return prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable );
-    }
-
-    public void move() {
-    	if( dropInfo.getCombineTarget() != null ){
-            remove( dropInfo.getDockable() );
-            combine( dropInfo, dropInfo.getCombineTarget(), null );
-        }
-    	else{
-	    	int index = indexOf( dropInfo.getDockable() );
-	    	if( index < dropInfo.getIndex() ){
-	    		dropInfo.setIndex( dropInfo.getIndex()-1 );
-	    	}
-	    	handles.dockables().move( index, dropInfo.getIndex() );
-	    	buttonPane.resetTitles();
-	    	fireDockablesRepositioned( Math.min( index, dropInfo.getIndex() ), Math.max( index, dropInfo.getIndex() ) );
-    	}
-    }
-    
     public void move( Dockable dockable, DockableProperty property ) {
     	DockUtilities.checkLayoutLocked();
         if( property instanceof FlapDockProperty ){
@@ -1634,19 +1615,6 @@ public class FlapDockStation extends AbstractDockableStation {
                 fireDockablesRepositioned( Math.min( index, destination ), Math.max( index, destination ) );
             }
         }
-    }
-
-    public void draw() {
-        if( dropInfo != null )
-            dropInfo.setDraw( true );
-        buttonPane.repaint();
-        if( window != null )
-            window.repaint();
-    }
-
-    public void forget() {
-        setDropInfo( null );
-        buttonPane.repaint();
     }
 
     public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ) {
@@ -1889,6 +1857,10 @@ public class FlapDockStation extends AbstractDockableStation {
 				return child;
 			}
 			
+			public DockableDisplayer getOldDisplayer(){
+				return null;
+			}
+			
 			public Point getMousePosition(){
 				return null;
 			}
@@ -2085,6 +2057,93 @@ public class FlapDockStation extends AbstractDockableStation {
         	DockableHandle handle = handles.dockables().get( index );
         	if( handle.getTitle() == title ){
         		handle.setTitle( buttonVersion );
+            }
+        }
+    }
+    
+    /**
+     * Custom implementation of {@link StationDropOperation}.
+     * @author Benjamin Sigg
+     */
+    protected class FlapDropOperation implements StationDropOperation{
+    	private FlapDropInfo dropInfo;
+    	private boolean move;
+    	
+    	/**
+    	 * Creates a new operation.
+    	 * @param dropInfo the location information of the dropped {@link Dockable}
+    	 * @param move whether this is a move operation
+    	 */
+    	public FlapDropOperation( FlapDropInfo dropInfo, boolean move ){
+    		this.dropInfo = dropInfo;
+    		this.move = move;
+    	}
+    	
+    	public boolean isMove(){
+	    	return move;
+    	}
+    	
+    	public void draw(){
+	    	setDropInfo( dropInfo );	
+    	}
+    	
+    	public void destroy(){
+    		if( FlapDockStation.this.dropInfo == dropInfo ){
+    			setDropInfo( null );
+    		}
+    	}
+    	
+    	public Dockable getItem(){
+    		return dropInfo.getDockable();
+    	}
+    	
+    	public DockStation getTarget(){
+    		return FlapDockStation.this;
+    	}
+    	
+    	public CombinerTarget getCombination(){
+	    	return dropInfo.getCombineTarget();
+    	}
+    	
+    	public DisplayerCombinerTarget getDisplayerCombination(){
+    		CombinerTarget target = getCombination();
+    		if( target == null ){
+    			return null;
+    		}
+    		return target.getDisplayerCombination();
+    	}
+    	
+    	public void execute(){
+	    	if( isMove() ){
+	    		move();
+	    	}
+	    	else{
+	    		drop();
+	    	}
+    	}
+    	
+        public void move() {
+        	if( dropInfo.getCombineTarget() != null ){
+                remove( dropInfo.getDockable() );
+                combine( dropInfo, dropInfo.getCombineTarget(), null );
+            }
+        	else{
+    	    	int index = indexOf( dropInfo.getDockable() );
+    	    	if( index < dropInfo.getIndex() ){
+    	    		dropInfo.setIndex( dropInfo.getIndex()-1 );
+    	    	}
+    	    	handles.dockables().move( index, dropInfo.getIndex() );
+    	    	buttonPane.resetTitles();
+    	    	fireDockablesRepositioned( Math.min( index, dropInfo.getIndex() ), Math.max( index, dropInfo.getIndex() ) );
+        	}
+        }
+
+        public void drop(){
+        	if( dropInfo.getCombineTarget() != null ){
+                combine( dropInfo, dropInfo.getCombineTarget(), null );
+            }
+            else{
+                add( dropInfo.getDockable(), dropInfo.getIndex() );
             }
         }
     }

@@ -129,8 +129,7 @@ public class CEclipseTheme extends CDockTheme<EclipseTheme>{
         super.install( controller );
         IconManager manager = controller.getIcons();
         Map<String, Icon> icons = DockUtilities.loadIcons(
-                "data/bibliothek/gui/dock/icons/eclipse/icons.ini",
-                "data/bibliothek/gui/dock/icons/eclipse/", CEclipseTheme.class.getClassLoader() );
+                "data/bibliothek/gui/dock/common/icons/eclipse/icons.ini", null, CEclipseTheme.class.getClassLoader() );
         for( Map.Entry<String, Icon> entry : icons.entrySet() ){
             manager.setIconTheme( entry.getKey(), entry.getValue() );
         }

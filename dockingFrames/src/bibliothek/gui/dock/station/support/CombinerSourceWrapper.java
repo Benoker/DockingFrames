@@ -30,6 +30,7 @@ import java.awt.Point;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.DockableDisplayer;
 
 /**
  * A wrapper around a {@link CombinerSource}, can be used to easily override
@@ -65,6 +66,10 @@ public class CombinerSourceWrapper implements CombinerSource{
 	
 	public Dockable getNew(){
 		return delegate.getNew();
+	}
+	
+	public DockableDisplayer getOldDisplayer(){
+		return delegate.getOldDisplayer();
 	}
 
 	public Dockable getOld(){

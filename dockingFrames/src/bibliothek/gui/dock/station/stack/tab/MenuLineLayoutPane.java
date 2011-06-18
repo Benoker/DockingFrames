@@ -92,7 +92,7 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 		List<MenuLineLayoutPossibility> layouts = listLayouts();
 		Dimension bestSize = new Dimension( 0, 0 );
 		
-		if( getPane().getTabPlacement().isHorizontal() ){
+		if( getPane().getDockTabPlacement().isHorizontal() ){
 			for( MenuLineLayoutPossibility layout : layouts ){
 				if( layout.isPreferred() ){
 					Dimension size = layout.getSize();
@@ -124,7 +124,7 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 		List<MenuLineLayoutPossibility> layouts = listLayouts();
 		Dimension bestSize = null;
 		
-		if( getPane().getTabPlacement().isHorizontal() ){
+		if( getPane().getDockTabPlacement().isHorizontal() ){
 			for( MenuLineLayoutPossibility layout : layouts ){
 				Dimension size = layout.getSize();
 				if( bestSize == null || size.width < bestSize.width ){
@@ -217,7 +217,7 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 	 */
 	private List<MenuLineLayoutPossibility> listLayouts(){
 		List<MenuLineLayoutPossibility> results = new ArrayList<MenuLineLayoutPossibility>();
-		TabPlacement orientation = getPane().getTabPlacement();
+		TabPlacement orientation = getPane().getDockTabPlacement();
 		
 		tabs.setOrientation( orientation );
 		Size[] sizesTabs = tabs.getSizes();

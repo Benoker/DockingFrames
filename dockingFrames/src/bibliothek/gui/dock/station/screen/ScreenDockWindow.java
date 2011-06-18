@@ -91,6 +91,12 @@ public interface ScreenDockWindow {
     public Dockable getDockable();
     
     /**
+     * Gets the {@link DockableDisplayer} which manages {@link #getDockable() the dockable}.
+     * @return the displayer or <code>null</code>
+     */
+    public DockableDisplayer getDockableDisplayer();
+    
+    /**
      * Gets the center of the title of this window. In general the center of
      * the title should remain visible all the time.
      * @return the center, can be <code>null</code>

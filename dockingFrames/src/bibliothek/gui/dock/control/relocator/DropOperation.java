@@ -28,6 +28,7 @@ package bibliothek.gui.dock.control.relocator;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
  * This operation calls {@link DockStation#drop()}
@@ -37,37 +38,64 @@ import bibliothek.gui.Dockable;
 public class DropOperation implements RelocateOperation{
 	private DockController controller;
 	private DockStation station;
+	private StationDropOperation operation;
 	
 	/**
 	 * Creates a new operation
 	 * @param controller the controller in whose realm this operation works
 	 * @param station the target of this operation
+	 * @param operation the operation that would be executed by <code>station</code>
 	 */
-	public DropOperation( DockController controller, DockStation station ){
+	public DropOperation( DockController controller, DockStation station, StationDropOperation operation ){
 		this.controller = controller;
 		this.station = station;
+		this.operation = operation;
 	}
 	
 	public DockStation getStation(){
 		return station;
 	}
 	
+	public StationDropOperation getOperation(){
+		return operation;
+	}
+	
 	public Dockable[] getImplicit( Dockable selection ){
 		return new Dockable[]{};
 	}
 	
+	public void destroy(){
+		operation.destroy();
+	}
+	
 	public boolean execute( Dockable selection, VetoableDockRelocatorListener listener ){
-		DockStation parent = selection.getDockParent();
-		if( parent != null ){
-			DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station );
-			listener.dragging( event );
-			if( event.isCanceled() || event.isForbidden() ){
-				return false;
+		try{
+			if( operation.isMove() ){
+				DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station );
+				listener.dragging( event );
+				if( event.isCanceled() || event.isForbidden() ){
+					return false;
+				}
+				operation.execute();
+				listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station ) );
 			}
-			parent.drag( selection );
-			listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station ) );
+			else{
+				DockStation parent = selection.getDockParent();
+				if( parent != null ){
+					DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station );
+					listener.dragging( event );
+					if( event.isCanceled() || event.isForbidden() ){
+						return false;
+					}
+					parent.drag( selection );
+					listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station ) );
+				}
+				operation.execute();
+			}
 		}
-        station.drop();
-        return true;	
+		finally{
+			operation.destroy();
+		}
+		return true;	
 	}
 }

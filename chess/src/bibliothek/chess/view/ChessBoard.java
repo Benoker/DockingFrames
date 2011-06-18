@@ -24,6 +24,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.dockable.DockableStateListener;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleEvent;
@@ -33,6 +34,8 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
@@ -229,18 +232,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			put( field.getRow(), field.getColumn(), null );
 	}
 
-	public void draw(){
-		if( drop != null ){
-			repaint();
-		}
-	}
-
-	public void drop(){
-		if( drop != null && drop.valid ){
-			put( drop.row, drop.column, drop.figure );
-		}
-	}
-
 	public void drop( Dockable dockable ){
 		throw new IllegalStateException( "Can't just drop a figure on a chess board" );
 	}
@@ -319,11 +310,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		return null;
 	}
 
-	public void forget(){
-		drop = null;
-		repaint();
-	}
-
 	public DockController getController(){
 		return controller;
 	}
@@ -377,21 +363,11 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		return isStationVisible();
 	}
 
-	public void move(){
-		if( drop != null && drop.valid ){
-			put( drop.row, drop.column, drop.figure );
-		}
-	}
-	
 	public void move( Dockable dockable, DockableProperty property ) {
 	    // do nothing
 	}
 
-	public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
-		return prepare( mouseX, mouseY, (ChessFigure)dockable );
-	}
-
-	public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
 		return prepare( mouseX, mouseY, (ChessFigure)dockable );
 	}
 	
@@ -403,7 +379,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	 * @return <code>true</code> if a valid location for <code>figure</code>
 	 * was found, <code>false</code> otherwise
 	 */
-	private boolean prepare( int x, int y, ChessFigure figure ){
+	private StationDropOperation prepare( int x, int y, ChessFigure figure ){
 		Point location = new Point( x, y );
 		SwingUtilities.convertPointFromScreen( location, this );
 
@@ -411,7 +387,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		int h = getHeight();
 		
 		if( location.x < 0 || location.y < 0 || location.x > w || location.y > h ){
-			return false;
+			return null;
 		}
 		
 
@@ -424,16 +400,14 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		while( (7-r)*h/8 > location.y )
 			r++;
 		
-		if( drop == null || drop.figure != figure ){
-			drop = new DropInfo();
+		final DropInfo drop = new DropInfo();
 			
-			figure.getFigure().reachable( new Board.CellVisitor(){
-			    public boolean visit( int r, int c, Figure figure ) {
-			        drop.targets[r][c] = true;
-			        return true;
-			    }
-			});
-		}
+		figure.getFigure().reachable( new Board.CellVisitor(){
+		    public boolean visit( int r, int c, Figure figure ) {
+		        drop.targets[r][c] = true;
+		        return true;
+		    }
+		});
 		
 		drop.figure = figure;
 		
@@ -442,7 +416,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		
 		drop.valid = drop.targets[drop.row][drop.column];
 		
-		return true;
+		return drop;
 	}
 
 	public void removeDockStationListener( DockStationListener listener ){
@@ -514,24 +488,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	}
 	
 	/**
-	 * An instance of DropInfo contains all information needed to execute
-	 * a drag and drop-action on a {@link ChessBoard}. 
-	 * @author Benjamin Sigg
-	 */
-	private class DropInfo{
-		/** the figure which is grabbed */
-		public ChessFigure figure = null;
-		/** the target row */
-		public int row;
-		/** the target column */
-		public int column;
-		/** whether the target is a valid destination or not */
-		public boolean valid;
-		/** which fields are valid targets */
-		public boolean[][] targets = new boolean[8][8];
-	}
-	
-	/**
 	 * Calculates the smallest x-coordinate which is still part of the column <code>c</code>.
 	 * @param c a column
 	 * @return the smallest x-coordinate in c
@@ -599,6 +555,62 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	
 	public boolean isAutoRemoveable(){
 		return false;
+	}
+
+	/**
+	 * An instance of DropInfo contains all information needed to execute
+	 * a drag and drop-action on a {@link ChessBoard}. 
+	 * @author Benjamin Sigg
+	 */
+	private class DropInfo implements StationDropOperation{
+		/** the figure which is grabbed */
+		public ChessFigure figure = null;
+		/** the target row */
+		public int row;
+		/** the target column */
+		public int column;
+		/** whether the target is a valid destination or not */
+		public boolean valid;
+		/** which fields are valid targets */
+		public boolean[][] targets = new boolean[8][8];
+		
+		public boolean isMove(){
+			return true;
+		}
+		
+		public void draw(){
+			drop = this;
+			repaint();
+		}
+		
+		public void destroy(){
+			if( drop == this ){
+				drop = null;
+				repaint();
+			}
+		}
+		
+		public void execute(){
+			if( valid ){
+				put( row, column, figure );
+			}
+		}
+		
+		public CombinerTarget getCombination(){
+			return null;
+		}
+		
+		public DisplayerCombinerTarget getDisplayerCombination(){
+			return null;
+		}
+		
+		public DockStation getTarget(){
+			return ChessBoard.this;
+		}
+		
+		public Dockable getItem(){
+			return figure;
+		}
 	}
 	
 	/**

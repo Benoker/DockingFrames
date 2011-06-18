@@ -532,7 +532,7 @@
 - Bugfix: Dropping a Dockable on a FlapDockStation could remove another child if the placeholders had a bad order
 - Bugfix: Dropping a Dockable on a SplitDockStation with children that have a fixed size and have an outstanding resize operation now updates the boundaries of the children twice: the first time to reflect the new child, the second time to reflect the resized station
 
-[v1.1.1]
+[v1.1.1p1]
 - Bugfix: If a CDockable is made visible without a known location, then the default location stored in CLocationModeManager is checked as well.
 - Bugfix: CLocationMode.getCLocation did return null even if there was enough information to return a non-null result.
 - API: MultipleCDockables are now registered at the DockFrontend just like SingleCDockables. This adds better support for persistent location storage to MultipleCDockable.
@@ -570,8 +570,16 @@
 ! API: SingleCDockableBackupFactory replaced by SingleCDockableFactory
 ! API: Methods related to UIListener moved from DockController to ThemeManager
 ! API: DockController.getFocusObserver replaced by getMouseFocusObserver
-! API: Server methods from DockUI (like "getCombiner") replaced by methods from the ThemeManager
+! API: Several methods from DockUI (like "getCombiner") replaced by methods from the ThemeManager
 ! API: DockRelocatorListener got completely replaced by VetoableDockRelocatorListener
+
+[v.1.1.1p2]
+! API: All resources (icons, localization) have been put into subfolders, this should prevent any collision of resources with any other project.
+! API: The drag'n'drop interface of DockStation has been heavily modified. All the methods related to drag and drop have been removed except "prepareDrop". "prepareDrop" now returns an object that is used to execute the operation.
+! API: Renamed StackDockComponent.setTabPlacemenet to setDockTabPlacement to prevent collision of names with JTabbedPane
+! API: The DockableDisplayer can now influence a drag and drop operation through a "DisplayerCombinerTarget". This allows displayers that show a tab (like in the EclipseTheme) to place a Dockable "left" or "right" to the existing dockable. Also the displayer can now paint markings to help the user to find out, what will happen. 
+- API: New property StackDockStation.IMMUTABLE_SELECTED_INDEX prevents the StackDockStation from switching the selection index when dropping a Dockable (but has no effect on the FocusManager!).
+- Bugfix: EclipseStationPaint did dispose Graphics context that should not be disposed
 
 [Todo]
 - Import/Export Perspectives from file

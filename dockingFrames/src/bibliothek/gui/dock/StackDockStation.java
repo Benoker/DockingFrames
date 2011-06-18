@@ -52,10 +52,13 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.AbstractDockableStation;
@@ -65,6 +68,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
@@ -77,6 +81,7 @@ import bibliothek.gui.dock.station.stack.TabContent;
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableVisibilityManager;
@@ -127,6 +132,17 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public static final PropertyKey<TabContentFilter> TAB_CONTENT_FILTER =
     	new PropertyKey<TabContentFilter>( "stack dock tab content filter" );
     
+    /** 
+     * If set to <code>true</code>, then dropping a {@link Dockable} onto a {@link StackDockStation} won't
+     * change the currently selected item.<br>
+     * This property does not prevent the {@link FocusController} from changing the focus, and updating the focus
+     * may lead to changing the selected index anyway. Clients using this property might also need to
+     * implement a {@link FocusVetoListener} and add it to the {@link FocusController}.
+     */
+    public static final PropertyKey<Boolean> IMMUTABLE_SELECTION_INDEX = 
+    	new PropertyKey<Boolean>( "stack dock immutable selection index", 
+    			new ConstantPropertyFactory<Boolean>( false ), true );
+    
     /** A list of all children */
     private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
     
@@ -147,12 +163,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /** The set of displayers shown on this station */
     private DisplayerCollection displayers;
-    
-    /** The {@link Dockable} which is currently moved or dropped */
-    private Dockable dropping;
-    
-    /** Tells whether some lines have to be painted, or not */
-    private boolean draw = false;
     
     /** The preferred location where {@link #dropping} should be added */
     private Insert insert;
@@ -314,7 +324,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	@Override
         	protected void valueChanged( TabPlacement oldValue, TabPlacement newValue ){
         		if( stackComponent != null ){
-        			stackComponent.setTabPlacement( newValue );
+        			stackComponent.setDockTabPlacement( newValue );
         		}
         	}
         };
@@ -446,7 +456,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
             
             this.stackComponent = stackComponent;
-            stackComponent.setTabPlacement( tabPlacement.getValue() );
+            stackComponent.setDockTabPlacement( tabPlacement.getValue() );
             stackComponentRepresentative.setComponent( stackComponent );
             
             if( getDockableCount() < 2 && !singleTabStackDockComponent() ){
@@ -852,21 +862,55 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	placeholderStrategy.setValue( strategy );
     }
     
-    public boolean prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+
+    public StationDropOperation prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+        DockStation parent = getDockParent();
+        Point point = new Point( x, y );
+        SwingUtilities.convertPointFromScreen( point, panel );
+        
+        Insert insert = null;
+        
+        if( parent != null ){
+            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
+                if( dockables.dockables().size() > 1 ){
+                	insert = exactTabIndexAt( point.x, point.y );
+                    if( validate( insert, dockable ) ){
+                        return new StackDropOperation( dockable, insert, true );
+                    }
+                }
+                return null;
+            }
+        }
+        
+        insert = tabIndexAt( point.x, point.y );
+        if( validate( insert, dockable )){
+        	return new StackDropOperation( dockable, insert, true );
+        }
+        return null;
+    }
+    
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+    	if( dockable.getDockParent() == this ){
+    		return prepareMove( x, y, titleX, titleY, checkOverrideZone, dockable );
+    	}
+    	
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
-    		setInsert( null, null );
-    		return false;
+    		return null;
     	}
     	
         DockStation parent = getDockParent();
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, panel );
         
+        Insert insert = null;
+        
         if( parent != null ){
             if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
                 if( dockables.dockables().size() > 1 ){
-                    if( setInsert( exactTabIndexAt( point.x, point.y ), dockable ))
-                        return true;
+                	insert = exactTabIndexAt( point.x, point.y );
+                    if( validate( insert, dockable )){
+                        return new StackDropOperation( dockable, insert, false );
+                    }
                 }
                 else if( dockables.dockables().size() == 1 ){
                     DockTitle title = dockables.dockables().get( 0 ).getDisplayer().getTitle();
@@ -876,19 +920,22 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                         SwingUtilities.convertPointFromScreen( p, component );
 
                         if( component.getBounds().contains( p )){
-                            return setInsert( new Insert( 0, true ), dockable );
+                        	insert = new Insert( 0, true );
+                        	if( validate( insert, dockable )){
+                        		return new StackDropOperation( dockable, insert, false );
+                        	}
                         }
                     }
                 }
-                return false;
+                return null;
             }
         }
         
-        return setInsert( tabIndexAt( point.x, point.y ), dockable );
-    }
-
-    public void drop(){
-        add( dropping, insert.tab + (insert.right ? 1 : 0), null );
+        insert = tabIndexAt( point.x, point.y );
+        if( validate( insert, dockable )){
+        	return new StackDropOperation( dockable, insert, false );
+        }
+        return null;
     }
 
     public void drop( Dockable dockable ) {
@@ -989,42 +1036,14 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         return result;
     }
     
-    public boolean prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        DockStation parent = getDockParent();
-        Point point = new Point( x, y );
-        SwingUtilities.convertPointFromScreen( point, panel );
-        
-        if( parent != null ){
-            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
-                if( dockables.dockables().size() > 1 ){
-                    if( setInsert( exactTabIndexAt( point.x, point.y ), dockable ) )
-                        return true;
-                }
-                return false;
-            }
-        }
-        
-        return setInsert( tabIndexAt( point.x, point.y ), dockable );
-    }
-    
     /**
      * Checks whether <code>child</code> can be inserted at <code>insert</code>.
-     * If so, then the field {@link #insert} and {@link #dropping} are set.
      * @param insert the new location
      * @param child the element to insert
      * @return <code>true</code> if the combination is valid
      */
-    private boolean setInsert( Insert insert, Dockable child ){
-        if( insert != null && accept( child ) && child.accept( this ) && getController().getAcceptance().accept( this, child )){
-            this.insert = insert;
-            this.dropping = child;
-        }
-        else{
-            this.insert = null;
-            this.dropping = null;
-        }
-        
-        return this.insert != null;
+    private boolean validate( Insert insert, Dockable child ){
+        return insert != null && accept( child ) && child.accept( this ) && getController().getAcceptance().accept( this, child );
     }
     
     /**
@@ -1036,17 +1055,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 		return insert;
 	}
 
-    public void move() {
-        int index = indexOf( dropping );
-        if( index >= 0 ){
-            int drop = insert.tab + (insert.right ? 1 : 0 );
-            if( drop > index ){
-            	drop--;
-            }
-            move( index, drop );
-        }
-    }
-    
     public void move( Dockable dockable, DockableProperty property ) {
         if( property instanceof StackDockProperty ){
         	DockUtilities.checkLayoutLocked();
@@ -1115,18 +1123,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                
         return null;
     }    
-
-    public void draw() {
-        draw = true;
-        panel.repaint();
-    }
-
-    public void forget() {
-        draw = false;
-        insert = null;
-        dropping = null;
-        panel.repaint();
-    }
 
     public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
             int y, D invoker, Dockable drop ){
@@ -1265,6 +1261,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         }
         else{
         	int selectionIndex = index;
+        	int oldSelectionIndex = 0;
         	
             if( size == 1 && !singleTabStackDockComponent() ){
                 panel.removeAll();
@@ -1282,13 +1279,33 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 insertTab( child, 0 );
                 panel.add( stackComponent.getComponent() );
             }
+            else{
+            	oldSelectionIndex = stackComponent.getSelectedIndex();
+            	if( index <= oldSelectionIndex ){
+            		oldSelectionIndex++;
+            	}
+            }
             
             DockableDisplayer displayer = handle.getDisplayer();
             insertTab( displayer, index );
-            stackComponent.setSelectedIndex( selectionIndex );
+            
+            if( isImmutableSelectedIndex() ){
+            	stackComponent.setSelectedIndex( oldSelectionIndex );
+            }
+            else {
+            	stackComponent.setSelectedIndex( selectionIndex );
+            }
         }
         panel.revalidate();
         panel.repaint();
+    }
+    
+    private boolean isImmutableSelectedIndex(){
+    	DockController controller = getController();
+    	if( controller == null ){
+    		return IMMUTABLE_SELECTION_INDEX.getDefault( null );
+    	}
+    	return controller.getProperties().get( IMMUTABLE_SELECTION_INDEX );
     }
     
     private void insertTab( DockableDisplayer displayer, int index ){
@@ -1563,7 +1580,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         protected void paintOverlay( Graphics g ) {
             DefaultStationPaintValue paint = getPaint();
             
-            if( draw && dockables.dockables().size() > 1 && insert != null ){
+            if( insert != null && dockables.dockables().size() > 1 ){
                 Rectangle bounds = null;
                 
                 if( insert.tab >= 0 && insert.tab < stackComponent.getTabCount() )
@@ -1584,7 +1601,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 }
             }
             
-            if( draw ){
+            if( insert != null ){
                 Rectangle bounds = new Rectangle( 0, 0, getWidth(), getHeight() );
                 Rectangle insert = null;
                 if( getDockableCount() < 2 )
@@ -1725,6 +1742,86 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         public boolean isRight(){
 			return right;
 		}
+    }
+    
+    /**
+     * Custom implementation of {@link StationDropOperation}.
+     * @author Benjamin Sigg
+     */
+    protected class StackDropOperation implements StationDropOperation{
+    	private Insert insert;
+    	private Dockable dropping;
+    	private boolean move;
+    	
+    	/**
+    	 * Creates a new operation.
+    	 * @param dropping the item that is about to be dropped
+    	 * @param insert the new location of {@link #dropping}
+    	 * @param move whether this is a move operation
+    	 */
+    	public StackDropOperation( Dockable dropping, Insert insert, boolean move ){
+    		this.dropping = dropping;
+    		this.insert = insert;
+    		this.move = move;
+    	}
+    	
+    	public boolean isMove(){
+    		return move;
+    	}
+    	
+        public void draw() {
+        	StackDockStation.this.insert = insert;
+            panel.repaint();
+        }
+
+        public void destroy(){
+        	if( StackDockStation.this.insert == insert ){
+        		StackDockStation.this.insert = null;
+        		panel.repaint();
+        	}
+            insert = null;
+            dropping = null;
+        }
+        
+        public DockStation getTarget(){
+        	return StackDockStation.this;
+        }
+        
+        public Dockable getItem(){
+        	return dropping;
+        }
+        
+        public void execute(){
+	        if( isMove() ){	
+	        	move();
+	        }
+	        else{
+	        	drop();
+	        }
+        }
+
+        public void move() {
+            int index = indexOf( dropping );
+            if( index >= 0 ){
+                int drop = insert.tab + (insert.right ? 1 : 0 );
+                if( drop > index ){
+                	drop--;
+                }
+                StackDockStation.this.move( index, drop );
+            }
+        }
+
+        public void drop(){
+            add( dropping, insert.tab + (insert.right ? 1 : 0), null );
+        }
+        
+        public CombinerTarget getCombination(){
+        	return null;
+        }
+        
+        public DisplayerCombinerTarget getDisplayerCombination(){
+        	return null;
+        }
     }
     
     /**

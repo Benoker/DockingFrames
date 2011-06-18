@@ -106,14 +106,14 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 * Tells this pane where to paint the tabs.
 	 * @param tabPlacement a side, not <code>null</code>
 	 */
-	public void setTabPlacement( TabPlacement tabPlacement ){
+	public void setDockTabPlacement( TabPlacement tabPlacement ){
 		if( tabPlacement == null )
 			throw new IllegalArgumentException( "tab placement must not be null" );
 		this.tabPlacement = tabPlacement;
 		revalidate();
 	}
 	
-	public TabPlacement getTabPlacement(){
+	public TabPlacement getDockTabPlacement(){
 		return tabPlacement;
 	}
 	
@@ -491,7 +491,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		T tab = tabs.get( dockable );
 		if( tab == null ){
 			tab = newTab( dockable );
-			tab.setOrientation( getTabPlacement() );
+			tab.setOrientation( getDockTabPlacement() );
 			tabs.put( dockable, tab );
 		}
 		tab.setPaneVisible( true );
@@ -513,7 +513,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		T tab = tabs.get( dockable );
 		if( tab == null ){
 			tab = newTab( dockable );
-			tab.setOrientation( getTabPlacement() );
+			tab.setOrientation( getDockTabPlacement() );
 			tabs.put( dockable, tab );
 		}
 		return tab;
