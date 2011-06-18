@@ -38,8 +38,7 @@ import bibliothek.gui.dock.station.StationPaint;
 
 /**
  * Created by a {@link Combiner}, this object tells how two {@link Dockable}s
- * are going to be merged. Clients must call {@link #destroy()} if they no longer use
- * this target.
+ * are going to be merged.
  * @author Benjamin Sigg
  */
 public interface CombinerTarget {

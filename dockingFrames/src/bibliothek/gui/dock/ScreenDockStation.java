@@ -762,7 +762,8 @@ public class ScreenDockStation extends AbstractDockStation {
 
     /**
      * Ensures that the desired location where to insert the next child is valid.
-     * @param  <code>true</code> if <code>dropInfo</code> is valid, <code>false</code> otherwise
+     * @param dropInfo information about the element to drop
+     * @return <code>true</code> if <code>dropInfo</code> is valid, <code>false</code> otherwise
      */
     private boolean checkDropInfo( DropInfo dropInfo ){
         if( dropInfo.combine != null ){

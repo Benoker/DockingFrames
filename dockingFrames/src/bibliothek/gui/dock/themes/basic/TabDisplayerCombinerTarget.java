@@ -45,7 +45,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 /**
  * This {@link DisplayerCombinerTarget} can be used by {@link DockableDisplayer}s that show a 
  * {@link StackDockComponent} to paint some tabs. This target will create a {@link StackDockStation}
- * if {@link #execute()} is called.<br>
+ * if {@link #execute(CombinerSource)} is called.<br>
  * Clients should first create an instance of this target, then call {@link #isValid()} to check whether
  * the parameters were valid.  
  * @author Benjamin Sigg

@@ -587,3 +587,4 @@
 - Tabs: replace icon of drop down action showing overflowing Dockables by icon that dynamically shows the size of the menu
 - Drop StackDockStation over Dockable and merge them
 - EclipseTheme: Drop Dockable over Dockable and allow to select which Dockable has which index in the new StackDockStation.
+- SingleParentRemover: Implement bugfix as described in the file

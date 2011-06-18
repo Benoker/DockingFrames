@@ -2997,9 +2997,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		
 		/**
-		 * Adds the {@link Dockable} given by <code>putInfo</code> to this
+		 * Adds the {@link Dockable} given by {@link #putInfo} to this
 		 * station.
-		 * @param putInfo the location of the new child
 	     * @param token if <code>null</code>, then a token will be acquired by this method
 	     * and this method will fire events, otherwise this methods is executed silently
 		 */

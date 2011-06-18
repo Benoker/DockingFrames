@@ -59,7 +59,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  *  paint border and title of the item.</li>
  *  <li>This station should be aware of the current {@link DockTheme} and use its factories and delegates whenever possible.</li>
  *  <li>Drag and drop is handled by the {@link DockController}. Methods like {@link #canDrag(Dockable)}, {@link #drag(Dockable)}, 
- * {@link #drop()} or {@link #move()} need to be implemented for this. Also {@link #accept(Dockable)}, {@link Dockable#accept(DockStation)},
+ * {@link #prepareDrop(int, int, int, int, boolean, Dockable)} need to be implemented for this. Also {@link #accept(Dockable)}, {@link Dockable#accept(DockStation)},
  * {@link Dockable#accept(DockStation, Dockable)} and the {@link DockAcceptance} of the current {@link DockController} should be checked before
  * allowing a drag and drop operation.</li>
  *  <li>For each child there should be at least one {@link DockTitle}. This station needs to derive a {@link DockTitleVersion} from
