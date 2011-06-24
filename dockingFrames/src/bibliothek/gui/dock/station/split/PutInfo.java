@@ -77,16 +77,21 @@ public class PutInfo {
     /** information created by a {@link Combiner} */
     private CombinerTarget combinerTarget;
     
+    /** whether the mouse position would result in {@link Put#CENTER} */
+    private boolean combining;
+    
     /**
      * Creates a new PutInfo.
      * @param node the node to which <code>put</code> belongs
      * @param put where to put the {@link Dockable} in respect to <code>node</code>
      * @param dockable the element that will be dropped
+     * @param combining whether the mouse position alone would set <code>put</code> to {@link Put#CENTER} or {@link Put#TITLE}
      */
-    public PutInfo( SplitNode node, Put put, Dockable dockable ){
+    public PutInfo( SplitNode node, Put put, Dockable dockable, boolean combining ){
         this.node = node;
         this.put = put;
         this.dockable = dockable;
+        this.combining = combining;
     }
     
     /**
@@ -136,6 +141,15 @@ public class PutInfo {
     public Put getPut() {
         return put;
     }
+    
+    /**
+     * Tells whether the mouse position alone would result in {@link #getPut()} equaling
+     * {@link Put#CENTER} or {@link Put#TITLE}.
+     * @return whether the mouse is in the center position
+     */
+    public boolean isCombining(){
+		return combining;
+	}
     
     /**
      * Sets the preferred location that a divider should have if the {@link #getDockable() dockable}

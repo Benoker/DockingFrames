@@ -65,6 +65,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
@@ -1342,7 +1343,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		if( move ){
 			putInfo = layoutManager.getValue().prepareMove(this, x, y, titleX, titleY, checkOverrideZone, dockable);
 			if( putInfo != null ){
-				prepareCombine( putInfo, x, y );
+				prepareCombine( putInfo, x, y, move );
 			}
 		}
 		else{
@@ -1354,7 +1355,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 			
 			if( putInfo != null ){
-				prepareCombine( putInfo, x, y );
+				prepareCombine( putInfo, x, y, move );
 			}
 		}
 		if( putInfo == null ){
@@ -1371,7 +1372,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return putInfo;
 	}
 	
-	private void prepareCombine( PutInfo putInfo, int x, int y ){
+	private void prepareCombine( PutInfo putInfo, int x, int y, boolean move ){
 		if( putInfo.getCombinerSource() == null && putInfo.getCombinerTarget() == null ){
 			if( putInfo.getNode() instanceof Leaf ){
 				Point mouseOnStation = new Point( x, y );
@@ -1380,6 +1381,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				SplitDockCombinerSource source = new SplitDockCombinerSource( putInfo, this, mouseOnStation );
 					
 				CombinerTarget target = getCombiner().prepare( source, putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE );
+				if( target == null && putInfo.isCombining() && putInfo.getDockable().asDockStation() != null ){
+					DockController controller = getController();
+					if( controller != null ){
+						Merger merger = controller.getRelocator().getMerger();
+						
+						target = getCombiner().prepare( source, true );
+						putInfo.setCombination( source, target );
+
+						if( !merger.canMerge( new SplitDropOperation( putInfo, move ), this, putInfo.getDockable().asDockStation() ) ){
+							putInfo.setCombination( null, null );
+						}
+					}
+				}
+				
 				putInfo.setCombination( source, target );
 			}
 		}
@@ -1756,7 +1771,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			DockUtilities.ensureTreeValidity(this, dockable);
 	
 			if( source == null || target == null ){
-				PutInfo info = new PutInfo( leaf, Put.TITLE, dockable );
+				PutInfo info = new PutInfo( leaf, Put.TITLE, dockable, true );
 				source = new SplitDockCombinerSource( info, this, null );
 				target = combiner.prepare( source, true );
 			}

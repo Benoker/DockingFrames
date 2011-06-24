@@ -280,6 +280,7 @@ public class Leaf extends VisibleSplitNode{
         
         Rectangle bounds = getBounds();
         PutInfo result = null;
+        boolean centered = false;
         
         if( displayer.getTitle() != null ){
             if( displayer.getTitleLocation() == DockableDisplayer.Location.TOP ){
@@ -288,7 +289,8 @@ public class Leaf extends VisibleSplitNode{
                 bounds.height -= height;
                 
                 if( y <= bounds.y ){
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                	centered = true;
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
                 }
             }
             
@@ -297,7 +299,8 @@ public class Leaf extends VisibleSplitNode{
                 bounds.height -= height;
                 
                 if( y >= bounds.y+bounds.height ){
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                	centered = true;
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
                 }
             }
             
@@ -307,7 +310,8 @@ public class Leaf extends VisibleSplitNode{
                 bounds.width -= width;
                 
                 if( x <= bounds.x ){
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                	centered = true;
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
                 }
             }
             
@@ -316,7 +320,8 @@ public class Leaf extends VisibleSplitNode{
                 bounds.width -= width;
                 
                 if( x >= bounds.x + bounds.width ){
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop ));
+                	centered = true;
+                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
                 }
             }
         }
@@ -330,8 +335,10 @@ public class Leaf extends VisibleSplitNode{
             x < bounds.x + bounds.width - sideSnapSize*bounds.width &&
             y > bounds.y + sideSnapSize*bounds.height &&
             y < bounds.y + bounds.height - sideSnapSize*bounds.height ){
+        	
+        	centered = true;
             
-            result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
+            result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop, true ));
         }
         
         if( result != null )
@@ -339,21 +346,21 @@ public class Leaf extends VisibleSplitNode{
         
         if( above( bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, x, y )){
             if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TOP, drop ));
+                result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TOP, drop, centered ));
             else
-                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.RIGHT, drop ));
+                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.RIGHT, drop, centered ));
         }
         else{
             if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.LEFT, drop ));
+                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.LEFT, drop, centered ));
             else
-                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.BOTTOM, drop ));
+                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.BOTTOM, drop, centered ));
         }
         
         if( result != null )
             return result;
         
-        return getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop ));
+        return getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop, centered ));
     }
     
     @Override
