@@ -104,6 +104,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 		
 		MultiMerger merger = new MultiMerger();
 		merger.add( new StackMerger() );
+		merger.add( new TabMerger() );
 		setMerger( merger );
 	}
 	

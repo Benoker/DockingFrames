@@ -109,6 +109,22 @@ public class TabDisplayerCombinerTarget implements DisplayerCombinerTarget{
 		return index >= 0;
 	}
 	
+	/**
+	 * Gets the location where the {@link Dockable} would be inserted
+	 * @return -1 if this target is invalid, otherwise 0 or 1
+	 */
+	public int getIndex(){
+		return index;
+	}
+	
+	/**
+	 * Gets the {@link Dockable} over which the new item would be dragged.
+	 * @return the target {@link Dockable}, not <code>null</code>
+	 */
+	public Dockable getTarget(){
+		return displayer.getDockable();
+	}
+	
 	public Dockable execute( CombinerSource source ){
 		DockStation parent = source.getParent();
 		PlaceholderMap placeholders = source.getPlaceholders();
