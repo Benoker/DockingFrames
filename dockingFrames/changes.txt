@@ -583,6 +583,7 @@
 
 [v1.1.1p3]
 ! API: CAction now wrapps around a CommonDockAction and no longer a DockAction. This allows clients to use annotations like EclipseTabDockAction on CActions as well. 
+- API: The new TabMerger allows StackDockStations to be dropped on and merged with Dockables with one tab (like in the EclipseTheme).
 
 [Todo]
 - Import/Export Perspectives from file
