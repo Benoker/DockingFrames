@@ -36,9 +36,9 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
-import bibliothek.gui.dock.action.actions.SimpleDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.common.action.core.CommonSimpleButtonAction;
 import bibliothek.gui.dock.common.action.panel.DialogWindow;
 import bibliothek.gui.dock.common.action.panel.MenuWindow;
 import bibliothek.gui.dock.common.action.panel.PanelPopupWindow;
@@ -62,7 +62,7 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * <b>Note:</b> this action does not support being child of a drop down menu
  * @author Benjamin Sigg
  */
-public class CPanelPopup extends CDecorateableAction{
+public class CPanelPopup extends CDecorateableAction<CPanelPopup.PanelPopup>{
 	/** the kind of action this class represents */
 	public static final ActionType<CPanelPopup.PanelPopup> PANEL_POPUP =
 		new ActionType<PanelPopup>( "panel popup" );
@@ -352,8 +352,14 @@ public class CPanelPopup extends CDecorateableAction{
 	 * @author Benjamin Sigg
 	 *
 	 */
-	//public class PanelPopup extends SimpleDropDownItemAction{
-	public class PanelPopup extends SimpleDockAction{
+	public class PanelPopup extends CommonSimpleButtonAction{
+		/**
+		 * Creates a new action
+		 */
+		public PanelPopup(){
+			super( CPanelPopup.this );
+		}
+		
 		public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
 			return converter.createView( PANEL_POPUP, this, target, dockable );
 		}

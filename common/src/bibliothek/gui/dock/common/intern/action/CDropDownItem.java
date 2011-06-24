@@ -25,38 +25,28 @@
  */
 package bibliothek.gui.dock.common.intern.action;
 
-import bibliothek.gui.dock.action.actions.SimpleDockAction;
 import bibliothek.gui.dock.action.actions.SimpleDropDownItemAction;
+import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.CDropDownButton;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.util.FrameworkOnly;
 
 /**
  * An action which can be child of a dropdown-menu.
  * @author Benjamin Sigg
+ * @param A the kind of action that represents this {@link CAction}
  */
 @FrameworkOnly
-public class CDropDownItem extends CDecorateableAction{
-    /** the internal representation */
-    private SimpleDropDownItemAction action;
-    
+public class CDropDownItem<A extends SimpleDropDownItemAction & CommonDockAction> extends CDecorateableAction<A>{
     /**
      * Creates a new action
      * @param action the internal representation, can be <code>null</code> if
-     * {@link #init(SimpleDropDownItemAction)} is called later
+     * {@link #init(A)} is called later
      */
-    protected CDropDownItem( SimpleDropDownItemAction action ) {
+    protected CDropDownItem( A action ) {
         super( null );
         if( action != null )
             init( action );
-    }
-    
-    /**
-     * Initializes this action, this method can be called only once.
-     * @param action the internal representation
-     */
-    protected void init( SimpleDropDownItemAction action ){
-        init( (SimpleDockAction)action );
-        this.action = action;
     }
 
     /**
@@ -65,7 +55,7 @@ public class CDropDownItem extends CDecorateableAction{
      * @param dropDownSelectable <code>true</code> if this item can be selected
      */
     public void setDropDownSelectable( boolean dropDownSelectable ){
-        action.setDropDownSelectable( dropDownSelectable );
+        intern().setDropDownSelectable( dropDownSelectable );
     }
     
     /**
@@ -74,7 +64,7 @@ public class CDropDownItem extends CDecorateableAction{
      * @return <code>true</code> if this item can be selected
      */
     public boolean isDropDownSelectable(){
-        return action.isDropDownSelectable();
+        return intern().isDropDownSelectable();
     }
     
     /**
@@ -84,7 +74,7 @@ public class CDropDownItem extends CDecorateableAction{
      * can be triggered when it is not selected
      */
     public void setDropDownTriggerableNotSelected( boolean dropDownTriggerableNotSelected ){
-        action.setDropDownTriggerableNotSelected( dropDownTriggerableNotSelected );
+    	intern().setDropDownTriggerableNotSelected( dropDownTriggerableNotSelected );
     }
     
     /**
@@ -94,7 +84,7 @@ public class CDropDownItem extends CDecorateableAction{
      * is not selected
      */
     public boolean isDropDownTriggerableNotSelected(){
-        return action.isDropDownTriggerableNotSelected();
+        return intern().isDropDownTriggerableNotSelected();
     }
     
     /**
@@ -104,7 +94,7 @@ public class CDropDownItem extends CDecorateableAction{
      * can be triggered when it is selected
      */
     public void setDropDownTriggerableSelected( boolean dropDownTriggerableSelected ){
-        action.setDropDownTriggerableSelected( dropDownTriggerableSelected );
+    	intern().setDropDownTriggerableSelected( dropDownTriggerableSelected );
     }
     
     /**
@@ -113,6 +103,6 @@ public class CDropDownItem extends CDecorateableAction{
      * @return <code>true</code> if this item can be triggered when it is selected
      */
     public boolean isDropDownTriggerableSelected(){
-        return action.isDropDownTriggerableSelected();
+        return intern().isDropDownTriggerableSelected();
     }
 }

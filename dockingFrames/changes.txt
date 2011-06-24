@@ -581,6 +581,9 @@
 - API: New property StackDockStation.IMMUTABLE_SELECTED_INDEX prevents the StackDockStation from switching the selection index when dropping a Dockable (but has no effect on the FocusManager!).
 - Bugfix: EclipseStationPaint did dispose Graphics context that should not be disposed
 
+[v1.1.1p3]
+! API: CAction now wrapps around a CommonDockAction and no longer a DockAction. This allows clients to use annotations like EclipseTabDockAction on CActions as well. 
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

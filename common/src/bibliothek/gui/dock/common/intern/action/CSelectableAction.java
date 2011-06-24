@@ -32,25 +32,31 @@ import javax.swing.Icon;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
+import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
 import bibliothek.util.FrameworkOnly;
 
 /**
  * An action which is either selected or deselected.
  * @author Benjamin Sigg
+ * @param <A> the kind of action representing this {@link CAction}
  */
 @FrameworkOnly
-public abstract class CSelectableAction extends CDropDownItem{
-    /** the internal representation of this action */
-    private SimpleSelectableAction action;
-    
+public abstract class CSelectableAction<A extends SimpleSelectableAction & CommonDockAction> extends CDropDownItem<A>{
     /**
      * Creates a new action
      * @param action the internal representation
      */
-    protected CSelectableAction( SimpleSelectableAction action ){
-        super( action );
-        this.action = action;
+    protected CSelectableAction( A action ){
+    	super( null );
+    	if( action != null ){
+    		init( action );
+    	}
+    }
+    
+    protected void init(A action){
+        super.init( action );
         action.addSelectableListener( new SelectableDockActionListener(){
             public void selectedChanged( SelectableDockAction action, Set<Dockable> dockables ) {
                 changed();
@@ -69,7 +75,7 @@ public abstract class CSelectableAction extends CDropDownItem{
      * @param selected the new state
      */
     public void setSelected( boolean selected ){
-        action.setSelected( selected );
+        intern().setSelected( selected );
     }
     
     /**
@@ -77,7 +83,7 @@ public abstract class CSelectableAction extends CDropDownItem{
      * @return <code>true</code> if the action is selected
      */
     public boolean isSelected(){
-        return action.isSelected();
+        return intern().isSelected();
     }
     
     /**
@@ -85,7 +91,7 @@ public abstract class CSelectableAction extends CDropDownItem{
      * @param icon the icon or <code>null</code>
      */
     public void setSelectedIcon( Icon icon ){
-        action.setSelectedIcon( icon );
+    	intern().setSelectedIcon( icon );
     }
     
     /**
@@ -93,6 +99,6 @@ public abstract class CSelectableAction extends CDropDownItem{
      * @return the icon or <code>null</code>
      */
     public Icon getSelectedIcon(){
-        return action.getSelectedIcon();
+        return intern().getSelectedIcon();
     }
 }

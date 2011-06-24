@@ -26,10 +26,10 @@
 package bibliothek.gui.dock.common.action.predefined;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 
 /**
  * An action which is never visible, can be used as placeholder
@@ -47,7 +47,7 @@ public class CBlank extends CAction {
      * Creates a new blank action
      */
     protected CBlank(){
-        super( new DockAction(){
+        init( new CommonDockAction(){
             public void bind( Dockable dockable ) {
                 // ignore
             }
@@ -62,6 +62,10 @@ public class CBlank extends CAction {
 
             public void unbind( Dockable dockable ) {
                 // ignore
+            }
+            
+            public CAction getAction(){
+            	return CBlank.this;
             }
         });
     }

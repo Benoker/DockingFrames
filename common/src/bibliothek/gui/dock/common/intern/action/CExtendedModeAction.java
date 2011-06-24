@@ -34,8 +34,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionIcon;
-import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.action.core.CommonSimpleButtonAction;
 import bibliothek.gui.dock.common.action.util.CActionText;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -52,7 +52,7 @@ import bibliothek.util.FrameworkOnly;
  * @author Benjamin Sigg
  */
 @FrameworkOnly
-public class CExtendedModeAction extends CDropDownItem{
+public class CExtendedModeAction extends CDropDownItem<CExtendedModeAction.Action>{
     /** the mode into which this action leads */
     private ExtendedMode mode;
     
@@ -201,9 +201,16 @@ public class CExtendedModeAction extends CDropDownItem{
      * The internal representation of a {@link CExtendedModeAction}.
      * @author Benjamin Sigg
      */
-    protected class Action extends SimpleButtonAction{
+    public class Action extends CommonSimpleButtonAction{
         /** how many times this action was bound */
         private int count = 0;
+        
+        /**
+         * Creates a new action.
+         */
+        public Action(){
+        	super( CExtendedModeAction.this );
+        }
         
         @Override
         protected boolean trigger( KeyEvent event, Dockable dockable ) {
