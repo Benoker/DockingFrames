@@ -35,8 +35,8 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 
@@ -121,7 +121,7 @@ public abstract class AbstractDockStation implements DockStation {
     }
     
     public void changed( Dockable dockable, DockTitle title, boolean active ) {
-        title.changed( new DockTitleEvent( this, dockable, active ));
+        title.changed( new ActivityDockTitleEvent( this, dockable, active ));
     }
     
     public void requestChildDockTitle( DockTitleRequest request ){

@@ -29,6 +29,7 @@ import java.awt.Component;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionSource;
 
 /**
  * Minimalistic implementation of a {@link BasicDockableDisplayerDecorator}. Just shows the
@@ -49,5 +50,9 @@ public class MinimalDecorator implements BasicDockableDisplayerDecorator{
 
 	public void setDockable( Component content, Dockable dockable ){
 		this.content = content;
+	}
+	
+	public DockActionSource getActionSuggestion(){
+		return null;
 	}
 }

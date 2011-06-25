@@ -30,8 +30,8 @@ import java.awt.Container;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.themes.basic.BasicButtonDockTitle;
+import bibliothek.gui.dock.title.DockTitleEvent;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**

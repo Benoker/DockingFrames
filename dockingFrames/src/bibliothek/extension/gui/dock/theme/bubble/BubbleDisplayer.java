@@ -36,13 +36,20 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 
+import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayerDecorator;
+import bibliothek.gui.dock.themes.basic.MinimalDecorator;
+import bibliothek.gui.dock.themes.basic.TabDecorator;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -89,6 +96,9 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     
     /** The border of this displayer */
     private DisplayerBorder openBorder;
+    
+    /** Tells whether to use a {@link DockActionDistributorSource} */
+    private boolean stacked = false;
     
     /**
      * Creates a new displayer
@@ -275,6 +285,53 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             insets.bottom += borderInsets.bottom;
         }
         return insets;
+    }
+    
+    /**
+     * Tells this {@link BubbleDisplayer} whether to use a {@link DockActionDistributorSource} when showing the
+     * minimal decorator.
+     * @param stacked whether to filter the actions
+     */
+    public void setStacked( boolean stacked ){
+    	if( this.stacked != stacked ){
+    		this.stacked = stacked;
+    		updateDecorator( true );
+    	}
+	}
+    
+    /**
+     * Tells whether this {@link BubbleDisplayer} uses a {@link DockActionDistributorSource} when showing the
+     * minimal decorator.
+     * @param stacked whether to filter the actions
+     */
+    public boolean isStacked(){
+		return stacked;
+	}
+    
+    @Override
+    protected BasicDockableDisplayerDecorator createMinimalDecorator(){
+    	if( isStacked() ){
+    		return new MinimalDecorator(){
+    			private DockActionDistributorSource source = new DockActionDistributorSource( Target.TITLE, BubbleTheme.ACTION_DISTRIBUTOR );
+    			
+    			@Override
+    			public void setDockable( Component content, Dockable dockable ){
+    				super.setDockable( content, dockable );
+    				source.setDockable( dockable );
+    			}
+    			
+    			@Override
+    			public DockActionSource getActionSuggestion(){
+    				return source;
+    			}
+    		};
+    	}
+    	return super.createMinimalDecorator();
+    }
+    
+    @Override
+    protected TabDecorator createTabDecorator(){
+	    return new TabDecorator( getStation(), BubbleTheme.ACTION_DISTRIBUTOR );
     }
     
     /**

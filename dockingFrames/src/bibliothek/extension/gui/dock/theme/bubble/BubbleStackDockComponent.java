@@ -30,7 +30,6 @@ import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.stack.CombinedInfoComponent;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 
@@ -39,7 +38,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponentParent;
  * used by a {@link BubbleTheme}. This component can animate its tabs.
  * @author Benjamin Sigg
  */
-public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleTab, BubbleTabMenu, CombinedInfoComponent> {
+public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleTab, BubbleTabMenu, BubbleInfoComponent> {
 
 	/** the station for which this component is used */
 	private StackDockComponentParent station;
@@ -50,6 +49,7 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	 */
 	public BubbleStackDockComponent( StackDockComponentParent parent ){
 		this.station = parent;
+		setInfoComponent( new BubbleInfoComponent( this ) );
 	}
 	
 	/**

@@ -75,7 +75,6 @@ import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.SplitDockListener;
@@ -129,6 +128,7 @@ import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
@@ -934,7 +934,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public void changed( Dockable dockable, DockTitle title, boolean active ){
-		title.changed(new DockTitleEvent(this, dockable, active));
+		title.changed(new ActivityDockTitleEvent(this, dockable, active));
 	}
 
 	public void requestChildDockTitle( DockTitleRequest request ){

@@ -161,10 +161,6 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 			}
 			public void selectionChanged( TabPane pane ){
 				updateFullBorder();
-				EclipseTabInfo info = getInfoComponent();
-				if( info != null ){
-					info.setSelection( getSelectedDockable() );
-				}
 			}
 			public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
 				// ignore

@@ -194,7 +194,6 @@ public class MenuLineLayoutPossibility {
 		// distribute empty space
 		int[] widths = calculateWidths( orientation, order, available.width, tabSize, menuSize, infoSize );
 		int x = available.x;
-
 		for( MenuLineLayoutOrder.Item item : order ){
 			int availableWidth = 0;
 			Size size = null;
@@ -222,21 +221,17 @@ public class MenuLineLayoutPossibility {
 				
 				switch( item ){
 					case INFO:
-						
-							int reqDelta = Math.max( 0, required - infoSize.getHeight() );
-							Rectangle infoBounds = new Rectangle( x + deltaX, available.y+reqDelta/2, itemWidth, required-reqDelta );
-							x += availableWidth;
-							infoBounds = conversion.modelToView( infoBounds );
-							info.setBounds( infoBounds.x, infoBounds.y, infoBounds.width, infoBounds.height );
-						
+						int reqDelta = Math.max( 0, required - infoSize.getHeight() );
+						Rectangle infoBounds = new Rectangle( x + deltaX, available.y+reqDelta/2, itemWidth, required-reqDelta );
+						x += availableWidth;
+						infoBounds = conversion.modelToView( infoBounds );
+						info.setBounds( infoBounds.x, infoBounds.y, infoBounds.width, infoBounds.height );
 						break;
 					case MENU:
-						
-							Rectangle menuBounds = new Rectangle( x + deltaX, available.y, itemWidth, required );
-							x += availableWidth;
-							menuBounds = conversion.modelToView( menuBounds );
-							menu.setBounds( menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height );
-						
+						Rectangle menuBounds = new Rectangle( x + deltaX, available.y, itemWidth, required );
+						x += availableWidth;
+						menuBounds = conversion.modelToView( menuBounds );
+						menu.setBounds( menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height );						
 						break;
 					case TABS:
 						Rectangle tabBounds = new Rectangle( x + deltaX, available.y, itemWidth, required );

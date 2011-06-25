@@ -34,7 +34,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 

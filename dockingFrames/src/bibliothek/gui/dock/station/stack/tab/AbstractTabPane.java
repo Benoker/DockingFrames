@@ -504,7 +504,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		return tab;
 	}
 	
-	public Tab getOnTab( Dockable dockable ){
+	public T getOnTab( Dockable dockable ){
 		if( dockable == null )
 			throw new IllegalArgumentException( "dockable must not be null" );
 		if( !dockables.contains( dockable ))

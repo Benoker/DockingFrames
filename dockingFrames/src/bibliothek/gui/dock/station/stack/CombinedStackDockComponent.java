@@ -468,6 +468,18 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 
 		return tab;
 	}
+	
+	@Override
+	public T getOnTab( Dockable dockable ){
+		T tab = super.getOnTab( dockable );
+		Meta meta = components.get( dockable );
+
+		tab.setIcon( meta.icon );
+		tab.setText( meta.text );
+		tab.setTooltip( meta.tooltip );
+
+		return tab;
+	}
 
 	protected void addToMenu( M menu, Dockable dockable ){
 		int index = menu.getDockableCount();

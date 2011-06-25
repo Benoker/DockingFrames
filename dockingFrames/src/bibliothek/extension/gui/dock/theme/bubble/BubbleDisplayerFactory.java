@@ -27,6 +27,7 @@ package bibliothek.extension.gui.dock.theme.bubble;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayer.Location;
@@ -38,10 +39,14 @@ import bibliothek.gui.dock.title.DockTitle;
  */
 public class BubbleDisplayerFactory implements DisplayerFactory {
 	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
-        BubbleDisplayer displayer = new BubbleDisplayer( station, dockable, title );
-        
-        if( dockable.asDockStation() != null )
+		BubbleDisplayer displayer = new BubbleDisplayer( station, dockable, title );
+		if( station instanceof StackDockStation ){
+			displayer.setStacked( true );
+		}
+		
+        if( dockable.asDockStation() != null ){
             displayer.setTitleLocation( Location.RIGHT );
+        }
         
         return displayer;
     }

@@ -47,18 +47,23 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedTab;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.stack.tab.Tab;
+import bibliothek.gui.dock.station.stack.tab.TabComponentLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
@@ -106,6 +111,15 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
 public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeListener, Runnable, DockableFocusListener{
 	/** a label showing text and icon for this tab */
 	private OrientedLabel label = new OrientedLabel();
+	
+	/** a panel showing additional actions on this tab */
+	private ButtonPanel actions = new ButtonPanel( false );
+	
+	/** the actions shown on {@link #actions} */
+	private DockActionDistributorSource actionsSource;
+	
+	/** layout manager for {@link #label} and {@link #actions} */
+	private TabComponentLayoutManager layoutManager;
 
 	/** an animation used when the mouse enters or leaves this tab */
 	private BubbleColorAnimation animation;
@@ -122,15 +136,11 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 
 	/** when to paint this panel */
 	private int zOrder;
-
-	/** the size of the arc of the round tabs */
+	
+	/** the size of the round borders */
 	private int arc = 6;
-	/** the size of the border of the tabs */
+	/** the size of the border */
 	private int borderSize = 3;
-	/** The free space around text and icon of the tabs to the side border */
-	private int freeSpaceToSideBorder = borderSize;
-	/** free space around text and icon of the tabs to the parallel border */
-	private int freeSpaceToParallelBorder = 0;
 
 	private TabPlacement orientation = TabPlacement.TOP_OF_DOCKABLE;
 
@@ -244,7 +254,13 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 
 		setOpaque( false );
 		add( label );
-		setLayout( null );
+		add( actions );
+		layoutManager = new TabComponentLayoutManager( label, actions );
+		layoutManager.setFreeSpaceToSideBorder( borderSize + borderSize );
+		layoutManager.setFreeSpaceToParallelBorder( borderSize );
+		layoutManager.setFreeSpaceBetweenLabelAndActions( borderSize );
+		layoutManager.setFreeSpaceToOpenSide( arc );
+		setLayout( layoutManager );
 
 		MouseListener listener = new MouseAdapter(){
 			@Override
@@ -303,7 +319,9 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 
 		if( this.orientation != orientation ){	
 			this.orientation = orientation;
-			label.setHorizontal( orientation.isHorizontal() );
+			
+			layoutManager.setOrientation( orientation );
+			
 			revalidate();
 			repaint();
 		}
@@ -327,10 +345,25 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 		background.setController( controller );
 
 		this.controller = controller;
-		if( controller != null ){
+		
+		if( controller == null ){
+			if( actionsSource != null ){
+				actions.set( null );
+				actionsSource.setDockable( null );
+				actionsSource = null;
+			}
+		}
+		else{
 			controller.addDockableFocusListener( this );
 			focused = controller.getFocusedDockable() == dockable;
+		
+			if( actionsSource == null ){
+				actionsSource = new DockActionDistributorSource( Target.TAB, BubbleTheme.ACTION_DISTRIBUTOR );
+				actionsSource.setDockable( getDockable() );
+				actions.set( getDockable(), actionsSource );
+			}
 		}
+		
 
 		checkAnimation();
 		animation.kick();
@@ -364,63 +397,9 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 	public Dimension getPreferredSize( Tab[] tabs ){
 		return getPreferredSize();
 	}
-	
-	@Override
-	public Dimension getPreferredSize(){
-		Dimension size = label.getPreferredSize();
-		if( orientation.isHorizontal() ){
-			return new Dimension( 
-					size.width+2*borderSize+2*freeSpaceToSideBorder,
-					size.height+2*arc+borderSize+freeSpaceToParallelBorder );
-		}
-		else{
-			return new Dimension( 
-					size.width+2*arc+borderSize+freeSpaceToParallelBorder,
-					size.height+2*borderSize+2*freeSpaceToSideBorder );
-		}
-	}
 
 	public Dimension getMinimumSize( Tab[] tabs ){
 		return getMinimumSize();
-	}
-	
-	@Override
-	public Dimension getMinimumSize(){
-		return getPreferredSize();
-	}
-
-	@Override
-	public void doLayout(){
-		switch( orientation ){
-			case TOP_OF_DOCKABLE:
-				label.setBounds(
-						borderSize+freeSpaceToSideBorder, 
-						borderSize+freeSpaceToParallelBorder+borderSize, 
-						getWidth()-2*borderSize-2*freeSpaceToSideBorder,
-						getHeight()-arc-borderSize-freeSpaceToParallelBorder );
-				break;
-			case BOTTOM_OF_DOCKABLE:
-				label.setBounds(
-						borderSize+freeSpaceToSideBorder, 
-						borderSize+freeSpaceToParallelBorder, 
-						getWidth()-2*borderSize-2*freeSpaceToSideBorder,
-						getHeight()-arc-borderSize-freeSpaceToParallelBorder );
-				break;
-			case RIGHT_OF_DOCKABLE:
-				label.setBounds(
-						borderSize+freeSpaceToParallelBorder, 
-						borderSize+freeSpaceToSideBorder,
-						getWidth()-arc-borderSize-freeSpaceToParallelBorder,
-						getHeight()-2*borderSize-2*freeSpaceToSideBorder );
-				break;
-			case LEFT_OF_DOCKABLE:
-				label.setBounds(
-						borderSize+freeSpaceToParallelBorder+freeSpaceToSideBorder, 
-						borderSize+freeSpaceToSideBorder,
-						getWidth()-arc-borderSize-freeSpaceToParallelBorder,
-						getHeight()-2*borderSize-2*freeSpaceToSideBorder );
-				break;
-		}
 	}
 	
 	@Override
@@ -475,14 +454,13 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 				break;
 		}
 		g2.dispose();
+		
+
 	}
 
 	@Override
 	public void paintForeground( Graphics g ){
-		// draw text and icon
-		Graphics child = g.create( label.getX(), label.getY(), label.getWidth(), label.getHeight() );
-		label.paint( child );
-		child.dispose();
+		super.paintChildren( g );
 	}
 	
 	@Override
@@ -526,11 +504,6 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 		}
 
 		g2.dispose();
-	}
-	
-	@Override
-	public void paintChildren( Graphics g ){
-		// do nothing
 	}
 
 	public JComponent getComponent(){

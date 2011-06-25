@@ -59,6 +59,7 @@ import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
+import bibliothek.gui.dock.title.ActionsDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
@@ -146,6 +147,8 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     private BasicDockableDisplayerDecorator decorator;
     /** the result {@link SingleTabDecider#showSingleTab(DockStation, Dockable)} returned */
     private boolean singleTabShowing;
+    /** whether an update of the decorator is pending */
+    private boolean pendingForcedUpdateDecorator = false;
     
     /** the panel that shows the content of this displayer */
     private BackgroundPanel content = new BackgroundPanel( null, false, true ){
@@ -258,23 +261,59 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     		add( newComponent );
     	}
     	
+    	if( title != null ){
+    		title.changed( new ActionsDockTitleEvent( dockable, decorator.getActionSuggestion() ) );
+    	}
+    	
     	revalidate();
     	repaint();
     }
     
+    /**
+     * Replaces the current {@link BasicDockableDisplayerDecorator decorator} if necessary.
+     */
     protected void updateDecorator(){
+    	updateDecorator( false );
+    }
+    
+    /**
+     * Replaces the current {@link BasicDockableDisplayerDecorator decorator} if necessary.
+     * @param force whether to force an update
+     */
+    protected void updateDecorator( boolean force ){
+    	if( force ){
+    		pendingForcedUpdateDecorator = true;
+    	}
+    	
     	if( dockable != null && station != null ){
     		boolean decision = decider.getValue().showSingleTab( station, dockable );
-    		if( decision != singleTabShowing ){
+    		if( pendingForcedUpdateDecorator || decision != singleTabShowing ){
+    			pendingForcedUpdateDecorator = false;
     			singleTabShowing = decision;
     			if( singleTabShowing )
-    				setDecorator( new TabDecorator( station ) );
+    				setDecorator( createTabDecorator() );
     			else
-    				setDecorator( new MinimalDecorator() );
+    				setDecorator( createMinimalDecorator() );
     		}
     		
     		updateBorder();
     	}
+    }
+    
+    /**
+     * Creates a new {@link MinimalDecorator} that will be shown on this displayer.
+     * @return the new decorator
+     */
+    protected BasicDockableDisplayerDecorator createMinimalDecorator(){
+		return new MinimalDecorator();
+	}
+    
+    /**
+     * Creates a new {@link TabDecorator} that will be shown on this displayer.
+     * @return the new decorator
+     */
+    protected BasicDockableDisplayerDecorator createTabDecorator(){
+    	return new TabDecorator( station, null );
     }
     
     public void setController( DockController controller ) {
@@ -406,6 +445,10 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
         if( title != null ){
             title.setOrientation( orientation( location ));
             addTitle( title.getComponent() );
+            
+            if( decorator != null ){
+            	title.changed( new ActionsDockTitleEvent( dockable, decorator.getActionSuggestion() ) );
+            }
         }
         
         revalidate();
