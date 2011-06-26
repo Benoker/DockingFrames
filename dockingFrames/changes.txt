@@ -589,6 +589,7 @@
 - API: New DockActionDistributor interface allows clients to define where actions apper (on a title, on a tab or on a info component).
 - API: BasicDockableDisplayer/BasicDockableDisplayerDecorator now create a DockActionSource and forward this source to the DockTitle. That way the dislpayer/decorator can apply a filter to the actions.
 - API: BubbleTheme now allows clients to show actions on tabs and on an info component, see the new BubbleTheme.ACTION_DISTRIBUTOR property.
+- API: FlatTheme now allows clients to show actions on tabs and on an info component, see the new FlatTheme.ACTION_DISTRIBUTOR property.
 
 [Todo]
 - Import/Export Perspectives from file

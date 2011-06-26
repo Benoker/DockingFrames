@@ -178,24 +178,24 @@ public class TabComponentLayoutManager implements LayoutManager{
 		if( orientation.isHorizontal() ){
 			result = new Dimension( 
 					size.width+2*freeSpaceToSideBorder,
-					size.height+2*freeSpaceToOpenSide+freeSpaceToParallelBorder );
+					size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder );
 			
 			if( actions.hasActions() ){
 				result.width += freeSpaceBetweenLabelAndActions;
 				size = actions.getPreferredSize();
 				result.width += size.width;
-				result.height = Math.max( result.height, size.height+2*freeSpaceToOpenSide+freeSpaceToParallelBorder );
+				result.height = Math.max( result.height, size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder );
 			}
 		}
 		else{
 			result = new Dimension( 
-					size.width+2*freeSpaceToOpenSide+freeSpaceToParallelBorder,
+					size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder,
 					size.height+2*freeSpaceToSideBorder );
 			if( actions.hasActions() ){
 				result.height += freeSpaceBetweenLabelAndActions;
 				size = actions.getPreferredSize();
 				result.height += size.height;
-				result.width = Math.max( result.width, size.width + size.width+2*freeSpaceToOpenSide+freeSpaceToParallelBorder );
+				result.width = Math.max( result.width, size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder );
 			}
 		}
 		return result;
@@ -259,7 +259,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 						height-2*freeSpaceToSideBorder-actionsSize.height );
 				if( actions.hasActions() ){
 					int actionsWidth = Math.min( actionsSize.width, width-freeSpaceToOpenSide-freeSpaceToParallelBorder );
-					int delta = height-freeSpaceToOpenSide-freeSpaceToParallelBorder-actionsWidth;
+					int delta = width-freeSpaceToOpenSide-freeSpaceToParallelBorder-actionsWidth;
 					
 					actions.setBounds(
 							freeSpaceToParallelBorder+delta/2,
@@ -276,7 +276,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 						height-2*freeSpaceToSideBorder - actionsSize.height );
 				if( actions.hasActions() ){
 					int actionsWidth = Math.min( actionsSize.width, width-freeSpaceToOpenSide-freeSpaceToParallelBorder );
-					int delta = height-freeSpaceToOpenSide-freeSpaceToParallelBorder-actionsWidth;
+					int delta = width-freeSpaceToOpenSide-freeSpaceToParallelBorder-actionsWidth;
 					
 					actions.setBounds(
 							width-actionsWidth-freeSpaceToParallelBorder-delta/2,

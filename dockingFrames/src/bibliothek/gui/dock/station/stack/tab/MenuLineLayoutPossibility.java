@@ -216,12 +216,20 @@ public class MenuLineLayoutPossibility {
 			}
 			
 			if( size != null ){
-				int itemWidth = calculateWidth( order, item, size, availableWidth );
+				int itemWidth = calculateWidth( order, item, size, availableWidth, orientation );
 				int deltaX = calculateDeltaX( order, item, itemWidth, availableWidth );
 				
 				switch( item ){
 					case INFO:
-						int reqDelta = Math.max( 0, required - infoSize.getHeight() );
+						int reqDelta;
+						
+						if( orientation.isHorizontal() ){
+							reqDelta = Math.max( 0, required - infoSize.getHeight() );
+						}
+						else{
+							reqDelta = Math.max( 0, required - infoSize.getWidth() );
+						}
+						
 						Rectangle infoBounds = new Rectangle( x + deltaX, available.y+reqDelta/2, itemWidth, required-reqDelta );
 						x += availableWidth;
 						infoBounds = conversion.modelToView( infoBounds );
@@ -244,12 +252,22 @@ public class MenuLineLayoutPossibility {
 		}
 	}
 	
-	private int calculateWidth( MenuLineLayoutOrder order, Item item, Size size, int width ){
-		int overflow = width - size.getWidth();
+	private int calculateWidth( MenuLineLayoutOrder order, Item item, Size size, int width, TabPlacement orientation ){
+		int expected;
+		
+		if( orientation.isHorizontal() ){
+			expected = size.getWidth();
+		}
+		else{
+			expected = size.getHeight();
+		}
+		
+		int overflow = width - expected;
+		
 		if( overflow <= 0 ){
 			return width;
 		}
-		return size.getWidth() + (int)(order.getFill( item ) * overflow);
+		return expected + (int)(order.getFill( item ) * overflow);
 	}
 	
 	private int calculateDeltaX( MenuLineLayoutOrder order, Item item, int itemWidth, int availableWidth ){

@@ -45,6 +45,7 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.MenuDockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;
@@ -56,6 +57,8 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.action.DefaultDockActionDistributor;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
 import bibliothek.gui.dock.station.stack.tab.MenuLineLayout;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
@@ -78,6 +81,7 @@ import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
@@ -105,6 +109,13 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
     			}
     		}, true );
 
+	/**
+	 * Key for a property pointing to a {@link DockActionDistributor}. This interface is responsible for distributing
+	 * {@link DockAction}s to tabs, titles and info components.
+	 */
+	public static final PropertyKey<DockActionDistributor> ACTION_DISTRIBUTOR = new PropertyKey<DockActionDistributor>( "flat.DockActionDistributor",
+			new ConstantPropertyFactory<DockActionDistributor>( new DefaultDockActionDistributor() ), true);
+    
     /**
      * Creates a new theme
      */

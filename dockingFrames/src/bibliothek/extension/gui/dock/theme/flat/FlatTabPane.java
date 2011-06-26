@@ -33,7 +33,6 @@ import javax.swing.JTabbedPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.stack.CombinedInfoComponent;
 import bibliothek.gui.dock.station.stack.CombinedStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 
@@ -43,7 +42,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponentParent;
  * buttons of the <code>JTabbedPane</code>.
  * @author Benjamin Sigg
  */
-public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, CombinedInfoComponent>{
+public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, FlatInfoComponent>{
     /** the station which uses this component */
     private StackDockComponentParent station;
     
@@ -53,6 +52,7 @@ public class FlatTabPane extends CombinedStackDockComponent<FlatTab, FlatMenu, C
      */
     public FlatTabPane( StackDockComponentParent parent ){
         this.station = parent;
+        setInfoComponent( new FlatInfoComponent( this ) );
     }
     
     @Override

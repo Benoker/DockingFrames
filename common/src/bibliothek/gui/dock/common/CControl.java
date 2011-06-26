@@ -728,6 +728,7 @@ public class CControl {
         putProperty( SingleTabDecider.SINGLE_TAB_DECIDER, new CommonSingleTabDecider( this ) );
         putProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new CPlaceholderStrategy( this ) );
         putProperty( BubbleTheme.ACTION_DISTRIBUTOR, new CDefaultDockActionDistributor() );
+        putProperty( FlatTheme.ACTION_DISTRIBUTOR, new CDefaultDockActionDistributor() );
     }
     
     /**
@@ -1435,6 +1436,7 @@ public class CControl {
      * (properties marked with '*' should not be changed by clients if using the Common project).
      * <table>
      * 	<tr><tr>{@link BubbleTheme#ACTION_DISTRIBUTOR}</td><td>Default instance of a {@link DockActionDistributor}.</td></tr>
+     *  <tr><tr>{@link FlatTheme#ACTION_DISTRIBUTOR}</td><td>Default instance of a {@link DockActionDistributor}.</td></tr>
      *  <tr><td>{@link DockTheme#BACKGROUND_PAINT} </td><td>The default value of the {@link BackgroundPaint}.</td></tr>
      * 	<tr><td>{@link BasicTheme#BASIC_COLOR_SCHEME}</td><td>The {@link ColorScheme} to use if the {@link BasicTheme} is installed.</td></tr>
      *  <tr><td>{@link DockTheme#BORDER_MODIFIER} </td><td>The default value of the {@link BorderModifier}.</td></tr>

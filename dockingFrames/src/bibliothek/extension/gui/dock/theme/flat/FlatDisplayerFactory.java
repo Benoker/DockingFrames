@@ -26,12 +26,15 @@
 
 package bibliothek.extension.gui.dock.theme.flat;
 
+import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayer.Location;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayerDecorator;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -61,14 +64,23 @@ public class FlatDisplayerFactory implements DisplayerFactory{
             location = DockableDisplayer.Location.TOP;
 
         if( border ){
-            return new FlatDockableDisplayer( station, dockable, title, location );
+            FlatDockableDisplayer displayer = new FlatDockableDisplayer( station, dockable, title, location );
+            displayer.setStacked( station instanceof StackDockStation );
+            return displayer;
         }
         
-        BasicDockableDisplayer displayer = new BasicDockableDisplayer( station, dockable, title, location );
+        BasicDockableDisplayer displayer = new BasicDockableDisplayer( station, dockable, title, location ){
+        	@Override
+        	protected BasicDockableDisplayerDecorator createStackedDecorator(){
+	        	return createStackedDecorator( FlatTheme.ACTION_DISTRIBUTOR );
+        	}
+        };
         displayer.setRespectBorderHint( false );
         displayer.setDefaultBorderHint( false );
         displayer.setSingleTabShowInnerBorder( false );
         displayer.setSingleTabShowOuterBorder( false );
+        displayer.setStacked( station instanceof StackDockStation );
+        
         return displayer;
     }
 }
