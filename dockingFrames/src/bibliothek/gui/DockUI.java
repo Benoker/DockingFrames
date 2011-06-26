@@ -162,7 +162,18 @@ public class DockUI {
     
     private void registerColors(){
         registerColors( ".+", new DefaultLookAndFeelColors() );
-        registerColors( "com\\.sun\\.java\\.swing\\.plaf\\.nimbus\\.NimbusLookAndFeel", new Nimbus6u10() );
+        
+        String version = System.getProperty( "java.version" );
+        int begin = version.indexOf( '.' ) + 1;
+        int end = version.indexOf( '.', begin );
+        int major = Integer.parseInt( version.substring( begin, end ));
+
+        if( major >= 7 ){
+        	registerColors( "javax\\.swing\\.plaf\\.nimbus\\.NimbusLookAndFeel", new Nimbus6u10() );
+        }
+        else{
+        	registerColors( "com\\.sun\\.java\\.swing\\.plaf\\.nimbus\\.NimbusLookAndFeel", new Nimbus6u10() );
+        }
         registerColors( "com\\.sun\\.java\\.swing\\.plaf\\.windows\\.WindowsLookAndFeel", new Windows() );
     }
     

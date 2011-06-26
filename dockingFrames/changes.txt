@@ -590,6 +590,7 @@
 - API: BasicDockableDisplayer/BasicDockableDisplayerDecorator now create a DockActionSource and forward this source to the DockTitle. That way the dislpayer/decorator can apply a filter to the actions.
 - API: BubbleTheme now allows clients to show actions on tabs and on an info component, see the new BubbleTheme.ACTION_DISTRIBUTOR property.
 - API: FlatTheme now allows clients to show actions on tabs and on an info component, see the new FlatTheme.ACTION_DISTRIBUTOR property.
+- Bugfix: The framework should now also handle the NimbusLookAndFeel (whose package was renamed, so much for backwards compatibility...) under Java 7 
 
 [Todo]
 - Import/Export Perspectives from file
