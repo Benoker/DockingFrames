@@ -28,7 +28,7 @@ package bibliothek.gui.dock.common.action;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.action.DefaultDockActionSource;
-import bibliothek.gui.dock.action.actions.SimpleMenuAction;
+import bibliothek.gui.dock.common.action.core.CommonSimpleMenuAction;
 import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
 
 /**
@@ -36,7 +36,7 @@ import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
  * @author Benjamin Sigg
  *
  */
-public class CMenu extends CDecorateableAction {
+public class CMenu extends CDecorateableAction<CommonSimpleMenuAction> {
     /** the internal representation */
     private DefaultDockActionSource menu;
     
@@ -44,8 +44,9 @@ public class CMenu extends CDecorateableAction {
      * Creates a new menu
      */
     public CMenu() {
-        super( new SimpleMenuAction( new DefaultDockActionSource() ) );
-        menu = (DefaultDockActionSource)((SimpleMenuAction)intern()).getMenu();
+        super( null );
+        menu = new DefaultDockActionSource();
+        init( new CommonSimpleMenuAction( this, menu ));
     }
     
     /**

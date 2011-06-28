@@ -31,11 +31,16 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
@@ -85,13 +90,18 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 	private StackDockComponent component;
 	private Component representation;
 	private StackDockComponentRepresentative representative = new StackDockComponentRepresentative();
+	private DockActionDistributorSource actions;
 	
 	/**
 	 * Creates a new decorator
 	 * @param station the station for which this decorator is used
+	 * @param distributor key to a {@link DockActionDistributor} that suggests the actions for the title
 	 */
-	public TabDecorator( DockStation station ){
+	public TabDecorator( DockStation station, PropertyKey<DockActionDistributor> distributor ){
 		this.station = station;
+		if( distributor != null ){
+			actions = new DockActionDistributorSource( Target.TITLE, distributor );
+		}
 	}
 	
 	public DockStation getStackDockParent(){
@@ -125,6 +135,9 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		}
 		
 		representative.setTarget( dockable );
+		if( actions != null ){
+			actions.setDockable( dockable );
+		}
 	}
 	
 	public void setController( DockController controller ){
@@ -144,4 +157,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		return component.getComponent();
 	}
 	
+	public DockActionSource getActionSuggestion(){
+		return actions;
+	}
 }

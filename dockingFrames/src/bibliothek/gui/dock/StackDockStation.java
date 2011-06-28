@@ -164,7 +164,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     /** The set of displayers shown on this station */
     private DisplayerCollection displayers;
     
-    /** The preferred location where {@link #dropping} should be added */
+    /** The preferred location where a dropping {@link Dockable} should be added */
     private Insert insert;
     
      /** The graphical representation of this station */
@@ -1047,7 +1047,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
     
     /**
-     * Gets the location where {@link #drop()} or {@link #move()} will insert the next
+     * Gets the location where {@link StationDropOperation#execute()} will insert the next
      * {@link Dockable}.
      * @return the insertion location, can be <code>null</code>
      */

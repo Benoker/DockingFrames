@@ -45,7 +45,6 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.FilteredDockActionSource;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.action.StationChildrenActionSource;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -53,6 +52,8 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonContentValue;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.title.AbstractDockTitle;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
+import bibliothek.gui.dock.title.DockTitleEvent;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -381,9 +382,15 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     
     @Override
     public void changed( DockTitleEvent event ) {
-        super.setActive( event.isActive() );
-        selected = event.isActive() || event.isPreferred();
-        updateLayout();
+    	if( event instanceof ActivityDockTitleEvent ){
+    		ActivityDockTitleEvent activity = (ActivityDockTitleEvent)event;
+	        super.setActive( activity.isActive() );
+	        selected = activity.isActive() || activity.isPreferred();
+	        updateLayout();
+    	}
+    	else{
+    		super.changed( event );
+    	}
     }
     
     @Override

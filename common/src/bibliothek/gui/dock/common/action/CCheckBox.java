@@ -28,7 +28,7 @@ package bibliothek.gui.dock.common.action;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 
-import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
+import bibliothek.gui.dock.common.action.core.CommonSimpleCheckAction;
 import bibliothek.gui.dock.common.intern.action.CSelectableAction;
 
 /**
@@ -36,12 +36,13 @@ import bibliothek.gui.dock.common.intern.action.CSelectableAction;
  * @author Benjamin Sigg
  *
  */
-public abstract class CCheckBox extends CSelectableAction {
+public abstract class CCheckBox extends CSelectableAction<CommonSimpleCheckAction> {
     /**
      * Creates a new checkbox
      */
     public CCheckBox() {
-        super( new SimpleSelectableAction.Check() );
+        super( null );
+        init( new CommonSimpleCheckAction( this ));
     }
     
     /**

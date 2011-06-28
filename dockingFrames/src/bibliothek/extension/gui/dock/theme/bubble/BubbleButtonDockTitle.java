@@ -43,13 +43,14 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.FilteredDockActionSource;
 import bibliothek.gui.dock.action.MultiDockActionSource;
 import bibliothek.gui.dock.action.StationChildrenActionSource;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonContentValue;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.themes.font.TitleFont;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleEvent;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -257,10 +258,17 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     
     @Override
     public void changed( DockTitleEvent event ) {
-        selected = event.isActive() || event.isPreferred();
-        super.setActive( event.isActive() );
-        updateAnimation();
-        updateFonts();
+    	if( event instanceof ActivityDockTitleEvent ){
+    		ActivityDockTitleEvent activity = (ActivityDockTitleEvent)event;
+    		
+	        selected = activity.isActive() || activity.isPreferred();
+	        super.setActive( activity.isActive() );
+	        updateAnimation();
+	        updateFonts();
+    	}
+    	else{
+    		super.changed( event );
+    	}
     }
     
     @Override

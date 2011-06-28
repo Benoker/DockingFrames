@@ -47,6 +47,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.MenuDockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;
@@ -57,6 +58,8 @@ import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+import bibliothek.gui.dock.station.stack.action.DefaultDockActionDistributor;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
 import bibliothek.gui.dock.station.stack.tab.MenuLineLayout;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
@@ -72,6 +75,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.icon.DefaultIconScheme;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
@@ -83,7 +87,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         descriptionBundle = "theme.bubble.description", 
         nameBundle = "theme.bubble", 
         webpages = { "" }  )
-        public class BubbleTheme extends BasicTheme {
+public class BubbleTheme extends BasicTheme {
     /** the key to set the {@link ColorScheme} of this theme */
     public static final PropertyKey<ColorScheme> BUBBLE_COLOR_SCHEME = 
         new PropertyKey<ColorScheme>( "dock.ui.BubbleTheme.ColorScheme",
@@ -94,6 +98,13 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 	        		return new BubbleColorScheme();
 	        	}
         	}, true );
+    
+	/**
+	 * Key for a property pointing to a {@link DockActionDistributor}. This interface is responsible for distributing
+	 * {@link DockAction}s to tabs, titles and info components.
+	 */
+	public static final PropertyKey<DockActionDistributor> ACTION_DISTRIBUTOR = new PropertyKey<DockActionDistributor>( "dock.bubble.DockActionDistributor",
+			new ConstantPropertyFactory<DockActionDistributor>( new DefaultDockActionDistributor() ), true);
 
     /** the {@link DockController}s which currently use this theme */
     private List<DockController> controllers = new ArrayList<DockController>();
@@ -121,9 +132,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         controllers.add( controller );
 
         // set new titles
-        controller.getDockTitleManager().registerTheme( 
-                FlapDockStation.BUTTON_TITLE_ID, 
-                BubbleButtonDockTitle.FACTORY );
+        controller.getDockTitleManager().registerTheme( FlapDockStation.BUTTON_TITLE_ID, BubbleButtonDockTitle.FACTORY );
 
         controller.getProperties().set( TabPane.LAYOUT_MANAGER, new MenuLineLayout(), Priority.THEME );
         

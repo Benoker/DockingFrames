@@ -27,7 +27,7 @@ package bibliothek.gui.dock.common.action;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.action.actions.SimpleDropDownAction;
+import bibliothek.gui.dock.common.action.core.CommonSimpleDropDownAction;
 import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
 
 /**
@@ -35,16 +35,13 @@ import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
  * marked graphically.
  * @author Benjamin Sigg
  */
-public class CDropDownButton extends CDecorateableAction{
-    /** the internal representation */
-    private SimpleDropDownAction menu;
-    
+public class CDropDownButton extends CDecorateableAction<CommonSimpleDropDownAction>{
     /**
      * Creates a new dropdown-button
      */
     public CDropDownButton(){
-        super( new SimpleDropDownAction() );
-        menu = (SimpleDropDownAction)intern();
+    	super( null );
+        init( new CommonSimpleDropDownAction( this ));
     }
     
     /**
@@ -63,7 +60,7 @@ public class CDropDownButton extends CDecorateableAction{
      * @param action the new action
      */
     public void add( CAction action ){
-        menu.add( action.intern() );
+       intern().add( action.intern() );
     }
 
     /**
@@ -72,7 +69,7 @@ public class CDropDownButton extends CDecorateableAction{
      * @param action the new action
      */
     public void insert( int index, CAction action ){
-        menu.insert( index, action.intern() );
+    	intern().insert( index, action.intern() );
     }
     
     /**
@@ -95,7 +92,7 @@ public class CDropDownButton extends CDecorateableAction{
      * @param index the location of the element to remove
      */
     public void remove( int index ){
-        menu.remove( index );
+    	intern().remove( index );
     }
     
     /**
@@ -103,7 +100,7 @@ public class CDropDownButton extends CDecorateableAction{
      * @param action the action to remove
      */
     public void remove( CAction action ){
-        menu.remove( action.intern() );
+    	intern().remove( action.intern() );
     }
     
     /**
@@ -111,6 +108,6 @@ public class CDropDownButton extends CDecorateableAction{
      * @param action the action to select.
      */
     public void setSelection( CAction action ){
-        menu.setSelection( action.intern() );
+    	intern().setSelection( action.intern() );
     }
 }

@@ -25,7 +25,8 @@
  */
 package bibliothek.gui.dock.common.action;
 
-import bibliothek.gui.dock.action.actions.SeparatorAction;
+import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.common.action.core.CommonSeparatorAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
@@ -36,19 +37,19 @@ import bibliothek.gui.dock.common.intern.CDockable;
  */
 public class CSeparator extends CAction{
     /** the normal separator */
-    public static final CSeparator SEPARATOR = new CSeparator( SeparatorAction.SEPARATOR );
+    public static final CSeparator SEPARATOR = new CSeparator( ViewTarget.MENU, ViewTarget.TITLE, ViewTarget.DROP_DOWN );
     
     /** a separator which is only visible in menus */
-    public static final CSeparator MENU_SEPARATOR = new CSeparator( SeparatorAction.MENU_SEPARATOR );
+    public static final CSeparator MENU_SEPARATOR = new CSeparator( ViewTarget.MENU, ViewTarget.DROP_DOWN );
     
     /** a separator which is only visible on a title of a {@link CDockable} */
-    public static final CSeparator TITLE_SEPARATOR = new CSeparator( SeparatorAction.TITLE_SEPARATOR );
+    public static final CSeparator TITLE_SEPARATOR = new CSeparator( ViewTarget.TITLE );
     
     /**
      * Creates a new separator
-     * @param separator the internal representation
+     * @param targets where to show this action
      */
-    protected CSeparator( SeparatorAction separator ){
-        super( separator );
+    protected CSeparator( ViewTarget<?>... targets ){
+        init( new CommonSeparatorAction( this, targets ));
     }
 }

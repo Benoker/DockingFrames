@@ -1,6 +1,5 @@
 package bibliothek.extension.gui.dock.theme.flat;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -18,18 +17,23 @@ import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedTab;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.stack.tab.Tab;
+import bibliothek.gui.dock.station.stack.tab.TabComponentLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
@@ -113,7 +117,16 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
     private int zOrder;
     
     private TabPlacement orientation = TabPlacement.BOTTOM_OF_DOCKABLE;
-    
+
+	/** a panel showing additional actions on this tab */
+	private ButtonPanel actions = new ButtonPanel( false );
+	
+	/** the actions shown on {@link #actions} */
+	private DockActionDistributorSource actionsSource;
+	
+	/** layout manager for {@link #label} and {@link #actions} */
+	private TabComponentLayoutManager layoutManager;
+	
     /**
      * Constructs a new button
      * @param pane the owner of this tab
@@ -123,9 +136,15 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
     	super( true, false );
     	this.pane = pane;
     	this.dockable = dockable;
-    	            
-    	setLayout( new BorderLayout() );
-    	add( label, BorderLayout.CENTER );
+    	
+    	add( label );
+    	add( actions );
+    	layoutManager = new TabComponentLayoutManager( label, actions );
+    	layoutManager.setFreeSpaceToSideBorder( 2 );
+    	layoutManager.setFreeSpaceToParallelBorder( 2 );
+    	layoutManager.setFreeSpaceToOpenSide( 2 );
+    	layoutManager.setFreeSpaceBetweenLabelAndActions( 2 );
+    	setLayout( layoutManager );
     	
     	label.setBackground( backgroundAlgorithm );
     	setBackground( backgroundAlgorithm );
@@ -336,6 +355,24 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
         if( controller != null )
             controller.addDockableFocusListener( this );
     	
+		if( controller == null ){
+			if( actionsSource != null ){
+				actions.set( null );
+				actionsSource.setDockable( null );
+				actionsSource = null;
+			}
+		}
+		else{
+			controller.addDockableFocusListener( this );
+			focused = controller.getFocusedDockable() == dockable;
+		
+			if( actionsSource == null ){
+				actionsSource = new DockActionDistributorSource( Target.TAB, FlatTheme.ACTION_DISTRIBUTOR );
+				actionsSource.setDockable( getDockable() );
+				actions.set( getDockable(), actionsSource );
+			}
+		}
+		
         borderSelectedOut.connect( controller );
         borderSelectedCenter.connect( controller );
         borderFocusedOut.connect( controller );
@@ -486,8 +523,15 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
     public void setOrientation( TabPlacement orientation ){
     	if( orientation == null )
     		throw new IllegalArgumentException( "orientation is null" );
-    	this.orientation = orientation;
-    	label.setHorizontal( orientation.isHorizontal() );
+    	
+    	if( this.orientation != orientation ){
+	    	this.orientation = orientation;
+	    	
+	    	layoutManager.setOrientation( orientation );
+	    	
+	    	revalidate();
+	    	repaint();
+    	}
     }
     
     /**

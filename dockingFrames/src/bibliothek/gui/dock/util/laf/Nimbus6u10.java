@@ -60,6 +60,17 @@ public class Nimbus6u10 extends AbstractLookAndFeelColors{
         translations.put( WINDOW_BORDER, "windowBorder" );
     }
     
+    /**
+     * Tells this {@link Nimbus6u10} that the color <code>colorKey</code>
+     * should be read from the {@link UIManager} using <code>lafKey</code> 
+     * as key.
+     * @param colorKey name of a color
+     * @param lafKey key used by the {@link UIManager}
+     */
+    public void put( String colorKey, String lafKey ){
+    	translations.put( colorKey, lafKey );
+    }
+    
     public Color getColor( String key ) {
         key = translations.get( key );
         if( key == null )

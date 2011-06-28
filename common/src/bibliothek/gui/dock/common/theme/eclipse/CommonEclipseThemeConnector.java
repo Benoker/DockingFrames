@@ -26,12 +26,16 @@
 package bibliothek.gui.dock.common.theme.eclipse;
 
 import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnectorListener;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.intern.CDockable;
@@ -99,6 +103,19 @@ public class CommonEclipseThemeConnector extends DefaultEclipseThemeConnector {
 			listening = false;
 			control.removePropertyListener( propertyListener );
 		}
+	}
+	
+	@Override
+	public boolean isTabAction( Dockable dockable, DockAction action ){
+		if( super.isTabAction( dockable, action ) ){
+			return true;
+		}
+		if( action instanceof CommonDockAction ){
+			CAction common = ((CommonDockAction)action).getAction();
+			EclipseTabDockAction tab = common.getClass().getAnnotation( EclipseTabDockAction.class );
+			return tab != null;
+		}
+		return false;
 	}
 	
 	@Override

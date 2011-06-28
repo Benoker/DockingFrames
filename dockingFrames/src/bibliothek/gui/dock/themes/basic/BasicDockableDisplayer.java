@@ -44,9 +44,11 @@ import javax.swing.border.Border;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
-import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
@@ -56,12 +58,17 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
+import bibliothek.gui.dock.title.ActionsDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Todo;
@@ -146,6 +153,12 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     private BasicDockableDisplayerDecorator decorator;
     /** the result {@link SingleTabDecider#showSingleTab(DockStation, Dockable)} returned */
     private boolean singleTabShowing;
+    /** whether an update of the decorator is pending */
+    private boolean pendingForcedUpdateDecorator = false;
+    
+    /** Tells whether to use a {@link DockActionDistributorSource} */
+    private boolean stacked = false;
+    
     
     /** the panel that shows the content of this displayer */
     private BackgroundPanel content = new BackgroundPanel( null, false, true ){
@@ -258,23 +271,116 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     		add( newComponent );
     	}
     	
+    	if( title != null ){
+    		title.changed( new ActionsDockTitleEvent( dockable, decorator.getActionSuggestion() ) );
+    	}
+    	
     	revalidate();
     	repaint();
     }
     
+    /**
+     * Replaces the current {@link BasicDockableDisplayerDecorator decorator} if necessary.
+     */
     protected void updateDecorator(){
+    	updateDecorator( false );
+    }
+    
+    /**
+     * Replaces the current {@link BasicDockableDisplayerDecorator decorator} if necessary.
+     * @param force whether to force an update
+     */
+    protected void updateDecorator( boolean force ){
+    	if( force ){
+    		pendingForcedUpdateDecorator = true;
+    	}
+    	
     	if( dockable != null && station != null ){
     		boolean decision = decider.getValue().showSingleTab( station, dockable );
-    		if( decision != singleTabShowing ){
+    		if( pendingForcedUpdateDecorator || decision != singleTabShowing ){
+    			pendingForcedUpdateDecorator = false;
     			singleTabShowing = decision;
     			if( singleTabShowing )
-    				setDecorator( new TabDecorator( station ) );
+    				setDecorator( createTabDecorator() );
+    			else if( isStacked() )
+    				setDecorator( createStackedDecorator() );
     			else
-    				setDecorator( new MinimalDecorator() );
+    				setDecorator( createMinimalDecorator() );
     		}
     		
     		updateBorder();
     	}
+    }
+    
+    /**
+     * Tells this displayer that it is used inside a tabbed environment. This displayer will call
+     * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
+     * @param stacked whether this displayer is part of a stack of displayerss
+     */
+    public void setStacked( boolean stacked ){
+    	if( this.stacked != stacked ){
+    		this.stacked = stacked;
+    		updateDecorator( true );
+    	}
+	}
+    
+    /**
+     * Tells this displayer that it is used inside a tabbed environment. This displayer will call
+     * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
+     * @param stacked whether this displayer is part of a stack of displayerss
+     */
+    public boolean isStacked(){
+		return stacked;
+	}
+    
+    /**
+     * Creates a new {@link MinimalDecorator} that will be shown on this displayer.
+     * @return the new decorator
+     */
+    protected BasicDockableDisplayerDecorator createMinimalDecorator(){
+		return new MinimalDecorator();
+	}
+    
+    /**
+     * Creates a new decorator that will be shown in this displayer if the displayer is
+     * shown alongside a tab (@see {@link #setStacked(boolean)}). The default implementation
+     * return {@link #createMinimalDecorator()}. Subclasses may call {@link #createStackedDecorator(PropertyKey)}
+     * to easily create a fitting decorator.
+     * @return the new decorator
+     * @see #createStackedDecorator(PropertyKey)
+     */
+    protected BasicDockableDisplayerDecorator createStackedDecorator(){
+    	return createMinimalDecorator();
+    }
+    
+    /**
+     * Creates a new {@link MinimalDecorator} that uses a restricted set of {@link DockAction}s.
+     * @param distributor the key to the filter for the actions
+     * @return the new decorator
+     */
+    protected BasicDockableDisplayerDecorator createStackedDecorator( final PropertyKey<DockActionDistributor> distributor ){
+    	return new MinimalDecorator(){
+			private DockActionDistributorSource source = new DockActionDistributorSource( Target.TITLE, distributor );
+			
+			@Override
+			public void setDockable( Component content, Dockable dockable ){
+				super.setDockable( content, dockable );
+				source.setDockable( dockable );
+			}
+			
+			@Override
+			public DockActionSource getActionSuggestion(){
+				return source;
+			}
+		};
+    }
+    
+    /**
+     * Creates a new {@link TabDecorator} that will be shown on this displayer.
+     * @return the new decorator
+     */
+    protected BasicDockableDisplayerDecorator createTabDecorator(){
+    	return new TabDecorator( station, null );
     }
     
     public void setController( DockController controller ) {
@@ -321,6 +427,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     
     public void setStation( DockStation station ) {
         this.station = station;
+        updateDecorator();
     }
     
     public DockStation getStation() {
@@ -406,6 +513,10 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
         if( title != null ){
             title.setOrientation( orientation( location ));
             addTitle( title.getComponent() );
+            
+            if( decorator != null ){
+            	title.changed( new ActionsDockTitleEvent( dockable, decorator.getActionSuggestion() ) );
+            }
         }
         
         revalidate();

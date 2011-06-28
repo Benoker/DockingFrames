@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.action;
 
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 
 /**
@@ -35,14 +36,22 @@ import bibliothek.gui.dock.common.intern.CDockable;
  */
 public class CAction {
     /** the internal representation of the action */
-    private DockAction action;
+    private CommonDockAction action;
+    
+    /**
+     * Creates a new empty {@link CAction}, subclasses must call
+     * {@link #init(CommonDockAction)} to complete initialization of this action.
+     */
+    protected CAction(){
+    	// nothing
+    }
     
     /**
      * Creates a new CAction
      * @param action the internal representation of this action. Subclasses
      * can put <code>null</code> in here and later call {@link #init(DockAction)}
      */
-    protected CAction( DockAction action ){
+    protected CAction( CommonDockAction action ){
         if( action != null )
             init( action );
     }
@@ -51,7 +60,7 @@ public class CAction {
      * Initializes this action. This method can be called only once.
      * @param action the internal representation, not <code>null</code>
      */
-    protected void init( DockAction action ){
+    protected void init( CommonDockAction action ){
         if( this.action != null )
             throw new IllegalStateException( "already initialized" );
         
@@ -65,7 +74,7 @@ public class CAction {
      * Gets the internal representation of the action.
      * @return the representation
      */
-    public DockAction intern(){
+    public CommonDockAction intern(){
         return action;
     }
 }

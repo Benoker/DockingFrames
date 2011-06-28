@@ -85,7 +85,8 @@ public interface SplitLayoutManager {
     public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
 
     /**
-     * Call forwarded from {@link DockStation#prepareMove(int, int, int, int, boolean, Dockable) DockStation.prepareMove}.
+     * Call forwarded from {@link DockStation#prepareDrop(int, int, int, int, boolean, Dockable) DockStation.prepareDrop} if
+     * the operation is a move operation (if the <code>dockable</code> is already a child of this station).
      * This method calculates where to move a {@link Dockable} of <code>station</code>.
      * @param station the calling station
      * @param x the x-coordinate of the mouse on the screen

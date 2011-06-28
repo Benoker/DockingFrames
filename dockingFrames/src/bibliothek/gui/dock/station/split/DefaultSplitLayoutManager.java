@@ -63,7 +63,7 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
                     return null;
             }
             
-            PutInfo putInfo = new PutInfo( null, PutInfo.Put.CENTER, dockable );
+            PutInfo putInfo = new PutInfo( null, PutInfo.Put.CENTER, dockable, true );
             putInfo.setDockable( dockable );
             putInfo = validatePutInfo( station, putInfo );
             return putInfo;
@@ -162,21 +162,21 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         if( SplitNode.above( 0, 0, station.getWidth(), station.getHeight(), x, y )){
             if( SplitNode.above( 0, station.getHeight(), station.getWidth(), 0, x, y )){
                 // top
-                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.TOP, drop );
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.TOP, drop, false );
             }
             else{
                 // bottom
-                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.RIGHT, drop );
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.RIGHT, drop, false );
             }
         }
         else{
             if( SplitNode.above( 0, station.getHeight(), station.getWidth(), 0, x, y )){
                 // left
-                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.LEFT, drop );
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.LEFT, drop, false );
             }
             else{
                 // right
-                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.BOTTOM, drop );
+                info = new PutInfo( station.getRoot().getChild(), PutInfo.Put.BOTTOM, drop, false );
             }            
         }
         

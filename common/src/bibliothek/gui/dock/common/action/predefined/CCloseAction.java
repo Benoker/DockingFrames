@@ -31,6 +31,8 @@ import javax.swing.KeyStroke;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -46,7 +48,8 @@ import bibliothek.gui.dock.util.PropertyValue;
  * same time.
  * @author Benjamin Sigg
  */
-public class CCloseAction extends CDropDownItem{
+@EclipseTabDockAction
+public class CCloseAction extends CDropDownItem<CCloseAction.Action>{
     /** the control for which this action works */
     private CControl control;
     
@@ -91,8 +94,7 @@ public class CCloseAction extends CDropDownItem{
      * {@link CCloseAction#close(CDockable)} when triggered.
      * @author Benjamin Sigg
      */
-    @EclipseTabDockAction
-    private class Action extends CloseAction{
+    public class Action extends CloseAction implements CommonDockAction{
         /** how often this action was bound */
         private int count = 0;
         
@@ -130,6 +132,10 @@ public class CCloseAction extends CDropDownItem{
                 setController( null );
                 keyClose.setProperties( (DockProperties)null );
             }
+        }
+        
+        public CAction getAction(){
+	        return CCloseAction.this;
         }
     }
 }

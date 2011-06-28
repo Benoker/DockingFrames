@@ -32,14 +32,14 @@ import java.util.List;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.action.actions.SimpleButtonAction;
+import bibliothek.gui.dock.common.action.core.CommonSimpleButtonAction;
 import bibliothek.gui.dock.common.intern.action.CDropDownItem;
 
 /**
  * A simple button, the user clicks onto the button and {@link #action()} is called.
  * @author Benjamin Sigg
  */
-public class CButton extends CDropDownItem {
+public class CButton extends CDropDownItem<CommonSimpleButtonAction> {
 	/** all the registered {@link ActionListener} */
 	private List<ActionListener> listeners = new ArrayList<ActionListener>();
 	
@@ -47,8 +47,9 @@ public class CButton extends CDropDownItem {
      * Creates the new button
      */
     public CButton(){
-        super( new SimpleButtonAction() );
-        ((SimpleButtonAction)intern()).addActionListener( new ActionListener(){
+        super( null );
+        init( new CommonSimpleButtonAction( this ));
+        intern().addActionListener( new ActionListener(){
             public void actionPerformed( ActionEvent e ) {
                 action();
             }

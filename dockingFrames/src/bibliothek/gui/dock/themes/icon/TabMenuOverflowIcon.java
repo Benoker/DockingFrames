@@ -81,7 +81,7 @@ public class TabMenuOverflowIcon implements Icon{
 		modifier.setSize( 8 );
 		g.setFont( modifier.modify( font ) );
 		
-		TextLayout layout = new TextLayout( text, g.getFont(), g.getFontMetrics().getFontRenderContext() );
+		TextLayout layout = new TextLayout( text, g.getFont(), ((Graphics2D)g).getFontRenderContext() );
 		Rectangle2D bounds = layout.getBounds();
 		
 		layout.draw( (Graphics2D)g, 

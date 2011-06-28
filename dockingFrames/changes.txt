@@ -581,9 +581,21 @@
 - API: New property StackDockStation.IMMUTABLE_SELECTED_INDEX prevents the StackDockStation from switching the selection index when dropping a Dockable (but has no effect on the FocusManager!).
 - Bugfix: EclipseStationPaint did dispose Graphics context that should not be disposed
 
+[v1.1.1p3]
+! API: CAction now wrapps around a CommonDockAction and no longer a DockAction. This allows clients to use annotations like EclipseTabDockAction on CActions as well. 
+- API: The new TabMerger allows StackDockStations to be dropped on and merged with Dockables with one tab (like in the EclipseTheme).
+- Bugfix: Text and Icons are now set for invisible tabs as well, thus the LayoutManager can now correctly guess the preferred size of the tabs.
+- API: New DockTitleEvent "ActionsDockTitleEvent" informs a DockTitle about the actions it should display, most of the built in DockTitles will support this feature
+- API: New DockActionDistributor interface allows clients to define where actions apper (on a title, on a tab or on a info component).
+- API: BasicDockableDisplayer/BasicDockableDisplayerDecorator now create a DockActionSource and forward this source to the DockTitle. That way the dislpayer/decorator can apply a filter to the actions.
+- API: BubbleTheme now allows clients to show actions on tabs and on an info component, see the new BubbleTheme.ACTION_DISTRIBUTOR property.
+- API: FlatTheme now allows clients to show actions on tabs and on an info component, see the new FlatTheme.ACTION_DISTRIBUTOR property.
+- Bugfix: The framework should now also handle the NimbusLookAndFeel (whose package was renamed, so much for backwards compatibility...) under Java 7 
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
 - Tabs: replace icon of drop down action showing overflowing Dockables by icon that dynamically shows the size of the menu
 - Drop StackDockStation over Dockable and merge them
 - EclipseTheme: Drop Dockable over Dockable and allow to select which Dockable has which index in the new StackDockStation.
+- SingleParentRemover: Implement bugfix as described in the file

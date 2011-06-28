@@ -51,6 +51,14 @@ public abstract class AbstractDockActionSource implements DockActionSource {
     }
 
     /**
+     * Checks whether this {@link DockActionSource} has at least one registered {@link DockActionSourceListener}.
+     * @return whether at least one listener is registered
+     */
+    public boolean hasListeners(){
+    	return listeners.size() > 0;
+    }
+    
+    /**
      * Invokes the {@link DockActionSourceListener#actionsAdded(DockActionSource, int, int) actionsAdded}-method
      * on all registered {@link DockActionSourceListener DockActionSourceListeners}.
      * @param firstIndex The index of the first action that was added

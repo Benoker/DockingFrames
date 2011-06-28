@@ -80,7 +80,6 @@ import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockTitleBindingListener;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
@@ -88,6 +87,7 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DockableSelectionEvent;
 import bibliothek.gui.dock.event.DockableSelectionListener;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.util.DirectWindowProvider;
@@ -1363,7 +1363,7 @@ public class DockController {
                 if( parent != null )
                     parent.changed( title.getValue(), title.getKey(), false );
                 else
-                    title.getKey().changed( new DockTitleEvent( title.getValue(), false ));
+                    title.getKey().changed( new ActivityDockTitleEvent( title.getValue(), false ));
             }
             
             activeTitles.clear();
@@ -1416,7 +1416,7 @@ public class DockController {
                 }
                 
                 if( station == null )
-                    title.changed( new DockTitleEvent( dockable, focused ));
+                    title.changed( new ActivityDockTitleEvent( dockable, focused ));
                 else
                     station.changed( dockable, title, focused );
                 
@@ -1453,7 +1453,7 @@ public class DockController {
             if( parent != null )
                 parent.changed( dockable, title, false );
             else
-                title.changed( new DockTitleEvent( dockable, false ));
+                title.changed( new ActivityDockTitleEvent( dockable, false ));
         }
 
         @Override

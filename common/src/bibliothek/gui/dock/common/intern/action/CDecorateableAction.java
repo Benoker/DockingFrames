@@ -28,24 +28,25 @@ package bibliothek.gui.dock.common.intern.action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.actions.SimpleDockAction;
 import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 
 /**
  * An action which has text, icons and other decorations.
  * @author Benjamin Sigg
+ * @param A the kind of action managed by this {@link CAction}
  */
-public class CDecorateableAction extends CAction {
+public class CDecorateableAction<A extends SimpleDockAction & CommonDockAction> extends CAction {
     /** the internal representation */
-    private SimpleDockAction action;
+    private A action;
     
     /**
      * Creates a new action.
      * @param action the internal representation, can be <code>null</code>
      * if {@link #init(SimpleDockAction)} is called later
      */
-    public CDecorateableAction( SimpleDockAction action ){
+    public CDecorateableAction( A action ){
         super( null );
         if( action != null )
             init( action );
@@ -55,8 +56,8 @@ public class CDecorateableAction extends CAction {
      * Initializes this action, this method can be called only once.
      * @param action the internal representation
      */
-    protected void init( SimpleDockAction action ){
-        init( (DockAction)action );
+    protected void init( A action ){
+        super.init( action );
         this.action = action;
     }
     
@@ -163,5 +164,10 @@ public class CDecorateableAction extends CAction {
      */
     public KeyStroke getAccelerator(){
         return action.getAccelerator();
+    }
+    
+    @Override
+    public A intern(){
+    	return action;
     }
 }

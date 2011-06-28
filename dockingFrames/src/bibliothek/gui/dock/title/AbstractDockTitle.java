@@ -52,7 +52,6 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
@@ -110,6 +109,8 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     };
     /** A panel that displays the action-buttons of this title */
     private ButtonPanel itemPanel;
+    /** The actions that were suggested to this title */
+    private DockActionSource suggestedSource;
     
     /** 
      * A listener added to the owned {@link Dockable}. The listener changes the
@@ -210,7 +211,6 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
      */
     protected void init( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
         this.dockable = dockable;
-//        this.showMiniButtons = showMiniButtons;
         this.origin = origin;
         
         label.setBackground( background );
@@ -219,18 +219,7 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
         setLayout( null );
         add( label );
         setActive( false );
-//        
-//        if( showMiniButtons ){
-//        	itemPanel = new ButtonPanel( true ){
-//        		@Override
-//        		protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
-//        			return AbstractDockTitle.this.createItemFor( action, dockable );
-//        		}
-//        	};
-//            itemPanel.setOpaque( false );
-//            add( itemPanel );
-//        }
-//        
+        
         setFocusTraversalPolicyProvider( true );
         setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy(){
             @Override
@@ -758,7 +747,12 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     }
     
     public void changed( DockTitleEvent event ) {
-        setActive( event.isActive() );
+    	if( event instanceof ActivityDockTitleEvent ){
+    		setActive( ((ActivityDockTitleEvent)event).isActive() );
+    	}
+    	if( event instanceof ActionsDockTitleEvent ){
+    		suggestActions( ((ActionsDockTitleEvent)event).getSuggestions() );
+    	}
     }
     
     public boolean isActive(){
@@ -851,8 +845,37 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
      * @return the list of actions
      */
     protected DockActionSource getActionSourceFor( Dockable dockable ){
+    	if( suggestedSource != null ){
+    		return suggestedSource;
+    	}
+    	
         return dockable.getGlobalActionOffers();
     }
+    
+    /**
+     * Called if a module using the {@link DockTitle} suggests using a specific set of {@link DockAction}s. It is
+     * up to the {@link DockTitle} to follow the suggestions or to ignore them. The default behavior of this
+     * {@link AbstractDockTitle} is to set the result of {@link #getActionSourceFor(Dockable)} equal to
+     * <code>actions</code> and update the {@link #itemPanel} if necessary.
+     * @param actions the set of actions that should be used
+     */
+    protected void suggestActions( DockActionSource actions ){
+    	if( suggestedSource != actions ){
+	    	suggestedSource = actions;
+	    	if( isShowMiniButtons() ){
+	    		itemPanel.set( dockable, getActionSourceFor( dockable ) );
+	    	}
+    	}
+    }
+    
+    /**
+     * Gets the {@link DockActionSource} that was {@link #suggestActions(DockActionSource) suggested} to this
+     * title.
+     * @return the source, can be <code>null</code>
+     */
+    protected DockActionSource getSuggestedSource(){
+		return suggestedSource;
+	}
     
     public void bind() {        
         if( bound )

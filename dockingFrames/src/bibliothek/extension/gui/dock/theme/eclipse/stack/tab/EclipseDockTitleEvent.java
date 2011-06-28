@@ -2,7 +2,7 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockTitleEvent;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -12,7 +12,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * @author Benjamin Sigg
  *
  */
-public class EclipseDockTitleEvent extends DockTitleEvent {
+public class EclipseDockTitleEvent extends ActivityDockTitleEvent {
     /** whether the tab is focused */
     private boolean focused;
     /** whether icons should be painted even when a tab is not selected */

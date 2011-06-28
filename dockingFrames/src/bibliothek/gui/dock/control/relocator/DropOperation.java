@@ -31,7 +31,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
- * This operation calls {@link DockStation#drop()}
+ * This operation calls {@link StationDropOperation#execute()}
  * @author Benjamin Sigg
  *
  */

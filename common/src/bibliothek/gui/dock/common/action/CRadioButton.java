@@ -32,7 +32,7 @@ import javax.swing.JRadioButton;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.SelectableDockAction;
-import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
+import bibliothek.gui.dock.common.action.core.CommonSimpleRadioAction;
 import bibliothek.gui.dock.common.intern.action.CSelectableAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
 
@@ -42,7 +42,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
  * one {@link CRadioButton} of such a group will be selected.
  * @author Benjamin Sigg
  */
-public abstract class CRadioButton extends CSelectableAction {
+public abstract class CRadioButton extends CSelectableAction<CommonSimpleRadioAction> {
     /** group to which this button belongs */
     private CRadioGroup group;
     
@@ -50,8 +50,9 @@ public abstract class CRadioButton extends CSelectableAction {
      * Creates a new radiobutton
      */
     public CRadioButton() {
-        super( new SimpleSelectableAction.Radio() );
-        ((SimpleSelectableAction)intern()).addSelectableListener( new SelectableDockActionListener(){
+        super( null );
+        init( new CommonSimpleRadioAction( this ));
+        intern().addSelectableListener( new SelectableDockActionListener(){
             public void selectedChanged( SelectableDockAction action, Set<Dockable> dockables ) {
                 if( isSelected() && group != null )
                     group.selected( CRadioButton.this );

@@ -60,7 +60,6 @@ import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.event.DockStationAdapter;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
@@ -108,6 +107,7 @@ import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicButtonTitleFactory;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
@@ -1120,7 +1120,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     @Override
     public void changed( Dockable dockable, DockTitle title, boolean active ) {
-        DockTitleEvent event = new DockTitleEvent( this, dockable, active );
+    	ActivityDockTitleEvent event = new ActivityDockTitleEvent( this, dockable, active );
         event.setPreferred( dockable == getFrontDockable() );
         title.changed( event );
     }

@@ -180,6 +180,22 @@ public class ButtonPanel extends JPanel{
     }
     
     /**
+     * Gets the {@link DockActionSource} that is currently shown on this panel.
+     * @return the source that is used, can be <code>null</code>
+     */
+    public DockActionSource getSource(){
+		return source;
+	}
+    
+    /**
+     * Tells whether this panel shows at least one {@link DockAction}.
+     * @return whether at least one action is present
+     */
+    public boolean hasActions(){
+    	return actions.size() > 0;
+    }
+    
+    /**
      * Changes the content which is shown.
      * @param dockable the Dockable for which the actions are shown, can be <code>null</code>
      * @param source the list of actions, can be <code>null</code>

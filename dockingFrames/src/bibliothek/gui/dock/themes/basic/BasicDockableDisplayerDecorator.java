@@ -29,6 +29,9 @@ import java.awt.Component;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.title.ActionsDockTitleEvent;
+import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A decorator may add a {@link Component} between a {@link BasicDockableDisplayer}
@@ -56,4 +59,13 @@ public interface BasicDockableDisplayerDecorator {
 	 * @return the component or <code>null</code> to show nothing
 	 */
 	public Component getComponent();
+	
+	/**
+	 * Gets a {@link DockActionSource} which is forwarded to the {@link DockTitle} through
+	 * a {@link ActionsDockTitleEvent}. This method may be called at any time, the action source
+	 * must update itself if the settings of this decorator (like {@link #setController(DockController)})
+	 * change.
+	 * @return the suggestion for actions, can be <code>null</code>
+	 */
+	public DockActionSource getActionSuggestion();
 }

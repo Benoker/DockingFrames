@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 
+import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -43,6 +44,8 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
+import bibliothek.gui.dock.themes.basic.BasicDockableDisplayerDecorator;
+import bibliothek.gui.dock.themes.basic.TabDecorator;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -275,6 +278,16 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             insets.bottom += borderInsets.bottom;
         }
         return insets;
+    }
+
+    @Override
+    protected BasicDockableDisplayerDecorator createStackedDecorator(){
+    	return createStackedDecorator( BubbleTheme.ACTION_DISTRIBUTOR );
+    }
+    
+    @Override
+    protected TabDecorator createTabDecorator(){
+	    return new TabDecorator( getStation(), BubbleTheme.ACTION_DISTRIBUTOR );
     }
     
     /**

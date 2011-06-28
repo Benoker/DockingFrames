@@ -176,6 +176,44 @@ public class DefaultDockable extends AbstractDockable {
     }
     
     /**
+     * Gets the number of {@link Component}s on this dockable, this is equivalent of calling
+     * <code>getContentPane().getComponentCount()</code>.
+     * @return the number of components
+     * @see #getContentPane()
+     * @see Container#getComponentCount()
+     */
+    public int getComponentCount(){
+    	return getContentPane().getComponentCount();
+    }
+
+    /**
+     * Gets the index'th child of this {@link Dockable}, this is equivalent of calling
+     * <code>getContentPane().getComponent( index )</code>.
+     * @param index the index of the child
+     * @return the component
+     * @see #getContentPane()
+     * @see Container#getComponent(int)
+     */
+    public Component getComponent( int index ){
+    	return getContentPane().getComponent( index );
+    }
+    
+    /**
+     * Gets the first child {@link Component} of this dockable. This is equivalent of calling
+     * <code>getContentPane().getComponent( 0 )</code>. For many dockables the first component will be the
+     * object that was given to the constructor {@link #DefaultDockable(Component)}.
+     * @return the first child or <code>null</code> if no children are present
+     */
+    public Component getFirstComponent(){
+    	if( getComponentCount() == 0 ){
+    		return null;
+    	}
+    	else{
+    		return getComponent( 0 );
+    	}
+    }
+    
+    /**
      * Gets a panel for children of this Dockable. Clients can do whatever
      * they like, except removing the content pane from its parent.
      * @return the representation of this dockable

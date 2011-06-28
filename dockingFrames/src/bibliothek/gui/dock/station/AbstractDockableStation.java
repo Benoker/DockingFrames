@@ -40,11 +40,12 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.event.DockStationListener;
-import bibliothek.gui.dock.event.DockTitleEvent;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
+import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -165,11 +166,13 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
     }
     
     /**
-     * Tells whether this station accepts <code>child</code> as new child.
+     * Tells whether this station accepts <code>child</code> as new child. This is a shortcut
+     * asking {@link #accept(Dockable)}, {@link Dockable#accept(DockStation)} and
+     * {@link DockAcceptance#accept(DockStation, Dockable)} in one go.
      * @param child the child to add
      * @return <code>true</code> if acceptable
      */
-    protected boolean acceptable( Dockable child ){
+    public boolean acceptable( Dockable child ){
     	if( !accept( child )){
     		return false;
     	}
@@ -195,7 +198,7 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
     }
 
     public void changed( Dockable dockable, DockTitle title, boolean active ) {
-        title.changed( new DockTitleEvent( this, dockable, active ));
+        title.changed( new ActivityDockTitleEvent( this, dockable, active ));
     }
     
     public void requestChildDockTitle( DockTitleRequest request ){
