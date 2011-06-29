@@ -1,7 +1,5 @@
 Readme
 
-// Beni: this is a test from Andrei //
-
 Each directory represents an own project:
 	dockingFrame - the DockingFrames
 	demo - small demonstrations building a tutorial
