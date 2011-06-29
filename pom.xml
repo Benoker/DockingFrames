@@ -177,6 +177,16 @@
 		<!-- TODO change to maven convention src/main/java; then remove this -->
 		<sourceDirectory>src</sourceDirectory>
 
+		<!-- TODO change to maven convention src/main/resources; then remove this -->
+		<resources>
+			<resource>
+				<directory>src/data</directory>
+				<includes>
+					<include>**/*.*</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<pluginManagement>
 
 			<plugins>
