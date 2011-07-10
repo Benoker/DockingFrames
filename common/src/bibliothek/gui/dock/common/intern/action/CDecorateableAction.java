@@ -30,14 +30,14 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.dock.action.actions.SimpleDockAction;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.action.core.CommonDockAction;
+import bibliothek.gui.dock.common.action.core.CommonDecoratableDockAction;
 
 /**
  * An action which has text, icons and other decorations.
  * @author Benjamin Sigg
  * @param A the kind of action managed by this {@link CAction}
  */
-public class CDecorateableAction<A extends SimpleDockAction & CommonDockAction> extends CAction {
+public class CDecorateableAction<A extends CommonDecoratableDockAction> extends CAction {
     /** the internal representation */
     private A action;
     

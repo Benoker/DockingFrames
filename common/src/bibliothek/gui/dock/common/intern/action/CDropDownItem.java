@@ -25,10 +25,9 @@
  */
 package bibliothek.gui.dock.common.intern.action;
 
-import bibliothek.gui.dock.action.actions.SimpleDropDownItemAction;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.CDropDownButton;
-import bibliothek.gui.dock.common.action.core.CommonDockAction;
+import bibliothek.gui.dock.common.action.core.CommonDropDownItem;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -37,7 +36,7 @@ import bibliothek.util.FrameworkOnly;
  * @param A the kind of action that represents this {@link CAction}
  */
 @FrameworkOnly
-public class CDropDownItem<A extends SimpleDropDownItemAction & CommonDockAction> extends CDecorateableAction<A>{
+public class CDropDownItem<A extends CommonDropDownItem> extends CDecorateableAction<A>{
     /**
      * Creates a new action
      * @param action the internal representation, can be <code>null</code> if

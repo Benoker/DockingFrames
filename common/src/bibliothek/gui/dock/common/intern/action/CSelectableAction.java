@@ -34,6 +34,7 @@ import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.core.CommonDockAction;
+import bibliothek.gui.dock.common.action.core.CommonSelectableAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
 import bibliothek.util.FrameworkOnly;
 
@@ -43,7 +44,7 @@ import bibliothek.util.FrameworkOnly;
  * @param <A> the kind of action representing this {@link CAction}
  */
 @FrameworkOnly
-public abstract class CSelectableAction<A extends SimpleSelectableAction & CommonDockAction> extends CDropDownItem<A>{
+public abstract class CSelectableAction<A extends CommonSelectableAction> extends CDropDownItem<A>{
     /**
      * Creates a new action
      * @param action the internal representation

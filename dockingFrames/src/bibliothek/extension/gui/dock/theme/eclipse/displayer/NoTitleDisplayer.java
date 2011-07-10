@@ -424,7 +424,7 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 		 */
 		public Border modify( Border border ){
 			if( modifier == null ){
-				return null;
+				return border;
 			}
 			else{
 				return modifier.modify( border );

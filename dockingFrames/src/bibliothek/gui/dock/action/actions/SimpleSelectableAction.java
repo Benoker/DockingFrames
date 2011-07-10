@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -45,7 +45,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
  * has always the same value for every {@link Dockable} using this action.
  * @author Benjamin Sigg
  */
-public abstract class SimpleSelectableAction extends SimpleDropDownItemAction implements SelectableDockAction{
+public abstract class SimpleSelectableAction extends SimpleDropDownItemAction implements SharingSelectableDockAction, SelectableDockAction{
 	/** observers of this action */
 	private List<SelectableDockActionListener> listeners = new ArrayList<SelectableDockActionListener>();
 	/** whether this action is selected or not */
@@ -143,20 +143,10 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
 		setSelected( selected );
 	}
 
-    /**
-     * Gets the selected-state of this action.
-     * @return The current state
-     * @see #setSelected(boolean)
-     */
     public boolean isSelected() {
         return selected;
     }
 	
-    /**
-     * Sets the state of this action. The action will notify all listeners
-     * about the new state.
-     * @param selected the new state
-     */
 	public void setSelected( boolean selected ){
 		if( selected != this.selected ){
 			this.selected = selected;
@@ -187,34 +177,15 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
         return null;
     }
 	
-	/**
-     * Gets the icon that is shown when this action is selected.
-     * @return The selected-icon, may be <code>null</code>
-     * @see #setSelectedIcon(Icon)
-     * @see #isSelected()
-     */
     public Icon getSelectedIcon() {
         return selectedIcon;
     }
     
-    /**
-     * Sets the icon that will be shown, when this action is selected.
-     * @param selectedIcon The icon, can be <code>null</code>
-     * @see #setSelected(boolean)
-     */
     public void setSelectedIcon( Icon selectedIcon ) {
         this.selectedIcon = selectedIcon;
         fireActionIconChanged( getBoundDockables() );
     }
     
-    /**
-     * Gets the icon that is shown, when this action is selected but
-     * not enabled.
-     * @return The icon, may be <code>null</code>
-     * @see #setDisabledSelectedIcon(Icon)
-     * @see #isEnabled()
-     * @see #isSelected()
-     */
     public Icon getDisabledSelectedIcon() {
         return disabledSelectedIcon;
     }
@@ -227,13 +198,6 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
     		return super.getDisabledIcon( dockable );
     }
     
-    /**
-     * Sets the icon that will be shown when this action is selected
-     * but not enabled.
-     * @param disabledSelectedIcon The icon, <code>null</code> is allowed
-     * @see #setSelected(boolean)
-     * @see #setEnabled(boolean)
-     */
     public void setDisabledSelectedIcon( Icon disabledSelectedIcon ) {
         this.disabledSelectedIcon = disabledSelectedIcon;
         fireActionDisabledIconChanged( getBoundDockables() );

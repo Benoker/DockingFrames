@@ -26,25 +26,17 @@
 package bibliothek.gui.dock.common.action.core;
 
 import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
-import bibliothek.gui.dock.common.action.CAction;
+import bibliothek.gui.dock.action.actions.SharingStandardDockAction;
+import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
+import bibliothek.util.FrameworkOnly;
 
 /**
- * A {@link SimpleSelectableAction} that also implements {@link CommonDockAction}.
+ * The combination of a {@link CommonDockAction} and a {@link SharingStandardDockAction}, does not introduce
+ * any new methods or fields.<br>
+ * This is the interface any {@link DockAction} that is used by a {@link CDecorateableAction} must implement.
  * @author Benjamin Sigg
  */
-public class CommonSimpleCheckAction extends SimpleSelectableAction.Check implements CommonSelectableAction{
-	private CAction action;
-	
-	/**
-	 * Creates a new action.
-	 * @param action the {@link CAction} that wrapps around this {@link DockAction}
-	 */
-	public CommonSimpleCheckAction( CAction action ){
-		this.action = action;
-	}
-	
-	public CAction getAction(){
-		return action;
-	}
+@FrameworkOnly
+public interface CommonDecoratableDockAction extends CommonDockAction, SharingStandardDockAction{
+
 }

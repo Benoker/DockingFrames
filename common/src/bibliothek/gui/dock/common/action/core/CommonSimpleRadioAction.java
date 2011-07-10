@@ -33,7 +33,7 @@ import bibliothek.gui.dock.common.action.CAction;
  * A {@link SimpleSelectableAction} that also implements {@link CommonDockAction}.
  * @author Benjamin Sigg
  */
-public class CommonSimpleRadioAction extends SimpleSelectableAction.Radio implements CommonDockAction{
+public class CommonSimpleRadioAction extends SimpleSelectableAction.Radio implements CommonSelectableAction{
 	private CAction action;
 	
 	/**

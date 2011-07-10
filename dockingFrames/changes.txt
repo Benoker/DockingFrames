@@ -591,6 +591,7 @@
 - API: BubbleTheme now allows clients to show actions on tabs and on an info component, see the new BubbleTheme.ACTION_DISTRIBUTOR property.
 - API: FlatTheme now allows clients to show actions on tabs and on an info component, see the new FlatTheme.ACTION_DISTRIBUTOR property.
 - Bugfix: The framework should now also handle the NimbusLookAndFeel (whose package was renamed, so much for backwards compatibility...) under Java 7 
+- API: Added some additional interfaces to prevent constructors like "<A extends SimpleButtonDockAction & CommonDockable>", as these constructors are not working well together with the compiler.
 
 [Todo]
 - Import/Export Perspectives from file
