@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.action.CAction;
  * A {@link SimpleMenuAction} implementing {@link CommonDockAction}.
  * @author Benjamin Sigg
  */
-public class CommonSimpleMenuAction extends SimpleMenuAction implements CommonDockAction {
+public class CommonSimpleMenuAction extends SimpleMenuAction implements CommonDecoratableDockAction {
 	private CAction action;
 	
 	/**

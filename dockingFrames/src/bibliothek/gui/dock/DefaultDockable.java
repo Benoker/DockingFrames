@@ -32,6 +32,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.lang.ref.WeakReference;
 
 import javax.swing.Icon;
 import javax.swing.LayoutFocusTraversalPolicy;
@@ -64,6 +65,9 @@ public class DefaultDockable extends AbstractDockable {
     
     /** the background of this dockable */
     private Background background = new Background();
+    
+    /** the component that was set by the client */
+    private WeakReference<Component> clientComponent;
     
     /**
      * Constructs a new DefaultDockable
@@ -133,6 +137,7 @@ public class DefaultDockable extends AbstractDockable {
     	pane.setBackground( background );
     	
         if( component != null ){
+        	clientComponent = new WeakReference<Component>( component );
             getContentPane().setLayout( new GridLayout( 1, 1 ));
             getContentPane().add( component );
         }
@@ -199,18 +204,28 @@ public class DefaultDockable extends AbstractDockable {
     }
     
     /**
-     * Gets the first child {@link Component} of this dockable. This is equivalent of calling
-     * <code>getContentPane().getComponent( 0 )</code>. For many dockables the first component will be the
-     * object that was given to the constructor {@link #DefaultDockable(Component)}.
-     * @return the first child or <code>null</code> if no children are present
+     * Gets the {@link Component} which was given to this {@link DefaultDockable} through the constructor. If the client
+     * ever removes and the client component from the {@link #getContentPane() content-pane}, and then adds the component
+     * again, then the result of this method gets unspecified.<br> 
+     * Please note: the implementation of how the client component is stored does not prevent the garbage collector from
+     * deleting the client component.
+     * @return the component that was given to this dockable through the constructor or <code>null</code> if that component
+     * was removed from the {@link #getContentPane() content-pane} 
      */
-    public Component getFirstComponent(){
-    	if( getComponentCount() == 0 ){
+    public Component getClientComponent(){
+    	if( clientComponent == null ){
     		return null;
     	}
-    	else{
-    		return getComponent( 0 );
+    	Component child = clientComponent.get();
+    	if( child == null ){
+    		clientComponent = null;
+    		return null;
     	}
+    	if( child.getParent() != getContentPane() ){
+    		clientComponent = null;
+    		return null;
+    	}
+    	return child;
     }
     
     /**

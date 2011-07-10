@@ -37,7 +37,6 @@ import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -48,7 +47,7 @@ import bibliothek.gui.dock.event.KeyboardListener;
  * all associated {@link Dockable Dockables} the same settings.
  * @author Benjamin Sigg
  */
-public abstract class SimpleDockAction extends AbstractStandardDockAction {
+public abstract class SimpleDockAction extends AbstractStandardDockAction implements SharingStandardDockAction {
 	/** Icon shown if the action is enabled */
 	private Icon icon;
 	
@@ -95,19 +94,10 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
         return text;
     }
     
-    /**
-     * Gets the text that is shown for this action.
-     * @return The text of this action, may be <code>null</code>
-     * @see #setText(String)
-     */
     public String getText() {
         return text;
     }
     
-    /**
-     * Sets the <code>text</code> which is shown for this action.
-     * @param text The text to show, or <code>null</code>
-     */
     public void setText( String text ) {
         this.text = text;
         fireActionTextChanged( getBoundDockables() );
@@ -117,12 +107,6 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	return getTooltipText();
     }
     
-    /**
-     * Gets the text that should be shown as tooltip of this action. This text
-     * contains the value of {@link #getTooltip()}, but also additional information
-     * like the {@link #getAccelerator() accelerator}
-     * @return the full tooltip text
-     */
     public String getTooltipText(){
     	if( accelerator == null )
     		return tooltip;
@@ -135,19 +119,10 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     		return tooltip + " (" + acceleratorText + ")";
     }
     
-    /**
-     * Gets the first part of the toopltip-text that is shown for this action.
-     * @return The client defined part of the tooltip
-     * @see #setTooltip(String)
-     */
     public String getTooltip() {
         return tooltip;
     }
     
-    /**
-     * Sets the first part of the tooltip-text which is shown for this action.
-     * @param tooltip The client defined part of the tooltip for this action
-     */
     public void setTooltip( String tooltip ) {
         this.tooltip = tooltip;
         fireActionTooltipTextChanged( getBoundDockables() );
@@ -157,22 +132,10 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
         return enabled;
     }
     
-    /**
-     * Gets the enabled-state for this action. Only an action that
-     * is enabled can be triggered.
-     * @return <code>true</code> if this action can be triggered,
-     * <code>false</code> otherwise
-     * @see #setEnabled(boolean)
-     */
     public boolean isEnabled() {
         return enabled;
     }
     
-    /**
-     * Sets the enabled-state of this action. This action can be triggered
-     * only if it is enabled.
-     * @param enabled The state
-     */
     public void setEnabled( boolean enabled ) {
         if( this.enabled != enabled ){
             this.enabled = enabled;
@@ -180,32 +143,15 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
         }
     }
     
-    /**
-     * Gets the default-icon that is shown for this action.
-     * @return The icon, may be <code>null</code>
-     * @see #setIcon(Icon)
-     */
     public Icon getIcon(){
         return icon;
     }
     
-    /**
-     * Sets the default-<code>icon</code> for this action. This icon
-     * will be shown when no other icon fits the current states of
-     * the action.
-     * @param icon The icon, can be <code>null</code>
-     */
     public void setIcon( Icon icon ) {
         this.icon = icon;
         fireActionIconChanged( getBoundDockables() );
     }
     
-    /**
-     * Gets the icon that is shown when this action is not enabled.
-     * @return The disabled-icon, may be <code>null</code>
-     * @see #setDisabledIcon(Icon)
-     * @see #isEnabled()
-     */
     public Icon getDisabledIcon() {
         return disabledIcon;
     }
@@ -214,12 +160,6 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	return disabledIcon;
     }
     
-    /**
-     * Sets the {@link Dockable} which is represented by this {@link DockAction}. Some views of
-     * this {@link DockAction} will register themselves as {@link DockElementRepresentative} representing
-     * <code>dockable</code>.
-     * @param dockable the new representation, can be <code>null</code>
-     */
     public void setDockableRepresentation( Dockable dockable ){
     	if( this.representative != dockable ){
     		this.representative = dockable;
@@ -231,38 +171,19 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction {
     	return representative;
     }
     
-    /**
-     * Gets the {@link Dockable} which is represented by this {@link DockAction}.
-     * @return the element, can be <code>null</code>
-     * @see #getDockableRepresentation(Dockable)
-     */
     public Dockable getDockableRepresentation(){
     	return representative;
     }
     
-    /**
-     * Sets an icon that will be shown when this action is not enabled.
-     * @param disabledIcon The disabled-icon, can be <code>null</code>
-     * @see #setEnabled(boolean)
-     */
     public void setDisabledIcon( Icon disabledIcon ) {
 		this.disabledIcon = disabledIcon;
     	fireActionDisabledIconChanged( getBoundDockables() );	
     }
     
-    /**
-     * Gets the type of {@link KeyEvent} that must happen to trigger this
-     * action.
-     * @return the type of event or <code>null</code>
-     */
     public KeyStroke getAccelerator(){
 		return accelerator;
 	}
     
-    /**
-     * Sets the type of event that will trigger this action.
-     * @param accelerator the type of event or <code>null</code>.
-     */
     public void setAccelerator( KeyStroke accelerator ){
 		this.accelerator = accelerator;
 		fireActionTooltipTextChanged( getBoundDockables() );

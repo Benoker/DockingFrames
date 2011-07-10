@@ -37,40 +37,22 @@ import bibliothek.gui.dock.action.StandardDockAction;
  * A dropdown action that has the same properties for all Dockables.
  * @author Benjamin Sigg
  */
-public class SimpleDropDownAction extends AbstractSimpleDropDownAction implements DropDownAction {
+public class SimpleDropDownAction extends AbstractSimpleDropDownAction implements DropDownAction, SharingDropDownDockAction {
 	/** the menu */
 	private DefaultDockActionSource actions = new DefaultDockActionSource();
 
-	/**
-	 * Adds an action to the menu.
-	 * @param action the action to add
-	 */
 	public void add( DockAction action ){
 		actions.add( action );
 	}
 	
-	/**
-	 * Inserts an action into the menu.
-	 * @param index the location of the action
-	 * @param action the new action
-	 */
 	public void insert( int index, DockAction action ){
 		actions.add( index, action );
 	}
 	
-	/**
-	 * Inserts a list of actions into the menu.
-	 * @param index the location of the first action
-	 * @param action the actions to add
-	 */
 	public void insert( int index, DockAction... action ){
 		actions.add( index, action );
 	}
 	
-	/**
-	 * Removes an action from the menu.
-	 * @param index the location of the action
-	 */
 	public void remove( int index ){
 		DockAction action = actions.getDockAction( index );
 		actions.remove( index );
@@ -80,18 +62,10 @@ public class SimpleDropDownAction extends AbstractSimpleDropDownAction implement
 		}
 	}
 	
-	/**
-	 * Gets the number of actions shown in the menu.
-	 * @return the number of actions
-	 */
 	public int size(){
 		return actions.getDockActionCount();
 	}
 	
-	/**
-	 * Removes <code>action</code> from the menu.
-	 * @param action the action to remove
-	 */
 	public void remove( DockAction action ){
 		actions.remove( action );
 		

@@ -33,7 +33,7 @@ import bibliothek.gui.dock.common.action.CAction;
  * An implementation of a {@link SimpleDropDownAction} also implementing {@link CommonDockAction}.
  * @author Benjamin Sigg
  */
-public class CommonSimpleDropDownAction extends SimpleDropDownAction implements CommonDockAction{
+public class CommonSimpleDropDownAction extends SimpleDropDownAction implements CommonDecoratableDockAction{
 	private CAction action;
 	
 	/**

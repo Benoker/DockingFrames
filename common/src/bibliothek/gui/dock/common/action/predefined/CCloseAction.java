@@ -32,7 +32,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.action.core.CommonDockAction;
+import bibliothek.gui.dock.common.action.core.CommonDropDownItem;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -94,7 +94,7 @@ public class CCloseAction extends CDropDownItem<CCloseAction.Action>{
      * {@link CCloseAction#close(CDockable)} when triggered.
      * @author Benjamin Sigg
      */
-    public class Action extends CloseAction implements CommonDockAction{
+    public class Action extends CloseAction implements CommonDropDownItem{
         /** how often this action was bound */
         private int count = 0;
         
