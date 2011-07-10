@@ -54,7 +54,7 @@ public class DefaultDockActionDistributor implements DockActionDistributor{
 	}
 
 	/**
-	 * Creates a new {@link DockActionSource} for the {@link Target} {@link Target#TAB}.
+	 * Creates a new {@link DockActionSource} for the {@link DockActionDistributor.Target} {@link DockActionDistributor.Target#TAB}.
 	 * @param source the basic actions
 	 * @return the filtered actions
 	 */
@@ -68,7 +68,7 @@ public class DefaultDockActionDistributor implements DockActionDistributor{
 	}
 	
 	/**
-	 * Creates a new {@link DockActionSource} for the {@link Target} {@link Target#INFO_COMPONENT}.
+	 * Creates a new {@link DockActionSource} for the {@link DockActionDistributor.Target} {@link DockActionDistributor.Target#INFO_COMPONENT}.
 	 * @param source the basic actions
 	 * @return the filtered actions
 	 */	
@@ -82,7 +82,7 @@ public class DefaultDockActionDistributor implements DockActionDistributor{
 	}
 	
 	/**
-	 * Creates a new {@link DockActionSource} for the {@link Target} {@link Target#TITLE} or for
+	 * Creates a new {@link DockActionSource} for the {@link DockActionDistributor.Target} {@link DockActionDistributor.Target#TITLE} or for
 	 * those actions that are not marked with any annotation.
 	 * @param source the basic actions
 	 * @return the filtered actions

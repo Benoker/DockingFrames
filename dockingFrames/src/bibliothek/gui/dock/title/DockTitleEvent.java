@@ -54,7 +54,7 @@ public class DockTitleEvent {
     /**
      * Constructs a new event. This constructor should only be called
      * if a {@link DockStation} itself sends the event. Other components
-     * should use {@link #DockTitleEvent(Dockable, boolean)}.
+     * should use {@link #DockTitleEvent(Dockable)}.
      * @param station the station on which the target-title is displayed
      * @param dockable the {@link Dockable} for which the target-title
      * is rendered

@@ -33,14 +33,14 @@ import bibliothek.util.FrameworkOnly;
 /**
  * An action which can be child of a dropdown-menu.
  * @author Benjamin Sigg
- * @param A the kind of action that represents this {@link CAction}
+ * @param <A> the kind of action that represents this {@link CAction}
  */
 @FrameworkOnly
 public class CDropDownItem<A extends CommonDropDownItem> extends CDecorateableAction<A>{
     /**
      * Creates a new action
      * @param action the internal representation, can be <code>null</code> if
-     * {@link #init(A)} is called later
+     * {@link #init(bibliothek.gui.dock.common.action.core.CommonDecoratableDockAction)} is called later
      */
     protected CDropDownItem( A action ) {
         super( null );

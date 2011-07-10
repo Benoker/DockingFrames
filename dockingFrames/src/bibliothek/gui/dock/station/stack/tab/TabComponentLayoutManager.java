@@ -115,7 +115,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 	
 	/**
 	 * Gets the size of the border at the side of the {@link Dockable}
-	 * @param freeSpaceToSideBorder the size
+	 * @return the size
 	 * @see #setFreeSpaceToParallelBorder(int) 
 	 */
 	public int getFreeSpaceToParallelBorder(){

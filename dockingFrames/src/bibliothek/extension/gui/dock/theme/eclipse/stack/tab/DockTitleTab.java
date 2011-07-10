@@ -36,7 +36,7 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * to get a {@link TabComponent}.<br>
  * This <code>DockTitleTab</code> will use {@link EclipseDockTitleEvent}s
  * to inform its <code>DockTitle</code> when a property has changed, the
- * method {@link DockTitle#changed(bibliothek.gui.dock.event.DockTitleEvent)}
+ * method {@link DockTitle#changed(bibliothek.gui.dock.title.DockTitleEvent)}
  * is called for that purpose.
  * @author Benjamin Sigg
  *

@@ -226,7 +226,7 @@ public interface DockStation extends DockElement{
     /**
      * Called by the {@link DockController} of this station to indicate that
      * the active-state of <code>title</code> has been changed. This station
-     * should call the method <code>title.{@link DockTitle#changed(bibliothek.gui.dock.event.DockTitleEvent) changed}</code>
+     * should call the method <code>title.{@link DockTitle#changed(bibliothek.gui.dock.title.DockTitleEvent) changed}</code>
      * with an appropriate event. The station may add some additional information
      * to this call.
      * @param dockable the child whose title is changed

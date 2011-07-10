@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.common.action;
 
-import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.common.intern.CDockable;
 
@@ -49,7 +48,7 @@ public class CAction {
     /**
      * Creates a new CAction
      * @param action the internal representation of this action. Subclasses
-     * can put <code>null</code> in here and later call {@link #init(DockAction)}
+     * can put <code>null</code> in here and later call {@link #init(CommonDockAction)}
      */
     protected CAction( CommonDockAction action ){
         if( action != null )

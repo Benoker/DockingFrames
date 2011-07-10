@@ -327,7 +327,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     /**
      * Tells this displayer that it is used inside a tabbed environment. This displayer will call
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
-     * @param stacked whether this displayer is part of a stack of displayerss
+     * @return whether this displayer is part of a stack of displayerss
      */
     public boolean isStacked(){
 		return stacked;

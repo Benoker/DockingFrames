@@ -31,9 +31,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.SelectableDockAction;
-import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
 import bibliothek.gui.dock.common.action.CAction;
-import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.common.action.core.CommonSelectableAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
 import bibliothek.util.FrameworkOnly;
