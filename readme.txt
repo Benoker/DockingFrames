@@ -63,3 +63,56 @@ The projects have these dependencies:
 	+ demonstration_interface
 	+ dockingFrame
 	+ common
+
+
+Maven Snapshot Repository
+
+	you can get current project snapshot here:
+	https://oss.sonatype.org/content/repositories/snapshots/org/dockingframes/
+
+	or add to your pom.xml
+
+	<repositories>
+
+		<repository>
+			<id>sonatype-oss-snapshots</id>
+			<name>Sonatype OSS Maven Repository for Staging Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
+
+	<dependencies>
+		<dependency>
+    		<groupId>org.dockingframes</groupId>
+    		<artifactId>docking-frames-common</artifactId>
+    		<version>1.1.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	be sure to use latest <version>-SNAPSHOT
+
+
+Maven Release Repository
+
+	you can get latest release from maven central:
+	http://search.maven.org/#artifactdetails|org.dockingframes|docking-frames-common|1.1.0|jar
+
+	just add to your pom.xml
+
+	<dependencies>
+		<dependency>
+    		<groupId>org.dockingframes</groupId>
+    		<artifactId>docking-frames-common</artifactId>
+    		<version>1.1.0</version>
+		</dependency>
+	</dependencies>
+
+	be sure to use latest <version>
+
