@@ -108,17 +108,17 @@
 		<property name="web.demo" value="${base}/web/demo"/>
 		<property name="web.tutorial" value="${base}/web/tutorial"/>
 
-		<property name="name.chess" value="chess"/>
-		<property name="name.common" value="dockingFramesCommon"/>
-		<property name="name.layouts" value="commonLayouts"/>
-		<property name="name.tutorial" value="tutorial"/>
-		<property name="name.demonstration" value="demonstration"/>
-		<property name="name.demonstrationInterface" value="interfaces"/>
-		<property name="name.core" value="dockingFramesCore"/>
-		<property name="name.help" value="help"/>
-		<property name="name.notes" value="notes"/>
-		<property name="name.paint" value="paint"/>
-		<property name="name.sizeAndColor" value="sizeAndColor"/>
+		<property name="name.chess" value="docking-frames-demo-chess"/>
+		<property name="name.common" value="docking-frames-common"/>
+		<property name="name.layouts" value="docking-frames-demo-layouts"/>
+		<property name="name.tutorial" value="docking-frames-demo-tutorial"/>
+		<property name="name.demonstration" value="docking-frames-demo-app"/>
+		<property name="name.demonstrationInterface" value="docking-frames-demo-app-ice"/>
+		<property name="name.core" value="docking-frames-core"/>
+		<property name="name.help" value="docking-frames-demo-help"/>
+		<property name="name.notes" value="docking-frames-demo-notes"/>
+		<property name="name.paint" value="docking-frames-demo-paint"/>
+		<property name="name.sizeAndColor" value="docking-frames-demo-size-and-color"/>
 
 		<property name="location.chess" value="[JavaForge]Chess"/>
 		<property name="location.common" value="[JavaForge]Common"/>

@@ -18,7 +18,7 @@
 		<property name="glass.doc" value="${glass.base}/doc"/>
 		<property name="glasslib" value="glasslib.jar"/>
 
-		<property name="name.glass" value="extensionGlass"/>
+		<property name="name.glass" value="docking-frames-ext-glass"/>
 		
 		<property name="location.glass" value="[JavaForge]Glass"/>
 	</target>
