@@ -43,6 +43,7 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.focus.AbstractFocusController;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.FocusStrategy;
+import bibliothek.gui.dock.control.focus.FocusStrategyRequest;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -163,12 +164,12 @@ public class DefaultFocusController extends AbstractFocusController {
     	ensureFocusSet( dockableOnly, null );
     }
     
-    private void ensureFocusSet( boolean dockableOnly, Component component ){
+    private void ensureFocusSet( final boolean dockableOnly, Component component ){
     	if( isFrozen() ){
     		return;
     	}
 
-        Dockable focusedDockable = this.focusedDockable;
+        final Dockable focusedDockable = this.focusedDockable;
         if( focusedDockable != null ){
             Stack<Dockable> front = new Stack<Dockable>();            
             
@@ -203,7 +204,25 @@ public class DefaultFocusController extends AbstractFocusController {
             boolean preset = component != null;
             FocusStrategy strategy = getStrategy();
             if( strategy != null ){
-            	Component replacement = strategy.getFocusComponent( focusedDockable, component );
+            	final Component mouseClicked = component;
+            	Component replacement = strategy.getFocusComponent( new FocusStrategyRequest(){
+					public Component getMouseClicked(){
+						return mouseClicked;
+					}
+					
+					public Dockable getDockable(){
+						return focusedDockable;
+					}
+					
+					public boolean excluded( Component component ){
+						if( dockableOnly ){
+							return !SwingUtilities.isDescendingFrom( component, getDockable().getComponent() );
+						}
+						else{
+							return false;
+						}
+					}
+				});
             	if( replacement != null ){
             		if( replacement != component ){
             			component = replacement;
@@ -244,6 +263,7 @@ public class DefaultFocusController extends AbstractFocusController {
      */
     private void focus( final Component component, int delay, final int loops ){
         final Timer timer = new Timer( delay, null );
+
         timer.addActionListener( new ActionListener(){
             private int remaining = loops;
             
@@ -254,10 +274,9 @@ public class DefaultFocusController extends AbstractFocusController {
                 if( manager.getPermanentFocusOwner() != component ){
                     manager.clearGlobalFocusOwner();
                     component.requestFocus();
-                    
-                    if( remaining > 0 ){
-                        timer.restart();
-                    }
+                }
+                if( remaining > 0 ){
+                    timer.restart();
                 }
             }
         });

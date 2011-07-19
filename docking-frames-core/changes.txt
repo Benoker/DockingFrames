@@ -593,6 +593,11 @@
 - Bugfix: The framework should now also handle the NimbusLookAndFeel (whose package was renamed, so much for backwards compatibility...) under Java 7 
 - API: Added some additional interfaces to prevent constructors like "<A extends SimpleButtonDockAction & CommonDockable>", as these constructors are not working well together with the compiler.
 
+[v1.1.1p4]
+- Bugfix: DockElementRepresentative.shouldTransfersFocus is now respected by the DefaultFocusStrategy, meaning that clicking on an element like a tab now forwards the focus directly into a Dockable.
+- API: Focus ownership is now transfered more aggressively: focus transfer can be delayed up to 200 milliseconds after the user clicked the mouse.
+! API: FocusStrategy now receives a FocusStrategyRequest instead of several parameters.
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

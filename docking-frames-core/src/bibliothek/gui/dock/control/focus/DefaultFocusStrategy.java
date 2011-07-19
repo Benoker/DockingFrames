@@ -26,7 +26,6 @@
 package bibliothek.gui.dock.control.focus;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,9 +69,10 @@ public class DefaultFocusStrategy implements FocusStrategy{
 	 * Tells whether the non-focusable <code>component</code> in reality is focusable. This is <code>true</code>
 	 * for example for any child of a {@link JComboBox}.
 	 * @param component the component which seems to be not focusable, but in reality is focusable
+	 * @param request information about the item that gains the focus
 	 * @return <code>true</code> if <code>component</code> should be treated as if it would be focusable
 	 */
-	protected boolean focusable( Component component ){
+	protected boolean focusable( Component component, FocusStrategyRequest request ){
 		while( component != null ){
 			if( component instanceof JComboBox ){
 				return true;
@@ -82,9 +82,23 @@ public class DefaultFocusStrategy implements FocusStrategy{
 		return false;
 	}
 	
-	public Component getFocusComponent( Dockable dockable, Component mouseClicked ){
+	/**
+	 * Tells whether the focusable {@link Component} <code>component</code> should be treated like a non-focusable
+	 * <code>Component</code>.
+	 * @param component some focusable component which may get the focus
+	 * @param request information about the item that gains the focus
+	 * @return <code>true</code> if <code>component</code> should be treated as if it were not focusable
+	 */
+	protected boolean excluded( Component component, FocusStrategyRequest request ){
+		return request.excluded( component );
+	}
+	
+	public Component getFocusComponent( FocusStrategyRequest request ){
+		Component mouseClicked = request.getMouseClicked();
+		Dockable dockable = request.getDockable();
+		
 		if( mouseClicked != null ){
-			if( mouseClicked.isFocusable() || focusable( mouseClicked )){
+			if( (mouseClicked.isFocusable() && !excluded( mouseClicked, request )) || focusable( mouseClicked, request )){
 				return mouseClicked;
 			}
 		}

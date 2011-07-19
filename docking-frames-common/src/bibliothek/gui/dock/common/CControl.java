@@ -124,6 +124,7 @@ import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
+import bibliothek.gui.dock.control.focus.FocusStrategyRequest;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
@@ -514,9 +515,12 @@ public class CControl {
         
         frontend.getController().getFocusController().addVetoListener( new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
         frontend.getController().getFocusController().setStrategy( new DefaultFocusStrategy( frontend.getController() ){
-			public Component getFocusComponent( Dockable dockable, Component mouseClicked ){
+        	public Component getFocusComponent( FocusStrategyRequest request ){
+        		Component mouseClicked = request.getMouseClicked();
+        		Dockable dockable = request.getDockable();
+        		
 				if( mouseClicked != null ){
-					if( mouseClicked.isFocusable() || focusable( mouseClicked )){
+					if( (mouseClicked.isFocusable() && !excluded( mouseClicked, request )) || focusable( mouseClicked, request )){
 						return mouseClicked;
 					}
 				}
@@ -527,7 +531,7 @@ public class CControl {
 						return result;
 					}
 				}
-				return super.getFocusComponent( dockable, null );
+				return super.getFocusComponent( request );
 			}
 		});
         
