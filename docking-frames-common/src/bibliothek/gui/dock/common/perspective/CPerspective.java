@@ -39,7 +39,6 @@ import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
-import bibliothek.gui.dock.common.intern.station.CScreenDockStation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;

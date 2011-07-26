@@ -286,7 +286,7 @@ public abstract class AbstractCDockable implements CDockable {
     
     public void setVisible( boolean visible ){
         if( control == null )
-            throw new IllegalStateException( "This CDockable does not know its CControl. Call CControl.add(...) to connect this CDockable befor calling setVisible(...)." );
+            throw new IllegalStateException( "This CDockable does not know its CControl. Call CControl.addDockable(...) to connect this CDockable befor calling setVisible(...)." );
         
         if( visible ){
             control.show( this );
