@@ -598,6 +598,9 @@
 - API: Focus ownership is now transfered more aggressively: focus transfer can be delayed up to 200 milliseconds after the user clicked the mouse.
 ! API: FocusStrategy now receives a FocusStrategyRequest instead of several parameters.
 
+[v1.1.1p4a]
+- Bugfix: ScreenDockPerspective did not update the parent property of its children
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

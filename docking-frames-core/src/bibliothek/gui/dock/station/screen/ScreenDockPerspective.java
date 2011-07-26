@@ -70,6 +70,7 @@ public class ScreenDockPerspective implements PerspectiveStation{
 				PerspectiveDockable dockable = children.get( id );
 				if( dockable != null ){
 					ScreenPerspectiveWindow child = new ScreenPerspectiveWindow( dockable );
+					dockable.setParent( ScreenDockPerspective.this );
 					child.setX( item.getInt( "x" ) );
 					child.setY( item.getInt( "y" ) );
 					child.setWidth( item.getInt( "width" ) );
@@ -194,6 +195,7 @@ public class ScreenDockPerspective implements PerspectiveStation{
 	public void add( PerspectiveDockable dockable, int x, int y, int width, int height, boolean fullscreen ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		ScreenPerspectiveWindow child = new ScreenPerspectiveWindow( dockable );
+		dockable.setParent( this );
 		child.setX( x );
 		child.setY( y );
 		child.setWidth( width );
@@ -278,6 +280,7 @@ public class ScreenDockPerspective implements PerspectiveStation{
 		map.putInt( "height", child.getHeight() );
 		
 		dockables.remove( child );
+		child.dockable.setParent( null );
 		return child.dockable;
 	}
 	

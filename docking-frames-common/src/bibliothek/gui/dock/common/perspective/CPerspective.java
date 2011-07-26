@@ -39,6 +39,7 @@ import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.intern.station.CScreenDockStation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -202,6 +203,18 @@ public class CPerspective {
 			addRoot( new CMinimizePerspective( west, CContentArea.TYPE_ID_MINIMIZE ));
 		}
 		return new CContentPerspective( this, id );
+	}
+	
+	/**
+	 * Gets the {@link CStationPerspective} for the station that represents free floating dockables. This
+	 * is equivalent of calling <code>getRoot( CControl.EXTERNALIZED_STATION_ID )</code>.<br>
+	 * @return the station or <code>null</code> if there is no station registered with key
+	 * {@link CControl#EXTERNALIZED_STATION_ID}
+	 * @throws ClassCastException if the station named {@link CControl#EXTERNALIZED_STATION_ID} is not
+	 * of type {@link CExternalizePerspective}
+	 */
+	public CExternalizePerspective getScreenStation(){
+		return (CExternalizePerspective) getRoot( CControl.EXTERNALIZED_STATION_ID );
 	}
 	
 	private void ensureType( String id, Class<?> type ){
