@@ -308,6 +308,8 @@ public class DropDownIcon implements Icon{
 			
 			int factor = Math.min( width, height );
 			if( factor == 7 ){
+				x++;
+				
 				g.drawLine( x, y+1,x+4, y+1 );
 				g.drawLine( x+1, y+2, x+3, y+2 );
 				g.drawLine( x+2, y+3, x+2, y+3 );	
