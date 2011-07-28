@@ -601,6 +601,16 @@
 [v1.1.1p4a]
 - Bugfix: ScreenDockPerspective did not update the parent property of its children
 
+[v1.1.1p5]
+* DropDownIcon
+ ! API: DropDownMiniButton.setDropDownIconColor removed, this color can now be configured throught the ColorManager and the key "action.dropdown.arrow"
+ - API: The icon can now be replaced through the IconManager using the key DropDownIcon.ICON_KEY
+ - API: The default icon resizes itself according to IconManager.MINIMUM_ICON_SIZE
+
+* General 
+ - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
+ 
+
 [Todo]
 - Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

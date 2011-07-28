@@ -48,6 +48,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.FocusManager;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
@@ -2474,6 +2475,15 @@ public class CControl {
      */
     public DockController getController(){
     	return intern().getController();
+    }
+    
+    /**
+     * Grants access to all the {@link Icon}s that are used within the realm of this
+     * {@link CControl}. Clients are free to modify the set of icons.
+     * @return the set of icons that are used
+     */
+    public IconManager getIcons(){
+    	return getController().getIcons();
     }
     
     /**
