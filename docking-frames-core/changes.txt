@@ -607,6 +607,9 @@
  - API: The icon can now be replaced through the IconManager using the key DropDownIcon.ICON_KEY
  - API: The default icon resizes itself according to IconManager.MINIMUM_ICON_SIZE
 
+* Focus
+ ! API: The FocusStrategy can now decide whether a Dockable that was drag&dropped should keep its focus. The default implementation allows a Dockable to lose the focus if its new parent is a FlapDockStation (when it was "minimized").
+
 * General 
  - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
  

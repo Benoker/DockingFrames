@@ -33,10 +33,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.util.FrameworkOnly;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A {@link MouseFocusObserver} tracks the movement and actions of the mouse and is responsible for
@@ -44,8 +40,6 @@ import bibliothek.util.Todo.Version;
  * at an appropriate time.
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.BUG, target=Version.VERSION_1_1_1,
-		description="Dockables moving on ScreenDockStation: should keep focus" )
 public interface MouseFocusObserver {
     /**
      * Gets the {@link DockController} whose {@link Dockable}s are tracked by this observer.

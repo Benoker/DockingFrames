@@ -65,7 +65,11 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
     	public void dropped( final DockRelocatorEvent event ){
     		EventQueue.invokeLater( new Runnable(){
                 public void run(){
-                    controller.setFocusedDockable( event.getDockable(), null, true );
+                	FocusController focus = controller.getFocusController();
+                	FocusStrategy strategy = focus.getStrategy();
+                	if( strategy == null || strategy.shouldFocusAfterDrop( event.getDockable() )){
+                		controller.setFocusedDockable( event.getDockable(), null, true );
+                	}
                 }
             });
     	};

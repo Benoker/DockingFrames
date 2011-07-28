@@ -61,4 +61,13 @@ public interface FocusStrategy {
 	 * </ul> 
 	 */
 	public Component getFocusComponent( FocusStrategyRequest request );
+	
+	/**
+	 * Called after <code>dockable</code> was dropped on a new parent due to a relocation operation (an operation
+	 * that was visible to the user or that was performed by the user).
+	 * @param dockable the element that changed its position
+	 * @return <code>true</code> if focus should be (again) transfered to <code>dockable</code>, <code>false</code> if
+	 * the focus should remain where it is (this may mean, that <code>dockable</code> loses the focus)
+	 */
+	public boolean shouldFocusAfterDrop( Dockable dockable );
 }

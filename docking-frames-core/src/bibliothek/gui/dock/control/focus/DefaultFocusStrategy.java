@@ -34,6 +34,7 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRegisterListener;
@@ -63,6 +64,10 @@ public class DefaultFocusStrategy implements FocusStrategy{
 	
 	public DefaultFocusStrategy( DockController controller ){
 		this.controller = controller;
+	}
+	
+	public boolean shouldFocusAfterDrop( Dockable dockable ){
+		return !(dockable.getDockParent() instanceof FlapDockStation);
 	}
 	
 	/**
