@@ -198,7 +198,7 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 	public void setMaximizingArea( boolean maximize ){
 		if( maximize != maximizing ){
 			this.maximizing = maximize;
-			CControlAccess access = getControl();
+			CControl access = getControl();
 			if( access != null ){
 				CMaximizedMode mode = access.getLocationManager().getMaximizedMode();
 				if( maximizing ){

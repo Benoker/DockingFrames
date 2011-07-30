@@ -30,6 +30,7 @@ import java.util.List;
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.CStationContainer;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.SingleCDockable;
 
@@ -39,42 +40,42 @@ import bibliothek.gui.dock.common.SingleCDockable;
  */
 public interface MutableCControlRegister extends CControlRegister {
     /**
-     * Gets an unmodifiable list of all {@link CContentArea}s known 
+     * Gets an unmodifiable list of all {@link CStationContainer}s known 
      * to this register. The list might or might not be updated when the contents
      * of this register change.
      * @return the unmodifiable list
      */
-    public List<CContentArea> getContentAreas();
+    public List<CStationContainer> getStationContainers();
     
     /**
-     * Adds a new content area to this register.
-     * @param area the new area
-     * @throws IllegalArgumentException if <code>area</code> is already known
-     * to this register
-     * @throws NullPointerException if <code>area</code> is <code>null</code>
+     * Adds a new set of {@link CStation}s to this register.
+     * @param container the new set of stations, not <code>null</code>
+     * @throws IllegalArgumentException if <code>container</code> is already registered or
+     * another container with the same unique id was found
+     * @throws NullPointerException if <code>container</code> is <code>null</code>
      */
-    public void addContentArea( CContentArea area );
+    public void addStationContainer( CStationContainer container );
     
     /**
-     * Removes <code>area</code> from this register
-     * @param area the area to remove
-     * @return <code>true</code> if <code>area</code> was known to this register
-     * before, <code>false</code> if <code>area</code> could not be removed
-     * because it was not in the list
+     * Removes <code>container</code> from this registry. 
+     * @param container the container to remove
+     * @return <code>true</code> if <code>container</code> was known to this registry and
+     * was removed, <code>false</code> otherwise
      */
-    public boolean removeContentArea( CContentArea area );
+    public boolean removeStationContainer( CStationContainer container );
     
     /**
-     * Gets the default content area.
-     * @return the area, can be <code>null</code>
+     * Gets the default set of {@link CStation}s.
+     * @return the container, can be <code>null</code>
      */
     public CContentArea getDefaultContentArea();
     
     /**
-     * Sets the default content area.
-     * @param area the new area
+     * Sets the default set of {@link CStation}s. One of this {@link CStation}s will be used
+     * to show new {@link CDockable}s if they do not have a location set.
+     * @param container the new container
      */
-    public void setDefaultContentArea( CContentArea area );
+    public void setDefaultContentArea( CContentArea container );
     
     /**
      * Adds <code>station</code> to this register.

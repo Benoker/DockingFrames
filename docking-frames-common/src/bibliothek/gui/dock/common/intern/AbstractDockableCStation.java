@@ -104,9 +104,9 @@ public abstract class AbstractDockableCStation<S extends DockStation> extends Ab
     	return this;
     }
 
-    public void setControl( CControlAccess access ) {
-    	CControlAccess control = getControl();
-    	super.setControl( access );
+    public void setControlAccess( CControlAccess access ) {
+    	CControlAccess control = getControlAccess();
+    	super.setControlAccess( access );
         if( control != access ){
             if( control != null )
                 uninstall( control );

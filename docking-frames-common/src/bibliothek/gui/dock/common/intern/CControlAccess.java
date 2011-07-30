@@ -33,6 +33,7 @@ import bibliothek.gui.dock.common.MissingCDockableStrategy;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * Gives access to the internal methods of a {@link bibliothek.gui.dock.common.CControl}.<br>
@@ -40,6 +41,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
  * behavior of its owning {@link CControl}.
  * @author Benjamin Sigg
  */
+@FrameworkOnly
 public interface CControlAccess {
 	/**
 	 * Gets the control to which this object gives access.

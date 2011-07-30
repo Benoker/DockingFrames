@@ -53,10 +53,6 @@ import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.FrameworkOnly;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A basic element representing some {@link java.awt.Component} and a wrapper
@@ -501,17 +497,23 @@ public interface CDockable {
 	 * {@link CDockable}. <code>link</code> can also be used to revoke access.
 	 * @param control the new control or <code>null</code>
 	 */
-	public void setControl( CControlAccess control );
+	@FrameworkOnly
+	public void setControlAccess( CControlAccess control );
 	
 	/**
 	 * Gets the control which is responsible for this dockable. Clients
 	 * should not use this method unless they know exactly what they are doing.
 	 * @return the control
 	 */
-	@Todo( priority=Priority.MINOR, compatibility=Compatibility.BREAK_MINOR, target=Version.VERSION_1_1_1,
-			description="Return CControl instead of CControlAccess" )
 	@FrameworkOnly
-	public CControlAccess getControl();
+	public CControlAccess getControlAccess();
+	
+	/**
+	 * Gets the control which is responsible for this dockable. This property is set as long as this 
+	 * {@link CDockable} is registered at a {@link CControl}.
+	 * @return the control in whose realm this dockable is used, can be <code>null</code>
+	 */
+	public CControl getControl();
 	
 	/**
 	 * Gets an action which is not added to the title by this {@link CDockable}

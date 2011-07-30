@@ -625,11 +625,11 @@ public abstract class AbstractCDockable implements CDockable {
         return defaultLocations.get( mode );
     }
     
-    /**
-     * Sets the {@link CControl} which is responsible for this dockable.
-     * @param control the new control
-     */
-    public void setControl( CControlAccess control ){
+    public CControlAccess getControlAccess(){
+	    return control;
+    }
+    
+    public void setControlAccess( CControlAccess control ){
     	if( this.control == control )
     		return;
     	
@@ -770,7 +770,10 @@ public abstract class AbstractCDockable implements CDockable {
      * Gets the control which is responsible for this dockable.
      * @return the control
      */
-    public CControlAccess getControl(){
-        return control;
+    public CControl getControl(){
+        if( control == null ){
+        	return null;
+        }
+        return control.getOwner();
     }
 }

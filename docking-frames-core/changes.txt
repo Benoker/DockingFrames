@@ -612,7 +612,8 @@
 
 * General 
  - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
- 
+ ! API: CDockable.getControl now returns a CControl
+ - API: New interface "CStationContainer" is an abstraction of Components that show a set of CStations, like for example the CContentArea. This interface allows the framework to be more general and there is no need to assume any set of CStations is a CContentArea. 
 
 [Todo]
 - Import/Export Perspectives from file

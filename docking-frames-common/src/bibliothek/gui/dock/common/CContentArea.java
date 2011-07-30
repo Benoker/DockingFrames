@@ -60,7 +60,7 @@ import bibliothek.util.Todo.Version;
  */
 @Todo( priority=Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_1, 
 		description="Introduce some interface 'MultiCStation' or similar: a set of CStations, CContentArea would implement this interface" )
-public class CContentArea extends JPanel{
+public class CContentArea extends JPanel implements CStationContainer{
 	
 	/** The result of {@link CStation#getTypeId()} for the center station */
 	public static final Path TYPE_ID_CENTER = new Path( "dock", "CContentArea", "center" );
@@ -152,7 +152,19 @@ public class CContentArea extends JPanel{
 	public String getUniqueId(){
 		return uniqueId;
 	}
+	
+	public Component getComponent(){
+		return this;
+	}
 
+	public void addStationContainerListener( CStationContainerListener listener ){
+		// ignore, the CContentArea is not mutable hence the listener will never be called
+	}
+	
+	public void removeStationContainerListener( CStationContainerListener listener ){
+		// ignore
+	}
+	
 	/**
 	 * Gets the {@link CControl} for which this content area was created.
 	 * @return the owner of this area
@@ -170,6 +182,18 @@ public class CContentArea extends JPanel{
 		CStation<?>[] copy = new CStation[ stations.length ];
 		System.arraycopy( stations, 0, copy, 0, stations.length );
 		return copy;
+	}
+	
+	public int getStationCount(){
+		return stations.length;
+	}
+	
+	public CStation<?> getStation( int index ){
+		return stations[index];
+	}
+	
+	public CStation<?> getDefaultStation(){
+		return center;
 	}
 
 	/**

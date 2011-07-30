@@ -112,5 +112,5 @@ public interface CStation<S extends DockStation> {
      * @param access access to the internals of the {@link CControl} that uses
      * this station or <code>null</code> to remove all ties from a control
      */
-    public void setControl( CControlAccess access );
+    public void setControlAccess( CControlAccess access );
 }
