@@ -3,25 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>docking-frames-base</artifactId>
 		<groupId>org.dockingframes</groupId>
+		<artifactId>docking-frames-base</artifactId>
 		<version>1.1.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>docking-frames-common</artifactId>
+	<artifactId>docking-frames-core</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.artifactId}</name>
-	<description>${project.name} is a user-level framework</description>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.dockingframes</groupId>
-			<artifactId>docking-frames-core</artifactId>
-			<type>jar</type>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
+	<description>${project.name} is a core library</description>
 
 </project>
