@@ -36,12 +36,14 @@ import java.awt.Toolkit;
  * screen.
  * @author Benjamin Sigg
  */
-public class HardBoundaryRestriction implements BoundaryRestriction{
-	public Rectangle check( ScreenDockWindow window ) {
-        return check( window, window.getWindowBounds() );
-    }
-    
-    public Rectangle check( ScreenDockWindow window, Rectangle target ) {
+public class HardBoundaryRestriction extends AbstractBoundaryRestriction{
+	@Override
+	protected Rectangle checkSize( ScreenDockWindow window ){
+		return checkSize( window, window.getWindowBounds() );
+	}
+	
+	@Override
+    protected Rectangle checkSize( ScreenDockWindow window, Rectangle target ){
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] screens = ge.getScreenDevices();
     

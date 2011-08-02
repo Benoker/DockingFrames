@@ -610,18 +610,19 @@
 * Focus
  ! API: The FocusStrategy can now decide whether a Dockable that was drag&dropped should keep its focus. The default implementation allows a Dockable to lose the focus if its new parent is a FlapDockStation (when it was "minimized").
 
-* General 
- - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
- ! API: CDockable.getControl now returns a CControl
- - API: New interface "CStationContainer" is an abstraction of Components that show a set of CStations, like for example the CContentArea. This interface allows the framework to be more general and there is no need to assume any set of CStations is a CContentArea. 
- - API: CControl does not a sanity check for unique identifiers, an identifier must not be null and contain at least one sign that is not a whitespace
-
 * Perspectives
  - Bugfix: MultipleCDockables on non-root working stations no longer lead to exceptions
  - Bugfix: Non-root CStations are now correctly identified as CStations and not as SingleCDockables (which they are as well, but being a CStation is a more important attribute).
  ! API: CPerspective.add/getRoot was renamed to add/getStation as "root" was a misleading name. The items consisted and are consisting of all CStations of a CControl, including nested stations.
  - API: CControlPerspective allows now to read/write "entry" (partial) and "non-entry" (full) layouts.
  ! API: MissingPerspectiveStrategy.createRoot renamed to createStation because the method can create any kind of station, not just root stations.
+ 
+ * General 
+ - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
+ ! API: CDockable.getControl now returns a CControl
+ - API: New interface "CStationContainer" is an abstraction of Components that show a set of CStations, like for example the CContentArea. This interface allows the framework to be more general and there is no need to assume any set of CStations is a CContentArea. 
+ - API: CControl does not a sanity check for unique identifiers, an identifier must not be null and contain at least one sign that is not a whitespace
+ - API: The size of ScreenDockWindows is now limited to the size of the biggest screen device, the exact behavior can be modified by implementing a new BoundaryRestriction
 
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
