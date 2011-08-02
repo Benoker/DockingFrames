@@ -1382,4 +1382,15 @@ public class DockSituation {
     public Map<String, AdjacentDockFactory<?>> getAdjacentFactorys(){
     	return Collections.unmodifiableMap( adjacent );
     }
+    
+    /**
+     * Tells what identifier was associated with <code>composition</code> when it was
+     * stored by a {@link DockSituation} of this type. The default implementation always
+     * returns <code>null</code>. 
+     * @param composition some element that was created by this or a similar {@link DockSituation}
+     * @return the identifier that was associated with <code>composition</code>
+     */
+    public String getIdentifier( DockLayoutComposition composition ){
+    	return null;
+    }
 }

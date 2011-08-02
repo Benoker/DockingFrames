@@ -620,7 +620,8 @@
  - Bugfix: MultipleCDockables on non-root working stations no longer lead to exceptions
  - Bugfix: Non-root CStations are now correctly identified as CStations and not as SingleCDockables (which they are as well, but being a CStation is a more important attribute).
  ! API: CPerspective.add/getRoot was renamed to add/getStation as "root" was a misleading name. The items consisted and are consisting of all CStations of a CControl, including nested stations.
- - APi: CControlPerspective allows now to read/write "entry" (partial) and "non-entry" (full) layouts.
+ - API: CControlPerspective allows now to read/write "entry" (partial) and "non-entry" (full) layouts.
+ ! API: MissingPerspectiveStrategy.createRoot renamed to createStation because the method can create any kind of station, not just root stations.
 
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
@@ -536,6 +537,16 @@ public class PredefinedDockSituation extends DockSituation {
         return backups.get( id );
     }
 
+    @Override
+    public String getIdentifier( DockLayoutComposition composition ){
+    	DockLayout<?> layout = composition.getLayout().getDataLayout();
+    	if( layout != null && layout.getFactoryID().equals( KNOWN )){
+    		PredefinedLayout predefined = (PredefinedLayout) layout.getData();
+    		return predefined.getPredefined();
+    	}
+    	return null;
+    }
+    
     /**
      * A factory which uses other factories as delegate. This factory does
      * not always use the delegates, sometimes it does just read an element

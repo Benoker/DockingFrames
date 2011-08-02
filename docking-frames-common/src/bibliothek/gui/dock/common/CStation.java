@@ -87,7 +87,7 @@ public interface CStation<S extends DockStation> {
     
     /**
      * Gets a unique path denoting the type of this station. This path will be given
-     * to {@link MissingPerspectiveStrategy#createRoot(String, Path)} when loading a layout
+     * to {@link MissingPerspectiveStrategy#createStation(String, Path)} when loading a layout
      * as a {@link CPerspective}.
      * @return the type of this station. Paths starting with "dock." are reserved for the
      * framework. A value of <code>null</code> will just be ignored.
