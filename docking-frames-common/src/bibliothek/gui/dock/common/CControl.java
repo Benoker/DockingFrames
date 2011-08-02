@@ -783,7 +783,7 @@ public class CControl {
      */
     protected void initPersistentStorage(){
         try{
-        	addMultipleDockableFactory( "", NullMultipleCDockableFactory.NULL );
+        	addMultipleDockableFactory( "", NullMultipleCDockableFactory.NULL, false );
         	
             resources.put( "ccontrol.frontend", new ApplicationResource(){
                 public void write( DataOutputStream out ) throws IOException {
@@ -1296,6 +1296,8 @@ public class CControl {
     		throw new NullPointerException( "container is null" );
     	}
     	
+    	checkValidUniqueId( container.getUniqueId() );
+    	
     	// check control?
     	
     	DockStation defaultStation = frontend.getDefaultStation();
@@ -1541,17 +1543,28 @@ public class CControl {
     }
 
     /**
+     * Adds an additional station to this control.
+     * @param station the new station
+     */
+    public void addStation( CStation<?> station ){
+    	addStation( station, true );
+    }
+    
+    /**
      * Adds an additional station to this control. Most {@link CStation}s should
      * be root-stations, even if they are nested. 
      * @param station the new station
-     * @param root <code>true</code> if the station should become a root station.
-     * A root station often does not have a parent, the location of a {@link CDockable}
-     * is always relative to its youngest parent that is a root station.
+     * @param root <code>true</code> if the station should be a root station. A root station may
+     * or may not have any parent station. The location of a {@link CDockable} is always relative
+     * to the first root station that can be found when travelling the tree upwards. For most stations
+     * this attribute should be <code>true</code>
      */
     public void addStation( CStation<?> station, boolean root ){
+    	String id = station.getUniqueId();
+    	checkValidUniqueId( id );
+    	
         register.addStation( station );
         
-        String id = station.getUniqueId();
         if( root ){
             frontend.addRoot( id, station.getStation() );
         }
@@ -1630,13 +1643,12 @@ public class CControl {
      * @throws IllegalArgumentException if <code>dockable</code> already is registered at another {@link CControl}
      * or if the unique id of <code>dockable</code> already is used for another object
      */
-    @Todo( compatibility=Compatibility.COMPATIBLE, priority=Todo.Priority.BUG, target=Todo.Version.VERSION_1_1_1,
-    		description="check unique identifier of dockable to make sure it is a valid identifier, maybe not at this location..." )
     public <S extends SingleCDockable> S addDockable( S dockable ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        boolean alreadyKnown = dockable.getControl() == access;
+        checkValidUniqueId( dockable.getUniqueId() );
+        boolean alreadyKnown = dockable.getControl() == this;
         
         if( dockable.getControl() != null && !alreadyKnown ){
             throw new IllegalArgumentException( "dockable is already part of a control" );
@@ -1669,6 +1681,24 @@ public class CControl {
             listener.added( CControl.this, dockable );
 
         return dockable;
+    }
+    
+    /**
+     * Checks whether the unique identifier <code>id</code> is a valid identifier. This means that <code>id</code>
+     * is not <code>null</code> and contains at least one sign that is not a whitespace.
+     * @param id the unique identifier to check
+     * @throws IllegalArgumentException if <code>id</code> is not valid
+     */
+    private void checkValidUniqueId( String id ){
+    	if( id == null ){
+    		throw new IllegalArgumentException( "unique id is 'null'");
+    	}
+    	if( id.length() == 0 ){
+    		throw new IllegalArgumentException( "unique id has length of 0" );
+    	}
+    	if( id.trim().length() == 0 ){
+    		throw new IllegalArgumentException( "unique id consists of whitespaces only" );
+    	}
     }
 
     /**
@@ -1733,7 +1763,7 @@ public class CControl {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        if( dockable.getControl() == access ){
+        if( dockable.getControl() == this ){
             dockable.setVisible( false );
             frontend.remove( dockable.intern() );
             register.removeSingleDockable( dockable );
@@ -1928,8 +1958,7 @@ public class CControl {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        if( uniqueId == null )
-            throw new NullPointerException( "uniqueId must not be null" );
+        checkValidUniqueId( uniqueId );
 
         String factory = access.getFactoryId( dockable.getFactory() );
         if( factory == null ){
@@ -1974,7 +2003,7 @@ public class CControl {
     	if( newDockable == null )
     		throw new IllegalArgumentException( "new dockable must not be null" );
     	
-    	if( oldDockable.getControl() != access )
+    	if( oldDockable.getControl() != this )
     		throw new IllegalArgumentException( "old dockable not registered at this CControl" );
     	
     	if( newDockable.getControl() != null )
@@ -2102,7 +2131,7 @@ public class CControl {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        if( dockable.getControl() == access ){
+        if( dockable.getControl() == this ){
             dockable.setVisible( false );
             frontend.remove( dockable.intern() );
 
@@ -2141,9 +2170,13 @@ public class CControl {
      * @param factory the new factory
      */
     public void addMultipleDockableFactory( final String id, final MultipleCDockableFactory<?,?> factory ){
-        if( id == null ){
-            throw new NullPointerException( "id must not be null" );
-        }
+    	addMultipleDockableFactory( id, factory, true );
+    }
+    
+    private void addMultipleDockableFactory( final String id, final MultipleCDockableFactory<?,?> factory, boolean check ){
+    	if( check ){
+    		checkValidUniqueId( id );
+    	}
 
         if( factory == null ){
             throw new NullPointerException( "factory must not be null" );
@@ -2587,7 +2620,7 @@ public class CControl {
     }
 
     /**
-     * Stores the current layout with the given name.
+     * Stores the current layout with the given name. This creates "entry" (partial) layout information.
      * @param name the name of the current layout.
      */
     public void save( String name ){

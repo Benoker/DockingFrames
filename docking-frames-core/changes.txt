@@ -614,11 +614,16 @@
  - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
  ! API: CDockable.getControl now returns a CControl
  - API: New interface "CStationContainer" is an abstraction of Components that show a set of CStations, like for example the CContentArea. This interface allows the framework to be more general and there is no need to assume any set of CStations is a CContentArea. 
+ - API: CControl does not a sanity check for unique identifiers, an identifier must not be null and contain at least one sign that is not a whitespace
+
+* Perspectives
+ - Bugfix: MultipleCDockables on non-root working stations no longer lead to exceptions
+ - Bugfix: Non-root CStations are now correctly identified as CStations and not as SingleCDockables (which they are as well, but being a CStation is a more important attribute).
+ ! API: CPerspective.add/getRoot was renamed to add/getStation as "root" was a misleading name. The items consisted and are consisting of all CStations of a CControl, including nested stations.
+ - APi: CControlPerspective allows now to read/write "entry" (partial) and "non-entry" (full) layouts.
 
 [Todo]
-- Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
-- Tabs: replace icon of drop down action showing overflowing Dockables by icon that dynamically shows the size of the menu
 - Drop StackDockStation over Dockable and merge them
 - EclipseTheme: Drop Dockable over Dockable and allow to select which Dockable has which index in the new StackDockStation.
 - SingleParentRemover: Implement bugfix as described in the file

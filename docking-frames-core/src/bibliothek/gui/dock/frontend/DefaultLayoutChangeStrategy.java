@@ -197,7 +197,9 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
         for( DockInfo info : frontend.getDockables() ){
             if( info.getDockable() != null ){
             	PerspectiveElement element = cache.get( info.getKey(), info.getDockable(), false );
-            	perspective.put( DockFrontend.DOCKABLE_KEY_PREFIX + info.getKey(), element );
+            	if( element != null ){
+            		perspective.put( DockFrontend.DOCKABLE_KEY_PREFIX + info.getKey(), element );
+            	}
             }
         }
         

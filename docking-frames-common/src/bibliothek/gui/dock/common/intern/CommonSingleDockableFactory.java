@@ -237,7 +237,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     public CommonElementPerspective layoutPerspective( CommonSingleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
     	SingleCDockablePerspective dockable = new SingleCDockablePerspective( layout.getId() );
     	if( layout.isAreaSet() && layout.getArea() != null ){
-    		dockable.setWorkingArea( perspective.getRoot( layout.getArea() ));
+    		dockable.setWorkingArea( perspective.getStation( layout.getArea() ));
     	}
     	
     	return dockable.intern();

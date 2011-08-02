@@ -58,8 +58,6 @@ import bibliothek.util.Todo.Version;
  * {@link CControl#createContentArea(String)} to create a new content area. 
  * @author Benjamin Sigg
  */
-@Todo( priority=Priority.MINOR, compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_1, 
-		description="Introduce some interface 'MultiCStation' or similar: a set of CStations, CContentArea would implement this interface" )
 public class CContentArea extends JPanel implements CStationContainer{
 	
 	/** The result of {@link CStation#getTypeId()} for the center station */

@@ -46,6 +46,10 @@ import bibliothek.gui.dock.common.perspective.mode.LocationModeManagerPerspectiv
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link CPerspective} is a lightweight, modifiable representation of all {@link Dockable}s and {@link DockStation}s
@@ -58,8 +62,8 @@ import bibliothek.gui.dock.perspective.PerspectiveStation;
  * @author Benjamin Sigg
  */
 public class CPerspective {
-	/** All the root stations of this perspective */
-	private Map<String, CStationPerspective> roots = new HashMap<String, CStationPerspective>();
+	/** All the stations of this perspective */
+	private Map<String, CStationPerspective> stations = new HashMap<String, CStationPerspective>();
 	
 	/** a manager for finding the location of {@link CDockablePerspective}s */
 	private LocationModeManagerPerspective locationModeManager;
@@ -127,15 +131,28 @@ public class CPerspective {
 	}
 	
 	/**
-	 * Adds a new root station to this perspective. If a station with name <code>id</code> is
+	 * Adds a new station to this perspective. If a station with name <code>id</code> is
+	 * already registered, then this station gets replaced.
+	 * @param station the new station
+	 * @deprecated use {@link #addStation(CStationPerspective)} instead
+	 */
+	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+			description="Remove this method")
+	public void addRoot( CStationPerspective station ){
+		addStation( station );
+	}
+
+	/**
+	 * Adds a new station to this perspective. If a station with name <code>id</code> is
 	 * already registered, then this station gets replaced.
 	 * @param station the new station
 	 */
-	public void addRoot( CStationPerspective station ){
+	public void addStation( CStationPerspective station ){
 		if( station == null ){
 			throw new IllegalArgumentException( "station must not be null" );
 		}
-		roots.put( station.getUniqueId(), station );
+		stations.put( station.getUniqueId(), station );
 		station.setPerspective( this );
 	}
 	
@@ -143,17 +160,42 @@ public class CPerspective {
 	 * Gets the station which was registered with the unique identifier <code>id</code>.
 	 * @param id some unique identifier
 	 * @return the station associated with <code>id</code>, can be <code>null</code>
+	 * @deprecated use {@link #getStation(String)} instead
 	 */
+	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+			description="Remove this method")
 	public CStationPerspective getRoot( String id ){
-		return roots.get( id );
+		return getStation( id );
 	}
 	
 	/**
-	 * Gets the names of all the stations that were registered as root station
+	 * Gets the station which was registered with the unique identifier <code>id</code>.
+	 * @param id some unique identifier
+	 * @return the station associated with <code>id</code>, can be <code>null</code>
+	 */
+	public CStationPerspective getStation( String id ){
+		return stations.get( id );
+	}
+	
+	/**
+	 * Gets the names of all the stations that were registered
+	 * @return the names, not <code>null</code>
+	 * @deprecated use {@link #getStationKeys()} instead
+	 */
+	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+			description="Remove this method")
+	public String[] getRootKeys(){
+		return getStationKeys();
+	}
+	
+	/**
+	 * Gets the names of all the stations that were registered
 	 * @return the names, not <code>null</code>
 	 */
-	public String[] getRootKeys(){
-		return roots.keySet().toArray( new String[ roots.size() ] );
+	public String[] getStationKeys(){
+		return stations.keySet().toArray( new String[ stations.size() ] );
 	}
 	
 	/**
@@ -186,20 +228,20 @@ public class CPerspective {
 		ensureType( east, CMinimizePerspective.class );
 		ensureType( west, CMinimizePerspective.class );
 		
-		if( getRoot( center ) == null ){
-			addRoot( new CGridPerspective( center, CContentArea.TYPE_ID_CENTER, false ));
+		if( getStation( center ) == null ){
+			addStation( new CGridPerspective( center, CContentArea.TYPE_ID_CENTER, false ));
 		}
-		if( getRoot( north ) == null ){
-			addRoot( new CMinimizePerspective( north, CContentArea.TYPE_ID_MINIMIZE ));
+		if( getStation( north ) == null ){
+			addStation( new CMinimizePerspective( north, CContentArea.TYPE_ID_MINIMIZE ));
 		}
-		if( getRoot( south ) == null ){
-			addRoot( new CMinimizePerspective( south, CContentArea.TYPE_ID_MINIMIZE ));
+		if( getStation( south ) == null ){
+			addStation( new CMinimizePerspective( south, CContentArea.TYPE_ID_MINIMIZE ));
 		}
-		if( getRoot( east ) == null ){
-			addRoot( new CMinimizePerspective( east, CContentArea.TYPE_ID_MINIMIZE ));
+		if( getStation( east ) == null ){
+			addStation( new CMinimizePerspective( east, CContentArea.TYPE_ID_MINIMIZE ));
 		}
-		if( getRoot( west ) == null ){
-			addRoot( new CMinimizePerspective( west, CContentArea.TYPE_ID_MINIMIZE ));
+		if( getStation( west ) == null ){
+			addStation( new CMinimizePerspective( west, CContentArea.TYPE_ID_MINIMIZE ));
 		}
 		return new CContentPerspective( this, id );
 	}
@@ -213,11 +255,11 @@ public class CPerspective {
 	 * of type {@link CExternalizePerspective}
 	 */
 	public CExternalizePerspective getScreenStation(){
-		return (CExternalizePerspective) getRoot( CControl.EXTERNALIZED_STATION_ID );
+		return (CExternalizePerspective) getStation( CControl.EXTERNALIZED_STATION_ID );
 	}
 	
 	private void ensureType( String id, Class<?> type ){
-		CStationPerspective station = getRoot( id );
+		CStationPerspective station = getStation( id );
 		if( station != null && station.getClass() != type ){
 			throw new IllegalStateException( "present root station '" + id + "' is of type '" + station.getClass() + "' but should be of type '" + type + "'" );
 		}
@@ -270,7 +312,7 @@ public class CPerspective {
 		
 		public ElementIterator(){
 			List<PerspectiveElement> items = new ArrayList<PerspectiveElement>();
-			for( CStationPerspective station : roots.values() ){
+			for( CStationPerspective station : stations.values() ){
 				if( station.asDockable() == null || station.asDockable().getParent() == null ){
 					items.add( station.intern() );
 				}
