@@ -154,7 +154,7 @@ public class LocationModeManagerPerspective {
 			}
 			if( parent instanceof CommonElementPerspective ){
 				CStationPerspective station = ((CommonElementPerspective)parent).getElement().asStation();
-				if( perspective.getRoot( station.getUniqueId() ) != null ){
+				if( perspective.getStation( station.getUniqueId() ) != null ){
 					return station;
 				}
 			}

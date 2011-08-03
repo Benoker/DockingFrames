@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +49,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.FocusManager;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
@@ -124,6 +126,7 @@ import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
+import bibliothek.gui.dock.control.focus.FocusStrategyRequest;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
@@ -514,9 +517,12 @@ public class CControl {
         
         frontend.getController().getFocusController().addVetoListener( new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
         frontend.getController().getFocusController().setStrategy( new DefaultFocusStrategy( frontend.getController() ){
-			public Component getFocusComponent( Dockable dockable, Component mouseClicked ){
+        	public Component getFocusComponent( FocusStrategyRequest request ){
+        		Component mouseClicked = request.getMouseClicked();
+        		Dockable dockable = request.getDockable();
+        		
 				if( mouseClicked != null ){
-					if( mouseClicked.isFocusable() || focusable( mouseClicked )){
+					if( (mouseClicked.isFocusable() && !excluded( mouseClicked, request )) || focusable( mouseClicked, request )){
 						return mouseClicked;
 					}
 				}
@@ -527,7 +533,7 @@ public class CControl {
 						return result;
 					}
 				}
-				return super.getFocusComponent( dockable, null );
+				return super.getFocusComponent( request );
 			}
 		});
         
@@ -777,7 +783,7 @@ public class CControl {
      */
     protected void initPersistentStorage(){
         try{
-        	addMultipleDockableFactory( "", NullMultipleCDockableFactory.NULL );
+        	addMultipleDockableFactory( "", NullMultipleCDockableFactory.NULL, false );
         	
             resources.put( "ccontrol.frontend", new ApplicationResource(){
                 public void write( DataOutputStream out ) throws IOException {
@@ -1250,33 +1256,6 @@ public class CControl {
     }
 
     /**
-     * Ensures the uniqueness of the identifier <code>uniqueId</code>. Throws
-     * various exceptions if the id is not unique.
-     * @param uniqueId the id that might be unique
-     */
-    private void checkStationIdentifierUniqueness( String uniqueId ){
-        if( uniqueId == null )
-            throw new NullPointerException( "uniqueId must not be null" );
-
-        if( CContentArea.getCenterIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-        if( CContentArea.getEastIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-        if( CContentArea.getWestIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-        if( CContentArea.getSouthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-        if( CContentArea.getNorthIdentifier( CONTENT_AREA_STATIONS_ID ).equals( uniqueId ) )
-            throw new IllegalArgumentException( "The id " + uniqueId + " is reserved for special purposes" );
-
-        for( CStation<?> station : register.getStations() ){
-            if( station.getUniqueId().equals( uniqueId )){
-                throw new IllegalArgumentException( "There exists already a station with id: " + uniqueId );    
-            }
-        }
-    }
-
-    /**
      * Creates and adds a new {@link CContentArea}.
      * @param uniqueId the unique id of the new contentarea, the id must be unique
      * in respect to all other contentareas which are registered at this control.
@@ -1285,80 +1264,83 @@ public class CControl {
      * @throws NullPointerException if the id is <code>null</code>
      */
     public CContentArea createContentArea( String uniqueId ){
+    	return createContentArea( uniqueId, false );
+    }
+    
+    private CContentArea createContentArea( String uniqueId, boolean isDefaultContentArea ){
         if( uniqueId == null )
             throw new NullPointerException( "uniqueId must not be null" );
-
-        for( CContentArea center : register.getContentAreas() ){
-            if( center.getUniqueId().equals( uniqueId )){
-                throw new IllegalArgumentException( "There exists already a CContentArea with the unique id " + uniqueId );
-            }
+        
+        if( !isDefaultContentArea && uniqueId.equals( CONTENT_AREA_STATIONS_ID )){
+        	throw new IllegalArgumentException( "the unique identifier '" + uniqueId + "' is reserved for the default CContentArea and may not be used by the client" );
         }
         
-        DockStation defaultStation = frontend.getDefaultStation();
-
-        boolean noDefaultStation = defaultStation == null || defaultStation instanceof ScreenDockStation;
-
         CContentArea center = new CContentArea( this, uniqueId );
-        addContentArea( center );
-
-        if( noDefaultStation ){
-            frontend.setDefaultStation( center.getCenter() );
+        if( isDefaultContentArea ){
+        	register.setDefaultContentArea( center );
         }
-
+        addStationContainer( center );
         return center;
     }
 
     /**
-     * Adds a new {@link CContentArea} to this control.
-     * @param content the new area
-     * @throws IllegalArgumentException if the area is already in use or if
-     * the area was not created using <code>this</code>
-     * @deprecated this method has not the same behavior as {@link #createContentArea(String)},
-     * this method will either be removed in future releases or change its
-     * behavior
+     * Adds <code>container</code> to this control. All children {@link CStation}s of <code>container</code> will
+     * be added as root station to this control.
+     * @param container the additional set of stations
+     * @throws IllegalArgumentException if <code>container</code> is already registered or if the unique identifier
+     * of <code>container</code> is already known
+     * @throws NullPointerException if <code>container</code> is <code>null</code>
      */
-    @Deprecated
-    @Todo( priority=Todo.Priority.MAJOR, compatibility=Compatibility.BREAK_MAJOR, target=Todo.Version.VERSION_1_1_1,
-    		description="remove this method, replace by something better" )
-    public void addContentArea( CContentArea content ){
-        if( content == null ){
-            throw new NullPointerException( "content is null" );
-        }
-
-        if( content.getControl() != this ){
-            throw new IllegalArgumentException( "content was not created using this CControl" );
-        }
-
-        register.addContentArea( content );
-
-        CContentArea defaultArea = register.getDefaultContentArea();
-
-        boolean check = !(defaultArea == null || content != defaultArea);
-
-        for( CStation<?> station : content.getStations() ){
-            addStation( station, true, check );
+    public void addStationContainer( CStationContainer container ){
+    	if( container == null ){
+    		throw new NullPointerException( "container is null" );
+    	}
+    	
+    	checkValidUniqueId( container.getUniqueId() );
+    	
+    	// check control?
+    	
+    	DockStation defaultStation = frontend.getDefaultStation();
+    	boolean noDefaultStation = defaultStation == null || defaultStation instanceof ScreenDockStation;
+    	
+    	register.addStationContainer( container );
+    	
+        if( noDefaultStation ){
+        	CStation<?> newDefaultStation = container.getDefaultStation();
+        	if( newDefaultStation != null ){
+        		frontend.setDefaultStation( newDefaultStation.getStation() );
+        	}
         }
     }
-
+    
     /**
      * Removes <code>content</code> from the list of known contentareas. This also removes
      * the stations of <code>content</code> from this control. Elements aboard the
      * stations are made invisible, but not removed from this control.
      * @param content the contentarea to remove
      * @throws IllegalArgumentException if the default-contentarea equals <code>content</code>
+     * @deprecated use {@link #removeStationContainer(CStationContainer)} instead
      */
+    @Deprecated
     public void removeContentArea( CContentArea content ){
-        if( content == null )
-            throw new NullPointerException( "content must not be null" );
+    	removeStationContainer( content );
+    }
+    
+    /**
+     * Removes <code>container</code> from the list of known {@link CStationContainer}s. This also
+     * ensures that all child {@link CStation}s of <code>container</code> are removed. Elements aboard the
+     * stations are made invisible, but not removed from this {@link CControl}.
+     * @param container the set of stations to remove
+     * @throws IllegalArgumentException if container is the default {@link CContentArea}
+     */
+    public void removeStationContainer( CStationContainer container ){
+        if( container == null )
+            throw new NullPointerException( "container must not be null" );
 
-        if( register.getDefaultContentArea() == content )
+        if( register.getDefaultContentArea() == container )
             throw new IllegalArgumentException( "The default-contentarea can't be removed" );
 
-        if( register.removeContentArea( content ) ){
-            for( CStation<?> station : content.getStations() ){
-                remove( station );
-            }
-        }
+        register.removeStationContainer( container );
     }
 
     /**
@@ -1374,11 +1356,29 @@ public class CControl {
      * Gets an unmodifiable list of all {@link CContentArea}s registered at
      * this control
      * @return the list of content-areas
+     * @deprecated use {@link #getStationContainers()} instead
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_2,
+    		description="remove this method, replace by 'getStationContainers'")
     public List<CContentArea> getContentAreas(){
-        return register.getContentAreas();
+        List<CContentArea> result = new ArrayList<CContentArea>();
+        for( CStationContainer container : getStationContainers() ){
+        	if( container instanceof CContentArea ){
+        		result.add( (CContentArea)container );
+        	}
+        }
+        return Collections.unmodifiableList( result );
     }
 
+    /**
+     * Gets an unmodifiable list of all {@link CStationContainer}s that are registered at this {@link CControl}.
+     * @return the list of containers
+     */
+    public List<CStationContainer> getStationContainers(){
+    	return register.getStationContainers();
+    }
+    
     /**
      * Gets the factory which is mainly used to create new elements for this
      * control.
@@ -1536,58 +1536,64 @@ public class CControl {
         CContentArea content = register.getDefaultContentArea();
 
         if( content == null ){
-            content = createContentArea( CONTENT_AREA_STATIONS_ID );
-            register.setDefaultContentArea( content );
+            content = createContentArea( CONTENT_AREA_STATIONS_ID, true );
         }
 
         return content;
     }
 
     /**
+     * Adds an additional station to this control.
+     * @param station the new station
+     */
+    public void addStation( CStation<?> station ){
+    	addStation( station, true );
+    }
+    
+    /**
      * Adds an additional station to this control. Most {@link CStation}s should
      * be root-stations, even if they are nested. 
      * @param station the new station
-     * @param root <code>true</code> if the station should become a root station.
-     * A root station often does not have a parent, the location of a {@link CDockable}
-     * is always relative to its youngest parent that is a root station.
+     * @param root <code>true</code> if the station should be a root station. A root station may
+     * or may not have any parent station. The location of a {@link CDockable} is always relative
+     * to the first root station that can be found when travelling the tree upwards. For most stations
+     * this attribute should be <code>true</code>
      */
     public void addStation( CStation<?> station, boolean root ){
-    	addStation( station, root, true );
-    }
-
-    /**
-     * Adds an additional station to this control.
-     * @param station the new station
-     * @param root <code>true</code> if the station should become a root station.
-     * A root station often does not have a parent, the location of a {@link CDockable}
-     * is always relative to its youngest parent that is a root station.
-     * @param check if <code>true</code> a check of the unique id is performed,
-     * otherwise the station is just put in, perhaps wrongly replacing
-     * other stations.
-     */    
-    private void addStation( CStation<?> station, boolean root, boolean check ){
-        String id = station.getUniqueId();
-        if( check ){
-            checkStationIdentifierUniqueness( id );
-        }
-
+    	String id = station.getUniqueId();
+    	checkValidUniqueId( id );
+    	
+        register.addStation( station );
+        
         if( root ){
             frontend.addRoot( id, station.getStation() );
         }
 
-        station.setControl( access );
-        register.addStation( station );
+        station.setControlAccess( access );
     }
 
     /**
      * Removes a {@link CStation} from this control. It is unspecified what
      * happens with the children on <code>station</code>
      * @param station the station to remove
+     * @deprecated use {@link #removeStation(CStation)} instead
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_2,
+    		description="remove this method and replace by 'removeStation'")
     public void remove( CStation<?> station ){
+    	removeStation( station );
+    }
+    
+    /**
+     * Removes a {@link CStation} from this control. It is unspecified what
+     * happens with the children on <code>station</code>
+     * @param station the station to remove
+     */
+    public void removeStation( CStation<?> station ){
         if( register.removeStation( station ) ){
             frontend.removeRoot( station.getStation() );
-            station.setControl( null );
+            station.setControlAccess( null );
         }
     }
 
@@ -1637,13 +1643,12 @@ public class CControl {
      * @throws IllegalArgumentException if <code>dockable</code> already is registered at another {@link CControl}
      * or if the unique id of <code>dockable</code> already is used for another object
      */
-    @Todo( compatibility=Compatibility.COMPATIBLE, priority=Todo.Priority.BUG, target=Todo.Version.VERSION_1_1_1,
-    		description="check unique identifier of dockable to make sure it is a valid identifier, maybe not at this location..." )
     public <S extends SingleCDockable> S addDockable( S dockable ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        boolean alreadyKnown = dockable.getControl() == access;
+        checkValidUniqueId( dockable.getUniqueId() );
+        boolean alreadyKnown = dockable.getControl() == this;
         
         if( dockable.getControl() != null && !alreadyKnown ){
             throw new IllegalArgumentException( "dockable is already part of a control" );
@@ -1662,7 +1667,7 @@ public class CControl {
         
         
         if( !alreadyKnown ){
-        	dockable.setControl( access );
+        	dockable.setControlAccess( access );
         }
 
         String id = register.toSingleId( dockable.getUniqueId() );
@@ -1676,6 +1681,24 @@ public class CControl {
             listener.added( CControl.this, dockable );
 
         return dockable;
+    }
+    
+    /**
+     * Checks whether the unique identifier <code>id</code> is a valid identifier. This means that <code>id</code>
+     * is not <code>null</code> and contains at least one sign that is not a whitespace.
+     * @param id the unique identifier to check
+     * @throws IllegalArgumentException if <code>id</code> is not valid
+     */
+    private void checkValidUniqueId( String id ){
+    	if( id == null ){
+    		throw new IllegalArgumentException( "unique id is 'null'");
+    	}
+    	if( id.length() == 0 ){
+    		throw new IllegalArgumentException( "unique id has length of 0" );
+    	}
+    	if( id.trim().length() == 0 ){
+    		throw new IllegalArgumentException( "unique id consists of whitespaces only" );
+    	}
     }
 
     /**
@@ -1740,11 +1763,11 @@ public class CControl {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        if( dockable.getControl() == access ){
+        if( dockable.getControl() == this ){
             dockable.setVisible( false );
             frontend.remove( dockable.intern() );
             register.removeSingleDockable( dockable );
-            dockable.setControl( null );
+            dockable.setControlAccess( null );
 
             for( CControlListener listener : listeners() )
                 listener.removed( CControl.this, dockable );
@@ -1935,8 +1958,7 @@ public class CControl {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        if( uniqueId == null )
-            throw new NullPointerException( "uniqueId must not be null" );
+        checkValidUniqueId( uniqueId );
 
         String factory = access.getFactoryId( dockable.getFactory() );
         if( factory == null ){
@@ -1955,7 +1977,7 @@ public class CControl {
             }
         }
 
-        dockable.setControl( access );
+        dockable.setControlAccess( access );
         accesses.get( dockable ).setUniqueId( uniqueId );
         
         frontend.addDockable( uniqueId, dockable.intern() );
@@ -1981,7 +2003,7 @@ public class CControl {
     	if( newDockable == null )
     		throw new IllegalArgumentException( "new dockable must not be null" );
     	
-    	if( oldDockable.getControl() != access )
+    	if( oldDockable.getControl() != this )
     		throw new IllegalArgumentException( "old dockable not registered at this CControl" );
     	
     	if( newDockable.getControl() != null )
@@ -2109,13 +2131,13 @@ public class CControl {
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
-        if( dockable.getControl() == access ){
+        if( dockable.getControl() == this ){
             dockable.setVisible( false );
             frontend.remove( dockable.intern() );
 
             register.removeMultipleDockable( dockable );
 
-            dockable.setControl( null );
+            dockable.setControlAccess( null );
 
             for( CControlListener listener : listeners() )
                 listener.removed( CControl.this, dockable );
@@ -2148,9 +2170,13 @@ public class CControl {
      * @param factory the new factory
      */
     public void addMultipleDockableFactory( final String id, final MultipleCDockableFactory<?,?> factory ){
-        if( id == null ){
-            throw new NullPointerException( "id must not be null" );
-        }
+    	addMultipleDockableFactory( id, factory, true );
+    }
+    
+    private void addMultipleDockableFactory( final String id, final MultipleCDockableFactory<?,?> factory, boolean check ){
+    	if( check ){
+    		checkValidUniqueId( id );
+    	}
 
         if( factory == null ){
             throw new NullPointerException( "factory must not be null" );
@@ -2473,6 +2499,15 @@ public class CControl {
     }
     
     /**
+     * Grants access to all the {@link Icon}s that are used within the realm of this
+     * {@link CControl}. Clients are free to modify the set of icons.
+     * @return the set of icons that are used
+     */
+    public IconManager getIcons(){
+    	return getController().getIcons();
+    }
+    
+    /**
      * Tells this control whether basic modes like "normalized", "minimized" or "externalized" are forced upon
      * {@link Dockable}s after loading a persistent layout. Basically if this property is set, then all {@link Dockable}s
      * are un-maximized after a layout change. The default value of this property is <code>true</code>.<br>
@@ -2585,7 +2620,7 @@ public class CControl {
     }
 
     /**
-     * Stores the current layout with the given name.
+     * Stores the current layout with the given name. This creates "entry" (partial) layout information.
      * @param name the name of the current layout.
      */
     public void save( String name ){

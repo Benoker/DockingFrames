@@ -39,8 +39,8 @@ public class EnvironmentDockable extends DefaultSingleCDockable {
     }
     
     @Override
-    public void setControl( CControlAccess control ) {
-        super.setControl( control );
+    public void setControlAccess( CControlAccess control ) {
+        super.setControlAccess( control );
         if( control != null ){
             this.control.setRootWindow( control.getOwner().getRootWindow() );
         }

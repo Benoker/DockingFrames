@@ -117,7 +117,7 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
         area = new CFlapDockStationHandle( this );
     }
     
-    public void setControl( CControlAccess access ) {
+    public void setControlAccess( CControlAccess access ) {
         if( this.access != null ){
             this.access.getOwner().removeResizeRequestListener( request );
             this.access.getLocationManager().getMinimizedMode().remove( area.getUniqueId() );

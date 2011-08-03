@@ -26,7 +26,10 @@
 
 package bibliothek.gui.dock.themes.basic.action.buttons;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
 
 import javax.swing.Icon;
 import javax.swing.border.Border;
@@ -37,7 +40,6 @@ import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A {@link MiniButton} that shows a {@link DropDownAction}. The button is
@@ -53,9 +55,6 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 	
 	/** A disabled version of {@link #dropIcon} */
 	private Icon disabledDropIcon;
-	
-	/** The color of the dropicon */
-	private Color dropIconColor;
 	
     private BasicDropDownButtonHandler handler;
     
@@ -83,32 +82,11 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
         };
         setModel( model );
         
-		dropIcon = createDropIcon();
-	}
-	
-	/**
-	 * Sets the color that will be used to paint the icon on the smaller
-	 * sub-button.
-	 * @param dropIconColor the color, <code>null</code> if the default-color
-	 * should be used.
-	 */
-	public void setDropIconColor( Color dropIconColor ){
-		this.dropIconColor = dropIconColor;
-		disabledDropIcon = null;
-		repaint();
-	}
-	
-	/**
-	 * Gets the color that is used to paint the small drop-down icon.
-	 * @return the color, can be <code>null</code>
-	 */
-	public Color getDropIconColor(){
-		return dropIconColor;
+		dropIcon = handler.getDropDownIcon();
 	}
 	
 	@Override
 	public void setForeground( Color fg ){
-		disabledDropIcon = null;
 		super.setForeground( fg );
 		repaint();
 	}
@@ -155,8 +133,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 	
 	@Override
 	public void updateUI(){
-		disabledDropIcon = null;
-        if( handler != null )
+		if( handler != null )
             handler.updateUI();
         
 		super.updateUI();
@@ -207,7 +184,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		Icon drop = dropIcon;
 		if( !isEnabled() ){
 			if( disabledDropIcon == null )
-				disabledDropIcon = DockUtilities.disabledIcon( this, dropIcon );
+				disabledDropIcon = handler.getDisabledDropDownIcon();
 			drop = disabledDropIcon;
 		}
 		
@@ -277,31 +254,6 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Creates an icon that is shown in the smaller subbutton of this button.
-	 * @return the icon
-	 */
-	protected Icon createDropIcon(){
-		return new Icon(){
-			public int getIconHeight(){
-				return 7;
-			}
-			public int getIconWidth(){
-				return 7;
-			}
-			public void paintIcon( Component c, Graphics g, int x, int y ){
-				x++;
-				if( dropIconColor == null )
-					g.setColor( getForeground() );
-				else
-					g.setColor( dropIconColor );
-				g.drawLine( x, y+1, x+4, y+1 );
-				g.drawLine( x+1, y+2, x+3, y+2 );
-				g.drawLine( x+2, y+3, x+2, y+3 );
-			}
-		};
 	}
 	
 	/**

@@ -71,7 +71,7 @@ public class CContentPerspective {
 	 * @return the center
 	 */
 	public CGridPerspective getCenter(){
-		return (CGridPerspective)perspective.getRoot( CContentArea.getCenterIdentifier( id ));
+		return (CGridPerspective)perspective.getStation( CContentArea.getCenterIdentifier( id ));
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class CContentPerspective {
 	 * @return the minimize-area at the top side
 	 */
 	public CMinimizePerspective getNorth(){
-		return (CMinimizePerspective)perspective.getRoot( CContentArea.getNorthIdentifier( id ));
+		return (CMinimizePerspective)perspective.getStation( CContentArea.getNorthIdentifier( id ));
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class CContentPerspective {
 	 * @return the minimize-area at the bottom side
 	 */
 	public CMinimizePerspective getSouth(){
-		return (CMinimizePerspective)perspective.getRoot( CContentArea.getSouthIdentifier( id ));
+		return (CMinimizePerspective)perspective.getStation( CContentArea.getSouthIdentifier( id ));
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class CContentPerspective {
 	 * @return the minimize-area at the right side
 	 */
 	public CMinimizePerspective getEast(){
-		return (CMinimizePerspective)perspective.getRoot( CContentArea.getEastIdentifier( id ));
+		return (CMinimizePerspective)perspective.getStation( CContentArea.getEastIdentifier( id ));
 	}
 	
 	/**
@@ -103,6 +103,6 @@ public class CContentPerspective {
 	 * @return the minimize-area at the left side
 	 */
 	public CMinimizePerspective getWest(){
-		return (CMinimizePerspective)perspective.getRoot( CContentArea.getWestIdentifier( id ));
+		return (CMinimizePerspective)perspective.getStation( CContentArea.getWestIdentifier( id ));
 	}
 }

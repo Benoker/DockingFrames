@@ -175,7 +175,7 @@ public class CPlaceholderStrategy implements PlaceholderStrategy {
 		}
 		
 		CDockable cdockable = ((CommonDockable)dockable).getDockable();
-		CControlAccess controlAccess = cdockable.getControl();
+		CControlAccess controlAccess = cdockable.getControlAccess();
 		if( controlAccess == null || controlAccess.getOwner() != control ){
 			return null;
 		}

@@ -34,8 +34,9 @@ import java.awt.Rectangle;
  * A restriction that ensures that the title of each dialog is always visible.
  * @author Benjamin Sigg
  */
-public class MediumBoundaryRestriction implements BoundaryRestriction{
-	public Rectangle check( ScreenDockWindow window ){
+public class MediumBoundaryRestriction extends AbstractBoundaryRestriction{
+	@Override
+	public Rectangle checkSize( ScreenDockWindow window ){
 		Point center = window.getTitleCenter();
 		if( center == null ){
 			Rectangle target = window.getWindowBounds();
@@ -44,7 +45,8 @@ public class MediumBoundaryRestriction implements BoundaryRestriction{
 		return validate( window.getWindowBounds(), center, center );
 	}
 
-	public Rectangle check( ScreenDockWindow window, Rectangle target ){
+	@Override
+	public Rectangle checkSize( ScreenDockWindow window, Rectangle target ){
 		Point center = window.getTitleCenter();
 		Point search;
 		

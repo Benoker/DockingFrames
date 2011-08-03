@@ -26,7 +26,6 @@
 package bibliothek.extension.gui.dock.theme.eclipse;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -98,7 +97,7 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         
         setOpaque( false );
         
-        dropIcon = createDropIcon();
+        dropIcon = handler.getDropDownIcon();
         
         model.addListener( new BasicButtonModelAdapter(){
         	@Override
@@ -344,27 +343,5 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         
         if( handler != null )
             handler.updateUI();
-    }
-    
-    /**
-     * Creates an icon that is shown in the smaller subbutton of this button.
-     * @return the icon
-     */
-    protected Icon createDropIcon(){
-        return new Icon(){
-            public int getIconHeight(){
-                return 7;
-            }
-            public int getIconWidth(){
-                return 7;
-            }
-            public void paintIcon( Component c, Graphics g, int x, int y ){
-                x++;
-                g.setColor( getForeground() );
-                g.drawLine( x, y+1, x+4, y+1 );
-                g.drawLine( x+1, y+2, x+3, y+2 );
-                g.drawLine( x+2, y+3, x+2, y+3 );
-            }
-        };
     }
 }

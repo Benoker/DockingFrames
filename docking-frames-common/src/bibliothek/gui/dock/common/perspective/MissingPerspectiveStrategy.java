@@ -31,17 +31,17 @@ import bibliothek.util.Path;
 
 /**
  * This strategy is used by a {@link CControl} or a {@link CControlPerspective} to create
- * {@link CStationPerspective}s for root-stations that are not (yet) registered at the 
+ * {@link CStationPerspective}s for stations that are not (yet) registered at the 
  * {@link CControl}.
  * @author Benjamin Sigg
  */
 public interface MissingPerspectiveStrategy {
 	/**
-	 * Creates the root station that represented <code>id</code>.
-	 * @param id the root
+	 * Creates the station that represented <code>id</code>.
+	 * @param id the identifier of the station
 	 * @param typeId the type of the station, this is the identifier that was returned by {@link CStation#getTypeId()},
 	 * can be <code>null</code>
 	 * @return the new perspective, can be <code>null</code>
 	 */
-	public CStationPerspective createRoot( String id, Path typeId );
+	public CStationPerspective createStation( String id, Path typeId );
 }

@@ -28,7 +28,6 @@ package bibliothek.gui.dock.common.intern;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
@@ -39,21 +38,14 @@ import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.SingleCDockable;
-import bibliothek.gui.dock.common.perspective.CElementPerspective;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.perspective.CPerspectiveMultipleIdentifierCollection;
-import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
 import bibliothek.gui.dock.common.perspective.MultipleCDockablePerspective;
-import bibliothek.gui.dock.common.perspective.SingleCDockablePerspective;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
-import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.util.Todo;
 import bibliothek.util.Version;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -148,8 +140,6 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         return flayout;
     }
     
-    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.BUG, target=Todo.Version.VERSION_1_1_1,
-    		description="does the working-area really work this way? Or can some working areas be missed?")
 	public void layoutPerspective( CommonElementPerspective perspective, CommonMultipleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
     	MultipleCDockablePerspective multiple = (MultipleCDockablePerspective) perspective.getElement();
     	multiple.setLayout( layout.getLayout() );
@@ -158,32 +148,12 @@ public class CommonMultipleDockableFactory implements DockFactory<CommonDockable
         // working area
         String areaId = layout.getArea();
         if( areaId != null ){
-        	CStationPerspective station = perspectiveIdentifiers.getPerspective().getRoot( areaId );
-        	if( station != null ){
-        		multiple.setWorkingArea( station );
-        	}
-        	else{
-	        	Iterator<PerspectiveElement> elements = perspectiveIdentifiers.getPerspective().elements();
-	        	while( elements.hasNext() ){
-	        		PerspectiveElement next = elements.next();
-	        		if( next instanceof CommonElementPerspective ){
-	        			CElementPerspective celement = ((CommonElementPerspective)next).getElement();
-	        		
-		        		if( celement instanceof SingleCDockablePerspective ){
-		        			SingleCDockablePerspective single = (SingleCDockablePerspective) celement;
-		        			if( areaId.equals( single.getUniqueId() ) ){
-		        				multiple.setWorkingArea( single.asStation() );
-		        				break;
-		        			}
-		        		}
-	        		}
-	        	}
-        	}
+        	multiple.setWorkingArea( perspectiveIdentifiers.getPerspective().getStation( areaId ) );
         }
     }
     
     public CommonElementPerspective layoutPerspective( CommonMultipleDockableLayout layout, Map<Integer, PerspectiveDockable> children ){
-    	MultipleCDockablePerspective perspective = new MultipleCDockablePerspective( getID(), null );
+    	MultipleCDockablePerspective perspective = new MultipleCDockablePerspective( getID(), layout.getId(), layout.getLayout() );
     	layoutPerspective( perspective.intern(), layout, children );
     	return perspective.intern();
     }

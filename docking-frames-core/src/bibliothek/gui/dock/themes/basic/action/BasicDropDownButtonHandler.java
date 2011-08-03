@@ -45,6 +45,7 @@ import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DropDownActionListener;
 import bibliothek.gui.dock.event.StandardDockActionListener;
+import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownIcon;
 import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 
@@ -77,6 +78,9 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
     /** filters the properties of the action and its selection */
     private DropDownFilter filter;
     
+    /** the icon that indicates the button for opening the popup menu */
+    private DropDownIcon dropDownIcon;
+    
     /**
      * Creates a new handler.
      * @param action the action to observe
@@ -89,6 +93,13 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
     public void bind(){
     	DropDownAction action = getAction();
     	Dockable dockable = getDockable();
+    	
+    	if( dropDownIcon != null ){
+    		if( !dropDownIcon.isInitialized() ){
+    			dropDownIcon.init(  getDockable(), getAction(), this );
+    		}
+    		dropDownIcon.setController( dockable.getController() );
+    	}
     	
         action.bind( dockable );
         filter = action.getFilter( dockable ).createView( action, dockable, buttonView );
@@ -119,6 +130,10 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
     	DropDownAction action = getAction();
     	Dockable dockable = getDockable();
     	
+    	if( dropDownIcon != null ){
+    		dropDownIcon.setController( null );
+    	}
+    	
         action.removeDockActionListener( listener );
         action.removeDropDownActionListener( listener );
         source.removeDockActionSourceListener( listener );
@@ -144,6 +159,34 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         super.unbind();
 
         getModel().setDockableRepresentative( null );
+    }
+
+    /**
+     * Gets an icon that can be used to represent an area that opens the popup menu when clicked.
+     * @return an icon, not <code>null</code>
+     */
+    public Icon getDropDownIcon(){
+    	ensureDropDownIcon();
+		return dropDownIcon;
+	}
+    
+    /**
+     * Gets a disabled version of {@link #getDropDownIcon()}.
+     * @return the icon, not <code>null</code>
+     */
+    public Icon getDisabledDropDownIcon(){
+    	ensureDropDownIcon();
+    	return dropDownIcon.getDisabledIcon();
+    }
+    
+    private void ensureDropDownIcon(){
+    	if( dropDownIcon == null ){
+    		dropDownIcon = new DropDownIcon();
+    		if( isBound() ){
+    			dropDownIcon.init(  getDockable(), getAction(), this );
+    			dropDownIcon.setController( getDockable().getController() );
+    		}
+    	}
     }
 
     public void setBackground( Color background ) {

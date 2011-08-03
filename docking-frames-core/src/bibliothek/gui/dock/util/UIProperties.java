@@ -575,7 +575,9 @@ public class UIProperties<V, U extends UIValue<V>, B extends UIBridge<V, U>> {
         	UIScheme<V, U, B> scheme = null;
         	if( resource == null ){
         		scheme = schemes.get( priority );
-        		resource = scheme.getResource( id, this );
+        		if( scheme != null ){
+        			resource = scheme.getResource( id, this );
+        		}
         	}
         	
 	        if( value.set( priority, resource, scheme ) ){

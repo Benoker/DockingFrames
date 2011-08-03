@@ -593,10 +593,40 @@
 - Bugfix: The framework should now also handle the NimbusLookAndFeel (whose package was renamed, so much for backwards compatibility...) under Java 7 
 - API: Added some additional interfaces to prevent constructors like "<A extends SimpleButtonDockAction & CommonDockable>", as these constructors are not working well together with the compiler.
 
+[v1.1.1p4]
+- Bugfix: DockElementRepresentative.shouldTransfersFocus is now respected by the DefaultFocusStrategy, meaning that clicking on an element like a tab now forwards the focus directly into a Dockable.
+- API: Focus ownership is now transfered more aggressively: focus transfer can be delayed up to 200 milliseconds after the user clicked the mouse.
+! API: FocusStrategy now receives a FocusStrategyRequest instead of several parameters.
+
+[v1.1.1p4a]
+- Bugfix: ScreenDockPerspective did not update the parent property of its children
+
+[v1.1.1p5]
+* DropDownIcon
+ ! API: DropDownMiniButton.setDropDownIconColor removed, this color can now be configured throught the ColorManager and the key "action.dropdown.arrow"
+ - API: The icon can now be replaced through the IconManager using the key DropDownIcon.ICON_KEY
+ - API: The default icon resizes itself according to IconManager.MINIMUM_ICON_SIZE
+
+* Focus
+ ! API: The FocusStrategy can now decide whether a Dockable that was drag&dropped should keep its focus. The default implementation allows a Dockable to lose the focus if its new parent is a FlapDockStation (when it was "minimized").
+
+* Perspectives
+ - Bugfix: MultipleCDockables on non-root working stations no longer lead to exceptions
+ - Bugfix: Non-root CStations are now correctly identified as CStations and not as SingleCDockables (which they are as well, but being a CStation is a more important attribute).
+ ! API: CPerspective.add/getRoot was renamed to add/getStation as "root" was a misleading name. The items consisted and are consisting of all CStations of a CControl, including nested stations.
+ - API: CControlPerspective allows now to read/write "entry" (partial) and "non-entry" (full) layouts.
+ ! API: MissingPerspectiveStrategy.createRoot renamed to createStation because the method can create any kind of station, not just root stations.
+ 
+ * General 
+ - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
+ ! API: CDockable.getControl now returns a CControl
+ - API: New interface "CStationContainer" is an abstraction of Components that show a set of CStations, like for example the CContentArea. This interface allows the framework to be more general and there is no need to assume any set of CStations is a CContentArea. 
+ - API: CControl does not a sanity check for unique identifiers, an identifier must not be null and contain at least one sign that is not a whitespace
+ - API: The size of ScreenDockWindows is now limited to the size of the biggest screen device, the exact behavior can be modified by implementing a new BoundaryRestriction
+ - Bugfix: SingleParentRemover now also can remove DockStations that were just added into the tree (meaning, invalid stations will no longer show up).
+
 [Todo]
-- Import/Export Perspectives from file
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
-- Tabs: replace icon of drop down action showing overflowing Dockables by icon that dynamically shows the size of the menu
 - Drop StackDockStation over Dockable and merge them
 - EclipseTheme: Drop Dockable over Dockable and allow to select which Dockable has which index in the new StackDockStation.
 - SingleParentRemover: Implement bugfix as described in the file

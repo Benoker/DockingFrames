@@ -32,6 +32,9 @@ import java.awt.Dimension;
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockUI;
+import bibliothek.gui.dock.action.DropDownAction;
+import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownIcon;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.icon.DockIconBridge;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
@@ -42,7 +45,15 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
  * {@link Priority priorities}, only the icon with the highest priority
  * will be returned.<br>
  * Clients have to add an {@link DockIcon} in order to read values from this
- * manager.
+ * manager.<br>
+ * The default icons are stored as png files alongside the framework, the "icons.ini" files
+ * tells what keys are used for the icons. Additional keys for icons are:
+ * <ul>
+ * 	<li>{@link DropDownIcon#ICON_KEY}: this icon is painted for {@link DropDownAction}s, it is
+ * a small triangle pointing downwards. </li>
+ *  <li>{@link DockUI#OVERFLOW_MENU_ICON}: the icon used for the menu that is created if there are too many buttons
+ *  of actions in a row.</li>
+ * </ul>
  * @author Benjamin Sigg
  */
 public class IconManager extends UIProperties<Icon, DockIcon, DockIconBridge>{
@@ -64,7 +75,7 @@ public class IconManager extends UIProperties<Icon, DockIcon, DockIconBridge>{
     }
     
     /**
-     * Stores an icon.
+     * Stores an icon. 
      * @param key the key of the icon
      * @param priority the priority, where {@link Priority#CLIENT} is the
      * highest, {@link Priority#DEFAULT} the lowest. Icons stored with the

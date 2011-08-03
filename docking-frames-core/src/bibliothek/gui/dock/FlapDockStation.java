@@ -131,8 +131,6 @@ import bibliothek.util.Todo.Version;
  * which owns the clicked title is shown in this window.
  * @author Benjamin Sigg
  */
-@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_0,
-		description="Allow clients to tell whether a Dockable should be opened if dropped on this station")
 public class FlapDockStation extends AbstractDockableStation {
     /** 
      * The direction in which the window with the <code>Dockable</code> will popup,

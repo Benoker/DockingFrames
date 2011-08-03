@@ -25,7 +25,13 @@
  */
 package bibliothek.extension.gui.dock.theme.bubble;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.geom.RoundRectangle2D;
@@ -46,10 +52,6 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.ColorCodes;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A button which can be pressed by the user either to execute 
@@ -157,7 +159,7 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         });
         
         this.handler = handler;
-        dropIcon = createDropIcon();
+        dropIcon = handler.getDropDownIcon();
         
         model = new BasicDropDownButtonModel( this, handler, handler ){
             @Override
@@ -368,30 +370,6 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 g2.setStroke( stroke );
             }
         }
-    }
-    
-    /**
-     * Creates an icon that is shown in the smaller subbutton of this button.
-     * @return the icon
-     */
-    @Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-    		description="make this icon dependent on the size of the button" )
-    protected Icon createDropIcon(){
-        return new Icon(){
-            public int getIconHeight(){
-                return 7;
-            }
-            public int getIconWidth(){
-                return 7;
-            }
-            public void paintIcon( Component c, Graphics g, int x, int y ){
-                x++;
-                g.setColor( getForeground() );
-                g.drawLine( x, y+1, x+4, y+1 );
-                g.drawLine( x+1, y+2, x+3, y+2 );
-                g.drawLine( x+2, y+3, x+2, y+3 );
-            }
-        };
     }
     
     /**

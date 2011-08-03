@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,28 +23,25 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
-package bibliothek.gui.dock.event;
-
-import java.util.Set;
-
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DropDownAction;
+package bibliothek.gui.dock.common;
 
 /**
- * A listener of a {@link DropDownAction}. The listener gets informed whenever
- * the number of actions changes, or the selection changes.
+ * This listener is added to a {@link CStationContainer} and receives an event if
+ * either {@link CStation}s are added or removed from the container.
  * @author Benjamin Sigg
- *
  */
-public interface DropDownActionListener {	
+public interface CStationContainerListener {
 	/**
-	 * Called when the selection of <code>action</code> has changed.
-	 * @param action the action whose selection is changed
-	 * @param dockables the set of {@link Dockable Dockables} for which
-	 * the selection has changed
-	 * @param selection the new selected child, might be <code>null</code>
+	 * Called after <code>station</code> has been added to <code>source</code>.
+	 * @param source the source of the event
+	 * @param station the newly added station
 	 */
-	public void selectionChanged( DropDownAction action, Set<Dockable> dockables, DockAction selection );
+	public void added( CStationContainer source, CStation<?> station );
+	
+	/**
+	 * Called after <code>station</code> has been removed from <code>source</code>.
+	 * @param source the source of the event
+	 * @param station the station that was removed
+	 */
+	public void removed( CStationContainer source, CStation<?> station );
 }

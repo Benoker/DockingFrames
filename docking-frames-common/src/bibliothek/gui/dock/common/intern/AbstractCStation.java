@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.CStation;
  * A simple implementation of {@link CStation}. This class adds a 
  * {@link #install(CControlAccess)} and {@link #uninstall(CControlAccess)} method,
  * subclasses do not have to track or store the {@link CControlAccess} that
- * is given in {@link #setControl(CControlAccess)}.
+ * is given in {@link #setControlAccess(CControlAccess)}.
  * @author Benjamin Sigg
  * @param <S> the kind of station this {@link CStation} is built upon
  */
@@ -95,7 +95,7 @@ public abstract class AbstractCStation<S extends DockStation> implements CStatio
         return station;
     }
 
-    public void setControl( CControlAccess access ) {
+    public void setControlAccess( CControlAccess access ) {
         if( control != access ){
             if( control != null )
                 uninstall( control );

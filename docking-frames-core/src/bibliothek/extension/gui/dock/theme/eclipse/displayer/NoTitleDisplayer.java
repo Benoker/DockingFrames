@@ -47,8 +47,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
-import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.displayer.DisplayerDockBorder;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
@@ -61,7 +61,6 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
-import bibliothek.util.Todo;
 
 /**
  * A {@link DockableDisplayer} which is not able to show the {@link DockTitle} of
@@ -346,7 +345,10 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 		return false;
 	}
 
-	@Todo
+	/**
+	 * As the {@link NoTitleDisplayer} does not show any decorations, there is no need to
+	 * prepare for a combination. Hence this method always returns <code>null</code>.
+	 */
 	public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
 		return null;
 	}

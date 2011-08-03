@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,28 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.control.focus;
 
-package bibliothek.gui.dock.event;
-
-import java.util.Set;
+import java.awt.Component;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DropDownAction;
 
 /**
- * A listener of a {@link DropDownAction}. The listener gets informed whenever
- * the number of actions changes, or the selection changes.
+ * A question that is asked to a {@link FocusStrategy}.
  * @author Benjamin Sigg
- *
  */
-public interface DropDownActionListener {	
+public interface FocusStrategyRequest {
 	/**
-	 * Called when the selection of <code>action</code> has changed.
-	 * @param action the action whose selection is changed
-	 * @param dockables the set of {@link Dockable Dockables} for which
-	 * the selection has changed
-	 * @param selection the new selected child, might be <code>null</code>
+	 * Gets the item which is about to gain the focus
+	 * @return the item that gains the focus, not <code>null</code>
 	 */
-	public void selectionChanged( DropDownAction action, Set<Dockable> dockables, DockAction selection );
+	public Dockable getDockable();
+	/**
+	 * Gets the {@link Component} which was touched by the mouse.
+	 * @return the clicked component, can be <code>null</code>
+	 */
+	public Component getMouseClicked();
+	
+	/**
+	 * Tells whether <code>component</code> should be excluded from receiving the focus.
+	 * @param component some {@link Component} which may receive the focus
+	 * @return <code>true</code> if <code>component</code> should not gain the focus
+	 */
+	public boolean excluded( Component component );
 }

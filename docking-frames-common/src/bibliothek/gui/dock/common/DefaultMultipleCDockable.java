@@ -204,8 +204,8 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
     }
     
     @Override
-    public void setControl( CControlAccess control ){
-        super.setControl( control );
+    public void setControlAccess( CControlAccess control ){
+        super.setControlAccess( control );
         if( control == null )
             intern().setFactoryID( DefaultDockableFactory.ID );
         else

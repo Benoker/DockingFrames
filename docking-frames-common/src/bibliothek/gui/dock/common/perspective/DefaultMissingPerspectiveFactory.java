@@ -39,7 +39,7 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  */
 public class DefaultMissingPerspectiveFactory implements MissingPerspectiveStrategy{
-	public CStationPerspective createRoot( String id, Path typeId ){
+	public CStationPerspective createStation( String id, Path typeId ){
 		if( CContentArea.TYPE_ID_CENTER.equals( typeId )){
 			return new CGridPerspective( id, typeId, false );
 		}
