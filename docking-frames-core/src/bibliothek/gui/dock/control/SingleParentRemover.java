@@ -33,10 +33,6 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
 import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * An observer of a {@link DockController}. The remover
@@ -203,8 +199,6 @@ public class SingleParentRemover{
      * if the structure of the dock-tree changes.
      * @author Benjamin Sigg
      */
-    @Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.BUG, target=Version.VERSION_1_1_1,
-    		description="removing a just added station could cause inconsistencies, also the event is received too early")
     private class DockRegisterObserver extends DockRegisterAdapter{
         @Override
         public void dockableCycledRegister( DockController controller, Dockable dockable ) {
@@ -225,13 +219,14 @@ public class SingleParentRemover{
             }
         }
         
-        // BUGFIX: this method would make the order of events correct, but will lead to inconsistencies
-        // The wrong order of events is: "add dockable" - "test all" - "add station", where station == docakble
-        // and station is a DockStation that has to be removed.
-//        @Override
-//        public void dockStationRegistered( DockController controller, DockStation station ){
-//        	 ...
-//        }
+        @Override
+        public void dockStationRegistered( final DockController controller, DockStation station ){
+        	controller.getHierarchyLock().onRelease( new Runnable(){
+				public void run(){
+					testAll( controller );	
+				}
+			});
+        }
     }
     
     /**
