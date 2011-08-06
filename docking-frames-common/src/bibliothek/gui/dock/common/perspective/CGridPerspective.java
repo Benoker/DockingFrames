@@ -47,14 +47,12 @@ import bibliothek.gui.dock.station.split.SplitDockPerspective.Node;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Root;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
 
 /**
  * A representation of a {@link CGridArea}. If this perspective is loaded with content, then all the coordinates
  * are in a range between 0 and 100.
  * @author Benjamin Sigg
  */
-@Todo(description = "nested dockable/stations will not work due to ClassCastException")
 public class CGridPerspective extends SingleCDockablePerspective implements CStationPerspective {
 	/** the intern representation of this perspective */
 	private CommonSplitDockPerspective delegate;

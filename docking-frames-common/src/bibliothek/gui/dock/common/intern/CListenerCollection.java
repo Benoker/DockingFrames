@@ -99,14 +99,14 @@ public class CListenerCollection {
                 listener.minimizeSizeChanged( dockable );
         }
 
-        public void minimizedHoldChanged( CDockable dockable ) {
+        public void stickyChanged( CDockable dockable ) {
             for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
-                listener.minimizedHoldChanged( dockable );
+                listener.stickyChanged( dockable );
         }
 
-        public void minimizedHoldSwitchableChanged( CDockable dockable ){
+        public void stickySwitchableChanged( CDockable dockable ){
         	for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
-                listener.minimizedHoldSwitchableChanged( dockable );
+                listener.stickySwitchableChanged( dockable );
         }
         
         public void resizeLockedChanged( CDockable dockable ) {

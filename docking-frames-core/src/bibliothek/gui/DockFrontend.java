@@ -58,8 +58,8 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
-import bibliothek.gui.dock.event.DockAdapter;
 import bibliothek.gui.dock.event.DockFrontendListener;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.VetoableDockFrontendListener;
 import bibliothek.gui.dock.frontend.DefaultFrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
@@ -82,10 +82,6 @@ import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
-import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
-import bibliothek.gui.dock.security.SecureScreenDockStationFactory;
-import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
-import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
@@ -304,21 +300,16 @@ public class DockFrontend {
         
         registerFactory( new DefaultDockableFactory() );
         registerFactory( new SplitDockStationFactory() );
-        registerFactory( new SecureSplitDockStationFactory() );
         registerFactory( new StackDockStationFactory() );
-        registerFactory( new SecureStackDockStationFactory() );
         registerFactory( new FlapDockStationFactory() );
-        registerFactory( new SecureFlapDockStationFactory() );
-        
         registerFactory( new ScreenDockStationFactory( controller.getRootWindowProvider() ));
-        registerFactory( new SecureScreenDockStationFactory( controller.getRootWindowProvider() ));
         
         registerFactory( new SplitDockPropertyFactory() );
         registerFactory( new StackDockPropertyFactory() );
         registerFactory( new FlapDockPropertyFactory() );
         registerFactory( new ScreenDockPropertyFactory() );
         
-        controller.getRegister().addDockRegisterListener( new DockAdapter(){
+        controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
             @Override
             public void dockableRegistered( DockController controller, Dockable dockable ) {
                 if( onAutoFire == 0 ){

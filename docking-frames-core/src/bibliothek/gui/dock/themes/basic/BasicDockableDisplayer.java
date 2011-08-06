@@ -71,7 +71,6 @@ import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIValue;
-import bibliothek.util.Todo;
 
 
 /**
@@ -877,8 +876,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     		contentBorder.setBorder( border );
     	}
     }
-    
-    @Todo
+
     public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
     	if( decorator instanceof TabDecorator ){
     		TabDisplayerCombinerTarget target = new TabDisplayerCombinerTarget( this, ((TabDecorator)decorator).getStackComponent(), source, force );

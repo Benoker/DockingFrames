@@ -43,10 +43,6 @@ import bibliothek.gui.dock.station.stack.StackDockPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * Represents a {@link SplitDockStation} in a {@link Perspective}.
@@ -332,16 +328,14 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 		return children.size();
 	}
 	
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-			description="implementation pending")
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		// ignore, SplitDockStation does not support placeholder maps
+		SplitPerspectivePlaceholderConverter converter = new SplitPerspectivePlaceholderConverter( this );
+		converter.setPlaceholders( placeholders );
 	}
 	
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_1,
-			description="implementation pending")
 	public PlaceholderMap getPlaceholders(){
-		return null;
+		SplitPerspectivePlaceholderConverter converter = new SplitPerspectivePlaceholderConverter( this );
+		return converter.getPlaceholders();
 	}
 	
 	public DockableProperty getDockableProperty( PerspectiveDockable child, PerspectiveDockable target ){

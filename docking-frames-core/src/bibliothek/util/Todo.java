@@ -63,7 +63,8 @@ public @interface Todo {
 	public static enum Version{
 		VERSION_1_1_0,
 		VERSION_1_1_1,
-		VERSION_1_1_2;
+		VERSION_1_1_2,
+		VERSION_1_1_3;
 	}
 	
 	public Priority priority() default Priority.MAJOR;

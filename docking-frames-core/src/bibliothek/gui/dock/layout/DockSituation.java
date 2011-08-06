@@ -49,10 +49,8 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
-import bibliothek.gui.dock.security.SecureFlapDockStationFactory;
-import bibliothek.gui.dock.security.SecureSplitDockStationFactory;
-import bibliothek.gui.dock.security.SecureStackDockStationFactory;
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
+import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -113,11 +111,8 @@ public class DockSituation {
         this( 
                 new DefaultDockableFactory(),
                 new SplitDockStationFactory(),
-                new SecureSplitDockStationFactory(),
                 new StackDockStationFactory(),
-                new SecureStackDockStationFactory(),
-                new FlapDockStationFactory(),
-                new SecureFlapDockStationFactory());
+                new FlapDockStationFactory());
     }
 
     /**
@@ -337,8 +332,6 @@ public class DockSituation {
      * if the factory for <code>composition</code> was not found
      */
     @SuppressWarnings("unchecked")
-    @Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_1,
-    		description="setting Dockable.parent to null should also be done in the stations whose layout changes")
     public DockElement convert( DockLayoutComposition composition ){
         DockLayoutInfo info = composition.getLayout();
         if( info == null )
@@ -1358,8 +1351,19 @@ public class DockSituation {
      * @param id the name of the factory
      * @return the factory or <code>null</code> if no factory has this id
      */
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_3,
+    		description="remove the legacy code that filters out identifiers that look like 'secure ...'. Instead 'result' can be returned directly." )
     public DockFactory<? extends DockElement,?,?> getFactory( String id ){
-        return factories.get( id );
+        DockFactory<?, ?, ?> result = factories.get( id );
+        if( result == null ){
+        	if( id.startsWith( "secure " )){
+        		id = id.substring( "secure ".length() );
+        		if( FlapDockStationFactory.ID.equals( id ) || ScreenDockStationFactory.ID.equals( id ) || StackDockStationFactory.ID.equals( id ) || SplitDockStationFactory.ID.equals( id )){
+        			result = factories.get( id );
+        		}
+        	}
+        }
+        return result;
     }
 
     /**

@@ -53,6 +53,10 @@ import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.FrameworkOnly;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A basic element representing some {@link java.awt.Component} and a wrapper
@@ -429,31 +433,77 @@ public interface CDockable {
      * Sets whether this <code>CDockable</code> should remain visible when minimized
      * and without focus.
      * @param hold whether to remain visible
+     * @deprecated use {@link #setSticky(boolean)} instead
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+    		description="remove this method")
     public void setMinimizedHold( boolean hold );
+    
+    /**
+     * Sets whether this <code>CDockable</code> should remain visible when minimized
+     * and without focus.
+     * @param hold whether to remain visible
+     */
+    public void setSticky( boolean sticky );
+    
+    /**
+     * Tells whether this <code>CDockable</code> remains visible when minimized and 
+     * without focus.
+     * @return <code>true</code> if this remains visible, <code>false</code>
+     * otherwise
+     * @deprecated use {@link #isSticky()} instead 
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+    		description="remove this method")
+    public boolean isMinimizedHold();
     
     /**
      * Tells whether this <code>CDockable</code> remains visible when minimized and 
      * without focus.
      * @return <code>true</code> if this remains visible, <code>false</code>
      * otherwise 
-     */
-    public boolean isMinimizedHold();
+     */    
+    public boolean isSticky();
     
     /**
      * Sets whether the user can switch the {@link #isMinimizedHold()} property by clicking
      * on a button that is presented by the {@link FlapDockStation}.
      * @param switchable whether the user is able to switch the hold property
+     * @deprecated use {@link #setStickySwitchable(boolean)} instead
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+    		description="remove this method")
     public void setMinimizedHoldSwitchable( boolean switchable );
+
+    /**
+     * Sets whether the user can switch the {@link #isSticky()} property by clicking
+     * on a button that is presented by the {@link FlapDockStation}.
+     * @param switchable whether the user is able to switch the hold property
+     */
+    public void setStickySwitchable( boolean switchable );
     
     /**
      * Tells whether the {@link #isMinimizedHold()} property can be changed by the user
      * by clicking a button that is displayed on the {@link FlapDockStation}.
      * @return <code>true</code> if the user is able to switch the property, <code>false</code>
      * otherwise
+     * @deprecated use {@link #isStickySwitchable()} instead
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+    		description="remove this method")
     public boolean isMinimizedHoldSwitchable();
+
+    /**
+     * Tells whether the {@link #isSticky()} property can be changed by the user
+     * by clicking a button that is displayed on the {@link FlapDockStation}.
+     * @return <code>true</code> if the user is able to switch the property, <code>false</code>
+     * otherwise
+     */
+    public boolean isStickySwitchable();
     
     /**
      * Tells whether this <code>CDockable</code> shows its title or not. Note that some

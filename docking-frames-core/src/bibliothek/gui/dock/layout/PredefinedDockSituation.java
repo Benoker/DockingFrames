@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
