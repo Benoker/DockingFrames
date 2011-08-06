@@ -1356,11 +1356,21 @@ public class DockSituation {
     public DockFactory<? extends DockElement,?,?> getFactory( String id ){
         DockFactory<?, ?, ?> result = factories.get( id );
         if( result == null ){
-        	if( id.startsWith( "secure " )){
-        		id = id.substring( "secure ".length() );
-        		if( FlapDockStationFactory.ID.equals( id ) || ScreenDockStationFactory.ID.equals( id ) || StackDockStationFactory.ID.equals( id ) || SplitDockStationFactory.ID.equals( id )){
-        			result = factories.get( id );
-        		}
+        	String base = null;
+        	if( id.startsWith( "delegate_secure " )){
+        		base = id.substring( "delegate_secure ".length() );
+        		id = "delegate_" + base; 
+        	}
+        	else if( id.startsWith( "secure " )){
+        		base = id.substring( "secure ".length() );
+        		id = base;
+        	}
+        	
+        	if( FlapDockStationFactory.ID.equals( base) || 
+        			ScreenDockStationFactory.ID.equals( base ) || 
+        			StackDockStationFactory.ID.equals( base ) || 
+        			SplitDockStationFactory.ID.equals( base )){
+        		result = factories.get( id );
         	}
         }
         return result;
