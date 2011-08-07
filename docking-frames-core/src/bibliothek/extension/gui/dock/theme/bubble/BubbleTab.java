@@ -67,7 +67,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -108,7 +108,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
 	"stack.tab.border.focused",
 	"stack.tab.foreground.focused"
 })
-public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeListener, Runnable, DockableFocusListener{
+public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab, ChangeListener, Runnable, DockableFocusListener{
 	/** a label showing text and icon for this tab */
 	private OrientedLabel label = new OrientedLabel();
 	
@@ -404,58 +404,58 @@ public class BubbleTab extends BackgroundPanel implements CombinedTab, ChangeLis
 	
 	@Override
 	public void paintBackground( Graphics g ){
-		Graphics2D g2 = (Graphics2D)g.create();
-		g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-		
-		Color bottom = animation.getColor( "bottom" );
-		Color top = animation.getColor( "top" );
-		Color border = animation.getColor( "border" );
-
-		int w = getWidth();
-		int h = getHeight();
-
-		// Rectangle clip = g.getClipBounds();
+		if( !isTransparent() ){
+			Graphics2D g2 = (Graphics2D)g.create();
+			g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+			
+			Color bottom = animation.getColor( "bottom" );
+			Color top = animation.getColor( "top" );
+			Color border = animation.getColor( "border" );
 	
-		// draw border
-		g2.setColor( border );
-		switch( orientation ){
-			case TOP_OF_DOCKABLE:
-				g2.fillRoundRect( 0, 0, w, h+arc, 2*arc, 2*arc );
-				break;
-			case BOTTOM_OF_DOCKABLE:
-				g2.fillRoundRect( 0, -arc, w, h+arc, 2*arc, 2*arc );
-				break;
-			case LEFT_OF_DOCKABLE:
-				g2.fillRoundRect( 0, 0, w+arc, h, 2*arc, 2*arc );
-				break;
-			case RIGHT_OF_DOCKABLE:
-				g2.fillRoundRect( -arc, 0, w+arc, h, 2*arc, 2*arc );
-				break;
-		}
+			int w = getWidth();
+			int h = getHeight();
+	
+			// Rectangle clip = g.getClipBounds();
 		
-
-		// draw background
-		if( orientation.isHorizontal() )
-			g2.setPaint( new GradientPaint( 0, 0, top, 0, h-borderSize, bottom ) );
-		else
-			g2.setPaint( new GradientPaint( 0, 0, top, w-borderSize, 0, bottom ) );
-		switch( orientation ){
-			case TOP_OF_DOCKABLE:
-				g2.fillRoundRect( borderSize, borderSize, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc );
-				break;
-			case BOTTOM_OF_DOCKABLE:
-				g2.fillRoundRect( borderSize, -arc, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc );
-				break;
-			case LEFT_OF_DOCKABLE:
-				g2.fillRoundRect( borderSize, borderSize, w+arc-borderSize, h-2*borderSize, 2*arc, 2*arc );
-				break;
-			case RIGHT_OF_DOCKABLE:
-				g2.fillRoundRect( -arc, borderSize, w+arc-borderSize, h-2*borderSize, 2*arc, 2*arc );
-				break;
-		}
-		g2.dispose();
+			// draw border
+			g2.setColor( border );
+			switch( orientation ){
+				case TOP_OF_DOCKABLE:
+					g2.fillRoundRect( 0, 0, w, h+arc, 2*arc, 2*arc );
+					break;
+				case BOTTOM_OF_DOCKABLE:
+					g2.fillRoundRect( 0, -arc, w, h+arc, 2*arc, 2*arc );
+					break;
+				case LEFT_OF_DOCKABLE:
+					g2.fillRoundRect( 0, 0, w+arc, h, 2*arc, 2*arc );
+					break;
+				case RIGHT_OF_DOCKABLE:
+					g2.fillRoundRect( -arc, 0, w+arc, h, 2*arc, 2*arc );
+					break;
+			}
 		
-
+			// draw background
+			if( orientation.isHorizontal() )
+				g2.setPaint( new GradientPaint( 0, 0, top, 0, h-borderSize, bottom ) );
+			else
+				g2.setPaint( new GradientPaint( 0, 0, top, w-borderSize, 0, bottom ) );
+			switch( orientation ){
+				case TOP_OF_DOCKABLE:
+					g2.fillRoundRect( borderSize, borderSize, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc );
+					break;
+				case BOTTOM_OF_DOCKABLE:
+					g2.fillRoundRect( borderSize, -arc, w-2*borderSize, h+arc-borderSize, 2*arc, 2*arc );
+					break;
+				case LEFT_OF_DOCKABLE:
+					g2.fillRoundRect( borderSize, borderSize, w+arc-borderSize, h-2*borderSize, 2*arc, 2*arc );
+					break;
+				case RIGHT_OF_DOCKABLE:
+					g2.fillRoundRect( -arc, borderSize, w+arc-borderSize, h-2*borderSize, 2*arc, 2*arc );
+					break;
+			}
+			
+			g2.dispose();
+		}
 	}
 
 	@Override

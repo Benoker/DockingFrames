@@ -309,15 +309,17 @@ public class ArchGradientPainter extends BaseTabComponent {
 			}
 		}
 		else{
-			GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint( x, y, color1, x, y + h, color2 );
-			Paint old = g2d.getPaint();
-			if( gradient != null )
-				g2d.setPaint(gradient);
-			else
-				g2d.setPaint( color1 );
-
-			g2d.fillRect( x, y, w, h-1 );
-			g2d.setPaint(old);
+			if( !isTransparent() ){
+				GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint( x, y, color1, x, y + h, color2 );
+				Paint old = g2d.getPaint();
+				if( gradient != null )
+					g2d.setPaint(gradient);
+				else
+					g2d.setPaint( color1 );
+	
+				g2d.fillRect( x, y, w, h-1 );
+				g2d.setPaint(old);
+			}
 		}
 	}
 	
@@ -449,10 +451,12 @@ public class ArchGradientPainter extends BaseTabComponent {
 			right.translate( 0, -1 );
 		}
 		
-		g.fillPolygon( left );
-		right.translate( 1, 1 );
-		g.fillPolygon( right );
-		right.translate( -1, -1 );
+		if( !isTransparent() ){
+			g.fillPolygon( left );
+			right.translate( 1, 1 );
+			g.fillPolygon( right );
+			right.translate( -1, -1 );
+		}
 		
 		switch( getOrientation() ){
 			case TOP_OF_DOCKABLE:
@@ -469,22 +473,23 @@ public class ArchGradientPainter extends BaseTabComponent {
 				break;
 		}
 		
-		
-		Rectangle leftBox = left.getBounds();
-		Rectangle rightBox = right.getBounds();
-		
-		if( orientation.isHorizontal() ){
-			if( leftBox.x+leftBox.width < rightBox.x ){
-				g.fillRect(
-						leftBox.x+leftBox.width, 0,
-						rightBox.x-leftBox.x-leftBox.width+1, h );
+		if( !isTransparent() ){
+			Rectangle leftBox = left.getBounds();
+			Rectangle rightBox = right.getBounds();
+			
+			if( orientation.isHorizontal() ){
+				if( leftBox.x+leftBox.width < rightBox.x ){
+					g.fillRect(
+							leftBox.x+leftBox.width, 0,
+							rightBox.x-leftBox.x-leftBox.width+1, h );
+				}
 			}
-		}
-		else{
-			if( leftBox.y+leftBox.height < rightBox.y ){
-				g.fillRect(
-						0, leftBox.y+leftBox.height,
-						w, rightBox.y-leftBox.y-leftBox.height+1 );
+			else{
+				if( leftBox.y+leftBox.height < rightBox.y ){
+					g.fillRect(
+							0, leftBox.y+leftBox.height,
+							w, rightBox.y-leftBox.y-leftBox.height+1 );
+				}
 			}
 		}
 		

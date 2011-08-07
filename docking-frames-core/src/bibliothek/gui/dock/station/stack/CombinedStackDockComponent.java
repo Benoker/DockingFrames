@@ -56,6 +56,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
 import bibliothek.util.FrameworkOnly;
 
@@ -69,8 +70,7 @@ import bibliothek.util.FrameworkOnly;
  * @param <M> the type of the menus
  * @param <I> the type of the additinal info panel
  */
-public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends CombinedInfoComponent> extends
-		AbstractTabPane<T, M, I> implements StackDockComponent {
+public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends CombinedInfoComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent {
 	/** The panel which shows the children */
 	private CombinedStackDockContentPane panel;
 
@@ -81,7 +81,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	private BackgroundAlgorithm background;
 
 	/** The panel which displays one of the children of this pane */
-	private BackgroundPanel componentPanel = new BackgroundPanel( null, true, false ){
+	private BackgroundPanel componentPanel = new ConfiguredBackgroundPanel( null, true, false ){
 		@Override
 		public void doLayout(){
 			int w = getWidth();

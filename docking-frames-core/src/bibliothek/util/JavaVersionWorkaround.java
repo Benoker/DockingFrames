@@ -31,9 +31,6 @@ import java.awt.Shape;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-
 /**
  * Utility class providing help for bugs or specialities present in some
  * versions of the JRE.
@@ -46,8 +43,6 @@ public class JavaVersionWorkaround {
 	 * are not visible. 
 	 * @param component the component to mark completely transparent
 	 */
-	@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Todo.Version.VERSION_1_1_0,
-			description="make sure this works with JOGL")
 	public static void markAsGlassPane( Component component ){
 		try{
 			Class<?> clazz = Class.forName( "com.sun.awt.AWTUtilities" );

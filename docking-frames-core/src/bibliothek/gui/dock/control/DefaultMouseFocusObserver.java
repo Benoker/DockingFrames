@@ -34,18 +34,12 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.AbstractMouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.util.PropertyValue;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A focus controller which adds an {@link AWTEventListener} to the 
  * {@link Toolkit} to receive events which may change the focus. 
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
-		description="Some kind of strategy to decide which child Component of a Dockable should be focused")
 public class DefaultMouseFocusObserver extends AbstractMouseFocusObserver{
     /** The listener to all AWT events*/
     private AWTEventListener listener;

@@ -56,7 +56,7 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
         // empty
     }
     
-    public void minimizedHoldChanged( CDockable dockable ) {
+    public void stickyChanged( CDockable dockable ) {
         // empty
     }
     
@@ -64,7 +64,7 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
         // empty
     }
     
-    public void minimizedHoldSwitchableChanged( CDockable dockable ){
+    public void stickySwitchableChanged( CDockable dockable ){
     	// empty
     }
     

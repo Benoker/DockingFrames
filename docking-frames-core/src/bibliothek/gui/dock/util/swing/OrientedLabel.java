@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.Icon;
 
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.font.FontModifier;
 
 /**
@@ -16,7 +16,7 @@ import bibliothek.gui.dock.util.font.FontModifier;
  * between horizontal and vertical.
  * @author Benjamin Sigg
  */
-public class OrientedLabel extends BackgroundPanel{
+public class OrientedLabel extends ConfiguredBackgroundPanel{
     /** The label which really paints the text */
     private DLabel label = new DLabel();
     
@@ -46,7 +46,6 @@ public class OrientedLabel extends BackgroundPanel{
      */
     public OrientedLabel(){
     	super( false, false );
-        setOpaque( false );
         label.setOpaque( false );
         label.setAlignmentX( 0 );
     }

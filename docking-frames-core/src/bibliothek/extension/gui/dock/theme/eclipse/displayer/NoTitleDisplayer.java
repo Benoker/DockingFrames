@@ -58,7 +58,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
 
@@ -69,7 +69,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * and the key {@link EclipseTheme#TAB_PAINTER}.
  * @author Janni Kovacs
  */
-public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplayer, InvisibleTabPane, BorderedComponent {
+public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements DockableDisplayer, InvisibleTabPane, BorderedComponent {
 	private Dockable dockable;
 	private DockController controller;
 	private DockStation station;
@@ -102,7 +102,6 @@ public class NoTitleDisplayer extends BackgroundPanel implements DockableDisplay
 	public NoTitleDisplayer( DockStation station, Dockable dockable, TitleBar bar ){
 		super( false, true );
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
-		setOpaque( false );
 		setBackground( background );
 		
 		bordered = bar == TitleBar.NONE_BORDERED || bar == TitleBar.NONE_HINTED_BORDERED;

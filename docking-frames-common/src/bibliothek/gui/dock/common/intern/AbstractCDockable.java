@@ -81,10 +81,10 @@ public abstract class AbstractCDockable implements CDockable {
     private boolean resizeLockedHorizontally = false;
     
     /** whether to remain visible when minimized and unfocused or not */
-    private boolean minimizeHold = false;
+    private boolean sticky = false;
     
-    /** whether {@link #minimizeHold} can be switched by the user */
-    private boolean minimizeHoldSwitchable = true;
+    /** whether {@link #sticky} can be switched by the user */
+    private boolean stickySwitchable = true;
     
     /** the preferred size when minimized */
     private Dimension minimizeSize = new Dimension( -1, -1 );
@@ -505,26 +505,46 @@ public abstract class AbstractCDockable implements CDockable {
         }
     }
     
+    @Deprecated
     public void setMinimizedHold( boolean hold ) {
-        if( this.minimizeHold != hold ){
-            this.minimizeHold = hold;
-            listenerCollection.getCDockablePropertyListener().minimizedHoldChanged( this );
+    	setSticky( hold );
+    }
+    
+    public void setSticky( boolean sticky ){
+        if( this.sticky != sticky ){
+            this.sticky = sticky;
+            listenerCollection.getCDockablePropertyListener().stickyChanged( this );
         }
     }
     
+    @Deprecated
     public boolean isMinimizedHold() {
-        return minimizeHold;
+        return isSticky();
     }
     
+    public boolean isSticky(){
+	    return sticky;
+    }
+    
+    @Deprecated
     public void setMinimizedHoldSwitchable( boolean minimizeHoldSwitchable ){
-    	if( this.minimizeHoldSwitchable != minimizeHoldSwitchable ){
-    		this.minimizeHoldSwitchable = minimizeHoldSwitchable;
-    		listenerCollection.getCDockablePropertyListener().minimizedHoldSwitchableChanged( this );
+    	setStickySwitchable( minimizeHoldSwitchable );
+    }
+    
+    public void setStickySwitchable( boolean switchable ){
+    	if( this.stickySwitchable != switchable ){
+    		this.stickySwitchable = switchable;
+    		listenerCollection.getCDockablePropertyListener().stickySwitchableChanged( this );
     	}
 	}
     
+    @Deprecated
     public boolean isMinimizedHoldSwitchable(){
-	    return minimizeHoldSwitchable;
+	    return isStickySwitchable();
+    }
+    
+    public boolean isStickySwitchable(){
+    	return stickySwitchable;
     }
     
     public void setMinimizedSize( Dimension size ) {

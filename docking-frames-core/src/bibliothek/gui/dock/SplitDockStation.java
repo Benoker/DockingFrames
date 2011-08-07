@@ -135,7 +135,7 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
@@ -2678,7 +2678,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * The panel which will be the parent of all {@link DockableDisplayer displayers}
 	 * @author Benjamin Sigg
 	 */
-	private class Content extends BackgroundPanel {
+	private class Content extends ConfiguredBackgroundPanel {
 		public Content(){
 			super( true, false );
 		}
@@ -2693,7 +2693,13 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				fullScreenDockable.getDisplayer().getComponent().setBounds(insets.left, insets.top, getWidth() - insets.left - insets.right,
 						getHeight() - insets.bottom - insets.top);
 			}
-		}		
+		}
+		
+		@Override
+		public void setSolid( boolean solid ){
+			super.setSolid( solid );
+			SplitDockStation.this.setSolid( solid );
+		}
 	}
 
 	/**

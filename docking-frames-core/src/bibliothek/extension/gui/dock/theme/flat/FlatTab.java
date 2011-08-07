@@ -37,7 +37,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -68,7 +68,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
     "stack.tab.foreground.selected",
     "stack.tab.foreground.focused",
     "stack.tab.foreground" })
-public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFocusListener{
+public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, DockableFocusListener{
 	/** the dockable for which this button is shown */
     private Dockable dockable;
     
@@ -544,62 +544,64 @@ public class FlatTab extends BackgroundPanel implements CombinedTab, DockableFoc
     
     @Override
     public void paintBackground( Graphics g ){
-        super.paintBackground( g );
-    	
-        Graphics2D g2 = (Graphics2D)g;
-        Paint oldPaint = g2.getPaint();
-        
-        int w = getWidth();
-        int h = getHeight();
-        
-        Color top = null;
-        Color bottom = null;
-        
-        if( focused ){
-            top = backgroundFocusedTop.value();
-            bottom = backgroundFocusedBottom.value();
-        }
-        if( isSelected() ){
-            if( top == null )
-                top = backgroundSelectedTop.value();
-            if( bottom == null )
-                bottom = backgroundSelectedBottom.value();
-        }
-        if( top == null )
-            top = backgroundTop.value();
-        if( bottom == null )
-            bottom = backgroundBottom.value();
-        
-        if( top == null || bottom == null ){
-            Color background = FlatTab.this.background.value();
-            if( background == null )
-                background = getBackground();
-            
-            if( bottom == null )
-                bottom = background;
-            
-            if( top == null ){
-                if( isSelected() ){
-                    top = background.brighter();
-                }
-                else{
-                    top = background;
-                }
-            }
-        }
-
-        if( top.equals( bottom ))
-            g.setColor( top );
-        else{
-        	if( orientation.isHorizontal() )
-        		g2.setPaint( new GradientPaint( 0, 0, top, 0, h, bottom ) );
-        	else
-        		g2.setPaint( new GradientPaint( 0, 0, top, w, 0, bottom ) );
-        }
-        
-        g.fillRect( 0, 0, w, h );
-        
-        g2.setPaint( oldPaint );
+    	if( !isTransparent() ){
+	    	super.paintBackground( g );
+	    	
+	        Graphics2D g2 = (Graphics2D)g;
+	        Paint oldPaint = g2.getPaint();
+	        
+	        int w = getWidth();
+	        int h = getHeight();
+	        
+	        Color top = null;
+	        Color bottom = null;
+	        
+	        if( focused ){
+	            top = backgroundFocusedTop.value();
+	            bottom = backgroundFocusedBottom.value();
+	        }
+	        if( isSelected() ){
+	            if( top == null )
+	                top = backgroundSelectedTop.value();
+	            if( bottom == null )
+	                bottom = backgroundSelectedBottom.value();
+	        }
+	        if( top == null )
+	            top = backgroundTop.value();
+	        if( bottom == null )
+	            bottom = backgroundBottom.value();
+	        
+	        if( top == null || bottom == null ){
+	            Color background = FlatTab.this.background.value();
+	            if( background == null )
+	                background = getBackground();
+	            
+	            if( bottom == null )
+	                bottom = background;
+	            
+	            if( top == null ){
+	                if( isSelected() ){
+	                    top = background.brighter();
+	                }
+	                else{
+	                    top = background;
+	                }
+	            }
+	        }
+	
+	        if( top.equals( bottom ))
+	            g.setColor( top );
+	        else{
+	        	if( orientation.isHorizontal() )
+	        		g2.setPaint( new GradientPaint( 0, 0, top, 0, h, bottom ) );
+	        	else
+	        		g2.setPaint( new GradientPaint( 0, 0, top, w, 0, bottom ) );
+	        }
+	        
+	        g.fillRect( 0, 0, w, h );
+	        
+	        g2.setPaint( oldPaint );
+    	}
     }
     
     /**

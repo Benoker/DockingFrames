@@ -172,7 +172,6 @@ public class FlapDockStationFactory implements DockFactory<FlapDockStation, Flap
     }
     
     public FlapDockStation layout( FlapDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
-        
         FlapDockStation station = createStation();
         setLayout( station, layout, children, placeholders );
         return station;

@@ -35,7 +35,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.security.SecureScreenDockDialog;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -62,9 +61,6 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	public boolean isFullscreen( ScreenDockWindow window ) {
 		if( window instanceof ScreenDockDialog ){
 			return isFullscreen( window, ((ScreenDockDialog)window).getDialog() );
-		}
-		if( window instanceof SecureScreenDockDialog ){
-			return isFullscreen( window, ((SecureScreenDockDialog)window).getDialog() );
 		}
 		if( window instanceof ScreenDockFrame ){
 			return isFullscreen( window, ((ScreenDockFrame)window).getFrame() );
@@ -103,9 +99,6 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	public void setFullscreen( ScreenDockWindow window, boolean fullscreen ) {
 		if( window instanceof ScreenDockDialog ){
 			setFullscreen( window, ((ScreenDockDialog)window).getDialog(), fullscreen );
-		}
-		if( window instanceof SecureScreenDockDialog ){
-			setFullscreen( window, ((SecureScreenDockDialog)window).getDialog(), fullscreen );
 		}
 		if( window instanceof ScreenDockFrame ){
 			setFullscreen( window, ((ScreenDockFrame)window).getFrame(), fullscreen );

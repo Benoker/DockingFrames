@@ -27,6 +27,9 @@ package bibliothek.gui.dock.util;
 
 import java.awt.Component;
 
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.station.stack.tab.Tab;
+import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Path;
 
 /**
@@ -39,10 +42,43 @@ public interface BackgroundComponent extends UIValue<BackgroundPaint>{
 	public static final Path KIND = new Path( "dock", "background" );
 	
 	/**
+	 * A description of how a {@link BackgroundComponent} should paint its background.
+	 * @author Benjamin Sigg
+	 */
+	public static enum Transparency{
+		/** The background is not to be painted at all */
+		TRANSPARENT,
+		/** The background needs to cover the entire component */
+		SOLID,
+		/** The component decides on its own how to paint the background, there may be some transparent patches or not. */
+		DEFAULT
+	}
+	
+	/**
 	 * Gets the {@link Component} which is represented by <code>this</code>
 	 * @return the component, may not be <code>null</code>
 	 */
 	public Component getComponent();
+	
+	/**
+	 * Informs this component whether it should be transparent or not. A transparent
+	 * component does not paint a background, while a non-transparent component paints
+	 * every part of its background. This property is optional and not every component can fully support transparency:
+	 * <ul>
+	 * 	<li>Root-components like a {@link ScreenDockWindow} usually do not support any transparency at all.</li>
+	 *  <li>Decorative components, like a {@link DockTitle} or a {@link Tab}, usually paint some parts of their background even if transparent.</li>
+	 * </ul>
+	 * It should be noted, that together with a {@link BackgroundPaint}, any component can be made to look as if transparent.
+	 * @param transparency whether to paint a background or not
+	 */
+	public void setTransparency( Transparency transparency );
+	
+	/**
+	 * Tells whether this component is transparent or not.
+	 * @return how the background is painted
+	 * @see #setTransparency(Transparency)
+	 */
+	public Transparency getTransparency();
 	
 	/**
 	 * Informs this component that it should be repainted.

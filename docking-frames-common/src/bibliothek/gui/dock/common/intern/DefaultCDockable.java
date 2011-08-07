@@ -35,10 +35,6 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.CSeparator;
 import bibliothek.util.FrameworkOnly;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * An {@link CDockable} that uses a {@link DefaultCommonDockable} to show
@@ -50,8 +46,6 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  */
 @FrameworkOnly
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT,
-		target=Version.VERSION_1_1_1, description="Add some property 'stickable', if not set, then the minimized dockable cannot be sticked")
 public class DefaultCDockable extends AbstractCDockable{
     /**
      * Describes what the user can do with the enclosing {@link DefaultCDockable}.<br>

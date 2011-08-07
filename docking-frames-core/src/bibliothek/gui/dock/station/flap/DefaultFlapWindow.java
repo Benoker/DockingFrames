@@ -67,6 +67,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
 
 /**
  * This window pops up if the user presses one of the buttons of a 
@@ -133,7 +134,12 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			}
 		};
 		
-		BackgroundPanel content = new BackgroundPanel( true, false );
+		BackgroundPanel content = new BackgroundPanel( true, false ){
+			@Override
+			protected void configure( Transparency transparency ){
+				// no support for transparency as this is a root component and can never be transparent
+			}
+		};
 		content.setBackground( background );
 		contentContainer.getBasePane().setLayout( new BorderLayout() );
 		contentContainer.getBasePane().add( content, BorderLayout.CENTER );

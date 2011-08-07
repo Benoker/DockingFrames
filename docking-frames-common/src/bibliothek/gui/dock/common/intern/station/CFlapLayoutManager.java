@@ -78,7 +78,7 @@ public class CFlapLayoutManager extends AbstractFlapLayoutManager implements Fla
      */
     private CDockablePropertyListener propertyListener = new CDockableAdapter(){
         @Override
-        public void minimizedHoldChanged( CDockable dockable ) {
+        public void stickyChanged( CDockable dockable ) {
             DockStation parent = dockable.intern().getDockParent();
             if( parent instanceof FlapDockStation ){
                 ((FlapDockStation)parent).updateHold( dockable.intern() );
@@ -91,7 +91,7 @@ public class CFlapLayoutManager extends AbstractFlapLayoutManager implements Fla
                 ((FlapDockStation)parent).updateWindowSize( dockable.intern() );
             }
         }
-        public void minimizedHoldSwitchableChanged( CDockable dockable ){
+        public void stickySwitchableChanged( CDockable dockable ){
         	DockStation parent = dockable.intern().getDockParent();
             if( parent instanceof FlapDockStation ){
                 fireHoldSwitchableChanged( (FlapDockStation)parent, dockable.intern() );

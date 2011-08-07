@@ -260,24 +260,25 @@ public class RectGradientPainter extends BaseTabComponent {
 			paintSelected( g2d, tabIndex, old );
 		}
 		else{
-			switch( orientation ){
-				case TOP_OF_DOCKABLE:
-					g.fillRect( 0, 0, getWidth(), getHeight()-1 );
-					break;
-				case BOTTOM_OF_DOCKABLE:
-					g.fillRect( 0, 1, getWidth(), getHeight()-1 );
-					break;
-				case LEFT_OF_DOCKABLE:
-					g.fillRect( 0, 0, getWidth()-1, getHeight() );
-					break;
-				case RIGHT_OF_DOCKABLE:
-					g.fillRect( 1, 0, getWidth()-1, getHeight() );
-					break;
+			if( !isTransparent() ){
+				switch( orientation ){
+					case TOP_OF_DOCKABLE:
+						g.fillRect( 0, 0, getWidth(), getHeight()-1 );
+						break;
+					case BOTTOM_OF_DOCKABLE:
+						g.fillRect( 0, 1, getWidth(), getHeight()-1 );
+						break;
+					case LEFT_OF_DOCKABLE:
+						g.fillRect( 0, 0, getWidth()-1, getHeight() );
+						break;
+					case RIGHT_OF_DOCKABLE:
+						g.fillRect( 1, 0, getWidth()-1, getHeight() );
+						break;
+				}
 			}
-		    
-		    
-		    g2d.setPaint(old);
 		}
+
+	    g2d.setPaint(old);
 	}
 	
 	@Override
@@ -310,7 +311,9 @@ public class RectGradientPainter extends BaseTabComponent {
 		
 		switch( orientation ){
 			case TOP_OF_DOCKABLE:
-				g2d.fillRect( 1, 0, width - 2, height );
+				if( !isTransparent() ){
+					g2d.fillRect( 1, 0, width - 2, height );
+				}
 				g2d.drawLine( 0, 1, 0, height );
 				g2d.setPaint( normalBackground );
 				// left
@@ -323,7 +326,9 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( width - 1, 1, width - 1, height );
 				break;
 			case BOTTOM_OF_DOCKABLE:
-				g2d.fillRect( 1, 0, width - 2, height );
+				if( !isTransparent() ){
+					g2d.fillRect( 1, 0, width - 2, height );
+				}
 				g2d.drawLine( 0, height-2, 0, 0 );
 				g2d.setPaint( normalBackground );
 				// left
@@ -336,7 +341,9 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( width - 1, height-2, width - 1, 0 );
 				break;
 			case LEFT_OF_DOCKABLE:
-				g2d.fillRect( 0, 1, width, height-2 );
+				if( !isTransparent() ){
+					g2d.fillRect( 0, 1, width, height-2 );
+				}
 				g2d.drawLine( 1, 0, width, 0 );
 				g2d.setPaint( normalBackground );
 				// left
@@ -349,7 +356,9 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( 1, height-1, width, height-1 );
 				break;
 			case RIGHT_OF_DOCKABLE:
-				g2d.fillRect( 0, 1, width, height-2 );
+				if( !isTransparent() ){
+					g2d.fillRect( 0, 1, width, height-2 );
+				}
 				g2d.drawLine( 0, 0, width-1, 0 );
 				g2d.setPaint( normalBackground );
 				// left

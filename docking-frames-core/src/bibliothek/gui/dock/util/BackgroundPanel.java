@@ -31,16 +31,25 @@ import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
+import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
+
 /**
  * This {@link JPanel} implements {@link PaintableComponent} and 
  * can use a {@link BackgroundAlgorithm} to paint its background.
  * @author Benjamin Sigg
  */
-public class BackgroundPanel extends JPanel implements PaintableComponent{
+public abstract class BackgroundPanel extends JPanel implements PaintableComponent{
 	private BackgroundAlgorithm background;
 	
 	/** whether no pixels of this panel are painted */
 	private boolean transparent;
+	
+	/** added to the {@link BackgroundAlgorithm} that paints this component */
+	private BackgroundAlgorithmListener listener = new BackgroundAlgorithmListener(){
+		public void transparencyChanged( BackgroundAlgorithm algorithm, Transparency transparency ){
+			configure( transparency );
+		}
+	};
 	
 	/**
 	 * Creates a new panel.
@@ -69,8 +78,22 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	 * @param background the background algorithm
 	 */
 	public void setBackground( BackgroundAlgorithm background ){
+		if( this.background != null ){
+			this.background.removeListener( listener );
+		}
 		this.background = background;
+		if( background != null ){
+			background.addListener( listener );
+			configure( background.getTransparency() );
+		}
 	}
+	
+	/**
+	 * Called if the {@link Transparency} of the {@link BackgroundAlgorithm} changed, this panel
+	 * should configure itself to met the requested transparency settings.
+	 * @param transparency the setting to use
+	 */
+	protected abstract void configure( Transparency transparency );
 	
 	/**
 	 * Gets the algorithm that paints the background of this panel.
@@ -125,7 +148,9 @@ public class BackgroundPanel extends JPanel implements PaintableComponent{
 	}
 	
 	public void paintBackground( Graphics g ){
-		super.paintComponent( g );
+		if( !isTransparent() ){
+			super.paintComponent( g );
+		}
 	}
 	
 	public void paintForeground( Graphics g ){
