@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.util.JavaVersionWorkaround;
 
 /**
@@ -59,6 +60,9 @@ public class OverpaintablePanel extends JLayeredPane {
     /** the panel which is added to this {@link JLayeredPane} */
     private JComponent base;
     
+    /** whether the background should be painted or not */
+    private boolean solid = true;
+    
     /**
      * Creates a new panel
      */
@@ -74,6 +78,31 @@ public class OverpaintablePanel extends JLayeredPane {
     }
     
     /**
+     * Tells this panel whether the background should be painted or not. If solid is <code>true</code>,
+     * then the background is painted.<br>
+     * This method should not be called by clients directly, this method is intended to be called by 
+     * {@link BackgroundComponent}s only.
+     * @param solid whether to paint the background or not
+     */
+    public void setSolid( boolean solid ){
+    	this.solid = solid;
+    	setOpaque( solid );
+    	
+    	if( base != content ){
+    		base.setOpaque( solid );
+    	}
+    }
+    
+    /**
+     * Tells whether the background of this panel should be painted or not.
+     * @return <code>true</code> if the background is painted, <code>false</code> if this component
+     * is transparent
+     */
+    public boolean isSolid(){
+    	return solid;
+    }
+    
+    /**
      * Sets the panel on which clients should add their children. Note that
      * <code>content</code> is not added to the base-panel, that must be done
      * by the client.
@@ -84,6 +113,7 @@ public class OverpaintablePanel extends JLayeredPane {
             throw new IllegalArgumentException( "Content must not be null" );
         
         this.content = content;
+        setSolid( isSolid() );
     }
     
     /**
@@ -111,6 +141,8 @@ public class OverpaintablePanel extends JLayeredPane {
 		
 		setLayer( base, DEFAULT_LAYER );
 		add( base );
+		
+		setSolid( isSolid() );
 	}
     
     /**

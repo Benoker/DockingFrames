@@ -13,6 +13,7 @@ public class BasicCoreSet extends TutorialSet{
                 StackTabLayoutExample.class,
                 InternalExample.class,
                 BackgroundExample.class,
+                TransparencyExample.class,
                 BorderModifierExample.class,
                 CombinerExample.class,
                 MergerExample.class );

@@ -27,6 +27,8 @@ package bibliothek.gui.dock.util;
 
 import java.awt.Component;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -44,6 +46,12 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 	private DockController controller;
 	private BackgroundPaint paint;
 	
+	/** all the observers of this algorithm */
+	private List<BackgroundAlgorithmListener> listeners = new ArrayList<BackgroundAlgorithmListener>( 2 );
+	
+	/** how to paint the background */
+	private Transparency transparency = Transparency.DEFAULT;
+	
 	/**
 	 * Creates a new algorithm.
 	 * @param kind the kind of {@link UIValue} this is
@@ -52,6 +60,22 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 	public BackgroundAlgorithm( Path kind, String id ){
 		this.kind = kind;
 		this.id = id;
+	}
+	
+	/**
+	 * Adds an observer to this algorithm. The observer will be informed when properties of this algorithm change.
+	 * @param listener the new observer, not <code>null</code>
+	 */
+	public void addListener( BackgroundAlgorithmListener listener ){
+		listeners.add( listener );
+	}
+	
+	/**
+	 * Removes the observer <code>listener</code> from this algorithm.
+	 * @param listener the listener to remove
+	 */
+	public void removeListener( BackgroundAlgorithmListener listener ){
+		listeners.remove( listener );
 	}
 	
 	/**
@@ -83,6 +107,22 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 		if( this.paint != null ){
 			this.paint.install( this );
 		}
+	}
+	
+	public void setTransparency( Transparency transparency ){
+		if( transparency == null ){	
+			throw new IllegalArgumentException( "transparency must not be null" );
+		}
+		if( this.transparency != transparency ){
+			this.transparency = transparency;
+			for( BackgroundAlgorithmListener listener : listeners.toArray( new BackgroundAlgorithmListener[ listeners.size() ] )){
+				listener.transparencyChanged( this, this.transparency );
+			}
+		}
+	}
+	
+	public Transparency getTransparency(){
+		return transparency;
 	}
 	
 	/**

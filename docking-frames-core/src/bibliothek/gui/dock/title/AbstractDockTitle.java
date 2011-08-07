@@ -59,7 +59,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIValue;
@@ -91,7 +91,7 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  *
  */
-public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
+public class AbstractDockTitle extends ConfiguredBackgroundPanel implements DockTitle {
     /** Insets of the size 1,2,1,2 */
     private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 0, 1, 0, 1 );
     /** Insets of the size 2,1,2,1 */
@@ -387,7 +387,9 @@ public class AbstractDockTitle extends BackgroundPanel implements DockTitle {
     
     @Override
     public void paintBackground( Graphics g ){
-    	paintBackground( g, this );
+    	if( !isTransparent() ){
+    		paintBackground( g, this );
+    	}
     }
     
     /**

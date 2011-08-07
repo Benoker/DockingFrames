@@ -100,6 +100,7 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -1565,7 +1566,13 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	 * Creates a new panel
     	 */
         public Background(){
-        	content = new BackgroundPanel( true, false );
+        	content = new ConfiguredBackgroundPanel( true, false ){
+        		@Override
+        		public void setSolid( boolean solid ){
+        			super.setSolid( solid );
+        			Background.this.setSolid( solid );
+        		}
+        	};
         	content.setBackground( panelBackground );
         	
         	setContentPane( content );

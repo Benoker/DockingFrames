@@ -70,7 +70,7 @@ public class PerspectivesMulti {
 	    /* because we called "control.createWorkingArea" we can now access the 
 	     * CWorkingPerspective with the same unique identifier. We could also just
 	     * create a new CWorkingPerspective and use "addRoot" to store it. */
-	    CWorkingPerspective work = (CWorkingPerspective)perspective.getRoot( "work" );
+	    CWorkingPerspective work = (CWorkingPerspective)perspective.getStation( "work" );
 	    center.gridAdd( 0, 50, 100, 100, work );
 	    
 	    for( int i = 0; i < 5; i++ ){

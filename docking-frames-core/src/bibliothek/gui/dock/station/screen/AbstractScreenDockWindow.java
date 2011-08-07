@@ -61,6 +61,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
 
 /**
  * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
@@ -456,7 +457,12 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * @return the new content pane
      */
     protected SecureContainer createContent(){
-    	contentBackground = new BackgroundPanel( true, false );
+    	contentBackground = new BackgroundPanel( true, false ){
+    		@Override
+    		protected void configure( Transparency transparency ){
+    			// does not support transparency as this is a root component
+    		}
+    	};
     	contentBackground.setBackground( background );
     	
     	SecureContainer panel = new SecureContainer(){

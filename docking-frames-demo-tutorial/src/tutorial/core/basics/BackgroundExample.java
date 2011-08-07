@@ -29,6 +29,7 @@ import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.PaintableComponent;
+import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
 
 @Tutorial( id="Background", title="Background" )
 public class BackgroundExample {
@@ -197,7 +198,13 @@ public class BackgroundExample {
 		
 			/* We use a BackgroundPanel: it already offers methods to use a replaceable strategy
 			 * for painting. */
-			panel = new BackgroundPanel( true, false );
+			panel = new BackgroundPanel( true, false ){
+				@Override
+				protected void configure( Transparency transparency ){
+					// we ignore transparency settings. These settings are made by the client and since in this
+					// example we do not set transparency this method will never be called anyway
+				}
+			};
 			panel.setBackground( color );
 			add( panel );
 			

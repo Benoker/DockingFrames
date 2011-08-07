@@ -383,6 +383,7 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 	protected Component createLayerAt( Component component, Dockable dockable ){
 		JPanel panel = new JPanel( new GridLayout( 1, 1 ));
 		panel.add( component );
+		panel.setOpaque( false );
 		return panel;
 	}
 	

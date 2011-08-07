@@ -38,7 +38,7 @@ import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 
 /**
  * This panel is used by the {@link FlapDockStation} to display some button-titles.
@@ -298,12 +298,18 @@ public class ButtonPane extends SecureContainer{
      * The direct parent of the buttons-titles. 
      * @author Benjamin Sigg
      */
-    private class Content extends BackgroundPanel{
+    private class Content extends ConfiguredBackgroundPanel{
         /**
          * Creates a new panel
          */
         public Content(){
         	super( null, true, false );
+        }
+        
+        @Override
+        public void setSolid( boolean solid ){
+        	super.setSolid( solid );
+        	ButtonPane.this.setSolid( solid );
         }
        
         @Override

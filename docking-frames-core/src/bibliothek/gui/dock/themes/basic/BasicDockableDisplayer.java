@@ -68,6 +68,7 @@ import bibliothek.gui.dock.title.ActionsDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIValue;
@@ -88,7 +89,7 @@ import bibliothek.gui.dock.util.UIValue;
  * @see DisplayerFactory
  * @author Benjamin Sigg
  */
-public class BasicDockableDisplayer extends BackgroundPanel implements DockableDisplayer{
+public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements DockableDisplayer{
     /** The content of this displayer */
     private Dockable dockable;
     /** The title on this displayer */
@@ -160,7 +161,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
     
     
     /** the panel that shows the content of this displayer */
-    private BackgroundPanel content = new BackgroundPanel( null, false, true ){
+    private BackgroundPanel content = new ConfiguredBackgroundPanel( null, false, true ){
     	@Override
     	public void doLayout(){
 	    	BasicDockableDisplayer.this.doLayout( content );
@@ -229,7 +230,7 @@ public class BasicDockableDisplayer extends BackgroundPanel implements DockableD
      * @param location the location of the title, can be <code>null</code>
      */
     protected void init( DockStation station, Dockable dockable, DockTitle title, Location location ){
-    	content.setOpaque( false );
+//    	content.setOpaque( false );
     	content.setBackground( background );
     	
     	setDecorator( new MinimalDecorator() );

@@ -58,7 +58,7 @@ import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -75,7 +75,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
     "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
     "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
     "stack.border" })
-public abstract class BaseTabComponent extends BackgroundPanel implements TabComponent{
+public abstract class BaseTabComponent extends ConfiguredBackgroundPanel implements TabComponent{
     protected final TabColor colorStackTabBorder;
     protected final TabColor colorStackTabBorderSelected;
     protected final TabColor colorStackTabBorderSelectedFocused;

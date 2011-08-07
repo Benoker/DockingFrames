@@ -31,7 +31,7 @@ import javax.swing.JPanel;
 
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
-import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 
 /**
  * This panel paints the contents of a {@link CombinedStackDockComponent}. It is just a {@link JPanel}. The layout has to be 
@@ -39,7 +39,7 @@ import bibliothek.gui.dock.util.BackgroundPanel;
  * focus traversal policy provider}.
  * @author Benjamin Sigg
  */
-public class CombinedStackDockContentPane extends BackgroundPanel{
+public class CombinedStackDockContentPane extends ConfiguredBackgroundPanel{
 	private CombinedStackDockComponent<?, ?, ?> parent;
 	
 	private boolean paintBackground = true;
@@ -53,7 +53,6 @@ public class CombinedStackDockContentPane extends BackgroundPanel{
 		if( parent == null )
 			throw new IllegalArgumentException( "parent must not be null" );
 		this.parent = parent;
-		setOpaque( false );
 		setFocusTraversalPolicyProvider( true );
 		setFocusTraversalPolicy( new DockFocusTraversalPolicy( new CombinedStackDockFocusTraversalPolicy( this ), true ) );
 	}

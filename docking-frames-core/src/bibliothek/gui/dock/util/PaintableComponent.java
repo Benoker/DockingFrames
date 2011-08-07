@@ -30,7 +30,7 @@ import java.awt.Graphics;
 
 /**
  * A wrapper around a {@link Component} whose paint algorithm may be
- * modified by a {@link BackgroundPaint}. This provider of this method may
+ * modified by a {@link BackgroundPaint}. The provider of this method may
  * paint some parts automatically if the appropriate method is not called. The usual
  * order in which the paint methods should be executed is:
  * <ol>

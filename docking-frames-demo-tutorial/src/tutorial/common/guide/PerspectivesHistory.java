@@ -162,7 +162,7 @@ public class PerspectivesHistory {
 	 * as the method "setUpMinimized" just above. */
 	private static void setUpNormalized( CPerspective perspective, Map<String, CDockablePerspective> dockables ){
 		CGridPerspective center = perspective.getContentArea().getCenter();
-		CWorkingPerspective work = (CWorkingPerspective)perspective.getRoot( "work" );
+		CWorkingPerspective work = (CWorkingPerspective)perspective.getStation( "work" );
 		
 		center.gridAdd(  0,  0,  50, 25, dockables.get( "Red" ));
 		center.gridAdd( 50,  0,  50, 25, dockables.get( "Green" ));
