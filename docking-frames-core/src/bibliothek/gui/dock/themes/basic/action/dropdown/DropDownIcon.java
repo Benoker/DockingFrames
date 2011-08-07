@@ -87,7 +87,7 @@ public class DropDownIcon implements Icon{
 	};
 	
 	/**
-	 * Creates a new icon. The caller should call {@link #init(Dockable, DropDownAction, JComponent)} to fully
+	 * Creates a new icon. The caller should call {@link #init(Dockable, DropDownAction, ViewItem)} to fully
 	 * utilize this icon.
 	 */
 	public DropDownIcon(){
@@ -127,7 +127,7 @@ public class DropDownIcon implements Icon{
 	}
 	
 	/**
-	 * Tells whether {@link #init(Dockable, DropDownAction, Component)} has already been called.
+	 * Tells whether {@link #init(Dockable, DropDownAction, ViewItem)} has already been called.
 	 * @return <code>true</code> if this icon is initialized
 	 */
 	public boolean isInitialized(){

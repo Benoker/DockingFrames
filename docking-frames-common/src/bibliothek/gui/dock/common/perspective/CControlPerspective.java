@@ -251,9 +251,9 @@ public class CControlPerspective {
      * by this {@link CControlPerspective}.
      * @param out the stream to write into, not <code>null</code>
      * @param perspective the perspective to write, not <code>null</code>
-     * @throws IOException if <code>out</code> is not writeable
      * @param includeWorkingAreas whether the output contains information about children of {@link CStation#isWorkingArea() working areas} 
      * (<code>includeWorkingAreas = true</code>) or not (<code>includeWorkingAreas = false</code>)
+     * @throws IOException if <code>out</code> is not writeable
      */
     public void write( DataOutputStream out, CPerspective perspective, boolean includeWorkingAreas ) throws IOException{
     	Version.write( out, Version.VERSION_1_1_1 );

@@ -443,7 +443,7 @@ public interface CDockable {
     /**
      * Sets whether this <code>CDockable</code> should remain visible when minimized
      * and without focus.
-     * @param hold whether to remain visible
+     * @param sticky whether to remain visible
      */
     public void setSticky( boolean sticky );
     
