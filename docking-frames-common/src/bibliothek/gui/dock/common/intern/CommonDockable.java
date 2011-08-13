@@ -31,6 +31,8 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
+import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 
 /**
  * A {@link Dockable} which is a wrapper for a {@link CDockable}.
@@ -62,7 +64,9 @@ public interface CommonDockable extends Dockable, CommonElement{
 	 * Gets the identifier of the {@link DockFactory} which can store and load
 	 * this dockable. {@link CommonDockable}s which show a {@link SingleCDockable}
 	 * should return {@link CommonSingleDockableFactory#BACKUP_FACTORY_ID} and
-	 * the others should return the id of {@link MultipleCDockable#getFactory()}.
+	 * the others should return the id of {@link MultipleCDockable#getFactory()}.<br>
+	 * If the subclass implements {@link CommonDockStation}, then {@link CommonDockStationFactory#FACTORY_ID}
+	 * should be returned.
 	 * @return the name of the factory
 	 */
 	public String getFactoryID();

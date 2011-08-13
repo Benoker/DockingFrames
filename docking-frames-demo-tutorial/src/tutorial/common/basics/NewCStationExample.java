@@ -20,6 +20,7 @@ import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
+import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.mode.CNormalModeArea;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
@@ -257,6 +258,15 @@ public class NewCStationExample {
 		
 		public CStackDockStation( CStack stack ){
 			this.delegate = stack;
+		}
+		
+		@Override
+		public String getFactoryID(){
+			return CommonDockStationFactory.FACTORY_ID;
+		}
+		
+		public String getConverterID(){
+			return super.getFactoryID();
 		}
 		
 		public CDockable getDockable(){

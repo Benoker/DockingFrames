@@ -617,17 +617,21 @@
  - API: CControlPerspective allows now to read/write "entry" (partial) and "non-entry" (full) layouts.
  ! API: MissingPerspectiveStrategy.createRoot renamed to createStation because the method can create any kind of station, not just root stations.
  
- * General 
+* General 
  - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
  ! API: CDockable.getControl now returns a CControl
  - API: New interface "CStationContainer" is an abstraction of Components that show a set of CStations, like for example the CContentArea. This interface allows the framework to be more general and there is no need to assume any set of CStations is a CContentArea. 
- - API: CControl does not a sanity check for unique identifiers, an identifier must not be null and contain at least one sign that is not a whitespace
+ - API: CControl does now a sanity check for unique identifiers, an identifier must not be null and contain at least one sign that is not a whitespace
  - API: The size of ScreenDockWindows is now limited to the size of the biggest screen device, the exact behavior can be modified by implementing a new BoundaryRestriction
  - Bugfix: SingleParentRemover now also can remove DockStations that were just added into the tree (meaning, invalid stations will no longer show up).
  ! API: CDockable.isMinimizeHold/isMinimizeHoldSwitchable renamed in isSticky/isStickySwitchable. "sticky" is a much better name for a property than "minimizeHold".
  - API: SplitDockPerspective now supports reading and writing PlaceholderMaps, just like SplitDockStation
  ! API: All "Secure"-classes, needed to support unsigned applets, have been removed (they were already deprecated and the documentation clearly stated, that they will be removed). The property DockController.set/getSecureEnvironment is to be used instead of the secure-classes.
  - API: Clients can tell BackgroundComponents to be transparent or to be solid by calling BackgroundComponent.setTransparency. There is no alpha value, a component either paints its background or it does not.
+
+[v1.1.1p5a]
+ - Bugfix/API: New CommonDockStationFactory and CommonDockStationLayout are used to persistently store the layout of CStations. This new facillity allows clients to dynamically create new root-CStations that are also SingleCDockables while loading a layout. 
+ ! API: CommonDockStation has a new method "getConverterID" which tells what DockFactory to use for reading and writing the layout
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.intern.station;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CommonElement;
 
@@ -55,4 +56,20 @@ public interface CommonDockStation<S extends DockStation, C extends CommonDockSt
 	 * @return the model, may not be <code>null</code>
 	 */
 	public CStation<S> getStation();
+	
+	/**
+	 * Gets the unique identifier of the {@link DockFactory} that stores and loads the layout of this
+	 * station. For {@link CommonDockStation}s the result should always be {@link CommonDockStationFactory#FACTORY_ID}
+	 * @see #getConverterID()
+	 */
+	public String getFactoryID();
+	
+	/**
+	 * Gets the unique identifier of the {@link DockFactory} that should be used by the {@link CommonDockStationFactory}
+	 * to actually write or read the layout. Usually the result of this method is the same result
+	 * as {@link DockStation#getFactoryID()} (note: the factory id from the <b>super</b> class).
+	 * @return the unique identifier of a {@link DockFactory}. Can be <code>null</code> if 
+	 * {@link #getFactoryID()} does not return {@link CommonDockStationFactory#FACTORY_ID}
+	 */
+	public String getConverterID();
 }

@@ -54,7 +54,16 @@ public class CSplitDockStation extends SplitDockStation implements CommonDockSta
 			}
 		});
 	}
-
+	
+	@Override
+	public String getFactoryID(){
+		return CommonDockStationFactory.FACTORY_ID;
+	}
+	
+	public String getConverterID(){
+		return super.getFactoryID();
+	}
+	
 	public CDockable getDockable() {
 		return delegate.getDockable();
 	}

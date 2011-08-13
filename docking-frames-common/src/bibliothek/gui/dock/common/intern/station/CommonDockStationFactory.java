@@ -1,0 +1,357 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2011 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+package bibliothek.gui.dock.common.intern.station;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.util.Map;
+
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.SingleCDockable;
+import bibliothek.gui.dock.common.SingleCDockableFactory;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.layout.DockLayout;
+import bibliothek.gui.dock.layout.LocationEstimationMap;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.Version;
+import bibliothek.util.xml.XElement;
+import bibliothek.util.xml.XException;
+
+/**
+ * A factory that is responsible for storing and loading the layout of the
+ * {@link CommonDockStation}s. This factory actually forwards the work to
+ * a real {@link DockFactory} and only stores meta-data (like "was the 
+ * {@link CommonDockStation} as {@link SingleCDockable}?").
+ * @author Benjamin Sigg
+ */
+public class CommonDockStationFactory implements DockFactory<CommonDockStation<?, ?>, PerspectiveElement, CommonDockStationLayout>{
+	/** The unique identifier of this factory */
+	public static final String FACTORY_ID = "CommonDockStationFactory";
+	
+	/** The control in whose realm this factory is used */
+	private CControl control;
+
+	/** The factory used to create new {@link CommonDockStation}s that are also {@link SingleCDockable}s */
+	private CommonSingleDockableFactory singleDockableFactory;
+	
+	/**
+	 * Creates a new factory
+	 * @param control the {@link CControl} in whose realm this factory works, not <code>null</code>
+	 * @param singleDockableFactory the factory used to create new {@link CommonDockStation}s that are also {@link SingleCDockable}s, not <code>null</code>
+	 */
+	public CommonDockStationFactory( CControl control, CommonSingleDockableFactory singleDockableFactory ){
+		if( control == null ){
+			throw new IllegalArgumentException( "control must not be null" );
+		}
+		if( singleDockableFactory == null ){
+			throw new IllegalArgumentException( "singleDockableFactory must not be null" );
+		}
+		this.control = control;
+		this.singleDockableFactory = singleDockableFactory;
+	}
+	
+	/**
+	 * Creates a new {@link CommonDockStation} whose {@link CStation} is also a {@link SingleCDockable} with
+	 * unique identifier <code>id</code>.
+	 * @param id the unique identifier of a {@link SingleCDockable}
+	 * @return the new station or <code>null</code> if <code>id</code> is unknown
+	 */
+	protected CommonDockStation<?, ?> createStation( String id ){
+    	SingleCDockableFactory factory = singleDockableFactory.getFactory( id );
+    	if( factory == null ){
+    		return null;
+    	}
+    	
+    	SingleCDockable dockable = factory.createBackup( id );
+    	if( dockable == null ){
+    		return null;
+    	}
+    	
+    	CStation<?> station = dockable.asStation();
+    	if( station == null ){
+    		System.err.println( "unique identifier '" + id + "' was supposed to be a CStation, but factory created a dockable" );
+    		return null;
+    	}
+    	
+    	return (CommonDockStation<?, ?>)station.getStation();  
+	}
+	
+	/**
+	 * Register <code>station</code> at the {@link CControl} in whose realm this factory works.
+	 * @param station the station to register
+	 * @param root whether to set the root flag or not
+	 */
+	protected void registerStation( CStation<?> station, boolean root ){
+		control.addStation( station, root );
+	}
+
+	public String getID(){
+		return FACTORY_ID;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CommonDockStationLayout getLayout( CommonDockStation<?, ?> element, Map<Dockable, Integer> children ){
+		String factoryId = element.getConverterID();
+		DockFactory<DockElement, ?, ?> factory = (DockFactory<DockElement, ?, ?>)control.intern().getDockFactory( factoryId );
+		if( factory == null ){
+			return null;
+		}
+		
+		Object layout = factory.getLayout( element, children );
+		if( layout == null ){
+			return null;
+		}
+		
+		CDockable dockable = element.getStation().asDockable();
+		String id = null;
+		if( dockable instanceof SingleCDockable ){
+			id = ((SingleCDockable)dockable).getUniqueId();
+		}
+		
+		boolean root = control.isRootStation( element.getStation() );
+		return new CommonDockStationLayout( id, root, factoryId, new DockLayout<Object>( factoryId, layout ) );
+	}
+
+	public CommonDockStation<?, ?> layout( CommonDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+		CommonDockStation<?, ?> station = createStation( layout.getId() );
+		if( station == null ){
+			return null;
+		}
+		
+		registerStation( station.getStation(), layout.isRoot() );
+		
+		setLayout( station, layout, children, placeholders );
+		
+		return station;
+	}
+
+	public CommonDockStation<?, ?> layout( CommonDockStationLayout layout, PlaceholderStrategy placeholders ){
+		return layout( layout, null, placeholders );
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setLayout( CommonDockStation<?, ?> element, CommonDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+		String factoryId = element.getConverterID();
+		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
+		if( factory == null ){
+			return;
+		}
+		
+		layout.updateLayout( factory, placeholders );
+		DockLayout<?> data = layout.getLayout();
+		if( data == null ){
+			return;
+		}
+		
+		if( children == null ){
+			factory.setLayout( element, data.getData(), placeholders );
+		}
+		else{
+			factory.setLayout( element, data.getData(), children, placeholders );
+		}
+	}
+
+	public void setLayout( CommonDockStation<?, ?> element, CommonDockStationLayout layout, PlaceholderStrategy placeholders ){
+		setLayout( element, layout, null, placeholders );	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void estimateLocations( CommonDockStationLayout layout, LocationEstimationMap children ){
+		String factoryId = layout.getFactoryId();
+		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
+		if( factory == null ){
+			return;
+		}
+		layout.updateLayout( factory, null );
+		DockLayout<?> data = layout.getLayout();
+		if( data == null ){
+			return;
+		}
+		factory.estimateLocations( data.getData(), children );
+	}
+
+	public PerspectiveElement layoutPerspective( CommonDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void layoutPerspective( PerspectiveElement perspective, CommonDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public CommonDockStationLayout getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void write( CommonDockStationLayout layout, XElement element ){
+		String factoryId = layout.getFactoryId();
+		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
+		XElement content = layout.getLayoutXML();
+		if( content == null ){
+			layout.updateLayout( factory, null );
+			DockLayout<?> data = layout.getLayout();
+			if( data == null ){
+				throw new XException( "data are null, but data were just updated" );
+			}
+			content = new XElement("content");
+			factory.write( data.getData(), content );
+		}
+		if( content == null ){
+			throw new XException( "unable to write layout, it could not be converted into byte-array format" );
+		}
+		
+		String id = layout.getId();
+		if( id != null ){
+			element.addElement( "id" ).setString( id );
+		}
+		element.addElement( "root" ).setBoolean( layout.isRoot() );
+		
+		content.addString( "delegate", factoryId );
+		element.addElement( content );
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CommonDockStationLayout read( XElement element, PlaceholderStrategy placeholders ){
+		String id = null;
+		XElement xid = element.getElement( "id" );
+		if( xid != null ){
+			id = xid.getString();
+		}
+		
+		boolean root = element.getElement( "root" ).getBoolean();
+		
+		XElement xcontent = element.getElement( "content" );
+		if( xcontent == null ){
+			throw new XException( "missing content element" );
+		}
+		
+		String factoryId = xcontent.getString( "delegate" );
+		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
+		if( factory == null ){
+			return new CommonDockStationLayout( id, root, factoryId, xcontent );
+		}
+		else{
+			Object data = factory.read( xcontent, placeholders );
+			if( data == null ){
+				return null;
+			}
+			
+			return new CommonDockStationLayout( id, root, factoryId, new DockLayout<Object>( factoryId, data ) );
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void write( CommonDockStationLayout layout, DataOutputStream out ) throws IOException{
+		String factoryId = layout.getFactoryId();
+		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
+		byte[] content = layout.getLayoutBytes();
+		if( content == null ){
+			layout.updateLayout( factory, null );
+			DockLayout<?> data = layout.getLayout();
+			if( data == null ){
+				throw new IOException( "data are null, but data were just updated" );
+			}
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			factory.write( data.getData(), new DataOutputStream( bout ) );
+			content = bout.toByteArray();
+		}
+		if( content == null ){
+			throw new IOException( "unable to write layout, it could not be converted into byte-array format" );
+		}
+		
+		Version.write( out, Version.VERSION_1_1_1 );
+		
+		String id = layout.getId();
+		if( id == null ){
+			out.writeBoolean( false );
+		}
+		else{
+			out.writeBoolean( true );
+			out.writeUTF( id );
+		}
+		
+		out.writeBoolean( layout.isRoot() );
+		
+		out.writeUTF( factoryId );
+		
+		out.writeInt( content.length );
+		out.write( content );
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CommonDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
+		Version.read( in ).checkCurrent();
+		
+		String id;
+		if( in.readBoolean() ){
+			id = in.readUTF();
+		}
+		else{
+			id = null;
+		}
+		
+		boolean root = in.readBoolean();
+		
+		String factoryId = in.readUTF();
+		
+		int length = in.readInt();
+		byte[] content = new byte[length];
+		int offset = 0;
+		while( offset < length ){
+			int delta = in.read( content, offset, length - offset );
+			if( delta == -1 ){
+				throw new EOFException();
+			}
+			offset += delta;
+		}
+		
+		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
+		if( factory == null ){
+			return new CommonDockStationLayout( id, root, factoryId, content );
+		}
+		else{
+			Object data = factory.read( new DataInputStream( new ByteArrayInputStream( content ) ), placeholders );
+			if( data == null ){
+				return null;
+			}
+			return new CommonDockStationLayout( id, root, factoryId, new DockLayout<Object>( factoryId, data ) );
+		}
+	}
+}

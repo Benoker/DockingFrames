@@ -101,6 +101,7 @@ import bibliothek.gui.dock.common.intern.MutableCControlRegister;
 import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
+import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
 import bibliothek.gui.dock.common.intern.ui.CommonSingleTabDecider;
 import bibliothek.gui.dock.common.intern.ui.ExtendedModeAcceptance;
@@ -704,7 +705,8 @@ public class CControl {
      * Called during construction of this {@link CControl}, this method adds {@link DockFactory}s
      * to the {@link #intern() intern representation} of this {@link CControl}.
      */
-    protected void initFactories(){
+    @SuppressWarnings("unchecked")
+	protected void initFactories(){
         CommonSingleDockableFactory backupFactory = register.getBackupFactory();
         frontend.registerFactory( backupFactory );
         frontend.registerBackupFactory( backupFactory );
@@ -716,6 +718,13 @@ public class CControl {
         		return stack;
         	}
         });
+        
+        CommonDockStationFactory stationFactory = new CommonDockStationFactory( this, backupFactory );
+        frontend.registerFactory( stationFactory );
+        
+        // when creating new DockStations, the factory only creates DockStations that implement Dockable. Altough
+        // the factory can layout DockStations of any kind.
+        frontend.registerBackupFactory( (DockFactory)stationFactory );
     }
 
     /**
@@ -1570,6 +1579,17 @@ public class CControl {
         }
 
         station.setControlAccess( access );
+    }
+    
+    /**
+     * Tells whether <code>station</code> was {@link #addStation(CStation, boolean) added} to this {@link CControl}
+     * with the <code>root</code> flag set to <code>true</code>.
+     * @param station the station whose root flag is asked
+     * @return the value of the root flag or <code>false</code> if <code>station</code> is not registered at all
+     */
+    public boolean isRootStation( CStation<?> station ){
+    	DockStation root = frontend.getRoot( station.getUniqueId() );
+    	return root == station.getStation();
     }
 
     /**
