@@ -719,7 +719,7 @@ public class CControl {
         	}
         });
         
-        CommonDockStationFactory stationFactory = new CommonDockStationFactory( this, backupFactory );
+        CommonDockStationFactory stationFactory = new CommonDockStationFactory( this, null, backupFactory );
         frontend.registerFactory( stationFactory );
         
         // when creating new DockStations, the factory only creates DockStations that implement Dockable. Altough

@@ -31,6 +31,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGridArea;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
+import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.mode.CMaximizedModeAreaPerspective;
 import bibliothek.gui.dock.common.perspective.mode.CMaximizedModePerspective;
@@ -84,6 +85,9 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	/** The type of this perspective */
 	private Path typeId;
 
+	/** Whether this is a root station */
+	private boolean root = true;
+	
 	/** identifiers children that are in normal mode */
 	private CModeAreaPerspective normalMode = new CModeAreaPerspective(){
 		public String getUniqueId(){
@@ -155,6 +159,14 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	
 	public Path getTypeId(){
 		return typeId;
+	}
+	
+	public boolean isRoot(){
+		return root;
+	}
+	
+	public void setRoot( boolean root ){
+		this.root = root;
 	}
 	
 	/**
@@ -499,11 +511,20 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * The type of object that is used by a {@link CGridPerspective} as intern representation.
 	 * @author Benjamin Sigg
 	 */
-	public class CommonSplitDockPerspective extends SplitDockPerspective implements CommonElementPerspective {
+	public class CommonSplitDockPerspective extends SplitDockPerspective implements CommonDockStationPerspective {
 		public CElementPerspective getElement(){
 			return CGridPerspective.this;
 		}
-
+		
+		@Override
+		public String getFactoryID(){
+			return CommonDockStationFactory.FACTORY_ID;
+		}
+		
+		public String getConverterID(){
+			return super.getFactoryID();
+		}
+		
 		@Override
 		public void read( PerspectiveSplitDockTree tree, PerspectiveDockable fullscreen ){
 			super.read( tree, fullscreen );

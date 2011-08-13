@@ -42,6 +42,10 @@ import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.SingleCDockableFactory;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.common.perspective.CElementPerspective;
+import bibliothek.gui.dock.common.perspective.CStationPerspective;
+import bibliothek.gui.dock.common.perspective.CommonDockStationPerspective;
+import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
@@ -58,7 +62,7 @@ import bibliothek.util.xml.XException;
  * {@link CommonDockStation} as {@link SingleCDockable}?").
  * @author Benjamin Sigg
  */
-public class CommonDockStationFactory implements DockFactory<CommonDockStation<?, ?>, PerspectiveElement, CommonDockStationLayout>{
+public class CommonDockStationFactory implements DockFactory<CommonDockStation<?, ?>, CommonDockStationPerspective, CommonDockStationLayout>{
 	/** The unique identifier of this factory */
 	public static final String FACTORY_ID = "CommonDockStationFactory";
 	
@@ -68,12 +72,16 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 	/** The factory used to create new {@link CommonDockStation}s that are also {@link SingleCDockable}s */
 	private CommonSingleDockableFactory singleDockableFactory;
 	
+	/** Factory used to access missing {@link PerspectiveElement}s */
+	private FrontendPerspectiveCache cache;
+	
 	/**
 	 * Creates a new factory
 	 * @param control the {@link CControl} in whose realm this factory works, not <code>null</code>
+	 * @param cache used to create missing {@link PerspectiveElement}s, can be <code>null</code>
 	 * @param singleDockableFactory the factory used to create new {@link CommonDockStation}s that are also {@link SingleCDockable}s, not <code>null</code>
 	 */
-	public CommonDockStationFactory( CControl control, CommonSingleDockableFactory singleDockableFactory ){
+	public CommonDockStationFactory( CControl control, FrontendPerspectiveCache cache, CommonSingleDockableFactory singleDockableFactory ){
 		if( control == null ){
 			throw new IllegalArgumentException( "control must not be null" );
 		}
@@ -81,6 +89,7 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 			throw new IllegalArgumentException( "singleDockableFactory must not be null" );
 		}
 		this.control = control;
+		this.cache = cache;
 		this.singleDockableFactory = singleDockableFactory;
 	}
 	
@@ -204,19 +213,54 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 		factory.estimateLocations( data.getData(), children );
 	}
 
-	public PerspectiveElement layoutPerspective( CommonDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
-		// TODO Auto-generated method stub
-		return null;
+	public CommonDockStationPerspective layoutPerspective( CommonDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		CommonDockStationPerspective element = (CommonDockStationPerspective)cache.get( layout.getId(), layout.isRoot() );
+		if( element == null ){
+			return null;
+		}
+		
+		layoutPerspective( element, layout, children );
+		return element;
 	}
 
-	public void layoutPerspective( PerspectiveElement perspective, CommonDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
-		// TODO Auto-generated method stub
+	@SuppressWarnings("unchecked")
+	public void layoutPerspective( CommonDockStationPerspective element, CommonDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		CStationPerspective station = element.getElement().asStation();
+		station.setRoot( layout.isRoot() );
 		
+		DockFactory<?, PerspectiveElement, Object> factory = (DockFactory<?, PerspectiveElement, Object>)control.intern().getDockFactory( layout.getFactoryId() );
+		if( factory == null ){
+			return;
+		}
+		
+		layout.updateLayout( factory, null );
+		DockLayout<?> data = layout.getLayout();
+		if( data == null ){
+			return;
+		}
+		
+		factory.layoutPerspective( element, data.getData(), children );
 	}
 	
-	public CommonDockStationLayout getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("unchecked")
+	public CommonDockStationLayout getPerspectiveLayout( CommonDockStationPerspective element, Map<PerspectiveDockable, Integer> children ){
+		String factoryId = element.getConverterID();
+		DockFactory<?, PerspectiveElement, Object> dockFactory = (DockFactory<?, PerspectiveElement, Object>)control.intern().getDockFactory( factoryId );
+		DockFactory<?, PerspectiveElement, Object> factory = dockFactory;
+		if( factory == null ){
+			return null;
+		}
+		Object data = factory.getPerspectiveLayout( element, children );
+		if( data == null ){
+			return null;
+		}
+		
+		CElementPerspective celement = element.getElement();
+		CStationPerspective station = celement.asStation();
+		
+		String id = station.getUniqueId();
+				
+		return new CommonDockStationLayout( id, station.isRoot(), factoryId, new DockLayout<Object>( factoryId, data ) );
 	}
 
 	@SuppressWarnings("unchecked")
