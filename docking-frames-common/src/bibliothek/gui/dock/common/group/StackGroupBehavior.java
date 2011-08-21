@@ -116,6 +116,11 @@ public class StackGroupBehavior implements CGroupBehavior {
 	}
 	
 	public boolean shouldForwardActions( LocationModeManager<? extends LocationMode> manager, DockStation station, Dockable dockable, ExtendedMode mode ){
+		Dockable dockStation = station.asDockable();
+		if( dockStation != null && !manager.isModeAvailable( dockStation, mode )){
+			return false;
+		}
+		
 		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
 			Dockable child = station.getDockable( i );
 			if( !manager.isModeAvailable( child, mode ) ){

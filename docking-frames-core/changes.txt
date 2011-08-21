@@ -632,6 +632,10 @@
 [v1.1.1p5a]
  - Bugfix/API: New CommonDockStationFactory and CommonDockStationLayout are used to persistently store the layout of CStations. This new facillity allows clients to dynamically create new root-CStations that are also SingleCDockables while loading a layout. 
  ! API: CommonDockStation has a new method "getConverterID" which tells what DockFactory to use for reading and writing the layout
+
+[v1.1.1p5b]
+ - Bugfix: FlapDockStation did create a drag&drop operation even if it already knew that the operation was invalid, as a result an Exception was thrown later.
+ - Bugfix: CGroupBehaviors no longer forwards actions to DockStations if these DockStations do not support the action.
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

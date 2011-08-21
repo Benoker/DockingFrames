@@ -1419,6 +1419,10 @@ public class FlapDockStation extends AbstractDockableStation {
             }
         }
         
+        if( dropInfo == null ){
+        	return null;
+        }
+        
         return new FlapDropOperation( dropInfo, move );
         
     }
@@ -2069,6 +2073,10 @@ public class FlapDockStation extends AbstractDockableStation {
     	 * @param move whether this is a move operation
     	 */
     	public FlapDropOperation( FlapDropInfo dropInfo, boolean move ){
+    		if( dropInfo == null ){
+    			throw new IllegalArgumentException( "dropInfo must not be null" );
+    		}
+    		
     		this.dropInfo = dropInfo;
     		this.move = move;
     	}
