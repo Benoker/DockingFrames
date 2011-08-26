@@ -50,6 +50,10 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.icon.DockIcon;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * An abstract combination between {@link DockStation} and {@link Dockable}. This
@@ -146,12 +150,24 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
         listeners.removeListener( listener );
     }
 
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
     public boolean isVisible( Dockable dockable ) {
-        return isStationVisible();
+        return isStationShowing();
+    }
+    
+    public boolean isChildShowing( Dockable dockable ){
+    	return isVisible( dockable );
     }
 
+    public boolean isStationShowing(){
+	    return isStationVisible();
+    }
+    
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )    
     public boolean isStationVisible() {
-    	boolean visible = isDockableVisible();
+    	boolean visible = isDockableShowing();
     	if( visible ){
     		return true;
     	}

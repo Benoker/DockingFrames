@@ -84,7 +84,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
-import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -154,7 +154,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
     
     /** A manager for firing events if a child changes its visibility-state */
-    private DockableVisibilityManager visibility;
+    private DockableShowingManager visibility;
     
     /** A paint to draw lines */
     private DefaultStationPaintValue paint;
@@ -298,7 +298,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".stack", this );
     	
         visibleListener = new VisibleListener();
-        visibility = new DockableVisibilityManager( listeners );
+        visibility = new DockableShowingManager( listeners );
         
         displayers = new DisplayerCollection( this, displayerFactory );
         displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
@@ -348,7 +348,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 			public void hierarchyChanged( HierarchyEvent e ){
 				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
 					if( getDockParent() == null ){
-						getDockableStateListeners().checkVisibility();
+						getDockableStateListeners().checkShowing();
 					}
 					
 					visibility.fire();
@@ -1494,7 +1494,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      */
     private class VisibleListener extends DockStationAdapter implements ChangeListener{
         @Override
-        public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ) {
+        public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
             visibility.fire();
         }
         

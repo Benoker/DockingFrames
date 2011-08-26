@@ -48,6 +48,10 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A <code>DockStation</code> is some area (e.g. a {@link Component}) showing
@@ -153,15 +157,39 @@ public interface DockStation extends DockElement{
      * @param dockable the child whose visibility-state is questioned
      * @return whether <code>dockable</code> is visible or not
      * @see #isStationVisible()
+     * @deprecated use {@link #isChildShowing(Dockable)} instead, this method will be removed in a future release
      */
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
+    @Deprecated
     public boolean isVisible( Dockable dockable );
+
+    /**
+     * Tells whether the child <code>dockable</code> is visible or not. Visible
+     * means that the {@link Dockable#getComponent() component} of <code>dockable</code>
+     * can be seen by the user. The result must be <code>false</code> if
+     * this station is not visible.
+     * @param dockable the child whose visibility-state is questioned
+     * @return whether <code>dockable</code> is visible or not
+     * @see #isStationVisible()
+     */
+    public boolean isChildShowing( Dockable dockable );
+    
+    /**
+     * Tells whether this station is visible or not. For example a station on 
+     * a {@link JFrame} is not visible if the frame is minimized.
+     * @return whether this station is visible
+     * @deprecated use {@link #isStationShowing()} instead, this method will be removed in a future release
+     */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
+    public boolean isStationVisible();
     
     /**
      * Tells whether this station is visible or not. For example a station on 
      * a {@link JFrame} is not visible if the frame is minimized.
      * @return whether this station is visible
      */
-    public boolean isStationVisible();
+    public boolean isStationShowing();
     
     /**
      * Gets the number of children.

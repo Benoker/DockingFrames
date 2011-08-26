@@ -54,6 +54,10 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * An implementation of {@link Dockable} which deals with the simple things.<br>
@@ -193,6 +197,12 @@ public abstract class AbstractDockable implements Dockable {
         return controller;
     }
     
+    public boolean isDockableShowing(){
+	    return isDockableVisible();
+    }
+    
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
     public boolean isDockableVisible(){
     	DockController controller = getController();
     	if( controller == null ){

@@ -51,6 +51,10 @@ import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.event.VetoableDockFrontendEvent;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 
 /**
@@ -312,8 +316,14 @@ public abstract class AbstractCDockable implements CDockable {
 	    }
     }
     
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
     public boolean isDockableVisible(){
-    	return intern().isDockableVisible();
+    	return intern().isDockableShowing();
+    }
+    
+    public boolean isShowing(){
+    	return isDockableVisible();
     }
     
     /**

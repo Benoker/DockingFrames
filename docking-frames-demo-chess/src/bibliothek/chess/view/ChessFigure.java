@@ -231,6 +231,11 @@ public class ChessFigure extends JLabel implements Dockable {
 	    // ignore
 	}
 	
+	public boolean isDockableShowing(){
+		return isDockableVisible();
+	}
+	
+	@Deprecated
 	public boolean isDockableVisible(){
 		// ignore
 		return true;

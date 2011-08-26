@@ -303,11 +303,13 @@ public interface CDockable {
 	 * <code>JFrame</code> is not shown, or some <code>DockStation</code> not
 	 * properly added to a parent component, then a visible <code>CDockable</code> can
 	 * be invisible for the user. For {@link CDockable}s that are also root-{@link CStation} this method will 
-	 * always return <code>true</code>.
+	 * always return <code>true</code>.<br>
+	 * Clients interested in whether the user can actually see this dockable should call {@link #isShowing()}.<br>
 	 * Subclasses should return the result of {@link CControlAccess#isVisible(CDockable)}.
 	 * @return <code>true</code> if this <code>CDockable</code> can be accessed by the user
 	 * through a graphical user interface.
 	 * @see #hasParent()
+	 * @see #isShowing()
 	 */
 	public boolean isVisible();
 	
@@ -326,8 +328,24 @@ public interface CDockable {
 	 * does not take into account that a frame may be positioned such that it is not entierly visible on the
 	 * screen. Neither does the method take into account, that a frame may be minimized.
 	 * @return <code>true</code> if the user should be able to see this item
+	 * @deprecated this method gets replaced by {@link #isShowing()}, which offers the exact same information. This method
+	 * will be removed in a future release
 	 */
+	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
 	public boolean isDockableVisible();
+
+	/**
+	 * Tells whether this <code>CDockable</code> is currently visible to the user. A <code>CDockable</code>
+	 * which is not {@link #isVisible() visible}, is not <code>dockable visible</code> either. The method
+	 * does not take into account that a frame may be positioned such that it is not entierly visible on the
+	 * screen. The method may or may not take into account, that a frame may be minimized.<br>
+	 * Clients interested in monitoring this property can add a {@link CDockableLocationListener} to this dockable.
+	 * @return <code>true</code> if the user should be able to see this item
+	 * @see CDockableLocationListener
+	 * @see #addCDockableLocationListener(CDockableLocationListener)
+	 */
+	public boolean isShowing();
 	
 	/**
 	 * Sets the location of this <code>CDockable</code>. If this <code>CDockable</code> is visible, than

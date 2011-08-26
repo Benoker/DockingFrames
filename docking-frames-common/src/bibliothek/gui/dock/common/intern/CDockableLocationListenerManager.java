@@ -54,7 +54,7 @@ public class CDockableLocationListenerManager {
 	private CLocation location;
 	
 	/** the current visibility state */
-	private boolean visible;
+	private boolean showing;
 	
 	/** whether a delayed check is in progress */
 	private boolean delayed = false;
@@ -103,13 +103,13 @@ public class CDockableLocationListenerManager {
 	}
 
 	private void checkNow(){
-		boolean newVisible = dockable.isDockableVisible();
+		boolean newShowing = dockable.isShowing();
 		CLocation newLocation = dockable.getBaseLocation();
 		
-		boolean oldVisible = visible;
+		boolean oldShowing = showing;
 		CLocation oldLocation = location;
 		
-		this.visible = newVisible;
+		this.showing = newShowing;
 		this.location = newLocation;
 		
 		boolean locationEvent = false;
@@ -119,9 +119,9 @@ public class CDockableLocationListenerManager {
 			}
 		}
 		
-		if( locationEvent || (newVisible != oldVisible )){
+		if( locationEvent || (newShowing != oldShowing )){
 			if( listener != null ){
-				CDockableLocationEvent event = new CDockableLocationEvent( dockable, oldVisible, newVisible, oldLocation, newLocation );
+				CDockableLocationEvent event = new CDockableLocationEvent( dockable, oldShowing, newShowing, oldLocation, newLocation );
 				listener.changed( event );
 			}
 		}		

@@ -32,7 +32,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.station.LayoutLocked;
-import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.DockableShowingManager;
 
 /**
  * This listener is added to a {@link DockStation}. It receives events on adding
@@ -75,14 +75,15 @@ public interface DockStationListener {
     public void dockableRemoved( DockStation station, Dockable dockable );
     
     /**
-     * Invoked if the visibility of a child has been changed. The visibility
-     * has to be implemented in a global scale. Callers may use the class
-     * {@link DockableVisibilityManager} to organize the calls in an easy way.
+     * Invoked if the visibility of a child has been changed. In this context visibility
+     * means whether the user can or cannot see the <code>dockable</code>. See also
+     * {@link Dockable#isDockableShowing()}.<br>
+     * Callers may use the class {@link DockableShowingManager} to organize the calls in an easy way.
      * @param station the station whose children have changed their visibility
      * @param dockable the {@link Dockable} whose visibility has changed
-     * @param visible the new visibility-state
+     * @param showing the new visibility-state
      */
-    public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible );
+    public void dockableShowingChanged( DockStation station, Dockable dockable, boolean showing );
     
     /**
      * Called when <code>dockable</code> has been selected. The value of

@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common.event;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 
@@ -33,16 +34,19 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
  * about state changes of {@link CDockable}.
  * @author Benjamin Sigg
  * @see CDockablePropertyListener
+ * @see CDockableLocationListener
  */
 public interface CDockableStateListener {
     /**
      * Called when the {@link CDockable#isVisible() visibility}-property
-     * has changed. Please read the notes of {@link CDockable#isVisible()} to
+     * changed. Please read the notes of {@link CDockable#isVisible()} to
      * learn more about the exact meaning of visibility in the context of a 
      * {@link CDockable}.<br>
-     * Clients interested in the visibility of a dockable to the user should
-     * use a {@link CDockableLocationListener}.
+     * Clients interested to know whether the user can see the {@link Dockable} or not should use
+     * a {@link CDockableLocationListener}.
      * @param dockable the source of the event
+     * @see CDockable#isVisible()
+     * @see CDockable#isShowing()
      */
     public void visibilityChanged( CDockable dockable );
     

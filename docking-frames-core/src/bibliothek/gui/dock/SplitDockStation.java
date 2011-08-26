@@ -119,7 +119,7 @@ import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
-import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
@@ -143,6 +143,10 @@ import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This station shows all its children at once. The children are separated
@@ -203,7 +207,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private List<SplitDockListener> splitListeners = new ArrayList<SplitDockListener>();
 
 	/** The handler for events and listeners concerning the visibility of children */
-	private DockableVisibilityManager visibility;
+	private DockableShowingManager visibility;
 
 	/** the DockTitles which are bound to this dockable */
 	private List<DockTitle> titles = new LinkedList<DockTitle>();
@@ -387,7 +391,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		if( createFullScreenAction ){
 			fullScreenAction = createFullScreenAction();
 		}
-		visibility = new DockableVisibilityManager(dockStationListeners);
+		visibility = new DockableShowingManager(dockStationListeners);
 
 		getContentPane().addMouseListener(dividerListener);
 		getContentPane().addMouseMotionListener(dividerListener);
@@ -426,7 +430,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			public void hierarchyChanged( HierarchyEvent e ){
 				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
 					if( getDockParent() == null ){
-						dockableStateListeners.checkVisibility();
+						dockableStateListeners.checkShowing();
 					}
 					
 					visibility.fire();
@@ -1068,14 +1072,32 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		splitListeners.remove(listener);
 	}
 
+	public boolean isChildShowing( Dockable dockable ){
+		return isVisible( dockable );
+	}
+	
+	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
 	public boolean isVisible( Dockable dockable ){
 		return isStationVisible() && (!isFullScreen() || dockable == getFullScreen());
 	}
 
+	public boolean isStationShowing(){
+		return isStationVisible();
+	}
+	
+	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
 	public boolean isStationVisible(){
 		return isDockableVisible();
 	}
+
+	public boolean isDockableShowing(){
+		return isDockableVisible();
+	}
 	
+	@Deprecated
+	@Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
 	public boolean isDockableVisible(){
     	DockController controller = getController();
     	if( controller == null ){
@@ -1083,7 +1105,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
     	}
     	DockStation parent = getDockParent();
     	if( parent != null ){
-    		return parent.isVisible( this );
+    		return parent.isChildShowing( this );
     	}
     	return isShowing();
     }
@@ -2720,7 +2742,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	private class VisibleListener extends DockStationAdapter {
 		@Override
-		public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ){
+		public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ){
 			visibility.fire();
 		}
 	}

@@ -636,6 +636,7 @@
 [v1.1.1p5b]
  - Bugfix: FlapDockStation did create a drag&drop operation even if it already knew that the operation was invalid, as a result an Exception was thrown later.
  - Bugfix: CGroupBehaviors no longer forwards actions to DockStations if these DockStations do not support the action.
+ ! API: The property telling whether the user can see a Dockable is now called "showing" and no longer "dockable-visible". This should prevent more confusion about "visibility" vs "true visibility" (the later term is no longer to be used, its now "showing").
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

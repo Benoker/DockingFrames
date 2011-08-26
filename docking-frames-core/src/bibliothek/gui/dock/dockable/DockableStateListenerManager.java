@@ -61,7 +61,7 @@ public class DockableStateListenerManager {
 	private Dockable dockable;
 
 	/** whether {@link #dockable} currently is visible */
-	private boolean dockableVisible;
+	private boolean dockableShowing;
 	
 	/** whether an event is about to be fired */
 	private boolean firing = false;
@@ -80,14 +80,14 @@ public class DockableStateListenerManager {
 				flags |= DockableStateEvent.FLAG_PARENT_SELECTION;
 			}
 
-			if( event.didVisibilityChange() ) {
-				boolean newVisible = dockable.isDockableVisible();
-				if( newVisible != dockableVisible ) {
-					dockableVisible = newVisible;
-					flags |= DockableStateEvent.FLAG_VISIBILITY;
+			if( event.didShowingChange() ) {
+				boolean newShowing = dockable.isDockableShowing();
+				if( newShowing != dockableShowing ) {
+					dockableShowing = newShowing;
+					flags |= DockableStateEvent.FLAG_SHOWING;
 				}
 				else {
-					flags &= ~DockableStateEvent.FLAG_VISIBILITY;
+					flags &= ~DockableStateEvent.FLAG_SHOWING;
 				}
 			}
 
@@ -114,7 +114,7 @@ public class DockableStateListenerManager {
 			}
 			
 			event( DockableStateEvent.FLAG_HIERARCHY );
-			checkVisibility();
+			checkShowing();
 		}
 
 		public void controllerChanged( DockHierarchyEvent event ){
@@ -124,9 +124,9 @@ public class DockableStateListenerManager {
 
 	/** this listener is added to {@link #parent} */
 	private DockStationListener dockStationListener = new DockStationAdapter(){
-		public void dockableVisibiltySet( DockStation station, Dockable changed, boolean visible ){
+		public void dockableShowingChanged( DockStation station, Dockable changed, boolean visible ){
 			if( changed == dockable ){
-				checkVisibility();
+				checkShowing();
 			}
 		}
 
@@ -155,14 +155,14 @@ public class DockableStateListenerManager {
 	}
 	
 	/**
-	 * Rechecks the visibility state and may fire an event if the visibility changed.
+	 * Checks whether the {@link Dockable} is showing and fires an event if the property changed.
 	 */
-	public void checkVisibility(){
-		boolean newVisible = dockable.isDockableVisible();
+	public void checkShowing(){
+		boolean newShowing = dockable.isDockableShowing();
 		
-		if( dockableVisible != newVisible ){
-			dockableVisible = newVisible;
-			event( DockableStateEvent.FLAG_VISIBILITY );
+		if( dockableShowing != newShowing ){
+			dockableShowing = newShowing;
+			event( DockableStateEvent.FLAG_SHOWING );
 		}
 	}
 	
@@ -247,7 +247,7 @@ public class DockableStateListenerManager {
 			}
 			parent.addDockStationListener( dockStationListener );
 		}
-		dockableVisible = dockable.isDockableVisible();
+		dockableShowing = dockable.isDockableShowing();
 	}
 
 	/**

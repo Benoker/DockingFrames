@@ -79,14 +79,14 @@ public class DockStationListenerManager {
     }
 	
 	/**
-     * Invokes the method {@link DockStationListener#dockableVisibiltySet(DockStation, Dockable, boolean)}
+     * Invokes the method {@link DockStationListener#dockableShowingChanged(DockStation, Dockable, boolean)}
      * on all registered {@link DockStationListener DockStationListeners}.
      * @param dockable the {@link Dockable} whose visibility has changed
      * @param value the new state
      */
     public void fireDockableVisibilitySet( Dockable dockable, boolean value ){
     	for( DockStationListener listener : listeners.toArray( new DockStationListener[ listeners.size() ] ))
-            listener.dockableVisibiltySet( station, dockable, value );
+            listener.dockableShowingChanged( station, dockable, value );
     }
     
     /**

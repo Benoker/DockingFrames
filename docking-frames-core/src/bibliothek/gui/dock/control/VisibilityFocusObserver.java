@@ -94,7 +94,7 @@ public class VisibilityFocusObserver implements DockRegisterListener{
             if( !controller.getRelocator().isOnPut() ){
             	Dockable focusedDockable = controller.getFocusedDockable();
                 if( dockable == focusedDockable || focusedDockable == null ){
-                    if( dockable.isDockableVisible() ){
+                    if( dockable.isDockableShowing() ){
                         controller.setFocusedDockable( dockable, null, true );
                     }
                 }
@@ -102,7 +102,7 @@ public class VisibilityFocusObserver implements DockRegisterListener{
         }
         
         @Override
-        public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ){
+        public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ){
             if( !controller.isOnFocusing() && !visible && controller.isFocused( dockable ) ){
             	DockStation parent = dockable.getDockParent();
             	while( parent != null ){
