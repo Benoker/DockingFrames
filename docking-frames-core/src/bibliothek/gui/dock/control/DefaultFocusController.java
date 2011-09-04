@@ -201,7 +201,7 @@ public class DefaultFocusController extends AbstractFocusController {
 	    	pendingRequests.clear();
     	}
 
-    	boolean active= true;
+    	boolean active = true;
     	
     	// execute
     	if( EventQueue.isDispatchThread() ){
@@ -215,7 +215,7 @@ public class DefaultFocusController extends AbstractFocusController {
 			});
     	}
         
-        if( active && dockable != null && dockable != focusedDockable ){
+        if( active && dockable != focusedDockable ){
     		Dockable oldFocused = focusedDockable;
     		focusedDockable = dockable;
     		fireDockableFocused( oldFocused, focusedDockable );
@@ -237,7 +237,7 @@ public class DefaultFocusController extends AbstractFocusController {
         	Request nextRequest = new Request( next, accepted );
         	return nextRequest.enqueue();
         }
-    	return false;
+    	return true;
     }
     
     private class Request implements ActionListener{
@@ -319,6 +319,9 @@ public class DefaultFocusController extends AbstractFocusController {
 	    		Component component = accept();
 		    	if( component != null ){
 		    		execute( request, getDockable(), component );
+		    	}
+		    	else if( request.getSource() == null && request.getComponent() == null && pendingRequests.size() == 1 ){
+		    		execute( request, null, null );
 		    	}
 		    	else{
 		    		synchronized( pendingRequests ) {

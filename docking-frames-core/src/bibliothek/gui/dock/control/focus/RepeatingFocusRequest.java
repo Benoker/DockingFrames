@@ -53,15 +53,12 @@ public class RepeatingFocusRequest implements FocusRequest{
 	
 	/**
 	 * Creates a new request
-	 * @param source the element that gets focused, not <code>null</code>
+	 * @param source the element that gets focused, can be <code>null</code>
 	 * @param component the {@link Component} that actually gains the focus, not <code>null</code>
 	 * @param delay how long to wait until requesting the focus, at least 1
 	 * @param attempts how often to try and gain the focus, at least 1
 	 */
 	public RepeatingFocusRequest( DockElementRepresentative source, Component component, int delay, int attempts ){
-		if( source == null ){
-			throw new IllegalArgumentException( "source must not be null" );
-		}
 		if( component == null ){
 			throw new IllegalArgumentException( "component must not be null" );
 		}

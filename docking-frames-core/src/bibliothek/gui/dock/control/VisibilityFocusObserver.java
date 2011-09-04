@@ -110,7 +110,7 @@ public class VisibilityFocusObserver implements DockRegisterListener{
             		if( dockable != null ){
             			parent = dockable.getDockParent();
             			if( parent != null ){
-            				if( parent.isVisible( dockable )){
+            				if( parent.isChildShowing( dockable )){
             					controller.setFocusedDockable( dockable, null, false );
             					return;
             				}

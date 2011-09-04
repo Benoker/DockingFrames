@@ -355,7 +355,7 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 					boolean select = false;
 					
 					if( parent != null ){
-						select = parent.isVisible( dockable ) && parent.getFrontDockable() == dockable;
+						select = parent.isChildShowing( dockable ) && parent.getFrontDockable() == dockable;
 					}
 					
 					setSelected( select );

@@ -26,9 +26,11 @@
 package bibliothek.gui.dock.control.focus;
 
 import java.awt.Component;
+import java.awt.Window;
 
 import javax.swing.SwingUtilities;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.event.FocusVetoListener;
@@ -53,6 +55,9 @@ public class DefaultFocusRequest implements FocusRequest {
 	
 	/** whether the {@link FocusVetoListener} approved of this request */
 	private FocusVeto veto;
+	
+	/** the controller in whose realm this request is called */
+	private DockController controller;
 	
     /**
      * Creates a new request for setting the focused {@link Dockable}.
@@ -98,6 +103,7 @@ public class DefaultFocusRequest implements FocusRequest {
 	}
 	
 	public boolean validate( FocusController controller ){
+		this.controller = controller.getController();
 		if( force ){
 			return true;
 		}
@@ -128,6 +134,15 @@ public class DefaultFocusRequest implements FocusRequest {
 		if( dockable != null ){
 			if( ensureFocusSet || ensureDockableFocused ){
 				return new EnsuringFocusRequest( dockable, ensureDockableFocused, component );
+			}
+		}
+		if( component == null && controller != null ){
+			Window root = controller.getRootWindowProvider().searchWindow();
+			if( root != null ){
+				// if another dockable gains the focus, then it is going to do that 
+				// before this request gets even processed. So this is a backup
+				// executed to ensure that the application does not lose focus
+				return new RepeatingFocusRequest( null, root );
 			}
 		}
 		
