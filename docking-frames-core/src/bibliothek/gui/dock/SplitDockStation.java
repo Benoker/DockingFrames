@@ -627,6 +627,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			displayerFactory.setController( controller );
 			combiner.setController( controller );
 			background.setController( controller );
+			dividerStrategy.setProperties( controller );
 			
 			if( controller != null ) {
 				title = controller.getDockTitleManager().getVersion(TITLE_ID, ControllerTitleFactory.INSTANCE);

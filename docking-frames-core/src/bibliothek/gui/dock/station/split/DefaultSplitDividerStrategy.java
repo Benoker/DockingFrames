@@ -35,6 +35,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,7 +85,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 	 * A {@link Handler} is responsible for handling the needs of one {@link SplitDockStation}.
 	 * @author Benjamin Sigg
 	 */
-	public static class Handler extends MouseAdapter{
+	public static class Handler extends MouseAdapter implements MouseListener, MouseMotionListener{
 		/** the node of the currently selected divider */
 		private Node current;
 	
@@ -220,8 +221,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 				}
 			}
 		}
-	
-		@Override
+
 		public void mouseDragged( MouseEvent e ){
 			if( station.isResizingEnabled() ) {
 				if( pressed && current != null ) {
@@ -253,8 +253,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 				checkMousePositionAsync();
 			}
 		}
-	
-		@Override
+
 		public void mouseMoved( MouseEvent e ){
 			if( station.isResizingEnabled() ) {
 				current = station.getRoot().getDividerNode( e.getX(), e.getY() );
