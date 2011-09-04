@@ -109,21 +109,32 @@ public interface FocusController {
     public boolean isOnFocusing();
     
     /**
-     * Ensures that a title or a {@link Component} of the currently
-     * {@link #getFocusedDockable() focused Dockable} really
-     * has the focus.
-     * @param dockableOnly if <code>true</code>, then only the {@link Dockable} itself
-     * should be focused
-     */
-    public void ensureFocusSet( boolean dockableOnly );
-    
-    /**
      * Checks whether <code>source</code> can be used to select the next focused {@link Dockable}.
      * @param source the element which may be focused
      * @return whether the focus can be transfered, a value of <code>null</code> indicates that 
      * <code>source</code> does not represent a {@link Dockable}
      */
     public FocusVeto checkFocusedDockable( DockElementRepresentative source );
+    
+    /**
+     * Requests focus for the {@link Component} that is described by <code>request</code>. The request is either
+     * executed now (if {@link FocusRequest#getDelay() delay} is 0) or in the near future. The request may be canceled either
+     * because another request is executed first, because of a {@link FocusVetoListener}, or because the request contains
+     * invalid data.
+     * @param request the request
+     */
+    public void enqueue( FocusRequest request );
+    
+    /**
+     * Ensures that a title or a {@link Component} of the currently
+     * {@link #getFocusedDockable() focused Dockable} really
+     * has the focus.
+     * @param dockableOnly if <code>true</code>, then only the {@link Dockable} itself
+     * should be focused
+     * @deprecated clients should prefer calling {@link #enqueue(FocusRequest)} with a new {@link EnsuringFocusRequest}
+     */
+    @Deprecated
+    public void ensureFocusSet( boolean dockableOnly );
     
     /**
      * Sets the {@link Dockable} which should have the focus.
@@ -143,6 +154,8 @@ public interface FocusController {
      * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
      * @return whether focus could be transfered, a value of <code>null</code> indicates that {@link #isOnFocusing()} returned
      * <code>true</code> and the call was ignored
+     * @deprecated clients should prefer calling {@link #enqueue(FocusRequest)} with a new {@link DefaultFocusRequest}
      */
+    @Deprecated
     public FocusVeto setFocusedDockable( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused );
 }

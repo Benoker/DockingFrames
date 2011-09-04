@@ -41,7 +41,7 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 public interface Combiner {
     /**
      * Prepares information telling how two {@link Dockable}s may be combined.
-     * @param source the {@link Dockable} which may be combined, their parent station and
+     * @param source the {@link Dockable}s which may be combined, their parent station and
      * other helpful information.
      * @param force if <code>true</code> then a combination must happen, otherwise the
      * result may be <code>null</code> indicating that a combination is not desired by 

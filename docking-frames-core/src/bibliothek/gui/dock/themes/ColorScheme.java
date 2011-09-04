@@ -34,8 +34,7 @@ import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.Path;
 
 /**
- * A <code>ColorScheme</code> is a collection of colors and bridges.<br>
- * <b>Warning: </b> This interface will be replaced in version 1.1.0. 
+ * A <code>ColorScheme</code> is a collection of colors and bridges. 
  * 
  * @author Benjamin Sigg
  */

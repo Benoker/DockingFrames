@@ -404,7 +404,7 @@ public abstract class AbstractSplitPlaceholderConverter<P, N, D> {
 		}
 		
 		private BuildNode[] createArray( int length ){
-			return (AbstractSplitPlaceholderConverter<P, N, D>.BuildNode[]) new AbstractSplitPlaceholderConverter.BuildNode[ length ];
+			return (BuildNode[]) new AbstractSplitPlaceholderConverter.BuildNode[ length ];
 		}
 		
 		private BuildNode get( int index ){

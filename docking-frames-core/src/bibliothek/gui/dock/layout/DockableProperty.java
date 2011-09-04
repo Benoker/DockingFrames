@@ -37,7 +37,7 @@ import bibliothek.util.xml.XElement;
 /**
  * Describes the location of a {@link Dockable} on a {@link DockStation}. 
  * The properties can be nested, that describes the fact that a <code>DockStation</code> 
- * can also be <code>Dockables</code>.<br>
+ * can also be a <code>Dockable</code>.<br>
  * A <code>DockableProperty</code> should not have any reference to its <code>Dockable</code> or its
  * <code>DockStation</code>. 
  * @author Benjamin Sigg
