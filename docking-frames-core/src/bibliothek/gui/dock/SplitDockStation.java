@@ -27,13 +27,10 @@
 package bibliothek.gui.dock;
 
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -51,7 +48,6 @@ import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
@@ -90,6 +86,7 @@ import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.Leaf;
@@ -97,6 +94,7 @@ import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.Root;
+import bibliothek.gui.dock.station.split.SplitDividerStrategy;
 import bibliothek.gui.dock.station.split.SplitDockAccess;
 import bibliothek.gui.dock.station.split.SplitDockCombinerSource;
 import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
@@ -176,6 +174,13 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public static final PropertyKey<SplitLayoutManager> LAYOUT_MANAGER = new PropertyKey<SplitLayoutManager>("SplitDockStation layout manager",
 			new ConstantPropertyFactory<SplitLayoutManager>(new DefaultSplitLayoutManager()), true);
 
+	/**
+	 * The algorithm that allows users to resize children of a {@link SplitDockStation} by
+	 * grabbing a gab between two children and moving that gap around.
+	 */
+	public static final PropertyKey<SplitDividerStrategy> DIVIDER_STRATEGY = new PropertyKey<SplitDividerStrategy>("SplitDockStation divider strategy",
+			new ConstantPropertyFactory<SplitDividerStrategy>( new DefaultSplitDividerStrategy() ), true);
+	
 	/** The parent of this station */
 	private DockStation parent;
 
@@ -258,6 +263,19 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				newValue.install(SplitDockStation.this);
 		}
 	};
+	
+	/** the strategy responsible for resizing the children of this station when the user moves a gap between them */
+	private PropertyValue<SplitDividerStrategy> dividerStrategy = new PropertyValue<SplitDividerStrategy>(DIVIDER_STRATEGY){
+		@Override
+		protected void valueChanged( SplitDividerStrategy oldValue, SplitDividerStrategy newValue ){
+			if( oldValue != null ){
+				oldValue.uninstall( SplitDockStation.this );
+			}
+			if( newValue != null && content != null ){
+				newValue.install( SplitDockStation.this, getContentPane() );
+			}
+		}
+	};
 
 	private PropertyValue<PlaceholderStrategy> placeholderStrategyProperty = new PropertyValue<PlaceholderStrategy>(PlaceholderStrategy.PLACEHOLDER_STRATEGY){
 		@Override
@@ -335,12 +353,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	private DisplayerCollection displayers;
 
 	/**
-	 * A listener to the mouse. If triggered, the listener moves the dividers
-	 * between the children around.
-	 */
-	private DividerListener dividerListener;
-
-	/**
 	 * Whether the user can resize the content.
 	 */
 	private boolean resizingEnabled = true;
@@ -387,15 +399,13 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		});
 
-		dividerListener = new DividerListener();
 		if( createFullScreenAction ){
 			fullScreenAction = createFullScreenAction();
 		}
 		visibility = new DockableShowingManager(dockStationListeners);
 
-		getContentPane().addMouseListener(dividerListener);
-		getContentPane().addMouseMotionListener(dividerListener);
-
+		dividerStrategy.getValue().install( this, getContentPane() );
+		
 		hierarchyObserver = new DockHierarchyObserver(this);
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();
@@ -799,11 +809,21 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Gets the layout manager which was explicitly set.
 	 * @return the manager or <code>null</code>
 	 * @see #setSplitLayoutManager(SplitLayoutManager)
+	 * @see #getCurrentSplitLayoutManager()
 	 */
 	public SplitLayoutManager getSplitLayoutManager(){
 		return layoutManager.getOwnValue();
 	}
 
+	/**
+	 * Gets the {@link SplitLayoutManager} that is currently used by this station.
+	 * @return the currently used layout manager
+	 * @see #setSplitLayoutManager(SplitLayoutManager)
+	 */
+	public SplitLayoutManager getCurrentSplitLayoutManager(){
+		return layoutManager.getValue();
+	}
+	
 	/**
 	 * Gets the strategy for creating and storing placeholders. Note that this is not the same
 	 * value as was set to {@link #setPlaceholderStrategy(PlaceholderStrategy)} 
@@ -2218,7 +2238,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		}
 
-		dividerListener.paint(g);
+		dividerStrategy.getValue().paint( this, g );
 	}
 
 	/**
@@ -2657,28 +2677,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	/**
-	 * Asynchronously checks the current position of the mouse and updates the cursor
-	 * if necessary.
-	 */
-	protected void checkMousePositionAsync(){
-		DockController controller = getController();
-		if( controller != null && !controller.isRestrictedEnvironment() ){
-			SwingUtilities.invokeLater(new Runnable(){
-				public void run(){
-					PointerInfo p = MouseInfo.getPointerInfo();
-					Point e = p.getLocation();
-					SwingUtilities.convertPointFromScreen(e, getContentPane());
-					dividerListener.current = root().getDividerNode(e.x, e.y);
-	
-					if( dividerListener.current == null ) {
-						setCursor(null);
-					}
-				}
-			});
-		}
-	}
-
-	/**
 	 * The background algorithm of this {@link SplitDockStation}.
 	 * @author Benjamin Sigg
 	 */
@@ -2744,129 +2742,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		@Override
 		public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ){
 			visibility.fire();
-		}
-	}
-
-	/**
-	 * This listener is added directly to the {@link Component} of this 
-	 * {@link SplitDockStation}. This listener reacts when a divider is grabbed
-	 * by the mouse, and the listener will move the divider to a new position.
-	 * @author Benjamin Sigg
-	 */
-	private class DividerListener extends MouseInputAdapter {
-		/** the node of the currently selected divider */
-		private Node current;
-
-		/** the current location of the divider */
-		private double divider;
-
-		/** the current state of the mouse: pressed or not pressed */
-		private boolean pressed = false;
-
-		/** the current bounds of the divider */
-		private Rectangle bounds = new Rectangle();
-
-		/** 
-		 * A small modification of the position of the mouse. The modification
-		 * is the distance to the center of the divider.
-		 */
-		private int deltaX;
-
-		/** 
-		 * A small modification of the position of the mouse. The modification
-		 * is the distance to the center of the divider.
-		 */
-		private int deltaY;
-
-		@Override
-		public void mousePressed( MouseEvent e ){
-			if( isResizingEnabled() ) {
-				if( !pressed ) {
-					pressed = true;
-					mouseMoved(e);
-					if( current != null ) {
-						divider = current.getDividerAt(e.getX() + deltaX, e.getY() + deltaY);
-						repaint(bounds.x, bounds.y, bounds.width, bounds.height);
-						bounds = current.getDividerBounds(divider, bounds);
-						repaint(bounds.x, bounds.y, bounds.width, bounds.height);
-					}
-				}
-			}
-		}
-
-		@Override
-		public void mouseDragged( MouseEvent e ){
-			if( isResizingEnabled() ) {
-				if( pressed && current != null ) {
-					divider = current.getDividerAt(e.getX() + deltaX, e.getY() + deltaY);
-					divider = layoutManager.getValue().validateDivider(SplitDockStation.this, divider, current);
-					repaint(bounds.x, bounds.y, bounds.width, bounds.height);
-					bounds = current.getDividerBounds(divider, bounds);
-					repaint(bounds.x, bounds.y, bounds.width, bounds.height);
-
-					if( continousDisplay && current != null ) {
-						current.setDivider(divider);
-						updateBounds();
-					}
-				}
-			}
-		}
-
-		@Override
-		public void mouseReleased( MouseEvent e ){
-			if( pressed ) {
-				pressed = false;
-				if( current != null ) {
-					current.setDivider(divider);
-					repaint(bounds.x, bounds.y, bounds.width, bounds.height);
-					updateBounds();
-				}
-				SplitDockStation.this.setCursor(null);
-				mouseMoved(e);
-				checkMousePositionAsync();
-			}
-		}
-
-		@Override
-		public void mouseMoved( MouseEvent e ){
-			if( isResizingEnabled() ) {
-				current = root().getDividerNode(e.getX(), e.getY());
-
-				if( current == null )
-					SplitDockStation.this.setCursor(null);
-				else if( current.getOrientation() == Orientation.HORIZONTAL )
-					SplitDockStation.this.setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
-				else
-					SplitDockStation.this.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
-
-				if( current != null ) {
-					bounds = current.getDividerBounds(current.getDivider(), bounds);
-					deltaX = bounds.width / 2 + bounds.x - e.getX();
-					deltaY = bounds.height / 2 + bounds.y - e.getY();
-				}
-			}
-		}
-
-		@Override
-		public void mouseExited( MouseEvent e ){
-			if( isResizingEnabled() ) {
-				if( !pressed ) {
-					current = null;
-					SplitDockStation.this.setCursor(null);
-				}
-			}
-		}
-
-		/**
-		 * Paints a line at the current location of the divider.
-		 * @param g the Graphics used to paint
-		 */
-		public void paint( Graphics g ){
-			if( isResizingEnabled() ) {
-				if( current != null && pressed ) {
-					getPaint().drawDivider(g, bounds);
-				}
-			}
 		}
 	}
 
