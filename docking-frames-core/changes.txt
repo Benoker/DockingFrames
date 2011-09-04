@@ -638,7 +638,7 @@
  - Bugfix: CGroupBehaviors no longer forwards actions to DockStations if these DockStations do not support the action.
  ! API: The property telling whether the user can see a Dockable is now called "showing" and no longer "dockable-visible". This should prevent more confusion about "visibility" vs "true visibility" (the later term is no longer to be used, its now "showing").
  - API: The new property SplitDockStation.DIVIDER_STRATEGY and the interface SplitDividerStrategy allow a client to specify a custom algorithm for resizing the children of a SplitDockStation
- ! Bugfix/API: Yet another update to the focus system: focus is now handled by "FocusRequest" objects. One request wins, the others get canceled. The system refuses to grant focus to an invalid component (e.g. one that is not visible) if there are still requests pending. 
+ - Bugfix/API: Yet another update to the focus system: focus is now handled by "FocusRequest" objects. One request wins, the others get canceled. The system refuses to grant focus to an invalid component (e.g. one that is not visible) if there are still requests pending. 
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

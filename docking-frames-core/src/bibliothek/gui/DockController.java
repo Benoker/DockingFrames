@@ -71,8 +71,6 @@ import bibliothek.gui.dock.control.DoubleClickController;
 import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.control.PopupController;
 import bibliothek.gui.dock.control.SingleParentRemover;
-import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
-import bibliothek.gui.dock.control.focus.EnsuringFocusRequest;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
@@ -944,7 +942,7 @@ public class DockController {
      * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
      */
     public void setFocusedDockable( Dockable focusedDockable, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ) {
-    	focusController.enqueue( new DefaultFocusRequest( focusedDockable, component, force, ensureFocusSet, ensureDockableFocused ) );
+    	focusController.setFocusedDockable( focusedDockable, component, force, ensureFocusSet, ensureDockableFocused );
     }
     
     /**
@@ -984,10 +982,7 @@ public class DockController {
      * has the focus.
      */
     public void ensureFocusSet(){
-    	Dockable dockable = focusController.getFocusedDockable();
-    	if( dockable != null ){
-    		focusController.enqueue( new EnsuringFocusRequest( dockable, false ) );
-    	}
+    	focusController.ensureFocusSet( false );
     }
 
     /**

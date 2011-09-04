@@ -44,6 +44,7 @@ import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.FocusRequest;
 import bibliothek.gui.dock.control.focus.FocusStrategy;
 import bibliothek.gui.dock.control.focus.FocusStrategyRequest;
+import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -113,6 +114,13 @@ public class DefaultFocusController extends AbstractFocusController {
     	}
     }
     
+    /**
+     * Requests focus for the {@link Component} that is described by <code>request</code>. The request is either
+     * executed now (if {@link FocusRequest#getDelay() delay} is 0) or in the near future. The request may be canceled either
+     * because another request is executed first, because of a {@link FocusVetoListener}, or because the request contains
+     * invalid data.
+     * @param request the request
+     */
     public void enqueue( FocusRequest request ){
     	Request next = new Request( request, false );
     	next.enqueue();
