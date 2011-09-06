@@ -48,6 +48,10 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A <code>Dockable</code> is a window which can be dragged around by the user. <code>Dockable</code>s
@@ -90,8 +94,22 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      * are visible to the user.
      * @return <code>true</code> if the user can actually see this dockable, <code>false</code> 
      * otherwise
+     * @deprecated replaced by {@link #isDockableShowing()}, this method will be removed in a future release
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
     public boolean isDockableVisible();
+
+    /**
+     * Tells whether this {@link Dockable} can be seen by the user. A {@link Dockable} at least needs
+     * to be registered as root-station on a {@link DockController}, or be a child of a root-station
+     * to be visible.<br>
+     * Implementations will assume that {@link Component}s which are {@link Component#isDisplayable() displayable} are
+     * are visible to the user.
+     * @return <code>true</code> if the user can actually see this dockable, <code>false</code> 
+     * otherwise
+     */
+    public boolean isDockableShowing();
     
     /**
      * Sets the controller in whose realm this Dockable is. A value of <code>null</code>

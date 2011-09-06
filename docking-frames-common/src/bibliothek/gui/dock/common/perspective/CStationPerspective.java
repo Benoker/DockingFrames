@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.common.perspective;
 
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
@@ -59,4 +61,22 @@ public interface CStationPerspective extends CElementPerspective{
 	 * @return whether this station acts as working area
 	 */
 	public boolean isWorkingArea();
+	
+
+	/**
+	 * Tells whether this is a root station or not.
+	 * @return the root flag
+	 * @see #setRoot(boolean)
+	 */
+	public boolean isRoot();
+	
+	/**
+	 * Sets the root station flag. Setting flag is equivalent of setting the <code>root</code> parameter when calling
+	 * {@link CControl#addStation(bibliothek.gui.dock.common.CStation, boolean)}. The location of a {@link Dockable} is
+	 * always relative to its nearest root-station parent.<br>
+	 * Please note that the root-flag set by calling {@link CControl#addStation(bibliothek.gui.dock.common.CStation, boolean)} will
+	 * never be overriden by the flag set in the perspective.
+	 * @param root
+	 */
+	public void setRoot( boolean root );
 }

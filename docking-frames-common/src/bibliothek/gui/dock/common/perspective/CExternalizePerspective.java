@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.perspective;
 import java.awt.Rectangle;
 
 import bibliothek.gui.dock.common.CExternalizeArea;
+import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.mode.CExternalizedModePerspective;
 import bibliothek.gui.dock.common.perspective.mode.CMaximizedModeAreaPerspective;
@@ -55,6 +56,9 @@ public class CExternalizePerspective implements CStationPerspective{
 	
 	/** The type of this perspective */
 	private Path typeId;
+	
+	/** Whether this is a root station */
+	private boolean root = true;
 	
 	/** identifiers children that are in normal mode */
 	private CModeAreaPerspective extenalMode = new CModeAreaPerspective() {
@@ -111,6 +115,14 @@ public class CExternalizePerspective implements CStationPerspective{
 	
 	public Path getTypeId(){
 		return typeId;
+	}
+	
+	public boolean isRoot(){
+		return root;
+	}
+	
+	public void setRoot( boolean root ){
+		this.root = root;
 	}
 
 	public void setPerspective( CPerspective perspective ){
@@ -270,9 +282,17 @@ public class CExternalizePerspective implements CStationPerspective{
 	 * This type of object is used by the {@link CExternalizePerspective} as intern representation.
 	 * @author Benjamin Sigg
 	 */
-	public class CommonScreenDockPerspective extends ScreenDockPerspective implements CommonElementPerspective{
+	public class CommonScreenDockPerspective extends ScreenDockPerspective implements CommonDockStationPerspective{
 		public CElementPerspective getElement(){
 			return CExternalizePerspective.this;
-		}		
+		}
+		@Override
+		public String getFactoryID(){
+			return CommonDockStationFactory.FACTORY_ID;
+		}
+		
+		public String getConverterID(){
+			return super.getFactoryID();
+		}
 	}
 }

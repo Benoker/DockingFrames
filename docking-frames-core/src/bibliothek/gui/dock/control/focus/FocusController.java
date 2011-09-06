@@ -109,6 +109,14 @@ public interface FocusController {
     public boolean isOnFocusing();
     
     /**
+     * Checks whether <code>source</code> can be used to select the next focused {@link Dockable}.
+     * @param source the element which may be focused
+     * @return whether the focus can be transfered, a value of <code>null</code> indicates that 
+     * <code>source</code> does not represent a {@link Dockable}
+     */
+    public FocusVeto checkFocusedDockable( DockElementRepresentative source );
+    
+    /**
      * Ensures that a title or a {@link Component} of the currently
      * {@link #getFocusedDockable() focused Dockable} really
      * has the focus.
@@ -116,14 +124,6 @@ public interface FocusController {
      * should be focused
      */
     public void ensureFocusSet( boolean dockableOnly );
-    
-    /**
-     * Checks whether <code>source</code> can be used to select the next focused {@link Dockable}.
-     * @param source the element which may be focused
-     * @return whether the focus can be transfered, a value of <code>null</code> indicates that 
-     * <code>source</code> does not represent a {@link Dockable}
-     */
-    public FocusVeto checkFocusedDockable( DockElementRepresentative source );
     
     /**
      * Sets the {@link Dockable} which should have the focus.

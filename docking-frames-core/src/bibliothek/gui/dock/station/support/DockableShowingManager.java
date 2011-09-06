@@ -42,7 +42,7 @@ import bibliothek.gui.dock.event.DockStationAdapter;
  * sent to the listeners.
  * @author Benjamin Sigg
  */
-public class DockableVisibilityManager extends DockStationAdapter{
+public class DockableShowingManager extends DockStationAdapter{
     private DockStationListenerManager listeners;
     private Map<Dockable, Boolean> visibility = new HashMap<Dockable, Boolean>();
     
@@ -50,7 +50,7 @@ public class DockableVisibilityManager extends DockStationAdapter{
      * Constructs a new manager
      * @param listeners the listeners used to fire events
      */
-    public DockableVisibilityManager( DockStationListenerManager listeners ){
+    public DockableShowingManager( DockStationListenerManager listeners ){
         if( listeners == null )
             throw new IllegalArgumentException( "Listeners must not be null" );
         

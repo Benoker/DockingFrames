@@ -48,7 +48,7 @@ public abstract class AbstractBoundaryRestriction implements BoundaryRestriction
 	/**
 	 * Checks the size and location of <code>window</code>
 	 * @param window the window whose boundaries are checked
-	 * @param target the boundaries that are requested
+	 * @return the new boundaries or <code>null</code> if the current boundaries of <code>window</code> are valid
 	 */
 	protected abstract Rectangle checkSize( ScreenDockWindow window );
 

@@ -94,7 +94,7 @@ import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
-import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
@@ -330,12 +330,12 @@ public class FlapDockStation extends AbstractDockableStation {
     /** A listener that is added to the parent of this dockable station. */
     private VisibleListener visibleListener = new VisibleListener();
     /** the last checked state of {@link #isDockableVisible()} */
-    private boolean lastVisible = false;
+    private boolean lastShowing = false;
     /** A list of listeners that were added to this station */
     private List<FlapDockListener> flapDockListeners = new ArrayList<FlapDockListener>();
     
     /** Manager for the visibility of the children of this station */
-    private DockableVisibilityManager visibility;
+    private DockableShowingManager showingManager;
     
     /** the background algorithm of this component */
     private Background background = new Background();
@@ -363,7 +363,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Initializes the fields of this station, hast to be called exactly once
      */
     protected void init(){
-        visibility = new DockableVisibilityManager( listeners );
+        showingManager = new DockableShowingManager( listeners );
         buttonPane = createButtonPane();
         buttonPane.setBackground( background );
         buttonPane.setController( getController() );
@@ -404,9 +404,9 @@ public class FlapDockStation extends AbstractDockableStation {
 			public void hierarchyChanged( HierarchyEvent e ){
 				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
 					if( getDockParent() == null ){
-						getDockableStateListeners().checkVisibility();
+						getDockableStateListeners().checkShowing();
 					}
-					checkVisibility();
+					checkShowing();
 				}
 			}
 		});
@@ -533,7 +533,7 @@ public class FlapDockStation extends AbstractDockableStation {
             windowFactory.setProperties( controller );
             buttonPane.resetTitles();
             
-            visibility.fire();
+            showingManager.fire();
         }
     }
     
@@ -768,7 +768,7 @@ public class FlapDockStation extends AbstractDockableStation {
             }
         }
         
-        visibility.fire();
+        showingManager.fire();
         listeners.fireDockableSelected( oldFrontDockable, dockable );
     }
     
@@ -1419,6 +1419,10 @@ public class FlapDockStation extends AbstractDockableStation {
             }
         }
         
+        if( dropInfo == null ){
+        	return null;
+        }
+        
         return new FlapDropOperation( dropInfo, move );
         
     }
@@ -2000,12 +2004,12 @@ public class FlapDockStation extends AbstractDockableStation {
     	return -1;
     }
 
-    private void checkVisibility(){
-    	boolean visible = isDockableVisible();
-    	if( visible != lastVisible ){
-    		lastVisible = visible;
+    private void checkShowing(){
+    	boolean showing = isDockableShowing();
+    	if( showing != lastShowing ){
+    		lastShowing = showing;
             
-            if( visible ){
+            if( showing ){
                 if( oldFrontDockable != null )
                     setFrontDockable( oldFrontDockable );
             }
@@ -2016,7 +2020,7 @@ public class FlapDockStation extends AbstractDockableStation {
                     oldFrontDockable = null;
             }
             
-            visibility.fire();
+            showingManager.fire();
     	}
     }
     
@@ -2029,9 +2033,9 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     private class VisibleListener extends DockStationAdapter{
         @Override
-        public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ) {
+        public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
         	if( dockable == FlapDockStation.this ){
-        		checkVisibility();
+        		checkShowing();
             }
         }
     }
@@ -2069,6 +2073,10 @@ public class FlapDockStation extends AbstractDockableStation {
     	 * @param move whether this is a move operation
     	 */
     	public FlapDropOperation( FlapDropInfo dropInfo, boolean move ){
+    		if( dropInfo == null ){
+    			throw new IllegalArgumentException( "dropInfo must not be null" );
+    		}
+    		
     		this.dropInfo = dropInfo;
     		this.move = move;
     	}

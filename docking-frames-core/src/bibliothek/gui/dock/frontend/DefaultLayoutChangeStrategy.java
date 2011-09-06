@@ -150,14 +150,14 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
             }
         };
         
+        for( RootInfo info : frontend.getRoots() ){
+            situation.put( DockFrontend.ROOT_KEY_PREFIX + info.getName(), info.getStation() );
+        }
+        
         for( DockInfo info : frontend.getDockables() ){
             if( info.getDockable() != null && shouldPredefine( info.getDockable() )){
                 situation.put( DockFrontend.DOCKABLE_KEY_PREFIX + info.getKey(), info.getDockable() );
             }
-        }
-        
-        for( RootInfo info : frontend.getRoots() ){
-            situation.put( DockFrontend.ROOT_KEY_PREFIX + info.getName(), info.getStation() );
         }
         
         for( DockFactory<?,?,?> factory : frontend.getDockFactories() ){

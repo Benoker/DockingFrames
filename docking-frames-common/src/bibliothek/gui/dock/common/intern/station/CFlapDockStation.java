@@ -66,6 +66,15 @@ public class CFlapDockStation extends FlapDockStation implements CommonDockStati
 		addDockStationListener( new HoldActionHandler() );
 	}
 	
+	@Override
+	public String getFactoryID(){
+		return CommonDockStationFactory.FACTORY_ID;
+	}
+	
+	public String getConverterID(){
+		return super.getFactoryID();
+	}
+	
 	public CDockable getDockable(){
 		return delegate.getDockable();
 	}

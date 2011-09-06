@@ -77,7 +77,7 @@ import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
-import bibliothek.gui.dock.station.support.DockableVisibilityManager;
+import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -101,6 +101,10 @@ import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.PropertyFactory;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -174,7 +178,7 @@ public class ScreenDockStation extends AbstractDockStation {
     private ScreenDockWindow frontWindow;
     
     /** A manager for the visibility of the children */
-    private DockableVisibilityManager visibility;
+    private DockableShowingManager visibility;
     
     /** An action to enable or disable fullscreen mode of some window */
     private ListeningDockAction fullscreenAction;
@@ -305,7 +309,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     private void init( WindowProvider owner ){
-        visibility = new DockableVisibilityManager( listeners );
+        visibility = new DockableShowingManager( listeners );
         this.owner = owner;
         
         displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".screen", this );
@@ -1654,10 +1658,29 @@ public class ScreenDockStation extends AbstractDockStation {
         }
     }
     
+    /**
+     * Tells whether this station shows its children. This method just calls
+     * {@link #isShowing()}.
+     * @return <code>true</code> if the windows are visible, <code>false</code>
+     * if not.
+     * @see #isShowing()
+     */
+    public boolean isStationShowing(){
+	    return isShowing();
+    }
+    
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
     public boolean isStationVisible(){
     	return isShowing();
     }
     
+    public boolean isChildShowing( Dockable dockable ){
+    	return isVisible( dockable );
+    }
+    
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_3, description="remove this method" )
     public boolean isVisible( Dockable dockable ){
 	    return isStationVisible();
     }

@@ -48,6 +48,15 @@ public class CScreenDockStation extends ScreenDockStation implements CommonDockS
 		this.delegate = delegate;
 		setExpandOnDoubleClick( false );
 	}
+	
+	@Override
+	public String getFactoryID(){
+		return CommonDockStationFactory.FACTORY_ID;
+	}
+	
+	public String getConverterID(){
+		return super.getFactoryID();
+	}
 
 	@Override
 	protected ListeningDockAction createFullscreenAction(){

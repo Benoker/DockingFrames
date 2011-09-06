@@ -27,23 +27,24 @@ package bibliothek.gui.dock.control;
 
 import java.awt.Component;
 import java.awt.EventQueue;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.FocusManager;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.focus.AbstractFocusController;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
+import bibliothek.gui.dock.control.focus.EnsuringFocusRequest;
 import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.FocusRequest;
 import bibliothek.gui.dock.control.focus.FocusStrategy;
 import bibliothek.gui.dock.control.focus.FocusStrategyRequest;
+import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -59,14 +60,8 @@ public class DefaultFocusController extends AbstractFocusController {
     /** <code>true</code> while the controller actively changes the focus */
     private boolean onFocusing = false;
     
-    /** whether the focus is to be transfered in the near future */
-    private boolean focusingPending = false;
-    
-    /** the element whose focus may be set in the near future */
-    private Component focusingComponent;
-    
-    /** whether to ensure that the focus is set in the near future */
-    private boolean focusingEnsure;
+    /** all the requests waiting for their execution */
+    private List<Request> pendingRequests = new ArrayList<Request>();
     
     /**
      * Creates a new focus-controller
@@ -107,181 +102,233 @@ public class DefaultFocusController extends AbstractFocusController {
     }
     
     public FocusVeto setFocusedDockable( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ){
-    	// ignore more than one call
-    	if( onFocusing || isFrozen() )
+    	DefaultFocusRequest request = new DefaultFocusRequest( source, component, force, ensureFocusSet, ensureDockableFocused );
+    	enqueue( request );
+    	return request.getVeto();
+    }
+    
+    public void ensureFocusSet( boolean dockableOnly ){
+    	Dockable dockable = focusedDockable;
+    	if( dockable != null ){
+    		enqueue( new EnsuringFocusRequest( dockable, dockableOnly ));
+    	}
+    }
+    
+    /**
+     * Requests focus for the {@link Component} that is described by <code>request</code>. The request is either
+     * executed now (if {@link FocusRequest#getDelay() delay} is 0) or in the near future. The request may be canceled either
+     * because another request is executed first, because of a {@link FocusVetoListener}, or because the request contains
+     * invalid data.
+     * @param request the request
+     */
+    public void enqueue( FocusRequest request ){
+    	Request next = new Request( request, false );
+    	next.enqueue();
+    }
+    
+    /**
+     * Decides whether to execute or to refuse <code>request</code>.
+     * @param request the request to check
+     * @param dockable the dockable that would receive the focus through this request
+     * @return the accepted {@link Component} or <code>null</code> if the
+     * request is to be refused
+     */
+    protected Component accept( final FocusRequest request, final Dockable dockable ){
+    	if( isFrozen() ){
     		return null;
-    	
-    	FocusVeto veto = checkFocusedDockable( source );
-    	if( veto != null && veto != FocusVeto.NONE ){
-    		return veto;
     	}
     	
-    	Dockable focusedDockable = null;
-    	if( source != null ){
-    		focusedDockable = source.getElement().asDockable();
+    	if( !request.validate( this ) ){
+    		return null;
     	}
+    	
+    	FocusVeto veto = checkFocusedDockable( request.getSource() );
+    	if( veto == null ){
+    		veto = FocusVeto.NONE;
+    	}
+    	request.veto( veto );
+    	if( veto != FocusVeto.NONE ){
+    		return null;
+    	}
+    	
+    	FocusStrategy strategy = getStrategy();
+    	Component component = request.getComponent();
+    	
+        if( strategy != null && dockable != null ){
+        	Component replacement = strategy.getFocusComponent( new FocusStrategyRequest(){
+				public Component getMouseClicked(){
+					return request.getComponent();
+				}
+				
+				public Dockable getDockable(){
+					return dockable;
+				}
+				
+				public boolean excluded( Component component ){
+					return !request.acceptable( component );
+				}
+			});
+        	if( replacement != null ){
+        		component = replacement;
+        	}
+        }
+        
+        if( component == null && dockable != null ){
+        	component = dockable.getComponent();
+        }
+        
+        if( component != null && pendingRequests.size() > 1 ){
+        	if( !component.isVisible() || !component.isShowing() ){
+        		component = null;
+        	}
+        }
+        
+        return component;
+    }
+    
+    /**
+     * Called if {@link #accept(FocusRequest, Dockable)} accepted <code>request</code>.
+     * @param request the request to execute
+     * @param dockable the element that will receive the focus
+     * @param component the {@link Component} that is to be focused
+     */
+    protected void execute( final FocusRequest request, Dockable dockable, final Component component ){
+    	// clean up
+    	synchronized(pendingRequests){
+	    	for( Request pending : pendingRequests ){
+	    		pending.cancel();
+	    	}
+	    	pendingRequests.clear();
+    	}
+
+    	boolean active = true;
+    	
+    	// execute
+    	if( EventQueue.isDispatchThread() ){
+    		active = grant( request, component );
+    	}
+    	else{
+    		EventQueue.invokeLater( new Runnable() {
+				public void run(){
+					grant( request, component );
+				}
+			});
+    	}
+        
+        if( active && dockable != focusedDockable ){
+    		Dockable oldFocused = focusedDockable;
+    		focusedDockable = dockable;
+    		fireDockableFocused( oldFocused, focusedDockable );
+        }
+    }
+    
+    private boolean grant( FocusRequest request, Component component ){
+    	FocusRequest next;
     	
     	try{
-	        onFocusing = true;
-	        
-	        if( force || this.focusedDockable != focusedDockable ){
-	            Dockable oldFocused = this.focusedDockable;
-	            this.focusedDockable = focusedDockable;
-	            
-	            if( ensureFocusSet || ensureDockableFocused ){
-	            	if( EventQueue.isDispatchThread() ){
-	            		if( !focusingPending ){
-	            			focusingPending = true;
-		            	    SwingUtilities.invokeLater( new Runnable(){
-	    	                    public void run() {
-	    	                    	focusingPending = false;
-	    	                        ensureFocusSet( focusingEnsure, focusingComponent );
-	    	                        focusingComponent = null;
-	    	                    }
-	    	                });
-		                }
-	            		focusingEnsure = ensureDockableFocused;
-	            		focusingComponent = component;
-	            	}
-	                else{
-	                    // we are in the wrong Thread, but we can try...
-	                    ensureFocusSet( ensureDockableFocused, component );
-	                }
-	            }
-	            
-	            if( oldFocused != focusedDockable )
-	                fireDockableFocused( oldFocused, focusedDockable );
-	        }
+	    	onFocusing = true;
+	    	next = request.grant( component );
     	}
     	finally{
     		onFocusing = false;
     	}
-    	
-    	return FocusVeto.NONE;
-    }
-    
-    public void ensureFocusSet( boolean dockableOnly ){
-    	ensureFocusSet( dockableOnly, null );
-    }
-    
-    private void ensureFocusSet( final boolean dockableOnly, Component component ){
-    	if( isFrozen() ){
-    		return;
-    	}
-
-        final Dockable focusedDockable = this.focusedDockable;
-        if( focusedDockable != null ){
-            Stack<Dockable> front = new Stack<Dockable>();            
-            
-            Dockable temp = focusedDockable;
-            
-            while( temp != null ){
-                DockStation parent = temp.getDockParent();
-                if( parent != null )
-                    front.push( temp );
-                
-                temp = parent == null ? null : parent.asDockable();
-            }
-            
-            while( !front.isEmpty() ){
-                Dockable element = front.pop();
-                element.getDockParent().setFrontDockable( element );
-            }
-        
-            if( !dockableOnly ){
-	            DockTitle[] titles = focusedDockable.listBoundTitles();
-	            Component focused = FocusManager.getCurrentManager().getFocusOwner();
-	            if( focused != null ){
-	                if( SwingUtilities.isDescendingFrom( focused, focusedDockable.getComponent() ) )
-	                    return;
-	                
-	                for( DockTitle title : titles )
-	                    if( SwingUtilities.isDescendingFrom( focused, title.getComponent() ))
-	                        return;
-	            }
-            }
-            
-            boolean preset = component != null;
-            FocusStrategy strategy = getStrategy();
-            if( strategy != null ){
-            	final Component mouseClicked = component;
-            	Component replacement = strategy.getFocusComponent( new FocusStrategyRequest(){
-					public Component getMouseClicked(){
-						return mouseClicked;
-					}
-					
-					public Dockable getDockable(){
-						return focusedDockable;
-					}
-					
-					public boolean excluded( Component component ){
-						if( dockableOnly ){
-							return !SwingUtilities.isDescendingFrom( component, getDockable().getComponent() );
-						}
-						else{
-							return false;
-						}
-					}
-				});
-            	if( replacement != null ){
-            		if( replacement != component ){
-            			component = replacement;
-            			preset = false;
-            		}
-            	}
-            	else{
-            		preset = false;
-            	}
-            }
-            
-            if( component == null ){
-            	component = focusedDockable.getComponent();
-            }
-            
-            if( component.isFocusable() ){
-                component.requestFocus();
-                component.requestFocusInWindow();
-                focus( component, 10, 20 );
-            }
-            else if( !preset ){
-                KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent( component );
-            }
+    	if( next != null ){
+        	boolean accepted = request.getSource() == next.getSource() && component == next.getComponent();
+        	Request nextRequest = new Request( next, accepted );
+        	return nextRequest.enqueue();
         }
+    	return true;
     }
     
-    /**
-     * Ensures that <code>component</code> has the focus and is on the 
-     * active window. This is done by waiting <code>delay</code> milliseconds
-     * and then checking the current focus owner. If the owner is not <code>component</code>,
-     * then the focus is transfered. Checking stops after <code>component</code>
-     * is found to be the focus owner, or <code>loops</code> failures were reported.<br>
-     * Note: this awkward method to change the focus is necessary because on some
-     * systems - like Linux - Java does not handle focus very well.
-     * @param component the component which should have the focus
-     * @param delay how much time to wait between two checks of the focus
-     * @param loops how many times to check
-     */
-    private void focus( final Component component, int delay, final int loops ){
-        final Timer timer = new Timer( delay, null );
-
-        timer.addActionListener( new ActionListener(){
-            private int remaining = loops;
-            
-            public void actionPerformed( ActionEvent e ) {
-                remaining--;
-
-                KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-                if( manager.getPermanentFocusOwner() != component ){
-                    manager.clearGlobalFocusOwner();
-                    component.requestFocus();
-                }
-                if( remaining > 0 ){
-                    timer.restart();
-                }
-            }
-        });
-        
-        timer.setRepeats( false );
-        timer.start();
+    private class Request implements ActionListener{
+    	/** whether this request is accepted and can be executed */
+    	private boolean accepted = false;
+    	
+    	/** the request to execute */
+    	private FocusRequest request;
+    	
+    	/** whether this request should silently fail */
+    	private boolean canceled = false;
+    	
+    	/**
+    	 * Creates a new request.
+    	 * @param request the request to execute
+    	 * @param accepted whether <code>request</code> has already been accepted
+    	 */
+    	public Request( FocusRequest request, boolean accepted ){
+    		this.request = request;
+    		this.accepted = accepted;
+    		
+    		synchronized( pendingRequests ) {
+    			pendingRequests.add( this );
+			}
+    	}
+    	
+    	/**
+    	 * Starts this request
+    	 * @return <code>true</code> if the request has already been handled
+    	 * <code>false</code> otherwise
+    	 */
+    	public boolean enqueue(){
+    		if( request.getDelay() <= 0 ){
+    			run();
+    			return true;
+    		}
+    		else{
+	    		Timer timer = new Timer( request.getDelay(), this );
+	    		timer.setRepeats( false );
+	    		timer.start();
+	    		return false;
+    		}
+    	}
+    	
+    	/**
+    	 * Stop this request from ever being executed
+    	 */
+    	public void cancel(){
+    		canceled = true;
+    	}
+    	
+    	/**
+    	 * Gets the {@link Dockable} which receives the focus through this request.
+    	 * @return the dockable or <code>null</code>
+    	 */
+    	public Dockable getDockable(){
+    		DockElementRepresentative source = request.getSource();
+    		if( source == null ){
+    			return null;
+    		}
+    		return source.getElement().asDockable();
+    	}
+    	
+    	private Component accept(){
+    		if( accepted ){
+    			return request.getComponent();
+    		}
+    		else{
+    			return DefaultFocusController.this.accept( request, getDockable() );
+    		}
+    	}
+    	
+    	public void actionPerformed( ActionEvent e ){
+    		run();
+    	}
+    	
+    	private void run(){
+	    	if( !canceled ){
+	    		Component component = accept();
+		    	if( component != null ){
+		    		execute( request, getDockable(), component );
+		    	}
+		    	else if( request.getSource() == null && request.getComponent() == null && pendingRequests.size() == 1 ){
+		    		execute( request, null, null );
+		    	}
+		    	else{
+		    		synchronized( pendingRequests ) {
+						pendingRequests.remove( this );
+					}
+		    	}
+	    	}
+    	}
     }
 }

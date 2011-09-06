@@ -52,6 +52,6 @@ public class TopMostGroupBehavior implements CGroupBehavior{
 	}
 	
 	public boolean shouldForwardActions( LocationModeManager<? extends LocationMode> manager, DockStation station, Dockable dockable, ExtendedMode mode ){
-		return true;
+		return false;
 	}
 }

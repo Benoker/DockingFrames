@@ -54,7 +54,7 @@ public abstract class DockStationAdapter implements DockStationListener {
         // do nothing
     }
     
-    public void dockableVisibiltySet( DockStation station, Dockable dockable, boolean visible ) {
+    public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
         // do nothing
     }
     

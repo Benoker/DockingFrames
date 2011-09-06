@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CMinimizeArea;
+import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.mode.CMinimizedModePerspective;
 import bibliothek.gui.dock.common.perspective.mode.CModeAreaPerspective;
@@ -51,6 +52,9 @@ public class CMinimizePerspective implements CStationPerspective{
 
 	/** The type of this perspective */
 	private Path typeId;
+	
+	/** Whether this is a root station s*/
+	private boolean root = true;
 	
 	/** the mode this station represents */
 	private CModeAreaPerspective mode = new CModeAreaPerspective() {
@@ -90,6 +94,14 @@ public class CMinimizePerspective implements CStationPerspective{
 
 	public Path getTypeId(){
 		return typeId;
+	}
+	
+	public boolean isRoot(){
+		return root;
+	}
+	
+	public void setRoot( boolean root ){
+		this.root = root;
 	}
 	
 	/**
@@ -197,9 +209,18 @@ public class CMinimizePerspective implements CStationPerspective{
 	 * The type of object that is used by {@link CMinimizePerspective} as intern representation.
 	 * @author Benjamin Sigg
 	 */
-	public class CommonFlapDockPerspective extends FlapDockPerspective implements CommonElementPerspective{
+	public class CommonFlapDockPerspective extends FlapDockPerspective implements CommonDockStationPerspective{
 		public CElementPerspective getElement(){
 			return CMinimizePerspective.this;
+		}
+		
+		@Override
+		public String getFactoryID(){
+			return CommonDockStationFactory.FACTORY_ID;
+		}
+		
+		public String getConverterID(){
+			return super.getFactoryID();
 		}
 	}
 }

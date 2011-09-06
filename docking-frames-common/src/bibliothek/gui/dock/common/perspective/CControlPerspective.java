@@ -50,6 +50,7 @@ import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
 import bibliothek.gui.dock.common.intern.RootStationAdjacentFactory;
+import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
@@ -213,7 +214,6 @@ public class CControlPerspective {
      */
     public void writeXML( XElement root, CPerspective perspective, boolean includeWorkingAreas ){
     	Perspective conversion = wrap( perspective, includeWorkingAreas );
-    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
     		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
@@ -251,15 +251,14 @@ public class CControlPerspective {
      * by this {@link CControlPerspective}.
      * @param out the stream to write into, not <code>null</code>
      * @param perspective the perspective to write, not <code>null</code>
-     * @throws IOException if <code>out</code> is not writeable
      * @param includeWorkingAreas whether the output contains information about children of {@link CStation#isWorkingArea() working areas} 
      * (<code>includeWorkingAreas = true</code>) or not (<code>includeWorkingAreas = false</code>)
+     * @throws IOException if <code>out</code> is not writeable
      */
     public void write( DataOutputStream out, CPerspective perspective, boolean includeWorkingAreas ) throws IOException{
     	Version.write( out, Version.VERSION_1_1_1 );
     	
     	Perspective conversion = wrap( perspective, includeWorkingAreas );
-    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
     		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
@@ -308,8 +307,7 @@ public class CControlPerspective {
     	CPerspective perspective = createEmptyPerspective();
     	
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
-    	Perspective conversion = wrap( includeWorkingAreas, factory );
-    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
+    	Perspective conversion = wrap( perspective, includeWorkingAreas, factory );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
     		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
@@ -381,8 +379,7 @@ public class CControlPerspective {
     	CPerspective perspective = createEmptyPerspective();
     	
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
-    	Perspective conversion = wrap( includeWorkingAreas, factory );
-    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
+    	Perspective conversion = wrap( perspective, includeWorkingAreas, factory );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
     		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
@@ -415,7 +412,6 @@ public class CControlPerspective {
     	
     	// layout
     	Perspective conversion = wrap( perspective, includeWorkingAreas );
-    	conversion.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), perspective ) );
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
     		conversion.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, perspective ) );
@@ -438,9 +434,6 @@ public class CControlPerspective {
     	CPerspective cperspective = createEmptyPerspective();
     	Perspective perspective = wrap( cperspective, includeWorkingAreas );
     	
-    	// prepare factories
-    	perspective.getSituation().add( new CommonSingleDockableFactory( control.getOwner(), cperspective ) );
-    	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
     		perspective.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, cperspective ) );
     	}
@@ -455,15 +448,20 @@ public class CControlPerspective {
     	
     	return cperspective;
     }
-    
+
     private Perspective wrap( CPerspective perspective, boolean includeWorkingAreas ){
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
-    	return wrap( includeWorkingAreas, factory );
+    	return wrap( perspective, includeWorkingAreas, factory );
     }
     
-    private Perspective wrap( boolean includeWorkingAreas, PerspectiveElementFactory factory ){
+    private Perspective wrap( CPerspective perspective, boolean includeWorkingAreas, PerspectiveElementFactory factory ){
     	Perspective result = control.getOwner().intern().getPerspective( !includeWorkingAreas, factory ).getPerspective();
     	factory.setBasePerspective( result );
+    	
+    	CommonSingleDockableFactory singleDockableFactory = new CommonSingleDockableFactory( control.getOwner(), perspective );
+    	result.getSituation().add( singleDockableFactory );
+    	result.getSituation().add( new CommonDockStationFactory( control.getOwner(), factory, singleDockableFactory ) );
+    	
     	return result;
     }
     
@@ -566,6 +564,7 @@ public class CControlPerspective {
 					station = control.getOwner().getMissingPerspectiveStrategy().createStation( key, stationType );
 					if( station != null ){
 						perspective.addStation( station );
+						station.setRoot( rootStation );
 					}
 				}
 				if( station == null ){

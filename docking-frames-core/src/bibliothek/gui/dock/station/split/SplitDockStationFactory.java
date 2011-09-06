@@ -71,6 +71,41 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         return ID;
     }
     
+    /**
+     * Creates a new layout for <code>station</code>. The default implementation just calls {@link #createLayout(Entry, int, boolean)}.
+     * @param station the station for which the layout is requested
+     * @param root the contents of the layout
+     * @param fullscreen the index of the child that is maximized
+     * @param hasFullscreenAction whether a fullscreen action is shown or not
+     * @return the new layout
+     */
+    protected SplitDockStationLayout createLayout( SplitDockStation station, Entry root, int fullscreen, boolean hasFullscreenAction ){
+    	return createLayout( root, fullscreen, hasFullscreenAction );
+    }
+    
+    /**
+     * Creates a new layout for <code>station</code>. The default implementation just calls {@link #createLayout(Entry, int, boolean)}.
+     * @param station the station for which the layout is requested
+     * @param root the contents of the layout
+     * @param fullscreen the index of the child that is maximized
+     * @param hasFullscreenAction whether a fullscreen action is shown or not
+     * @return the new layout
+     */
+    protected SplitDockStationLayout createLayout( SplitDockPerspective station, Entry root, int fullscreen, boolean hasFullscreenAction ){
+    	return createLayout( root, fullscreen, hasFullscreenAction );
+    }
+    
+    /**
+     * Creates a new layout for <code>station</code>.
+     * @param root the contents of the layout
+     * @param fullscreen the index of the child that is maximized
+     * @param hasFullscreenAction whether a fullscreen action is shown or not
+     * @return the new layout
+     */
+    protected SplitDockStationLayout createLayout( Entry root, int fullscreen, boolean hasFullscreenAction ){
+    	return new SplitDockStationLayout( root, fullscreen, hasFullscreenAction );
+    }
+    
     public SplitDockStationLayout getLayout( final SplitDockStation station, final Map<Dockable, Integer> children ) {
         Entry root =
             station.visit( new SplitTreeFactory<Entry>(){
@@ -130,9 +165,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
             fullscreen = children.get( fullscreenDockable );
         
         if( fullscreen == null )
-            return new SplitDockStationLayout( root, -1, station.hasFullScreenAction() );
+            return createLayout( station, root, -1, station.hasFullScreenAction() );
         else
-            return new SplitDockStationLayout( root, fullscreen, station.hasFullScreenAction() );
+            return createLayout( station, root, fullscreen, station.hasFullScreenAction() );
     }
     
     public SplitDockStationLayout getPerspectiveLayout( SplitDockPerspective element, Map<PerspectiveDockable, Integer> children ){
@@ -147,9 +182,9 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
              fullscreen = children.get( fullscreenDockable );
          
         if( fullscreen == null )
-            return new SplitDockStationLayout( root, -1, element.hasFullscreenAction() );
+            return createLayout( element, root, -1, element.hasFullscreenAction() );
         else
-            return new SplitDockStationLayout( root, fullscreen, element.hasFullscreenAction() );
+            return createLayout( element, root, fullscreen, element.hasFullscreenAction() );
     }
 
     private Entry convert( SplitDockPerspective.Entry entry, Map<PerspectiveDockable, Integer> children ){
@@ -442,7 +477,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         if( version110 ){
         	fullscreenAction = in.readBoolean();
         }
-        return new SplitDockStationLayout( root, fullscreen, fullscreenAction );
+        return createLayout( root, fullscreen, fullscreenAction );
     }
     
     /**
@@ -598,7 +633,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
         	fullscreenAction = xfullscreenAction.getBoolean();
         }
         
-        return new SplitDockStationLayout( root, fullscreen, fullscreenAction );
+        return createLayout( root, fullscreen, fullscreenAction );
     }
     
     /**

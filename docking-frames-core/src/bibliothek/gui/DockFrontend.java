@@ -421,6 +421,21 @@ public class DockFrontend {
     }
 
     /**
+     * Searches for a {@link DockFactory} which id <code>factoryId</code>. This method checks
+     * all the factories that were added by {@link #registerFactory(DockFactory)}.
+     * @param factoryId the unique identifier of the factory
+     * @return the factory or <code>null</code>
+     */
+    public DockFactory<?, ?, ?> getDockFactory( String factoryId ){
+    	for( DockFactory<?, ?, ?> factory : dockFactories ){
+    		if( factory.getID().equals( factoryId )){
+    			return factory;
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
      * Registers a factory to write and read {@link Dockable}s and {@link DockStation}s.
      * @param factory the new factory
      * @param backup if <code>true</code>, then <code>factory</code> is registered
