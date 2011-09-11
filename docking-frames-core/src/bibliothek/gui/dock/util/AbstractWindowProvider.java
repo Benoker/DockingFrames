@@ -116,6 +116,14 @@ public abstract class AbstractWindowProvider implements WindowProvider{
         return listeners.toArray( new WindowProviderListener[ listeners.size() ] );
     }
     
+    /**
+     * Tells whether at least one {@link WindowProviderListener} is registered.
+     * @return whether this provider is monitored
+     */
+    protected boolean hasListeners(){
+    	return listeners.size() > 0;
+    }
+    
     public void addWindowProviderListener( WindowProviderListener listener ) {
         if( listener == null )
             throw new IllegalArgumentException( "null is not allowed as listener" );
