@@ -121,6 +121,12 @@ public interface DockRelocator {
     public boolean isOnPut();    
 
     /**
+     * Cancels the current drag and drop operation (if there is any). All evidence of a DnD operation is
+     * to be removed immediatelly. Listeners will receive a canceled-event.
+     */
+    public void cancel();
+    
+    /**
      * Creates a device with which drag&amp;drop operations concerning
      * <code>dockable</code> can be initiated and executed.
      * @param dockable the dockable which might be moved
