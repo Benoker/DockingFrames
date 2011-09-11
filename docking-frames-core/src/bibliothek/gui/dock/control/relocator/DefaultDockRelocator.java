@@ -287,7 +287,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         if( !isCancelLocation( x, y, moved )){
 	        for( DockStation station : controller.getRegister().listDockStations() ){   
 	            if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
-	                if( station.isStationVisible() && isStationValid( station ) ){
+	                if( station.isStationShowing() && isStationValid( station ) ){
 	                    Rectangle bounds = station.getStationBounds();
 	                    if( bounds == null || bounds.contains( x, y )){
 	                        int index = 0;
@@ -825,6 +825,12 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         }
         else
             return consume ? Reaction.CONTINUE_CONSUMED : Reaction.CONTINUE;
+    }
+    
+    public void cancel(){
+    	if( operation != null ){
+    		cancel( operation.getOperation().getItem() );
+    	}
     }
     
     /**
