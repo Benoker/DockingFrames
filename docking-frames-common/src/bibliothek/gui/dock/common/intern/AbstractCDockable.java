@@ -671,7 +671,6 @@ public abstract class AbstractCDockable implements CDockable {
         		this.control.getLocationManager().reduceToEmpty( intern() );
         	}
         	
-            this.control.getLocationManager().remove( intern() );
             this.control.link( this, null );
             if( vetoClosingListenerConverter != null ){
             	this.control.getOwner().intern().removeVetoableListener( vetoClosingListenerConverter );

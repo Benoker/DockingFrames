@@ -645,6 +645,8 @@
  - API: ScreenDockWindow now closes and reopens its ScreenDockWindows if the owner window (the root window) changed. This way the windows stay open if the client switches to a new root frame.
  ! API: In order to prevent focus stealing ScreenDockWindow has a new method "setPreventFocusStealing". This method is only used if the root window changed. Focus stealing prevention is unset after ScreenDockStation.PREVENT_FOCUS_STEALING_DELAY milliseconds.
  - API: New CStationContainerHistoryRewriter tries to ensure that a CDockable stays on the same CStationContainer as long as possible.
+ - Bugfix: A removed MultipleCDockable did not forget its unique identifier, when adding it again this caused an exception if another dockable got that unique id.
+ - Bugfix: The location of a removed CDockable could be forgotten even if CControl.shoudStore returned true.
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

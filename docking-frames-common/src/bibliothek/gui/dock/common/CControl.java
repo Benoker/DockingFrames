@@ -2690,7 +2690,10 @@ public class CControl {
 
         public void link( CDockable dockable, CDockableAccess access ) {
             if( access == null ){
-                accesses.remove( dockable );
+                CDockableAccess oldAccess = accesses.remove( dockable );
+                if( oldAccess != null ){
+                	oldAccess.setUniqueId( null );
+                }
                 dockable.removeCDockablePropertyListener( listenerCollection.getCDockablePropertyListener() );
                 dockable.removeCDockableStateListener( listenerCollection.getCDockableStateListener() );
             }
