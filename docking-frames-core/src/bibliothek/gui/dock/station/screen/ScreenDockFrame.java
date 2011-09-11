@@ -86,6 +86,10 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
         frame.setTitle( getTitleText() );
     }
     
+    public void setPreventFocusStealing( boolean prevent ){
+    	frame.setFocusableWindowState( !prevent );
+    }
+    
     @Override
     protected void updateTitleIcon() {
         Icon icon = getTitleIcon();

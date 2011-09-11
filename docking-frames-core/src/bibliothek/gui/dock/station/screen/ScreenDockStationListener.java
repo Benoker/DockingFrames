@@ -51,6 +51,7 @@ public interface ScreenDockStationListener {
 	/**
 	 * Called when <code>window</code> was removed from <code>station</code>.
 	 * @param station the element that was shown on <code>window</code>
+	 * @param dockable the element that was shown on <code>window</code>
 	 * @param window the removed window
 	 */
 	public void windowDeregistering( ScreenDockStation station, Dockable dockable, ScreenDockWindow window );

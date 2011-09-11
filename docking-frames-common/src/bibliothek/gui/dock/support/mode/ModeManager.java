@@ -88,6 +88,9 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	/** how often the {@link #affected} set was opened */
 	private int affectedCount = 0;
 	
+	/** used to change the history of {@link Dockable}s before applying a new mode */
+	private HistoryRewriter<H,M> historyRewriter;
+	
 	private ActionGuard guard = new ActionGuard() {
 		public boolean react( Dockable dockable ){
 			return getHandle( dockable ) != null;
@@ -241,6 +244,29 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 				return mode;
 		}
 		return null;
+	}
+	
+	/**
+	 * Sets the current {@link HistoryRewriter}. The rewriter is invoked every time before
+	 * the {@link Mode#apply(Dockable, Object, AffectedSet) apply} method of a {@link Mode} is
+	 * called. The rewriter can then change the history of one {@link Dockable}, e.g. to apply
+	 * additional checks whether an old state is still valid.<br>
+	 * A history rewriter does not change the history permanently. It creates a new history
+	 * object before the <code>apply</code> method is called, but that new history object
+	 * will not be stored by the {@link ModeManager}.
+	 * @param historyRewriter the new rewriter, can be <code>null</code>
+	 */
+	public void setHistoryRewriter( HistoryRewriter<H,M> historyRewriter ){
+		this.historyRewriter = historyRewriter;
+	}
+	
+	/**
+	 * Gets the current {@link HistoryRewriter}. 
+	 * @return the rewriter, can be <code>null</code>
+	 * @see #setHistoryRewriter(HistoryRewriter)
+	 */
+	public HistoryRewriter<H,M> getHistoryRewriter(){
+		return historyRewriter;
 	}
 	
 	/**
@@ -665,7 +691,11 @@ public abstract class ModeManager<H, M extends Mode<H>> {
     	
     	runTransaction( new Runnable(){
 			public void run(){
-				mode.apply( dockable, history, set );
+				H rewritten = history;
+				if( historyRewriter != null ){
+					rewritten = historyRewriter.rewrite( dockable, mode, history );
+				}
+				mode.apply( dockable, rewritten, set );
 			}
 		});
     }

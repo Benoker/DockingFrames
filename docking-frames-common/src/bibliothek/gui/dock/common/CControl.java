@@ -113,6 +113,7 @@ import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
 import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
+import bibliothek.gui.dock.common.mode.CStationContainerHistoryRewriter;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.CControlPerspective;
 import bibliothek.gui.dock.common.perspective.CDockablePerspective;
@@ -687,6 +688,7 @@ public class CControl {
      */
     private void initExtendedModes(){
     	locationManager = new CLocationModeManager( access );
+    	locationManager.setHistoryRewriter( new CStationContainerHistoryRewriter( this ) );
     	initExternalizeArea();
     }
     
@@ -2377,7 +2379,8 @@ public class CControl {
     /**
      * Sets the root window of the application. The root window is used
      * as owner of any dialog that is created. Already existing dialogs
-     * will not change their owner.
+     * may be closed and reopened in order to change the owner. Short living
+     * dialogs will not change their owner.
      * @param window the new owner, can be <code>null</code>
      */
     public void setRootWindow( WindowProvider window ){

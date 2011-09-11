@@ -153,6 +153,10 @@ public class DefaultScreenDockWindowFactory implements ScreenDockWindowFactory {
         return titleText;
     }
     
+    public ScreenDockWindow updateWindow( ScreenDockWindow window, ScreenDockStation station ){
+    	return createWindow( station );
+    }
+    
     public ScreenDockWindow createWindow( ScreenDockStation station ) {
         AbstractScreenDockWindow window;
         

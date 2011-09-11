@@ -32,6 +32,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -98,6 +101,7 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.gui.dock.util.WindowProviderListener;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.PropertyFactory;
 import bibliothek.util.Path;
@@ -143,6 +147,11 @@ public class ScreenDockStation extends AbstractDockStation {
     /** global setting to change the effect happening on a double click */
     public static final PropertyKey<Boolean> EXPAND_ON_DOUBLE_CLICK =
     	new PropertyKey<Boolean>( "ScreenDockStation.double_click_fullscreen", new ConstantPropertyFactory<Boolean>( true ), true );
+    
+    /** time in milliseconds a {@link ScreenDockWindow} is prevented from stealing the focus after the {@link #getOwner() owner} of this station changed. A value
+     * of <code>null</code> disables the focus stealing prevention. */
+    public static final PropertyKey<Integer> PREVENT_FOCUS_STEALING_DELAY = 
+    		new PropertyKey<Integer>( "ScreenDockStation.prevent_focus_stealing_delay", new ConstantPropertyFactory<Integer>( 500 ), false );
     
     /** The visibility state of the windows */
     private boolean showing = false;
@@ -321,6 +330,15 @@ public class ScreenDockStation extends AbstractDockStation {
         stationPaint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".screen", this );
         
         addScreenDockStationListener( new FullscreenListener() );
+        
+        owner.addWindowProviderListener( new WindowProviderListener(){
+        	public void visibilityChanged( WindowProvider provider, boolean showing ){
+        		// ignore
+        	}
+        	public void windowChanged (WindowProvider provider, Window window ){
+        		updateWindows();
+        	}
+        });
     }
     
     /**
@@ -1553,6 +1571,8 @@ public class ScreenDockStation extends AbstractDockStation {
         
         dockables.remove( index );
         
+        window.setDockable( null );
+        window.setPaintCombining( null );
         window.setController( null );
         window.setFullscreenStrategy( null );
         
@@ -1569,6 +1589,73 @@ public class ScreenDockStation extends AbstractDockStation {
      */
     protected ScreenDockWindow createWindow(){
         return getWindowFactory().createWindow( this );
+    }
+    
+    /**
+     * Called if {@link #getOwner()} changed. This method replaces existing {@link ScreenDockWindow}
+     * by new windows created by {@link ScreenDockWindowFactory#updateWindow(ScreenDockWindow, ScreenDockStation)}.
+     */
+    protected void updateWindows(){
+    	ScreenDockWindowFactory factory = getWindowFactory();
+    	
+    	Integer delay = PREVENT_FOCUS_STEALING_DELAY.getDefault( null );
+    	DockController controller = getController();
+    	if( controller != null ){
+    		delay = controller.getProperties().get( PREVENT_FOCUS_STEALING_DELAY ); 
+    	}
+    	
+    	for( ScreenDockWindowHandle handle : dockables.dockables() ){
+    		final ScreenDockWindow oldWindow = handle.getWindow();
+    		final ScreenDockWindow newWindow = factory.updateWindow( oldWindow, this );
+    		
+    		if( newWindow != null && newWindow != oldWindow ){
+    			Dockable dockable = oldWindow.getDockable();
+    			Rectangle bounds = oldWindow.getNormalBounds();
+    			if( bounds == null ){
+    				bounds = oldWindow.getWindowBounds();
+    			}
+    			boolean fullscreen = oldWindow.isFullscreen();
+    			boolean visible = oldWindow.isVisible();
+    			
+    			oldWindow.setDockable( null );
+    			oldWindow.setPaintCombining( null );
+    			oldWindow.setController( null );
+    	        oldWindow.setFullscreenStrategy( null );
+    	        
+    	        for( ScreenDockStationListener listener : screenDockStationListeners() ){
+    	        	listener.windowDeregistering( this, dockable, oldWindow );
+    	        }
+    	        
+    			oldWindow.destroy();
+    			handle.setWindow( newWindow );
+    			
+    	        newWindow.setController( getController() );
+    	        newWindow.setFullscreenStrategy( getFullscreenStrategy() );
+    	        newWindow.setWindowBounds( bounds, true );
+    	        newWindow.setFullscreen( fullscreen );
+    	        
+    	        for( ScreenDockStationListener listener : screenDockStationListeners() ){
+    	        	listener.windowRegistering( this, dockable, newWindow );
+    	        }
+    	        
+    	        if( visible ){
+    	        	if( delay == null || delay.intValue() <= 0 ){
+    	        		newWindow.setVisible( true );
+    	        	}
+    	        	else{
+	    	        	newWindow.setPreventFocusStealing( true );
+	    	        	newWindow.setVisible( true );
+	    	        	Timer timer = new Timer( delay, new ActionListener(){
+	    	        		public void actionPerformed( ActionEvent e ){
+	    	        			newWindow.setPreventFocusStealing( false );	
+	    	        		}
+	    	        	});
+	    	        	timer.setRepeats( false );
+	    	        	timer.start();
+    	        	}
+    	        }
+    		}
+    	}
     }
     
     /**

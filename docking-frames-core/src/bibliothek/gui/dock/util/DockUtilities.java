@@ -1,7 +1,9 @@
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
- * panels containing any Swing-Component the developer likes to add.
+ * panels containing any Swing-Co
+import java.awt.EventQueue;
+mponent the developer likes to add.
  * 
  * Copyright (C) 2007 Benjamin Sigg
  * 

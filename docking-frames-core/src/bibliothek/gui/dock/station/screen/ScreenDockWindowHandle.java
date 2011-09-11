@@ -81,6 +81,16 @@ public class ScreenDockWindowHandle implements PlaceholderListItem<Dockable>{
 	}
 	
 	/**
+	 * Sets the window which is represented by this handle.
+	 * @param window the new window, not <code>null</code>
+	 */
+	public void setWindow( ScreenDockWindow window ){
+		this.window.setDockable( null );
+		this.window = window;
+		window.setDockable( dockable );
+	}
+	
+	/**
 	 * Gets the current normal bounds of the window represented by this handle.
 	 * @return the boundaries, not <code>null</code>
 	 */

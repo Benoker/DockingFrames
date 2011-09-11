@@ -83,16 +83,6 @@ public class ScreenDockStationFactory implements DockFactory<ScreenDockStation, 
     }
     
     /**
-     * Gets the owner of all created dialogs.
-     * @return the owner
-     * @deprecated replaced by {@link #getProvider()}
-     */
-    @Deprecated
-    public Window getOwner(){
-        return owner.searchWindow();
-    }
-    
-    /**
      * Gets the provider for windows, which will be used as owner for newly
      * created dialogs.
      * @return the owner

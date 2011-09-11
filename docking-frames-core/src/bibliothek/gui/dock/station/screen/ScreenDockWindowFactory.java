@@ -40,4 +40,14 @@ public interface ScreenDockWindowFactory {
      * @return the new window
      */
     public ScreenDockWindow createWindow( ScreenDockStation station );
+    
+    /**
+     * This method is called if the result of {@link ScreenDockStation#getOwner()} changed, i.e. if
+     * the {@link ScreenDockStation} has a new owner. This method may replace the existing <code>window</code>
+     * with a new window if necessary.
+     * @param window the currently shown window
+     * @param station the owner of the window
+     * @return the replacement, a value of <code>null</code> or <code>window</code> means that nothing happens
+     */
+    public ScreenDockWindow updateWindow( ScreenDockWindow window, ScreenDockStation station );
 }

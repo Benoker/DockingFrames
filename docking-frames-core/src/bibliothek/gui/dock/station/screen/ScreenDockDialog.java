@@ -91,6 +91,10 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
         init( dialog, dialog.getContentPane(), undecorated );
     }
     
+    public void setPreventFocusStealing( boolean prevent ){
+    	dialog.setFocusableWindowState( !prevent );
+    }
+    
     /**
      * Gets the dialog which represents the window.
      * @return the window

@@ -90,4 +90,8 @@ public class InternalDockDialog extends AbstractScreenDockWindow{
 	public void toFront(){
 		desktop.moveToFront( dialog );
 	}
+	
+	public void setPreventFocusStealing( boolean prevent ){
+    	// ignore
+    }
 }

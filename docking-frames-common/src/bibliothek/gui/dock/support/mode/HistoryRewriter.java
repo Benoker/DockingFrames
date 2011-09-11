@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,37 +23,23 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.support.mode;
 
-import javax.swing.JDesktopPane;
-
-import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.Dockable;
 
 /**
- * A simple factory creating new instances of {@link InternalDockDialog}.
+ * A {@link HistoryRewriter} can be 
  * @author Benjamin Sigg
- * @see InternalBoundaryRestriction
+ * @param <M> the kind of {@link Mode} this rewriter accepts
+ * @param <H> the kind of history this rewriter accepts
  */
-public class InternalScreenDockWindowFactory implements ScreenDockWindowFactory{
-	/** the parent for new windows */
-	private JDesktopPane desktop;
-	
+public interface HistoryRewriter<H, M extends Mode<H>> {
 	/**
-	 * Creates the factory. All windows will have <code>desktop</code> as parent.
-	 * @param desktop the parent for new windows
+	 * Checks whether the history object <code>history</code> is still valid.
+	 * @param dockable the element which is about to change its mode
+	 * @param mode the mode that is going to be applied
+	 * @param history the history object that will be forwarded to <code>mode</code>, may be <code>null</code>
+	 * @return the history object to use, may be <code>null</code>
 	 */
-	public InternalScreenDockWindowFactory( JDesktopPane desktop ){
-		if( desktop == null ){
-			throw new IllegalArgumentException( "desktop must not be null" );
-		}
-		this.desktop = desktop;
-	}
-	
-	public ScreenDockWindow updateWindow( ScreenDockWindow window, ScreenDockStation station ){
-		return null;
-	}
-	
-	public ScreenDockWindow createWindow( ScreenDockStation station ){
-		return new InternalDockDialog( station, desktop );
-	}
+	public H rewrite( Dockable dockable, M mode, H history );
 }

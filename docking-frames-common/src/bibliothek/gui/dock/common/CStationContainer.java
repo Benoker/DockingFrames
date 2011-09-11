@@ -27,6 +27,9 @@ package bibliothek.gui.dock.common;
 
 import java.awt.Component;
 
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
+
 /**
  * A {@link CStationContainer} is a set of root {@link CStation}s that are somehow
  * combined and ordered on some kind of {@link Component}. A container may or may not be mutable.
@@ -78,4 +81,29 @@ public interface CStationContainer {
 	 * @return the default station or <code>null</code>
 	 */
 	public CStation<?> getDefaultStation();
+	
+	/**
+	 * Gets the preferred default {@link CStation} of this container for children in mode <code>mode</code>.
+	 * @param mode the mode for which a station is searched
+	 * @return a child of this {@link CStationContainer} that can show {@link Dockable}s in mode <code>mode</code>, 
+	 * can be <code>null</code>
+	 */
+	public CStation<?> getDefaultStation( ExtendedMode mode );
+	
+	/**
+	 * Assuming <code>container</code> is a type of {@link CStationContainer} that is known to
+	 * <code>this</code>, and assuming <code>station</code> is a child of <code>container</code>: this
+	 * method returns one of <code>this</code> children that has the same relative location in respect to <code>this</code>
+	 * as <code>station</code> has to <code>container</code>. For example if <code>station</code> is the
+	 * center area of a {@link CGridArea}, and <code>this</code> is a {@link CGridArea} as well, then
+	 * this method would return the center area of <code>this</code>.
+	 * @param container some kind of {@link CStationContainer}, may be a type that is known to <code>this</code>
+	 * or not.
+	 * @param station some child of <code>container</code>
+	 * @return a child of <code>this</code>, such that the location of the child in relation to <code>this</code> is
+	 * equivalent to the location of <code>station</code> in relation to <code>container</code>. A value of
+	 * <code>null</code> indicates that this method did not find a suitable child. If possible the result of this method
+	 * and <code>station</code> should be of the same type.
+	 */
+	public CStation<?> getMatchingStation( CStationContainer container, CStation<?> station );
 }

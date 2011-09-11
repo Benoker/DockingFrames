@@ -144,6 +144,12 @@ public interface ScreenDockWindow {
     public boolean isVisible();
     
     /**
+     * Tells this window that it should try not to steal the focus if possible.
+     * @param prevent whether to attempt to prevent focus stealing
+     */
+    public void setPreventFocusStealing( boolean prevent );
+    
+    /**
      * Informs this window that it is no longer used by the station
      * and will never be used again.
      */

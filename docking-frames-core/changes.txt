@@ -642,6 +642,9 @@
 
 [v1.1.1p5c]
  - API: DockRelocator offers a method "cancel" to cancel any DnD operation at any time.
+ - API: ScreenDockWindow now closes and reopens its ScreenDockWindows if the owner window (the root window) changed. This way the windows stay open if the client switches to a new root frame.
+ ! API: In order to prevent focus stealing ScreenDockWindow has a new method "setPreventFocusStealing". This method is only used if the root window changed. Focus stealing prevention is unset after ScreenDockStation.PREVENT_FOCUS_STEALING_DELAY milliseconds.
+ - API: New CStationContainerHistoryRewriter tries to ensure that a CDockable stays on the same CStationContainer as long as possible.
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

@@ -34,17 +34,14 @@ import javax.swing.JPanel;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
-import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.location.CBaseLocation;
 import bibliothek.gui.dock.common.location.CMinimizedLocation;
 import bibliothek.gui.dock.common.location.Side;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A component that is normally set into the center of the
@@ -190,10 +187,37 @@ public class CContentArea extends JPanel implements CStationContainer{
 		return stations[index];
 	}
 	
+	/**
+	 * Gets the index of <code>child</code>.
+	 * @param child a child {@link CStation} of this area.
+	 * @return the index of <code>child</code> or -1 if not found
+	 */
+	public int indexOf( CStation<?> child ){
+		for( int i = 0; i < stations.length; i++ ){
+			if( stations[i] == child ){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public CStation<?> getDefaultStation(){
 		return center;
 	}
-
+	
+	public CStation<?> getDefaultStation( ExtendedMode mode ){
+		if( mode == ExtendedMode.MINIMIZED ){
+			return north;
+		}
+		if( mode == ExtendedMode.NORMALIZED ){
+			return center;
+		}
+		if( mode == ExtendedMode.MAXIMIZED ){
+			return center;
+		}
+		return null;
+	}
+	
 	/**
 	 * Exchanges all the {@link CDockable}s on the center panel by
 	 * the elements of <code>grid</code>.
@@ -487,6 +511,14 @@ public class CContentArea extends JPanel implements CStationContainer{
 	 */
 	public static String getWestIdentifier( String uniqueCenterId ){
 		return uniqueCenterId + " west";
+	}
+	
+	public CStation<?> getMatchingStation( CStationContainer container, CStation<?> station ){
+		if( container instanceof CContentArea ){
+			CContentArea other = (CContentArea)container;
+			return getStation( other.indexOf( station ) );
+		}
+		return null;
 	}
 
 	/**
