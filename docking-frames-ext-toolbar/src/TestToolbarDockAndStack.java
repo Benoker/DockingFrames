@@ -5,6 +5,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation.Position;
 import bibliothek.gui.dock.ToolbarDockStation;
@@ -70,7 +71,7 @@ public class TestToolbarDockAndStack {
 		/**
 		 * Create a stack and add it in the center area
 		 * */
-		FlapDockStation stackStation = new FlapDockStation();
+		StackDockStation stackStation = new StackDockStation();
 		controller.add( stackStation );
 		DefaultDockable dockable9 = new DefaultDockable( "First" );
 		stackStation.drop( dockable9 );

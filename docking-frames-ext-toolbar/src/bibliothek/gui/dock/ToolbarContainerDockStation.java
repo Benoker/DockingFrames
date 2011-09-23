@@ -71,7 +71,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/** The south Pane */
 	private JPanel southPanel = new JPanel();
 	/** The center Pane */
-	private JPanel centerPanel = new JPanel();
+	private JPanel centerPanel;
 	/** dockables associate with the west pane */
 	private ArrayList<AbstractDockableStation> westDockables = new ArrayList<AbstractDockableStation>();
 	/** dockables associate with the east pane */
@@ -99,7 +99,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		eastPanel = createSidePanel();
 		northPanel = createSidePanel();
 		southPanel = createSidePanel();
-		centerPanel = new JPanel();
+		centerPanel = new JPanel(new GridLayout( 1, 1 ));
 		borderPanel.add( westPanel, BorderLayout.WEST );
 		borderPanel.add( eastPanel, BorderLayout.EAST );
 		borderPanel.add( northPanel, BorderLayout.NORTH );
