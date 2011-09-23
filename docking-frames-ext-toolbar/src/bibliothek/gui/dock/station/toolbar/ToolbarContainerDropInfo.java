@@ -5,12 +5,16 @@ import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.OrientedDockStation.Orientation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation.Position;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.AbstractDockableStation;
+import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 
 /**
  * Information where to insert a {@link Dockable} into a
@@ -18,14 +22,14 @@ import bibliothek.gui.dock.station.AbstractDockableStation;
  * 
  * @author Herve Guillaume
  */
-public class ToolbarContainerDropInfo {
+public class ToolbarContainerDropInfo implements StationDropOperation {
 	/** The {@link Dockable} which is inserted */
 	private Dockable dragDockable;
 	/**
 	 * The {@link Dockable} which received the dockbale (WARNING: this can be
 	 * different to the original dock parent of the dockable!)
 	 */
-	private AbstractDockableStation stationHost;
+	private ToolbarContainerDockStation stationHost;
 	/** the drag dockable will be insert inside this {@link Dockable}s */
 	private ArrayList<AbstractDockableStation> associateToolbars;
 	/** Store temporary the position beneath the mouse */
@@ -51,7 +55,7 @@ public class ToolbarContainerDropInfo {
 	 * @param dockable
 	 *            the {@link Dockable} which will be inserted
 	 */
-	public ToolbarContainerDropInfo( Dockable dockable, AbstractDockableStation stationHost, ArrayList<AbstractDockableStation> associateToolbars,
+	public ToolbarContainerDropInfo( Dockable dockable, ToolbarContainerDockStation stationHost, ArrayList<AbstractDockableStation> associateToolbars,
 			Position position, int mouseX, int mouseY ){
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
@@ -61,15 +65,40 @@ public class ToolbarContainerDropInfo {
 		this.mouseY = mouseY;
 	}
 
-	/**
-	 * Gets the {@link Dockable} which will be dropped or moved on the station.
-	 * 
-	 * @return the source
-	 */
-	public Dockable getDragDockable(){
+	public Dockable getItem(){
 		return dragDockable;
 	}
+	
+	public DockStation getTarget(){
+		return stationHost;
+	}
 
+	public void destroy(){
+		// nothing to do
+	}
+	
+	public void draw(){
+		// TODO	
+	}
+	
+	public boolean isMove(){
+		return getItem().getDockParent() == getTarget();
+	}
+	
+	public void execute(){
+		stationHost.drop( this );
+	}
+	
+	public CombinerTarget getCombination(){
+		// not supported
+		return null;
+	}
+	
+	public DisplayerCombinerTarget getDisplayerCombination(){
+		// not supported
+		return null;
+	}
+	
 	/**
 	 * Gets the {@link Position} which will be dropped or moved on the station.
 	 * 
@@ -85,20 +114,19 @@ public class ToolbarContainerDropInfo {
 	 * @return the index
 	 */
 	public int getIndex( ReferencePoint reference ){
-		ToolbarContainerDockStation station = (ToolbarContainerDockStation) stationHost;
 		switch( reference ){
-		case UPPERLEFT:
-			if( indexUpperLeft == -1 ) {
-				indexUpperLeft = computeIndex( associateToolbars, mouseX, mouseY, station.getOrientation( position ), reference );
-			}
-			return indexUpperLeft;
-		case BOTTOMRIGHT:
-			if( indexBottomRight == -1 ) {
-				indexBottomRight = computeIndex( associateToolbars, mouseX, mouseY, station.getOrientation( position ), reference );
-			}
-			return indexBottomRight;
-		default:
-			return 0;
+			case UPPERLEFT:
+				if( indexUpperLeft == -1 ) {
+					indexUpperLeft = computeIndex( associateToolbars, mouseX, mouseY, stationHost.getOrientation( position ), reference );
+				}
+				return indexUpperLeft;
+			case BOTTOMRIGHT:
+				if( indexBottomRight == -1 ) {
+					indexBottomRight = computeIndex( associateToolbars, mouseX, mouseY, stationHost.getOrientation( position ), reference );
+				}
+				return indexBottomRight;
+			default:
+				return 0;
 		}
 	}
 
@@ -116,43 +144,43 @@ public class ToolbarContainerDropInfo {
 		if( position != null ) {
 			int dockableCount = list.size();
 			Point mousePoint = new Point( this.mouseX, this.mouseY );
-			Dockable stationDockable = (Dockable) stationHost;
-			SwingUtilities.convertPointFromScreen( mousePoint, stationDockable.getComponent() );
+			
+			SwingUtilities.convertPointFromScreen( mousePoint, stationHost.getComponent() );
 			switch( reference ){
-			case UPPERLEFT:
-				for( int i = dockableCount - 1; i > -1; i-- ) {
-					Point componentPoint = new Point( (int) stationHost.getDockable( i ).getComponent().getBounds().getMinX(), (int) stationHost
-							.getDockable( i ).getComponent().getBounds().getMinY() );
-					switch( orientation ){
-					case VERTICAL:
-						if( mousePoint.getY() > componentPoint.getY() ) {
-							return i + 1;
+				case UPPERLEFT:
+					for( int i = dockableCount - 1; i > -1; i-- ) {
+						Point componentPoint = new Point( (int) stationHost.getDockable( i ).getComponent().getBounds().getMinX(), (int) stationHost
+								.getDockable( i ).getComponent().getBounds().getMinY() );
+						switch( orientation ){
+							case VERTICAL:
+								if( mousePoint.getY() > componentPoint.getY() ) {
+									return i + 1;
+								}
+								break;
+							case HORIZONTAL:
+								if( mousePoint.getX() > componentPoint.getX() ) {
+									return i + 1;
+								}
+								break;
 						}
-						break;
-					case HORIZONTAL:
-						if( mousePoint.getX() > componentPoint.getX() ) {
-							return i + 1;
-						}
-						break;
 					}
-				}
-			case BOTTOMRIGHT:
-				for( int i = dockableCount - 1; i > -1; i-- ) {
-					Point componentPoint = new Point( (int) stationHost.getDockable( i ).getComponent().getBounds().getMaxX(), (int) stationHost
-							.getDockable( i ).getComponent().getBounds().getMaxY() );
-					switch( orientation ){
-					case VERTICAL:
-						if( mousePoint.getY() > componentPoint.getY() ) {
-							return i + 1;
+				case BOTTOMRIGHT:
+					for( int i = dockableCount - 1; i > -1; i-- ) {
+						Point componentPoint = new Point( (int) stationHost.getDockable( i ).getComponent().getBounds().getMaxX(), (int) stationHost
+								.getDockable( i ).getComponent().getBounds().getMaxY() );
+						switch( orientation ){
+							case VERTICAL:
+								if( mousePoint.getY() > componentPoint.getY() ) {
+									return i + 1;
+								}
+								break;
+							case HORIZONTAL:
+								if( mousePoint.getX() > componentPoint.getX() ) {
+									return i + 1;
+								}
+								break;
 						}
-						break;
-					case HORIZONTAL:
-						if( mousePoint.getX() > componentPoint.getX() ) {
-							return i + 1;
-						}
-						break;
 					}
-				}
 			}
 			return 0;
 		}

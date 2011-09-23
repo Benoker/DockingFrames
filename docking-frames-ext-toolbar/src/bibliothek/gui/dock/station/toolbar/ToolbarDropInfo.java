@@ -10,21 +10,25 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.OrientedDockStation;
 import bibliothek.gui.OrientedDockStation.Orientation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.support.CombinerTarget;
 
 /**
  * Information where to insert a {@link Dockable} into a
  * {@link ToolbarGroupDockStation} or a {@link ToolbarDockStationFactory}.
  * 
  * @author Herve Guillaume
+ * @param <S> the kind of station using this {@link ToolbarDropInfo} 
  */
-public class ToolbarDropInfo {
+public abstract class ToolbarDropInfo<S extends DockStation> implements StationDropOperation{
 	/** The {@link Dockable} which is inserted */
 	private Dockable dragDockable;
 	/**
 	 * The {@link Dockable} which received the dockbale (WARNING: this can be
 	 * different to his original dock parent!)
 	 */
-	private DockStation stationHost;
+	private S stationHost;
 	/**
 	 * The multiple {@link Dockable} which belong to the dockstation
 	 */
@@ -50,7 +54,7 @@ public class ToolbarDropInfo {
 	 * @param dockable
 	 *            the {@link Dockable} which will be inserted
 	 */
-	public ToolbarDropInfo( Dockable dockable, DockStation stationHost, int mouseX, int mouseY ){
+	public ToolbarDropInfo( Dockable dockable, S stationHost, int mouseX, int mouseY ){
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
 		for( int i = 0; i < stationHost.getDockableCount(); i++ ) {
@@ -60,15 +64,37 @@ public class ToolbarDropInfo {
 		this.mouseY = mouseY;
 	}
 
-	/**
-	 * Gets the {@link Dockable} which will be dropped or moved on the station.
-	 * 
-	 * @return the source
-	 */
-	public Dockable getDragDockable(){
+	public Dockable getItem(){
 		return dragDockable;
 	}
-
+	
+	public S getTarget(){
+		return stationHost;
+	}
+	
+	public void destroy(){
+		// at the moment nothing to do
+	}
+	
+	public CombinerTarget getCombination(){
+		// not supported by this kind of station
+		return null;
+	}
+	
+	public DisplayerCombinerTarget getDisplayerCombination(){
+		// not supported by this kind of station
+		return null;
+	}
+	
+	public void draw(){
+		// TODO
+		// enable this ToolbarDropInfo to draw some markings on the stationHost
+	}
+	
+	public boolean isMove(){
+		return getItem().getDockParent() == getTarget();
+	}
+	
 	/**
 	 * Gets the <code>index</code> of the component beneath the mouse
 	 * 

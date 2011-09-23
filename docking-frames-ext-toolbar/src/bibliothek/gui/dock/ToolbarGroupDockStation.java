@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -20,6 +19,7 @@ import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
@@ -46,12 +46,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 	 * Graphical orientation of the group of components (vertical or horizontal)
 	 */
 	private Orientation orientation = Orientation.VERTICAL;
-	/**
-	 * Temporary information needed when a {@link Dockable} is moved over this
-	 * station.
-	 */
-	private ToolbarDropInfo dropInfo;
-
+	
 	/**
 	 * Constructs a new ToolbarGroupDockStation
 	 */
@@ -101,9 +96,9 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 		// Todo LATER. needed to implement persistent storage
 		return null;
 	}
-
+	
 	@Override
-	public boolean prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
 		System.out.println( this.toString() + "## prepareDrop(...) ##" );
 		DockController controller = getController();
 		// check whether this station has to check if the mouse is in the
@@ -111,7 +106,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 		// the mouse is in the override-zone
 		if( checkOverrideZone & this.getDockParent() != null ) {
 			if( this.getDockParent().isInOverrideZone( mouseX, mouseY, this, dockable ) ) {
-				return false;
+				return null;
 			}
 		}
 		// check if the dockable and the station accept each other
@@ -120,21 +115,59 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 			// the dockable become a child of this station
 			if( controller != null ) {
 				if( !controller.getAcceptance().accept( this, dockable ) ) {
-					return false;
+					return null;
 				}
 			}
-			this.dropInfo = new ToolbarDropInfo( dockable, this, mouseX, mouseY );
-			return true;
+			return new ToolbarDropInfo<ToolbarGroupDockStation>( dockable, this, mouseX, mouseY ){
+				@Override
+				public void execute(){
+					drop( this );
+				}
+			};
 		}
 		else {
-			return false;
+			return null;
 		}
 	}
-
+	
+	private void drop( ToolbarDropInfo<?> dropInfo ){
+		if( dropInfo.isMove() ){
+			move( dropInfo.getItem(), dropInfo.getIndex( ReferencePoint.UPPERLEFT ));
+		}
+		else{
+			drop( dropInfo.getItem(), dropInfo.getIndex( ReferencePoint.BOTTOMRIGHT ));
+		}
+	}
+	
 	@Override
-	public void drop(){
-		System.out.println( this.toString() + "## drop() ##" );
-		this.drop( dropInfo.getDragDockable(), dropInfo.getIndex( ReferencePoint.BOTTOMRIGHT ) );
+	public void move( Dockable dockable, DockableProperty property ){
+		// TODO pending
+	}
+	
+	private void move( Dockable dockable, int indexWhereInsert ){
+		System.out.println( this.toString() + "## move() ##" );
+		System.out.println( "Index move: " + indexWhereInsert );
+		
+		DockController controller = getController();
+		try{
+			if( controller != null ){
+				controller.freezeLayout();
+			}
+			
+			this.remove( dockable );
+			// Warning we remove a dockable before insert it again
+			if( indexWhereInsert == 0 ) {
+				this.add( (ComponentDockable) dockable, indexWhereInsert );
+			}
+			else {
+				this.add( (ComponentDockable) dockable, indexWhereInsert - 1 );
+			}
+		}
+		finally{
+			if( controller != null ){
+				controller.meltLayout();
+			}
+		}
 	}
 
 	@Override
@@ -173,44 +206,6 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 				this.add( (ComponentDockable) dockable, indexWhereInsert );
 			}
 		}
-	}
-
-	@Override
-	public boolean prepareMove( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
-		System.out.println( this.toString() + "## prepareMove(...) ##" );
-		return this.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable );
-	}
-
-	@Override
-	public void move(){
-		System.out.println( this.toString() + "## move() ##" );
-		int indexWhereInsert = dropInfo.getIndex( ReferencePoint.UPPERLEFT );
-		System.out.println( "Index move: " + indexWhereInsert );
-		this.remove( dropInfo.getDragDockable() );
-		// Warning we remove a dockable before insert it again
-		if( indexWhereInsert == 0 ) {
-			this.add( (ComponentDockable) dropInfo.getDragDockable(), indexWhereInsert );
-		}
-		else {
-			this.add( (ComponentDockable) dropInfo.getDragDockable(), indexWhereInsert - 1 );
-		}
-
-	}
-
-	@Override
-	public void move( Dockable dockable, DockableProperty property ){
-		// Todo LATER Auto-generated method stub
-		System.out.println( this.toString() + "## move(Dockable dockable, DockableProperty property) ## " );
-	}
-
-	@Override
-	public void draw(){
-		componentsPanel.repaint();
-	}
-
-	@Override
-	public void forget(){
-		dropInfo = null;
 	}
 
 	@Override
@@ -346,7 +341,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 			dockables.add( index, dockable );
 			componentsPanel.add( dockable.getComponent(), index );
 			componentsPanel.revalidate();
-			this.draw();
+			componentsPanel.repaint();
 			listeners.fireDockableAdded( dockable );
 			fireDockablesRepositioned( index + 1 );
 		}
@@ -396,7 +391,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 			// race condition, only required if not called from the EDT
 			// buttonPane.resetTitles();
 			componentsPanel.revalidate();
-			this.draw();
+			componentsPanel.repaint();
 			listeners.fireDockableRemoved( dockable );
 		}
 		finally {
@@ -416,7 +411,6 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 			break;
 		}
 		this.orientation = orientation;
-		this.draw();
 	}
 
 	@Override

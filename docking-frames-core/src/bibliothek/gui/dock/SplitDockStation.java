@@ -692,7 +692,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		if( !old.accept( this, next )){
 			return false;
 		}
-		if( !next.accept( this )){
+		if( !next.accept( this, old )){
 			return false;
 		}
 		DockController controller = getController();
