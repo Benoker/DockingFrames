@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation.Position;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
@@ -37,7 +38,7 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 	/**
 	 * Creates a new property.
 	 * @param index the index of a child of a {@link DockStation}
-	 * @param position where the child is in respect to the center of the station
+	 * @param position where the child is in respect to the center of the station, not <code>null</code>
 	 * @param placeholder the name of the child, can be <code>null</code>
 	 */
 	public ToolbarContainerProperty( int index, Position position, Path placeholder ){
@@ -59,7 +60,31 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 	public String getFactoryID(){
 		return ToolbarPropertyFactory.ID;
 	}
-
+	
+	/**
+	 * Gets the location of the {@link Dockable} in its list. 
+	 * @return the index
+	 */
+	public int getIndex(){
+		return index;
+	}
+	
+	/**
+	 * Gets the name of the {@link Dockable}.
+	 * @return the name, can be <code>null</code>
+	 */
+	public Path getPlaceholder(){
+		return placeholder;
+	}
+	
+	/**
+	 * Tells in which list the {@link Dockable} appears.
+	 * @return the position, must not be <code>null</code>
+	 */
+	public Position getPosition(){
+		return position;
+	}
+	
 	public void store( DataOutputStream out ) throws IOException{
 		Version.write( out, Version.VERSION_1_1_1 );
 		out.writeInt( index );

@@ -49,6 +49,22 @@ public class ToolbarProperty extends AbstractDockableProperty{
 		}
 		return copy;
 	}
+	
+	/**
+	 * Gets the index of the child on its parent.
+	 * @return the index
+	 */
+	public int getIndex(){
+		return index;
+	}
+	
+	/**
+	 * Gets the name of the child.
+	 * @return the name of the child, can be <code>null</code>
+	 */
+	public Path getPlaceholder(){
+		return placeholder;
+	}
 
 	@Override
 	public String getFactoryID(){

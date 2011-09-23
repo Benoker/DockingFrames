@@ -23,7 +23,12 @@ import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
+import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link Dockable} and a {@link Dockstation} which stands for a group of
@@ -93,8 +98,8 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		// Todo LATER. needed to implement persistent storage
-		return null;
+		int index = dockables.indexOf( child );
+		return new ToolbarProperty( index, null );
 	}
 	
 	@Override
@@ -178,12 +183,23 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		// Todo LATER. needed to implement persistent storage
-		System.out.println( this.toString() + "## drop(Dockable dockable, DockableProperty property) ## " );
+		if( property instanceof ToolbarProperty ){
+			ToolbarProperty toolbar = (ToolbarProperty)property;
+			if( toolbar.getSuccessor() != null && toolbar.getIndex() < getDockableCount()){
+				DockStation child = getDockable( toolbar.getIndex() ).asDockStation();
+				if( child != null ){
+					return child.drop( dockable, toolbar.getSuccessor() );
+				}
+			}
+			return drop( dockable, Math.min( getDockableCount(), toolbar.getIndex() ));
+		}
+		
 		return false;
 	}
 
-	public void drop( Dockable dockable, int index ){
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
+			description="make use of the Merger interface")
+	public boolean drop( Dockable dockable, int index ){
 		System.out.println( this.toString() + "## drop(Dockable dockable, int index)##" );
 		if( this.accept( dockable ) ) {
 			int indexWhereInsert = index;
@@ -191,6 +207,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 				// WARNING: if I don't do a copy of dockables, problem occurs.
 				// Perhaps due to concurrent access to the dockable (drop in
 				// goal area ==> drag in origin area)?
+				
 				int count = dockable.asDockStation().getDockableCount();
 				ArrayList<ComponentDockable> insertDockables = new ArrayList<ComponentDockable>();
 				for( int i = 0; i < count; i++ ) {
@@ -200,12 +217,15 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 					this.add( insertDockables.get( i ), indexWhereInsert );
 					indexWhereInsert++;
 				}
+				return true;
 			}
 			else {
 				// one ComponentDockable only is added
 				this.add( (ComponentDockable) dockable, indexWhereInsert );
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override

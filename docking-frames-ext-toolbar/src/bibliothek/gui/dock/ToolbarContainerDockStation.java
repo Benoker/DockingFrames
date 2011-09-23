@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -27,7 +28,7 @@ import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
-import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -154,8 +155,27 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		// Todo LATER. needed to implement persistent storage
-		return null;
+		int index = eastDockables.indexOf( child );
+		if( index >= 0 ){
+			return new ToolbarContainerProperty( index, Position.EAST, null );
+		}
+		
+		index = westDockables.indexOf( child );
+		if( index >= 0 ){
+			return new ToolbarContainerProperty( index, Position.WEST, null );
+		}
+		
+		index = northDockables.indexOf( child );
+		if( index >= 0 ){
+			return new ToolbarContainerProperty( index, Position.NORTH, null );
+		}
+		
+		index = southDockables.indexOf( child );
+		if( index >= 0 ){
+			return new ToolbarContainerProperty( index, Position.SOUTH, null );
+		}
+		
+		return new ToolbarContainerProperty( 0, Position.CENTER, null );
 	}
 
 	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
@@ -236,8 +256,35 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		// Todo LATER. needed to implement persistent storage
-		System.out.println( this.toString() + "## drop(Dockable dockable, DockableProperty property) ## " + this.toString() );
+		if( property instanceof ToolbarContainerProperty ){
+			ToolbarContainerProperty toolbar = (ToolbarContainerProperty)property;
+			
+			if( toolbar.getSuccessor() != null ){
+				Dockable preset = null;
+				
+				if( toolbar.getPosition() == Position.CENTER ){
+					preset = centerDockable;
+				}
+				else{
+					List<? extends Dockable> list = getDockables( toolbar.getPosition() );
+					if( toolbar.getIndex() < list.size() ){
+						preset = list.get( toolbar.getIndex() );
+					}
+				}
+				
+				if( preset != null && preset.asDockStation() != null ){
+					return preset.asDockStation().drop( dockable, property.getSuccessor() );
+				}
+			}
+			
+			if( toolbar.getPosition() == Position.CENTER ){
+				return drop( dockable, Position.CENTER );
+			}
+			else{
+				int max = getDockables( toolbar.getPosition() ).size();
+				return drop( dockable, Math.min( max, toolbar.getIndex() ), toolbar.getPosition() );
+			}
+		}
 		return false;
 	}
 
@@ -252,10 +299,11 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 *            a new child
 	 * @param position
 	 *            Refer to the position of area
+	 * @return <code>true</code> if dropping was successfull
 	 */
-	public void drop( Dockable dockable, Position position ){
+	public boolean drop( Dockable dockable, Position position ){
 		System.out.println( this.toString() + "## drop(Dockable dockable, String position)##" );
-		this.drop( dockable, getDockables( position ).size(), position );
+		return this.drop( dockable, getDockables( position ).size(), position );
 	}
 
 	/**
@@ -268,11 +316,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 *            a new child
 	 * @param position
 	 *            Refer to the position of area
+	 * @return <code>true</code> if dropping was successfull
 	 */
-	private void drop( Dockable dockable, int index, Position position ){
+	private boolean drop( Dockable dockable, int index, Position position ){
 		System.out.println( this.toString() + "## drop(Dockable dockable, int index, Position position)##" );
 		// where the dockable whre drop (WEST, EAST, etc.)?
-		this.add( dockable, index, position );
+		return this.add( dockable, index, position );
 	}
 
 	public void drop( ToolbarContainerDropInfo dropInfo ){
@@ -646,8 +695,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 *            Index where add dockable
 	 * @param position
 	 *            Position where insert dokckable
+	 * @return <code>true</code> if dropping was successfull
 	 */
-	protected void add( Dockable dockable, int index, Position position ){
+	protected boolean add( Dockable dockable, int index, Position position ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
 		// DockHierarchyLock.Token token =
@@ -675,6 +725,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					finally {
 						token.release();
 					}
+					return true;
 				}
 				break;
 			case NORTH:
@@ -709,12 +760,14 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					finally {
 						token.release();
 					}
+					return true;
 				}
 				break;
 			default:
-				throw new NullPointerException();
+				throw new IllegalStateException( "Unknown position: " + position );
 		}
-
+		
+		return false;
 	}
 
 }

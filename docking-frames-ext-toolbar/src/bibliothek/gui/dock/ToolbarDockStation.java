@@ -27,6 +27,7 @@ import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
+import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -99,8 +100,8 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		// Todo LATER. needed to implement persistent storage
-		return null;
+		int index = dockables.indexOf( child );
+		return new ToolbarProperty( index, null );
 	}
 
 	@Override
@@ -180,12 +181,27 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		// Todo LATER. needed to implement persistent storage
-		System.out.println( this.toString() + "## drop(Dockable dockable, DockableProperty property) ## " + this.toString() );
+		if( property instanceof ToolbarProperty ){
+			ToolbarProperty toolbar = (ToolbarProperty)property;
+			if( toolbar.getSuccessor() != null && toolbar.getIndex() < getDockableCount()){
+				DockStation child = getDockable( toolbar.getIndex() ).asDockStation();
+				if( child != null ){
+					return child.drop( dockable, toolbar.getSuccessor() );
+				}
+			}
+			return drop( dockable, Math.min( getDockableCount(), toolbar.getIndex() ));
+		}
+		
 		return false;
 	}
 
-	public void drop( Dockable dockable, int index ){
+	/**
+	 * Dropps <code>dockable</code> at location <code>index</code>.
+	 * @param dockable the element to add
+	 * @param index the location of <code>dockable</code>
+	 * @return whether the operation was succesfull or not
+	 */
+	public boolean drop( Dockable dockable, int index ){
 		System.out.println( this.toString() + "## drop(Dockable dockable, int index)##" );
 		if( this.accept( dockable ) ) {
 			int indexWhereInsert = index;
@@ -202,16 +218,21 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 					this.add( insertDockables.get( i ), indexWhereInsert );
 					indexWhereInsert++;
 				}
+				return true;
 			}
 			else if( dockable instanceof ToolbarGroupDockStation ) {
 				add( (ToolbarGroupDockStation) dockable, indexWhereInsert );
+				return true;
 			}
 			else {
 				ToolbarGroupDockStation group = new ToolbarGroupDockStation();
 				group.drop( (ComponentDockable) dockable );
 				add( group, indexWhereInsert );
+				return true;
 			}
 		}
+		
+		return false;
 	}
 
 	@Override
