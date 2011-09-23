@@ -336,7 +336,7 @@ public class CControlPerspective {
     		throw new XException( "missing element 'modes'" );
     	}
     	
-    	ModeSettingsConverter<Location, Location> converter = new LocationSettingConverter();
+    	ModeSettingsConverter<Location, Location> converter = new LocationSettingConverter( control.getOwner().getController() );
     	ModeSettings<Location, Location> modes = control.getOwner().getLocationManager().createModeSettings( converter );
     	modes.readXML( xmodes );
     	
@@ -398,7 +398,7 @@ public class CControlPerspective {
     		}
     	}
     	
-    	ModeSettingsConverter<Location, Location> converter = new LocationSettingConverter();
+    	ModeSettingsConverter<Location, Location> converter = new LocationSettingConverter( control.getOwner().getController() );
     	ModeSettings<Location, Location> modes = control.getOwner().getLocationManager().createModeSettings( converter );
     	modes.read( in );
     	

@@ -124,7 +124,7 @@ public class CDockFrontend extends DockFrontend{
     protected Setting createSetting() {
         CSetting setting = new CSetting();
         CLocationModeManager manager = control.getLocationManager();
-        ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter() );
+        ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter( getController() ) );
         setting.setModes( modeSettings );
         return setting;
     }
@@ -135,7 +135,7 @@ public class CDockFrontend extends DockFrontend{
     	
     	CSetting setting = (CSetting)super.getSetting( entry );
         
-        ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter() );
+        ModeSettings<Location, ?> modeSettings = manager.createSettings( new LocationSettingConverter( getController() ) );
         setting.setModes( modeSettings );
         manager.writeSettings( modeSettings );
         

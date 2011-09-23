@@ -200,7 +200,7 @@ public class LocationModeManagerPerspective {
 	 * @return the contents of this object
 	 */
 	public ModeSettings<Location, ?> writeModes( CControlAccess control ){
-		ModeSettings<Location, ?> modes = new CLocationModeSettings<Location>( new LocationSettingConverter() );
+		ModeSettings<Location, ?> modes = new CLocationModeSettings<Location>( new LocationSettingConverter( control.getOwner().getController() ) );
     	
     	LocationModeManagerPerspective manager = perspective.getLocationManager();
     	

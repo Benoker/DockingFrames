@@ -1,0 +1,21 @@
+package bibliothek.gui.dock.station.toolbar;
+
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.DockablePropertyFactory;
+
+/**
+ * Creates new {@link ToolbarContainerProperty}s.
+ * @author Benjamin Sigg
+ */
+public class ToolbarContainerPropertyFactory implements DockablePropertyFactory{
+	/** the unique identifier of this factory */
+	public static final String ID = "ToolbarContainerProperty";
+	
+	public String getID(){
+		return ID;
+	}
+	
+	public DockableProperty createProperty(){
+		return new ToolbarContainerProperty();
+	}
+}

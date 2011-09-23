@@ -240,7 +240,7 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
     }
     
     public PropertyTransformer createTransformer( DockFrontendInternals frontend ){
-        PropertyTransformer transformer = new PropertyTransformer();
+        PropertyTransformer transformer = new PropertyTransformer(frontend.getFrontend().getController());
         for( DockablePropertyFactory factory : frontend.getPropertyFactories() )
             transformer.addFactory( factory );
         return transformer;

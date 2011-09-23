@@ -29,6 +29,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
@@ -45,8 +46,16 @@ import bibliothek.util.xml.XElement;
  */
 public class LocationSettingConverter implements ModeSettingsConverter<Location, Location>{
     /** transformer to read or write single {@link DockableProperty}s */
-    private PropertyTransformer transformer = new PropertyTransformer();
+    private PropertyTransformer transformer;
 
+    /**
+     * Creates a new converter.
+     * @param controller the controller in whose realm settings need to be converted
+     */
+    public LocationSettingConverter( DockController controller ){
+    	transformer = new PropertyTransformer( controller );
+    }
+    
     /**
      * Adds an additional factory to this converter, needed to read and write
      * {@link DockableProperty}s.

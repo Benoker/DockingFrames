@@ -33,8 +33,10 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockFullScreenPropertyFactory;
@@ -42,6 +44,8 @@ import bibliothek.gui.dock.station.split.SplitDockPathPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
+import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -53,14 +57,22 @@ import bibliothek.util.xml.XElement;
  * 
  */
 public class PropertyTransformer {
+	/** Name of the {@link ExtensionName} that allows to load additional {@link DockablePropertyFactory}s */
+	public static final Path FACTORY_EXTENSION = new Path( "dock.DockablePropertyFactory" );
+	
+	/** Name of the only property of an {@link ExtensionName} that points to <code>this</code> */
+	public static final String FACTORY_EXTENSION_PARAMETER = "transformer";
+	
 	private Map<String, DockablePropertyFactory> factories = new HashMap<String, DockablePropertyFactory>();
 
 	/**
 	 * Creates a new transformer, the factories for all {@link DockableProperty}s implemented 
 	 * by this framework are installed.
+	 * @param controller the controller in whose realm this transformer is used
 	 */
-	public PropertyTransformer(){
-		this( SplitDockPropertyFactory.FACTORY,
+	public PropertyTransformer(DockController controller){
+		this( controller,
+				SplitDockPropertyFactory.FACTORY,
 				SplitDockPathPropertyFactory.FACTORY,
 				SplitDockPlaceholderPropertyFactory.FACTORY,
 				SplitDockFullScreenPropertyFactory.FACTORY,
@@ -72,10 +84,17 @@ public class PropertyTransformer {
 	/**
 	 * Creates a new transformer and installs <code>factories</code>.
 	 * @param factories a list of factories to install
+	 * @param controller the controller in whose realm this transformer is used
 	 */
-	public PropertyTransformer( DockablePropertyFactory... factories ){
-		for (DockablePropertyFactory factory : factories)
+	public PropertyTransformer( DockController controller, DockablePropertyFactory... factories ){
+		for (DockablePropertyFactory factory : factories){
 			this.factories.put( factory.getID(), factory );
+		}
+		
+		List<DockablePropertyFactory> extensions = controller.getExtensions().load( new ExtensionName<DockablePropertyFactory>( FACTORY_EXTENSION, DockablePropertyFactory.class, FACTORY_EXTENSION_PARAMETER, this ) );
+		for( DockablePropertyFactory factory : extensions ){
+			this.factories.put( factory.getID(), factory );
+		}
 	}
 
 	/**

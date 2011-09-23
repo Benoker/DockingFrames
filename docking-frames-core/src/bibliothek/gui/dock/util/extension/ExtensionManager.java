@@ -59,7 +59,8 @@ public class ExtensionManager {
 	 * main-framework.
 	 */
 	protected void tryLoadDefaultExtensions(){
-		String[] list = { "glass.eclipse.GlassExtension" };
+		String[] list = { "glass.eclipse.GlassExtension",
+				"bibliothek.gui.ToolbarExtension" };
 		for( String className : list ){
 			try {
 				tryLoadExtension( className );
