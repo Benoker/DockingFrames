@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
+import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.extension.ExtensionName;
@@ -33,6 +37,9 @@ public class ToolbarExtension implements Extension{
 		if( extension.getName().equals( PropertyTransformer.FACTORY_EXTENSION )){
 			return (Collection<E>)createPropertyFactoryExtension();
 		}
+		if( extension.getName().equals( DefaultDockRelocator.MERGE_EXTENSION )){
+			return (Collection<E>)createMergerExtension();
+		}
 		
 		return null;
 	}
@@ -41,6 +48,13 @@ public class ToolbarExtension implements Extension{
 		List<DockablePropertyFactory> result = new ArrayList<DockablePropertyFactory>();
 		result.add( new ToolbarPropertyFactory() );
 		result.add( new ToolbarContainerPropertyFactory() );
+		return result;
+	}
+	
+	private Collection<Merger> createMergerExtension(){
+		List<Merger> result = new ArrayList<Merger>();
+		result.add( new ToolbarGroupDockStationMerger() );
+		result.add( new ToolbarDockStationMerger() );
 		return result;
 	}
 }

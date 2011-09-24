@@ -5,13 +5,17 @@ import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DockableIcon;
+import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
@@ -142,12 +146,14 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 	@Override
 	public boolean accept( DockStation station ){
 		System.out.println( this.toString() + "## accept(DockStation station) ##" );
-		if( station instanceof ToolbarInterface ) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		
+		// as this method is called during drag&drop operations a DockController is available
+		
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
+		ToolbarStrategy strategy = value.getValue();
+		value.setProperties( (DockController)null );
+		
+		return strategy.isToolbarGroupPartParent( station, this );
 	}
 
 	@Override

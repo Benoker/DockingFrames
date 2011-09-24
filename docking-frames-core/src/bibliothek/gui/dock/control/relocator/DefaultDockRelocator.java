@@ -6,7 +6,9 @@
  * Copyright (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
+ * modify it under the terms of 
+import bibliothek.util.Path;
+the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
@@ -63,7 +65,9 @@ import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.ClientOnly;
+import bibliothek.util.Path;
 
 /**
  * Default implementation of a handler that performs the drag & drop operations
@@ -71,6 +75,12 @@ import bibliothek.util.ClientOnly;
  * @author Benjamin Sigg
  */
 public class DefaultDockRelocator extends AbstractDockRelocator{
+	/** Path of an {@link ExtensionName} that adds new {@link Merger}s */
+	public static final Path MERGE_EXTENSION = new Path("dock.merger");
+	
+	/** Name of a parameter of an {@link ExtensionName} pointing to <code>this</code> */
+	public static final String EXTENSION_PARAM = "relocator";
+	
 	/** <code>true</code> as long as the user drags a title or a Dockable */
     private boolean onMove = false;
     /** <code>true</code> while a drag and drop-operation is performed */
@@ -96,15 +106,22 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	 */
 	public DefaultDockRelocator( DockController controller, ControllerSetupCollection setup ){
 		super( controller );
+		
+		final MultiMerger merger = new MultiMerger();
+		merger.add( new StackMerger() );
+		merger.add( new TabMerger() );
+		
 		setup.add( new ControllerSetupListener(){
 		    public void done( DockController controller ) {
 		        controller.addRepresentativeListener( new Listener() );
+		        
+		        List<Merger> mergers = controller.getExtensions().load( new ExtensionName<Merger>( MERGE_EXTENSION, Merger.class, EXTENSION_PARAM, this ));
+				for( Merger next : mergers ){
+					merger.add( next );
+				}
 		    }
 		});
 		
-		MultiMerger merger = new MultiMerger();
-		merger.add( new StackMerger() );
-		merger.add( new TabMerger() );
 		setMerger( merger );
 	}
 	

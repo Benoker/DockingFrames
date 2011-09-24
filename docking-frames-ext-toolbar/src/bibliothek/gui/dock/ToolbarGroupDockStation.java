@@ -24,11 +24,9 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
+import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
+import bibliothek.gui.dock.util.SilentPropertyValue;
 
 /**
  * A {@link Dockable} and a {@link Dockstation} which stands for a group of
@@ -197,33 +195,12 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 		return false;
 	}
 
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
-			description="make use of the Merger interface")
 	public boolean drop( Dockable dockable, int index ){
+		// note: merging of two ToolbarGroupDockStations is done by the ToolbarGroupDockStationMerger
 		System.out.println( this.toString() + "## drop(Dockable dockable, int index)##" );
 		if( this.accept( dockable ) ) {
-			int indexWhereInsert = index;
-			if( dockable instanceof ToolbarGroupDockStation ) {
-				// WARNING: if I don't do a copy of dockables, problem occurs.
-				// Perhaps due to concurrent access to the dockable (drop in
-				// goal area ==> drag in origin area)?
-				
-				int count = dockable.asDockStation().getDockableCount();
-				ArrayList<ComponentDockable> insertDockables = new ArrayList<ComponentDockable>();
-				for( int i = 0; i < count; i++ ) {
-					insertDockables.add( (ComponentDockable) dockable.asDockStation().getDockable( i ) );
-				}
-				for( int i = 0; i < count; i++ ) {
-					this.add( insertDockables.get( i ), indexWhereInsert );
-					indexWhereInsert++;
-				}
-				return true;
-			}
-			else {
-				// one ComponentDockable only is added
-				this.add( (ComponentDockable) dockable, indexWhereInsert );
-				return true;
-			}
+			this.add( dockable, index );
+			return true;
 		}
 		return false;
 	}
@@ -273,7 +250,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 		remove( old );
 		// the child is a ComponentDockable because canReplace()
 		// ensure it
-		add( (ComponentDockable) next, index );
+		add( next, index );
 		controller.meltLayout();
 	}
 
@@ -301,23 +278,27 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 		// Todo LATER
 	}
 
+	/**
+	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
+	 * @return the strategy, never <code>null</code>
+	 */
+	public ToolbarStrategy getToolbarStrategy(){
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
+		ToolbarStrategy result = value.getValue();
+		value.setProperties( (DockController)null );
+		return result;
+	}
+	
 	@Override
 	public boolean accept( Dockable child ){
 		System.out.println( this.toString() + "## accept(Dockable child) ##" );
-		if( child instanceof ComponentDockable || child instanceof ToolbarGroupDockStation )
-			return true;
-		return false;
+		return getToolbarStrategy().isToolbarGroupPart( child );
 	}
 
 	@Override
 	public boolean accept( DockStation station ){
 		System.out.println( this.toString() + "## accept(DockStation station) ##" );
-		if( station instanceof ToolbarInterface ) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return getToolbarStrategy().isToolbarGroupPartParent( station, this );
 	}
 
 	@Override
@@ -351,7 +332,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements 
 	 * @param index
 	 *            Index where add dockable
 	 */
-	private void add( ComponentDockable dockable, int index ){
+	private void add( Dockable dockable, int index ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
 		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );

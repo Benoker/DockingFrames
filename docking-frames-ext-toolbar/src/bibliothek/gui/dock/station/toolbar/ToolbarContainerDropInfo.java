@@ -31,7 +31,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation {
 	 */
 	private ToolbarContainerDockStation stationHost;
 	/** the drag dockable will be insert inside this {@link Dockable}s */
-	private ArrayList<AbstractDockableStation> associateToolbars;
+	private ArrayList<Dockable> associateToolbars;
 	/** Store temporary the position beneath the mouse */
 	private Position position;
 	/** Location of the mouse */
@@ -55,7 +55,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation {
 	 * @param dockable
 	 *            the {@link Dockable} which will be inserted
 	 */
-	public ToolbarContainerDropInfo( Dockable dockable, ToolbarContainerDockStation stationHost, ArrayList<AbstractDockableStation> associateToolbars,
+	public ToolbarContainerDropInfo( Dockable dockable, ToolbarContainerDockStation stationHost, ArrayList<Dockable> associateToolbars,
 			Position position, int mouseX, int mouseY ){
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
@@ -140,7 +140,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation {
 	 * @param reference reference point used to compute relative position of the dockables
 	 * @return the index
 	 */
-	public int computeIndex( ArrayList<AbstractDockableStation> list, int mouseX, int mouseY, Orientation orientation, ReferencePoint reference ){
+	public int computeIndex( ArrayList<Dockable> list, int mouseX, int mouseY, Orientation orientation, ReferencePoint reference ){
 		if( position != null ) {
 			int dockableCount = list.size();
 			Point mousePoint = new Point( this.mouseX, this.mouseY );

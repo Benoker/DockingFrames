@@ -19,6 +19,7 @@ import javax.swing.border.EtchedBorder;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.OrientedDockStation;
 import bibliothek.gui.OrientedDockStation.Orientation;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
@@ -29,7 +30,9 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
+import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.SilentPropertyValue;
 
 /**
  * A {@link Dockable} and a {@link Dockstation} which stands a group of
@@ -73,13 +76,13 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/** The center Pane */
 	private JPanel centerPanel;
 	/** dockables associate with the west pane */
-	private ArrayList<AbstractDockableStation> westDockables = new ArrayList<AbstractDockableStation>();
+	private ArrayList<Dockable> westDockables = new ArrayList<Dockable>();
 	/** dockables associate with the east pane */
-	private ArrayList<AbstractDockableStation> eastDockables = new ArrayList<AbstractDockableStation>();
+	private ArrayList<Dockable> eastDockables = new ArrayList<Dockable>();
 	/** dockables associate with the north pane */
-	private ArrayList<AbstractDockableStation> northDockables = new ArrayList<AbstractDockableStation>();
+	private ArrayList<Dockable> northDockables = new ArrayList<Dockable>();
 	/** dockables associate with the south pane */
-	private ArrayList<AbstractDockableStation> southDockables = new ArrayList<AbstractDockableStation>();
+	private ArrayList<Dockable> southDockables = new ArrayList<Dockable>();
 	/**
 	 * all dockables contain in this dockstation (north, south, west, east and
 	 * center)
@@ -198,7 +201,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					return null;
 				}
 			}
-			ArrayList<AbstractDockableStation> associateToolbars;
+			ArrayList<Dockable> associateToolbars;
 			Position position;
 			Point mousePoint = new Point( mouseX, mouseY );
 			SwingUtilities.convertPointFromScreen( mousePoint, borderPanel );
@@ -226,7 +229,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				// center area
 				return null;
 			}
-			if( !(dockable instanceof ToolbarElementInterface) ) {
+			if( !getToolbarStrategy().isToolbarPart( dockable ) ) {
 				// only ToolbarElementInterface can be drop or move in
 				// the side areas
 				return null;
@@ -249,7 +252,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	@Override
 	public void drop( Dockable dockable ){
 		System.out.println( this.toString() + "## drop(Dockable dockable)##" );
-		if( !(dockable instanceof ToolbarElementInterface) ) {
+		if( !(getToolbarStrategy().isToolbarPart( dockable )) ) {
 			this.drop( dockable, -1, Position.CENTER );
 		}
 	}
@@ -348,7 +351,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			case SOUTH:
 			case WEST:
 			case EAST:
-				if( dockable instanceof ToolbarElementInterface ) {
+				if( getToolbarStrategy().isToolbarPart( dockable ) ) {
 					DockController controller = getController();
 					
 					try{
@@ -460,6 +463,17 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
+	 * @return the strategy, never <code>null</code>
+	 */
+	public ToolbarStrategy getToolbarStrategy(){
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
+		ToolbarStrategy result = value.getValue();
+		value.setProperties( (DockController)null );
+		return result;
+	}
+	
 	@Override
 	public boolean accept( Dockable child ){
 		System.out.println( this.toString() + "## accept(Dockable child) ##" );
@@ -484,7 +498,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * @param position
 	 * @return the dockables associated with specified position
 	 */
-	public ArrayList<AbstractDockableStation> getDockables( Position position ){
+	public ArrayList<Dockable> getDockables( Position position ){
 		if( position == Position.WEST ) {
 			return this.westDockables;
 		}
@@ -601,7 +615,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			case SOUTH:
 			case WEST:
 			case EAST:
-				ArrayList<AbstractDockableStation> dockables = getDockables( position );
+				ArrayList<Dockable> dockables = getDockables( position );
 				int index = 0;
 				for( Dockable d : dockables ) {
 					if( d == dockable ) {
@@ -647,7 +661,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				case WEST:
 				case EAST:
 					JPanel panel = getPanel( position );
-					ArrayList<AbstractDockableStation> dockables = getDockables( position );
+					ArrayList<Dockable> dockables = getDockables( position );
 					listeners.fireDockableRemoving( dockable );
 					dockable.setDockParent( null );
 					dockables.remove( dockable );
@@ -703,9 +717,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		// DockHierarchyLock.Token token =
 		// DockHierarchyLock.acquireLinking(this,
 		// dockable);
+		
+		ToolbarStrategy strategy = getToolbarStrategy();
+		
 		switch( position ){
 			case CENTER:
-				if( !(dockable instanceof ToolbarElementInterface) ) {
+				if( !strategy.isToolbarPart( dockable ) ) {
 					DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 					try {
 						if( centerDockable != null ) {
@@ -732,29 +749,25 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			case SOUTH:
 			case WEST:
 			case EAST:
-				if( dockable instanceof ToolbarElementInterface ) {
-					ToolbarDockStation toolbar;
-					if( dockable instanceof ToolbarDockStation ) {
-						toolbar = (ToolbarDockStation) dockable;
-					}
-					else {
-						toolbar = new ToolbarDockStation();
-						toolbar.drop( dockable );
-					}
-					DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, toolbar );
+				if( strategy.isToolbarPart( dockable ) ) {
+					dockable = strategy.ensureToolbarLayer( this, dockable );
+					
+					DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 					try {
-						toolbar.setDockParent( this );
-						listeners.fireDockableAdding( toolbar );
-						ArrayList<AbstractDockableStation> dockables = getDockables( position );
+						dockable.setDockParent( this );
+						listeners.fireDockableAdding( dockable );
+						ArrayList<Dockable> dockables = getDockables( position );
 						JPanel panel = getPanel( position );
-						toolbar.setOrientation( getOrientation( position ) );
+						if( dockable instanceof OrientedDockStation ){
+							((OrientedDockStation)dockable).setOrientation( getOrientation( position ) );
+						}
 						System.out.println( "########### INDEX: " + index + " ################" );
-						panel.add( toolbar.getComponent(), index );
-						dockables.add( index, toolbar );
+						panel.add( dockable.getComponent(), index );
+						dockables.add( index, dockable );
 						updateDockables();
 						panel.revalidate();
 						borderPanel.repaint();
-						listeners.fireDockableAdded( toolbar );
+						listeners.fireDockableAdded( dockable );
 						fireDockablesRepositioned( index + 1 );
 					}
 					finally {

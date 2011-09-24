@@ -28,7 +28,9 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
+import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.SilentPropertyValue;
 
 /**
  * A {@link Dockable} and a {@link Dockstation} which stands a group of
@@ -128,7 +130,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 			return new ToolbarDropInfo<ToolbarDockStation>( dockable, this, mouseX, mouseY ){
 				@Override
 				public void execute(){
-					drop( this );	
+					drop( this );
 				}
 			};
 		}
@@ -181,17 +183,17 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		if( property instanceof ToolbarProperty ){
-			ToolbarProperty toolbar = (ToolbarProperty)property;
-			if( toolbar.getSuccessor() != null && toolbar.getIndex() < getDockableCount()){
+		if( property instanceof ToolbarProperty ) {
+			ToolbarProperty toolbar = (ToolbarProperty) property;
+			if( toolbar.getSuccessor() != null && toolbar.getIndex() < getDockableCount() ) {
 				DockStation child = getDockable( toolbar.getIndex() ).asDockStation();
-				if( child != null ){
+				if( child != null ) {
 					return child.drop( dockable, toolbar.getSuccessor() );
 				}
 			}
-			return drop( dockable, Math.min( getDockableCount(), toolbar.getIndex() ));
+			return drop( dockable, Math.min( getDockableCount(), toolbar.getIndex() ) );
 		}
-		
+
 		return false;
 	}
 
@@ -205,33 +207,13 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 		System.out.println( this.toString() + "## drop(Dockable dockable, int index)##" );
 		if( this.accept( dockable ) ) {
 			int indexWhereInsert = index;
-			if( dockable instanceof ToolbarDockStation ) {
-				// WARNING: if I don't do a copy of dockables, problem occurs.
-				// Perhaps due to concurrent access to the dockable (drop in
-				// goal area ==> drag in origin area)?
-				int count = dockable.asDockStation().getDockableCount();
-				ArrayList<ToolbarGroupDockStation> insertDockables = new ArrayList<ToolbarGroupDockStation>();
-				for( int i = 0; i < count; i++ ) {
-					insertDockables.add( (ToolbarGroupDockStation) dockable.asDockStation().getDockable( i ) );
-				}
-				for( int i = 0; i < count; i++ ) {
-					this.add( insertDockables.get( i ), indexWhereInsert );
-					indexWhereInsert++;
-				}
-				return true;
+			dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+			if( dockable == null ) {
+				return false;
 			}
-			else if( dockable instanceof ToolbarGroupDockStation ) {
-				add( (ToolbarGroupDockStation) dockable, indexWhereInsert );
-				return true;
-			}
-			else {
-				ToolbarGroupDockStation group = new ToolbarGroupDockStation();
-				group.drop( (ComponentDockable) dockable );
-				add( group, indexWhereInsert );
-				return true;
-			}
+			add( dockable, indexWhereInsert );
 		}
-		
+
 		return false;
 	}
 
@@ -312,28 +294,27 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 		// Todo LATER
 	}
 
+	/**
+	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
+	 * @return the strategy, never <code>null</code>
+	 */
+	public ToolbarStrategy getToolbarStrategy(){
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
+		ToolbarStrategy result = value.getValue();
+		value.setProperties( (DockController) null );
+		return result;
+	}
+
 	@Override
 	public boolean accept( Dockable child ){
 		System.out.println( this.toString() + "## accept(Dockable child) ##" );
-		if( child instanceof ComponentDockable || child instanceof ToolbarGroupDockStation || child instanceof ToolbarDockStation ) {
-			// if (child instanceof ToolbarElementInterface) {
-			return true;
-
-		}
-		else {
-			return false;
-		}
+		return getToolbarStrategy().isToolbarPart( child );
 	}
 
 	@Override
 	public boolean accept( DockStation station ){
 		System.out.println( this.toString() + "## accept(DockStation station) ##" );
-		if( station instanceof ToolbarInterface || station instanceof ScreenDockStation ) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return getToolbarStrategy().isToolbarGroupPartParent( station, this );
 	}
 
 	@Override
@@ -375,69 +356,73 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 	private void add( Dockable dockable, int index ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
-		ToolbarGroupDockStation group;
-		if( dockable instanceof ToolbarDockStation ) {
-			// I do a copy of dockables first. If I don't do that, problems
-			// occur. Perhaps due to concurrent access to the dockable (drop
-			// in goal area ==> drag in origin area)?
-			int count = dockable.asDockStation().getDockableCount();
-			ArrayList<ToolbarGroupDockStation> insertDockables = new ArrayList<ToolbarGroupDockStation>();
-			for( int i = 0; i < count; i++ ) {
-				insertDockables.add( (ToolbarGroupDockStation) dockable.asDockStation().getDockable( i ) );
-			}
-			for( int i = 0; i < count; i++ ) {
-				group = insertDockables.get( i );
-				DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
-				try {
-					listeners.fireDockableAdding( group );
-					group.setDockParent( this );
-					group.setOrientation( getOrientation() );
-					dockables.add( index, group );
-					groupComponentsPanel.add( group.getComponent(), index );
-					listeners.fireDockableAdded( group );
-					fireDockablesRepositioned( index + 1 );
-				}
-				finally {
-					token.release();
-				}
-			}
-		}
-		else if( dockable instanceof ToolbarGroupDockStation ) {
-			group = (ToolbarGroupDockStation) dockable;
+		
+		// The first two cases should never happen: 
+		// Case 1 is handled by the "ToolbarDockStationMerger"
+		// Case 2 is handled by the "ToolbarStrategy.ensureToolbarLayer" method
+		
+//		if( dockable instanceof ToolbarDockStation ) {
+//			// I do a copy of dockables first. If I don't do that, problems
+//			// occur. Perhaps due to concurrent access to the dockable (drop
+//			// in goal area ==> drag in origin area)?
+//			int count = dockable.asDockStation().getDockableCount();
+//			ArrayList<ToolbarGroupDockStation> insertDockables = new ArrayList<ToolbarGroupDockStation>();
+//			for( int i = 0; i < count; i++ ) {
+//				insertDockables.add( (ToolbarGroupDockStation) dockable.asDockStation().getDockable( i ) );
+//			}
+//			for( int i = 0; i < count; i++ ) {
+//				group = insertDockables.get( i );
+//				DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+//				try {
+//					listeners.fireDockableAdding( group );
+//					group.setDockParent( this );
+//					group.setOrientation( getOrientation() );
+//					dockables.add( index, group );
+//					groupComponentsPanel.add( group.getComponent(), index );
+//					listeners.fireDockableAdded( group );
+//					fireDockablesRepositioned( index + 1 );
+//				}
+//				finally {
+//					token.release();
+//				}
+//			}
+//		}
+//		else if( dockable instanceof ToolbarGroupDockStation ) {
+//			group = (ToolbarGroupDockStation) dockable;
+//			DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+//			try {
+//				listeners.fireDockableAdding( group );
+//				group.setDockParent( this );
+//				group.setOrientation( getOrientation() );
+//				dockables.add( index, group );
+//				groupComponentsPanel.add( group.getComponent(), index );
+//				listeners.fireDockableAdded( group );
+//				fireDockablesRepositioned( index + 1 );
+//			}
+//			finally {
+//				token.release();
+//			}
+//		}
+//		else {
+			dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
 			DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 			try {
-				listeners.fireDockableAdding( group );
-				group.setDockParent( this );
-				group.setOrientation( getOrientation() );
-				dockables.add( index, group );
-				groupComponentsPanel.add( group.getComponent(), index );
-				listeners.fireDockableAdded( group );
+				listeners.fireDockableAdding( dockable );
+				dockable.setDockParent( this );
+				if( dockable instanceof OrientedDockStation ){
+					((OrientedDockStation)dockable).setOrientation( getOrientation() );
+				}
+				dockables.add( index, dockable );
+				groupComponentsPanel.add( dockable.getComponent(), index );
+				listeners.fireDockableAdded( dockable );
 				fireDockablesRepositioned( index + 1 );
 			}
 			finally {
 				token.release();
 			}
-		}
-		else {
-			group = new ToolbarGroupDockStation();
-			group.drop( dockable );
-			DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
-			try {
-				listeners.fireDockableAdding( group );
-				group.setDockParent( this );
-				group.setOrientation( getOrientation() );
-				dockables.add( index, group );
-				groupComponentsPanel.add( group.getComponent(), index );
-				listeners.fireDockableAdded( group );
-				fireDockablesRepositioned( index + 1 );
-			}
-			finally {
-				token.release();
-			}
-		}
+//		}
 		groupComponentsPanel.revalidate();
 		groupComponentsPanel.repaint();
-		listeners.fireDockableAdded( dockable );
 		fireDockablesRepositioned( index + 1 );
 	}
 
