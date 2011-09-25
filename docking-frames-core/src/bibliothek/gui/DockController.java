@@ -1,7 +1,15 @@
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
- * panels containing any Swing-Component the developer likes to add.
+ * panels 
+import java.awt.event.MouseEvent;
+
+import java.awt.event.MouseEvent;
+
+import bibliothek.gui.dock.control.GlobalMouseDispatcher;
+
+import bibliothek.gui.dock.control.GlobalMouseDispatcher;
+containing any Swing-Component the developer likes to add.
  * 
  * Copyright (C) 2007 Benjamin Sigg
  * 
@@ -32,6 +40,7 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,6 +77,7 @@ import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.DoubleClickController;
+import bibliothek.gui.dock.control.GlobalMouseDispatcher;
 import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.control.PopupController;
 import bibliothek.gui.dock.control.SingleParentRemover;
@@ -165,6 +175,9 @@ public class DockController {
     
     /** a special controller listening to AWT-events and changing the focused dockable */
     private MouseFocusObserver focusObserver;
+    
+    /** central collection of {@link MouseEvent}s */
+    private GlobalMouseDispatcher mouseDispatcher;
     
     /** class managing focus transfer between {@link Dockable}s */
     private FocusController focusController;
@@ -332,6 +345,7 @@ public class DockController {
         doubleClickController = factory.createDoubleClickController( this, setup );
         keyboardController = factory.createKeyboardController( this, setup );
         dockableSelector = factory.createDockableSelector( this, setup );
+        mouseDispatcher = factory.createGlobalMouseDispatcher( this, setup );
         
         extensions = factory.createExtensionManager( this, setup );
         extensions.init();
@@ -391,6 +405,7 @@ public class DockController {
 	    keyboardController.kill();
 	    theme.kill();
 	    extensions.kill();
+	    mouseDispatcher.kill();
 	    setRootWindowProvider( null );
     }
     
@@ -427,6 +442,16 @@ public class DockController {
      */
     public FocusController getFocusController(){
 		return focusController;
+	}
+    
+    /**
+     * Grants access to the {@link GlobalMouseDispatcher} which is responsible for collecting and
+     * distributing global {@link MouseEvent}s. Clients may use the dispatcher to listen for
+     * {@link MouseEvent}s.
+     * @return the dispatcher, not <code>null</code>
+     */
+    public GlobalMouseDispatcher getGlobalMouseDispatcher(){
+		return mouseDispatcher;
 	}
     
     /**

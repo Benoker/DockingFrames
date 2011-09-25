@@ -314,7 +314,7 @@ public class GlassedPane extends JPanel{
                         e.getButton() );
                 
                 if( controller != null ){
-                	controller.getMouseFocusObserver().check( forward );
+                	controller.getGlobalMouseDispatcher().dispatch( forward );
                 }
                 
                 component.dispatchEvent( forward );
@@ -359,7 +359,7 @@ public class GlassedPane extends JPanel{
                         e.getScrollType(), e.getScrollAmount(), e.getWheelRotation() );
                 
                 if( controller != null ){
-                	controller.getMouseFocusObserver().check( forward );
+                	controller.getGlobalMouseDispatcher().dispatch( forward );
                 }
                 
                 component.dispatchEvent( forward );

@@ -647,6 +647,10 @@
  - API: New CStationContainerHistoryRewriter tries to ensure that a CDockable stays on the same CStationContainer as long as possible.
  - Bugfix: A removed MultipleCDockable did not forget its unique identifier, when adding it again this caused an exception if another dockable got that unique id.
  - Bugfix: The location of a removed CDockable could be forgotten even if CControl.shoudStore returned true.
+
+[v1.1.1p6]
+ - API: New GlobalMouseDispatcher collects and distributes MouseEvents. Can be used by clients to listen to events.
+ ! API: The "check" methods of MouseFocusObserver have been removed
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
