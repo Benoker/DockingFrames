@@ -64,17 +64,17 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * The graphical representation of this station: the pane which contains
 	 * toolbars
 	 */
-	private JPanel borderPanel;
+	private JPanel borderPanel = new JPanel( new BorderLayout() );
 	/** The westPane */
-	private JPanel westPanel = new JPanel();
+	private JPanel westPanel;
 	/** The east pane */
-	private JPanel eastPanel = new JPanel();
+	private JPanel eastPanel;
 	/** The north pane */
-	private JPanel northPanel = new JPanel();
+	private JPanel northPanel;
 	/** The south Pane */
-	private JPanel southPanel = new JPanel();
+	private JPanel southPanel;
 	/** The center Pane */
-	private JPanel centerPanel;
+	private JPanel centerPanel = new JPanel(new GridLayout(1, 1));
 	/** dockables associate with the west pane */
 	private ArrayList<Dockable> westDockables = new ArrayList<Dockable>();
 	/** dockables associate with the east pane */
@@ -95,14 +95,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * Constructs a new ToolbarContainerDockStation
 	 */
 	public ToolbarContainerDockStation(){
-		borderPanel = new JPanel( new BorderLayout() );
 		// Grid Layout allow component pout in the panels to
 		// fill all the space
 		westPanel = createSidePanel();
 		eastPanel = createSidePanel();
 		northPanel = createSidePanel();
 		southPanel = createSidePanel();
-		centerPanel = new JPanel(new GridLayout( 1, 1 ));
 		borderPanel.add( westPanel, BorderLayout.WEST );
 		borderPanel.add( eastPanel, BorderLayout.EAST );
 		borderPanel.add( northPanel, BorderLayout.NORTH );
