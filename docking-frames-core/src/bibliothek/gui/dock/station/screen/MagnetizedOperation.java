@@ -23,28 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.extension.gui.dock.theme.bubble;
+package bibliothek.gui.dock.station.screen;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.station.stack.DockActionCombinedInfoComponent;
-import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
-import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
+import java.awt.Rectangle;
+
 
 /**
- * This component shows a number of {@link DockAction}s and is used by the {@link BubbleStackDockComponent}
- * to be shown alongside the tabs.
+ * A callback used by {@link ScreenDockWindow}s to calculate the attraction between two 
+ * {@link ScreenDockWindow}s.
  * @author Benjamin Sigg
  */
-public class BubbleInfoComponent extends DockActionCombinedInfoComponent{
-	public BubbleInfoComponent( BubbleStackDockComponent pane ){
-		super( pane );
-	}
-
-	@Override
-	protected DockActionSource createActionSource( Dockable dockable ){
-		return new DockActionDistributorSource( Target.INFO_COMPONENT, BubbleTheme.ACTION_DISTRIBUTOR, dockable );
-	}
+public interface MagnetizedOperation {
+	
+	/**
+	 * To be called by a {@link ScreenDockWindow} if the user updates the size or 
+	 * location of the window. This method calculates then to which other windows
+	 * an attraction may exist.
+	 * @param bounds the boundaries the window would have if the operation would stop
+	 * right now.
+	 * @return the boundaries the window would have if attraction is respected, never <code>null</code>
+	 */
+	public Rectangle attract( Rectangle bounds );
+	
+	/**
+	 * To be called by a {@link ScreenDockWindow} once moving or resizing is finished.
+	 */
+	public void stop();
 }

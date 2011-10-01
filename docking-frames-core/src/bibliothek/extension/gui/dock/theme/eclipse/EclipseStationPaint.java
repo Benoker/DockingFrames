@@ -25,17 +25,17 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.Graphics2D;
-import java.awt.BasicStroke;
+import java.awt.Rectangle;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.color.StationPaintColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
-import bibliothek.gui.DockStation;
 
 /**
  * @author Janni Kovacs

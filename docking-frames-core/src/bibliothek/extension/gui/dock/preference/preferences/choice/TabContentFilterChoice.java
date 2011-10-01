@@ -26,8 +26,8 @@
 package bibliothek.extension.gui.dock.preference.preferences.choice;
 
 import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter;
-import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter.Behavior;
+import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.util.DockProperties;
 
 /**

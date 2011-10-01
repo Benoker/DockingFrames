@@ -28,8 +28,8 @@ package bibliothek.extension.gui.dock.preference.preferences.choice;
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.extension.gui.dock.theme.IdentifiedColorScheme;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleColorScheme;
-import bibliothek.extension.gui.dock.theme.bubble.SimpleBubbleColorScheme;
 import bibliothek.extension.gui.dock.theme.bubble.BubbleColorScheme.Distribution;
+import bibliothek.extension.gui.dock.theme.bubble.SimpleBubbleColorScheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.util.DockProperties;
 

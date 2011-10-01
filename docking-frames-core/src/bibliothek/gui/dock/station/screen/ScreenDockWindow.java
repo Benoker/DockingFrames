@@ -43,7 +43,10 @@ import bibliothek.gui.dock.title.DockTitle;
  * in any way they like, however subclasses are encouraged to use a 
  * {@link StationChildHandle} to manage displayers and title.<br>
  * New implementations of {@link ScreenDockWindow} may require the implementation of a {@link ScreenDockFullscreenStrategy}
- * as well.
+ * as well.<br>
+ * {@link ScreenDockWindow}s offering users a way to modify the size or location should call
+ * {@link ScreenDockStation#getMagnetController()} to gain access to the {@link MagnetController}. This controller
+ * can be used to calculate magnetic attraction between two {@link ScreenDockWindow}s.
  * @author Benjamin Sigg
  */
 public interface ScreenDockWindow {

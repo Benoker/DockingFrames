@@ -25,7 +25,11 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Marks a {@link bibliothek.gui.dock.action.DockAction} that it should be shown

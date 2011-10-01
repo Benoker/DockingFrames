@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.station.screen.AttractorStrategy;
+import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
@@ -40,6 +43,9 @@ public class ToolbarExtension implements Extension{
 		if( extension.getName().equals( DefaultDockRelocator.MERGE_EXTENSION )){
 			return (Collection<E>)createMergerExtension();
 		}
+		if( extension.getName().equals( ScreenDockStation.ATTRACTOR_STRATEGY_EXTENSION )){
+			return (Collection<E>)createAttractorStrategies();
+		}
 		
 		return null;
 	}
@@ -55,6 +61,12 @@ public class ToolbarExtension implements Extension{
 		List<Merger> result = new ArrayList<Merger>();
 		result.add( new ToolbarGroupDockStationMerger() );
 		result.add( new ToolbarDockStationMerger() );
+		return result;
+	}
+	
+	private Collection<AttractorStrategy> createAttractorStrategies(){
+		List<AttractorStrategy> result = new ArrayList<AttractorStrategy>();
+		result.add( new ToolbarAttractorStrategy() );
 		return result;
 	}
 }

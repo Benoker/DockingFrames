@@ -31,8 +31,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.station.stack.DockActionCombinedInfoComponent;
-import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 
 /**
  * This component shows a number of {@link DockAction}s and is used by the {@link BubbleStackDockComponent}

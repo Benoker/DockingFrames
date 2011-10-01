@@ -60,8 +60,8 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
+import bibliothek.gui.dock.util.BackgroundPanel;
 
 /**
  * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
@@ -529,6 +529,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 
         private Point start;
         private Rectangle bounds;
+        private MagnetizedOperation attraction;
 
         private void updateBorder(){
         	if( border != null ){
@@ -584,6 +585,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
                     convertPointToScreen( start, e.getComponent() );
                     bounds = getWindowBounds();
                     updateBorder();
+                    attraction = getStation().getMagnetController().start( AbstractScreenDockWindow.this );
                 }
             }
         }
@@ -595,6 +597,8 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
                 checkWindowBounds();
                 invalidate();
                 validate();
+                attraction.stop();
+                attraction = null;
             }
         }
 
@@ -658,6 +662,8 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
                     bounds.y += dy;
                 }
 
+                bounds = attraction.attract( bounds );
+                
                 setWindowBounds( bounds, false );
                 updateBorder();
                 invalidate();

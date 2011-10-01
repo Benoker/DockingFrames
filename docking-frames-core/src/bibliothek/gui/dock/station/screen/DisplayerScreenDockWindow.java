@@ -156,7 +156,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
      * @param background the algorithm, may be <code>null</code>
      */
     protected abstract void setBackground( BackgroundAlgorithm background );
-
+    
     /**
      * Sets whether the {@link DockTitle} should be shown or not.
      * @param showTitle <code>true</code> if the title should be visible,

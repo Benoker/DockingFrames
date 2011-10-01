@@ -63,9 +63,14 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.screen.AttractorStrategy;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
+import bibliothek.gui.dock.station.screen.DefaultMagnetStrategy;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockWindowFactory;
+import bibliothek.gui.dock.station.screen.MagnetController;
+import bibliothek.gui.dock.station.screen.MagnetStrategy;
+import bibliothek.gui.dock.station.screen.MultiAttractorStrategy;
 import bibliothek.gui.dock.station.screen.ScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
@@ -81,16 +86,16 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
-import bibliothek.gui.dock.station.support.PlaceholderList.Level;
-import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -102,7 +107,9 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.WindowProviderListener;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 import bibliothek.gui.dock.util.property.PropertyFactory;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
@@ -121,6 +128,9 @@ import bibliothek.util.Todo.Version;
 public class ScreenDockStation extends AbstractDockStation {
     /** The key for the {@link DockTitleVersion} of this station */
     public static final String TITLE_ID = "screen dock";
+    
+    /** Path of an {@link ExtensionName} for creating additional {@link AttractorStrategy} */
+    public static final Path ATTRACTOR_STRATEGY_EXTENSION = new Path( "dock.AttractorStrategy" );
     
     /** a key for a property telling which boundaries a {@link ScreenDockWindow} can have */
     public static final PropertyKey<BoundaryRestriction> BOUNDARY_RESTRICTION = 
@@ -152,6 +162,30 @@ public class ScreenDockStation extends AbstractDockStation {
      * of <code>null</code> disables the focus stealing prevention. */
     public static final PropertyKey<Integer> PREVENT_FOCUS_STEALING_DELAY = 
     		new PropertyKey<Integer>( "ScreenDockStation.prevent_focus_stealing_delay", new ConstantPropertyFactory<Integer>( 500 ), false );
+    
+    /** the {@link MagnetStrategy} decides how two {@link ScreenDockWindow}s attract each other */
+    public static final PropertyKey<MagnetStrategy> MAGNET_STRATEGY = 
+    		new PropertyKey<MagnetStrategy>( "ScreenDockStation.magnet_strategy", new ConstantPropertyFactory<MagnetStrategy>( new DefaultMagnetStrategy() ){
+    			public MagnetStrategy getDefault( PropertyKey<MagnetStrategy> key ){
+    				return null;
+    			};
+    		}, true );
+    
+    /** the {@link AttractorStrategy} that tells whether two {@link Dockable}s attract each other */
+    public static final PropertyKey<AttractorStrategy> ATTRACTOR_STRATEGY = 
+    		new PropertyKey<AttractorStrategy>( "ScreenDockStation.attractor_strategy", new DynamicPropertyFactory<AttractorStrategy>(){
+    			public AttractorStrategy getDefault( PropertyKey<AttractorStrategy> key, DockProperties properties ){
+    				ExtensionName<AttractorStrategy> name = new ExtensionName<AttractorStrategy>( ATTRACTOR_STRATEGY_EXTENSION, AttractorStrategy.class, null );
+    				List<AttractorStrategy> extensions = properties.getController().getExtensions().load( name );
+    				
+    				MultiAttractorStrategy strategy = new MultiAttractorStrategy();
+    				for( AttractorStrategy extension : extensions ){
+    					strategy.add( extension );
+    				}
+    				
+    				return strategy;
+    			}
+    		}, true );
     
     /** The visibility state of the windows */
     private boolean showing = false;
@@ -194,6 +228,9 @@ public class ScreenDockStation extends AbstractDockStation {
 
     /** tells how much two windows must overlap in order for them to be merged */
     private double dropOverRatio = 0.75;
+    
+    /** controlls attraction between {@link ScreenDockWindow}s */
+    private MagnetController magnet;
     
     /** the restrictions of the boundaries of this window*/
     private PropertyValue<BoundaryRestriction> restriction =
@@ -328,6 +365,7 @@ public class ScreenDockStation extends AbstractDockStation {
         fullscreenAction = createFullscreenAction();
         
         stationPaint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".screen", this );
+        magnet = new MagnetController( this );
         
         addScreenDockStationListener( new FullscreenListener() );
         
@@ -500,6 +538,7 @@ public class ScreenDockStation extends AbstractDockStation {
         windowFactory.setProperties( controller );
         fullscreenStrategy.setProperties( controller );
         placeholderStrategy.setProperties( controller );
+        magnet.setController( controller );
         
         if( fullscreenAction != null ){
         	fullscreenAction.setController( controller );
@@ -1831,6 +1870,15 @@ public class ScreenDockStation extends AbstractDockStation {
     public void checkWindowBoundaries(){
         for( ScreenDockWindowHandle window : dockables.dockables() )
             window.getWindow().checkWindowBounds();
+    }
+    
+    /**
+     * Gets the {@link MagnetController} of this station. The {@link MagnetController} controlls the
+     * attraction between {@link ScreenDockWindow}s.
+     * @return the controller, never <code>null</code>
+     */
+    public MagnetController getMagnetController(){
+    	return magnet;
     }
     
     /**

@@ -27,8 +27,8 @@ package bibliothek.extension.gui.dock.theme.eclipse.displayer;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnectorListener;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBar;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnectorListener;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
