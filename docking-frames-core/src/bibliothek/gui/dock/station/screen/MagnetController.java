@@ -282,11 +282,11 @@ public class MagnetController {
 			case NORTH:
 				return rectangle.y;
 			case SOUTH:
-				return rectangle.y + rectangle.height;
+				return rectangle.y + rectangle.height - 1;
 			case WEST:
 				return rectangle.x;
 			case EAST:
-				return rectangle.x + rectangle.width;
+				return rectangle.x + rectangle.width - 1;
 			default:
 				throw new IllegalStateException( "unknown side: " + side );
 		}
@@ -376,22 +376,32 @@ public class MagnetController {
 			return initialBoundaries.y + initialBoundaries.height != baseBoundaries.y + baseBoundaries.height;
 		}
 
-		public boolean isEast(){
+		public boolean isWest(){
 			return initialBoundaries.x != baseBoundaries.x;
 		}
 
-		public boolean isWest(){
-			return initialBoundaries.x + initialBoundaries.width != baseBoundaries.y + baseBoundaries.width;
+		public boolean isEast(){
+			return initialBoundaries.x + initialBoundaries.width != baseBoundaries.x + baseBoundaries.width;
 		}
 
+		public boolean is( Side side ){
+			switch( side ){
+				case EAST: return isEast();
+				case WEST: return isWest();
+				case NORTH: return isNorth();
+				case SOUTH: return isSouth();
+				default: throw new IllegalStateException( "side unknown: " + side );
+			}
+		}
+		
 		public void resizingAttraction( ScreenDockWindow neighbor, Side windowSide, Side neighborSide ){
 			checkArguments( neighbor, windowSide, neighborSide );
 			
-			int neighborValue = getValue( neighbor.getWindowBounds(), windowSide );
-			int windowValue = getValue( resultBoundaries, neighborSide );
+			int neighborValue = getValue( neighbor.getWindowBounds(), neighborSide );
+			int windowValue = getValue( resultBoundaries, windowSide );
 			
 			int delta = neighborValue - windowValue;
-			
+
 			switch( windowSide ){
 				case NORTH:
 					resultBoundaries.y += delta;
@@ -400,11 +410,11 @@ public class MagnetController {
 				case SOUTH:
 					resultBoundaries.height += delta;
 					break;
-				case EAST:
+				case WEST:
 					resultBoundaries.x += delta;
 					resultBoundaries.width -= delta;
 					break;
-				case WEST:
+				case EAST:
 					resultBoundaries.width += delta;
 			}
 		}

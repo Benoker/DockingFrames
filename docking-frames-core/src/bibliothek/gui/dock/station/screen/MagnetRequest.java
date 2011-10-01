@@ -124,6 +124,14 @@ public interface MagnetRequest {
 	public boolean isWest();
 	
 	/**
+	 * Calls {@link #isWest()}, {@link #isEast()}, {@link #isNorth()} or {@link #isSouth()} depending
+	 * on <code>side</code>.
+	 * @param side the side to ask whether it changed
+	 * @return <code>true</code> if the side changed its position
+	 */
+	public boolean is( Side side );
+	
+	/**
 	 * Resizes the {@link #getWindow() window} such that its side <code>windowSide</code> is at
 	 * the same location as the side <code>neighborSide</code> from <code>neighbor</code>. 
 	 * @param neighbor the window to which {@link #getWindow() window} is attracted
