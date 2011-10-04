@@ -693,6 +693,8 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 		 */
 		public ToolbarDropInfo( Dockable dockable, S stationHost, int mouseX,
 				int mouseY ){
+			System.out.println(this.toString()
+					+ "## NEW ToolbarDropInfo() ##");
 			this.dragDockable = dockable;
 			this.stationHost = stationHost;
 			for (int i = 0; i < stationHost.getDockableCount(); i++){
@@ -701,6 +703,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 			this.mouseX = mouseX;
 			this.mouseY = mouseY;
 			OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
+			// sans cette ligne ça plante
 			dropIndex = computeIndex(list, mouseX, mouseY,
 					orientedStation.getOrientation(), ReferencePoint.UPPERLEFT);
 		}
@@ -714,11 +717,20 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 		}
 
 		public void destroy(){
-			if (ToolbarGroupDockStation.this.dropIndex == dropIndex){
-				ToolbarGroupDockStation.this.dropIndex = null;
-				background.getContentPane().repaint();
-			}
-			dropIndex = null;
+			System.out.println(this.toString() + "## destroy() ##");
+			// sans cette ligne la barre n'est pa affiché à moins de drager una ture composant
+			ToolbarGroupDockStation.this.dropIndex = null;
+			ToolbarGroupDockStation.this.background.getContentPane().repaint();
+
+		}
+		
+		public void draw(){
+			System.out.println(this.toString()
+					+ "## draw() ##");
+			// sans cette ligne la barre n'est jamais affichée
+			ToolbarGroupDockStation.this.dropIndex = dropIndex;
+			// sans cette ligne la bare n'est affiché que sur le premier composant rencontré
+			ToolbarGroupDockStation.this.background.getContentPane().repaint();
 		}
 
 		public CombinerTarget getCombination(){
@@ -729,11 +741,6 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 		public DisplayerCombinerTarget getDisplayerCombination(){
 			// not supported by this kind of station
 			return null;
-		}
-
-		public void draw(){
-			ToolbarGroupDockStation.this.dropIndex = dropIndex;
-			ToolbarGroupDockStation.this.background.getContentPane().repaint();
 		}
 
 		public boolean isMove(){
@@ -834,50 +841,6 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 					+ Integer.toHexString(this.hashCode());
 		}
 
-	}
-
-	/**
-	 * Describes the gap between two tabs.
-	 * 
-	 * @author Benjamin Sigg
-	 */
-	public static class Insert{
-		/** The location of a base-tab */
-		private final int tab;
-		/** Whether the gap is left or right of {@link #tab} */
-		private final boolean right;
-
-		/**
-		 * Constructs a new Gap-location
-		 * 
-		 * @param tab
-		 *            The location of a base-tab
-		 * @param right
-		 *            Whether the gap is left or right of <code>tab</code>
-		 */
-		public Insert( int tab, boolean right ){
-			this.tab = tab;
-			this.right = right;
-		}
-
-		/**
-		 * A reference for this gap, the gap is either at the left or at the
-		 * right side of this tab.
-		 * 
-		 * @return the reference
-		 */
-		public int getTab(){
-			return tab;
-		}
-
-		/**
-		 * Whether the tab is at the left or the right of {@link #getTab()}.
-		 * 
-		 * @return <code>true</code> if the gab is at the right side
-		 */
-		public boolean isRight(){
-			return right;
-		}
 	}
 
 }
