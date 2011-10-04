@@ -414,15 +414,15 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 				}
 				dockables.add( index, dockable );
 				groupComponentsPanel.add( dockable.getComponent(), index );
+				groupComponentsPanel.revalidate();
+				groupComponentsPanel.repaint();
 				listeners.fireDockableAdded( dockable );
-				fireDockablesRepositioned( index + 1 );
 			}
 			finally {
 				token.release();
 			}
 //		}
-		groupComponentsPanel.revalidate();
-		groupComponentsPanel.repaint();
+
 		fireDockablesRepositioned( index + 1 );
 	}
 
@@ -486,6 +486,8 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 			ToolbarGroupDockStation group = (ToolbarGroupDockStation) d;
 			group.setOrientation( orientation );
 		}
+		groupComponentsPanel.revalidate();
+		groupComponentsPanel.repaint();
 		this.orientation = orientation;
 	}
 
