@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.OrientedDockStation;
-import bibliothek.gui.OrientedDockStation.Orientation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -31,22 +30,20 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	 * different to his original dock parent!)
 	 */
 	private S stationHost;
-	/**
-	 * The multiple {@link Dockable} which belong to the dockstation
-	 */
-	private ArrayList<Dockable> list = new ArrayList<Dockable>();
 	/** Location of the mouse */
 	public int mouseX, mouseY;
+	/** index of the closest component with regards to the mouse coordinates */
+	private int index = -1;
 	/**
-	 * index computed with reference take on upper left corner on the underneath
-	 * dockables
+	 * closest side of the the closest component with regards to the mouse
+	 * coordinates
 	 */
-	private int indexUpperLeft = -1;
+	private Position side = null;
 	/**
-	 * index computed with reference take on bottom right corner on the
-	 * underneath dockables
+	 * Position of the drag dockable with regards to the closest component above
+	 * the mouse
 	 */
-	private int indexBottomRight = -1;
+	private Position dragDockablePosition;
 
 	/**
 	 * Constructs a new info.
@@ -61,9 +58,6 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 		System.out.println(this.toString() + "## new ToolbarDropInfo ## ");
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
-		for (int i = 0; i < stationHost.getDockableCount(); i++){
-			list.add(this.stationHost.getDockable(i));
-		}
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 	}
@@ -104,116 +98,93 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	 * 
 	 * @return the index
 	 */
-	public int getIndex( ReferencePoint reference ){
-		OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
-		switch (reference) {
-		case UPPERLEFT:
-			if (indexUpperLeft == -1){
-				indexUpperLeft = computeIndex(list, mouseX, mouseY,
-						orientedStation.getOrientation(), reference);
-			}
-			return indexUpperLeft;
-		case BOTTOMRIGHT:
-			if (indexBottomRight == -1){
-				indexBottomRight = computeIndex(list, mouseX, mouseY,
-						orientedStation.getOrientation(), reference);
-			}
-			return indexBottomRight;
-		default:
-			return 0;
+	public int getIndex(){
+		if (index == -1){
+			index = computeIndex();
 		}
+		return index;
+
 	}
 
 	/**
-	 * compute the <code>index</code> of the component beneath the mouse
+	 * Gets the closest <code>side</code> of the component beneath the mouse
 	 * 
-	 * @param list
-	 *            list of the dockables in the middle of which the drag dockable
-	 *            will be inserted
-	 * @param mouseX
-	 *            position X of the mouse
-	 * @param mouseY
-	 *            position Y of the mouse
-	 * @param orientation
-	 *            orientation of the dockables
-	 * @param reference
-	 *            reference point used to compute relative position of the
-	 *            dockables
-	 * @return the index
+	 * @return the side
 	 */
-	public int computeIndex( ArrayList<Dockable> list, int mouseX, int mouseY,
-			Orientation orientation, ReferencePoint reference ){
-		int dockableCount = list.size();
-		Point mousePoint = new Point(this.mouseX, this.mouseY);
+	public Position getSide(){
+		if (side == null){
+			side = computeSide();
+		}
+		return side;
+
+	}
+	
+	/**
+	 * Gets the relative position of drag dockable and the closest dockable
+	 * above the mouse.
+	 * 
+	 * @return the position
+	 */
+	public Position getDragDockablePosition(){
+		if (dragDockablePosition == null){
+			dragDockablePosition = this.computeDragDockablePosition();
+		}
+		return dragDockablePosition;
+
+	}
+
+	/**
+	 * compute the closest <code>side</code> of the component beneath the mouse
+	 * 
+	 * @return the side
+	 */
+	private Position computeSide(){
+		// mouse coordinate in the frame of reference of the station
+		Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
 		Dockable stationDockable = (Dockable) stationHost;
-		SwingUtilities.convertPointFromScreen(mousePoint,
+		SwingUtilities.convertPointFromScreen(mouseCoordinate,
 				stationDockable.getComponent());
-		switch (reference) {
-		case UPPERLEFT:
-			for (int i = dockableCount - 1; i > -1; i--){
-				Point componentPoint = new Point((int) stationHost
-						.getDockable(i).getComponent().getBounds().getMinX(),
-						(int) stationHost.getDockable(i).getComponent()
-								.getBounds().getMinY());
-				switch (orientation) {
-				case VERTICAL:
-					if (mousePoint.getY() > componentPoint.getY()){
-						return i + 1;
-					}
-					break;
-				case HORIZONTAL:
-					if (mousePoint.getX() > componentPoint.getX()){
-						return i + 1;
-					}
-					break;
-				}
+		// the dockable the closest of the mouse
+		int index = getIndex();
+		// compute if the mouse is on top or bottom this dockable
+		OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
+		switch (orientedStation.getOrientation()) {
+		case VERTICAL:
+			double middleY = (stationHost.getDockable(index).getComponent()
+					.getBounds().getMinY() + stationHost.getDockable(index)
+					.getComponent().getBounds().getMaxY()) / 2.0;
+			if (Math.abs(mouseCoordinate.getY()) < middleY){
+				return Position.NORTH;
+			} else{
+				return Position.SOUTH;
 			}
-		case BOTTOMRIGHT:
-			for (int i = dockableCount - 1; i > -1; i--){
-				Point componentPoint = new Point((int) stationHost
-						.getDockable(i).getComponent().getBounds().getMaxX(),
-						(int) stationHost.getDockable(i).getComponent()
-								.getBounds().getMaxY());
-				switch (orientation) {
-				case VERTICAL:
-					if (mousePoint.getY() > componentPoint.getY()){
-						return i + 1;
-					}
-					break;
-				case HORIZONTAL:
-					if (mousePoint.getX() > componentPoint.getX()){
-						return i + 1;
-					}
-					break;
-				}
+		case HORIZONTAL:
+			double middleX = (stationHost.getDockable(index).getComponent()
+					.getBounds().getMinX() + stationHost.getDockable(index)
+					.getComponent().getBounds().getMaxX()) / 2.0;
+			if (Math.abs(mouseCoordinate.getX()) < middleX){
+				return Position.WEST;
+			} else{
+				return Position.EAST;
 			}
 		}
-		return 0;
+		throw new IllegalArgumentException();
 	}
 
 	/**
 	 * compute the <code>index</code> of the component beneath the mouse
 	 * 
-	 * @param list
-	 *            list of the dockables in the middle of which the drag dockable
-	 *            will be inserted
-	 * @param mouseX
-	 *            position X of the mouse
-	 * @param mouseY
-	 *            position Y of the mouse
-	 * @param orientation
-	 *            orientation of the dockables
 	 * @return the index
 	 */
-	public int computeIndex( ArrayList<Dockable> list, int mouseX, int mouseY,
-			Orientation orientation ){
+	private int computeIndex(){
 		Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
 		Dockable stationDockable = (Dockable) stationHost;
 		SwingUtilities.convertPointFromScreen(mouseCoordinate,
 				stationDockable.getComponent());
 		double formerDistance;
-		int dockableCount = list.size();
-		switch (orientation) {
+		int dockableCount = stationHost.getDockableCount();
+		OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
+		switch (orientedStation.getOrientation()) {
 		case VERTICAL:
 			// loop on dockables too see which of them is closer of the mouse
 			double middleY = (stationHost.getDockable(0).getComponent()
@@ -248,9 +219,43 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 				formerDistance = Math.abs(mouseCoordinate.getX() - middleX);
 			}
 			return dockableCount - 1;
-		default:
-			return 0; // this case can't happened
 		}
+		throw new IllegalArgumentException();
+	}
+
+	/**
+	 * Compute the relative position of drag dockable and the closest dockable
+	 * above the mouse
+	 * 
+	 * @return the position
+	 */
+	private Position computeDragDockablePosition(){
+		int indexOfClosestDockable = this.getIndex();
+		if (this.dragDockable == stationHost
+				.getDockable(indexOfClosestDockable)){
+			return Position.CENTER;
+		} else{
+			OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
+			switch (orientedStation.getOrientation()) {
+			case VERTICAL:
+				if (dragDockable.getComponent().getBounds().getMinY() < stationHost
+						.getDockable(indexOfClosestDockable).getComponent()
+						.getBounds().getMinY()){
+					return Position.NORTH;
+				} else{
+					return Position.SOUTH;
+				}
+			case HORIZONTAL:
+				if (dragDockable.getComponent().getBounds().getMinX() < stationHost
+						.getDockable(indexOfClosestDockable).getComponent()
+						.getBounds().getMinX()){
+					return Position.WEST;
+				} else{
+					return Position.EAST;
+				}
+			}
+		}
+		throw new IllegalArgumentException();
 	}
 
 	@Override

@@ -36,7 +36,8 @@ public class ToolbarGroupDockStationMerger implements Merger{
 			insertDockables.add( child.getDockable( i ) );
 		}
 		
-		int index = operation.getIndex( ReferencePoint.BOTTOMRIGHT );
+//		int index = operation.getIndex( ReferencePoint.BOTTOMRIGHT );
+		int index = operation.getIndex();
 		
 		for( int i = 0; i < count; i++ ) {
 			parent.drop( insertDockables.get( i ), index++ );

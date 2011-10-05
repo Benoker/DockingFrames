@@ -4,7 +4,7 @@ package bibliothek.gui.dock.station.toolbar;
  * Describe the reference point of a graphic component used to compute
  * relative position (e.g. between mouse position and component position)
  * 
- * @author Herv� Guillaume
+ * @author Herve Guillaume
  * 
  */
 public enum ReferencePoint {

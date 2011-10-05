@@ -31,6 +31,7 @@ import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.station.toolbar.Position;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 
@@ -48,15 +49,7 @@ import bibliothek.gui.dock.util.SilentPropertyValue;
  */
 public class ToolbarContainerDockStation extends AbstractDockableStation implements ToolbarInterface {
 
-	/**
-	 * The area position
-	 * 
-	 * @author Herv� Guillaume
-	 * 
-	 */
-	public enum Position {
-		NORTH, SOUTH, EAST, WEST, CENTER
-	}
+	
 
 	ScreenDockStation screenStation;
 

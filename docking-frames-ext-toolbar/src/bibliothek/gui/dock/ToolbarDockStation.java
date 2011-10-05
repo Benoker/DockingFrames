@@ -141,10 +141,10 @@ public class ToolbarDockStation extends AbstractDockableStation implements Orien
 
 	private void drop( ToolbarDropInfo<?> dropInfo ){
 		if( dropInfo.isMove() ) {
-			move( dropInfo.getItem(), dropInfo.getIndex( ReferencePoint.UPPERLEFT ) );
+			move( dropInfo.getItem(), dropInfo.getIndex() );
 		}
 		else {
-			drop( dropInfo.getItem(), dropInfo.getIndex( ReferencePoint.BOTTOMRIGHT ) );
+			drop( dropInfo.getItem(), dropInfo.getIndex() );
 		}
 	}
 

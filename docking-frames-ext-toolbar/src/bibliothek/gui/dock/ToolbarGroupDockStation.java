@@ -1,11 +1,9 @@
 package bibliothek.gui.dock;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
-import bibliothek.gui.dock.station.toolbar.ReferencePoint;
+import bibliothek.gui.dock.station.toolbar.Position;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
@@ -62,10 +60,13 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 
 	/** A paint to draw lines */
 	private DefaultStationPaintValue paint;
-	
+
 	/** where a drag dockable have to be inserted */
 	private Integer dropIndex = null;
-
+	/** the index of the closest dockable above the mouse */
+	private Integer indexAboveMouse = null;
+	/** closest side of the the closest dockable above the mouse */
+	private Position sideAboveMouse = null;
 
 	/**
 	 * Constructs a new ToolbarGroupDockStation
@@ -156,7 +157,8 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 					System.out.println(this.toString() + "## destroy() ##");
 					// sans cette ligne la barre n'est pa affiché à moins de
 					// drager un autre composant
-					ToolbarGroupDockStation.this.dropIndex = null;
+					ToolbarGroupDockStation.this.indexAboveMouse = null;
+					ToolbarGroupDockStation.this.sideAboveMouse = null;
 					ToolbarGroupDockStation.this.background.getContentPane()
 							.repaint();
 				}
@@ -165,13 +167,10 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 				public void draw(){
 					System.out.println(this.toString() + "## draw() ##");
 					// sans cette ligne la barre n'est jamais affichée
-					if (this.isMove()){
-						ToolbarGroupDockStation.this.dropIndex = this
-								.getIndex(ReferencePoint.UPPERLEFT);
-					} else{
-						ToolbarGroupDockStation.this.dropIndex = this
-								.getIndex(ReferencePoint.BOTTOMRIGHT);
-					}
+					ToolbarGroupDockStation.this.indexAboveMouse = this
+							.getIndex();
+					ToolbarGroupDockStation.this.sideAboveMouse = this
+							.getSide();
 					// sans cette ligne la bare n'est affiché que sur le premier
 					// composant rencontré
 					ToolbarGroupDockStation.this.background.getContentPane()
@@ -184,12 +183,54 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 	}
 
 	private void drop( ToolbarDropInfo<?> dropInfo ){
-		if (dropInfo.isMove()){
-			move(dropInfo.getItem(),
-					dropInfo.getIndex(ReferencePoint.UPPERLEFT));
-		} else{
-			drop(dropInfo.getItem(),
-					dropInfo.getIndex(ReferencePoint.BOTTOMRIGHT));
+		// Note. Computation of index to insert drag dockbale is not the same
+		// between a move() and a drop(), because with a move(), we remove()
+		// first the drag dockable before add again in the list
+		if (dropInfo.getDragDockablePosition() != Position.CENTER){
+			if (dropInfo.isMove()){
+				switch (this.getOrientation()) {
+				case VERTICAL:
+					if (dropInfo.getDragDockablePosition() == Position.SOUTH){
+						if (dropInfo.getSide() == Position.SOUTH){
+							this.dropIndex = dropInfo.getIndex() + 1;
+						} else{
+							this.dropIndex = dropInfo.getIndex();
+						}
+					} else{
+						if (dropInfo.getSide() == Position.SOUTH){
+							this.dropIndex = dropInfo.getIndex();
+						} else{
+							this.dropIndex = dropInfo.getIndex() - 1;
+						}
+					}
+					break;
+				case HORIZONTAL:
+					if (dropInfo.getDragDockablePosition() == Position.EAST){
+						if (dropInfo.getSide() == Position.EAST){
+							this.dropIndex = dropInfo.getIndex() + 1;
+						} else{
+							this.dropIndex = dropInfo.getIndex();
+						}
+					} else{
+						if (dropInfo.getSide() == Position.EAST){
+							this.dropIndex = dropInfo.getIndex();
+						} else{
+							this.dropIndex = dropInfo.getIndex() - 1;
+						}
+					}
+					break;
+				}
+				move(dropInfo.getItem(), this.dropIndex);
+			} else{
+				this.indexAboveMouse = dropInfo.getIndex();
+				int increment = 0;
+				if (dropInfo.getSide() == Position.SOUTH
+						|| dropInfo.getSide() == Position.EAST){
+					increment++;
+				}
+				this.dropIndex = dropInfo.getIndex() + increment;
+				drop(dropInfo.getItem(), this.dropIndex);
+			}
 		}
 	}
 
@@ -210,11 +251,12 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 
 			this.remove(dockable);
 			// Warning we remove a dockable before insert it again
-			if (indexWhereInsert == 0){
-				this.add((ComponentDockable) dockable, indexWhereInsert);
-			} else{
-				this.add((ComponentDockable) dockable, indexWhereInsert - 1);
-			}
+			// if (indexWhereInsert == 0){
+			// this.add((ComponentDockable) dockable, indexWhereInsert);
+			// } else{
+			// this.add((ComponentDockable) dockable, indexWhereInsert - 1);
+			// }
+			this.add((ComponentDockable) dockable, indexWhereInsert);
 		} finally{
 			if (controller != null){
 				controller.meltLayout();
@@ -521,7 +563,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too.
 	 * 
-	 * @author Benjamin Sigg
+	 * @author Herve Guillaume
 	 */
 	protected class Background extends OverpaintablePanel{
 		/**
@@ -551,79 +593,39 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 					.getPreferredSize().height));
 			setContentPane(content);
 			setBasePane(content);
-			// getBasePane().removeAll();
-			// getBasePane().setLayout(new BorderLayout());
-			// getBasePane().add(content, BorderLayout.CENTER);
 		}
 
 		@Override
 		protected void paintOverlay( Graphics g ){
-			System.out.println(this.toString()
-					+ "## paintOverlay(Graphics g) ##");
 			DefaultStationPaintValue paint = getPaint();
-			// if (dropInfo != null){
-			// System.out.println("	NOT NULL DROP INFO");
-			//
-			// int index;
-			// // compute rectangle of component
-			// if (dropInfo.isMove()){
-			// index = dropInfo.getIndex(ReferencePoint.UPPERLEFT);
-			// if (index >= ToolbarGroupDockStation.this.dockables.size()){
-			// index = ToolbarGroupDockStation.this.dockables.size() - 1;
-			// }
-			// } else{
-			// index = dropInfo.getIndex(ReferencePoint.BOTTOMRIGHT);
-			// }
-			// Rectangle rect = dockables.get(index).getComponent()
-			// .getBounds();
-			// if (rect != null){
-			// if (g == null){
-			// System.out.println("	NULL GRAPHICS");
-			// }
-			// paint.drawInsertionLine(g, rect.x, rect.y, rect.x
-			// + rect.width, rect.y + rect.height);
-			// }
-			//
-			// }
-
-			if (dropIndex != null){
-				System.out.println(this.toString() + "			NOT NULL");
-				// if (dropInfo.isMove()){
-				Rectangle rect = dockables.get(dropIndex).getComponent()
+			if (indexAboveMouse != null){
+				Rectangle rect = dockables.get(indexAboveMouse).getComponent()
 						.getBounds();
 				if (rect != null){
-					paint.drawInsertionLine(g, rect.x, rect.y, rect.x
-							+ rect.width, rect.y + rect.height);
+					switch (ToolbarGroupDockStation.this.getOrientation()) {
+					case VERTICAL:
+						int y;
+						if (sideAboveMouse == Position.NORTH){
+							y = rect.y;
+						} else{
+							y = rect.y + rect.height;
+						}
+						paint.drawInsertionLine(g, rect.x, y, rect.x
+								+ rect.width, y);
+						break;
+					case HORIZONTAL:
+						int x;
+						if (sideAboveMouse == Position.WEST){
+							x = rect.x;
+						} else{
+							x = rect.x + rect.width;
+						}
+						paint.drawInsertionLine(g, x, rect.y, x, rect.y
+								+ rect.height);
+						break;
+					}
 				}
-				// }
-			} else{
-				System.out.println(this.toString()
-						+ "			NULL NULL NULL NULL NULL NULL");
 			}
-
-			// if (dropIndex != null){
-			// Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
-			// Rectangle insert = null;
-			// if (getDockableCount() < 2)
-			// insert = bounds;
-			// else{
-			// int index = stackComponent.getSelectedIndex();
-			// if (index >= 0){
-			// Component front = dockables.dockables().get(index)
-			// .getDisplayer().getComponent();
-			// Point location = new Point(0, 0);
-			// location = SwingUtilities.convertPoint(front, location,
-			// this);
-			// insert = new Rectangle(location.x, location.y,
-			// front.getWidth(), front.getHeight());
-			// }
-			// }
-			//
-			// if (insert != null){
-			// paint.drawInsertion(g, bounds, insert);
-			// }
-			// }
-
 		}
 
 		@Override
@@ -652,5 +654,5 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 		// DefaultStationPaintValue do nothing
 		paint.setController(controller);
 	}
-	
+
 }
