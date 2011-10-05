@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -24,16 +22,14 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.OrientedDockStation;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
-import bibliothek.gui.OrientedDockStation.Orientation;
-import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.toolbar.ReferencePoint;
+import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
@@ -64,10 +60,12 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 	 */
 	private Orientation orientation = Orientation.VERTICAL;
 
-	private ToolbarDropInfo<ToolbarGroupDockStation> dropInfo = null;
-
 	/** A paint to draw lines */
 	private DefaultStationPaintValue paint;
+	
+	/** where a drag dockable have to be inserted */
+	private Integer dropIndex = null;
+
 
 	/**
 	 * Constructs a new ToolbarGroupDockStation
@@ -75,7 +73,7 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 	public ToolbarGroupDockStation(){
 		background = new Background();
 		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
-				+ ".stack", this);
+				+ ".toolbar", this);
 		// background.setLayout(new BoxLayout(background, BoxLayout.Y_AXIS));
 		// background.setBorder(new CompoundBorder(new EtchedBorder(),
 		// new EmptyBorder(new Insets(5, 5, 5, 5))));
@@ -146,23 +144,40 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 					return null;
 				}
 			}
-			dropInfo = new ToolbarDropInfo<ToolbarGroupDockStation>(dockable,
-					this, mouseX, mouseY){
+			return new ToolbarDropInfo<ToolbarGroupDockStation>(dockable, this,
+					mouseX, mouseY){
 				@Override
 				public void execute(){
 					drop(this);
 				}
-				// @Override
-				// public void destroy(){
-				// if( ToolbarGroupDockStation.this.insert == insert ){
-				// StackDockStation.this.insert = null;
-				// panel.repaint();
-				// }
-				// dropInfo = null;
-				// ToolbarGroupDockStation.this.getComponent().repaint();
-				// }
+
+				@Override
+				public void destroy(){
+					System.out.println(this.toString() + "## destroy() ##");
+					// sans cette ligne la barre n'est pa affiché à moins de
+					// drager un autre composant
+					ToolbarGroupDockStation.this.dropIndex = null;
+					ToolbarGroupDockStation.this.background.getContentPane()
+							.repaint();
+				}
+
+				@Override
+				public void draw(){
+					System.out.println(this.toString() + "## draw() ##");
+					// sans cette ligne la barre n'est jamais affichée
+					if (this.isMove()){
+						ToolbarGroupDockStation.this.dropIndex = this
+								.getIndex(ReferencePoint.UPPERLEFT);
+					} else{
+						ToolbarGroupDockStation.this.dropIndex = this
+								.getIndex(ReferencePoint.BOTTOMRIGHT);
+					}
+					// sans cette ligne la bare n'est affiché que sur le premier
+					// composant rencontré
+					ToolbarGroupDockStation.this.background.getContentPane()
+							.repaint();
+				}
 			};
-			return dropInfo;
 		} else{
 			return null;
 		}
@@ -572,46 +587,42 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 			// }
 
 			if (dropIndex != null){
-				System.out.println(this.toString()
-						+ "			NOT NULL");
-				if (dropInfo.isMove()){
-					Rectangle rect = dockables.get(dropIndex).getComponent()
-							.getBounds();
-					if (rect != null){
-						if (g == null){
-							System.out.println("	NULL GRAPHICS");
-						}
-						paint.drawInsertionLine(g, rect.x, rect.y, rect.x
-								+ rect.width, rect.y + rect.height);
-					}
+				System.out.println(this.toString() + "			NOT NULL");
+				// if (dropInfo.isMove()){
+				Rectangle rect = dockables.get(dropIndex).getComponent()
+						.getBounds();
+				if (rect != null){
+					paint.drawInsertionLine(g, rect.x, rect.y, rect.x
+							+ rect.width, rect.y + rect.height);
 				}
-			} 			else {
+				// }
+			} else{
 				System.out.println(this.toString()
 						+ "			NULL NULL NULL NULL NULL NULL");
 			}
 
-//			if (dropIndex != null){
-//				Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
-//				Rectangle insert = null;
-//				if (getDockableCount() < 2)
-//					insert = bounds;
-//				else{
-//					int index = stackComponent.getSelectedIndex();
-//					if (index >= 0){
-//						Component front = dockables.dockables().get(index)
-//								.getDisplayer().getComponent();
-//						Point location = new Point(0, 0);
-//						location = SwingUtilities.convertPoint(front, location,
-//								this);
-//						insert = new Rectangle(location.x, location.y,
-//								front.getWidth(), front.getHeight());
-//					}
-//				}
-//
-//				if (insert != null){
-//					paint.drawInsertion(g, bounds, insert);
-//				}
-//			}
+			// if (dropIndex != null){
+			// Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
+			// Rectangle insert = null;
+			// if (getDockableCount() < 2)
+			// insert = bounds;
+			// else{
+			// int index = stackComponent.getSelectedIndex();
+			// if (index >= 0){
+			// Component front = dockables.dockables().get(index)
+			// .getDisplayer().getComponent();
+			// Point location = new Point(0, 0);
+			// location = SwingUtilities.convertPoint(front, location,
+			// this);
+			// insert = new Rectangle(location.x, location.y,
+			// front.getWidth(), front.getHeight());
+			// }
+			// }
+			//
+			// if (insert != null){
+			// paint.drawInsertion(g, bounds, insert);
+			// }
+			// }
 
 		}
 
@@ -641,206 +652,5 @@ public class ToolbarGroupDockStation extends AbstractDockableStation implements
 		// DefaultStationPaintValue do nothing
 		paint.setController(controller);
 	}
-
-	/**
-	 * 
-	 * 
-	 * 
-	 * DEBUG
-	 * 
-	 * 
-	 * 
-	 */
-
-	Integer dropIndex = null;
-
-	/**
-	 * Information where to insert a {@link Dockable} into a
-	 * {@link ToolbarGroupDockStation} or a {@link ToolbarDockStationFactory}.
-	 * 
-	 * @author Herve Guillaume
-	 * @param <S>
-	 *            the kind of station using this {@link ToolbarDropInfo}
-	 */
-	public abstract class ToolbarDropInfo<S extends DockStation> implements
-			StationDropOperation{
-		/** The {@link Dockable} which is inserted */
-		private Dockable dragDockable;
-		/**
-		 * The {@link Dockable} which received the dockbale (WARNING: this can
-		 * be different to his original dock parent!)
-		 */
-		private S stationHost;
-		/**
-		 * The multiple {@link Dockable} which belong to the dockstation
-		 */
-		private ArrayList<Dockable> list = new ArrayList<Dockable>();
-		/** Location of the mouse */
-		public int mouseX, mouseY;
-		/**
-		 * index computed with reference take on bottom right corner on the
-		 * underneath dockables
-		 */
-		private Integer dropIndex = null;
-
-		/**
-		 * Constructs a new info.
-		 * 
-		 * @param station
-		 *            the owner of this info
-		 * @param dockable
-		 *            the {@link Dockable} which will be inserted
-		 */
-		public ToolbarDropInfo( Dockable dockable, S stationHost, int mouseX,
-				int mouseY ){
-			System.out.println(this.toString()
-					+ "## NEW ToolbarDropInfo() ##");
-			this.dragDockable = dockable;
-			this.stationHost = stationHost;
-			for (int i = 0; i < stationHost.getDockableCount(); i++){
-				list.add(this.stationHost.getDockable(i));
-			}
-			this.mouseX = mouseX;
-			this.mouseY = mouseY;
-			OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
-			// sans cette ligne ça plante
-			dropIndex = computeIndex(list, mouseX, mouseY,
-					orientedStation.getOrientation(), ReferencePoint.UPPERLEFT);
-		}
-
-		public Dockable getItem(){
-			return dragDockable;
-		}
-
-		public S getTarget(){
-			return stationHost;
-		}
-
-		public void destroy(){
-			System.out.println(this.toString() + "## destroy() ##");
-			// sans cette ligne la barre n'est pa affiché à moins de drager una ture composant
-			ToolbarGroupDockStation.this.dropIndex = null;
-			ToolbarGroupDockStation.this.background.getContentPane().repaint();
-
-		}
-		
-		public void draw(){
-			System.out.println(this.toString()
-					+ "## draw() ##");
-			// sans cette ligne la barre n'est jamais affichée
-			ToolbarGroupDockStation.this.dropIndex = dropIndex;
-			// sans cette ligne la bare n'est affiché que sur le premier composant rencontré
-			ToolbarGroupDockStation.this.background.getContentPane().repaint();
-		}
-
-		public CombinerTarget getCombination(){
-			// not supported by this kind of station
-			return null;
-		}
-
-		public DisplayerCombinerTarget getDisplayerCombination(){
-			// not supported by this kind of station
-			return null;
-		}
-
-		public boolean isMove(){
-			return getItem().getDockParent() == getTarget();
-		}
-
-		/**
-		 * Gets the <code>index</code> of the component beneath the mouse
-		 * 
-		 * @return the index
-		 */
-		public Integer getIndex( ReferencePoint reference ){
-			OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
-			switch (reference) {
-			case UPPERLEFT:
-				dropIndex = computeIndex(list, mouseX, mouseY,
-						orientedStation.getOrientation(), reference);
-				return dropIndex;
-			case BOTTOMRIGHT:
-				dropIndex = computeIndex(list, mouseX, mouseY,
-						orientedStation.getOrientation(), reference);
-				return dropIndex;
-			default:
-				return 0;
-			}
-		}
-
-		/**
-		 * compute the <code>index</code> of the component beneath the mouse
-		 * 
-		 * @param list
-		 *            list of the dockables in the middle of which the drag
-		 *            dockable will be inserted
-		 * @param mouseX
-		 *            position X of the mouse
-		 * @param mouseY
-		 *            position Y of the mouse
-		 * @param orientation
-		 *            orientation of the dockables
-		 * @param reference
-		 *            reference point used to compute relative position of the
-		 *            dockables
-		 * @return the index
-		 */
-		public Integer computeIndex( ArrayList<Dockable> list, int mouseX,
-				int mouseY, Orientation orientation, ReferencePoint reference ){
-			int dockableCount = list.size();
-			Point mousePoint = new Point(this.mouseX, this.mouseY);
-			Dockable stationDockable = (Dockable) stationHost;
-			SwingUtilities.convertPointFromScreen(mousePoint,
-					stationDockable.getComponent());
-			switch (reference) {
-			case UPPERLEFT:
-				for (int i = dockableCount - 1; i > -1; i--){
-					Point componentPoint = new Point((int) stationHost
-							.getDockable(i).getComponent().getBounds()
-							.getMinX(), (int) stationHost.getDockable(i)
-							.getComponent().getBounds().getMinY());
-					switch (orientation) {
-					case VERTICAL:
-						if (mousePoint.getY() > componentPoint.getY()){
-							return i + 1;
-						}
-						break;
-					case HORIZONTAL:
-						if (mousePoint.getX() > componentPoint.getX()){
-							return i + 1;
-						}
-						break;
-					}
-				}
-			case BOTTOMRIGHT:
-				for (int i = dockableCount - 1; i > -1; i--){
-					Point componentPoint = new Point((int) stationHost
-							.getDockable(i).getComponent().getBounds()
-							.getMaxX(), (int) stationHost.getDockable(i)
-							.getComponent().getBounds().getMaxY());
-					switch (orientation) {
-					case VERTICAL:
-						if (mousePoint.getY() > componentPoint.getY()){
-							return i + 1;
-						}
-						break;
-					case HORIZONTAL:
-						if (mousePoint.getX() > componentPoint.getX()){
-							return i + 1;
-						}
-						break;
-					}
-				}
-			}
-			return 0;
-		}
-
-		@Override
-		public String toString(){
-			return this.getClass().getSimpleName() + '@'
-					+ Integer.toHexString(this.hashCode());
-		}
-
-	}
-
+	
 }
