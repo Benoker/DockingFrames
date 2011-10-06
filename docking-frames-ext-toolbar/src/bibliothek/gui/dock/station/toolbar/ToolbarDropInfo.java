@@ -72,6 +72,10 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	public void destroy(){
 	}
 
+	public void draw(){
+		// enable this ToolbarDropInfo to draw some markings on the stationHost
+	}
+	
 	public CombinerTarget getCombination(){
 		// not supported by this kind of station
 		return null;
@@ -80,10 +84,6 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	public DisplayerCombinerTarget getDisplayerCombination(){
 		// not supported by this kind of station
 		return null;
-	}
-
-	public void draw(){
-		// enable this ToolbarDropInfo to draw some markings on the stationHost
 	}
 
 	public boolean isMove(){
@@ -100,11 +100,12 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 			index = computeIndex();
 		}
 		return index;
-
 	}
 
 	/**
-	 * Gets the closest <code>side</code> of the component beneath the mouse
+	 * Gets the closest <code>side</code> of the component beneath the mouse.
+	 * Example: if the mouse is over a button, near the top of the button, this
+	 * return NORTH position
 	 * 
 	 * @return the side
 	 */
@@ -117,7 +118,7 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	}
 
 	/**
-	 * Gets the relative position of drag dockable and the closest dockable
+	 * Gets the relative position of drag dockable with the closest dockable
 	 * above the mouse.
 	 * 
 	 * @return the position

@@ -25,7 +25,7 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 	private Path placeholder;
 	
 	/** where the child is in respect to the center of the station */
-	private Position position;
+	private Position area;
 	
 	/**
 	 * Creates a new, empty {@link ToolbarProperty}.
@@ -37,17 +37,17 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 	/**
 	 * Creates a new property.
 	 * @param index the index of a child of a {@link DockStation}
-	 * @param position where the child is in respect to the center of the station, not <code>null</code>
+	 * @param area where the child is in respect to the center of the station, not <code>null</code>
 	 * @param placeholder the name of the child, can be <code>null</code>
 	 */
-	public ToolbarContainerProperty( int index, Position position, Path placeholder ){
+	public ToolbarContainerProperty( int index, Position area, Path placeholder ){
 		this.index = index;
-		this.position = position;
+		this.area = area;
 		this.placeholder = placeholder;
 	}
 	
 	public DockableProperty copy(){
-		ToolbarContainerProperty copy = new ToolbarContainerProperty( index, position, placeholder );
+		ToolbarContainerProperty copy = new ToolbarContainerProperty( index, area, placeholder );
 		DockableProperty successor = getSuccessor();
 		if( successor != null ){
 			copy.setSuccessor( successor.copy() );
@@ -80,8 +80,8 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 	 * Tells in which list the {@link Dockable} appears.
 	 * @return the position, must not be <code>null</code>
 	 */
-	public Position getPosition(){
-		return position;
+	public Position getArea(){
+		return area;
 	}
 	
 	public void store( DataOutputStream out ) throws IOException{
@@ -94,7 +94,7 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 			out.writeBoolean( true );
 			out.writeUTF( placeholder.toString() );
 		}
-		switch( position ){
+		switch( area ){
 			case CENTER:
 				out.write( 0 );
 				break;
@@ -111,7 +111,7 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 				out.write( 4 );
 				break;
 			default:
-				throw new IllegalStateException( "unknown type of position: " + position );
+				throw new IllegalStateException( "unknown type of area: " + area );
 		}
 	}
 
@@ -131,22 +131,22 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 		int item = in.read();
 		switch( item ){
 			case 0:
-				position = Position.CENTER;
+				area = Position.CENTER;
 				break;
 			case 1:
-				position = Position.EAST;
+				area = Position.EAST;
 				break;
 			case 2:
-				position = Position.WEST;
+				area = Position.WEST;
 				break;
 			case 3:
-				position = Position.NORTH;
+				area = Position.NORTH;
 				break;
 			case 4:
-				position = Position.SOUTH;
+				area = Position.SOUTH;
 				break;
 			default:
-				throw new IllegalStateException( "unknown type of position: " + item );
+				throw new IllegalStateException( "unknown type of area: " + item );
 		}
 	}
 	
@@ -155,13 +155,13 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 		if( placeholder != null ){
 			element.addElement( "placeholder" ).setString( placeholder.toString() );
 		}
-		element.addElement( "position" ).setString( position.name() );
+		element.addElement( "area" ).setString( area.name() );
 	}
 
 	public void load( XElement element ){
 		XElement xindex = element.getElement( "index" );
 		XElement xplaceholder = element.getElement( "placeholder" );
-		XElement xposition = element.getElement( "position" );
+		XElement xarea = element.getElement( "area" );
 		
 		if( xindex != null ){
 			index = xindex.getInt();
@@ -173,6 +173,6 @@ public class ToolbarContainerProperty  extends AbstractDockableProperty{
 			placeholder = null;
 		}
 		
-		position = Position.valueOf( xposition.getString() );
+		area = Position.valueOf( xarea.getString() );
 	}
 }

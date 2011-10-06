@@ -61,7 +61,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	/**
 	 * Graphical orientation of the group of components (vertical or horizontal)
 	 */
-	private Orientation orientation = null; // Orientation.HORIZONTAL;
+	private Orientation orientation = null;
 	/** A paint to draw lines */
 	private DefaultStationPaintValue paint;
 	/** the index of the closest dockable above the mouse */
@@ -192,7 +192,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	private void drop( ToolbarDropInfo<?> dropInfo ){
 		// Note. Computation of index to insert drag dockbale is not the same
 		// between a move() and a drop(), because with a move(), we remove()
-		// first the drag dockable before add again in the list
+		// first the drag dockable before we add it again in the list
 		if (dropInfo.getDragDockablePosition() != Position.CENTER){
 			int dropIndex;
 			if (dropInfo.isMove()){
@@ -600,7 +600,8 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 
 	/**
 	 * This panel is used as base of the station. All children of the station
-	 * have this panel as parent too.
+	 * have this panel as parent too. It allows to draw arbitrary figures over
+	 * the base panel
 	 * 
 	 * @author Herve Guillaume
 	 */
