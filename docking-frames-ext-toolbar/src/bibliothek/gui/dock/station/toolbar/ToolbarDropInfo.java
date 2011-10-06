@@ -1,7 +1,6 @@
 package bibliothek.gui.dock.station.toolbar;
 
 import java.awt.Point;
-import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
@@ -71,7 +70,6 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	}
 
 	public void destroy(){
-		// at the moment nothing to do
 	}
 
 	public CombinerTarget getCombination(){
@@ -85,7 +83,6 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	}
 
 	public void draw(){
-		// TODO
 		// enable this ToolbarDropInfo to draw some markings on the stationHost
 	}
 
@@ -118,7 +115,7 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 		return side;
 
 	}
-	
+
 	/**
 	 * Gets the relative position of drag dockable and the closest dockable
 	 * above the mouse.
