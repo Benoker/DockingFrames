@@ -54,6 +54,11 @@ public class TestToolbarDockStation {
 		ToolbarDockStation toolbar1 = new ToolbarDockStation();
 		toolbar1.drop( group1 );
 		toolbarStation.drop( toolbar1, Position.NORTH );
+		
+		ToolbarDockStation toolbar3 = new ToolbarDockStation();
+		ComponentDockable dockable6 = new ComponentDockable( new JButton( "Six" ) );
+		toolbar3.drop( dockable6 );
+		toolbarStation.drop( toolbar3, Position.NORTH );
 
 		ToolbarGroupDockStation group2 = new ToolbarGroupDockStation();
 		ComponentDockable dockable5 = new ComponentDockable( new JButton( "Five" ) );

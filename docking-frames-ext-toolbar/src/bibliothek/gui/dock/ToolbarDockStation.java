@@ -65,9 +65,9 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	/** A paint to draw lines */
 	private DefaultStationPaintValue paint;
 	/** the index of the closest dockable above the mouse */
-	private Integer indexAboveMouse = null;
+	private Integer indexBeneathMouse = null;
 	/** closest side of the the closest dockable above the mouse */
-	private Position sideAboveMouse = null;
+	private Position sideBeneathMouse = null;
 
 	/**
 	 * Constructs a new ToolbarDockStation
@@ -162,8 +162,8 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				public void destroy(){
 					// without this line, nothing is displayed except if you
 					// drag another component
-					ToolbarDockStation.this.indexAboveMouse = null;
-					ToolbarDockStation.this.sideAboveMouse = null;
+					ToolbarDockStation.this.indexBeneathMouse = null;
+					ToolbarDockStation.this.sideBeneathMouse = null;
 					ToolbarDockStation.this.basePanel.getContentPane()
 							.repaint();
 				}
@@ -171,8 +171,10 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				@Override
 				public void draw(){
 					// without this line, nothing is displayed
-					ToolbarDockStation.this.indexAboveMouse = this.getIndex();
-					ToolbarDockStation.this.sideAboveMouse = this.getSide();
+					ToolbarDockStation.this.indexBeneathMouse = ToolbarDockStation.this
+							.getDockables().indexOf(
+									this.getDockableBeneathMouse());
+					ToolbarDockStation.this.sideBeneathMouse = this.getSideDockableBeneathMouse();
 					// without this line, line is displayed only on the first
 					// component met
 					ToolbarDockStation.this.basePanel.getContentPane()
@@ -190,41 +192,44 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	 * @param dropInfo
 	 */
 	private void drop( ToolbarDropInfo<?> dropInfo ){
-		// Note. Computation of index to insert drag dockbale is not the same
-		// between a move() and a drop(), because with a move(), we remove()
-		// first the drag dockable before we add it again in the list
-		if (dropInfo.getDragDockablePosition() != Position.CENTER){
+		if (dropInfo.getItemPositionVSBeneathDockable() != Position.CENTER){
+			// Note: Computation of index to insert drag dockable is not the same
+			// between a move() and a drop(), because with a move() it is as if the
+			// drag dockable were remove first then added again in the list
+			// (Note: It's wird beacause indeed drag() is called after move()...)
 			int dropIndex;
+			int indexBeneathMouse = this.getDockables().indexOf(
+					dropInfo.getDockableBeneathMouse());
 			if (dropInfo.isMove()){
 				switch (this.getOrientation()) {
 				case VERTICAL:
-					if (dropInfo.getDragDockablePosition() == Position.SOUTH){
-						if (dropInfo.getSide() == Position.SOUTH){
-							dropIndex = dropInfo.getIndex() + 1;
+					if (dropInfo.getItemPositionVSBeneathDockable() == Position.SOUTH){
+						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+							dropIndex = indexBeneathMouse + 1;
 						} else{
-							dropIndex = dropInfo.getIndex();
+							dropIndex = indexBeneathMouse;
 						}
 					} else{
-						if (dropInfo.getSide() == Position.SOUTH){
-							dropIndex = dropInfo.getIndex();
+						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+							dropIndex = indexBeneathMouse;
 						} else{
-							dropIndex = dropInfo.getIndex() - 1;
+							dropIndex = indexBeneathMouse - 1;
 						}
 					}
 					move(dropInfo.getItem(), dropIndex);
 					break;
 				case HORIZONTAL:
-					if (dropInfo.getDragDockablePosition() == Position.EAST){
-						if (dropInfo.getSide() == Position.EAST){
-							dropIndex = dropInfo.getIndex() + 1;
+					if (dropInfo.getItemPositionVSBeneathDockable() == Position.EAST){
+						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+							dropIndex = indexBeneathMouse + 1;
 						} else{
-							dropIndex = dropInfo.getIndex();
+							dropIndex = indexBeneathMouse;
 						}
 					} else{
-						if (dropInfo.getSide() == Position.EAST){
-							dropIndex = dropInfo.getIndex();
+						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+							dropIndex = indexBeneathMouse;
 						} else{
-							dropIndex = dropInfo.getIndex() - 1;
+							dropIndex = indexBeneathMouse - 1;
 						}
 					}
 					move(dropInfo.getItem(), dropIndex);
@@ -232,11 +237,11 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				}
 			} else{
 				int increment = 0;
-				if (dropInfo.getSide() == Position.SOUTH
-						|| dropInfo.getSide() == Position.EAST){
+				if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH
+						|| dropInfo.getSideDockableBeneathMouse() == Position.EAST){
 					increment++;
 				}
-				dropIndex = dropInfo.getIndex() + increment;
+				dropIndex = indexBeneathMouse + increment;
 				drop(dropInfo.getItem(), dropIndex);
 			}
 		}
@@ -263,7 +268,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			return drop(dockable,
 					Math.min(getDockableCount(), toolbar.getIndex()));
 		}
-
 		return false;
 	}
 
@@ -289,7 +293,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			add(dockable, index);
 			return true;
 		}
-
 		return false;
 	}
 
@@ -301,15 +304,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			if (controller != null){
 				controller.freezeLayout();
 			}
-
-			this.remove(dockable);
-			// // Warning we remove a dockable before insert it again
-			// if (indexWhereInsert == 0){
-			// this.add((ToolbarGroupDockStation) dockable, indexWhereInsert);
-			// } else{
-			// this.add((ToolbarGroupDockStation) dockable,
-			// indexWhereInsert - 1);
-			// }
 			this.add(dockable, indexWhereInsert);
 		} finally{
 			if (controller != null){
@@ -638,14 +632,14 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		@Override
 		protected void paintOverlay( Graphics g ){
 			DefaultStationPaintValue paint = getPaint();
-			if (indexAboveMouse != null){
-				Rectangle rect = dockables.get(indexAboveMouse).getComponent()
+			if (indexBeneathMouse != null){
+				Rectangle rect = dockables.get(indexBeneathMouse).getComponent()
 						.getBounds();
 				if (rect != null){
 					switch (ToolbarDockStation.this.getOrientation()) {
 					case VERTICAL:
 						int y;
-						if (sideAboveMouse == Position.NORTH){
+						if (sideBeneathMouse == Position.NORTH){
 							y = rect.y;
 						} else{
 							y = rect.y + rect.height;
@@ -655,7 +649,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 						break;
 					case HORIZONTAL:
 						int x;
-						if (sideAboveMouse == Position.WEST){
+						if (sideBeneathMouse == Position.WEST){
 							x = rect.x;
 						} else{
 							x = rect.x + rect.width;
