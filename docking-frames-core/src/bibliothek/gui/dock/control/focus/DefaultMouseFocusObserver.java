@@ -30,13 +30,18 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DockRelocator;
+import bibliothek.gui.dock.control.GlobalMouseDispatcher;
 import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
 import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
 import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
@@ -46,13 +51,13 @@ import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
- * This abstract implementation of a {@link MouseFocusObserver} offers methods to handle
+ * This implementation of a {@link MouseFocusObserver} offers methods to handle
  * {@link FocusVetoListener}s and registers a {@link VetoableDockRelocatorListener}. On a
  * {@link VetoableDockRelocatorListener#dropped(DockRelocatorEvent) drop event} this observer
- * will automatically transfer the focus to the dropped {@link Dockable}.  
+ * will automatically transfer the focus to the dropped {@link Dockable}.
  * @author Benjamin Sigg
  */
-public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
+public class DefaultMouseFocusObserver implements MouseFocusObserver{
     
     /** The controller to be informed about changes */
     private DockController controller;
@@ -74,6 +79,9 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
             });
     	};
 	};
+	
+	/** Listener added to the {@link GlobalMouseDispatcher} for registering any {@link MouseEvent} */
+	private GlobalMouseListener listener = new GlobalMouseListener();
 
     /**
      * Creates a new FocusController.
@@ -82,11 +90,15 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
      * @param setup an observable informing this object when <code>controller</code>
      * is set up.
      */
-    public AbstractMouseFocusObserver( DockController controller, ControllerSetupCollection setup ){
+    public DefaultMouseFocusObserver( DockController controller, ControllerSetupCollection setup ){
         this.controller = controller;
         setup.add( new ControllerSetupListener(){
             public void done( DockController controller ) {
                 controller.getRelocator().addVetoableDockRelocatorListener( relocatorListener );
+                GlobalMouseDispatcher dispatcher = controller.getGlobalMouseDispatcher();
+                dispatcher.addMouseListener( listener );
+                dispatcher.addMouseMotionListener( listener );
+                dispatcher.addMouseWheelListener( listener );
             }
         });
     }
@@ -97,6 +109,10 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
      */
     public void kill(){
         getController().getRelocator().removeVetoableDockRelocatorListener( relocatorListener );
+        GlobalMouseDispatcher dispatcher = controller.getGlobalMouseDispatcher();
+        dispatcher.removeMouseListener( listener );
+        dispatcher.removeMouseMotionListener( listener );
+        dispatcher.removeMouseWheelListener( listener );
     }
     
     /**
@@ -107,13 +123,28 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
         return controller;
     }
     
-    
+    /**
+     * This method may be called at any time by any component that received 
+     * the {@link MouseEvent} <code>event</code>.  This observer may transfer the
+     * focus because of this call.<br>
+     * If this application runs in a {@link DockController#isRestrictedEnvironment() restricted environment}
+     * than any {@link DockStation} of this framework will call this method.
+     * @param event the event to check
+     */
     public void check( MouseEvent event ){
     	if( interact( event )){
     		check( (AWTEvent)event );
     	}
     }
     
+    /**
+     * This method may be called at any time by any component that received 
+     * the {@link MouseWheelEvent} <code>event</code>.  This observer may transfer the
+     * focus because of this call.<br>
+     * If this application runs in a {@link DockController#isRestrictedEnvironment() restricted environment}
+     * than any {@link DockStation} of this framework will call this method.
+     * @param event the event to check
+     */
     public void check( MouseWheelEvent event ){
     	if( interact( event )){
     		check( (AWTEvent)event );
@@ -271,5 +302,44 @@ public abstract class AbstractMouseFocusObserver implements MouseFocusObserver{
         }
         
         return element;
+    }
+    
+    /**
+     * This listener forwards all {@link MouseEvent}s to the {@link DefaultMouseFocusObserver#check(MouseEvent)}
+     * and {@link DefaultMouseFocusObserver#check(MouseWheelEvent)}.
+     * @author Benjamin Sigg
+     */
+    private class GlobalMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener{
+		public void mouseWheelMoved( MouseWheelEvent e ){
+			check( e );
+		}
+
+		public void mouseDragged( MouseEvent e ){
+			check( e );	
+		}
+
+		public void mouseMoved( MouseEvent e ){
+			check( e );
+		}
+
+		public void mouseClicked( MouseEvent e ){
+			check( e );
+		}
+
+		public void mousePressed( MouseEvent e ){
+			check( e );
+		}
+
+		public void mouseReleased( MouseEvent e ){
+			check( e );
+		}
+
+		public void mouseEntered( MouseEvent e ){
+			check( e );
+		}
+
+		public void mouseExited( MouseEvent e ){
+			check( e );
+		}
     }
 }

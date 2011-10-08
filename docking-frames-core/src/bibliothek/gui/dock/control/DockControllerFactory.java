@@ -168,6 +168,16 @@ public interface DockControllerFactory {
     public SingleParentRemover createSingleParentRemover( DockController controller, ControllerSetupCollection setup );
 
     /**
+     * Creates a new {@link GlobalMouseDispatcher} which will be responsible for collecting and distributing
+     * global {@link MouseEvent}s.
+     * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
+     * @return The dispatcher
+     */
+    public GlobalMouseDispatcher createGlobalMouseDispatcher( DockController controller, ControllerSetupCollection setup );
+    
+    /**
      * Creates a new {@link ExtensionManager}.
      * @param controller the controller which will use the manager
      * @param setup an observable where new objects can add {@link ControllerSetupListener}

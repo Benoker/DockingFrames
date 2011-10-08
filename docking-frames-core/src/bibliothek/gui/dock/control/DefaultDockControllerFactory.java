@@ -30,6 +30,7 @@ import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DefaultActionOffer;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
+import bibliothek.gui.dock.control.focus.DefaultMouseFocusObserver;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
@@ -117,6 +118,10 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
 
     public SingleParentRemover createSingleParentRemover( DockController controller, ControllerSetupCollection setup ) {
         return new SingleParentRemover();
+    }
+    
+    public GlobalMouseDispatcher createGlobalMouseDispatcher( DockController controller, ControllerSetupCollection setup ){
+    	return new DefaultGlobalMouseDispatcher( controller, setup );
     }
     
     public ExtensionManager createExtensionManager( DockController controller, ControllerSetupCollection setup ){

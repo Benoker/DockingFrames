@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,31 +23,21 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.extension.gui.dock.theme.eclipse.stack.tab4;
 
-package bibliothek.gui.dock.control.focus;
-
-import bibliothek.gui.DockController;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.ArchGradientPainter;
 import bibliothek.gui.Dockable;
-import bibliothek.util.FrameworkOnly;
 
 /**
- * A {@link MouseFocusObserver} tracks the movement and actions of the mouse and is responsible for
- * transferring the focus by calling {@link DockController#setFocusedDockable(Dockable, java.awt.Component, boolean, boolean, boolean)}
- * at an appropriate time.
+ * The classical {@link ArchGradientPainter} upgraded to look as if used by
+ * Eclipse 4.x. This adds hover effects, additional effects when not beeing in
+ * the selected stack, and an extended pallet of colors, 
  * @author Benjamin Sigg
  */
-public interface MouseFocusObserver {
-    /**
-     * Gets the {@link DockController} whose {@link Dockable}s are tracked by this observer.
-     * @return the controller
-     */
-    public DockController getController();
-    
-    /**
-     * Stops this FocusController. This controller will remove all
-     * its listeners and become ready for the garbage collector.<br>
-     * This method should not be called by clients. 
-     */
-    @FrameworkOnly
-    public void kill();
+public class ArchGradientPainterV4 extends ArchGradientPainter{
+	public ArchGradientPainterV4( EclipseTabPane pane, Dockable dockable ){
+		super( pane, dockable );
+	}
+	
 }
