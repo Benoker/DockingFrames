@@ -58,13 +58,21 @@ public class MultiAttractorStrategy implements AttractorStrategy{
 		strategies.remove( strategy );
 	}
 	
-	public Attraction attract( ScreenDockStation parent, Dockable fixed, Dockable moved ){
+	public Attraction attract( ScreenDockStation parent, Dockable moved, Dockable fixed ){
 		Attraction attraction = Attraction.NEUTRAL;
 		for( AttractorStrategy strategy : strategies ){
-			Attraction next = strategy.attract( parent, fixed, moved );
+			Attraction next = strategy.attract( parent, moved, fixed );
 			attraction = attraction.stronger( next );
 		}
 		return attraction;
 	}
 
+	public Attraction stick( ScreenDockStation parent, Dockable moved, Dockable fixed ){
+		Attraction attraction = Attraction.NEUTRAL;
+		for( AttractorStrategy strategy : strategies ){
+			Attraction next = strategy.stick( parent, moved, fixed );
+			attraction = attraction.stronger( next );
+		}
+		return attraction;
+	}
 }

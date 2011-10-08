@@ -27,7 +27,9 @@ package bibliothek.gui.dock.station.screen;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -131,18 +133,34 @@ public class MagnetController {
 	
 	/**
 	 * Tells whether <code>fixed</code> and <code>moved</code> attract each other. 
-	 * @param fixed the dockable that has not moved
 	 * @param moved the dockable that has moved
+	 * @param fixed the dockable that has not moved
 	 * @return the attraction, the strongest result from all currently registered {@link AttractorStrategy}s
 	 */
-	public Attraction getAttraction( Dockable fixed, Dockable moved ){
+	public Attraction getAttraction( Dockable moved, Dockable fixed ){
 		AttractorStrategy strategy = attraction.getValue();
 		if( strategy == null ){
 			return Attraction.NEUTRAL;
 		}
 		else{
-			return strategy.attract( station, fixed, moved );
+			return strategy.attract( station, moved, fixed );
 		}
+	}
+
+	/**
+	 * Tells whether <code>fixed</code> and <code>moved</code> stick to each other. 
+	 * @param moved the dockable that has moved
+	 * @param fixed the dockable that has not moved
+	 * @return the attraction, the strongest result from all currently registered {@link AttractorStrategy}s
+	 */
+	public Attraction getStickiness( Dockable moved, Dockable fixed ){
+		AttractorStrategy strategy = attraction.getValue();
+		if( strategy == null ){
+			return Attraction.NEUTRAL;
+		}
+		else{
+			return strategy.stick( station, moved, fixed );
+		}		
 	}
 	
 	/**
@@ -180,7 +198,7 @@ public class MagnetController {
 		for( int i = 0; i < count; i++ ){
 			ScreenDockWindow next = station.getWindow( i );
 			if( next != window ){
-				Attraction attraction = getAttraction( next.getDockable(), window.getDockable() );
+				Attraction attraction = getAttraction( window.getDockable(), next.getDockable() );
 				switch( attraction ){
 					case STRONGLY_ATTRACTED:
 					case ATTRACTED:
@@ -333,8 +351,8 @@ public class MagnetController {
 		/** the window that is reshaped */
 		private ScreenDockWindow window;
 		
-		/** the boundaries {@link #window} had before the operation started */
-		private Rectangle initialBoundaries;
+		/** the boundaries any {@link ScreenDockWindow} had before the operation started */
+		private Map<ScreenDockWindow, Rectangle> initialBoundaries = new HashMap<ScreenDockWindow, Rectangle>();
 		
 		/** the unmodified boundaries */
 		private Rectangle baseBoundaries;
@@ -342,13 +360,20 @@ public class MagnetController {
 		/** the boundaries {@link #window} will have after this {@link MagnetRequest} has been executed */
 		private Rectangle resultBoundaries;
 		
+		/** the currently executer operation */
+		private MagnetOperation operation;
+		
 		/**
 		 * Creates a new operation.
 		 * @param window the window that is reshaped
 		 */
 		public Operation( ScreenDockWindow window ){
 			this.window = window;
-			initialBoundaries = new Rectangle( window.getWindowBounds() );
+			
+			for( ScreenDockWindow check : getWindows() ){
+				initialBoundaries.put( check, check.getWindowBounds() );
+			}
+			
 			window.addScreenDockWindowListener( this );
 		}
 		
@@ -359,28 +384,41 @@ public class MagnetController {
 		public Rectangle getBounds(){
 			return baseBoundaries;
 		}
+
+		public Rectangle getInitialBounds( ScreenDockWindow window ){
+			Rectangle bounds = initialBoundaries.get( window );
+			if( bounds == null ){
+				throw new IllegalArgumentException( "window is unknown: " + window );
+			}
+			return bounds;
+		}
 		
 		public boolean isMoved(){
 			return (isNorth() && isSouth()) || (isEast() && isWest());
 		}
 
 		public boolean isResized(){
+			Rectangle initialBoundaries = getInitialBounds( getWindow() );
 			return !isMoved() && !initialBoundaries.equals( baseBoundaries );
 		}
 
 		public boolean isNorth(){
+			Rectangle initialBoundaries = getInitialBounds( getWindow() );
 			return initialBoundaries.y != baseBoundaries.y;
 		}
 
 		public boolean isSouth(){
+			Rectangle initialBoundaries = getInitialBounds( getWindow() );
 			return initialBoundaries.y + initialBoundaries.height != baseBoundaries.y + baseBoundaries.height;
 		}
 
 		public boolean isWest(){
+			Rectangle initialBoundaries = getInitialBounds( getWindow() );
 			return initialBoundaries.x != baseBoundaries.x;
 		}
 
 		public boolean isEast(){
+			Rectangle initialBoundaries = getInitialBounds( getWindow() );
 			return initialBoundaries.x + initialBoundaries.width != baseBoundaries.x + baseBoundaries.width;
 		}
 
@@ -497,9 +535,14 @@ public class MagnetController {
 			baseBoundaries = new Rectangle( bounds );
 			resultBoundaries = new Rectangle( bounds );
 			
-			MagnetStrategy strategy = getStrategy();
-			if( strategy != null ){
-				strategy.attract( MagnetController.this, this );
+			if( operation == null ){
+				MagnetStrategy strategy = getStrategy();
+				if( strategy != null ){
+					operation = strategy.start( MagnetController.this, this );
+				}
+			}
+			if( operation != null ){
+				operation.attract( MagnetController.this, this );
 			}
 			
 			return resultBoundaries;
@@ -509,6 +552,10 @@ public class MagnetController {
 			window.removeScreenDockWindowListener( this );
 			if( current == this ){
 				current = null;
+			}
+			if( operation != null ){
+				operation.destroy();
+				operation = null;
 			}
 		}
 	}

@@ -101,13 +101,27 @@ public interface AttractorStrategy {
 	
 	/**
 	 * Called when the {@link Dockable} <code>moved</code> has been moved. This method
-	 * tells whether the unmoved {@link Dockable} <code>firm</code> can attract <code>moved</code>. This
+	 * tells whether the unmoved {@link Dockable} <code>fixed</code> can attract <code>moved</code>. This
 	 * method does not have to check the actual position or size of any {@link Dockable}, this method
 	 * only has to tell whether an attraction is theoretically possible or not.  
-	 * @param parent the parent {@link DockStation} of <code>firm</code> and of <code>moved</code>
-	 * @param fixed a {@link Dockable} that did not change its position or size
+	 * @param parent the parent {@link DockStation} of <code>fixed</code> and of <code>moved</code>
 	 * @param moved a {@link Dockable} that did change its position or size
-	 * @see Attraction how <code>firm</code> and <code>moved</code> interact
+	 * @param fixed a {@link Dockable} that did not change its position or size
+	 * @see Attraction how <code>fixed</code> and <code>moved</code> interact
 	 */
-	public Attraction attract( ScreenDockStation parent, Dockable fixed, Dockable moved );
+	public Attraction attract( ScreenDockStation parent, Dockable moved, Dockable fixed );
+	
+	/**
+	 * Called when the {@link Dockable} <code>moved</code> has been moved. This method then tells whether
+	 * the unmoved {@link Dockable} <code>fixed</code> can stick to <code>moved</code> and be moved
+	 * as well. This method does not need to check the actual position or size of any {@link Dockable}, 
+	 * this method only has to tell whether the two items could stick together. Also 
+	 * stickiness does not imply {@link #attract(ScreenDockStation, Dockable, Dockable) attraction} or the other
+	 * way around.
+	 * @param parent the parent {@link DockStation} of <code>moved</code> and of <code>fixed</code>
+	 * @param moved a {@link Dockable} that did change its position or size
+	 * @param fixed a {@link Dockable} that did not change its position or size
+	 * @see Attraction how <code>fixed</code> and <code>moved</code> interact
+	 */
+	public Attraction stick( ScreenDockStation parent, Dockable moved, Dockable fixed );
 }

@@ -76,6 +76,14 @@ public interface MagnetRequest {
 	public Rectangle getBounds();
 	
 	/**
+	 * Gets the boundaries of <code>window</code> when this request was created.
+	 * @param window some window 
+	 * @return the initial boundaries of <code>window</code>
+	 * @throws IllegalArgumentException if <code>window</code> is not known to this request
+	 */
+	public Rectangle getInitialBounds( ScreenDockWindow window );
+	
+	/**
 	 * Tells whether the entire {@link #getWindow() window} was moved. A window
 	 * either is moved, resized or nothing happened.
 	 * @return <code>true</code> if the entire window was moved

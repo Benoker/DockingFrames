@@ -25,33 +25,23 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import bibliothek.gui.Dockable;
-
 /**
- * The {@link MagnetStrategy} is used by the {@link MagnetController} to define how exactly
- * two {@link ScreenDockWindow}s behave that are attracting each other.
+ * Creates by a {@link MagnetStrategy}, this operation is created once movement or resizing of a 
+ * {@link ScreenDockWindow} started and exists until this operation stopped. 
  * @author Benjamin Sigg
  */
-public interface MagnetStrategy {
-	/**
-	 * Informs this {@link MagnetStrategy} that it will be used by <code>controller</code>.
-	 * @param controller the controller using this strategy, not <code>null</code>
-	 */
-	public void install( MagnetController controller );
-	
-	/**
-	 * Informs this {@link MagnetStrategy} that it is no longer used by <code>controller</code>.
-	 * @param controller the controller which no longer uses this strategy
-	 */
-	public void uninstall( MagnetController controller );
-	
+public interface MagnetOperation {
 	/**
 	 * Called by <code>controller</code> after a {@link ScreenDockWindow} moved or changed
-	 * its size (or both). This method creates a new {@link MagnetOperation} which is tied to
-	 * <code>request</code>. The {@link MagnetOperation} will then find out which {@link Dockable}
-	 * is attracted to which other {@link Dockable}.
+	 * its size (or both). This method has to find out whether the window is attracted to another
+	 * window and if so it must call one of the <code>attract</code> methods of <code>request</code>.
 	 * @param controller the caller of this method, may be used to find other {@link ScreenDockWindow}s
 	 * @param request detailed information about the event
 	 */
-	public MagnetOperation start( MagnetController controller, MagnetRequest request );
+	public void attract( MagnetController controller, MagnetRequest request );
+	
+	/**
+	 * Called once the operation is no longer needed. 
+	 */
+	public void destroy();
 }
