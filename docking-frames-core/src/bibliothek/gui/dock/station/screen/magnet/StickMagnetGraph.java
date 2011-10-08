@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy.Attraction;
 import bibliothek.gui.dock.station.screen.magnet.MagnetRequest.Side;
@@ -295,7 +296,10 @@ public class StickMagnetGraph {
 	
 	/**
 	 * Tries to ensure that the modifications described in <code>constraints</code> can be achieved. For example
-	 * a constraint resulting in a negative width or height of a {@link ScreenDockWindow} can never be achieved.
+	 * a constraint resulting in a negative width or height of a {@link ScreenDockWindow} can never be achieved.<br>
+	 * The default implementation tries to smooth out resizes by distributing the changes to many windows. Note that
+	 * truelly invalid boundaries will be catched and processed by the {@link BoundaryRestriction}, which cannot be
+	 * influenced by the {@link StickMagnetGraph}.
 	 * @param constraints tells for each {@link Node} how its borders are to be moved, an entry of <code>null</code> or
 	 * a value of {@link Integer#MIN_VALUE} indicate that no constraint is set
 	 */

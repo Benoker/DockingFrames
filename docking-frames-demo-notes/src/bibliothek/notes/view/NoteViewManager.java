@@ -171,7 +171,7 @@ public class NoteViewManager{
 	 * @throws IOException if this method can't write into <code>out</code>
 	 */
 	public void write( DataOutputStream out ) throws IOException{
-	    PropertyTransformer transformer = new PropertyTransformer();
+	    PropertyTransformer transformer = new PropertyTransformer( frontend.getController() );
 
 	    out.writeInt( locations.size() );
 	    for( Map.Entry<Note, Tuple<DockStation, DockableProperty>> location : locations.entrySet() ){
@@ -187,7 +187,7 @@ public class NoteViewManager{
 	 * @throws IOException if <code>in</code> can't be read
 	 */
 	public void read( DataInputStream in ) throws IOException{
-	    PropertyTransformer transformer = new PropertyTransformer();
+	    PropertyTransformer transformer = new PropertyTransformer( frontend.getController() );
 		
 		int count = in.readInt();
 		for( int i = 0; i < count; i++ ){
@@ -207,7 +207,7 @@ public class NoteViewManager{
      * <code>element</code> will not be changed
      */
 	public void writeXML( XElement element ) throws IOException{
-	    PropertyTransformer transformer = new PropertyTransformer();
+	    PropertyTransformer transformer = new PropertyTransformer( frontend.getController() );
 	    
 	    for( Map.Entry<Note, Tuple<DockStation, DockableProperty>> location : locations.entrySet() ){
 	        XElement xnote = element.addElement( "note" );
@@ -222,7 +222,7 @@ public class NoteViewManager{
 	 * @param element the xml-element to read from
 	 */
 	public void readXML( XElement element ){
-	    PropertyTransformer transformer = new PropertyTransformer();
+	    PropertyTransformer transformer = new PropertyTransformer( frontend.getController() );
 
 	    for( XElement xnote : element.getElements( "note" )){
 	        Note note = model.getNote( xnote.getString( "id" ) );

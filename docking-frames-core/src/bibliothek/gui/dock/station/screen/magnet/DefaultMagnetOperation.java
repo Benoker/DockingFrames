@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.station.screen.magnet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.screen.magnet.MagnetRequest.Side;
 
@@ -74,13 +77,14 @@ public class DefaultMagnetOperation implements MagnetOperation{
 		
 		int nearest = threshold;
 		ScreenDockWindow nearestWindow = null;
+		List<ScreenDockWindow> windows = new ArrayList<ScreenDockWindow>();
 		Side nearestSide = null;
 		
 		for( ScreenDockWindow partner : partners ){
 			if( graph.getRoot().getNeighbor( partner ) == null ){
 				for( Side side : Side.values() ){
 					int distance = controller.distance( request.getWindow(), side, partner, side.opposite(), false );
-					if( distance <= nearest ){
+					if( distance <= threshold ){
 						boolean neighbors = false;
 						switch( side ){
 							case NORTH:
@@ -93,9 +97,12 @@ public class DefaultMagnetOperation implements MagnetOperation{
 								break;
 						}
 						if( neighbors ){
-							nearest = distance;
-							nearestWindow = partner;
-							nearestSide = side;
+							if( distance < nearest ){
+								nearest = distance;
+								nearestWindow = partner;
+								nearestSide = side;
+							}
+							windows.add( partner );
 						}
 					}
 				}
@@ -104,13 +111,13 @@ public class DefaultMagnetOperation implements MagnetOperation{
 		
 		if( nearestWindow != null ){
 			request.movingAttraction( nearestWindow, nearestSide, nearestSide.opposite() );
-			neighborMoved( controller, request, nearestWindow, nearestSide );
+			neighborMoved( controller, request, windows, nearestSide );
 		}
 		
 		graph.moveNeighbors();
 	}
 	
-	private void neighborMoved( MagnetController controller, MagnetRequest request, ScreenDockWindow neighbor, Side side ){
+	private void neighborMoved( MagnetController controller, MagnetRequest request, List<ScreenDockWindow> neighbors, Side side ){
 		Side checkA;
 		Side checkB;
 		if( side == Side.NORTH || side == Side.SOUTH ){
@@ -121,14 +128,33 @@ public class DefaultMagnetOperation implements MagnetOperation{
 		}
 		checkB = checkA.opposite();
 		
-		int distA = controller.distance( neighbor, checkA, request.getWindow(), checkA, false );
-		int distB = controller.distance( neighbor, checkB, request.getWindow(), checkB, false );
+		ScreenDockWindow neighborA = null;
+		int distA = threshold+1;
+		for( ScreenDockWindow neighbor : neighbors ){
+			int dist = controller.distance( neighbor, checkA, request.getWindow(), checkA, false );
+			if( dist < distA ){
+				distA = dist;
+				neighborA = neighbor;
+			}
+		}
+		
+		ScreenDockWindow neighborB = null;
+		int distB = threshold+1;
+		for( ScreenDockWindow neighbor : neighbors ){
+			int dist = controller.distance( neighbor, checkB, request.getWindow(), checkB, false );
+			if( dist < distB ){
+				distB = dist;
+				neighborB = neighbor;
+			}
+		}
+		
+		
 		
 		if( distA <= distB && distA <= threshold ){
-			request.movingAttraction( neighbor, checkA, checkA );
+			request.movingAttraction( neighborA, checkA, checkA );
 		}
 		else if( distB <= distA && distB <= threshold ){
-			request.movingAttraction( neighbor, checkB, checkB );
+			request.movingAttraction( neighborB, checkB, checkB );
 		}
 	}
 	
@@ -140,16 +166,19 @@ public class DefaultMagnetOperation implements MagnetOperation{
 	protected void resized( MagnetController controller, MagnetRequest request ){
 		ScreenDockWindow[] partners = controller.getAttracted( request.getWindow() );
 		
-		ScreenDockWindow[] neighbors = new ScreenDockWindow[4];
+		@SuppressWarnings("unchecked")
+		List<ScreenDockWindow>[] neighbors = new List[4];
 		
 		for( Side side : Side.values() ){
 			int nearest = threshold+1;
 			ScreenDockWindow window = null;
+			List<ScreenDockWindow> windows = new ArrayList<ScreenDockWindow>();
+			neighbors[ side.ordinal() ] = windows;
 			
 			for( ScreenDockWindow partner : partners ){
 				if( !request.is( side ) || graph.getRoot().getNeighbor( partner ) == null ){
 					int distance = controller.distance( request.getWindow(), side, partner, side.opposite(), false );
-					if( distance <= nearest || window == null ){
+					if( distance <= threshold || window == null ){
 						boolean neighbor = false;
 						switch( side ){
 							case NORTH:
@@ -162,8 +191,13 @@ public class DefaultMagnetOperation implements MagnetOperation{
 								break;
 						}
 						if( neighbor ){
-							nearest = distance;
-							window = partner;
+							if( distance <= nearest || window == null ){
+								nearest = distance;
+								window = partner;
+							}
+							if( distance <= threshold ){
+								windows.add( partner );
+							}
 						}
 					}
 				}
@@ -172,10 +206,10 @@ public class DefaultMagnetOperation implements MagnetOperation{
 			if( window != null ){
 				if( request.is( side ) && nearest <= threshold ){
 					request.resizingAttraction( window, side, side.opposite() );
-					neighbors[side.ordinal()] = window;
+					neighbors[side.ordinal()] = windows;
 				}
 				else if( nearest == 1 ){
-					neighbors[side.ordinal()] = window;
+					neighbors[side.ordinal()] = windows;
 				}
 			}
 		}
@@ -189,7 +223,7 @@ public class DefaultMagnetOperation implements MagnetOperation{
 		graph.moveAndResizeNeighbors();
 	}
 	
-	private void neighborResized( MagnetController controller, MagnetRequest request, Side side, ScreenDockWindow[] neighbors ){
+	private void neighborResized( MagnetController controller, MagnetRequest request, Side side, List<ScreenDockWindow>[] neighbors ){
 		Side checkA = null;
 		switch( side ){
 			case NORTH:
@@ -203,27 +237,39 @@ public class DefaultMagnetOperation implements MagnetOperation{
 		}
 		Side checkB = checkA.opposite();
 		
-		int distanceA;
+		ScreenDockWindow neighborA = null;
+		int distanceA = threshold+1;
 		if( neighbors[checkA.ordinal()] != null ){
-			distanceA = controller.distance( request.getWindow(), side, neighbors[checkA.ordinal()], side, false );
-		}
-		else{
-			distanceA = threshold+1;
+			for( ScreenDockWindow neighbor : neighbors[ checkA.ordinal() ]){
+				int distance = controller.distance( request.getWindow(), side, neighbor, side, false );
+				if( distance < distanceA ){
+					distanceA = distance;
+					neighborA = neighbor;
+				}
+			}
 		}
 		
-		int distanceB;
+		ScreenDockWindow neighborB = null;
+		int distanceB = threshold+1;
 		if( neighbors[checkB.ordinal()] != null ){
-			distanceB = controller.distance( request.getWindow(), side, neighbors[checkB.ordinal()], side, false );
+			for( ScreenDockWindow neighbor : neighbors[ checkB.ordinal() ]){
+				int distance = controller.distance( request.getWindow(), side, neighbor, side, false );
+				if( distance < distanceB ){
+					distanceB = distance;
+					neighborB = neighbor;
+				}
+			}
+			
 		}
 		else{
 			distanceB = threshold+1;
 		}
 		
 		if( distanceA <= distanceB && distanceA <= threshold ){
-			request.resizingAttraction( neighbors[checkA.ordinal()], side, side );
+			request.resizingAttraction( neighborA, side, side );
 		}
 		else if( distanceB <= distanceA && distanceB <= threshold ){
-			request.resizingAttraction( neighbors[checkB.ordinal()], side, side );
+			request.resizingAttraction( neighborB, side, side );
 		}
 	}
 }
