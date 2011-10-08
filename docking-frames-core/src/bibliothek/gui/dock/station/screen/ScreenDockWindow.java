@@ -34,6 +34,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.screen.magnet.MagnetController;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.title.DockTitle;
 

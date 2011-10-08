@@ -28,7 +28,7 @@ package bibliothek.gui.dock.station.toolbar;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.station.screen.AttractorStrategy;
+import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 
 /**
  * This implementation of an {@link AttractorStrategy} reads the current

@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.magnet;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -34,8 +34,10 @@ import java.util.Map;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.station.screen.AttractorStrategy.Attraction;
-import bibliothek.gui.dock.station.screen.MagnetRequest.Side;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
+import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy.Attraction;
+import bibliothek.gui.dock.station.screen.magnet.MagnetRequest.Side;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.util.FrameworkOnly;
@@ -218,18 +220,19 @@ public class MagnetController {
 	 * @param sideA the side of the window to check
 	 * @param windowB the second window
 	 * @param sideB the side of the second window to check
+	 * @param initialBoundaries if <code>true</code>, then the initial boundaries of <code>window</code> is used
 	 * @return the horizontall or vertical distance between the two sides, always a number greater or equal to 0
 	 * @throws IllegalArgumentException if <code>sideA</code> and <code>sideB</code> are neither equal nor opposite
 	 */
-	public int distance( ScreenDockWindow windowA, MagnetRequest.Side sideA, ScreenDockWindow windowB, MagnetRequest.Side sideB ){
+	public int distance( ScreenDockWindow windowA, MagnetRequest.Side sideA, ScreenDockWindow windowB, MagnetRequest.Side sideB, boolean initialBoundaries ){
 		if( sideA != sideB ){
 			if( (sideA == Side.NORTH || sideA == Side.SOUTH) != (sideB == Side.NORTH || sideB == Side.SOUTH) ){
 				throw new IllegalArgumentException( "sideA and sideB are neither equal nor opposite: " + sideA + ", " + sideB );
 			}
 		}
 		
-		int valueA = getValue( windowA, sideA );
-		int valueB = getValue( windowB, sideB );
+		int valueA = getValue( windowA, sideA, initialBoundaries );
+		int valueB = getValue( windowB, sideB, initialBoundaries );
 		
 		return Math.abs( valueA - valueB );
 	}
@@ -239,14 +242,15 @@ public class MagnetController {
 	 * are such that they have at least one pixel at the same height. 
 	 * @param windowA the first window
 	 * @param windowB the second window
+	 * @param initialBoundaries if <code>true</code>, then the initial boundaries of <code>window</code> is used
 	 * @return <code>true</code> if both windows have at least one pixel on the same height
 	 */
-	public boolean intersectHorizontally( ScreenDockWindow windowA, ScreenDockWindow windowB ){
-		int yA1 = getValue( windowA, Side.NORTH );
-		int yA2 = getValue( windowA, Side.SOUTH );
+	public boolean intersectHorizontally( ScreenDockWindow windowA, ScreenDockWindow windowB, boolean initialBoundaries ){
+		int yA1 = getValue( windowA, Side.NORTH, initialBoundaries );
+		int yA2 = getValue( windowA, Side.SOUTH, initialBoundaries );
 		
-		int yB1 = getValue( windowB, Side.NORTH );
-		int yB2 = getValue( windowB, Side.SOUTH );
+		int yB1 = getValue( windowB, Side.NORTH, initialBoundaries );
+		int yB2 = getValue( windowB, Side.SOUTH, initialBoundaries );
 		
 		return between( yA1, yA2, yB1 ) || between( yA1, yA2, yB2 ) || between( yB1, yB2, yA1 ) || between( yB1, yB2, yA2 );
 	}
@@ -256,14 +260,15 @@ public class MagnetController {
 	 * are such that they have at least one pixel at the same width. 
 	 * @param windowA the first window
 	 * @param windowB the second window
+	 * @param initialBoundaries if <code>true</code>, then the initial boundaries of <code>window</code> is used
 	 * @return <code>true</code> if both windows have at least one pixel on the same width
 	 */
-	public boolean intersectVertically( ScreenDockWindow windowA, ScreenDockWindow windowB ){
-		int xA1 = getValue( windowA, Side.WEST );
-		int xA2 = getValue( windowA, Side.EAST );
+	public boolean intersectVertically( ScreenDockWindow windowA, ScreenDockWindow windowB, boolean initialBoundaries ){
+		int xA1 = getValue( windowA, Side.WEST, initialBoundaries );
+		int xA2 = getValue( windowA, Side.EAST, initialBoundaries );
 		
-		int xB1 = getValue( windowB, Side.WEST );
-		int xB2 = getValue( windowB, Side.EAST );
+		int xB1 = getValue( windowB, Side.WEST, initialBoundaries );
+		int xB2 = getValue( windowB, Side.EAST, initialBoundaries );
 		
 		return between( xA1, xA2, xB1 ) || between( xA1, xA2, xB2 ) || between( xB1, xB2, xA1 ) || between( xB1, xB2, xA2 );
 	}
@@ -278,10 +283,14 @@ public class MagnetController {
 	 * to calculate the coordinates, otherwise {@link ScreenDockWindow#getWindowBounds()} is used.  
 	 * @param window some window
 	 * @param side the side to read
+	 * @param initialBoundaries if <code>true</code>, then the initial boundaries of <code>window</code> is used
 	 * @return the x or y coordinate of <code>side</code>
 	 */
-	public int getValue( ScreenDockWindow window, Side side ){
-		if( getCurrent() == window ){
+	public int getValue( ScreenDockWindow window, Side side, boolean initialBoundaries ){
+		if( initialBoundaries ){
+			return getValue( current.getInitialBounds( window ), side );
+		}
+		else if( getCurrent() == window ){
 			return getValue( current.getBounds(), side );
 		}
 		else{
@@ -382,7 +391,11 @@ public class MagnetController {
 		}
 
 		public Rectangle getBounds(){
-			return baseBoundaries;
+			return new Rectangle( baseBoundaries );
+		}
+		
+		public Rectangle getResultBounds(){
+			return new Rectangle( resultBoundaries );
 		}
 
 		public Rectangle getInitialBounds( ScreenDockWindow window ){
@@ -390,7 +403,7 @@ public class MagnetController {
 			if( bounds == null ){
 				throw new IllegalArgumentException( "window is unknown: " + window );
 			}
-			return bounds;
+			return new Rectangle( bounds );
 		}
 		
 		public boolean isMoved(){
@@ -440,6 +453,19 @@ public class MagnetController {
 			
 			int delta = neighborValue - windowValue;
 
+			if( windowSide != neighborSide ){
+				switch( windowSide ){
+					case NORTH:
+					case WEST:
+						delta += 1;
+						break;
+					case EAST:
+					case SOUTH:
+						delta -= 1;
+						break;
+				}
+			}
+			
 			switch( windowSide ){
 				case NORTH:
 					resultBoundaries.y += delta;
@@ -464,6 +490,20 @@ public class MagnetController {
 			int windowValue = getValue( resultBoundaries, windowSide );
 			
 			int delta = neighborValue - windowValue;
+			
+			if( windowSide != neighborSide ){
+				switch( windowSide ){
+					case NORTH:
+					case WEST:
+						delta += 1;
+						break;
+					case EAST:
+					case SOUTH:
+						delta -= 1;
+						break;
+				}
+			}
+			
 			switch( windowSide ){
 				case NORTH:
 				case SOUTH:

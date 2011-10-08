@@ -23,9 +23,12 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.magnet;
 
 import java.awt.Rectangle;
+
+import bibliothek.gui.dock.station.screen.BoundaryRestriction;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 /**
  * Describes the movement of a {@link ScreenDockWindow}. Also offers
@@ -72,8 +75,17 @@ public interface MagnetRequest {
 	 * Gets the boundaries the {@link #getWindow() window} would have if there would
 	 * be no outside influences (like magnetism) to the boundaries.
 	 * @return the unmodified boundaries, not <code>null</code>
+	 * @see #getResultBounds()
 	 */
 	public Rectangle getBounds();
+	
+	/**
+	 * Gets the boundaries the {@link #getWindow() window} would actually have if 
+	 * the operation would end right now.
+	 * @return the modified boundaries, not <code>null</code>
+	 * @see #getBounds()
+	 */
+	public Rectangle getResultBounds();
 	
 	/**
 	 * Gets the boundaries of <code>window</code> when this request was created.

@@ -23,9 +23,10 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.magnet;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 /**
  * The {@link MagnetStrategy} is used by the {@link MagnetController} to define how exactly

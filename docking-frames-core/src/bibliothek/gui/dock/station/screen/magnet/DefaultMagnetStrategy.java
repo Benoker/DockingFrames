@@ -23,7 +23,9 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.magnet;
+
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 
 /**

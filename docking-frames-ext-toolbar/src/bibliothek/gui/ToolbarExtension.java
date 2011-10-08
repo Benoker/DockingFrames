@@ -9,7 +9,7 @@ import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
-import bibliothek.gui.dock.station.screen.AttractorStrategy;
+import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
