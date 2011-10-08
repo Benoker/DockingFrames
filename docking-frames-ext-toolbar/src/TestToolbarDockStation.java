@@ -8,8 +8,8 @@ import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarContainerDockStation.Position;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.station.toolbar.Position;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 
 /**
@@ -53,7 +53,12 @@ public class TestToolbarDockStation {
 
 		ToolbarDockStation toolbar1 = new ToolbarDockStation();
 		toolbar1.drop( group1 );
-		toolbarStation.drop( toolbar1, Position.WEST );
+		toolbarStation.drop( toolbar1, Position.NORTH );
+		
+		ToolbarDockStation toolbar3 = new ToolbarDockStation();
+		ComponentDockable dockable6 = new ComponentDockable( new JButton( "Six" ) );
+		toolbar3.drop( dockable6 );
+		toolbarStation.drop( toolbar3, Position.NORTH );
 
 		ToolbarGroupDockStation group2 = new ToolbarGroupDockStation();
 		ComponentDockable dockable5 = new ComponentDockable( new JButton( "Five" ) );
@@ -61,7 +66,7 @@ public class TestToolbarDockStation {
 
 		ToolbarDockStation toolbar2 = new ToolbarDockStation();
 		toolbar2.drop( group2 );
-		toolbarStation.drop( toolbar2, Position.SOUTH );
+		toolbarStation.drop( toolbar2, Position.WEST );
 
 		frame.add( toolbarStation.getComponent() );
 

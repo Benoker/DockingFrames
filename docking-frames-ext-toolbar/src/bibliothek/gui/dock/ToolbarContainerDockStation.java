@@ -3,9 +3,12 @@ package bibliothek.gui.dock;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -25,12 +29,16 @@ import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
-import bibliothek.gui.dock.station.toolbar.ReferencePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.station.toolbar.Position;
+import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 
@@ -46,25 +54,9 @@ import bibliothek.gui.dock.util.SilentPropertyValue;
  * 
  * @author Herve Guillaume
  */
-public class ToolbarContainerDockStation extends AbstractDockableStation implements ToolbarInterface {
+public class ToolbarContainerDockStation extends AbstractDockableStation
+		implements ToolbarInterface{
 
-	/**
-	 * The area position
-	 * 
-	 * @author Herv� Guillaume
-	 * 
-	 */
-	public enum Position {
-		NORTH, SOUTH, EAST, WEST, CENTER
-	}
-
-	ScreenDockStation screenStation;
-
-	/**
-	 * The graphical representation of this station: the pane which contains
-	 * toolbars
-	 */
-	private JPanel borderPanel = new JPanel( new BorderLayout() );
 	/** The westPane */
 	private JPanel westPanel;
 	/** The east pane */
@@ -75,6 +67,11 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	private JPanel southPanel;
 	/** The center Pane */
 	private JPanel centerPanel = new JPanel(new GridLayout(1, 1));
+	/**
+	 * The graphical representation of this station: the pane which contains
+	 * toolbars
+	 */
+	protected OverpaintablePanelBase basePanel = new OverpaintablePanelBase();
 	/** dockables associate with the west pane */
 	private ArrayList<Dockable> westDockables = new ArrayList<Dockable>();
 	/** dockables associate with the east pane */
@@ -90,22 +87,24 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	private ArrayList<Dockable> allDockables = new ArrayList<Dockable>();
 	/** dockable associate with the center pane */
 	private Dockable centerDockable;
+	/** A paint to draw lines */
+	private DefaultStationPaintValue paint;
+	/** the index of the closest dockable above the mouse */
+	private Integer indexBeneathMouse = null;
+	/** closest side of the the closest dockable above the mouse */
+	private Position sideAboveMouse = null;
+	/** the area beneath the mouse, where the dockabel will be dragged */
+	private Position areaBeneathMouse = null;
 
 	/**
 	 * Constructs a new ToolbarContainerDockStation
 	 */
 	public ToolbarContainerDockStation(){
+		basePanel = new OverpaintablePanelBase();
+		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
+				+ ".toolbar", this);
 		// Grid Layout allow component pout in the panels to
 		// fill all the space
-		westPanel = createSidePanel();
-		eastPanel = createSidePanel();
-		northPanel = createSidePanel();
-		southPanel = createSidePanel();
-		borderPanel.add( westPanel, BorderLayout.WEST );
-		borderPanel.add( eastPanel, BorderLayout.EAST );
-		borderPanel.add( northPanel, BorderLayout.NORTH );
-		borderPanel.add( southPanel, BorderLayout.SOUTH );
-		borderPanel.add( centerPanel, BorderLayout.CENTER );
 	}
 
 	/**
@@ -113,12 +112,13 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 */
 	private JPanel createSidePanel(){
 		JPanel panel = new JPanel();
-		GridLayout layout = new GridLayout( 1, 1 );
-		layout.setHgap( 10 );
-		layout.setVgap( 10 );
-		panel.setLayout( layout );
-		panel.setBorder( new CompoundBorder( new EtchedBorder(), new EmptyBorder( new Insets( 5, 5, 5, 5 ) ) ) );
-		panel.setBackground( new Color( 31, 73, 125 ) );
+		GridLayout layout = new GridLayout(1, 1);
+		layout.setHgap(10);
+		layout.setVgap(10);
+		panel.setLayout(layout);
+		panel.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(
+				new Insets(5, 5, 5, 5))));
+		// panel.setBackground(new Color(31, 73, 125));
 		return panel;
 	}
 
@@ -129,7 +129,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	public Dockable getDockable( int index ){
-		return allDockables.get( index );
+		return allDockables.get(index);
 	}
 
 	@Override
@@ -156,88 +156,215 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		int index = eastDockables.indexOf( child );
-		if( index >= 0 ){
-			return new ToolbarContainerProperty( index, Position.EAST, null );
+		int index = eastDockables.indexOf(child);
+		if (index >= 0){
+			return new ToolbarContainerProperty(index, Position.EAST, null);
 		}
-		
-		index = westDockables.indexOf( child );
-		if( index >= 0 ){
-			return new ToolbarContainerProperty( index, Position.WEST, null );
+
+		index = westDockables.indexOf(child);
+		if (index >= 0){
+			return new ToolbarContainerProperty(index, Position.WEST, null);
 		}
-		
-		index = northDockables.indexOf( child );
-		if( index >= 0 ){
-			return new ToolbarContainerProperty( index, Position.NORTH, null );
+
+		index = northDockables.indexOf(child);
+		if (index >= 0){
+			return new ToolbarContainerProperty(index, Position.NORTH, null);
 		}
-		
-		index = southDockables.indexOf( child );
-		if( index >= 0 ){
-			return new ToolbarContainerProperty( index, Position.SOUTH, null );
+
+		index = southDockables.indexOf(child);
+		if (index >= 0){
+			return new ToolbarContainerProperty(index, Position.SOUTH, null);
 		}
-		
-		return new ToolbarContainerProperty( 0, Position.CENTER, null );
+
+		return new ToolbarContainerProperty(0, Position.CENTER, null);
 	}
 
-	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
-		System.out.println( this.toString() + "## prepareDrop(...) ##" );
+	public StationDropOperation prepareDrop( int mouseX, int mouseY,
+			int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+		System.out.println(this.toString() + "## prepareDrop(...) ##");
 		DockController controller = getController();
 		// check whether this station has to check if the mouse is in the
 		// override-zone of its parent & (if this parent exist) if
 		// the mouse is in the override-zone
-		if( checkOverrideZone & this.getDockParent() != null ) {
-			if( this.getDockParent().isInOverrideZone( mouseX, mouseY, this, dockable ) ) {
+		if (checkOverrideZone & this.getDockParent() != null){
+			if (this.getDockParent().isInOverrideZone(mouseX, mouseY, this,
+					dockable)){
 				return null;
 			}
 		}
 		// check if the dockable and the station accept each other
-		if( this.accept( dockable ) & dockable.accept( this ) ) {
+		if (this.accept(dockable) & dockable.accept(this)){
 			// check if controller exist and if the controller accept that
 			// the dockable become a child of this station
-			if( controller != null ) {
-				if( !controller.getAcceptance().accept( this, dockable ) ) {
+			if (controller != null){
+				if (!controller.getAcceptance().accept(this, dockable)){
 					return null;
 				}
 			}
 			ArrayList<Dockable> associateToolbars;
-			Position position;
-			Point mousePoint = new Point( mouseX, mouseY );
-			SwingUtilities.convertPointFromScreen( mousePoint, borderPanel );
+			Position area;
+			Point mousePoint = new Point(mouseX, mouseY);
+			SwingUtilities.convertPointFromScreen(mousePoint, basePanel.getContentPane());
 
-			System.out.println( "########### MOUSE: " + mouseX + "/" + mouseY + " ################" );
-			if( westPanel.getBounds().contains( mousePoint ) ) {
+			System.out.println("########### MOUSE: " + mouseX + "/" + mouseY
+					+ " ################");
+			if (westPanel.getBounds().contains(mousePoint)){
 				associateToolbars = westDockables;
-				position = Position.WEST;
-			}
-			else if( eastPanel.getBounds().contains( mousePoint ) ) {
+				area = Position.WEST;
+			} else if (eastPanel.getBounds().contains(mousePoint)){
 				associateToolbars = eastDockables;
-				position = Position.EAST;
-			}
-			else if( northPanel.getBounds().contains( mousePoint ) ) {
+				area = Position.EAST;
+			} else if (northPanel.getBounds().contains(mousePoint)){
 				associateToolbars = northDockables;
-				position = Position.NORTH;
-			}
-			else if( southPanel.getBounds().contains( mousePoint ) ) {
+				area = Position.NORTH;
+			} else if (southPanel.getBounds().contains(mousePoint)){
 				associateToolbars = southDockables;
-				position = Position.SOUTH;
-			}
-			else {
+				area = Position.SOUTH;
+			} else{
 				// user can't drag and drop an element in the center area
 				// the user can only add programmaticaly a dockable in the
 				// center area
 				return null;
 			}
-			if( !getToolbarStrategy().isToolbarPart( dockable ) ) {
+			if (!getToolbarStrategy().isToolbarPart(dockable)){
 				// only ToolbarElementInterface can be drop or move in
 				// the side areas
 				return null;
 			}
-			System.out.println( "########### POSITION: " + position + " ################" );
-			return new ToolbarContainerDropInfo( dockable, this, associateToolbars, position, mouseX, mouseY );
-		}
-		else {
+			System.out.println("########### AREA: " + area
+					+ " ################");
+			return new ToolbarContainerDropInfo(dockable, this,
+					associateToolbars, area, mouseX, mouseY){
+				@Override
+				public void execute(){
+					drop(this);
+				}
+
+				// Note: draw() is called first by the Controller. It seems
+				// destroy() is called after, after a new StationDropOperation
+				// is created
+
+				@Override
+				public void destroy(){
+					// without this line, nothing is displayed except if you
+					// drag another component
+					ToolbarContainerDockStation.this.indexBeneathMouse = null;
+					ToolbarContainerDockStation.this.sideAboveMouse = null;
+					ToolbarContainerDockStation.this.basePanel.getContentPane()
+							.repaint();
+				}
+
+				@Override
+				public void draw(){
+					// without this line, nothing is displayed
+					// Reminder: if dockable beneath mouse doesn't exist, then indexOf return -1
+					ToolbarContainerDockStation.this.indexBeneathMouse = ToolbarContainerDockStation.this
+							.getDockables(this.getArea()).indexOf(
+									this.getDockableBeneathMouse());
+					ToolbarContainerDockStation.this.sideAboveMouse = this
+							.getSideDockableBeneathMouse();
+					ToolbarContainerDockStation.this.areaBeneathMouse = this
+							.getArea();
+					// without this line, line is displayed only on the first
+					// component met
+					ToolbarContainerDockStation.this.basePanel.getContentPane()
+							.repaint();
+				}
+			};
+
+		} else{
 			return null;
 		}
+	}
+
+	private void drop( ToolbarContainerDropInfo dropInfo ){
+		// Note: Computation of index to insert drag dockable is not the
+		// same between a move() and a drop(), because with a move() it is
+		// as if the drag dockable were remove first then added again in the
+		// list (Note: It's wird beacause indeed drag() is called after
+		// move()...)
+		// We consider move() occur if :
+		// - the dockable added come from this station and stay on the same
+		// area
+		// We consider drop() occur if :
+		// - the dockable added come from another station OR come from this
+		// station but come from another area of this station
+
+		// we check if there's dockable in the area where the dockable will be
+		// drop
+		Position area = dropInfo.getArea();
+		if (this.getDockables(area).size() == 0){
+			// in this case, it's inevitably a drop() action
+			drop(dropInfo.getItem(), 0, area);
+		}
+		// if the dockable has to be drop at the same place (center with regards
+		// to itself): nothing to be done
+		if (dropInfo.getItemPositionVSBeneathDockable() != Position.CENTER){
+			int indexBeneathMouse = this.getDockables(area).indexOf(
+					dropInfo.getDockableBeneathMouse());
+			int dropIndex;
+			boolean isMove = false;
+			if (dropInfo.isMove()){
+				if (dropInfo.getArea() == this.getArea(dropInfo.getItem())){
+					isMove = true;
+				}
+			}
+
+			if (isMove){
+				switch (this.getOrientation(area)) {
+				case VERTICAL:
+					if (dropInfo.getItemPositionVSBeneathDockable() == Position.SOUTH){
+						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+							dropIndex = indexBeneathMouse + 1;
+						} else{
+							dropIndex = indexBeneathMouse;
+						}
+					} else{
+						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+							dropIndex = indexBeneathMouse;
+						} else{
+							dropIndex = indexBeneathMouse - 1;
+						}
+					}
+					move(dropInfo.getItem(), dropIndex, area);
+					break;
+				case HORIZONTAL:
+					System.out.println("PositionDragVSBeneathDockable: "
+							+ dropInfo.getItemPositionVSBeneathDockable());
+					if (dropInfo.getItemPositionVSBeneathDockable() == Position.EAST){
+						System.out.println("IndexBeneathMouse: "
+								+ indexBeneathMouse);
+						System.out.println("SideDockableBeneathMouse: "
+								+ dropInfo.getSideDockableBeneathMouse());
+						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+							dropIndex = indexBeneathMouse + 1;
+						} else{
+							dropIndex = indexBeneathMouse;
+						}
+						System.out.println("DropIndex: " + dropIndex);
+					} else{
+						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+							dropIndex = indexBeneathMouse;
+						} else{
+							dropIndex = indexBeneathMouse - 1;
+						}
+					}
+					move(dropInfo.getItem(), dropIndex, area);
+					break;
+				}
+
+			} else{
+				int increment = 0;
+				if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH
+						|| dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+					increment++;
+				}
+				dropIndex = indexBeneathMouse + increment;
+				drop(dropInfo.getItem(), dropIndex, area);
+
+			}
+		}
+
 	}
 
 	/**
@@ -249,48 +376,49 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 */
 	@Override
 	public void drop( Dockable dockable ){
-		System.out.println( this.toString() + "## drop(Dockable dockable)##" );
-		if( !(getToolbarStrategy().isToolbarPart( dockable )) ) {
-			this.drop( dockable, -1, Position.CENTER );
+		System.out.println(this.toString() + "## drop(Dockable dockable)##");
+		if (!(getToolbarStrategy().isToolbarPart(dockable))){
+			this.drop(dockable, -1, Position.CENTER);
 		}
 	}
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		if( property instanceof ToolbarContainerProperty ){
-			ToolbarContainerProperty toolbar = (ToolbarContainerProperty)property;
-			
-			if( toolbar.getSuccessor() != null ){
+		if (property instanceof ToolbarContainerProperty){
+			ToolbarContainerProperty toolbar = (ToolbarContainerProperty) property;
+
+			if (toolbar.getSuccessor() != null){
 				Dockable preset = null;
-				
-				if( toolbar.getPosition() == Position.CENTER ){
+
+				if (toolbar.getArea() == Position.CENTER){
 					preset = centerDockable;
-				}
-				else{
-					List<? extends Dockable> list = getDockables( toolbar.getPosition() );
-					if( toolbar.getIndex() < list.size() ){
-						preset = list.get( toolbar.getIndex() );
+				} else{
+					List<? extends Dockable> list = getDockables(toolbar
+							.getArea());
+					if (toolbar.getIndex() < list.size()){
+						preset = list.get(toolbar.getIndex());
 					}
 				}
-				
-				if( preset != null && preset.asDockStation() != null ){
-					return preset.asDockStation().drop( dockable, property.getSuccessor() );
+
+				if (preset != null && preset.asDockStation() != null){
+					return preset.asDockStation().drop(dockable,
+							property.getSuccessor());
 				}
 			}
-			
-			if( toolbar.getPosition() == Position.CENTER ){
-				return drop( dockable, Position.CENTER );
-			}
-			else{
-				int max = getDockables( toolbar.getPosition() ).size();
-				return drop( dockable, Math.min( max, toolbar.getIndex() ), toolbar.getPosition() );
+
+			if (toolbar.getArea() == Position.CENTER){
+				return drop(dockable, Position.CENTER);
+			} else{
+				int max = getDockables(toolbar.getArea()).size();
+				return drop(dockable, Math.min(max, toolbar.getIndex()),
+						toolbar.getArea());
 			}
 		}
 		return false;
 	}
 
 	/**
-	 * Adds <code>dockable</code> to this station at the given position. The
+	 * Adds <code>dockable</code> to this station in the given area. The
 	 * dockable in the center area mustn't be a {@link ToolbarElementInterface},
 	 * and the dockable in one of the side areas must be a
 	 * {@link ToolbarElementInterface} : if not, do nothing. The dockable is
@@ -298,151 +426,138 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * 
 	 * @param dockable
 	 *            a new child
-	 * @param position
+	 * @param area
 	 *            Refer to the position of area
 	 * @return <code>true</code> if dropping was successfull
 	 */
-	public boolean drop( Dockable dockable, Position position ){
-		System.out.println( this.toString() + "## drop(Dockable dockable, String position)##" );
-		return this.drop( dockable, getDockables( position ).size(), position );
+	public boolean drop( Dockable dockable, Position area ){
+		System.out.println(this.toString()
+				+ "## drop(Dockable dockable, Position area)##");
+		return this.drop(dockable, getDockables(area).size(), area);
 	}
 
 	/**
-	 * Inserts <code>dockable</code> to this station at the given position and
-	 * the given index. The dockable in the center area mustn't be a
+	 * Inserts <code>dockable</code> to this station at the given area and the
+	 * given index. The dockable in the center area mustn't be a
 	 * {@link ToolbarElementInterface}, and the dockable in on of the side areas
 	 * must be a {@link ToolbarElementInterface} : if not, do nothing.
 	 * 
 	 * @param dockable
 	 *            a new child
-	 * @param position
+	 * @param area
 	 *            Refer to the position of area
 	 * @return <code>true</code> if dropping was successfull
 	 */
-	private boolean drop( Dockable dockable, int index, Position position ){
-		System.out.println( this.toString() + "## drop(Dockable dockable, int index, Position position)##" );
+	private boolean drop( Dockable dockable, int index, Position area ){
+		System.out.println(this.toString()
+				+ "## drop(Dockable dockable, int index, Position area)##");
 		// where the dockable whre drop (WEST, EAST, etc.)?
-		return this.add( dockable, index, position );
+		return this.add(dockable, index, area);
 	}
 
-	public void drop( ToolbarContainerDropInfo dropInfo ){
-		if( dropInfo.isMove() ) {
-			move( dropInfo.getItem(), dropInfo.getIndex( ReferencePoint.UPPERLEFT ), dropInfo.getPosition() );
-		}
-		else {
-			drop( dropInfo.getItem(), dropInfo.getIndex( ReferencePoint.BOTTOMRIGHT ), dropInfo.getPosition() );
-		}
-	}
+	private void move( Dockable dockable, int indexWhereInsert, Position area ){
+		System.out.println(this.toString() + "## move() ##");
+		System.out.println(area);
+		switch (area) {
+		case CENTER:
+			// center area accept only one child, not a ToolbarELementInterface,
+			// and this child has to be added programmatically and not by user
+			// drag and drop. So the only move which can happen is to move the
+			// child in the center in the... center. Conclusion: nothing to be
+			// done. is move
+			break;
+		case NORTH:
+		case SOUTH:
+		case WEST:
+		case EAST:
+			if (getToolbarStrategy().isToolbarPart(dockable)){
+				DockController controller = getController();
+				try{
+					System.out.println("Index move: " + indexWhereInsert);
 
-	private void move( Dockable dockable, int indexWhereInsert, Position position ){
-		System.out.println( this.toString() + "## move() ##" );
-		System.out.println( position );
-		switch( position ){
-			case CENTER:
-				// center area accept only one child, not a ToolbarELementInterface,
-				// and this child has to be added programmatically and not by user
-				// drag and drop. So the only move which can happen is to move the
-				// child in the center in the... center. Conclusion: nothing to be
-				// done. is move
-				break;
-			case NORTH:
-			case SOUTH:
-			case WEST:
-			case EAST:
-				if( getToolbarStrategy().isToolbarPart( dockable ) ) {
-					DockController controller = getController();
-					
-					try{
-						System.out.println( "Index move: " + indexWhereInsert );
-						
-						if( controller != null ){
-							controller.freezeLayout();
-						}
-						this.remove( dockable );
-						// Warning we remove a dockable before insert it again
-						// this.add(dropInfo.getDragDockable(), indexWhereInsert,
-						// dropInfo.getSide());
-						if( indexWhereInsert == 0 ) {
-							this.add( dockable, indexWhereInsert, position );
-						}
-						else {
-							this.add( dockable, indexWhereInsert - 1, position );
-						}
+					if (controller != null){
+						controller.freezeLayout();
 					}
-					finally{
-						if( controller != null ){
-							controller.meltLayout();
-						}
+					this.add(dockable, indexWhereInsert, area);
+				} finally{
+					if (controller != null){
+						controller.meltLayout();
 					}
 				}
-				break;
-			default:
-				throw new NullPointerException();
+			}
+			break;
+		default:
+			throw new NullPointerException();
 		}
 	}
 
 	@Override
 	public void move( Dockable dockable, DockableProperty property ){
-		// Todo LATER Auto-generated method stub
-		System.out.println( this.toString() + "## move(Dockable dockable, DockableProperty property) ## " + this.toString() );
+		// TODO LATER Auto-generated method stub
+		System.out.println(this.toString()
+				+ "## move(Dockable dockable, DockableProperty property) ## "
+				+ this.toString());
 	}
 
 	@Override
-	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ){
-		// TODO Auto-generated method stub
+	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
+			int y, D invoker, Dockable drop ){
 		return false;
 	}
 
 	@Override
 	public boolean canDrag( Dockable dockable ){
-		System.out.println( this.toString() + "## canDrag(Dockable dockable) ## " + this.toString() );
+		System.out.println(this.toString()
+				+ "## canDrag(Dockable dockable) ## " + this.toString());
 		return true;
 	}
 
 	@Override
 	public void drag( Dockable dockable ){
-		System.out.println( this.toString() + "## drag(Dockable dockable) ##" );
-		if( dockable.getDockParent() != this )
-			throw new IllegalArgumentException( "The dockable cannot be dragged, it is not child of this station." );
-		this.remove( dockable );
+		System.out.println(this.toString() + "## drag(Dockable dockable) ##");
+		if (dockable.getDockParent() != this)
+			throw new IllegalArgumentException(
+					"The dockable cannot be dragged, it is not child of this station.");
+		this.remove(dockable);
 	}
 
 	@Override
 	public boolean canReplace( Dockable old, Dockable next ){
-		System.out.println( this.toString() + "## canReplace(Dockable old, Dockable next) ## " + this.toString() );
-		if( old.getClass() == next.getClass() ) {
-			System.out.println( "	TRUE" );
-			System.out.println( "	" + old.toString() + " / " + next.toString() );
+		System.out.println(this.toString()
+				+ "## canReplace(Dockable old, Dockable next) ## "
+				+ this.toString());
+		if (old.getClass() == next.getClass()){
 			return true;
-		}
-		else {
-			System.out.println( "	FALSE" );
-			System.out.println( "	" + old.toString() + " / " + next.toString() );
+		} else{
 			return false;
 		}
 	}
 
 	@Override
 	public void replace( Dockable old, Dockable next ){
-		System.out.println( this.toString() + "## replace(Dockable old, Dockable next) ## " + this.toString() );
-		System.out.println( "	" + old.toString() + " / " + next.toString() );
+		System.out.println(this.toString()
+				+ "## replace(Dockable old, Dockable next) ## "
+				+ this.toString());
+		System.out.println("	" + old.toString() + " / " + next.toString());
 		DockUtilities.checkLayoutLocked();
 		DockController controller = getController();
-		if( controller != null )
+		if (controller != null)
 			controller.freezeLayout();
-		Position position = getPosition( old );
-		int index = positionIndexOf( (Dockable) old );
-		this.remove( old );
+		Position area = getArea(old);
+		int index = areaIndexOf((Dockable) old);
+		this.remove(old);
 		// the child is a TollbarGroupDockStation because canReplace()
 		// ensure it
-		add( (ToolbarGroupDockStation) next, index, position );
+		add((ToolbarGroupDockStation) next, index, area);
 		controller.meltLayout();
 	}
 
 	@Override
 	public void replace( DockStation old, Dockable next ){
-		System.out.println( this.toString() + "## replace(DockStation old, Dockable next) ## " + this.toString() );
-		replace( old.asDockable(), next );
+		System.out.println(this.toString()
+				+ "## replace(DockStation old, Dockable next) ## "
+				+ this.toString());
+		replace(old.asDockable(), next);
 	}
 
 	@Override
@@ -453,7 +568,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	public Component getComponent(){
-		return borderPanel;
+		return basePanel;
 	}
 
 	@Override
@@ -463,118 +578,113 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	/**
 	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
+	 * 
 	 * @return the strategy, never <code>null</code>
 	 */
 	public ToolbarStrategy getToolbarStrategy(){
-		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>(
+				ToolbarStrategy.STRATEGY, getController());
 		ToolbarStrategy result = value.getValue();
-		value.setProperties( (DockController)null );
+		value.setProperties((DockController) null);
 		return result;
 	}
-	
+
 	@Override
 	public boolean accept( Dockable child ){
-		System.out.println( this.toString() + "## accept(Dockable child) ##" );
+		System.out.println(this.toString() + "## accept(Dockable child) ##");
 		return true;
 	}
 
 	@Override
 	public boolean accept( DockStation station ){
-		System.out.println( this.toString() + "## accept(DockStation station) ##" );
+		System.out.println(this.toString()
+				+ "## accept(DockStation station) ##");
 		// we can put this dockstation everywhere
 		return true;
 	}
 
 	@Override
 	public String toString(){
-		return this.getClass().getSimpleName() + '@' + Integer.toHexString( this.hashCode() );
+		return this.getClass().getSimpleName() + '@'
+				+ Integer.toHexString(this.hashCode());
 	}
 
 	/**
 	 * 
 	 * 
-	 * @param position
-	 * @return the dockables associated with specified position
+	 * @param area
+	 * @return the dockables associated in the specified area
 	 */
-	public ArrayList<Dockable> getDockables( Position position ){
-		if( position == Position.WEST ) {
+	public ArrayList<Dockable> getDockables( Position area ){
+		if (area == Position.WEST){
 			return this.westDockables;
-		}
-		else if( position == Position.EAST ) {
+		} else if (area == Position.EAST){
 			return this.eastDockables;
-		}
-		else if( position == Position.NORTH ) {
+		} else if (area == Position.NORTH){
 			return this.northDockables;
-		}
-		else {
+		} else{
 			return this.southDockables;
 		}
 	}
 
 	/**
-	 * Gets the panel associate with the specified position
+	 * Gets the panel associate with the specified area
 	 * 
-	 * @param position
+	 * @param area
 	 *            of the panel
-	 * @return the panel at the specified position
+	 * @return the panel at the specified area
 	 */
-	private JPanel getPanel( Position position ){
-		switch( position ){
-			case NORTH:
-				return this.northPanel;
-			case SOUTH:
-				return this.southPanel;
-			case WEST:
-				return this.westPanel;
-			case EAST:
-				return this.eastPanel;
-			case CENTER:
-				return this.centerPanel;
-			default:
-				return null;
-		}
-	}
-
-	/**
-	 * Gets the position of a dockable
-	 * 
-	 * @param dockable
-	 *            the child which is searched
-	 * @return the position of a dockable or null if it was not found
-	 */
-	private Position getPosition( Dockable dockable ){
-		if( westDockables.contains( dockable ) ) {
-			return Position.WEST;
-		}
-		else if( eastDockables.contains( dockable ) ) {
-			return Position.EAST;
-		}
-		else if( northDockables.contains( dockable ) ) {
-			return Position.NORTH;
-		}
-		else if( southDockables.contains( dockable ) ) {
-			return Position.SOUTH;
-		}
-		else if( dockable == centerDockable ) {
-			return Position.CENTER;
-		}
-		else {
+	public JPanel getPanel( Position area ){
+		switch (area) {
+		case NORTH:
+			return this.northPanel;
+		case SOUTH:
+			return this.southPanel;
+		case WEST:
+			return this.westPanel;
+		case EAST:
+			return this.eastPanel;
+		case CENTER:
+			return this.centerPanel;
+		default:
 			return null;
 		}
 	}
 
 	/**
-	 * Gets the orientation of dockables in one area at the specified position
+	 * Gets the area of a dockable
 	 * 
-	 * @param position
+	 * @param dockable
+	 *            the child which is searched
+	 * @return the area of a dockable or null if it was not found
+	 */
+	public Position getArea( Dockable dockable ){
+		if (westDockables.contains(dockable)){
+			return Position.WEST;
+		} else if (eastDockables.contains(dockable)){
+			return Position.EAST;
+		} else if (northDockables.contains(dockable)){
+			return Position.NORTH;
+		} else if (southDockables.contains(dockable)){
+			return Position.SOUTH;
+		} else if (dockable == centerDockable){
+			return Position.CENTER;
+		} else{
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the orientation of dockables in one area at the specified area
+	 * 
+	 * @param area
 	 *            refer to the area at the given position
 	 * @return the orientation
 	 */
-	public Orientation getOrientation( Position position ){
-		if( position == Position.WEST || position == Position.EAST ) {
+	public Orientation getOrientation( Position area ){
+		if (area == Position.WEST || area == Position.EAST){
 			return Orientation.VERTICAL;
-		}
-		else {
+		} else{
 			return Orientation.HORIZONTAL;
 		}
 	}
@@ -588,8 +698,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 */
 	private int globalIndexOf( Dockable dockable ){
 		int index = 0;
-		for( Dockable d : allDockables ) {
-			if( d == dockable ) {
+		for (Dockable d : allDockables){
+			if (d == dockable){
 				return index;
 			}
 			index++;
@@ -604,26 +714,26 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * @param dockable
 	 * @return
 	 */
-	private int positionIndexOf( Dockable dockable ){
-		Position position = getPosition( dockable );
-		switch( position ){
-			case CENTER:
-				return 0;
-			case NORTH:
-			case SOUTH:
-			case WEST:
-			case EAST:
-				ArrayList<Dockable> dockables = getDockables( position );
-				int index = 0;
-				for( Dockable d : dockables ) {
-					if( d == dockable ) {
-						return index;
-					}
-					index++;
+	private int areaIndexOf( Dockable dockable ){
+		Position area = getArea(dockable);
+		switch (area) {
+		case CENTER:
+			return 0;
+		case NORTH:
+		case SOUTH:
+		case WEST:
+		case EAST:
+			ArrayList<Dockable> dockables = getDockables(area);
+			int index = 0;
+			for (Dockable d : dockables){
+				if (d == dockable){
+					return index;
 				}
-				return -1;
-			default:
-				throw new NullPointerException();
+				index++;
+			}
+			return -1;
+		default:
+			throw new NullPointerException();
 		}
 	}
 
@@ -638,43 +748,43 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 */
 	private void remove( Dockable dockable ){
 		DockUtilities.checkLayoutLocked();
-		Position position = getPosition( dockable );
-		DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
-		try {
-			int globalIndex = globalIndexOf( dockable );
-			switch( position ){
-				case CENTER:
-					listeners.fireDockableRemoving( dockable );
-					dockable.setDockParent( null );
-					centerDockable = null;
-					allDockables.remove( globalIndex );
-					centerPanel.remove( dockable.getComponent() );
-					centerPanel.revalidate();
-					centerPanel.repaint();
-					listeners.fireDockableRemoved( dockable );
-					fireDockablesRepositioned( globalIndex );
-					break;
-				case NORTH:
-				case SOUTH:
-				case WEST:
-				case EAST:
-					JPanel panel = getPanel( position );
-					ArrayList<Dockable> dockables = getDockables( position );
-					listeners.fireDockableRemoving( dockable );
-					dockable.setDockParent( null );
-					dockables.remove( dockable );
-					allDockables.remove( globalIndex );
-					panel.remove( dockable.getComponent() );
-					panel.revalidate();
-					centerPanel.repaint();
-					listeners.fireDockableRemoved( dockable );
-					fireDockablesRepositioned( globalIndex );
-					break;
-				default:
-					throw new NullPointerException();
+		Position area = getArea(dockable);
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking(
+				this, dockable);
+		try{
+			int globalIndex = globalIndexOf(dockable);
+			switch (area) {
+			case CENTER:
+				listeners.fireDockableRemoving(dockable);
+				dockable.setDockParent(null);
+				centerDockable = null;
+				allDockables.remove(globalIndex);
+				centerPanel.remove(dockable.getComponent());
+				centerPanel.revalidate();
+				centerPanel.repaint();
+				listeners.fireDockableRemoved(dockable);
+				fireDockablesRepositioned(globalIndex);
+				break;
+			case NORTH:
+			case SOUTH:
+			case WEST:
+			case EAST:
+				JPanel panel = getPanel(area);
+				ArrayList<Dockable> dockables = getDockables(area);
+				listeners.fireDockableRemoving(dockable);
+				dockable.setDockParent(null);
+				dockables.remove(dockable);
+				allDockables.remove(globalIndex);
+				panel.remove(dockable.getComponent());
+				panel.revalidate();
+				centerPanel.repaint();
+				listeners.fireDockableRemoved(dockable);
+				fireDockablesRepositioned(globalIndex);
+				break;
+			default:
+				throw new NullPointerException();
 			}
-		}
-		finally {
+		} finally{
 			token.release();
 		}
 	}
@@ -685,17 +795,17 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 */
 	public void updateDockables(){
 		allDockables.clear();
-		allDockables.addAll( westDockables );
-		allDockables.addAll( northDockables );
-		allDockables.addAll( eastDockables );
-		allDockables.addAll( southDockables );
-		allDockables.add( centerDockable );
+		allDockables.addAll(westDockables);
+		allDockables.addAll(northDockables);
+		allDockables.addAll(eastDockables);
+		allDockables.addAll(southDockables);
+		allDockables.add(centerDockable);
 	}
 
 	/**
-	 * Add one dockable at the position and the index position. if Position is
-	 * null, then the dockable is added on the center area. The dockable can be
-	 * a {@link ComponentDockable}, {@link ToolbarGroupDockStation} or a
+	 * Add one dockable in the area and the index position. if area is null,
+	 * then the dockable is added on the center area. The dockable can be a
+	 * {@link ComponentDockable}, {@link ToolbarGroupDockStation} or a
 	 * {@link ToolbarDockStation} (see method accept()). All the
 	 * ComponentDockable extracted from the element are merged together and
 	 * wrapped in a {@link ToolbarGroupDockStation} before to be added at index
@@ -705,80 +815,195 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 *            Dockable to add
 	 * @param index
 	 *            Index where add dockable
-	 * @param position
-	 *            Position where insert dokckable
+	 * @param area
+	 *            area where insert dokckable
 	 * @return <code>true</code> if dropping was successfull
 	 */
-	protected boolean add( Dockable dockable, int index, Position position ){
-		DockUtilities.ensureTreeValidity( this, dockable );
+	protected boolean add( Dockable dockable, int index, Position area ){
+		DockUtilities.ensureTreeValidity(this, dockable);
 		DockUtilities.checkLayoutLocked();
 		// DockHierarchyLock.Token token =
 		// DockHierarchyLock.acquireLinking(this,
 		// dockable);
-		
+
 		ToolbarStrategy strategy = getToolbarStrategy();
-		
-		switch( position ){
-			case CENTER:
-				if( !strategy.isToolbarPart( dockable ) ) {
-					DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
-					try {
-						if( centerDockable != null ) {
-							remove( dockable );
-						}
-						dockable.setDockParent( this );
-						listeners.fireDockableAdding( dockable );
-						centerPanel.add( dockable.getComponent(), index );
-						centerDockable = dockable;
-						updateDockables();
-						centerPanel.revalidate();
-						centerPanel.repaint();
-						listeners.fireDockableAdded( dockable );
-						fireDockablesRepositioned( index + 1 );
-						System.out.println( "IN CENTER" );
+
+		switch (area) {
+		case CENTER:
+			if (!strategy.isToolbarPart(dockable)){
+				DockHierarchyLock.Token token = DockHierarchyLock
+						.acquireLinking(this, dockable);
+				try{
+					if (centerDockable != null){
+						remove(dockable);
 					}
-					finally {
-						token.release();
-					}
-					return true;
+					dockable.setDockParent(this);
+					listeners.fireDockableAdding(dockable);
+					centerPanel.add(dockable.getComponent(), index);
+					centerDockable = dockable;
+					updateDockables();
+					centerPanel.revalidate();
+					centerPanel.repaint();
+					listeners.fireDockableAdded(dockable);
+					fireDockablesRepositioned(index + 1);
+					System.out.println("IN CENTER");
+				} finally{
+					token.release();
 				}
-				break;
-			case NORTH:
-			case SOUTH:
-			case WEST:
-			case EAST:
-				if( strategy.isToolbarPart( dockable ) ) {
-					dockable = strategy.ensureToolbarLayer( this, dockable );
-					
-					DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
-					try {
-						dockable.setDockParent( this );
-						listeners.fireDockableAdding( dockable );
-						ArrayList<Dockable> dockables = getDockables( position );
-						JPanel panel = getPanel( position );
-						if( dockable instanceof OrientedDockStation ){
-							((OrientedDockStation)dockable).setOrientation( getOrientation( position ) );
-						}
-						System.out.println( "########### INDEX: " + index + " ################" );
-						panel.add( dockable.getComponent(), index );
-						dockables.add( index, dockable );
-						updateDockables();
-						panel.revalidate();
-						borderPanel.repaint();
-						listeners.fireDockableAdded( dockable );
-						fireDockablesRepositioned( index + 1 );
+				return true;
+			}
+			break;
+		case NORTH:
+		case SOUTH:
+		case WEST:
+		case EAST:
+			if (strategy.isToolbarPart(dockable)){
+				dockable = strategy.ensureToolbarLayer(this, dockable);
+
+				DockHierarchyLock.Token token = DockHierarchyLock
+						.acquireLinking(this, dockable);
+				try{
+					dockable.setDockParent(this);
+					listeners.fireDockableAdding(dockable);
+					ArrayList<Dockable> dockables = getDockables(area);
+					JPanel panel = getPanel(area);
+					if (dockable instanceof OrientedDockStation){
+						((OrientedDockStation) dockable)
+								.setOrientation(getOrientation(area));
 					}
-					finally {
-						token.release();
-					}
-					return true;
+					System.out.println("########### INDEX: " + index
+							+ " ################");
+					dockables.add(index, dockable);
+					updateDockables();
+					///////////
+					panel.add(dockable.getComponent(), index);
+					basePanel.getContentPane().setBounds(0, 0,
+							basePanel.getContentPane().getPreferredSize().width,
+							basePanel.getContentPane().getPreferredSize().height);
+					basePanel.setPreferredSize(new Dimension(basePanel.getContentPane()
+							.getPreferredSize().width, basePanel.getContentPane()
+							.getPreferredSize().height));
+					basePanel.getContentPane().revalidate();
+					basePanel.getContentPane().repaint();
+					////////////
+					listeners.fireDockableAdded(dockable);
+					fireDockablesRepositioned(index + 1);
+				} finally{
+					token.release();
 				}
-				break;
-			default:
-				throw new IllegalStateException( "Unknown position: " + position );
+				return true;
+			}
+			break;
+		default:
+			throw new IllegalStateException("Unknown area: " + area);
 		}
-		
+
 		return false;
+	}
+
+	/**
+	 * This panel is used as base of the station. All children of the station
+	 * have this panel as parent too. It allows to draw arbitrary figures over
+	 * the base panel
+	 * 
+	 * @author Herve Guillaume
+	 */
+	protected class OverpaintablePanelBase extends OverpaintablePanel{
+		 /**
+		 * The content Pane of this {@link OverpaintablePanel}
+		 */
+		private JPanel content = new JPanel(new BorderLayout());
+
+		/**
+		 * Creates a new panel
+		 */
+		public OverpaintablePanelBase(){
+			westPanel = createSidePanel();
+			eastPanel = createSidePanel();
+			northPanel = createSidePanel();
+			southPanel = createSidePanel();
+			content.add(westPanel, BorderLayout.WEST);
+			content.add(eastPanel, BorderLayout.EAST);
+			content.add(northPanel, BorderLayout.NORTH);
+			content.add(southPanel, BorderLayout.SOUTH);
+			content.add(centerPanel, BorderLayout.CENTER);
+			content.setBounds(0, 0, content.getPreferredSize().width,
+					content.getPreferredSize().height);
+			this.getContentPane().setBounds(0, 0,
+					this.getContentPane().getPreferredSize().width,
+					this.getContentPane().getPreferredSize().height);
+			this.setPreferredSize(new Dimension(this.getContentPane()
+					.getPreferredSize().width, this.getContentPane()
+					.getPreferredSize().height));
+			setContentPane(content);
+			setBasePane(content);
+		}
+
+		@Override
+		protected void paintOverlay( Graphics g ){
+			DefaultStationPaintValue paint = getPaint();
+			if (indexBeneathMouse != null){
+				if (indexBeneathMouse == -1) {
+					// it means there's no dockable beneath mouse
+					Rectangle rect = getPanel(areaBeneathMouse).getBounds();
+					paint.drawDivider(g, rect);
+				} else {
+					Rectangle rect = getDockables(areaBeneathMouse).get(indexBeneathMouse).getComponent()
+							.getBounds();
+					if (rect != null){
+						switch (ToolbarContainerDockStation.this.getOrientation(areaBeneathMouse)) {
+						case VERTICAL:
+							int y;
+							if (sideAboveMouse == Position.NORTH){
+								y = rect.y;
+							} else{
+								y = rect.y + rect.height;
+							}
+							paint.drawInsertionLine(g, rect.x, y, rect.x
+									+ rect.width, y);
+							break;
+						case HORIZONTAL:
+							int x;
+							if (sideAboveMouse == Position.WEST){
+								x = rect.x;
+							} else{
+								x = rect.x + rect.width;
+							}
+							paint.drawInsertionLine(g, x, rect.y, x, rect.y
+									+ rect.height);
+							break; 
+						}
+					}
+				}				
+			}
+		}
+				
+
+		@Override
+		public String toString(){
+			return this.getClass().getSimpleName() + '@'
+					+ Integer.toHexString(this.hashCode());
+		}
+
+	}
+
+	/**
+	 * Gets a {@link StationPaint} which is used to paint some lines onto this
+	 * station. Use a {@link DefaultStationPaintValue#setDelegate(StationPaint)
+	 * delegate} to exchange the paint.
+	 * 
+	 * @return the paint
+	 */
+	public DefaultStationPaintValue getPaint(){
+		return paint;
+	}
+
+	@Override
+	public void setController( DockController controller ){
+		super.setController(controller);
+		// if not set controller of the DefaultStationPaintValue, call to
+		// DefaultStationPaintValue do nothing
+		paint.setController(controller);
 	}
 
 }

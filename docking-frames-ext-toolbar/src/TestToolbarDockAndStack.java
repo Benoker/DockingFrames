@@ -7,9 +7,9 @@ import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarContainerDockStation.Position;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.toolbar.Position;
 
 /**
  * I have two questions.
