@@ -1,17 +1,7 @@
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
- * panels containing any Swing-Com
-import java.util.LinkedList;
-
-import java.util.LinkedList;
-
-import java.util.LinkedList;
-
-import java.util.Map;
-
-import java.util.Map;
-ponent the developer likes to add.
+ * panels containing any Swing-Component the developer likes to add.
  * 
  * Copyright (C) 2011 Benjamin Sigg
  * 
@@ -35,13 +25,12 @@ ponent the developer likes to add.
  */
 package bibliothek.gui.dock.station.screen.magnet;
 
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
@@ -65,7 +54,13 @@ public class StickMagnetGraph {
 	private MagnetRequest request;
 
 	/** the node that represents the {@link ScreenDockWindow} of {@link #request} */
-	private Node root;
+	private DefaultNode root;
+	
+	/** a list containing all nodes of this graph */
+	private List<DefaultNode> nodes = new ArrayList<StickMagnetGraph.DefaultNode>();
+	
+	/** all edges of this graph */
+	private List<DefaultEdge> edges = new ArrayList<StickMagnetGraph.DefaultEdge>();
 	
 	public StickMagnetGraph( MagnetController controller, MagnetRequest request ){
 		this.controller = controller;
@@ -110,7 +105,60 @@ public class StickMagnetGraph {
 	public MagnetRequest getRequest(){
 		return request;
 	}
-
+	
+	@Override
+	public String toString(){
+		if( root == null ){
+			return getClass().getSimpleName() + "[root=null]";
+		}
+		else{
+			final StringBuilder builder = new StringBuilder();
+			builder.append( getClass().getSimpleName() );
+			builder.append( "[\nroot: " );
+			
+			getRoot().visit( new Visitor(){
+				private int depth = 0;
+				
+				public boolean beginVisit( Node node, boolean revisit ){
+					builder.append( node.hashCode() ).append(" '").append( node.getWindow().getDockable().getTitleText() ).append( "' " );
+					builder.append( node.getConstraints() ).append( "\n" );
+					depth++;
+					return !revisit;
+				}
+				
+				public void endVisit( Edge edge ){
+					depth--;
+				}
+				
+				public void endVisit( Node node ){
+					depth--;
+				}
+				
+				public boolean beginVisit( Edge edge ){
+					for( int i = 0; i < depth; i++ ){
+						builder.append( "  " );
+					}
+					depth++;
+					builder.append( "-> " ).append( edge.getSide().name().toLowerCase() );
+					builder.append( " " );
+					return true;
+				}
+			});
+			
+			builder.append( "]" );
+			return builder.toString();
+		}
+	}
+	
+	/**
+	 * Calls {@link Node#unmark()} on all nodes of this graph
+	 */
+	public void unmark(){
+		for( DefaultNode node : nodes ){
+			node.unmark();
+		}
+	}
+	
 	/**
 	 * Builds the entire stickiness graph using a breath first search algorithm. 
 	 * @param index the node whose neighbors have to be found by this method
@@ -237,82 +285,354 @@ public class StickMagnetGraph {
 	 * to change the size as well if it looks like a good choice.
 	 */
 	public void moveAndResizeNeighbors(){
-		// a value of Integer.MIN_VALUE is an unset constraint
-		Map<Node, Insets> constraints = new HashMap<Node, Insets>();
-		
 		Rectangle initial = request.getInitialBounds( request.getWindow() );
 		Rectangle current = request.getResultBounds();
 		
-		int deltaWest = current.x - initial.x;
-		int deltaNorth = current.y - initial.y;
-		int deltaEast = (current.x + current.width) - (initial.x + initial.width);
-		int deltaSouth = (current.y + current.height) - (initial.y + initial.height);
+		StickMagnetGraphConstraint constraint = getRoot().getConstraints();
 		
-		constraints.put( getRoot(), new Insets( deltaNorth, deltaWest, deltaSouth, deltaEast ) );
-		
-		buildConstraints( constraints );
-		validateConstraints( constraints );
-		executeConstraints( constraints );
+		constraint.set( Side.NORTH, current.y- initial.y, true, true );
+		constraint.set( Side.WEST, current.x - initial.x, true, true );
+		constraint.set( Side.EAST, (current.x + current.width) - (initial.x + initial.width), true, true );
+		constraint.set( Side.SOUTH, (current.y + current.height) - (initial.y + initial.height), true, true );
+
+		for( Side side : Side.values() ){
+			hardPush( side );
+		}
+		validateHardConstraints();		
+		buildConstraints();
+		validateConstraints();		
+		executeConstraints();
 	}
 	
 	/**
-	 * Makes an initial guess telling which node has to be resized by how much. Each node is associated with
-	 * an {@link Insets} object, the value of each field of that {@link Insets} object is the delta in pixels that
-	 * the border of the {@link ScreenDockWindow} has to be moved. A value of {@link Integer#MIN_VALUE} or of
-	 * <code>null</code> indicates that no constraint has been found.
-	 * @param constraints the map of constraints that has to be filled, the root node is already set
+	 * Gets all edges of this graph ordered by the distance of their {@link Edge#getTarget() target} node
+	 * to the root node.
+	 * @return the edges
 	 */
-	protected void buildConstraints( final Map<Node, Insets> constraints ){
-		getRoot().visit( new Visitor(){
-			public boolean beginVisit( Edge edge ){
-				Node target = edge.getTarget();
-				Insets insets = constraints.get( target );
-				if( insets == null ){
-					insets = new Insets( Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE );
-					constraints.put( target, insets );
-				}
-				Side side = edge.getSide();
-				int delta = get( constraints.get( edge.getSource() ), side );
-				put( insets, side.opposite(), delta );
-				if( get( insets, side ) == Integer.MIN_VALUE ){
-					put( insets, side, delta );
-				}
-				return true;
+	protected DefaultEdge[] getEdgesByDistance(){
+		DefaultEdge[] edges = this.edges.toArray( new DefaultEdge[ this.edges.size() ] );
+		Arrays.sort( edges, new Comparator<DefaultEdge>(){
+			public int compare( DefaultEdge o1, DefaultEdge o2 ){
+				return o2.getTarget().getRootDistance() - o1.getTarget().getRootDistance();
 			}
+		});
+		return edges;
+	}
+	
+	/**
+	 * Makes an initial guess telling which node has to be resized by how much. This means that the
+	 * {@link Node#getConstraints() constraints} of the nodes are set.
+	 */
+	protected void buildConstraints(){
+		DefaultEdge[] edges = getEdgesByDistance();
+		
+		// fill in direct constraints
+		for( DefaultEdge edge : edges ){
+			Node target = edge.getTarget();
+			StickMagnetGraphConstraint constraint = target.getConstraints();
+			Side side = edge.getSide();
+			StickMagnetGraphConstraint partner = edge.getSource().getConstraints();
 			
+			if( partner.isSet( side )){
+				int delta = partner.get( side );
+			
+				constraint.set( side.opposite(), delta );
+				if( partner.isDirect( side )){
+					constraint.setDirect( side.opposite(), true );
+				}
+				
+				if( !constraint.isDirect( side ) || !constraint.isSet( side )){
+					constraint.set( side, delta );
+				}
+			}
+		}
+		
+		// fill in unset constraints
+		for( DefaultEdge edge : edges ){
+			StickMagnetGraphConstraint source = edge.getSource().getConstraints();
+			StickMagnetGraphConstraint target = edge.getTarget().getConstraints();
+			Side side = edge.getSide();
+			
+			if( source.isSet( side ) && !target.isDirect( side.opposite() )){
+				target.set( side.opposite(), source.get( side ));
+			}
+			else if( target.isSet( side.opposite() ) && !source.isDirect( side )){
+				source.set( side, target.get( side.opposite() ) );
+			}
+			if( !source.isSet( side )){
+				source.set( side, 0 );
+			}
+			if( !target.isSet( side.opposite() )){
+				target.set( side.opposite(), 0 );
+			}
+		}
+	}
+	
+	/**
+	 * Starting at the root node, this method follows all {@link Edge}s going into direction <code>side</code>
+	 * and sets the hard flag on <code>side</code> and on {@link Side#opposite()} on all {@link Node#getConstraints()}s it encounters.
+	 * @param side the direction to travel
+	 * @param constraints the constraints to modify
+	 */
+	protected void hardPush( final Side side ){
+		getRoot().visit( new Visitor(){
+			private Edge edge;
+			
+			public boolean beginVisit( Edge edge ){
+				this.edge = edge;
+				if( edge.getSide() == side ){
+					return true;
+				}
+				if( edge.getSide() == side.opposite() ){
+					return false;
+				}
+				int source = controller.getValue( edge.getSource().getWindow(), side, true );
+				int target = controller.getValue( edge.getTarget().getWindow(), side, true );
+				return source == target;
+			}
+		
 			public void endVisit( Edge edge ){
 				// nothing
 			}
-			
 			public boolean beginVisit( Node node, boolean revisit ){
+				if( revisit ){
+					return false;
+				}
+				StickMagnetGraphConstraint constraint = node.getConstraints();
+				
+				if( edge != null ){
+					if( edge.getSide() == side ){
+						constraint.setHard( side, true );
+						constraint.setHard( side.opposite(), true );
+					}
+					else{
+						constraint.setHard( side, true );
+					}
+				}
+				
 				return true;
 			}
-			
 			public void endVisit( Node node ){
-				
+				// nothing	
 			}
 		});
 	}
 	
 	/**
-	 * Tries to ensure that the modifications described in <code>constraints</code> can be achieved. For example
-	 * a constraint resulting in a negative width or height of a {@link ScreenDockWindow} can never be achieved.<br>
-	 * The default implementation tries to smooth out resizes by distributing the changes to many windows. Note that
-	 * truelly invalid boundaries will be catched and processed by the {@link BoundaryRestriction}, which cannot be
-	 * influenced by the {@link StickMagnetGraph}.
-	 * @param constraints tells for each {@link Node} how its borders are to be moved, an entry of <code>null</code> or
-	 * a value of {@link Integer#MIN_VALUE} indicate that no constraint is set
+	 * Ensures that if one side of an {@link Edge} is {@link StickMagnetGraphConstraint#isHard(Side) hard}, then
+	 * the other side is hard as well.
 	 */
-	protected void validateConstraints( final Map<Node, Insets> constraints ){
-		
+	protected void validateHardConstraints(){
+		getRoot().visit( new Visitor(){
+			public boolean beginVisit( Edge edge ){
+				if( edge.getSource().getConstraints().isHard( edge.getSide() )){
+					edge.getTarget().getConstraints().setHard( edge.getSide().opposite(), true );
+				}
+				
+				return true;
+			}
+			public void endVisit( Edge edge ){
+				// nothing
+			}
+			public boolean beginVisit( Node node, boolean revisit ){
+				return !revisit;
+			}
+			public void endVisit( Node node ){
+				// nothing
+			}
+		});
 	}
 	
 	/**
-	 * Reshapes all nodes except the root node according to <code>constraints</code>.
-	 * @param constraints tells for each {@link Node} how its borders are to be moved, an entry of <code>null</code> or
-	 * a value of {@link Integer#MIN_VALUE} indicate that no constraint is set
+	 * Tries to ensure that the modifications described in {@link Node#getConstraints()} can be achieved. For example
+	 * a constraint resulting in a negative width or height of a {@link ScreenDockWindow} can never be achieved.<br>
+	 * The default implementation tries to smooth out resizes by distributing the changes to many windows. Note that
+	 * truelly invalid boundaries will be catched and processed by the {@link BoundaryRestriction}, which cannot be
+	 * influenced by the {@link StickMagnetGraph}.<br>
+	 * Implementations should also pay attention to {@link StickMagnetGraphConstraint#isHard(Side)} and not modify
+	 * hard sides.<br>
+	 * Note that while the root window has a {@link StickMagnetGraphConstraint}, that constraint is actually ignored. 
 	 */
-	protected void executeConstraints( final Map<Node, Insets> constraints ){
+	protected void validateConstraints(){
+		// the nodes that were resized and need further validation
+		final List<Node> resizedVertically = new ArrayList<StickMagnetGraph.Node>();
+		final List<Node> resizedHorizontally = new ArrayList<StickMagnetGraph.Node>();
+		
+		getRoot().visit( new Visitor(){
+			public void endVisit( Edge edge ){
+				// ignore
+			}
+			
+			public void endVisit( Node node ){
+				// ignore
+			}
+			
+			public boolean beginVisit( Edge edge ){
+				return true;
+			}
+			
+			public boolean beginVisit( Node node, boolean revisit ){
+				if( revisit ){
+					return false;
+				}
+				StickMagnetGraphConstraint constraints = node.getConstraints();
+				if( constraints.isSet( Side.SOUTH ) && constraints.isSet( Side.NORTH )){
+					if( !constraints.isHard( Side.SOUTH ) || !constraints.isHard( Side.NORTH )){
+						if( constraints.get( Side.SOUTH ) != constraints.get( Side.NORTH )){
+							resizedVertically.add( node );
+						}
+					}
+				}
+				if( constraints.isSet( Side.EAST ) && constraints.isSet( Side.WEST )){
+					if( !constraints.isHard( Side.EAST ) || !constraints.isHard( Side.WEST )){
+						if( constraints.get( Side.EAST ) != constraints.get( Side.WEST )){
+							resizedHorizontally.add( node );
+						}
+					}
+				}
+				return true;
+			}
+		});
+		
+		for( Node node : resizedHorizontally ){
+			resizeRipple( node, Side.WEST );
+		}
+		for( Node node : resizedVertically ){
+			resizeRipple( node, Side.NORTH );
+		}
+	}
+	
+	/**
+	 * Starting from the resized node <code>node</code> this method distributes resizing over a chain of
+	 * nodes. All the affected sides are set to {@link StickMagnetGraphConstraint#setHard(Side, boolean) hard} to
+	 * prevent further modifications. Resizing stops at any {@link StickMagnetGraphConstraint#isHard(Side) hard} side.
+	 * @param node the node that was resized
+	 * @param topleft the direction into which the resize operation should ripple, the operation will also ripple in
+	 * the opposite direction
+	 */
+	protected void resizeRipple( Node node, Side topleft ){
+		int leftInitial = rippleBorder( node, topleft, true );
+		unmark();
+		
+		int rightInitial = rippleBorder( node, topleft.opposite(), true );
+		unmark();
+		
+		int leftAfter = rippleBorder( node, topleft, false );
+		unmark();
+		
+		int rightAfter = rippleBorder( node, topleft.opposite(), false );
+		unmark();
+		
+		if( leftInitial == rightInitial || leftAfter == rightAfter ){
+			// should not happen often, actually should not happen ever
+			return;
+		}
+		
+		rippleSide( node, topleft, leftInitial, leftAfter, rightInitial, rightAfter );
+		unmark();
+		
+		rippleSide( node, topleft.opposite(), leftInitial, leftAfter, rightInitial, rightAfter );
+		unmark();
+	}
+	
+	private int rippleBorder( Node start, Side direction, boolean initial ){
+		start.mark();
+		
+		int result = controller.getValue( start.getWindow(), direction, true );
+		if( !initial ){
+			if( start.getConstraints().isSet( direction )){
+				result += start.getConstraints().get( direction );
+			}
+		}
+		
+		if( start.getConstraints().isHard( direction )){
+			return result;
+		}
+		
+		if( direction == Side.NORTH || direction == Side.WEST ){
+			for( Edge edge : start.getEdges() ){
+				if( edge.getSource() == start && edge.getSide() == direction && !edge.getTarget().isMarked() ){
+					result = Math.min( result, rippleBorder( edge.getTarget(), direction, initial ) );
+				}
+				else if( edge.getTarget() == start && edge.getSide() == direction.opposite() && !edge.getSource().isMarked() ){
+					result = Math.min( result, rippleBorder( edge.getSource(), direction, initial ) );
+				}
+			}
+		}
+		else{
+			for( Edge edge : start.getEdges() ){
+				if( edge.getSource() == start && edge.getSide() == direction && !edge.getTarget().isMarked() ){
+					result = Math.max( result, rippleBorder( edge.getTarget(), direction, initial ) );
+				}
+				else if( edge.getTarget() == start && edge.getSide() == direction.opposite()  && !edge.getSource().isMarked() ){
+					result = Math.max( result, rippleBorder( edge.getSource(), direction, initial ) );
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	private void rippleSide( Node start, Side direction, int leftInitial, int leftAfter, int rightInitial, int rightAfter ){
+		StickMagnetGraphConstraint constraint = start.getConstraints();
+		start.mark();
+		
+		if( constraint.isHard( direction )){
+			return;
+		}
+		for( Edge edge : start.getEdges() ){
+			Node target = null;
+			
+			if( edge.getSource() == start && edge.getSide() == direction ){
+				target = edge.getTarget();
+			}
+			else if( edge.getTarget() == start && edge.getSide() == direction.opposite() ){
+				target = edge.getSource();
+			}
+			
+			if( target != null && !target.isMarked() ){
+				StickMagnetGraphConstraint next = target.getConstraints();
+				if( next.isHard( direction.opposite() )){
+					return;
+				}
+			}
+		}
+		
+		int value = controller.getValue( start.getWindow(), direction, true );
+		if( value <= leftInitial || value >= rightInitial ){
+			return;
+		}
+		
+		double point = (value - leftInitial) / (double)(rightInitial - leftInitial);
+		int actual = (int)(leftAfter + point * (rightAfter - leftAfter) + 0.5);
+		int delta = actual - value;
+
+		constraint.set( direction, delta, true, true );
+		
+		for( Edge edge : start.getEdges() ){
+			Node target = null;
+			
+			if( edge.getSource() == start && edge.getSide() == direction ){
+				target = edge.getTarget();
+			}
+			else if( edge.getTarget() == start && edge.getSide() == direction.opposite() ){
+				target = edge.getSource();
+			}
+			
+			if( target != null && !target.isMarked() ){
+				StickMagnetGraphConstraint next = target.getConstraints();
+
+				next.set( direction.opposite(), delta, true, true );
+				
+				rippleSide( target, direction, leftInitial, leftAfter, rightInitial, rightAfter );
+			}
+		}
+	}
+	
+	/**
+	 * Reshapes all nodes except the root node according to {@link Node#getConstraints()}.
+	 */
+	protected void executeConstraints(){
 		getRoot().visit( new Visitor(){
 			public boolean beginVisit( Edge edge ){
 				return true;
@@ -326,34 +646,39 @@ public class StickMagnetGraph {
 					return false;
 				}
 				if( node != getRoot() ){
-					Insets insets = constraints.get( node );
-					if( insets != null ){
+					StickMagnetGraphConstraint constraint = node.getConstraints();
+					if( constraint != null ){
 						Rectangle initial = request.getInitialBounds( node.getWindow() );
-						if( insets.top != Integer.MIN_VALUE ){
-							initial.y += insets.top;
-							initial.height -= insets.top;
+						if( constraint.isSet( Side.NORTH )){
+							initial.y += constraint.get( Side.NORTH );
+							
+							if( constraint.isSet( Side.SOUTH )){
+								initial.height -= constraint.get( Side.NORTH );
+								initial.height += constraint.get( Side.SOUTH );
+							}
 						}
-						if( insets.bottom != Integer.MIN_VALUE ){
-							initial.height += insets.bottom;
-						}
-						else if( insets.top != Integer.MIN_VALUE ){
-							initial.height += insets.top;
+						else if( constraint.isSet( Side.SOUTH ) ){
+							initial.y += constraint.get( Side.SOUTH );
 						}
 						
-						if( insets.left != Integer.MIN_VALUE ){
-							initial.x += insets.left;
-							initial.width -= insets.left;
+						if( constraint.isSet( Side.WEST )){
+							initial.x += constraint.get( Side.WEST );
+							if( constraint.isSet( Side.EAST ) ){
+								initial.width -= constraint.get( Side.WEST );
+								initial.width += constraint.get( Side.EAST );
+							}
 						}
-						if( insets.right != Integer.MIN_VALUE ){
-							initial.width += insets.right;
+						else if( constraint.isSet( Side.EAST )){
+							initial.x += constraint.get( Side.EAST );
 						}
-						else if( insets.left != Integer.MIN_VALUE ){
-							initial.width += insets.left;
-						}
+						
+
+						
 						
 						node.getWindow().setWindowBounds( initial, true );
 					}
 				}
+				node.getConstraints().reset();
 				return true;
 			}
 			
@@ -363,31 +688,47 @@ public class StickMagnetGraph {
 		});
 	}
 	
-	private int get( Insets insets, Side side ){
-		switch( side ){
-			case EAST: return insets.right;
-			case NORTH: return insets.top;
-			case SOUTH: return insets.bottom;
-			case WEST: return insets.left;
-			default: throw new IllegalArgumentException( "unknown side: " + side );
-		}
+	/**
+	 * Tells whether the side <code>side</code> of <code>window</code> will be moved if the
+	 * root window is moved at <code>side</code>. This means that there is a path from the root
+	 * window at <code>side</code> to <code>window</code> at <code>side</code> going only in
+	 * directions <code>side</code> and {@link Side#opposite()}.
+	 * @param window the window to check
+	 * @param side the side that might be affected 
+	 * @return <code>true</code> if <code>side</code> is affected by the root window
+	 */
+	public boolean depends( final ScreenDockWindow window, final Side side ){
+		return depends( getRoot(), window, side );
 	}
 	
-	private void put( Insets insets, Side side, int value ){
-		switch( side ){
-			case EAST:
-				insets.right = value;
-				break;
-			case WEST:
-				insets.left = value;
-				break;
-			case NORTH:
-				insets.top = value;
-				break;
-			case SOUTH:
-				insets.bottom = value;
-				break;
+	private boolean depends( Node node, ScreenDockWindow window, Side side ){
+		if( node.isMarked() ){
+			return false;
 		}
+		if( node.getWindow() == window ){
+			return true;
+		}
+		node.mark();
+		
+		for( Edge edge : node.getEdges() ){
+			if( edge.getSide() == side || edge.getSide() == side.opposite() ){
+				if( edge.getSource() == node ){
+					if( depends( edge.getTarget(), window, side )){
+						node.unmark();
+						return true;
+					}
+				}
+				else{
+					if( depends( edge.getSource(), window, side )){
+						node.unmark();
+						return true;
+					}
+				}
+			}
+		}
+		
+		node.unmark();
+		return false;
 	}
 	
 	/**
@@ -411,7 +752,8 @@ public class StickMagnetGraph {
 		public void endVisit( Node node );
 		
 		/**
-		 * Called when <code>edge</code> is added to the stack.
+		 * Called when <code>edge</code> is added to the stack. The visitor always follows the edges from
+		 * {@link Edge#getSource() source} to {@link Edge#getTarget() target}.
 		 * @param edge the edge that is going to be visited
 		 * @return <code>true</code> if the visitor should follow the edge, <code>false</code> if not.
 		 * In the later case {@link #endVisit(Edge)} is called immediatelly
@@ -456,6 +798,27 @@ public class StickMagnetGraph {
 		 * @param visitor the visitor used to traverse the node
 		 */
 		public void visit( Visitor visitor );
+		
+		/**
+		 * Gets the constraints telling how this node has to be modified.
+		 * @return the constraints, not <code>null</code>
+		 */
+		public StickMagnetGraphConstraint getConstraints();
+		
+		/**
+		 * Marks this node with a flag.
+		 */
+		public void mark();
+		
+		/**
+		 * Unmarks this node from the flag that was set by {@link #mark()}.
+		 */
+		public void unmark();
+		
+		/**
+		 * Tells whether a flag was set by {@link #mark()}.
+		 */
+		public boolean isMarked();
 	}
 	
 	/**
@@ -496,6 +859,7 @@ public class StickMagnetGraph {
 			this.source = source;
 			this.target = target;
 			this.side = side;
+			edges.add( this );
 		}
 		
 		public DefaultNode getSource(){
@@ -523,6 +887,8 @@ public class StickMagnetGraph {
 		
 		private boolean mark = false;
 		
+		private StickMagnetGraphConstraint constraints = new StickMagnetGraphConstraint();
+		
 		/**
 		 * Minimum distance to the root node, 0 for the root node. -1 indicates that the distance
 		 * has not yet been calculated
@@ -537,6 +903,8 @@ public class StickMagnetGraph {
 		public DefaultNode( int index, ScreenDockWindow window ){
 			this.index = index;
 			this.window = window;
+			
+			nodes.add( this );
 		}
 		
 		public void visit( Visitor visitor ){
@@ -544,8 +912,16 @@ public class StickMagnetGraph {
 				doVisit( visitor );
 			}
 			finally{
-				unmark();
+				StickMagnetGraph.this.unmark();
 			}
+		}
+		
+		/**
+		 * Gets the constraints telling how this node has to be modified.
+		 * @return the constraints
+		 */
+		public StickMagnetGraphConstraint getConstraints(){
+			return constraints;
 		}
 		
 		/**
@@ -557,7 +933,7 @@ public class StickMagnetGraph {
 				int min = -1;
 				for( DefaultEdge edge : edges ){
 					if( edge.getTarget() == this ){
-						int distance = edge.getSource().getRootDistance();
+						int distance = edge.getSource().getRootDistance() + 1;
 						if( min == -1 ){
 							min = distance;
 						}
@@ -595,21 +971,17 @@ public class StickMagnetGraph {
 			}
 			visitor.endVisit( this );
 		}
+
+		public void mark(){
+			mark = true;
+		}
 		
-		/**
-		 * Removes the {@link #mark} flag from this and from all children.
-		 */
+		public boolean isMarked(){
+			return mark;
+		}
+		
 		public void unmark(){
-			if( mark ){
-				mark = false;
-				
-				if( edges != null ){
-					for( DefaultEdge edge : edges ){
-						edge.getTarget().unmark();
-						edge.getSource().unmark();
-					}
-				}
-			}
+			mark = false;
 		}
 		
 		public ScreenDockWindow getWindow(){
@@ -626,12 +998,12 @@ public class StickMagnetGraph {
 		
 		/**
 		 * Creates a new edge between <code>this</code> and <code>depending</code>. If there is already
-		 * an edge from <code>depending</code> to <code>this</code>, then nothing happens.
+		 * an edge from either node to the other, then nothing happens.
 		 * @param side the side at which <code>depending</code> lies
 		 * @param depending the node to which a new edge may be created
 		 */
 		public void add( Side side, DefaultNode depending ){
-			if( !depending.contains( this )){
+			if( !depending.contains( this ) && !contains( depending )){
 				DefaultEdge edge = new DefaultEdge( this, depending, side );
 				add( edge );
 				depending.add( edge );

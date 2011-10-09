@@ -651,6 +651,7 @@
 [v1.1.1p6]
  - API: New GlobalMouseDispatcher collects and distributes MouseEvents. Can be used by clients to listen to events.
  ! API: The "check" methods of MouseFocusObserver have been removed
+ - API: Added magnet feature to ScreenDockStation, clients can configure the feature through an AttractorStrategy or a MagnetStrategy. The feature allows windows to snap in place, and to stick together on movement and resizing.
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

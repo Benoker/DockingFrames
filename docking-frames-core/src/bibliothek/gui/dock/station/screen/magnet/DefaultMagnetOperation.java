@@ -241,10 +241,12 @@ public class DefaultMagnetOperation implements MagnetOperation{
 		int distanceA = threshold+1;
 		if( neighbors[checkA.ordinal()] != null ){
 			for( ScreenDockWindow neighbor : neighbors[ checkA.ordinal() ]){
-				int distance = controller.distance( request.getWindow(), side, neighbor, side, false );
-				if( distance < distanceA ){
-					distanceA = distance;
-					neighborA = neighbor;
+				if( !graph.depends( neighbor, side ) ){
+					int distance = controller.distance( request.getWindow(), side, neighbor, side, false );
+					if( distance < distanceA ){
+						distanceA = distance;
+						neighborA = neighbor;
+					}
 				}
 			}
 		}
@@ -253,10 +255,12 @@ public class DefaultMagnetOperation implements MagnetOperation{
 		int distanceB = threshold+1;
 		if( neighbors[checkB.ordinal()] != null ){
 			for( ScreenDockWindow neighbor : neighbors[ checkB.ordinal() ]){
-				int distance = controller.distance( request.getWindow(), side, neighbor, side, false );
-				if( distance < distanceB ){
-					distanceB = distance;
-					neighborB = neighbor;
+				if( !graph.depends( neighbor, side ) ){
+					int distance = controller.distance( request.getWindow(), side, neighbor, side, false );
+					if( distance < distanceB ){
+						distanceB = distance;
+						neighborB = neighbor;
+					}
 				}
 			}
 			
