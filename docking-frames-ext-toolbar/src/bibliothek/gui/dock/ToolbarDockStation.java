@@ -1,5 +1,6 @@
 package bibliothek.gui.dock;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,6 +11,9 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -31,6 +35,7 @@ import bibliothek.gui.dock.station.toolbar.Position;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.station.toolbar.ToolbarTitle;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -81,7 +86,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		// EmptyBorder( new Insets( 5, 5, 5, 5 ) ) ) );
 		// basePanel.setBackground( new Color( 255, 255, 128 ) );
 	}
-
+	
 	@Override
 	public int getDockableCount(){
 		return dockables.size();
@@ -591,6 +596,14 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	public Orientation getOrientation(){
 		return orientation;
 	}
+	
+	public void setSeparatorVisible(boolean b) {
+		if (b) {
+			
+		} else {
+			
+		}
+	}
 
 	/**
 	 * This panel is used as base of the station. All children of the station
@@ -615,8 +628,8 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		public OverpaintablePanelBase(){
 			// content.setBorder(new CompoundBorder(new EtchedBorder(),
 			// new EmptyBorder(new Insets(5, 5, 5, 5))));
-			content.setBorder(new TitledBorder(ToolbarDockStation.this
-					.getClass().getSimpleName()));
+			//			content.setBorder(new TitledBorder(ToolbarDockStation.this
+			//					.getClass().getSimpleName()));
 			content.setBounds(0, 0, content.getPreferredSize().width,
 					content.getPreferredSize().height);
 			this.getContentPane().setBounds(0, 0,
