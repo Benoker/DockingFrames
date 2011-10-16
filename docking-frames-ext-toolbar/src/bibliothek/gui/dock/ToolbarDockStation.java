@@ -185,8 +185,20 @@ public class ToolbarDockStation extends AbstractDockableStation implements
     			controller.freezeLayout();
     		}
     		
-    		DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>( map, new PlaceholderListItemAdapter<Dockable, Dockable>(){
+    		DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>();
+    		    		
+			if( getController() != null ){
+				dockables.setStrategy( null );
+				dockables.unbind();
+				dockables = next;
+			}
+			else{
+				dockables = next;
+			}
+			
+			next.read( map, new PlaceholderListItemAdapter<Dockable, Dockable>(){
     			private DockHierarchyLock.Token token;
+    			private int index = 0;
     			
     			@Override
     			public Dockable convert( ConvertedPlaceholderListItem item ){
@@ -195,11 +207,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
     				if( dockable != null ){
     					DockUtilities.ensureTreeValidity( ToolbarDockStation.this, dockable );
     					token = DockHierarchyLock.acquireLinking( ToolbarDockStation.this, dockable );
-    					
     					listeners.fireDockableAdding( dockable );
-    					
-    					// this would be the correct place to create DockTitle and similar stuff.
-    					
     					return dockable;
     				}
     				return null;
@@ -208,7 +216,9 @@ public class ToolbarDockStation extends AbstractDockableStation implements
     			@Override
     			public void added( Dockable dockable ){
     				try{
-	    				dockable.setDockParent( ToolbarDockStation.this );
+    					// this would be the correct place to create DockTitle and similar stuff.
+
+    					insertAt( dockable, index++ );
 	    				listeners.fireDockableAdded( dockable );
     				}
     				finally{
@@ -216,16 +226,10 @@ public class ToolbarDockStation extends AbstractDockableStation implements
     				}
     			}
     		});
-    		
+			
 			if( getController() != null ){
-				dockables.setStrategy( null );
-				dockables.unbind();
-				dockables = next;
 				dockables.bind();
 				dockables.setStrategy( getPlaceholderStrategy() );
-			}
-			else{
-				dockables = next;
 			}
     	}
     	finally{
@@ -626,33 +630,37 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				dockable);
 		try{
 			listeners.fireDockableAdding(dockable);
-			dockable.setDockParent(this);
-			if (dockable instanceof OrientedDockStation){
-				if (getOrientation() != null){
-					// it would be possible that this station was not already
-					// oriented. This is the case when this station is
-					// instantiated but not drop in any station (e.g.
-					// ToolbarContainerDockStation) which could give it an
-					// orientation
-					((OrientedDockStation) dockable)
-							.setOrientation(getOrientation());
-				}
-			}
 			dockables.dockables().add(index, dockable);
-			basePanel.getContentPane().add(dockable.getComponent(), index);
-			basePanel.getContentPane().setBounds(0, 0,
-					basePanel.getContentPane().getPreferredSize().width,
-					basePanel.getContentPane().getPreferredSize().height);
-			basePanel.setPreferredSize(new Dimension(basePanel.getContentPane()
-					.getPreferredSize().width, basePanel.getContentPane()
-					.getPreferredSize().height));
-			basePanel.getContentPane().revalidate();
-			basePanel.getContentPane().repaint();
+			insertAt( dockable, index );
 			listeners.fireDockableAdded(dockable);
 			fireDockablesRepositioned(index + 1);
 		} finally{
 			token.release();
 		}
+	}
+	
+	private void insertAt( Dockable dockable, int index ){
+		dockable.setDockParent(this);
+		if (dockable instanceof OrientedDockStation){
+			if (getOrientation() != null){
+				// it would be possible that this station was not already
+				// oriented. This is the case when this station is
+				// instantiated but not drop in any station (e.g.
+				// ToolbarContainerDockStation) which could give it an
+				// orientation
+				((OrientedDockStation) dockable)
+						.setOrientation(getOrientation());
+			}
+		}
+		basePanel.getContentPane().add(dockable.getComponent(), index);
+		basePanel.getContentPane().setBounds(0, 0,
+				basePanel.getContentPane().getPreferredSize().width,
+				basePanel.getContentPane().getPreferredSize().height);
+		basePanel.setPreferredSize(new Dimension(basePanel.getContentPane()
+				.getPreferredSize().width, basePanel.getContentPane()
+				.getPreferredSize().height));
+		basePanel.getContentPane().revalidate();
+		basePanel.getContentPane().repaint();
 	}
 
 	/**

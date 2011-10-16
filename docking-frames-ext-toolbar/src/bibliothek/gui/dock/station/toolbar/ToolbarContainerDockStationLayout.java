@@ -25,10 +25,30 @@
  */
 package bibliothek.gui.dock.station.toolbar;
 
+import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
+
 /**
  * Describes the layout of a {@link ToolbarContainerDockStation}
  * @author Benjamin Sigg
  */
 public class ToolbarContainerDockStationLayout {
-
+	/** the encoded layout of the {@link ToolbarContainerDockStation} */
+	private PlaceholderMap placeholders;
+	
+	/**
+	 * Creates a new layout object
+	 * @param map the encoded layout, not <code>null</code>
+	 */
+	public ToolbarContainerDockStationLayout( PlaceholderMap map ){
+		this.placeholders = map;
+	}
+	
+	/**
+	 * Gets the encoded layout of the {@link ToolbarContainerDockStation}.
+	 * @return the encoded layout, not <code>null</code>
+	 */
+	public PlaceholderMap getPlaceholders(){
+		return placeholders;
+	}
 }

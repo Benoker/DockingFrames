@@ -33,9 +33,11 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.toolbar.DefaultToolbarContainerDockStationConverter;
+import bibliothek.gui.dock.station.toolbar.DefaultToolbarContainerConverter;
 import bibliothek.gui.dock.station.toolbar.Position;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationConverter;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerConverter;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerConverterCallback;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
@@ -112,6 +114,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			eastDockables.setStrategy( newValue );
 			southDockables.setStrategy( newValue );
 			northDockables.setStrategy( newValue );
+			centerDockable.setStrategy( newValue );
 		}
 	};
 
@@ -185,7 +188,40 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * @param children the children to add
 	 */
 	public void setPlaceholders( PlaceholderMap placeholders, Map<Integer, Dockable> children ){
-		createConverter().setPlaceholders( this, placeholders, children );
+		createConverter().setPlaceholders( this, new ToolbarContainerConverterCallback(){
+			final int[] index = new int[ Position.values().length ]; 
+			
+			@Override
+			public void adding( Position area, Dockable dockable ){
+				listeners.fireDockableAdded( dockable );
+			}
+
+			@Override
+			public void added( Position area, Dockable dockable ){
+				if( area == Position.CENTER ){
+					centerPanel.add( dockable.getComponent() );
+				}
+				else{
+					insertAt( area, dockable, index[ area.ordinal() ]++ );
+				}
+				
+				dockable.setDockParent( ToolbarContainerDockStation.this );
+				listeners.fireDockableAdded( dockable );
+			}
+
+			@Override
+			public void setDockables( Position area, DockablePlaceholderList<Dockable> list ){
+				ToolbarContainerDockStation.this.setDockables( area, list, false );
+			}
+			
+			public void finished( DockablePlaceholderList<Dockable> list ){
+				if( getController() != null ){
+					list.bind();
+					list.setStrategy( getPlaceholderStrategy() );
+				}
+			}
+			
+		}, placeholders, children );
 	}
 
 	/**
@@ -200,17 +236,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		}
 		try{
 			DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>( map );
-			if( getController() != null ){
-				DockablePlaceholderList<Dockable> list = getDockables( position );
-				list.setStrategy( null );
-				list.unbind();
-				setDockables( position, next );
-				next.bind();
-				next.setStrategy( getPlaceholderStrategy() );
-			}
-			else{
-				setDockables( position, next );
-			}
+			setDockables( position, next, true );
 		}
 		catch( IllegalArgumentException ex ){
 			// silent;
@@ -218,12 +244,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	}
 	
 	/**
-	 * Creates a {@link ToolbarContainerDockStationConverter} which will be used for one
+	 * Creates a {@link ToolbarContainerConverter} which will be used for one
 	 * call.
 	 * @return the new converter, not <code>null</code>
 	 */
-	protected ToolbarContainerDockStationConverter createConverter(){
-		return new DefaultToolbarContainerDockStationConverter();
+	protected ToolbarContainerConverter createConverter(){
+		return new DefaultToolbarContainerConverter();
 	}
 
 	/**
@@ -623,8 +649,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	public String getFactoryID(){
-		// Todo LATER
-		return null;
+		return ToolbarContainerDockStationFactory.ID;
 	}
 
 	@Override
@@ -705,13 +730,18 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	}
 
 	/**
-	 * Updates one of the lists containing dockables. This method does only update override the field, it does
-	 * not perform any other action. It is the callers responsibility to call {@link DockablePlaceholderList#bind()}
-	 * and {@link DockablePlaceholderList#unbind()}.
+	 * Updates one of the lists containing dockables.
 	 * @param area the list to exchange
 	 * @param list the new list
+	 * @param bind whether the new list should be {@link DockablePlaceholderList#bind() bound}
 	 */
-	private void setDockables( Position area, DockablePlaceholderList<Dockable> list ){
+	private void setDockables( Position area, DockablePlaceholderList<Dockable> list, boolean bind ){
+		if( getController() != null ){
+			DockablePlaceholderList<Dockable> oldList = getDockables( area );
+			oldList.setStrategy( null );
+			oldList.unbind();
+		}
+		
 		switch( area ){
 			case EAST:
 				eastDockables = list;
@@ -729,6 +759,11 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				centerDockable = list;
 			default:
 				throw new IllegalArgumentException( "invalid area: " + area );
+		}
+		
+		if( getController() != null && bind ){
+			list.bind();
+			list.setStrategy( getPlaceholderStrategy() );
 		}
 	}
 	
@@ -983,7 +1018,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				if( !strategy.isToolbarPart( dockable ) ) {
 					DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 					try {
-						if( centerDockable != null ) {
+						if( getCenterDockable() != null ) {
 							remove( dockable );
 						}
 						dockable.setDockParent( this );
@@ -1015,21 +1050,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 						dockable.setDockParent( this );
 						listeners.fireDockableAdding( dockable );
 						DockablePlaceholderList.Filter<Dockable> dockables = getDockables( area ).dockables();
-						JPanel panel = getPanel( area );
-						if( dockable instanceof OrientedDockStation ) {
-							((OrientedDockStation) dockable).setOrientation( getOrientation( area ) );
-						}
+						
 						System.out.println( "########### INDEX: " + index + " ################" );
 						dockables.add( index, dockable );
-						updateDockables();
-						///////////
-						panel.add( dockable.getComponent(), index );
-						basePanel.getContentPane().setBounds( 0, 0, basePanel.getContentPane().getPreferredSize().width,
-								basePanel.getContentPane().getPreferredSize().height );
-						basePanel.setPreferredSize( new Dimension( basePanel.getContentPane().getPreferredSize().width, basePanel.getContentPane()
-								.getPreferredSize().height ) );
-						basePanel.getContentPane().revalidate();
-						basePanel.getContentPane().repaint();
+						
+						insertAt( area, dockable, index );
+						
 						////////////
 						listeners.fireDockableAdded( dockable );
 						fireDockablesRepositioned( index + 1 );
@@ -1046,7 +1072,24 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 		return false;
 	}
-
+	
+	private void insertAt( Position area, Dockable dockable, int index ){
+		JPanel panel = getPanel( area );
+		if( dockable instanceof OrientedDockStation ) {
+			((OrientedDockStation) dockable).setOrientation( getOrientation( area ) );
+		}
+		
+		updateDockables();
+		///////////
+		panel.add( dockable.getComponent(), index );
+		basePanel.getContentPane().setBounds( 0, 0, basePanel.getContentPane().getPreferredSize().width,
+				basePanel.getContentPane().getPreferredSize().height );
+		basePanel.setPreferredSize( new Dimension( basePanel.getContentPane().getPreferredSize().width, basePanel.getContentPane()
+				.getPreferredSize().height ) );
+		basePanel.getContentPane().revalidate();
+		basePanel.getContentPane().repaint();
+	}
+	
 	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
@@ -1145,6 +1188,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				eastDockables.unbind();
 				southDockables.unbind();
 				northDockables.unbind();
+				centerDockable.unbind();
 			}
 
 			super.setController( controller );
@@ -1157,6 +1201,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				eastDockables.bind();
 				southDockables.bind();
 				northDockables.bind();
+				centerDockable.bind();
 			}
 		}
 	}

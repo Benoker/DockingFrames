@@ -36,7 +36,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  * {@link PlaceholderMap}s.
  * @author Benjamin Sigg
  */
-public interface ToolbarContainerDockStationConverter {
+public interface ToolbarContainerConverter {
 	/**
 	 * Called by {@link ToolbarContainerDockStation#getPlaceholders()}
 	 * @param station the calling station
@@ -62,8 +62,9 @@ public interface ToolbarContainerDockStationConverter {
 	/**
 	 * Called by {@link ToolbarContainerDockStation#setPlaceholders(PlaceholderMap, Map)}
 	 * @param station the calling station
+	 * @param callback offers methods to call private methods of <code>station</code>
 	 * @param children the new children of <code>station</code>
 	 * @param map the placeholders to read
 	 */
-	public void setPlaceholders( ToolbarContainerDockStation station, PlaceholderMap map, Map<Integer, Dockable> children );
+	public void setPlaceholders( ToolbarContainerDockStation station, ToolbarContainerConverterCallback callback, PlaceholderMap map, Map<Integer, Dockable> children );
 }
