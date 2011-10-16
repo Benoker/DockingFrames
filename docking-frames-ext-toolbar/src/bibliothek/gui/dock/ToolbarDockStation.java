@@ -222,7 +222,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	    				listeners.fireDockableAdded( dockable );
     				}
     				finally{
-    					token.releaseNoCheck();
+    					token.release();
     				}
     			}
     		});

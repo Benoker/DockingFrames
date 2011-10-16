@@ -193,7 +193,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			
 			@Override
 			public void adding( Position area, Dockable dockable ){
-				listeners.fireDockableAdded( dockable );
+				listeners.fireDockableAdding( dockable );
 			}
 
 			@Override
@@ -467,7 +467,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	/**
 	 * Adds <code>dockable</code> to this station in the center area if the
-	 * dockable is not a {@link ToolbarElementInterface}. Else do nothing
+	 * dockable is not a {@link ToolbarStrategy#isToolbarPart(Dockable)}, else the
+	 * dockable is added at the north side.
 	 * 
 	 * @param dockable
 	 *            a new child
@@ -475,7 +476,10 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	@Override
 	public void drop( Dockable dockable ){
 		System.out.println( this.toString() + "## drop(Dockable dockable)##" );
-		if( !(getToolbarStrategy().isToolbarPart( dockable )) ) {
+		if( getToolbarStrategy().isToolbarPart( dockable ) ) {
+			this.drop( dockable, getDockables( Position.NORTH ).dockables().size(), Position.NORTH );
+		}
+		else{
 			this.drop( dockable, -1, Position.CENTER );
 		}
 	}
@@ -757,6 +761,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				break;
 			case CENTER:
 				centerDockable = list;
+				break;
 			default:
 				throw new IllegalArgumentException( "invalid area: " + area );
 		}
@@ -1079,6 +1084,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			((OrientedDockStation) dockable).setOrientation( getOrientation( area ) );
 		}
 		
+		dockable.setDockParent( this );
 		updateDockables();
 		///////////
 		panel.add( dockable.getComponent(), index );
