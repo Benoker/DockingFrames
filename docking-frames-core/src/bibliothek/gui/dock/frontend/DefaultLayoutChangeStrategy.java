@@ -133,7 +133,7 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
      */
     @SuppressWarnings("unchecked")
     protected PredefinedDockSituation createSituation( final DockFrontendInternals frontend, final boolean entry, boolean onSetLayout ){
-        PredefinedDockSituation situation = new PredefinedDockSituation(){
+        PredefinedDockSituation situation = new PredefinedDockSituation( frontend.getFrontend().getController() ){
             @Override
             protected boolean shouldLayout( DockElement element ) {
                 if( entry ){

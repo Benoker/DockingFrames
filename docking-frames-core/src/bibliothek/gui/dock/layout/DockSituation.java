@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
@@ -55,6 +56,8 @@ import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.extension.ExtensionManager;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Version;
@@ -71,6 +74,15 @@ import bibliothek.util.xml.XException;
  * @author Benjamin Sigg
  */
 public class DockSituation {
+	/** Name for an {@link ExtensionName} to load additional {@link DockFactory}s */
+	public static final Path DOCK_FACTORY_EXTENSION = new Path("dock.DockSituation.DockFactory");
+	
+	/** Name for an {@link ExtensionName} to load additional {@link AdjacentDockFactory}s */
+	public static final Path ADJACENT_DOCK_FACTORY_EXTENSION = new Path("dock.DockSituation.AdjacentDockFactory");
+	
+	/** Name of a parameter of an {@link ExtensionName} pointing to <code>this</code> */
+	public static final String EXTENSION_PARAM = "situation";
+	
     /** the factories used to create new {@link DockElement elements}*/
     private Map<String, DockFactory<?,?,?>> factories = new HashMap<String, DockFactory<?,?,?>>();
 
@@ -94,7 +106,8 @@ public class DockSituation {
 
     /**
      * Constructs a new DockSituation and sets some factories which are
-     * used to create new {@link DockElement DockElements}
+     * used to create new {@link DockElement DockElements}. Please note that this
+     * constructor does not add the default factories, hence it should be used with care.
      * @param factories the factories
      */
     public DockSituation( DockFactory<?,?,?>...factories ){
@@ -106,13 +119,27 @@ public class DockSituation {
      * Constructs a new DockSituation. Factories for {@link DefaultDockable},
      * {@link SplitDockStation}, {@link StackDockStation} and
      * {@link FlapDockStation} will be preinstalled.
+     * @param controller {@link DockController} in whose realm this {@link DockSituation} will be used, the
+     * controller is used to access the {@link ExtensionManager} and load additional factories
      */
-    public DockSituation(){
+    public DockSituation( DockController controller ){
         this( 
                 new DefaultDockableFactory(),
                 new SplitDockStationFactory(),
                 new StackDockStationFactory(),
                 new FlapDockStationFactory());
+        
+        @SuppressWarnings("rawtypes")
+		List<DockFactory> factories = controller.getExtensions().load( new ExtensionName<DockFactory>( DOCK_FACTORY_EXTENSION, DockFactory.class, EXTENSION_PARAM, this ) );
+        for( DockFactory<?,?,?> factory : factories ){
+        	add( factory );
+        }
+     
+        @SuppressWarnings("rawtypes")
+		List<AdjacentDockFactory> adjacent = controller.getExtensions().load( new ExtensionName<AdjacentDockFactory>( ADJACENT_DOCK_FACTORY_EXTENSION, AdjacentDockFactory.class, EXTENSION_PARAM, this ) );
+        for( AdjacentDockFactory<?> factory : adjacent ){
+        	addAdjacent( factory );
+        }
     }
 
     /**

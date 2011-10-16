@@ -762,12 +762,10 @@ public class StackDockStation extends AbstractDockableStation implements
 
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		if (getDockableCount() > 0){
-			throw new IllegalStateException(
-					"there are children on this station");
+			throw new IllegalStateException( "there are children on this station" );
 		}
 		try{
-			DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>(
-					placeholders);
+			DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>(placeholders);
 			if (getController() != null){
 				dockables.setStrategy(null);
 				dockables.unbind();

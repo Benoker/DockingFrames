@@ -82,7 +82,7 @@ public class PersistentLayoutExample {
 		 * It does not matter when we create "situation" or if we create multiple instances of
 		 * PredefinedDockSituation. We do it now because because its convenient.
 		 *  */
-		final PredefinedDockSituation situation = new PredefinedDockSituation();
+		final PredefinedDockSituation situation = new PredefinedDockSituation( controller );
 		/* We are going to reuse "station" and "textDockable". "situation" will not store 
 		 * those two elements, rather the identifiers "root" and "layout" are stored. */
 		situation.put( "root", station );
