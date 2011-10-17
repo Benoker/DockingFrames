@@ -1,6 +1,7 @@
 package bibliothek.gui.dock;
 
 import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -115,9 +116,12 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 		}
 		setTitleText( title );
 	}
-
+	
 	@Override
 	public Component getComponent(){
+		// Dimension preferredSize = component.getPreferredSize();
+		// component.setMinimumSize( preferredSize );
+		// component.setMaximumSize( preferredSize );
 		return component;
 	}
 

@@ -27,7 +27,7 @@ public class ToolbarDockTitleRequest extends DockTitleRequest{
 			// finally you remove the title Component from its Container
 			ToolbarContainerDockStation station = (ToolbarContainerDockStation) this
 					.getParent();
-			station.getComponent().get remove(previous.getComponent());
+//			station.getComponent().get remove(previous.getComponent());
 		}
 		if (title != null){
 			// if you would need a MouseListener, which you don't, then you
@@ -36,12 +36,12 @@ public class ToolbarDockTitleRequest extends DockTitleRequest{
 
 			// here you can configure the title, e.g. whether it is painted
 			// horizontal or vertical.
-			title.setOrientation(orientation(direction));
+//			title.setOrientation(orientation(direction));
 			// you need to tell the Dockable about the DockTitle. Otherwise the
 			// title does not update its text or icon
 			this.getTarget().bind(title);
 			// and you need to show the Component
-			parent.add(title.getComponent());
+//			parent.add(title.getComponent());
 		}
 		// this.answer(title);
 	}

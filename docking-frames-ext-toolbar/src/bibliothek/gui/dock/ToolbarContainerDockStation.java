@@ -887,13 +887,14 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 					System.out.println("########### INDEX: " + index
 							+ " ################");
 					// /////////////////////
-					ToolbarDockTitleRequest titleRequest = new ToolbarDockTitleRequest(
-							this, dockable, this.titleVersion);
-					titleRequest.install();
-					titleRequest.request();
-					DockTitle title = titleRequest.getAnswer();
-					dockable.bind(title);
-					panel.add(title.getComponent(), index);
+					// ToolbarDockTitleRequest titleRequest = new
+					// ToolbarDockTitleRequest(
+					// this, dockable, this.titleVersion);
+					// titleRequest.install();
+					// titleRequest.request();
+					// DockTitle title = titleRequest.getAnswer();
+					// dockable.bind(title);
+					// panel.add(title.getComponent(), index);
 					// //////////////////////
 					dockables.add(index, dockable);
 					updateDockables();

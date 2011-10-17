@@ -44,34 +44,34 @@ public class TestToolbarDockStation {
 		ToolbarGroupDockStation group1 = new ToolbarGroupDockStation();
 		ComponentDockable dockable1 = new ComponentDockable( new JButton( "One" ) );
 		group1.drop( dockable1 );
-		ComponentDockable dockable2 = new ComponentDockable( new JButton( "Two" ) );
-		group1.drop( dockable2 );
-		ComponentDockable dockable3 = new ComponentDockable( new JButton( "Three" ) );
-		group1.drop( dockable3 );
-		ComponentDockable dockable4 = new ComponentDockable( new JButton( "Four" ) );
-		group1.drop( dockable4 );
+//		ComponentDockable dockable2 = new ComponentDockable( new JButton( "Two" ) );
+//		group1.drop( dockable2 );
+//		ComponentDockable dockable3 = new ComponentDockable( new JButton( "Three" ) );
+//		group1.drop( dockable3 );
+//		ComponentDockable dockable4 = new ComponentDockable( new JButton( "Four" ) );
+//		group1.drop( dockable4 );
 
 		ToolbarDockStation toolbar1 = new ToolbarDockStation();
 		toolbar1.drop( group1 );
-		toolbarStation.drop( toolbar1, Position.NORTH );
+		toolbarStation.drop( toolbar1, Position.WEST );
 		
-		ToolbarDockStation toolbar3 = new ToolbarDockStation();
-		ComponentDockable dockable6 = new ComponentDockable( new JButton( "Six" ) );
-		toolbar3.drop( dockable6 );
-		toolbarStation.drop( toolbar3, Position.NORTH );
-
-		ToolbarGroupDockStation group2 = new ToolbarGroupDockStation();
-		ComponentDockable dockable5 = new ComponentDockable( new JButton( "Five" ) );
-		group2.drop( dockable5 );
-
-		ToolbarDockStation toolbar2 = new ToolbarDockStation();
-		toolbar2.drop( group2 );
-		toolbarStation.drop( toolbar2, Position.WEST );
+//		ToolbarDockStation toolbar3 = new ToolbarDockStation();
+//		ComponentDockable dockable6 = new ComponentDockable( new JButton( "Six" ) );
+//		toolbar3.drop( dockable6 );
+//		toolbarStation.drop( toolbar3, Position.SOUTH );
+//
+//		ToolbarGroupDockStation group2 = new ToolbarGroupDockStation();
+//		ComponentDockable dockable5 = new ComponentDockable( new JButton( "Five" ) );
+//		group2.drop( dockable5 );
+//
+//		ToolbarDockStation toolbar2 = new ToolbarDockStation();
+//		toolbar2.drop( group2 );
+//		toolbarStation.drop( toolbar2, Position.WEST );
 
 		frame.add( toolbarStation.getComponent() );
 
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-		frame.setBounds( 20, 20, 400, 400 );
+		frame.setBounds( 20, 20, 500, 500 );
 		frame.setVisible( true );
 		//	screenStation.setShowing(true);
 
