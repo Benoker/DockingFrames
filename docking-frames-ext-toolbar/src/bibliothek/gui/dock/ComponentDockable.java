@@ -13,6 +13,7 @@ import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DockableIcon;
+import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.SilentPropertyValue;
@@ -129,8 +130,7 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 
 	@Override
 	public String getFactoryID(){
-		// Todo LATER
-		return null;
+		return ToolbarPartDockFactory.ID;
 	}
 
 	@Override

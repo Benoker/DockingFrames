@@ -2,7 +2,6 @@ package bibliothek.gui.dock.station.toolbar;
 
 import java.awt.Component;
 import java.awt.Point;
-import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
@@ -15,6 +14,7 @@ import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 
 /**
  * Information where to insert a {@link Dockable} into a
@@ -32,7 +32,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 */
 	private ToolbarContainerDockStation stationHost;
 	/** the drag dockable will be insert inside this {@link Dockable}s */
-	private ArrayList<Dockable> associateToolbars;
+	private DockablePlaceholderList<Dockable> associateToolbars;
 	/** Location of the mouse */
 	public int mouseX, mouseY;
 	/** closest dockable beneath the mouse with regards to the mouse coordinates */
@@ -60,7 +60,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 */
 	public ToolbarContainerDropInfo( Dockable dockable,
 			ToolbarContainerDockStation stationHost,
-			ArrayList<Dockable> associateToolbars, Position area, int mouseX,
+			DockablePlaceholderList<Dockable> associateToolbars, Position area, int mouseX,
 			int mouseY ){
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
@@ -209,7 +209,9 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 */
 	private Dockable computeDockableBeneathMouse(){
 		if (areaBeneathMouse != null){
-			int dockableCount = this.associateToolbars.size();
+			DockablePlaceholderList.Filter<Dockable> associateToolbars = this.associateToolbars.dockables();
+			
+			int dockableCount = associateToolbars.size();
 			if (dockableCount == 0){
 				return null;
 			}

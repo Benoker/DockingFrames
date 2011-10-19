@@ -31,7 +31,10 @@ import java.util.Map;
 import bibliothek.util.Path;
 
 /**
- * The name of some extension that can be loaded through {@link Extension}.
+ * The name of some extension that can be loaded through {@link Extension}. There is no clear
+ * definition of which class uses extension at which time. At the moment the best way to find 
+ * out is to search all occurences of this class in the code.<br>
+ * New extensions will be added to the framework when needed or upon request. 
  * @author Benjamin Sigg
  * @param <E> the type of this extension
  */

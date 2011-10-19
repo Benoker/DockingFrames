@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -18,6 +19,11 @@ import bibliothek.gui.dock.util.DockUtilities;
  */
 public class ToolbarGroupDockStation extends ToolbarDockStation {
 
+	@Override
+	public String getFactoryID(){
+		return ToolbarGroupDockStationFactory.ID;
+	}
+	
 	/**
 	 * Dropps <code>dockable</code> at location <code>index</code>.
 	 * 

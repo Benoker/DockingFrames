@@ -47,7 +47,7 @@ public class ToolbarDockStationMerger implements Merger{
 				|| operation.getSideDockableBeneathMouse() == Position.EAST){
 			increment++;
 		}
-		int dropIndex = parent.getDockables().indexOf(operation.getDockableBeneathMouse()) + increment;
+		int dropIndex = parent.indexOf(operation.getDockableBeneathMouse()) + increment;
 		for (int i = 0; i < count; i++){
 			parent.drop(insertDockables.get(i), dropIndex++);
 		}

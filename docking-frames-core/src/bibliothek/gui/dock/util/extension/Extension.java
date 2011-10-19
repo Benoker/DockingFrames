@@ -31,7 +31,9 @@ import bibliothek.gui.DockController;
 
 /**
  * An extension provides a set of resources that override existing resources. The
- * resources are acquired lazily.
+ * resources are acquired lazily.<br>
+ * New extensions will be added to the framework when needed or upon request.
+ * @see ExtensionName
  * @author Benjamin Sigg
  */
 public interface Extension {

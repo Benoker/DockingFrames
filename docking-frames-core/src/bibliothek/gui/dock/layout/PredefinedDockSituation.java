@@ -5,7 +5,9 @@
  * 
  * Copyright (C) 2008 Benjamin Sigg
  * 
- * This library is free software; you can redistribute it and/or
+ * This library is free software; you can 
+import bibliothek.gui.dock.util.extension.ExtensionManager;
+redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
@@ -74,6 +76,15 @@ public class PredefinedDockSituation extends DockSituation {
         new HashMap<String, DockFactory<? extends DockElement,?,BackupFactoryData<?>>>();
 
     private final PreloadFactory factory = new PreloadFactory();
+    
+    /**
+     * Creates a new {@link DockSituation}, uses <code>controller</code> to access the
+     * {@link ExtensionManager} and install additional {@link DockFactory}s.
+     * @param controller the controller in whose realm this situation will be used
+     */
+    public PredefinedDockSituation( DockController controller ){
+    	super( controller );
+    }
     
     /**
      * Creates a new {@link PredefinedPerspective}. This perspective will write the layout in
