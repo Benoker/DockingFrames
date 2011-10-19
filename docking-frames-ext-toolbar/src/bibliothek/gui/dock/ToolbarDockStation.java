@@ -501,9 +501,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		} finally{
 			token.release();
 		}
-		mainPanel.doLayout();
-		mainPanel.getContentPane().revalidate();
-		mainPanel.getContentPane().repaint();
 	}
 
 	/**
@@ -548,9 +545,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		} finally{
 			token.release();
 		}
-		mainPanel.doLayout();
-		mainPanel.getContentPane().revalidate();
-		mainPanel.getContentPane().repaint();
 	}
 
 	public Orientation getOrientation(){
@@ -585,9 +579,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				group.setPosition(this.getPosition());
 			}
 		}
-		this.mainPanel.doLayout();
-		this.mainPanel.revalidate();
-		this.mainPanel.repaint();
+		 this.mainPanel.doLayout();
 	}
 
 	@Override
@@ -681,7 +673,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		public OverpaintablePanelBase(){
 			basePane.setBorder(new CompoundBorder(new EtchedBorder(),
 					new EmptyBorder(new Insets(5, 5, 5, 5))));
-			JLabel label = new JLabel("---");
+			JLabel label = new JLabel("**");
 			titlePane.add(label);
 			titlePane.setBackground(Color.YELLOW);
 			basePane.add(titlePane);

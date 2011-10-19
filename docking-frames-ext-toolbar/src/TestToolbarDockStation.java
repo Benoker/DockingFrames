@@ -4,12 +4,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Position;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
-import bibliothek.gui.dock.station.toolbar.Position;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 
 /**
@@ -37,23 +37,43 @@ public class TestToolbarDockStation {
 		ScreenDockStation screenStation = new ScreenDockStation( windowProvider );
 		screenStation.setShowing( true );
 		controller.add( screenStation );
-
+		System.out.println("###############################################################");
+		System.out.println("##################  NEW CONTAINER  ############################");
+		System.out.println("###############################################################");
 		ToolbarContainerDockStation toolbarStation = new ToolbarContainerDockStation();
 		controller.add( toolbarStation );
-
-		ToolbarGroupDockStation group1 = new ToolbarGroupDockStation();
+		System.out.println("###############################################################");
+		System.out.println("##################  NEW COMPONENT  ############################");
+		System.out.println("###############################################################");
 		ComponentDockable dockable1 = new ComponentDockable( new JButton( "One" ) );
-		group1.drop( dockable1 );
-//		ComponentDockable dockable2 = new ComponentDockable( new JButton( "Two" ) );
-//		group1.drop( dockable2 );
-//		ComponentDockable dockable3 = new ComponentDockable( new JButton( "Three" ) );
-//		group1.drop( dockable3 );
-//		ComponentDockable dockable4 = new ComponentDockable( new JButton( "Four" ) );
-//		group1.drop( dockable4 );
-
+		ComponentDockable dockable2 = new ComponentDockable( new JButton( "Two" ) );
+		ComponentDockable dockable3 = new ComponentDockable( new JButton( "Three" ) );
+		System.out.println("###############################################################");
+		System.out.println("##################  NEW GROUP  ################################");
+		System.out.println("###############################################################");
+		ToolbarGroupDockStation group1 = new ToolbarGroupDockStation();
+		System.out.println("###############################################################");
+		System.out.println("##################  NEW TOOLBAR  ##############################");
+		System.out.println("###############################################################");
 		ToolbarDockStation toolbar1 = new ToolbarDockStation();
+		ToolbarDockStation toolbar2 = new ToolbarDockStation();
+		ToolbarDockStation toolbar3 = new ToolbarDockStation();
+		System.out.println("###############################################################");
+		System.out.println("##################  COMPONENT DROP INTO GROUP  ################");
+		System.out.println("###############################################################");
+		group1.drop( dockable1 );
+		System.out.println("###############################################################");
+		System.out.println("##################  GROUP DROP INTO TOOLBAR  ##################");
+		System.out.println("###############################################################");
 		toolbar1.drop( group1 );
+		toolbar2.drop(dockable2);
+		toolbar3.drop(dockable3);
+		System.out.println("###############################################################");
+		System.out.println("##################  TOOLBAR DROP INTO CONTAINER  ##############");
+		System.out.println("###############################################################");
 		toolbarStation.drop( toolbar1, Position.WEST );
+		toolbarStation.drop( toolbar2, Position.WEST );
+		toolbarStation.drop( toolbar3, Position.WEST );
 		
 //		ToolbarDockStation toolbar3 = new ToolbarDockStation();
 //		ComponentDockable dockable6 = new ComponentDockable( new JButton( "Six" ) );

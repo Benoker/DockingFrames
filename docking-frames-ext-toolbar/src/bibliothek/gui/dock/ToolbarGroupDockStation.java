@@ -69,9 +69,6 @@ public class ToolbarGroupDockStation extends ToolbarDockStation {
 		} finally{
 			token.release();
 		}
-		mainPanel.doLayout();
-		mainPanel.getContentPane().revalidate();
-		mainPanel.getContentPane().repaint();
 	}
 
 }

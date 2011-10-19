@@ -775,7 +775,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 				allDockables.remove(globalIndex);
 				centerPanel.remove(dockable.getComponent());
 				centerPanel.revalidate();
-				centerPanel.repaint();
+				// centerPanel.repaint();
 				listeners.fireDockableRemoved(dockable);
 				fireDockablesRepositioned(globalIndex);
 				break;
@@ -790,12 +790,15 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 				dockables.remove(dockable);
 				allDockables.remove(globalIndex);
 				panel.remove(dockable.getComponent());
+				// after verification subsequent call to revalidate, repaint are
+				// required
 				mainPanel.getContentPane().setBounds(0, 0,
 						mainPanel.getContentPane().getPreferredSize().width,
 						mainPanel.getContentPane().getPreferredSize().height);
 				mainPanel.setPreferredSize(new Dimension(mainPanel
 						.getContentPane().getPreferredSize().width, mainPanel
 						.getContentPane().getPreferredSize().height));
+
 				mainPanel.getContentPane().revalidate();
 				mainPanel.getContentPane().repaint();
 				listeners.fireDockableRemoved(dockable);
