@@ -64,20 +64,12 @@ public class ToolbarGroupDockStation extends ToolbarDockStation {
 			dockable.setDockParent(this);
 			getDockables().add(index, dockable);
 			mainPanel.getContentPane().add(dockable.getComponent(), index);
-//			mainPanel.getContentPane().setBounds(0, 0,
-//					mainPanel.getContentPane().getPreferredSize().width,
-//					mainPanel.getContentPane().getPreferredSize().height);
-//			mainPanel.setPreferredSize(new Dimension(mainPanel.getContentPane()
-//					.getPreferredSize().width, mainPanel.getContentPane()
-//					.getPreferredSize().height));
-//			mainPanel.revalidate();
-//			mainPanel.repaint();
 			listeners.fireDockableAdded(dockable);
 			fireDockablesRepositioned(index + 1);
 		} finally{
 			token.release();
 		}
-		this.mainPanel.updateSize();
+		mainPanel.doLayout();
 		mainPanel.getContentPane().revalidate();
 		mainPanel.getContentPane().repaint();
 	}

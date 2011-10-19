@@ -119,9 +119,6 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 	
 	@Override
 	public Component getComponent(){
-		// Dimension preferredSize = component.getPreferredSize();
-		// component.setMinimumSize( preferredSize );
-		// component.setMaximumSize( preferredSize );
 		return component;
 	}
 

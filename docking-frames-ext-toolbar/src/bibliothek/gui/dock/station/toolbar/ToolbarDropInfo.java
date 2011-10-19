@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.OrientedDockStation;
+import bibliothek.gui.Position;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -145,8 +146,8 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 		SwingUtilities.convertPointFromScreen(mouseCoordinate,
 				stationDockable.getComponent());
 		// compute if the mouse is on top or bottom this dockable
-		OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
-		switch (orientedStation.getOrientation()) {
+		OrientedDockStation positionedStation = (OrientedDockStation) stationHost;
+		switch (positionedStation.getOrientation()) {
 		case VERTICAL:
 			double middleY = (dockableBeneathMouse.getComponent()
 					.getBounds().getMinY() + dockableBeneathMouse
