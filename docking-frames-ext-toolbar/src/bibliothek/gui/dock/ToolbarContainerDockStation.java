@@ -853,30 +853,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * @return the index of <code>child</code> or -1 if not found
 	 */
 	private int indexOf( Position position, Dockable child ){
-		DockablePlaceholderList<Dockable> list = null;
-		switch( position ){
-			case EAST:
-				list = eastDockables;
-				break;
-			case WEST:
-				list = westDockables;
-				break;
-			case NORTH:
-				list = northDockables;
-				break;
-			case SOUTH:
-				list = southDockables;
-				break;
-		}
-		if( list == null && position == Position.CENTER ) {
-			if( centerDockable == child ) {
-				return 0;
-			}
-			else {
-				return -1;
-			}
-		}
-
+		DockablePlaceholderList<Dockable> list = getDockables( position );
+		
 		int index = 0;
 		for( Dockable handle : list.dockables() ) {
 			if( handle == child ) {

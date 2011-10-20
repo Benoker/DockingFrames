@@ -288,7 +288,15 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
 		int index = indexOf( child );
-		return new ToolbarProperty(index, null);
+		Path placeholder = null;
+		PlaceholderStrategy strategy = getPlaceholderStrategy();
+		if( strategy != null ){
+			placeholder = strategy.getPlaceholderFor( target == null ? child : target );
+			if( placeholder != null ){
+				dockables.dockables().addPlaceholder( index, placeholder );
+			}
+		}
+		return new ToolbarProperty( index, placeholder );
 	}
 
 	@Override
@@ -421,16 +429,53 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	public boolean drop( Dockable dockable, DockableProperty property ){
 		if (property instanceof ToolbarProperty){
 			ToolbarProperty toolbar = (ToolbarProperty) property;
-			if (toolbar.getSuccessor() != null
-					&& toolbar.getIndex() < getDockableCount()){
-				DockStation child = getDockable(toolbar.getIndex())
-						.asDockStation();
-				if (child != null){
-					return child.drop(dockable, toolbar.getSuccessor());
+			
+			boolean acceptable = acceptable( dockable );
+			boolean result = false;
+			int index = Math.min( getDockableCount(), toolbar.getIndex() );
+			
+			Path placeholder = toolbar.getPlaceholder();
+			if( placeholder != null && toolbar.getSuccessor() != null ){
+				Dockable preset = dockables.getDockableAt( placeholder );
+				if( preset != null ){
+					DockStation station = preset.asDockStation();
+					if( station != null ){
+						if( station.drop( dockable, toolbar.getSuccessor() )){
+							dockables.removeAll( placeholder );
+							result = true;
+						}
+					}
 				}
 			}
-			return drop(dockable,
-					Math.min(getDockableCount(), toolbar.getIndex()));
+			
+			if( !result && placeholder != null ){
+				if( acceptable && dockables.hasPlaceholder( placeholder )){
+					add( dockable, index, placeholder );
+					result = true;
+				}
+			}
+			
+			if( !result && dockables.dockables().size() == 0 ){
+				if( acceptable ){
+					drop( dockable );
+					result = true;
+				}
+			}
+			
+			if( !result ){
+				if( index < dockables.dockables().size() && toolbar.getSuccessor() != null ){
+					DockStation child = getDockable( index ).asDockStation();
+					if (child != null){
+						result = child.drop(dockable, toolbar.getSuccessor());
+					}
+				}
+			}
+			
+			if( !result && acceptable ){
+				result = drop( dockable, index );
+			}
+			
+			return result;
 		}
 		return false;
 	}
@@ -619,6 +664,9 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	 *            Index where add dockable
 	 */
 	private void add( Dockable dockable, int index ){
+		add( dockable, index, null );
+	}
+	private void add( Dockable dockable, int index, Path placeholder ){
 		DockUtilities.ensureTreeValidity(this, dockable);
 		DockUtilities.checkLayoutLocked();
 		// Case where dockable is instance of ToolbarDockStation is handled by
@@ -626,11 +674,26 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		// Case where dockable is instance of ToolbarGroupDockStation is handled
 		// by the "ToolbarStrategy.ensureToolbarLayer" method
 		dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
-		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this,
-				dockable);
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this, dockable);
 		try{
 			listeners.fireDockableAdding(dockable);
-			dockables.dockables().add(index, dockable);
+			
+			int inserted = -1;
+			
+			if( placeholder != null && dockables.getDockableAt( placeholder ) == null ){
+				inserted = dockables.put( placeholder, dockable );
+			}
+			else if( placeholder != null ){
+				index = dockables.getDockableIndex( placeholder );
+			}
+			
+			if( inserted == -1 ){
+				dockables.dockables().add( index, dockable );
+			}
+			else{
+				index = inserted;
+			}
+			
 			insertAt( dockable, index );
 			listeners.fireDockableAdded(dockable);
 			fireDockablesRepositioned(index + 1);
