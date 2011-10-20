@@ -748,6 +748,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		}
 	}
 
+	@Override
 	public Orientation getOrientation(){
 		switch (position) {
 		case NORTH:
@@ -761,10 +762,10 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		}
 		throw new IllegalStateException();
 	}
-	
+
 	@Override
 	public void setOrientation( Orientation orientation ){
-	// not supported: the orientation have to be dependant of the position
+		// not supported: the orientation have to be dependant of the position
 	}
 
 	@Override
@@ -800,7 +801,14 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		 * Generated serial number
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
-
+		
+		/**
+		 * A panel with a fixed size (minimum, maximum and preferred size are
+		 * same values). Computation of the size are take insets into account.
+		 * 
+		 * @author Herve Guillaume
+		 * 
+		 */
 		@SuppressWarnings("serial")
 		private class SizeFixedPanel extends JPanel{
 			@Override
@@ -885,6 +893,11 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			setContentPane(contentPane);
 		}
 
+		
+		/**
+		 * Gets the title pane which will hold a DockTitle 
+		 * @return
+		 */
 		public JPanel getTitlePane(){
 			return this.titlePane;
 		}
@@ -911,6 +924,10 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			return this.getPreferredSize();
 		}
 
+		/**
+		 * Update alignment with regards to the current orientation of this
+		 * {@linl ToolbarDockStation}
+		 */
 		private void updateAlignment(){
 			if (ToolbarDockStation.this.getPosition() != null){
 				switch (ToolbarDockStation.this.getPosition()) {

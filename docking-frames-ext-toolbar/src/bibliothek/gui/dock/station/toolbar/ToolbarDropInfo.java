@@ -8,14 +8,16 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.OrientedDockStation;
 import bibliothek.gui.Position;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 
 /**
- * Information where to insert a {@link Dockable} into a
- * {@link ToolbarGroupDockStation} or a {@link ToolbarDockStationFactory}.
+ * This class contains and computes information about a drag and drop action.
+ * Especially, where the {@link Dockable} should be inserted into which
+ * {@link DockStation}
  * 
  * @author Herve Guillaume
  * @param <S>
@@ -31,7 +33,7 @@ public abstract class ToolbarDropInfo<S extends DockStation> implements
 	 */
 	private S stationHost;
 	/** Location of the mouse */
-	public int mouseX, mouseY;
+	private int mouseX, mouseY;
 	/** closest dockable beneath the mouse with regards to the mouse coordinates */
 	private Dockable dockableBeneathMouse = null;
 	/**

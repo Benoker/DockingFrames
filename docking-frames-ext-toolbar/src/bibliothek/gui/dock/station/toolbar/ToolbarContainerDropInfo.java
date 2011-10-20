@@ -17,8 +17,8 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 
 /**
- * Information where to insert a {@link Dockable} into a
- * {@link ToolbarGroupDockStation} or a Toolbar
+ * This class contains and computes information about a drag and drop action.
+ * Especially, where the {@link Dockable} should be inserted into which
  * {@link ToolbarContainerDockStation}
  * 
  * @author Herve Guillaume
@@ -34,7 +34,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	/** the drag dockable will be insert inside this {@link Dockable}s */
 	private DockablePlaceholderList<Dockable> associateToolbars;
 	/** Location of the mouse */
-	public int mouseX, mouseY;
+	private int mouseX, mouseY;
 	/** closest dockable beneath the mouse with regards to the mouse coordinates */
 	private Dockable dockableBeneathMouse = null;
 	/** The area below the mouse */
@@ -60,8 +60,8 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 */
 	public ToolbarContainerDropInfo( Dockable dockable,
 			ToolbarContainerDockStation stationHost,
-			DockablePlaceholderList<Dockable> associateToolbars, Position area, int mouseX,
-			int mouseY ){
+			DockablePlaceholderList<Dockable> associateToolbars, Position area,
+			int mouseX, int mouseY ){
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
 		this.associateToolbars = associateToolbars;
@@ -209,8 +209,9 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 */
 	private Dockable computeDockableBeneathMouse(){
 		if (areaBeneathMouse != null){
-			DockablePlaceholderList.Filter<Dockable> associateToolbars = this.associateToolbars.dockables();
-			
+			DockablePlaceholderList.Filter<Dockable> associateToolbars = this.associateToolbars
+					.dockables();
+
 			int dockableCount = associateToolbars.size();
 			if (dockableCount == 0){
 				return null;
