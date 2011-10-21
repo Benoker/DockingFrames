@@ -1,8 +1,5 @@
 package bibliothek.gui.dock;
 
-
-import java.awt.Dimension;
-
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;

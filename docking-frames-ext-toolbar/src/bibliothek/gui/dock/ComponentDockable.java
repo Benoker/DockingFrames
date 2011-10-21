@@ -1,7 +1,6 @@
 package bibliothek.gui.dock;
 
 import java.awt.Component;
-import java.awt.Dimension;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;

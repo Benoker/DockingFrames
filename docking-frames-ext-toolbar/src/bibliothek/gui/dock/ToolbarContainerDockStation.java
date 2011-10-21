@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -63,7 +62,7 @@ import bibliothek.gui.dock.util.SilentPropertyValue;
  * The four sides can received multiple {@link ToolbarElementInterface}. This
  * element can drag and drop by user. The central area can received only one
  * dockable and only if this dockable if it's not a
- * {@link ToolbarElementInterface} . When ToolbarElement are added to one side,
+ * {@link ToolbarElementInterface}. When ToolbarElement are added to one side,
  * all the ComponentDockable extracted from the element are merged together and
  * wrapped in a {@link ToolbarDockstation} before to be added.
  * 
@@ -214,10 +213,10 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		createConverter().setPlaceholders( this, new ToolbarContainerConverterCallback(){
 			final int[] index = new int[ Position.values().length ]; 
 
-			@Override
+	@Override
 			public void adding( Position area, Dockable dockable ){
 				listeners.fireDockableAdding( dockable );
-			}
+		}
 
 			@Override
 			public void added( Position area, Dockable dockable ){
@@ -226,11 +225,11 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				}
 				else{
 					insertAt( area, dockable, index[ area.ordinal() ]++ );
-				}
+		}
 
 				dockable.setDockParent( ToolbarContainerDockStation.this );
 				listeners.fireDockableAdded( dockable );
-			}
+		}
 
 			@Override
 			public void setDockables( Position area, DockablePlaceholderList<Dockable> list ){
@@ -296,9 +295,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
 		for( Position position : Position.values() ) {
 			int index = indexOf( position, child );
-			if (index >= 0){
+		if (index >= 0){
 				return new ToolbarContainerProperty( index, position, null );
-			}
+		}
 		}
 
 		return new ToolbarContainerProperty(0, Position.CENTER, null);
@@ -846,8 +845,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				return position;
 			}
 		}
-		return null;
-	}
+			return null;
+		}
 
 	/**
 	 * Gets the orientation of dockables in one area at the specified area
@@ -939,12 +938,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * @return index or -1 if the dockable is not found
 	 */
 	private int areaIndexOf( Dockable dockable ){
-		Position area = getArea( dockable );
+		Position area = getArea(dockable);
 		if( area == null ) {
 			return -1;
-		}
+				}
 		return indexOf( area, dockable );
-	}
+		}
 
 	/**
 	 * Removes the child with the given <code>index</code> from this station.<br>
@@ -1087,17 +1086,19 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 						((PositionedDockStation) dockable).setPosition(area);
 					}
 					System.out.println("		==> INDEX: " + index);
-					// /////////////////////
-					// ToolbarDockTitleRequest titleRequest = new
-					// ToolbarDockTitleRequest(
-					// this, dockable, this.titleVersion);
-					// titleRequest.install();
-					// titleRequest.request();
-					// DockTitle title = titleRequest.getAnswer();
-					// dockable.bind(title);
-					// panel.add(title.getComponent(), index);
-					// //////////////////////
-					dockables.add(index, dockable);					
+					if (dockable.getClass() == ToolbarDockStation.class){
+						ToolbarDockStation dockableToolbar = (ToolbarDockStation) dockable;
+						ToolbarDockTitleRequest titleRequest = (dockableToolbar
+								.getTitleRequest() != null) ? dockableToolbar
+								.getTitleRequest()
+								: new ToolbarDockTitleRequest(this, dockable,
+										this.titleVersion);
+						titleRequest.setPosition(area);
+						dockableToolbar.setTitleRequest(titleRequest);
+						titleRequest.request();
+					}
+
+					dockables.add(index, dockable);
 					// updateListOfDockables();
 					insertAt( area, dockable, index );	
 					listeners.fireDockableAdded(dockable);
@@ -1162,7 +1163,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					content.getPreferredSize().height);
 			this.setPreferredSize(new Dimension(
 					content.getPreferredSize().width, content
-					.getPreferredSize().height));
+							.getPreferredSize().height));
 			setBasePane(content);
 			setContentPane(content);
 			this.getContentPane().revalidate();
@@ -1180,7 +1181,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				// drawn by this method (paintOverlay)
 				Rectangle rectangleAreaBeneathMouse = getPanel(areaBeneathMouse)
 						.getBounds();
-				if (indexBeneathMouse == -1) {
+				if (indexBeneathMouse == -1){
 					// it means there's no dockable beneath mouse
 					paint.drawDivider(g, rectangleAreaBeneathMouse);
 				} else{
@@ -1201,35 +1202,35 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					if (rectComponentBeneathMouse != null){
 						switch (ToolbarContainerDockStation.this
 								.getOrientation(areaBeneathMouse)) {
-								case VERTICAL:
-									int y;
-									if (sideAboveMouse == Position.NORTH){
-										y = rectComponentBeneathMouse.y;
-									} else {
-										y = rectComponentBeneathMouse.y
-												+ rectComponentBeneathMouse.height;
-									}
-									paint.drawInsertionLine(g,
-											rectComponentBeneathMouse.x, y,
-											rectComponentBeneathMouse.x
+						case VERTICAL:
+							int y;
+							if (sideAboveMouse == Position.NORTH){
+								y = rectComponentBeneathMouse.y;
+							} else{
+								y = rectComponentBeneathMouse.y
+										+ rectComponentBeneathMouse.height;
+							}
+							paint.drawInsertionLine(g,
+									rectComponentBeneathMouse.x, y,
+									rectComponentBeneathMouse.x
 											+ rectComponentBeneathMouse.width,
-											y);
-									break;
-								case HORIZONTAL:
-									int x;
-									if (sideAboveMouse == Position.WEST){
-										x = rectComponentBeneathMouse.x;
-									} else {
-										x = rectComponentBeneathMouse.x
-												+ rectComponentBeneathMouse.width;
-									}
-									paint.drawInsertionLine(g, x,
-											rectComponentBeneathMouse.y, x,
-											rectComponentBeneathMouse.y
+									y);
+							break;
+						case HORIZONTAL:
+							int x;
+							if (sideAboveMouse == Position.WEST){
+								x = rectComponentBeneathMouse.x;
+							} else{
+								x = rectComponentBeneathMouse.x
+										+ rectComponentBeneathMouse.width;
+							}
+							paint.drawInsertionLine(g, x,
+									rectComponentBeneathMouse.y, x,
+									rectComponentBeneathMouse.y
 											+ rectComponentBeneathMouse.height);
 						}
 					}
-				}				
+				}
 			}
 		}
 
@@ -1283,8 +1284,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				southDockables.bind();
 				northDockables.bind();
 				centerDockable.bind();
-			}
 		}
 	}
+}
 
 }

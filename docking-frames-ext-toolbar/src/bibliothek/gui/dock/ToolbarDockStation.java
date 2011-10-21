@@ -3,10 +3,8 @@ package bibliothek.gui.dock;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Map;
@@ -14,14 +12,10 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-import javax.tools.Tool;
+
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -45,12 +39,14 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockTitleRequest;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
@@ -87,6 +83,8 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	private Integer indexBeneathMouse = null;
 	/** closest side of the the closest dockable above the mouse */
 	private Position sideBeneathMouse = null;
+	/** the request needed to display title */
+	private ToolbarDockTitleRequest titleRequest = null;
 
 	/** current {@link PlaceholderStrategy} */
 	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
@@ -97,6 +95,14 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			dockables.setStrategy(newValue);
 		}
 	};
+
+	public void setTitleRequest( ToolbarDockTitleRequest titleRequest ){
+		this.titleRequest = titleRequest;
+	}
+	
+	public ToolbarDockTitleRequest getTitleRequest() {
+		return this.titleRequest;
+	}
 
 	/**
 	 * Constructs a new ToolbarDockStation
@@ -163,7 +169,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 
 		return dockables
 				.toMap(new PlaceholderListItemAdapter<Dockable, Dockable>(){
-					@Override
+	@Override
 					public ConvertedPlaceholderListItem convert( int index,
 							Dockable dockable ){
 						Integer id = children.get(dockable);
@@ -280,7 +286,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		if (getDockableCount() > 0){
 			throw new IllegalStateException(
 					"only allowed if there are not children present");
-		}
+	}
 
 		try{
 			DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>(
@@ -678,18 +684,18 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	}
 
 	private void insertAt( Dockable dockable, int index ){
-		dockable.setDockParent(this);
-		if (dockable instanceof PositionedDockStation){
-			if (getPosition() != null){
-				// it would be possible that this station was not already
-				// positioned. This is the case when this station is
-				// instantiated but not drop in any station (e.g.
-				// ToolbarContainerDockStation) which could give it a
-				// position
+			dockable.setDockParent(this);
+			if (dockable instanceof PositionedDockStation){
+				if (getPosition() != null){
+					// it would be possible that this station was not already
+					// positioned. This is the case when this station is
+					// instantiated but not drop in any station (e.g.
+					// ToolbarContainerDockStation) which could give it a
+					// position
 				((PositionedDockStation) dockable).setPosition(getPosition());
+				}
 			}
-		}
-		mainPanel.getContentPane().add(dockable.getComponent(), index);
+			mainPanel.getContentPane().add(dockable.getComponent(), index);
 		mainPanel.getContentPane().setBounds(0, 0,
 				mainPanel.getContentPane().getPreferredSize().width,
 				mainPanel.getContentPane().getPreferredSize().height);
@@ -699,7 +705,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		mainPanel.doLayout();
 		mainPanel.getContentPane().revalidate();
 		mainPanel.getContentPane().repaint();
-	}
+		}
 
 	/**
 	 * Removes <code>dockable</code> from this station.<br>
@@ -781,7 +787,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				group.setPosition(this.getPosition());
 			}
 		}
-		this.mainPanel.doLayout();
+		 this.mainPanel.doLayout();
 	}
 
 	@Override
@@ -801,7 +807,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		 * Generated serial number
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
-		
+
 		/**
 		 * A panel with a fixed size (minimum, maximum and preferred size are
 		 * same values). Computation of the size are take insets into account.
@@ -882,9 +888,11 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		public OverpaintablePanelBase(){
 			basePane.setBorder(new CompoundBorder(new EtchedBorder(),
 					new EmptyBorder(new Insets(5, 5, 5, 5))));
+			if (ToolbarDockStation.this.getClass() == ToolbarGroupDockStation.class) {
 			JLabel label = new JLabel("**");
 			titlePane.add(label);
 			titlePane.setBackground(Color.YELLOW);
+			}
 			basePane.add(titlePane);
 			basePane.setBackground(Color.GREEN);
 			contentPane.setBackground(Color.RED);
@@ -1026,16 +1034,20 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				dockables.unbind();
 			}
 
-			super.setController(controller);
-			// if not set controller of the DefaultStationPaintValue, call to
-			// DefaultStationPaintValue do nothing
-			paint.setController(controller);
+		super.setController(controller);
+		// if not set controller of the DefaultStationPaintValue, call to
+		// DefaultStationPaintValue do nothing
+		paint.setController(controller);
 			placeholderStrategy.setProperties(controller);
 
 			if (controller != null){
 				dockables.bind();
-			}
-		}
+						}
+					}
+	}
+
+	public JPanel getTitlePane() {
+		return this.mainPanel.getTitlePane();
 	}
 
 }
