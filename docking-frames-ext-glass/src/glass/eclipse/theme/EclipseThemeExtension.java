@@ -1,5 +1,8 @@
 package glass.eclipse.theme;
 
+import glass.eclipse.theme.factory.CDefaultGlassFactory;
+import glass.eclipse.theme.factory.IGlassParameterFactory;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -9,9 +12,18 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 public class EclipseThemeExtension implements DockThemeExtension{
 	private DockTheme trigger;
+	
+    /**
+     *  Tells the glass eclipse painter which glass parameters should be used to render the glass effect.
+     *  @see CDefaultGlassFactory
+     */
+    public static final PropertyKey<IGlassParameterFactory> GLASS_FACTORY =
+        new PropertyKey<IGlassParameterFactory>( "Glass eclipse glass parameter factory", new ConstantPropertyFactory<IGlassParameterFactory>( new CDefaultGlassFactory() ), true );
 	
 	public EclipseThemeExtension( DockTheme trigger, EclipseTheme theme ){
 		this.trigger = trigger;

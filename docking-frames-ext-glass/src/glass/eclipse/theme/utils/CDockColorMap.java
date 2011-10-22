@@ -11,9 +11,13 @@ public class CDockColorMap {
    public Color colSelectedGlassCenter;
    public Color colSelectedGlassBoundary;
    public Color colSelectedGlassLight;
+   
+   public Color colUnSelectedGlassCenter;
+   public Color colUnSelectedGlassBoundary;
+   public Color colUnSelectedGlassLight;
 
    public CDockColorMap (Color... colors) {
-      if (colors == null || colors.length < 6) {
+      if (colors == null || colors.length < 9) {
          initDefaultMap();
       }
       else {
@@ -23,16 +27,22 @@ public class CDockColorMap {
          colSelectedGlassCenter = colors[3];
          colSelectedGlassBoundary = colors[4];
          colSelectedGlassLight = colors[5];
+         colUnSelectedGlassCenter = colors[6];
+         colUnSelectedGlassBoundary = colors[7];
+         colUnSelectedGlassLight = colors[8];
       }
    }
 
-   public CDockColorMap (Color colFocusedGlassCenter, Color colFocusedGlassBoundary, Color colFocusedGlassLight, Color colSelectedGlassCenter, Color colSelectedGlassBoundary, Color colSelectedGlassLight) {
+   public CDockColorMap (Color colFocusedGlassCenter, Color colFocusedGlassBoundary, Color colFocusedGlassLight, Color colSelectedGlassCenter, Color colSelectedGlassBoundary, Color colSelectedGlassLight, Color colUnSelectedGlassCenter, Color colUnSelectedGlassBoundary, Color colUnSelectedGlassLight) {
       this.colFocusedGlassCenter = colFocusedGlassCenter;
       this.colFocusedGlassBoundary = colFocusedGlassBoundary;
       this.colFocusedGlassLight = colFocusedGlassLight;
       this.colSelectedGlassCenter = colSelectedGlassCenter;
       this.colSelectedGlassBoundary = colSelectedGlassBoundary;
       this.colSelectedGlassLight = colSelectedGlassLight;
+      this.colUnSelectedGlassCenter = colUnSelectedGlassCenter;
+      this.colUnSelectedGlassBoundary = colUnSelectedGlassBoundary;
+      this.colUnSelectedGlassLight = colUnSelectedGlassLight;
    }
 
    public CDockColorMap () {
@@ -41,11 +51,15 @@ public class CDockColorMap {
 
    protected void initDefaultMap () {
       colSelectedGlassCenter = new Color(222, 222, 222);
-      colFocusedGlassLight = new Color(222, 222, 222);
+      colSelectedGlassLight = new Color(222, 222, 222);
       colSelectedGlassBoundary = new Color(0, 40, 255);
 
       colFocusedGlassCenter = new Color(0, 80, 150);
       colFocusedGlassLight = new Color(150, 222, 252);
       colFocusedGlassBoundary = new Color(0, 40, 80);
+      
+      colUnSelectedGlassCenter = new Color(222, 222, 222,64);
+      colUnSelectedGlassLight = new Color(222, 222, 222,64);
+      colUnSelectedGlassBoundary = new Color(128,128,128,64);
    }
 }

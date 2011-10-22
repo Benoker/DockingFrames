@@ -78,37 +78,41 @@ public class CEclipseBorder implements Border {
       return roundEdges;
    }
 
-   public void SetCornerRadius(int radius) {
+   public void setCornerRadius(int radius) {
       iCornerRadius = radius;
    }
+   
+   public int getCornerRadius() {
+	   return (iCornerRadius);
+   }
 
-   protected Path2D createShape(int x, int y, int w, int h) {
+   protected Path2D createShape(int x, int y, int w, int h, int cornerRadius) {
       Path2D p = new Path2D.Float();
 
       if ((roundEdges & TOP_LEFT) != 0) {
-         p.moveTo(x, y + iCornerRadius);
-         p.quadTo(x, y, x + iCornerRadius, y);
+         p.moveTo(x, y + cornerRadius);
+         p.quadTo(x, y, x + cornerRadius, y);
       } else {
          p.moveTo(x, y);
       }
 
       if ((roundEdges & TOP_RIGHT) != 0) {
-         p.lineTo(x + w - 1 - iCornerRadius, y);
-         p.quadTo(x + w - 1, y, x + w - 1, y + iCornerRadius);
+         p.lineTo(x + w - 1 - cornerRadius, y);
+         p.quadTo(x + w - 1, y, x + w - 1, y + cornerRadius);
       } else {
          p.lineTo(x + w - 1, y);
       }
 
       if ((roundEdges & BOTTOM_RIGHT) != 0) {
-         p.lineTo(x + w - 1, y + h - 1 - iCornerRadius);
-         p.quadTo(x + w - 1, y + h - 1, x + w - 1 - iCornerRadius, y + h - 1);
+         p.lineTo(x + w - 1, y + h - 1 - cornerRadius);
+         p.quadTo(x + w - 1, y + h - 1, x + w - 1 - cornerRadius, y + h - 1);
       } else {
          p.lineTo(x + w - 1, y + h - 1);
       }
 
       if ((roundEdges & BOTTOM_LEFT) != 0) {
-         p.lineTo(x + iCornerRadius, y + h - 1);
-         p.quadTo(x, y + h - 1, x, y + h - 1 - iCornerRadius);
+         p.lineTo(x + cornerRadius, y + h - 1);
+         p.quadTo(x, y + h - 1, x, y + h - 1 - cornerRadius);
       } else {
          p.lineTo(x, y + h - 1);
       }
@@ -146,7 +150,7 @@ public class CEclipseBorder implements Border {
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
       g2d.setColor(color);
-      Shape s = createShape(x, y, width, height);
+      Shape s = createShape(x, y, width, height, getCornerRadius());
 
       g2d.draw(s);
 

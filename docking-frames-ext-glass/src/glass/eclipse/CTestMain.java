@@ -4,6 +4,8 @@ import glass.eclipse.theme.CGlassEclipseColorSchemeExtension;
 import glass.eclipse.theme.CGlassEclipseTabPainter;
 import glass.eclipse.theme.CGlassStationPaint;
 import glass.eclipse.theme.CMiniPreviewMovingImageFactory;
+import glass.eclipse.theme.EclipseThemeExtension;
+import glass.eclipse.theme.factory.IGlassParameterFactory;
 
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -11,6 +13,9 @@ import java.awt.GridLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+
+import kux.glass.IGlassFactory.SGlassParameter;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.dock.StackDockStation;
@@ -36,6 +41,8 @@ public class CTestMain {
       //
       //         public void run () {
       // TODO Auto-generated method stub
+	   UIManager.put("Panel.background", Color.BLACK); 
+
       JFrame frame = new JFrame();
 
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,7 +91,7 @@ public class CTestMain {
       background.setBackground(color);
       CTestPanel panel = new CTestPanel();
 
-      DefaultSingleCDockable d = new DefaultSingleCDockable(title, title, panel);
+      DefaultSingleCDockable d = new DefaultSingleCDockable(title, title, background);
       d.setMaximizable(true);
 
       //      d.setTitleIcon(new ImageIcon("D:/test.png"));
@@ -106,10 +113,11 @@ public class CTestMain {
       im.setIconClient("flap.free", createIcon("images/unpin_active.png"));
       im.setIconClient("overflow.menu", createIcon("images/overflow_menu.png"));
 
-      cControl.putProperty(StackDockStation.TAB_PLACEMENT, TabPlacement.TOP_OF_DOCKABLE);
+      cControl.putProperty(StackDockStation.TAB_PLACEMENT, TabPlacement.RIGHT_OF_DOCKABLE);
       cControl.putProperty(EclipseTheme.TAB_PAINTER, CGlassEclipseTabPainter.FACTORY);
       cControl.putProperty(EclipseTheme.ECLIPSE_COLOR_SCHEME, new CGlassEclipseColorSchemeExtension());
       cControl.putProperty(EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true);
+      cControl.putProperty(EclipseThemeExtension.GLASS_FACTORY, null);
 
       cControl.setTheme(ThemeMap.KEY_ECLIPSE_THEME);
       ((CEclipseTheme)cControl.intern().getController().getTheme()).intern().setMovingImageFactory(new CMiniPreviewMovingImageFactory(128), Priority.CLIENT);

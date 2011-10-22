@@ -23,6 +23,7 @@ import bibliothek.gui.dock.util.extension.ExtensionName;
  * @author Benjamin Sigg
  */
 public class CGlassExtension implements Extension{
+
 	public void install( DockController controller ){
 		// ignore
 	}
