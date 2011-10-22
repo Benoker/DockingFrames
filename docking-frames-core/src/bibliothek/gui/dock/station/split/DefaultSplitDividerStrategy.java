@@ -205,7 +205,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 			if (event.getID() == MouseEvent.MOUSE_MOVED || event.getID() == MouseEvent.MOUSE_RELEASED) {
 				MouseEvent mev = (MouseEvent)event;
 				if (mev.getSource() != Handler.this.container && withinBounds == true) {
-					if (!(mev.getSource() instanceof GlassedPane)) {
+					if (!(mev.getSource() instanceof GlassedPane.GlassPane)) {
 						// mouse is over another component which is not the registered container and the mouse cursor had not been reseted yet -> reset mouse cursor
 						Point p = SwingUtilities.convertPoint(mev.getComponent(), mev.getPoint(), station);
 						if (station.getBounds().contains(p)) {
