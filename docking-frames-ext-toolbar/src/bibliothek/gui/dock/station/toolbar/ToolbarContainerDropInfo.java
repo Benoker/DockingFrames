@@ -1,12 +1,14 @@
 package bibliothek.gui.dock.station.toolbar;
 
+import java.awt.Component;
 import java.awt.Point;
 
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.OrientedDockStation.Orientation;
+import bibliothek.gui.Position;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
@@ -15,8 +17,8 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 
 /**
- * Information where to insert a {@link Dockable} into a
- * {@link ToolbarGroupDockStation} or a Toolbar
+ * This class contains and computes information about a drag and drop action.
+ * Especially, where the {@link Dockable} should be inserted into which
  * {@link ToolbarContainerDockStation}
  * 
  * @author Herve Guillaume
@@ -32,7 +34,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	/** the drag dockable will be insert inside this {@link Dockable}s */
 	private DockablePlaceholderList<Dockable> associateToolbars;
 	/** Location of the mouse */
-	public int mouseX, mouseY;
+	private int mouseX, mouseY;
 	/** closest dockable beneath the mouse with regards to the mouse coordinates */
 	private Dockable dockableBeneathMouse = null;
 	/** The area below the mouse */
@@ -58,8 +60,8 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 */
 	public ToolbarContainerDropInfo( Dockable dockable,
 			ToolbarContainerDockStation stationHost,
-			DockablePlaceholderList<Dockable> associateToolbars, Position area, int mouseX,
-			int mouseY ){
+			DockablePlaceholderList<Dockable> associateToolbars, Position area,
+			int mouseX, int mouseY ){
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
 		this.associateToolbars = associateToolbars;
@@ -160,14 +162,19 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	private Position computeSideDockableBeneathMouse(){
 		// the dockable the closest of the mouse
 		Dockable dockableBeneathMouse = getDockableBeneathMouse();
-		if (dockableBeneathMouse == null) {
+		if (dockableBeneathMouse == null){
 			return null;
 		}
 		// mouse coordinate in the frame of reference of the station
 		Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
-		Dockable stationDockable = (Dockable) stationHost;	
-		SwingUtilities.convertPointFromScreen(mouseCoordinate,
-				stationDockable.getComponent());
+		// This component stands for the panel beneath the mouse. This
+		// rectangle will be the frame of reference of component inside this
+		// panel.
+		Component areaBeneathMouse = stationHost.getPanel(this.getArea());
+		// The mouse is now in the frame of reference of the area beneath
+		// mouse
+		SwingUtilities
+				.convertPointFromScreen(mouseCoordinate, areaBeneathMouse);
 		// compute if the mouse is on top or bottom this dockable
 		switch (stationHost.getOrientation(this.areaBeneathMouse)) {
 		case VERTICAL:
@@ -185,7 +192,7 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 					.getBounds().getMaxX()) / 2.0;
 			System.out.println(Math.abs(mouseCoordinate.getX()));
 			System.out.println(middleX + " / " + mouseCoordinate.getX());
- 
+
 			if (Math.abs(mouseCoordinate.getX()) <= middleX){
 				return Position.WEST;
 			} else{
@@ -202,30 +209,40 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 */
 	private Dockable computeDockableBeneathMouse(){
 		if (areaBeneathMouse != null){
-			DockablePlaceholderList.Filter<Dockable> associateToolbars = this.associateToolbars.dockables();
-			
+			DockablePlaceholderList.Filter<Dockable> associateToolbars = this.associateToolbars
+					.dockables();
+
 			int dockableCount = associateToolbars.size();
 			if (dockableCount == 0){
 				return null;
 			}
+
 			Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
+			// This component stands for the panel beneath the mouse. This
+			// rectangle will be the frame of reference of component inside this
+			// panel.
+			Component areaBeneathMouse = stationHost.getPanel(this.getArea());
+			// The mouse is now in the frame of reference of the area beneath
+			// mouse
 			SwingUtilities.convertPointFromScreen(mouseCoordinate,
-					stationHost.getComponent());
+					areaBeneathMouse);
+			Component componentBeneathMouse;
 			double formerDistance;
 			Orientation orientation = stationHost
-					.getOrientation(areaBeneathMouse);
+					.getOrientation(this.getArea());
 			switch (orientation) {
 			case VERTICAL:
+				componentBeneathMouse = associateToolbars.get(0).getComponent();
+				double middleY = (componentBeneathMouse.getBounds().getMinY() + componentBeneathMouse
+						.getBounds().getMaxY()) / 2.0;
+				formerDistance = Math.abs(mouseCoordinate.getY() - middleY);
 				// loop on dockables too see which of them is closer of the
 				// mouse
-				double middleY = (associateToolbars.get(0).getComponent()
-						.getBounds().getMinY() + associateToolbars.get(0)
-						.getComponent().getBounds().getMaxY()) / 2.0;
-				formerDistance = Math.abs(mouseCoordinate.getY() - middleY);
 				for (int i = 1; i < dockableCount; i++){
-					middleY = (associateToolbars.get(i).getComponent()
-							.getBounds().getMinY() + associateToolbars.get(i)
-							.getComponent().getBounds().getMaxY()) / 2.0;
+					componentBeneathMouse = associateToolbars.get(i)
+							.getComponent();
+					middleY = (componentBeneathMouse.getBounds().getMinY() + componentBeneathMouse
+							.getBounds().getMaxY()) / 2.0;
 					if (Math.abs(mouseCoordinate.getY() - middleY) >= formerDistance){
 						// the mouse is closer of the former dockable
 						return associateToolbars.get(i - 1);
@@ -234,16 +251,17 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 				}
 				return associateToolbars.get(dockableCount - 1);
 			case HORIZONTAL:
+				componentBeneathMouse = associateToolbars.get(0).getComponent();
+				double middleX = (componentBeneathMouse.getBounds().getMinX() + componentBeneathMouse
+						.getBounds().getMaxX()) / 2.0;
+				formerDistance = Math.abs(mouseCoordinate.getX() - middleX);
 				// loop on dockables too see which of them is closer of the
 				// mouse
-				double middleX = (associateToolbars.get(0).getComponent()
-						.getBounds().getMinX() + associateToolbars.get(0)
-						.getComponent().getBounds().getMaxX()) / 2.0;
-				formerDistance = Math.abs(mouseCoordinate.getX() - middleX);
 				for (int i = 1; i < dockableCount; i++){
-					middleX = (associateToolbars.get(i).getComponent()
-							.getBounds().getMinX() + associateToolbars.get(i)
-							.getComponent().getBounds().getMaxX()) / 2.0;
+					componentBeneathMouse = associateToolbars.get(i)
+							.getComponent();
+					middleX = (componentBeneathMouse.getBounds().getMinX() + componentBeneathMouse
+							.getBounds().getMaxX()) / 2.0;
 					if (Math.abs(mouseCoordinate.getX() - middleX) >= formerDistance){
 						// the mouse is closer of the former dockable
 						return associateToolbars.get(i - 1);

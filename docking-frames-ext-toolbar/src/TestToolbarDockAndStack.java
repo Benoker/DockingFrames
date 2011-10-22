@@ -2,6 +2,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.PositionedDockStation;
+import bibliothek.gui.Position;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.FlapDockStation;
@@ -9,7 +11,6 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
-import bibliothek.gui.dock.station.toolbar.Position;
 
 /**
  * I have two questions.

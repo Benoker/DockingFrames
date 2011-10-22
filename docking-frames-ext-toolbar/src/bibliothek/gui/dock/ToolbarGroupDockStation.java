@@ -1,8 +1,5 @@
 package bibliothek.gui.dock;
 
-
-import java.awt.Dimension;
-
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
@@ -69,15 +66,7 @@ public class ToolbarGroupDockStation extends ToolbarDockStation {
 			listeners.fireDockableAdding(dockable);
 			dockable.setDockParent(this);
 			getDockables().add(index, dockable);
-			basePanel.getContentPane().add(dockable.getComponent(), index);
-			basePanel.getContentPane().setBounds(0, 0,
-					basePanel.getContentPane().getPreferredSize().width,
-					basePanel.getContentPane().getPreferredSize().height);
-			basePanel.setPreferredSize(new Dimension(basePanel.getContentPane()
-					.getPreferredSize().width, basePanel.getContentPane()
-					.getPreferredSize().height));
-			basePanel.getContentPane().revalidate();
-			basePanel.getContentPane().repaint();
+			mainPanel.getContentPane().add(dockable.getComponent(), index);
 			listeners.fireDockableAdded(dockable);
 			fireDockablesRepositioned(index + 1);
 		} finally{

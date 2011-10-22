@@ -116,7 +116,7 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 		}
 		setTitleText( title );
 	}
-
+	
 	@Override
 	public Component getComponent(){
 		return component;

@@ -13,10 +13,12 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ComponentDockable;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
 
@@ -25,6 +27,12 @@ public class TestPersistentLayout {
 	public static void main( String[] args ){
 		JFrame frame = new JFrame();
 		final DockFrontend frontend = new DockFrontend( frame );
+		
+		DirectWindowProvider windowProvider = new DirectWindowProvider();
+		windowProvider.setWindow( frame );
+		ScreenDockStation screenStation = new ScreenDockStation( windowProvider );
+		screenStation.setShowing( true );
+		frontend.addRoot( "rootScreen", screenStation );
 		
 		ComponentDockable button1 = new ComponentDockable( new JButton( "One" ));
 		ComponentDockable button2 = new ComponentDockable( new JButton( "Two" ));

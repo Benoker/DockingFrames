@@ -5,6 +5,7 @@ import java.util.List;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Position;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.station.StationDropOperation;
