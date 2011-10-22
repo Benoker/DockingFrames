@@ -50,6 +50,7 @@ public class CGlassStripPainter implements TabPanePainter {
    };
 
    private final EclipseTabPane pane;
+   public IGlassFactory.SGlassParameter glassStrip;
 
    IGlassFactory glass = CGlassFactoryGenerator.Create();
 
@@ -59,6 +60,7 @@ public class CGlassStripPainter implements TabPanePainter {
     */
    public CGlassStripPainter (EclipseTabPane pane) {
       this.pane = pane;
+      getGlassParameters();
    }
 
    public void paint (Graphics g) {
@@ -80,7 +82,6 @@ public class CGlassStripPainter implements TabPanePainter {
    }
 
    private void paintVertical (Graphics g, Rectangle available, Rectangle bounds, int x) {
-      //      paintBackground(g, bounds.x, available.y, bounds.width, available.height, false);
       paintBackground(g, bounds.x, available.y, available.height, bounds.width, false);
 
       if (available.y < bounds.y - 1) {
@@ -91,26 +92,56 @@ public class CGlassStripPainter implements TabPanePainter {
       }
    }
 
+   
+   protected void getGlassParameters() {
+	   glass.eclipse.theme.factory.IGlassParameterFactory f = pane.getController().getProperties().get(EclipseThemeExtension.GLASS_FACTORY);
+	   glassStrip = f.getStripBGGlassParameters();
+   }
+   
    protected void paintBackground (Graphics g, int x, int y, int w, int h, boolean horizontal) {
       if (w > 0 && h > 0) {
          Graphics2D g2d = (Graphics2D)g.create();
 
          BufferedImage img = null;
-         try {
-            img = glass.RenderBufferedImage(CGlassEclipseTabPainter.VALUE_PLAIN, new Dimension(w, h), true);
-         }
-         catch (Exception e) {
-            img = glass.RenderBufferedImage(CGlassFactory.VALUE_STEEL, new Dimension(w, h), true);
-         }
-
-         if ( !horizontal) {
-            AffineTransform atTrans = AffineTransform.getTranslateInstance(x /*+ h*/, y + w);
-            atTrans.concatenate(COutlineHelper.tRot90CCW);
-
-            g2d.drawImage(img, atTrans, null);
-         }
-         else {
-            g2d.drawImage(img, x, y, null);
+         if (glassStrip != null) {
+	         try {
+	            img = glass.RenderBufferedImage(glassStrip, new Dimension(w, h), true);
+	         }
+	         catch (Exception e) {
+	            img = glass.RenderBufferedImage(CGlassFactory.VALUE_STEEL, new Dimension(w, h), true);
+	         }
+	         
+	         if (pane.getComponent().getBorder() instanceof CEclipseBorder) {
+	        	 CEclipseBorder ec = (CEclipseBorder) pane.getComponent().getBorder();
+	        
+	        	 switch (pane.getDockTabPlacement()) {
+	        	 case BOTTOM_OF_DOCKABLE:
+	        		 g2d.clip(ec.createShape(0, 1, pane.getComponent().getWidth(), pane.getComponent().getHeight(),ec.getCornerRadius()));
+	        		 break;
+	             case TOP_OF_DOCKABLE:
+	            	 g2d.clip(ec.createShape(0, 0, pane.getComponent().getWidth(), pane.getComponent().getHeight(),ec.getCornerRadius()));
+	            	 break;
+	
+	             case RIGHT_OF_DOCKABLE:
+	            	 g2d.clip(ec.createShape(1, 0, pane.getComponent().getWidth(), pane.getComponent().getHeight(),ec.getCornerRadius()));
+	            	 break;
+	             case LEFT_OF_DOCKABLE:
+	            	 g2d.clip(ec.createShape(0, 0, pane.getComponent().getWidth(), pane.getComponent().getHeight(),ec.getCornerRadius()));
+	            	 break;
+	
+	        	 }
+	         }
+	         
+	
+	         if ( !horizontal) {
+	            AffineTransform atTrans = AffineTransform.getTranslateInstance(x /*+ h*/, y + w);
+	            atTrans.concatenate(COutlineHelper.tRot90CCW);
+	
+	            g2d.drawImage(img, atTrans, null);
+	         }
+	         else {
+	            g2d.drawImage(img, x, y, null);
+	         }
          }
 
          g2d.dispose();
