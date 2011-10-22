@@ -111,7 +111,7 @@ public class TestPersistentLayout {
 			group.drop( button4 );
 			group.drop( button5 );
 			
-			ToolbarDockStation toolbar = new ToolbarGroupDockStation();
+			ToolbarGroupDockStation toolbar = new ToolbarGroupDockStation();
 			toolbar.drop( group );
 			
 			root.drop( toolbar );

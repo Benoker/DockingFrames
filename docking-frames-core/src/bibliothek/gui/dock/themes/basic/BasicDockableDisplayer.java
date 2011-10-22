@@ -170,6 +170,14 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	public Dimension getMinimumSize(){
     		return getContentMinimumSize();
     	}
+    	@Override
+    	public Dimension getPreferredSize(){
+    		return getContentPreferredSize();
+    	}
+    	@Override
+    	public Dimension getMaximumSize(){
+    		return getContentMaximumSize();
+    	}
     };
     
     /**
@@ -632,6 +640,66 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	else{
     		Dimension titleSize = getComponent( title ).getMinimumSize();
     		base = getComponent( dockable ).getMinimumSize();
+    		base = new Dimension( Math.max( titleSize.width, base.width ),
+    				titleSize.height + base.height );
+    	}
+    	
+    	Insets insets = getInsets();
+    	if( insets != null ){
+    		base = new Dimension( base.width + insets.left + insets.right,
+    				base.height + insets.top + insets.bottom );
+    	}
+    	return base;
+    }
+    
+    public Dimension getContentPreferredSize() {
+    	Dimension base;
+    	
+    	if( title == null && dockable != null )
+    		base = getComponent( dockable ).getPreferredSize();
+    	else if( dockable == null && title != null )
+    		base = getComponent( title ).getPreferredSize();
+    	else if( dockable == null && title == null )
+    		base = new Dimension( 0, 0 );
+    	else if( location == Location.LEFT || location == Location.RIGHT ){
+    		Dimension titleSize = getComponent( title ).getPreferredSize();
+    		base = getComponent( dockable ).getPreferredSize();
+    		base = new Dimension( base.width + titleSize.width, 
+    				Math.max( base.height, titleSize.height ));
+    	}
+    	else{
+    		Dimension titleSize = getComponent( title ).getPreferredSize();
+    		base = getComponent( dockable ).getPreferredSize();
+    		base = new Dimension( Math.max( titleSize.width, base.width ),
+    				titleSize.height + base.height );
+    	}
+    	
+    	Insets insets = getInsets();
+    	if( insets != null ){
+    		base = new Dimension( base.width + insets.left + insets.right,
+    				base.height + insets.top + insets.bottom );
+    	}
+    	return base;
+    }
+    
+    public Dimension getContentMaximumSize() {
+    	Dimension base;
+    	
+    	if( title == null && dockable != null )
+    		base = getComponent( dockable ).getMaximumSize();
+    	else if( dockable == null && title != null )
+    		base = getComponent( title ).getMaximumSize();
+    	else if( dockable == null && title == null )
+    		base = new Dimension( 0, 0 );
+    	else if( location == Location.LEFT || location == Location.RIGHT ){
+    		Dimension titleSize = getComponent( title ).getMaximumSize();
+    		base = getComponent( dockable ).getMaximumSize();
+    		base = new Dimension( base.width + titleSize.width, 
+    				Math.max( base.height, titleSize.height ));
+    	}
+    	else{
+    		Dimension titleSize = getComponent( title ).getMaximumSize();
+    		base = getComponent( dockable ).getMaximumSize();
     		base = new Dimension( Math.max( titleSize.width, base.width ),
     				titleSize.height + base.height );
     	}

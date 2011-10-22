@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station.toolbar;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.util.FrameworkOnly;
 
@@ -39,30 +40,39 @@ import bibliothek.util.FrameworkOnly;
 @FrameworkOnly
 public interface ToolbarContainerConverterCallback {
 	/**
+	 * Creates a new {@link StationChildHandle} for <code>dockable</code>, the new handle
+	 * must not be added to any collection.
+	 * @param area the area in which <code>dockable</code> will appear
+	 * @param dockable the element to wrap
+	 * @return the new {@link StationChildHandle}, must not be <code>null</code>
+	 */
+	public StationChildHandle wrap( Position area, Dockable dockable );
+	
+	/**
 	 * Called before <code>dockable</code> is added to the list of dockables.
 	 * @param area the side at which <code>dockable</code> is added
 	 * @param dockable the new element, not <code>null</code>
 	 */
-	public void adding( Position area, Dockable dockable );
+	public void adding( Position area, StationChildHandle dockable );
 
 	/**
 	 * Called after <code>dockable</code> was added to the list of dockables.
 	 * @param area the side at which <code>dockable</code> is added
 	 * @param dockable the new element, not <code>null</code>
 	 */
-	public void added( Position area, Dockable dockable );
+	public void added( Position area, StationChildHandle dockable );
 	
 	/**
 	 * Replaces the list of dockables at <code>area</code>.
 	 * @param area the affected position
 	 * @param list the new list of dockables, not <code>null</code>
 	 */
-	public void setDockables( Position area, DockablePlaceholderList<Dockable> list );
+	public void setDockables( Position area, DockablePlaceholderList<StationChildHandle> list );
 	
 	/**
 	 * Called after {@link #setDockables(Position, DockablePlaceholderList)} and after all children have
 	 * been stored in <code>list</code>.
 	 * @param list the list whose creation was finished
 	 */
-	public void finished( DockablePlaceholderList<Dockable> list );
+	public void finished( DockablePlaceholderList<StationChildHandle> list );
 }

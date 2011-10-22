@@ -1,10 +1,18 @@
 package bibliothek.gui.dock;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
-import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
+import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Path;
 
 /**
  * A {@link Dockable} and a {@link Dockstation} which stands for a group of
@@ -14,64 +22,66 @@ import bibliothek.gui.dock.util.DockUtilities;
  * 
  * @author Herve Guillaume
  */
-public class ToolbarGroupDockStation extends ToolbarDockStation {
-
+public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
+	/** the id of the {@link DockTitleFactory} which is used by this station */
+	public static final String TITLE_ID = "toolbar.group";
+	
+	/**
+	 * Creates a new {@link ToolbarGroupDockStation}.
+	 */
+	public ToolbarGroupDockStation(){
+		init();
+	}
+	
 	@Override
 	public String getFactoryID(){
 		return ToolbarGroupDockStationFactory.ID;
 	}
 	
-	/**
-	 * Dropps <code>dockable</code> at location <code>index</code>.
-	 * 
-	 * @param dockable
-	 *            the element to add
-	 * @param index
-	 *            the location of <code>dockable</code>
-	 * @return whether the operation was succesfull or not
-	 */
 	@Override
-	public boolean drop( Dockable dockable, int index ){
-		// note: merging of two ToolbarGroupDockStations is done by the
-		// ToolbarGroupDockStationMerger
-		System.out.println(this.toString()
-				+ "## drop(Dockable dockable, int index)##");
-		if (this.accept(dockable)){
-			this.add(dockable, index);
-			return true;
-		}
-		return false;
+	protected DefaultDisplayerFactoryValue createDisplayerFactory(){
+		return new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", this );
 	}
-
+	
+	@Override
+	protected DockTitleVersion registerTitle( DockController controller ){
+		return controller.getDockTitleManager().getVersion( TITLE_ID, BasicDockTitleFactory.FACTORY );
+	}
+	
 	@Override
 	public boolean accept( Dockable child ){
 		System.out.println(this.toString() + "## accept(Dockable child) ##");
 		return getToolbarStrategy().isToolbarGroupPart(child);
 	}
+	
+//	@Override
+//	public boolean accept( DockStation station ){
+//		System.out.println( this.toString() + "## accept(DockStation station) ##" );
+//		return getToolbarStrategy().isToolbarGroupPartParent( station, this );
+//	}
 
-	/**
-	 * Insert one dockable at the index
-	 * 
-	 * @param dockable
-	 *            Dockable to add
-	 * @param index
-	 *            Index where add dockable
-	 */
-	private void add( Dockable dockable, int index ){
-		DockUtilities.ensureTreeValidity(this, dockable);
-		DockUtilities.checkLayoutLocked();
-		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this,
-				dockable);
-		try{
-			listeners.fireDockableAdding(dockable);
-			dockable.setDockParent(this);
-			getDockables().add(index, dockable);
-			mainPanel.getContentPane().add(dockable.getComponent(), index);
-			listeners.fireDockableAdded(dockable);
-			fireDockablesRepositioned(index + 1);
-		} finally{
-			token.release();
-		}
+	// TODO don't use ToolbarProperty but a custom class, would be much safer if the layout is screwed up
+	
+	@Override
+	protected DockableProperty getDockableProperty( Dockable child, Dockable target, int index, Path placeholder ){
+		return new ToolbarProperty( index, placeholder );
 	}
+
+	@Override
+	protected boolean isValidProperty( DockableProperty property ){
+		return property instanceof ToolbarProperty;
+	}
+
+	@Override
+	protected int getIndex( DockableProperty property ){
+		return ((ToolbarProperty) property).getIndex();
+	}
+
+	@Override
+	protected Path getPlaceholder( DockableProperty property ){
+		return ((ToolbarProperty) property).getPlaceholder();
+	}
+	
+	
 
 }

@@ -31,6 +31,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
@@ -67,12 +68,14 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 		return result;
 	}
 	
-	private PlaceholderMap convert( ToolbarContainerDockStation station, DockablePlaceholderList<Dockable> list, final Map<Dockable, Integer> children ){
+	private PlaceholderMap convert( ToolbarContainerDockStation station, DockablePlaceholderList<StationChildHandle> list, final Map<Dockable, Integer> children ){
 		final PlaceholderStrategy strategy = station.getPlaceholderStrategy();
 		
-		return list.toMap( new PlaceholderListItemAdapter<Dockable, Dockable>(){
+		return list.toMap( new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
 			@Override
-			public ConvertedPlaceholderListItem convert( int index, Dockable dockable ){
+			public ConvertedPlaceholderListItem convert( int index, StationChildHandle handle ){
+				Dockable dockable = handle.getDockable();
+				
 				ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
     			Integer id = children.get( dockable );
     			if( id == null ){
@@ -119,12 +122,12 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 	}
 	
 	private void convert( final ToolbarContainerDockStation station, final ToolbarContainerConverterCallback callback, final Position area, PlaceholderMap map, final Map<Integer, Dockable> children ){
-		DockablePlaceholderList<Dockable> list = new DockablePlaceholderList<Dockable>();
+		DockablePlaceholderList<StationChildHandle> list = new DockablePlaceholderList<StationChildHandle>();
 		callback.setDockables( area, list );
-		list.read( map, new PlaceholderListItemAdapter<Dockable, Dockable>(){
+		list.read( map, new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
 			private DockHierarchyLock.Token token;
 			
-			public Dockable convert( ConvertedPlaceholderListItem item ){
+			public StationChildHandle convert( ConvertedPlaceholderListItem item ){
 				int id = item.getInt( "id" );
 				Dockable dockable = children.get( id );
 				if( dockable == null ){
@@ -134,15 +137,15 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 				DockUtilities.ensureTreeValidity( station, dockable );
 				token = DockHierarchyLock.acquireLinking( station, dockable );
 				
-				callback.adding( area, dockable );
-				
-				return dockable;
+				StationChildHandle handle = callback.wrap( area, dockable );
+				callback.adding( area, handle );
+				return handle;
 			}
 			
 			@Override
-			public void added( Dockable dockable ){
+			public void added( StationChildHandle handle ){
 				try{
-					callback.added( area, dockable );
+					callback.added( area, handle );
 				}
 				finally{
 					token.release();
