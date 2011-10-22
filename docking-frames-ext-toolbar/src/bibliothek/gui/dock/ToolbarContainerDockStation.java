@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -22,8 +23,8 @@ import javax.swing.border.EtchedBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.PositionedDockStation;
 import bibliothek.gui.ToolbarElementInterface;
@@ -33,6 +34,10 @@ import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.Orientation;
+import bibliothek.gui.dock.station.OrientingDockStation;
+import bibliothek.gui.dock.station.OrientingDockStationEvent;
+import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -72,7 +77,7 @@ import bibliothek.gui.dock.util.SilentPropertyValue;
  * 
  * @author Herve Guillaume
  */
-public class ToolbarContainerDockStation extends AbstractDockableStation implements ToolbarInterface {
+public class ToolbarContainerDockStation extends AbstractDockableStation implements ToolbarInterface, OrientingDockStation {
 	/** the id of the {@link DockTitleFactory} used in the sides of this station */
 	public static final String TITLE_ID_SIDE = "toolbar.container.side";
 
@@ -138,6 +143,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	private Position sideAboveMouse = null;
 	/** the area beneath the mouse, where the dockabel will be dragged */
 	private Position areaBeneathMouse = null;
+
+	/** all registered {@link OrientingDockStationListener}s. */
+	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
 
 	/** current {@link PlaceholderStrategy} */
 	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
@@ -441,6 +449,43 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		}
 	}
 
+	public void addOrientingDockStationListener( OrientingDockStationListener listener ){
+		orientingListeners.add( listener );
+	}
+
+	public void removeOrientingDockStationListener( OrientingDockStationListener listener ){
+		orientingListeners.remove( listener );
+	}
+
+	public Orientation getOrientationOf( Dockable child ){
+		Position position = getArea( child );
+		if( position == null ) {
+			throw new IllegalArgumentException( "child is not a child of this station" );
+		}
+		switch( position ){
+			case EAST:
+			case WEST:
+			case CENTER:
+				return Orientation.VERTICAL;
+			case NORTH:
+			case SOUTH:
+				return Orientation.HORIZONTAL;
+			default:
+				throw new IllegalStateException( "unknown position: " + position );
+		}
+	}
+
+	/**
+	 * Fires an {@link OrientingDockStationEvent}.
+	 * @param dockables the items whose orientation changed
+	 */
+	protected void fireOrientingEvent( Dockable... dockables ){
+		OrientingDockStationEvent event = new OrientingDockStationEvent( this, dockables );
+		for( OrientingDockStationListener listener : orientingListeners.toArray( new OrientingDockStationListener[orientingListeners.size()] ) ) {
+			listener.changed( event );
+		}
+	}
+
 	private void drop( ToolbarContainerDropInfo dropInfo ){
 		// Note: Computation of index to insert drag dockable is not the
 		// same between a move() and a drop(), because with a move() it is
@@ -722,7 +767,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
-		// TODO Auto-generated method stub
+		DockUI.updateTheme( this, new ToolbarContainerDockStationFactory() );
 	}
 
 	/**
@@ -1016,8 +1061,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					sideHandle.destroy();
 					// after verification subsequent call to revalidate, repaint are
 					// required
-//					mainPanel.getContentPane().setBounds( 0, 0, mainPanel.getContentPane().getPreferredSize().width, mainPanel.getContentPane().getPreferredSize().height );
-//					mainPanel.setPreferredSize( new Dimension( mainPanel.getContentPane().getPreferredSize().width, mainPanel.getContentPane().getPreferredSize().height ) );
+					//					mainPanel.getContentPane().setBounds( 0, 0, mainPanel.getContentPane().getPreferredSize().width, mainPanel.getContentPane().getPreferredSize().height );
+					//					mainPanel.setPreferredSize( new Dimension( mainPanel.getContentPane().getPreferredSize().width, mainPanel.getContentPane().getPreferredSize().height ) );
 
 					mainPanel.getContentPane().revalidate();
 					mainPanel.getContentPane().repaint();
@@ -1085,9 +1130,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 						dockable.setDockParent( this );
 						listeners.fireDockableAdding( dockable );
 						StationChildHandle handle = new StationChildHandle( this, centerDisplayers, dockable, centerTitle );
+						setCenterDockable( handle );
 						handle.updateDisplayer();
 						centerPanel.add( handle.getDisplayer().getComponent(), index );
-						setCenterDockable( handle );
 						updateListOfDockables();
 						centerPanel.revalidate();
 						centerPanel.repaint();
@@ -1097,6 +1142,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					finally {
 						token.release();
 					}
+					fireOrientingEvent( dockable );
 					return true;
 				}
 				break;
@@ -1118,9 +1164,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 						System.out.println( "		==> INDEX: " + index );
 
 						StationChildHandle handle = new StationChildHandle( this, sideDisplayers, dockable, sideTitle );
-						handle.updateDisplayer();
-
 						dockables.add( index, handle );
+						handle.updateDisplayer();
 						// updateListOfDockables();
 						insertAt( area, handle, index );
 						listeners.fireDockableAdded( dockable );
@@ -1129,6 +1174,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					finally {
 						token.release();
 					}
+					fireOrientingEvent( dockable );
 					mainPanel.revalidate();
 					return true;
 				}
@@ -1154,27 +1200,27 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		mainPanel.getContentPane().revalidate();
 		mainPanel.getContentPane().repaint();
 	}
-	
+
 	/**
 	 * Replaces <code>displayer</code> with a new {@link DockableDisplayer}.
 	 * @param displayer the displayer to replace, must actually be shown on this station
 	 */
 	protected void discard( DockableDisplayer displayer ){
 		Position position = getArea( displayer.getDockable() );
-		if( position == null ){
+		if( position == null ) {
 			throw new IllegalArgumentException( "displayer is not a child of this station: " + displayer );
 		}
-		
+
 		int index = indexOf( position, displayer.getDockable() );
 		StationChildHandle handle = getDockables( position ).dockables().get( index );
-		
-		if( position == Position.CENTER ){
+
+		if( position == Position.CENTER ) {
 			centerPanel.remove( displayer.getComponent() );
 			handle.updateDisplayer();
 			centerPanel.add( handle.getDisplayer().getComponent() );
 			centerPanel.revalidate();
 		}
-		else{
+		else {
 			getPanel( position ).remove( displayer.getComponent() );
 			handle.updateDisplayer();
 			insertAt( position, handle, index );

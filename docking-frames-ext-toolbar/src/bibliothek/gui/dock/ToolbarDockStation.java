@@ -1,7 +1,10 @@
 package bibliothek.gui.dock;
 
+import java.io.IOException;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
@@ -41,6 +44,11 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	@Override
 	public String getFactoryID(){
 		return ToolbarDockStationFactory.ID;
+	}
+	
+	@Override
+	protected void callDockUiUpdateTheme() throws IOException{
+		DockUI.updateTheme( this, new ToolbarDockStationFactory() );
 	}
 	
 	@Override

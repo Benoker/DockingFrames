@@ -7,10 +7,10 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.station.Orientation;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.CombinerTarget;

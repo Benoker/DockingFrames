@@ -6,7 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -18,8 +19,6 @@ import javax.swing.border.EtchedBorder;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.Orientation;
-import bibliothek.gui.OrientedDockStation;
 import bibliothek.gui.Position;
 import bibliothek.gui.PositionedDockStation;
 import bibliothek.gui.ToolbarElementInterface;
@@ -30,6 +29,10 @@ import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.Orientation;
+import bibliothek.gui.dock.station.OrientedDockStation;
+import bibliothek.gui.dock.station.OrientingDockStationEvent;
+import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -86,6 +89,9 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 	/** closest side of the the closest dockable above the mouse */
 	private Position sideBeneathMouse = null;
 
+	/** all registered {@link OrientingDockStationListener}s. */
+	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
+	
 	/** current {@link PlaceholderStrategy} */
 	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
 		@Override
@@ -667,11 +673,6 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 		return mainPanel;
 	}
 
-	@Override
-	protected void callDockUiUpdateTheme() throws IOException{
-		// Todo LATER
-	}
-
 	/**
 	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
 	 * 
@@ -846,10 +847,10 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 			dockable.setDockParent( null );
 
 			dockables.remove( index );
-			mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
+			mainPanel.dockablePane.remove( handle.getDisplayer().getComponent() );
 			mainPanel.doLayout();
-			mainPanel.getContentPane().revalidate();
-			mainPanel.getContentPane().repaint();
+			mainPanel.dockablePane.revalidate();
+			mainPanel.dockablePane.repaint();
 			handle.destroy();
 			listeners.fireDockableRemoved( dockable );
 			fireDockablesRepositioned( index );
@@ -894,6 +895,7 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 		}
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
+		fireOrientingEvent();
 	}
 
 	@Override
@@ -901,6 +903,28 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 		return this.position;
 	}
 
+	public void addOrientingDockStationListener( OrientingDockStationListener listener ){
+		orientingListeners.add( listener );
+	}
+
+	public void removeOrientingDockStationListener( OrientingDockStationListener listener ){
+		orientingListeners.remove( listener );
+	}
+
+	public Orientation getOrientationOf( Dockable child ){
+		return getOrientation();
+	}
+
+	/**
+	 * Fires an {@link OrientingDockStationEvent}.
+	 */
+	protected void fireOrientingEvent(){
+		OrientingDockStationEvent event = new OrientingDockStationEvent( this );
+		for( OrientingDockStationListener listener : orientingListeners.toArray( new OrientingDockStationListener[orientingListeners.size()] ) ) {
+			listener.changed( event );
+		}
+	}
+	
 	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
