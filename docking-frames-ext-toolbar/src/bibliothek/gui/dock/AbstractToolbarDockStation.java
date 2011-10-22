@@ -942,14 +942,7 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 		 * The content Pane of this {@link OverpaintablePanel} (with a
 		 * BoxLayout)
 		 */
-		private JPanel dockablePane = new SizeFixedPanel(){
-			public Dimension getPreferredSize(){
-				Dimension result = super.getPreferredSize();
-				
-				System.out.println("dp: " + result);
-				return result;
-			}
-		};
+		private JPanel dockablePane = new SizeFixedPanel();
 
 		/**
 		 * This pane is the base of this OverpaintablePanel and contains both
