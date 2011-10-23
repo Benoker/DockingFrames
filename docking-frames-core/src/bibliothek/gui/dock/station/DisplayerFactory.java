@@ -26,9 +26,9 @@
 
 package bibliothek.gui.dock.station;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
+import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 
 /**
  * A factory that creates instances of {@link DockableDisplayer}.
@@ -36,14 +36,18 @@ import bibliothek.gui.dock.title.DockTitle;
  *
  */
 public interface DisplayerFactory {
+	/** unique identifier of an {@link ExtensionName} which allows extensions to insert high priority {@link DisplayerFactory}s */
+	public static final Path DISPLAYER_EXTENSION = new Path( "dock.DisplayerExtension" );
+	
     /**
-     * Creates a new {@link DockableDisplayer} which will be shown
-     * on <code>station</code>, will have <code>dockable</code> as
-     * child and will display the <code>title</code>.
-     * @param station the parent of the created displayer
-     * @param dockable the child of the created displayer
-     * @param title the title for the displayer
-     * @return the newly created displayer
+     * Creates a new {@link DockableDisplayer}, this method needs to call
+     * {@link DisplayerRequest#answer(DockableDisplayer)} once the new displayer is created.<br>
+     * The new displayer will be shown on {@link DisplayerRequest#getParent()}, its content
+     * must be {@link DisplayerRequest#getTarget()} and {@link DisplayerRequest#getTitle()}.<br>
+     * If this factory does not want to provide a {@link DockableDisplayer} for the given request,
+     * it can just <code>return</code> and not call {@link DisplayerRequest#answer(DockableDisplayer)}.
+     * @param request detailed information about who is going to show the displayer, and callback to
+     * set the new displayer
      */
-    public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title );
+    public void request( DisplayerRequest request );
 }

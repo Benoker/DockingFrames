@@ -16,6 +16,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.DockableStateListener;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
@@ -164,6 +165,10 @@ public class ChessFigure extends JLabel implements Dockable {
 
 	public void requestDockTitle( DockTitleRequest request ){
 		// ignore	
+	}
+	
+	public void requestDisplayer( DisplayerRequest request ){
+		// ignore
 	}
 	
 	public Icon getTitleIcon(){

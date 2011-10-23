@@ -27,6 +27,7 @@ package bibliothek.gui.dock.title;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.util.ResourceRequest;
 
 /**
  * Set of information and callback used to obtain a {@link DockTitle}
@@ -34,7 +35,7 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  *
  */
-public abstract class DockTitleRequest {
+public abstract class DockTitleRequest extends ResourceRequest<DockTitle>{
 	/** the element for which the title is shown */
 	private Dockable target;
 	/** the element that shows the title */
@@ -43,15 +44,8 @@ public abstract class DockTitleRequest {
 	private DockTitleVersion version;
 	
 	
-	/** the current answer to this request */
-	private DockTitle title;
-	/** whether this request has been answered */
-	private boolean answered = false;
 	/** whether this request is installed on its {@link #version} */
 	private boolean installed = false;
-	
-	/** whether {@link #request()} has been called */
-	private boolean requesting = false;
 	
 	/**
 	 * Creates a new request.
@@ -70,6 +64,11 @@ public abstract class DockTitleRequest {
 		this.target = target;
 		this.parent = parent;
 		this.version = version;
+	}
+	
+	@Override
+	public void request(){
+		super.request();
 	}
 	
 	/**
@@ -128,57 +127,21 @@ public abstract class DockTitleRequest {
 	}
 	
 	/**
-	 * Called whenever a new title should be shown.
-	 * @param previous the title that was used previously, can be <code>null</code>
-	 * @param title the new title, may be <code>null</code>
-	 */
-	protected abstract void answer( DockTitle previous, DockTitle title );
-	
-	/**
-	 * Asks for a new title and may trigger {@link #answer(DockTitle, DockTitle)}.
-	 * This method may be called from anyone, not just the owner of this request.
-	 */
-	public void request(){
-		answered = false;
-		DockTitle old = title;
-				
-		try{
-			requesting = true;
-			executeRequestList();
-		}
-		finally{
-			requesting = false;
-		}
-
-		if( old != title ){
-			answer( old, title );
-		}
-	}
-	
-	/**
-	 * Tells whether {@link #answer(DockTitle)} was called since the last {@link #request()}.
-	 * @return <code>true</code> if there is an answer
-	 */
-	protected boolean isAnswered(){
-		return answered;
-	}
-	
-	/**
 	 * Asks all sources for a {@link DockTitle}, stops as soon
 	 * as one source called {@link #answer(DockTitle)}.  
 	 */
 	protected void executeRequestList(){
 		requestDockTitle( this );
-		if( answered )
+		if( isAnswered() )
 			return;
 		
 		target.requestDockTitle( this );
-		if( answered )
+		if( isAnswered() )
 			return;
 		
 		if( parent != null ){
 			parent.requestChildDockTitle( this );
-			if( answered )
+			if( isAnswered() )
 				return;
 		}
 		
@@ -194,18 +157,6 @@ public abstract class DockTitleRequest {
 	 */
 	public void requestDockTitle( DockTitleRequest request ){
 		// ignore
-	}
-	
-	/**
-	 * Asks this request to simulate a call to {@link #request()} which is
-	 * answered with <code>null</code>
-	 */
-	public void requestNull(){
-		if( title != null ){
-			DockTitle old = title;
-			title = null;
-			answer( old, title );
-		}
 	}
 	
 	/**
@@ -228,20 +179,20 @@ public abstract class DockTitleRequest {
 	 * @throws IllegalArgumentException if the title does not met the specifications described above
 	 * @throws IllegalStateException if {@link #request()} is not currently executing
 	 */
+	@Override
 	public void answer( DockTitle title ){
-		if( !requesting ){
-			throw new IllegalStateException( "not requesting a title" );
-		}
-		
-		answered = true;
-		this.title = title;
+		super.answer( title );
 	}
 	
-	/**
-	 * Gets the last answer made to this request.
-	 * @return the last answer, may be <code>null</code>
-	 */
-	public DockTitle getAnswer(){
-		return title;
+	@Override
+	protected void validate( DockTitle resource ){
+		if( resource != null ){
+			if( resource.getDockable() != getTarget() ){	
+				throw new IllegalArgumentException( "title.getDockable() does not return target");
+			}
+			if( resource.getOrigin() != getVersion() ){
+				throw new IllegalArgumentException( "title.getOrigin() does not return version" );
+			}
+		}
 	}
 }

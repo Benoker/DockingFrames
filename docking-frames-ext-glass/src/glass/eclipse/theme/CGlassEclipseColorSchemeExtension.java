@@ -1,6 +1,7 @@
 package glass.eclipse.theme;
 
 import java.awt.*;
+
 import bibliothek.extension.gui.dock.theme.eclipse.rex.*;
 import bibliothek.gui.*;
 import bibliothek.gui.dock.themes.color.*;
@@ -58,20 +59,15 @@ public class CGlassEclipseColorSchemeExtension extends DefaultColorScheme {
       setColor("glass.focused.center", colMap.colFocusedGlassCenter);
       setColor("glass.focused.light", colMap.colFocusedGlassLight);
       setColor("glass.focused.boundary", colMap.colFocusedGlassBoundary);
+      
+      setColor("glass.unselected.center", colMap.colUnSelectedGlassCenter);
+      setColor("glass.unselected.light", colMap.colUnSelectedGlassLight);
+      setColor("glass.unselected.boundary", colMap.colUnSelectedGlassBoundary);
 
-      //      setColor("glass.selected.center", new Color(222, 222, 222));
-      //      setColor("glass.selected.light", new Color(222, 222, 222));
-      //      setColor("glass.selected.boundary", new Color(0, 40, 255));
-      //
-      //      setColor("glass.focused.center", new Color(0, 0, 150));
-      //      setColor("glass.focused.light", new Color(100, 200, 255));
-      //      setColor("glass.focused.boundary", new Color(0, 40, 80));
-
-      setColor("stack.border.glass", Color.DARK_GRAY);
+      setColor("stack.border.glass",new Color(96,96,96));
 
       setColor("selection.border.glass", RexSystemColor.getBorderColor());
 
-      //      // Paint
       setColor("glass.paint.divider", Color.BLACK);
       setColor("glass.paint.insertion", Color.GRAY);
       setColor("glass.paint.line", Color.GRAY);

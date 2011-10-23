@@ -30,6 +30,7 @@ import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayer.Location;
@@ -55,7 +56,11 @@ public class FlatDisplayerFactory implements DisplayerFactory{
         this.border = border;
     }
     
-    public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
+    public void request( DisplayerRequest request ){
+    	Dockable dockable = request.getTarget();
+    	DockStation station = request.getParent();
+    	DockTitle title = request.getTitle();
+    	
         Location location;
         
         if( dockable.asDockStation() != null )
@@ -66,7 +71,8 @@ public class FlatDisplayerFactory implements DisplayerFactory{
         if( border ){
             FlatDockableDisplayer displayer = new FlatDockableDisplayer( station, dockable, title, location );
             displayer.setStacked( station instanceof StackDockStation );
-            return displayer;
+            request.answer( displayer );
+            return;
         }
         
         BasicDockableDisplayer displayer = new BasicDockableDisplayer( station, dockable, title, location ){
@@ -81,6 +87,6 @@ public class FlatDisplayerFactory implements DisplayerFactory{
         displayer.setSingleTabShowOuterBorder( false );
         displayer.setStacked( station instanceof StackDockStation );
         
-        return displayer;
+        request.answer( displayer );
     }
 }

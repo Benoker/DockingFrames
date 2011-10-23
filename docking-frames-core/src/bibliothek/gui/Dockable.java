@@ -36,6 +36,7 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DockableStateListener;
@@ -43,6 +44,7 @@ import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
@@ -257,6 +259,15 @@ public interface Dockable extends DockElement, DockElementRepresentative, Placeh
      * a special rule for the given request it just ignores the call
      */
     public void requestDockTitle( DockTitleRequest request );
+    
+    /**
+     * Invoked to get {@link DockableDisplayer} for this {@link Dockable}. This method may be called when
+     * this {@link Dockable} is dropped onto a new {@link DockStation}, a theme was exchanged, or an existing
+     * {@link DockableDisplayer} was discarded.<br>
+     * The usual behavior of this method should be to do nothing.
+     * @param request callback used to set a new {@link DockableDisplayer}
+     */
+    public void requestDisplayer( DisplayerRequest request );
     
     /**
      * Called by clients which want to show a title of this <code>Dockable</code>. The

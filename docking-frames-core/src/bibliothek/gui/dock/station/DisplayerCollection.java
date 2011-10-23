@@ -1,4 +1,4 @@
-/**
+/*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
@@ -33,6 +33,7 @@ import java.util.List;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.title.DockTitle;
 
@@ -43,7 +44,6 @@ import bibliothek.gui.dock.title.DockTitle;
  * is no longer used. The collection ensures that various properties of the
  * displayers are set in the proper order.
  * @author Benjamin Sigg
- *
  */
 public class DisplayerCollection implements Iterable<DockableDisplayer>{
     /** the station for which displayers are created */
@@ -56,7 +56,7 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
     private DisplayerFactory factory;
     
     /** the set of displayers that are fetched but not released */
-    private List<DockableDisplayer> displayers = new ArrayList<DockableDisplayer>();
+    private List<Handle> displayers = new ArrayList<Handle>();
     
     /** list of listeners added to each {@link DockableDisplayer} known to this collection */
     private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
@@ -84,8 +84,8 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
      */
     public DisplayerCollection( DockStation station, final DefaultDisplayerFactoryValue factory ){
     	this( station, new DisplayerFactory(){
-			public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ){
-				return factory.create( dockable, title );
+    		public void request( DisplayerRequest request ){
+    			factory.request( request );
 			}
 		});
     }
@@ -117,7 +117,21 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
     }
     
     public Iterator<DockableDisplayer> iterator() {
-        return displayers.iterator();
+    	return new Iterator<DockableDisplayer>(){
+    		private Iterator<Handle> handles = displayers.iterator();
+    		
+			public boolean hasNext(){
+				return handles.hasNext();
+			}
+
+			public DockableDisplayer next(){
+				return handles.next().getAnswer();
+			}
+
+			public void remove(){
+				handles.remove();	
+			}
+    	};
     }
     
     /**
@@ -131,13 +145,16 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
      * @param title the title which will be shown on the displayer, might be <code>null</code>
      * @return the new displayer
      */
-    public DockableDisplayer fetch( Dockable dockable, DockTitle title ){
-        DockableDisplayer displayer = factory.create( station, dockable, title );
+    public DockableDisplayer fetch(  Dockable dockable, DockTitle title ){
+    	Handle handle = new Handle( dockable );
+    	handle.request( title );
+    	DockableDisplayer displayer = handle.getAnswer();
+    	
         displayer.setDockable( dockable );
         displayer.setTitle( title );
         displayer.setStation( station );
         displayer.setController( controller );
-        displayers.add( displayer );
+        displayers.add( handle );
         
         for( DockableDisplayerListener listener : listeners )
         	displayer.addDockableDisplayerListener( listener );
@@ -150,10 +167,17 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
      * @param displayer the displayer to release
      */
     public void release( DockableDisplayer displayer ){
-    	for( DockableDisplayerListener listener : listeners )
+    	for( DockableDisplayerListener listener : listeners ){
     		displayer.removeDockableDisplayerListener( listener );
+    	}
     	
-        displayers.remove( displayer );
+    	Iterator<DockableDisplayer> iter = iterator();
+    	while( iter.hasNext() ){
+    		if( iter.next() == displayer ){
+    			iter.remove();
+    		}
+    	}
+
         displayer.setTitle( null );
         displayer.setDockable( null );
         displayer.setStation( null );
@@ -180,8 +204,34 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
     public void setController( DockController controller ){
         if( this.controller != controller ){
             this.controller = controller;
-            for( DockableDisplayer displayer : displayers )
-                displayer.setController( controller );
+            for( Handle handle : displayers ){
+            	handle.setController( controller );
+            }
         }
+    }
+    
+    /**
+     * A {@link Handle} handles the {@link DockableDisplayer} of one {@link Dockable}
+     * @author Benjamin Sigg
+     */
+    private class Handle extends DisplayerRequest {
+		public Handle( Dockable target ){
+			super( station, target, new DisplayerFactory(){
+				public void request( DisplayerRequest request ){
+					DisplayerCollection.this.factory.request( request );
+				}
+			});
+		}
+		
+		@Override
+		public void setController( DockController controller ){
+			super.setController( controller );
+			getAnswer().setController( controller );
+		}
+
+		@Override
+		protected void answer( DockableDisplayer previousResource, DockableDisplayer newResource ){
+			// ignore
+		}
     }
 }

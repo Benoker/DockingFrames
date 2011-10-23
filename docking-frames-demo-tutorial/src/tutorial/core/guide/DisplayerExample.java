@@ -13,8 +13,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.themes.DisplayerFactoryValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -112,7 +112,11 @@ public class DisplayerExample {
 			this.color = color;
 		}
 		
-		public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ){
+		public void request( DisplayerRequest request ){
+			Dockable dockable = request.getTarget();
+	    	DockStation station = request.getParent();
+	    	DockTitle title = request.getTitle();
+	    	
 			CustomDockableDisplayer displayer = new CustomDockableDisplayer( color, station, dockable, title );
 			
 			/* Tell the displayer how to handle the border-hint created by its Dockable.
@@ -122,7 +126,7 @@ public class DisplayerExample {
 	        displayer.setSingleTabShowInnerBorder( true );
 	        displayer.setSingleTabShowOuterBorder( true );
 	        
-	        return displayer;
+	        request.answer( displayer );
 		}
 	}
 	

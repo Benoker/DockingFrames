@@ -8,6 +8,7 @@ import javax.swing.border.LineBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.Orientation;
@@ -32,12 +33,12 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer{
 	public static final DisplayerFactory createColorBorderFactory( final Color color ){
 		return new DisplayerFactory(){
 			@Override
-			public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ){
-				ToolbarDockableDisplayer displayer = new ToolbarDockableDisplayer( station, dockable, title );
+			public void request( DisplayerRequest request ){
+				ToolbarDockableDisplayer displayer = new ToolbarDockableDisplayer( request.getParent(), request.getTarget(), request.getTitle() );
 				displayer.setDefaultBorder( BorderFactory.createLineBorder( color ) );
 				displayer.setDefaultBorderHint( true );
 				displayer.setRespectBorderHint( false );
-				return displayer;
+				request.answer( displayer );
 			}
 		};
 	}

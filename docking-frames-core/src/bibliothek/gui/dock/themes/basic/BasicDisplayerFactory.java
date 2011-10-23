@@ -28,6 +28,7 @@ package bibliothek.gui.dock.themes.basic;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayer.Location;
@@ -44,10 +45,13 @@ public class BasicDisplayerFactory implements DisplayerFactory {
     /** The location of the title if a {@link DockStation} is sent to the factory */
     private DockableDisplayer.Location stationLocation = DockableDisplayer.Location.LEFT;
     
-    public DockableDisplayer create( DockStation station, Dockable dockable,
-            DockTitle title ) {
-
+    public void request( DisplayerRequest request ){
+    	Dockable dockable = request.getTarget();
+    	DockStation station = request.getParent();
+    	DockTitle title = request.getTitle();
+    	
     	BasicDockableDisplayer displayer;
+    	
         if( dockable instanceof DockStation )
             displayer = create( station, dockable, title, stationLocation );
         else
@@ -58,7 +62,7 @@ public class BasicDisplayerFactory implements DisplayerFactory {
         displayer.setSingleTabShowInnerBorder( true );
         displayer.setSingleTabShowOuterBorder( true );
         
-        return displayer;
+        request.answer( displayer );
     }
     
     /**

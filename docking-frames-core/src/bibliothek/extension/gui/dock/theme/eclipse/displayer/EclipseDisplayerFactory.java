@@ -34,6 +34,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector.TitleBa
 import bibliothek.extension.gui.dock.theme.eclipse.rex.RexSystemColor;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayer.Location;
@@ -57,7 +58,26 @@ public class EclipseDisplayerFactory implements DisplayerFactory {
 		this.theme = theme;
 	}
 
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
+	public void request( DisplayerRequest request ){
+		Dockable dockable = request.getTarget();
+    	DockStation station = request.getParent();
+    	DockTitle title = request.getTitle();
+    	
+    	DockableDisplayer displayer = create( station, dockable, title );
+    	
+    	if( displayer != null ){
+    		request.answer( displayer );
+    	}
+	}
+	
+	/**
+	 * Creates a new {@link DockableDisplayer} for <code>dockable</code>.
+	 * @param station the station which will show the displayer
+	 * @param dockable the element which will be shown in the displayer
+	 * @param title the title of <code>dockable</code>
+	 * @return the new displayer or <code>null</code>
+	 */
+	protected DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ) {
 		TitleBar bar = theme.getThemeConnector( station.getController() ).getTitleBarKind( station, dockable );
 		
 		switch( bar ){

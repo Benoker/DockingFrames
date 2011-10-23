@@ -2,6 +2,7 @@ package bibliothek.chess.view;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
@@ -13,11 +14,16 @@ import bibliothek.gui.dock.title.DockTitle;
  * @author Benjamin Sigg
  */
 public class ChessDisplayerFactory implements DisplayerFactory{
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ){
+	public void request( DisplayerRequest request ){
+		Dockable dockable = request.getTarget();
+    	DockStation station = request.getParent();
+    	DockTitle title = request.getTitle();
+    	
 		BasicDockableDisplayer displayer = new BasicDockableDisplayer( station );
 		displayer.setTitle( title );
 		displayer.setDockable( dockable );
 		displayer.setOpaque( false );
-		return displayer;
+		
+		request.answer( displayer );
 	}
 }
