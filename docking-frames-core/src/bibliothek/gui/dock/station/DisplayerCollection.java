@@ -36,6 +36,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.extension.Extension;
 
 /**
  * A set of {@link DockableDisplayer}s. Clients may
@@ -61,33 +62,44 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
     /** list of listeners added to each {@link DockableDisplayer} known to this collection */
     private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
     
+    private String displayerId;
+    
     /**
      * Creates a new collection
      * @param station the station for which {@link DockableDisplayer} will be created
      * @param factory the factory that is initially used to create displayers
+     * @param displayerId an identifier depending on <code>station</code>, this identifier is forwarded to
+     * {@link Extension}s allowing them an easy solution to filter uninteresting requests
      */
-    public DisplayerCollection( DockStation station, DisplayerFactory factory ){
+    public DisplayerCollection( DockStation station, DisplayerFactory factory, String displayerId ){
         if( station == null )
             throw new IllegalArgumentException( "Station must not be null" );
         
         if( factory == null )
             throw new IllegalArgumentException( "Factory must not be null" );
         
+        if( displayerId == null ){
+        	throw new IllegalArgumentException( "displayerId must not be null" );
+        }
+        
         this.station = station;
         this.factory = factory;
+        this.displayerId = displayerId;
     }
     
     /**
      * Creates a new collection
      * @param station the station for which {@link DockableDisplayer}s will be created
      * @param factory the factory that is used create displayers
+     * @param displayerId an identifier depending on <code>station</code>, this identifier is forwarded to
+     * {@link Extension}s allowing them an easy solution to filter uninteresting requests
      */
-    public DisplayerCollection( DockStation station, final DefaultDisplayerFactoryValue factory ){
+    public DisplayerCollection( DockStation station, final DefaultDisplayerFactoryValue factory, String displayerId ){
     	this( station, new DisplayerFactory(){
     		public void request( DisplayerRequest request ){
     			factory.request( request );
 			}
-		});
+		}, displayerId );
     }
     
     /**
@@ -147,13 +159,13 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
      */
     public DockableDisplayer fetch(  Dockable dockable, DockTitle title ){
     	Handle handle = new Handle( dockable );
+    	handle.setController( controller );
     	handle.request( title );
     	DockableDisplayer displayer = handle.getAnswer();
     	
         displayer.setDockable( dockable );
         displayer.setTitle( title );
         displayer.setStation( station );
-        displayer.setController( controller );
         displayers.add( handle );
         
         for( DockableDisplayerListener listener : listeners )
@@ -220,18 +232,26 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
 				public void request( DisplayerRequest request ){
 					DisplayerCollection.this.factory.request( request );
 				}
-			});
+			}, displayerId );
 		}
 		
 		@Override
 		public void setController( DockController controller ){
 			super.setController( controller );
-			getAnswer().setController( controller );
+			DockableDisplayer displayer = getAnswer();
+			if( displayer != null ){
+				displayer.setController( null );
+			}
 		}
 
 		@Override
 		protected void answer( DockableDisplayer previousResource, DockableDisplayer newResource ){
-			// ignore
+			if( previousResource != null ){
+				previousResource.setController( null );
+			}
+			if( newResource != null ){
+				newResource.setController( getController() );
+			}
 		}
     }
 }

@@ -107,6 +107,7 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.WindowProviderListener;
+import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
@@ -128,6 +129,9 @@ import bibliothek.util.Todo.Version;
 public class ScreenDockStation extends AbstractDockStation {
     /** The key for the {@link DockTitleVersion} of this station */
     public static final String TITLE_ID = "screen dock";
+    
+    /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
+    public static final String DISPLAYER_ID = "screen";
     
     /** Path of an {@link ExtensionName} for creating additional {@link AttractorStrategy} */
     public static final Path ATTRACTOR_STRATEGY_EXTENSION = new Path( "dock.AttractorStrategy" );
@@ -361,7 +365,7 @@ public class ScreenDockStation extends AbstractDockStation {
         displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".screen", this );
         combiner = new StationCombinerValue( ThemeManager.COMBINER + ".screen", this );
         
-        displayers = new DisplayerCollection( this, displayerFactory );
+        displayers = new DisplayerCollection( this, displayerFactory, DISPLAYER_ID );
         fullscreenAction = createFullscreenAction();
         
         stationPaint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".screen", this );

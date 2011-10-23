@@ -139,6 +139,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
@@ -161,6 +162,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/** The ID under which this station tries to register a {@link DockTitleFactory} */
 	public static final String TITLE_ID = "split";
 
+    /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
+    public static final String DISPLAYER_ID = "split";
+	
 	/**
 	 * Describes which {@link KeyEvent} will maximize/normalize the currently
 	 * selected {@link Dockable}. 
@@ -393,7 +397,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		combiner = new StationCombinerValue( ThemeManager.COMBINER + ".split", this );
 		displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".split", this );
 		
-		displayers = new DisplayerCollection(this, displayerFactory);
+		displayers = new DisplayerCollection( this, displayerFactory, DISPLAYER_ID );
 		displayers.addDockableDisplayerListener(new DockableDisplayerListener(){
 			public void discard( DockableDisplayer displayer ){
 				SplitDockStation.this.discard(displayer);

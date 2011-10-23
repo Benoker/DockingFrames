@@ -104,6 +104,7 @@ import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
 
@@ -119,6 +120,9 @@ import bibliothek.util.Path;
 public class StackDockStation extends AbstractDockableStation implements StackDockComponentParent{
     /** The id of the titlefactory which is used by this station */
     public static final String TITLE_ID = "stack";
+    
+    /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
+    public static final String DISPLAYER_ID = "stack";
     
     /** Key used to read the current {@link StackDockComponentFactory} */
     public static final PropertyKey<StackDockComponentFactory> COMPONENT_FACTORY =
@@ -300,7 +304,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         visibleListener = new VisibleListener();
         visibility = new DockableShowingManager( listeners );
         
-        displayers = new DisplayerCollection( this, displayerFactory );
+        displayers = new DisplayerCollection( this, displayerFactory, DISPLAYER_ID );
         displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
         	public void discard( DockableDisplayer displayer ){
 	        	StackDockStation.this.discard( displayer );	

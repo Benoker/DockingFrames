@@ -9,6 +9,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
@@ -16,6 +17,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
 /**
@@ -34,6 +36,9 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	/** the id of the {@link DockTitleFactory} which is used by this station */
 	public static final String TITLE_ID = "toolbar";
 	
+    /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
+    public static final String DISPLAYER_ID = "toolbar";
+	
 	/**
 	 * Creates a new {@link ToolbarDockStation}.
 	 */
@@ -44,6 +49,11 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	@Override
 	public String getFactoryID(){
 		return ToolbarDockStationFactory.ID;
+	}
+	
+	@Override
+	protected String getDisplayerId(){
+		return DISPLAYER_ID;
 	}
 	
 	@Override

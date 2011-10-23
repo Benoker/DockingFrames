@@ -27,6 +27,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.Orientation;
@@ -55,6 +56,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
+import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
 /**
@@ -82,6 +84,8 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 	private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
 	/** Graphical position of the group on components (NORTH, SOUTH, WEST, EAST) */
 	private Position position = Position.NORTH;
+	/** Alignment of the content of this station */
+	private Orientation orientation = Orientation.HORIZONTAL;
 	/** A paint to draw lines */
 	private DefaultStationPaintValue paint;
 	/** the index of the closest dockable above the mouse */
@@ -119,7 +123,7 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 		// basePanel.setBackground( new Color( 255, 255, 128 ) );
 
 		displayerFactory = createDisplayerFactory();
-		displayers = new DisplayerCollection( this, displayerFactory );
+		displayers = new DisplayerCollection( this, displayerFactory, getDisplayerId() );
 		displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
 			public void discard( DockableDisplayer displayer ){
 				AbstractToolbarDockStation.this.discard( displayer );
@@ -132,6 +136,11 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 	 * @return the new factory, must not be <code>null</code>
 	 */
 	protected abstract DefaultDisplayerFactoryValue createDisplayerFactory();
+	
+	/**
+	 * Gets an id that is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s
+	 */
+	protected abstract String getDisplayerId();
 
 	@Override
 	public int getDockableCount(){
@@ -862,28 +871,13 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 
 	@Override
 	public Orientation getOrientation(){
-		switch( position ){
-			case NORTH:
-			case SOUTH:
-				return Orientation.HORIZONTAL;
-			case WEST:
-			case EAST:
-				return Orientation.VERTICAL;
-			case CENTER:
-				return null;
-		}
-		throw new IllegalStateException();
+		return orientation;
 	}
 
 	@Override
 	public void setOrientation( Orientation orientation ){
-		// not supported: the orientation have to be dependant of the position
-	}
+		this.orientation = orientation;
 
-	@Override
-	public void setPosition( Position position ){
-		System.out.println( this.toString() + "## setPosition( Position position ) ## ==> " + position );
-		this.position = position;
 		// it's very important to change position and orientation of inside
 		// dockables first, else doLayout() is done on wrong inside information
 		for( StationChildHandle handle : dockables.dockables() ) {
@@ -896,6 +890,25 @@ public abstract class AbstractToolbarDockStation extends AbstractDockableStation
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
 		fireOrientingEvent();
+
+	}
+
+	@Override
+	public void setPosition( Position position ){
+		System.out.println( this.toString() + "## setPosition( Position position ) ## ==> " + position );
+		this.position = position;
+		switch( position ){
+			case NORTH:
+			case SOUTH:
+				setOrientation( Orientation.HORIZONTAL );
+				break;
+			case WEST:
+			case EAST:
+				setOrientation( Orientation.VERTICAL );
+				break;
+			case CENTER:
+				throw new IllegalStateException( "AbstractToolbaDockStation must not have the center position" );
+		}
 	}
 
 	@Override

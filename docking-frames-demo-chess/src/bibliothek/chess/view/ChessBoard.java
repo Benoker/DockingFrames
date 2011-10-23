@@ -96,7 +96,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	    this.pawnReplaceDialog = pawnReplaceDialog;
 		setLayout( null );
 		
-		displayerCollection = new DisplayerCollection( this, displayerFactory );
+		displayerCollection = new DisplayerCollection( this, displayerFactory, "chess" );
 		
 		fields = new Field[8][8];
 		for( int r = 0; r < 8; r++ )

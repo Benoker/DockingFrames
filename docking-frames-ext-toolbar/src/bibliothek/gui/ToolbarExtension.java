@@ -16,6 +16,8 @@ import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.screen.ScreenToolbarDisplayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDockTitleFactory;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
@@ -76,6 +78,9 @@ public class ToolbarExtension implements Extension{
 		if( extension.getName().equals( DockTitleVersion.DOCK_TITLE_VERSION_EXTENSION )){
 			return (Collection<E>)createTitleFactories( (DockTitleVersion)extension.get( DockTitleVersion.DOCK_TITLE_VERSION_EXTENSION_PARAMETER ) );
 		}
+		if( extension.getName().equals( DisplayerFactory.DISPLAYER_EXTENSION )){
+			return (Collection<E>)createDisplayerFactories( controller, (String)extension.get( DisplayerFactory.DISPLAYER_EXTENSION_ID ) );
+		}
 		
 		return null;
 	}
@@ -118,6 +123,15 @@ public class ToolbarExtension implements Extension{
 		return null;
 	}
 	
+	private Collection<DisplayerFactory> createDisplayerFactories( DockController controller, String id ){
+		if( id.equals( ScreenDockStation.DISPLAYER_ID )){
+			List<DisplayerFactory> result = new ArrayList<DisplayerFactory>();
+			result.add( new ScreenToolbarDisplayerFactory( controller ));
+			return result;
+		}
+		return null;
+	}
+	
 	private Collection<DockThemeExtension> createDockThemeExtension(){
 		DockThemeExtension extension = new DockThemeExtension(){
 			
@@ -129,10 +143,11 @@ public class ToolbarExtension implements Extension{
 			@Override
 			public void installed( DockController controller, DockTheme theme ){
 				ThemeManager manager = controller.getThemeManager();
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 150, 150 ) ) );
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 100, 100 )) );
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.side", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 50, 50 ) ) );
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.center", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.RED ) );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 150, 150 ), false ) );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 100, 100 ), false ) );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.side", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 50, 50 ),false ) );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.center", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.RED, false ) );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.ORANGE, true ) );
 				
 				DockTitleManager titles = controller.getDockTitleManager();
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, ToolbarDockTitle.createFactory( new Color( 255, 255, 150 ) ) );

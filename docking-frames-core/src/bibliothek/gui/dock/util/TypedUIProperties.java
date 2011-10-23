@@ -239,7 +239,7 @@ public class TypedUIProperties {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void checkUsed( ThemeBridge<?> bridge ){
 		if( !properties.isStored( (UIBridge)bridge )){
 			bridges.remove( bridge.getDelegate() );

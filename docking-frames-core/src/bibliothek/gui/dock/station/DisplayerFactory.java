@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.Path;
@@ -38,6 +39,13 @@ import bibliothek.util.Path;
 public interface DisplayerFactory {
 	/** unique identifier of an {@link ExtensionName} which allows extensions to insert high priority {@link DisplayerFactory}s */
 	public static final Path DISPLAYER_EXTENSION = new Path( "dock.DisplayerExtension" );
+	
+	/**
+	 * parameter for {@link #DISPLAYER_EXTENSION}, this parameter depends on the {@link DockStation} which is using the displayers,
+	 * each {@link DockStation} should have a constant defined with the name "DISPLAYER_ID" or a similar name (some stations may
+	 * have more than one constant).
+	 */
+	public static final String DISPLAYER_EXTENSION_ID = "name";
 	
     /**
      * Creates a new {@link DockableDisplayer}, this method needs to call

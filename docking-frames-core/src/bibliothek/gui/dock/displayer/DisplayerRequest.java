@@ -33,6 +33,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.ResourceRequest;
+import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.extension.SharedExtension;
 
@@ -49,29 +50,41 @@ public abstract class DisplayerRequest extends ResourceRequest<DockableDisplayer
 	/** the title that should be forwarded to the displayer, may be <code>null</code> */
 	private DockTitle title;
 
+	/** the controller in whose realm this request is used, can be <code>null</code> */
+	private DockController controller;
+	
 	/** factories added by an extension */
 	private SharedExtension<DisplayerFactory> extensions; 
 	
 	/** default factory provided by the {@link DockTheme} */
 	private DisplayerFactory defaultFactory;
 	
+	/** name forwarded to the {@link ExtensionName} */
+	private String displayerId;
+	
 	/**
 	 * Creates a new request.
 	 * @param parent the station which is going to show the {@link DockableDisplayer}.
 	 * @param target the element which is going to be shown in the displayer
 	 * @param defaultFactory the default factory, to be used if no other way was found to create the {@link DockableDisplayer}
+	 * @param displayerId a unique identifier that depends on the type of <code>parent</code>, this identifier will be forwarded to
+	 * {@link Extension}s allowing them an easy way to filter uninteresting {@link DisplayerRequest}s, must not be <code>null</code>
 	 */
-	public DisplayerRequest( DockStation parent, Dockable target, DisplayerFactory defaultFactory ){
+	public DisplayerRequest( DockStation parent, Dockable target, DisplayerFactory defaultFactory, String displayerId ){
 		if( parent == null ){
 			throw new IllegalArgumentException( "parent must not be null" );
 		}
 		if( target == null ){
 			throw new IllegalArgumentException( "target must not be null" );
 		}
+		if( displayerId == null ){
+			throw new IllegalArgumentException( "displayerId must not be null" );
+		}
 		
 		this.parent = parent;
 		this.target = target;
 		this.defaultFactory = defaultFactory;
+		this.displayerId = displayerId;
 	}
 	
 	/**
@@ -80,13 +93,26 @@ public abstract class DisplayerRequest extends ResourceRequest<DockableDisplayer
 	 * @param controller the controller, can be <code>null</code>
 	 */
 	public void setController( DockController controller ){
-		if( extensions != null ){
-			extensions.unbind();
-			extensions = null;
+		if( this.controller != controller ){
+			this.controller = controller;
+			
+			if( extensions != null ){
+				extensions.unbind();
+				extensions = null;
+			}
+			if( controller != null ){
+				extensions = controller.getExtensions().share( new ExtensionName<DisplayerFactory>( DisplayerFactory.DISPLAYER_EXTENSION, DisplayerFactory.class, DisplayerFactory.DISPLAYER_EXTENSION_ID, displayerId ) );
+				extensions.bind();
+			}
 		}
-		if( controller != null ){
-			extensions = controller.getExtensions().share( new ExtensionName<DisplayerFactory>( DisplayerFactory.DISPLAYER_EXTENSION, DisplayerFactory.class ) );
-		}
+	}
+	
+	/**
+	 * Gets the controller in whose realm this request is issued.
+	 * @return the controller, might be <code>null</code>
+	 */
+	public DockController getController(){
+		return controller;
 	}
 	
 	/**

@@ -3,7 +3,9 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copy
+import bibliothek.gui.dock.util.extension.Extension;
+right (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -147,6 +149,11 @@ public class FlapDockStation extends AbstractDockableStation {
      * created for this version are used as buttons on this station.
      */
     public static final String BUTTON_TITLE_ID = "flap button";
+    
+    /**
+     * This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s.
+     */
+    public static final String DISPLAYER_ID = "flap";
     
     /**
      * Key for the {@link FlapLayoutManager} that is used by all {@link FlapDockStation}s.
@@ -371,7 +378,7 @@ public class FlapDockStation extends AbstractDockableStation {
         setDirection( Direction.SOUTH );
         
         displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".flap", this );
-        displayers = new DisplayerCollection( this, displayerFactory );
+        displayers = new DisplayerCollection( this, displayerFactory, DISPLAYER_ID );
         paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".flap", this );
         combiner = new StationCombinerValue( ThemeManager.COMBINER + ".flap", this );
         

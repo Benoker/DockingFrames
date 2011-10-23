@@ -32,6 +32,7 @@ import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
+import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.Orientation;
@@ -63,6 +64,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
+import bibliothek.gui.dock.util.extension.Extension;
 
 /**
  * A {@link Dockable} and a {@link Dockstation} which stands a group of
@@ -84,6 +86,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/** the id of the {@link DockTitleFactory} used in the center of this station */
 	public static final String TITLE_ID_CENTER = "toolbar.container.center";
 
+    /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
+    public static final String DISPLAYER_ID_SIDE = "toolbar.container.side";
+    
+    /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
+    public static final String DISPLAYER_ID_CENTER = "toolbar.container.center";
+    
 	/** The westPane */
 	private JPanel westPanel;
 	/** The east pane */
@@ -169,8 +177,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		sideDisplayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.side", this );
 		centerDisplayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.center", this );
 
-		sideDisplayers = new DisplayerCollection( this, sideDisplayerFactory );
-		centerDisplayers = new DisplayerCollection( this, centerDisplayerFactory );
+		sideDisplayers = new DisplayerCollection( this, sideDisplayerFactory, DISPLAYER_ID_SIDE );
+		centerDisplayers = new DisplayerCollection( this, centerDisplayerFactory, DISPLAYER_ID_CENTER );
 
 		DockableDisplayerListener listener = new DockableDisplayerListener(){
 			public void discard( DockableDisplayer displayer ){
