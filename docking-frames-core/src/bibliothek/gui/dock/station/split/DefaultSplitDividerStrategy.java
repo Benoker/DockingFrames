@@ -96,22 +96,12 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		private PropertyValue<Boolean> restricted = new PropertyValue<Boolean>(DockController.RESTRICTED_ENVIRONMENT) {
 			@Override
 			protected void valueChanged(Boolean oldValue, Boolean newValue) {
-				// listen to changes of RESTRICTED_ENVIRONMENT -> adds or removes the AWT Listener
-				awtListenerEnabled = false; 
-				try {
-					Toolkit.getDefaultToolkit().removeAWTEventListener(Handler.this);
-					if (!newValue) {
-						// not restricted -> add AWT Listener
-						Toolkit.getDefaultToolkit().addAWTEventListener(Handler.this, AWTEvent.MOUSE_MOTION_EVENT_MASK|AWTEvent.MOUSE_EVENT_MASK);
-						awtListenerEnabled = true;
-					}
-				} catch (Throwable e) {
-					e.printStackTrace();
-					awtListenerEnabled = false;
-				}
+				updateEventListener();
 			}
 		};
 		
+		/** the currently known {@link DockController} */
+		private DockController controller;
 		
 		/** the node of the currently selected divider */
 		private Node current;
@@ -172,27 +162,38 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 			container.addMouseListener( this );
 			container.addMouseMotionListener( this );
 			
-			// remove and add listener -> make sure it is not registered twice
-			getStation().removeDockHierarchyListener(this);
-			getStation().addDockHierarchyListener(this);
+			station.addDockHierarchyListener(this);
+			setController( station.getController() );
 		}
 		
-		public void hierarchyChanged(DockHierarchyEvent event) {}
+		public void hierarchyChanged( DockHierarchyEvent event ){
+			// nothing
+		}
 		
-		public void controllerChanged(DockHierarchyEvent event) {
-			restricted.setProperties(event.getController());
-			awtListenerEnabled = false;
-			
-			try {
-				Toolkit.getDefaultToolkit().removeAWTEventListener(Handler.this);
-
-				if (event.getController() != null && !event.getController().isRestrictedEnvironment()) {
+		public void controllerChanged( DockHierarchyEvent event ){
+			setController( station.getController() );
+		}
+		
+		private void setController( DockController controller ){
+			if( this.controller != controller ){
+				this.controller = controller;
+				restricted.setProperties( controller );
+				updateEventListener();
+			}
+		}
+		
+		private void updateEventListener(){
+			boolean expected = controller != null && !controller.isRestrictedEnvironment();
+			if( expected != awtListenerEnabled ){
+				if( expected ){
+					// if this goes wrong, the offending client rightly gets an exception. It's his fault because he did set the "restricted environment" property wrong.
 					Toolkit.getDefaultToolkit().addAWTEventListener(Handler.this, AWTEvent.MOUSE_MOTION_EVENT_MASK|AWTEvent.MOUSE_EVENT_MASK);
 					awtListenerEnabled = true;
 				}
-			} catch (Throwable e) {
-				e.printStackTrace();
-				awtListenerEnabled = false;
+				else{
+					Toolkit.getDefaultToolkit().removeAWTEventListener(Handler.this);	
+					awtListenerEnabled = true;
+				}
 			}
 		}
 		
@@ -245,7 +246,9 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}
-				awtListenerEnabled = false;
+			
+				setController( null );
+				station.removeDockHierarchyListener( this );
 			}
 		}
 		
