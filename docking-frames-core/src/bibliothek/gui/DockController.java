@@ -282,6 +282,7 @@ public class DockController {
         if( factory == null )
             throw new IllegalArgumentException( "Factory must not be null" );
         
+        extensions = factory.createExtensionManager( this, setup );
         
         properties = new DockProperties( this );
         theme = new ThemeManager( this );
@@ -347,7 +348,6 @@ public class DockController {
         dockableSelector = factory.createDockableSelector( this, setup );
         mouseDispatcher = factory.createGlobalMouseDispatcher( this, setup );
         
-        extensions = factory.createExtensionManager( this, setup );
         extensions.init();
         
         setTheme( DockUI.getDefaultDockUI().getDefaultTheme().create( this ) );

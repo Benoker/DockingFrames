@@ -32,8 +32,12 @@ import java.util.List;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.extension.Extension;
+import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 
 /**
  * A <code>DockTitleVersion</code> is a hint which {@link DockTitleFactory} has to
@@ -46,8 +50,20 @@ import bibliothek.gui.dock.util.Priority;
  * @author Benjamin Sigg
  */
 public class DockTitleVersion implements DockTitleFactory{
+	/** 
+	 * Name of the {@link ExtensionName} that allows to load additional {@link DockFactory}s into this 
+	 * {@link DockTitleVersion}. These factories will be asked to create a {@link DockTitle} before
+	 * the real factory is asked.
+	 */
+	public static final Path DOCK_TITLE_VERSION_EXTENSION = new Path( "dock.DockTitleVersion" );
+	
+	/** Name of the only property of an {@link ExtensionName}, the property points to <code>this</code> */
+	public static final String DOCK_TITLE_VERSION_EXTENSION_PARAMETER = "version";
+	
     /** the three slots for the factories */
     private DockTitleFactory[] factories = new DockTitleFactory[3];
+    /** additional high priority factories created by an {@link Extension} */
+    private DockTitleFactory[] extensionFactories;
     /** the name of this version */
     private String id;
     /** the controller for which the titles are created */
@@ -86,6 +102,11 @@ public class DockTitleVersion implements DockTitleFactory{
 				onThemeChange = false;
 			}
 		});
+        
+        List<DockTitleFactory> list = controller.getExtensions().load( new ExtensionName<DockTitleFactory>( DOCK_TITLE_VERSION_EXTENSION, DockTitleFactory.class, DOCK_TITLE_VERSION_EXTENSION_PARAMETER, this ) );
+        if( !list.isEmpty() ){
+        	extensionFactories = list.toArray( new DockTitleFactory[ list.size() ] );
+        }
     }
     
     /**
@@ -119,10 +140,20 @@ public class DockTitleVersion implements DockTitleFactory{
     
     /**
      * Calls {@link DockTitleFactory#request(DockTitleRequest)} for the current
-     * factory.
+     * factory. If there are any {@link #DOCK_TITLE_VERSION_EXTENSION extensions} installed, then
+     * these extensions are questioned first.
      * @param request the request to answer
      */
     public void request( DockTitleRequest request ){
+    	if( extensionFactories != null ){
+    		for( DockTitleFactory factory : extensionFactories ){
+    			factory.request( request );
+    			if( request.isAnswered() ){
+    				return;
+    			}
+    		}
+    	}
+    	
     	DockTitleFactory factory = getFactory();
     	if( factory != null ){
     		factory.request( request );

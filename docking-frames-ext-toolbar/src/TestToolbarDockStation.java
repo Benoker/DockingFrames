@@ -4,8 +4,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.ComponentDockable;
+import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
@@ -90,6 +92,9 @@ public class TestToolbarDockStation {
 //		toolbar2.drop( group2 );
 //		toolbarStation.drop( toolbar2, Position.WEST );
 
+		Dockable other = new DefaultDockable( "Hallo" );
+		screenStation.drop( other );
+		
 		frame.add( toolbarStation.getComponent() );
 
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );

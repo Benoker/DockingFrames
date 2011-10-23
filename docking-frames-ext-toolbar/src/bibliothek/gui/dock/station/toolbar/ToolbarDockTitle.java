@@ -20,7 +20,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * A very simplistic implementation of a {@link DockTitle}. This particular implementation
- * shows a line with a width or height of 3 pixels and a custom color. 
+ * shows a line with a width or height of 5 pixels and a custom color. 
  * @author Benjamin Sigg
  */
 public class ToolbarDockTitle extends JComponent implements DockTitle{
@@ -150,10 +150,10 @@ public class ToolbarDockTitle extends JComponent implements DockTitle{
 	@Override
 	public Dimension getPreferredSize(){
 		if( orientation.isHorizontal() ){
-			return new Dimension( 10, 3 );
+			return new Dimension( 10, 5 );
 		}
 		else{
-			return new Dimension( 3, 10 );
+			return new Dimension( 5, 10 );
 		}
 	}
 	

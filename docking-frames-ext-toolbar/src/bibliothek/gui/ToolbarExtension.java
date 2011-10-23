@@ -16,6 +16,7 @@ import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.station.screen.ScreenToolbarDockTitleFactory;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
@@ -30,7 +31,9 @@ import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
 import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.Priority;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.extension.ExtensionName;
@@ -70,6 +73,9 @@ public class ToolbarExtension implements Extension{
 		if( extension.getName().equals( DockThemeExtension.DOCK_THEME_EXTENSION )){
 			return (Collection<E>)createDockThemeExtension();
 		}
+		if( extension.getName().equals( DockTitleVersion.DOCK_TITLE_VERSION_EXTENSION )){
+			return (Collection<E>)createTitleFactories( (DockTitleVersion)extension.get( DockTitleVersion.DOCK_TITLE_VERSION_EXTENSION_PARAMETER ) );
+		}
 		
 		return null;
 	}
@@ -103,6 +109,15 @@ public class ToolbarExtension implements Extension{
 		return result;
 	}
 	
+	private Collection<DockTitleFactory> createTitleFactories( DockTitleVersion version ){
+		if( version.getID().equals( ScreenDockStation.TITLE_ID )){
+			List<DockTitleFactory> result = new ArrayList<DockTitleFactory>();
+			result.add( new ScreenToolbarDockTitleFactory( version.getController() ) );
+			return result;
+		}
+		return null;
+	}
+	
 	private Collection<DockThemeExtension> createDockThemeExtension(){
 		DockThemeExtension extension = new DockThemeExtension(){
 			
@@ -124,6 +139,7 @@ public class ToolbarExtension implements Extension{
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitle.createFactory( new Color( 255, 255, 100 ) ) );
 				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_SIDE, ToolbarDockTitle.createFactory( new Color( 255, 255, 50 ) ) );
 				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_CENTER, ToolbarDockTitle.createFactory( Color.YELLOW ) );
+				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitle.createFactory( Color.RED ) );
 			}
 			
 			@Override
