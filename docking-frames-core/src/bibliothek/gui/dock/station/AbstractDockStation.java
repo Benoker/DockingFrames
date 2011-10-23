@@ -34,6 +34,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.title.ActivityDockTitleEvent;
@@ -126,5 +127,9 @@ public abstract class AbstractDockStation implements DockStation {
     
     public void requestChildDockTitle( DockTitleRequest request ){
 	    // ignore	
+    }
+    
+    public void requestChildDisplayer( DisplayerRequest request ){
+    	// ignore
     }
 }

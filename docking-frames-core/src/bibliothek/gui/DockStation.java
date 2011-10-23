@@ -36,6 +36,7 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -272,6 +273,14 @@ public interface DockStation extends DockElement{
      * @param request the request to answer, not <code>null</code>
      */
 	public void requestChildDockTitle( DockTitleRequest request );
+	
+	/**
+	 * Provides a {@link DockableDisplayer} for a child of this station. This method
+	 * must call {@link DisplayerRequest#answer(DockableDisplayer)} to set the result.<br>
+	 * The usual implementation should be to do nothing.
+	 * @param request the request to answer, not <code>null</code>
+	 */
+	public void requestChildDisplayer( DisplayerRequest request );
     
     /**
      * Tells whether this station accepts <code>child</code> as a new child,

@@ -28,22 +28,17 @@ package bibliothek.gui.dock.themes;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
-import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * A wrapper for a {@link DisplayerFactory}. Every call to the Interface
- * is forwarded to a delegate. If no delegate is set, a default 
- * <code>DisplayerFactory</code> provided by the {@link DockTheme}
- * is used.
+ * A wrapper for a {@link DisplayerFactory}. Every call to the Interface is forwarded to a delegate. If no delegate is set,
+ * a default <code>DisplayerFactory</code> provided by the {@link DockTheme} is used.
  * @author Benjamin Sigg
  */
 public class DefaultDisplayerFactoryValue extends StationThemeItemValue<DisplayerFactory> implements DisplayerFactoryValue {
-    
 	/**
 	 * Creates a new object.
 	 * @param id the identifier used for retrieving a resource of {@link ThemeManager}
@@ -53,20 +48,17 @@ public class DefaultDisplayerFactoryValue extends StationThemeItemValue<Displaye
 		super( id, KIND_DISPLAYER_FACTORY, ThemeManager.DISPLAYER_FACTORY_TYPE, station );
 	}
 	
- 
-    /**
-     * Uses the current factory to create a new {@link DockableDisplayer}. Falls back to a {@link BasicDockableDisplayer}
-     * if no factory can be found.
-     * @param dockable the element for which a displayer is required
-     * @param title the title of the displayer, can be <code>null</code>
-     * @return the new displayer
-     */
-    public DockableDisplayer create( Dockable dockable, DockTitle title ) {
-    	DisplayerFactory factory = get();
-    	if( factory == null ){
+	/**
+	 * Creates a new {@link DockableDisplayer} and answers to <code>request</code>. This method does always create
+	 * a new {@link DockableDisplayer}.
+	 * @param request the request to answer
+	 */
+	public void request( DisplayerRequest request ){
+		DisplayerFactory factory = get();
+		if( factory == null ){
     		factory = new BasicDisplayerFactory();
     	}
     	
-        return factory.create( getStation(), dockable, title );
+		factory.request( request );
     }
 }

@@ -44,6 +44,15 @@ public class ExtensionName<E> {
 	 * Creates a new name.
 	 * @param name the unique identifier of this extension
 	 * @param type the type of this extension
+	 */
+	public ExtensionName( Path name, Class<E> type ){
+		this( name, type, null );
+	}
+	
+	/**
+	 * Creates a new name.
+	 * @param name the unique identifier of this extension
+	 * @param type the type of this extension
 	 * @param parameters all the parameters for this extension, can be <code>null</code>
 	 */
 	public ExtensionName( Path name, Class<E> type, Map<String, Object> parameters ){
@@ -114,7 +123,7 @@ public class ExtensionName<E> {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals( Object obj ){
 		if (this == obj)

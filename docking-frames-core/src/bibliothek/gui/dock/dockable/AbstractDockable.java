@@ -44,6 +44,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
@@ -423,9 +424,16 @@ public abstract class AbstractDockable implements Dockable {
     }
     
     /**
-     * The default behavior of this method is todo nothing.
+     * The default behavior of this method is to do nothing.
      */
     public void requestDockTitle( DockTitleRequest request ){
+	    // ignore	
+    }
+    
+    /**
+     * The default behavior of this method is to do nothing.
+     */
+    public void requestDisplayer( DisplayerRequest request ){
 	    // ignore	
     }
     

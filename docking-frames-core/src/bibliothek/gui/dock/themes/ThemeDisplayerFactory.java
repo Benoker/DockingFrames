@@ -26,12 +26,9 @@
 package bibliothek.gui.dock.themes;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
-import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.title.DockTitle;
 
 /**
  * A {@link DisplayerFactory} that forwards all calls to the {@link DisplayerFactory}
@@ -49,8 +46,8 @@ public class ThemeDisplayerFactory implements DisplayerFactory{
 		this.controller = controller;
 	}
 	
-	public DockableDisplayer create( DockStation station, Dockable dockable, DockTitle title ){
-		return controller.getTheme().getDisplayFactory( station ).create( station, dockable, title );
+	public void request( DisplayerRequest request ){
+		controller.getTheme().getDisplayFactory( request.getParent() ).request( request );
 	}
 
 }

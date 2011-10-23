@@ -27,7 +27,11 @@ package bibliothek.gui.dock.util.extension;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import bibliothek.gui.DockController;
 
@@ -44,6 +48,9 @@ public class ExtensionManager {
 	
 	/** whether the extensions are installed or not */
 	private boolean alive = false;
+	
+	/** all shared extensions */
+	private Map<ExtensionName<?>, Share<?>> shared = new HashMap<ExtensionName<?>, Share<?>>();
 	
 	/**
 	 * Creates a new manager.
@@ -127,6 +134,112 @@ public class ExtensionManager {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Creates a new {@link SharedExtension} object which uses <code>name</code> as key to read 
+	 * extensions. The {@link SharedExtension} object can be {@link SharedExtension#bind() bound} 
+	 * and {@link SharedExtension#unbind() unbound} at any time, it can be reused.
+	 * @param name the name of the extension to share
+	 * @return the shared extensions
+	 */
+	public <E> SharedExtension<E> share( final ExtensionName<E> name ){
+		return new SharedExtension<E>(){
+			private int bound = 0;
+			
+			@SuppressWarnings("unchecked")
+			public void bind(){
+				if( bound == 0 ){
+					Share<E> share = (Share<E>)shared.get( name );
+					if( share == null ){
+						share = new Share<E>( name );
+					}
+					share.bind();
+				}
+				bound++;
+			}
+			
+			@SuppressWarnings("unchecked")
+			public void unbind(){
+				if( bound == 0 ){
+					throw new IllegalStateException( "cannot unbind, counter is already 0" );
+				}
+				bound--;
+				if( bound == 0 ){
+					Share<E> share = (Share<E>)shared.get( name );
+					if( share != null ){
+						share.unbind();
+					}
+				}
+			}
+			
+			@SuppressWarnings("unchecked")
+			public List<E> get(){
+				if( bound == 0 ){
+					throw new IllegalStateException( "SharedExtension is not bound" );
+				}
+				Share<E> share = (Share<E>)shared.get( name );
+				return share.get();
+			}
+			
+			public Iterator<E> iterator(){
+				return get().iterator();
+			}
+			
+			public ExtensionName<E> getName(){
+				return name;
+			}
+		};
+	}
+	
+	/**
+	 * Represents a shared set of extensions.
+	 * @author Benjamin Sigg
+	 * @param <T> the type of object that is shared
+	 */
+	private class Share<T>{
+		private int bound = 0;
+		private List<T> extensions;
+		private ExtensionName<T> name;
+		
+		/**
+		 * Creates a new cache.
+		 * @param name the key of the extensions
+		 */
+		public Share( ExtensionName<T> name ){
+			this.name = name;
+		}
+		
+		/**
+		 * Connects this cache.
+		 */
+		public void bind(){
+			if( bound == 0 ){
+				shared.put( name, this );
+			}
+			bound++;
+		}
+		
+		/**
+		 * Disconnects this cache.
+		 */
+		public void unbind(){
+			bound--;
+			if( bound == 0 ){
+				shared.remove( name );
+			}
+		}
+		
+		/**
+		 * Gets the content of this cache.
+		 * @return the content
+		 */
+		public List<T> get(){
+			if( extensions == null ){
+				extensions = Collections.unmodifiableList( load( name ) );
+			}
+			return extensions;
+		}
 	}
 	
 	/**

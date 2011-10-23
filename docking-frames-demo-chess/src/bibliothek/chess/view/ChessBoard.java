@@ -25,6 +25,7 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.dockable.DockableStateListener;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -220,6 +221,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 
 	public void requestChildDockTitle( DockTitleRequest request ){
 		// ignore	
+	}
+	
+	public void requestChildDisplayer( DisplayerRequest request ){
+		// ignore
 	}
 	
 	public int compare( DockStation station ){

@@ -63,6 +63,7 @@ import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.DockHierarchyObserver;
 import bibliothek.gui.dock.dockable.DockableStateListener;
@@ -958,11 +959,19 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		// ignore	
 	}
 
+	public void requestDisplayer( DisplayerRequest request ){
+		// ignore
+	}
+	
 	public void changed( Dockable dockable, DockTitle title, boolean active ){
 		title.changed(new ActivityDockTitleEvent(this, dockable, active));
 	}
 
 	public void requestChildDockTitle( DockTitleRequest request ){
+		// ignore	
+	}
+	
+	public void requestChildDisplayer( DisplayerRequest request ){
 		// ignore	
 	}
 

@@ -42,6 +42,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
@@ -128,12 +129,7 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
      * @throws IOException if the DockUI throws an exception
      */
     protected abstract void callDockUiUpdateTheme() throws IOException;
-    
-    @Override
-    public void requestDockTitle( DockTitleRequest request ){
-	    // ignore
-    }
-    
+        
     public DockActionSource getDirectActionOffers( Dockable dockable ) {
         return null;
     }
@@ -218,6 +214,10 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
     }
     
     public void requestChildDockTitle( DockTitleRequest request ){
+	    // ignore	
+    }
+    
+    public void requestChildDisplayer( DisplayerRequest request ){
 	    // ignore	
     }
     

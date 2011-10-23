@@ -651,6 +651,7 @@
 [v1.1.1p6]
  - API: New GlobalMouseDispatcher collects and distributes MouseEvents. Can be used by clients to listen to events.
  ! API: The "check" methods of MouseFocusObserver have been removed
+ ! API: Creating a DockableDisplayer now requires the use of a DisplayerRequest. Instead of just one possibility to replace the factory creating DockableDisplayers, clients and extensions have now several possiblities, e.g. directly in a Dockable or in a DockStation
   
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
