@@ -72,11 +72,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		return getToolbarStrategy().isToolbarGroupPart(child);
 	}
 	
-//	@Override
-//	public boolean accept( DockStation station ){
-//		System.out.println( this.toString() + "## accept(DockStation station) ##" );
-//		return getToolbarStrategy().isToolbarGroupPartParent( station, this );
-//	}
+	@Override
+	public boolean accept( DockStation station ){
+		System.out.println( this.toString() + "## accept(DockStation station) ##" );
+		return getToolbarStrategy().isToolbarGroupPartParent( station, this );
+	}
 
 	// TODO don't use ToolbarProperty but a custom class, would be much safer if the layout is screwed up
 	
