@@ -288,12 +288,14 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 	 * @return the position and null if there's no dockable beneath mouse
 	 */
 	private Position computeItemPositionVSBeneathDockable(){
-		Point coordDockableDragged =  getItem().getComponent().getLocation();
-		if (getDockableBeneathMouse() != null) {
-			Point coordDockableBeneathMouse =  getDockableBeneathMouse().getComponent().getLocation();
-			// The dockable is now in the frame of reference of the dockable beneath mouse
-			SwingUtilities
-					.convertPointFromScreen(coordDockableDragged, getDockableBeneathMouse().getComponent());
+		Point coordDockableDragged = getItem().getComponent().getLocation();
+		if (getDockableBeneathMouse() != null){
+			Point coordDockableBeneathMouse = getDockableBeneathMouse()
+					.getComponent().getLocation();
+			// The dockable is now in the frame of reference of the dockable
+			// beneath mouse
+			SwingUtilities.convertPointFromScreen(coordDockableDragged,
+					getDockableBeneathMouse().getComponent());
 			if (getDockableBeneathMouse() == null){
 				return null;
 			}
@@ -302,23 +304,25 @@ public class ToolbarContainerDropInfo implements StationDropOperation{
 			} else{
 				switch (stationHost.getOrientation(getArea())) {
 				case VERTICAL:
-					if (coordDockableDragged.getY() <= coordDockableBeneathMouse.getY()){
-						return Position.SOUTH;
-					} else{
+					if (coordDockableDragged.getY() <= coordDockableBeneathMouse
+							.getY()){
 						return Position.NORTH;
+					} else{
+						return Position.SOUTH;
 					}
 				case HORIZONTAL:
-					if (coordDockableDragged.getX() <= coordDockableBeneathMouse.getX()){
-						return Position.WEST;
-					} else{
+					if (coordDockableDragged.getX() <= coordDockableBeneathMouse
+							.getX()){
 						return Position.EAST;
+					} else{
+						return Position.WEST;
 					}
 				}
 			}
 			throw new IllegalArgumentException();
-		} else {
+		} else{
 			return null;
-		}		
+		}
 	}
 
 	/**

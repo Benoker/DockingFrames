@@ -223,72 +223,61 @@ public abstract class ToolbarDropInfo<S extends AbstractToolbarDockStation>
 	private Dockable computeDockableBeneathMouse(){
 		// if there's no dockable, then the index is 0
 		final int dockableCount = stationHost.getDockableCount();
-		if (dockableCount <= 0) {
+		if (dockableCount <= 0){
 			return null;
 		}
 		// mouse coordinates
 		final Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
 		final Dockable stationDockable = (Dockable) stationHost;
-		OverpaintablePanel over = (OverpaintablePanel) stationDockable.getComponent();
+		OverpaintablePanel over = (OverpaintablePanel) stationDockable
+				.getComponent();
 		// variables for loop search
-		double formerDistance;		
+		double formerDistance;
 		OrientedDockStation orientedStation = (OrientedDockStation) stationHost;
-		Point middleCoordinate = new Point ((int)stationHost.getDockable(0).getComponent()
-				.getBounds().getCenterX(), (int) stationHost.getDockable(0).getComponent()
-				.getBounds().getCenterY());
-		SwingUtilities.convertPointToScreen(middleCoordinate, stationHost.getDockable(0).getComponent());
+		Point middleCoordinate = new Point((int) stationHost.getDockable(0)
+				.getComponent().getBounds().getCenterX(), (int) stationHost
+				.getDockable(0).getComponent().getBounds().getCenterY());
+		SwingUtilities.convertPointToScreen(middleCoordinate, stationHost
+				.getDockable(0).getComponent());
 		int index = 0;
 		switch (orientedStation.getOrientation()) {
 		case VERTICAL:
 			// loop on dockables too see which of them is closer of the mouse
-			formerDistance = Math.abs(mouseCoordinate.getY() - middleCoordinate.y);
+			formerDistance = Math.abs(mouseCoordinate.getY()
+					- middleCoordinate.y);
 			for (int i = 1; i < dockableCount; i++){
-				middleCoordinate = new Point ((int)stationHost.getDockable(i).getComponent()
-						.getBounds().getCenterX(), (int) stationHost.getDockable(i).getComponent()
-						.getBounds().getCenterY());
-				SwingUtilities.convertPointToScreen(middleCoordinate, stationHost.getDockable(i).getComponent());
+				middleCoordinate = new Point((int) stationHost.getDockable(i)
+						.getComponent().getBounds().getCenterX(),
+						(int) stationHost.getDockable(i).getComponent()
+								.getBounds().getCenterY());
+				SwingUtilities.convertPointToScreen(middleCoordinate,
+						stationHost.getDockable(i).getComponent());
 				if (Math.abs(mouseCoordinate.getY() - middleCoordinate.y) < formerDistance){
 					// the mouse is closer of the former dockable
 					index = i;
 				}
-				formerDistance = Math.abs(mouseCoordinate.getY() - middleCoordinate.y);
+				formerDistance = Math.abs(mouseCoordinate.getY()
+						- middleCoordinate.y);
 			}
 			return stationHost.getDockable(index);
 		case HORIZONTAL:
-			formerDistance = Math.abs(mouseCoordinate.getX() - middleCoordinate.x);
+			formerDistance = Math.abs(mouseCoordinate.getX()
+					- middleCoordinate.x);
 			for (int i = 1; i < dockableCount; i++){
-				middleCoordinate = new Point ((int)stationHost.getDockable(i).getComponent()
-						.getBounds().getCenterX(), (int) stationHost.getDockable(i).getComponent()
-						.getBounds().getCenterY());
-				SwingUtilities.convertPointToScreen(middleCoordinate, stationHost.getDockable(i).getComponent());
+				middleCoordinate = new Point((int) stationHost.getDockable(i)
+						.getComponent().getBounds().getCenterX(),
+						(int) stationHost.getDockable(i).getComponent()
+								.getBounds().getCenterY());
+				SwingUtilities.convertPointToScreen(middleCoordinate,
+						stationHost.getDockable(i).getComponent());
 				if (Math.abs(mouseCoordinate.getX() - middleCoordinate.x) < formerDistance){
 					// the mouse is closer of the former dockable
 					index = i;
 				}
-				formerDistance = Math.abs(mouseCoordinate.getX() - middleCoordinate.x);
+				formerDistance = Math.abs(mouseCoordinate.getX()
+						- middleCoordinate.x);
 			}
 			return stationHost.getDockable(index);
-			
-			
-			
-			
-////			System.out.println("HORIZONTAL");
-//			// loop on dockables too see which of them is closer of the mouse
-//			double middleX = (stationHost.getDockable(0).getComponent()
-//					.getBounds().getMinX() + stationHost.getDockable(0)
-//					.getComponent().getBounds().getMaxX()) / 2.0;
-//			formerDistance = Math.abs(mouseCoordinate.getX() - middleX);
-//			for (int i = 1; i < dockableCount; i++){
-//				middleX = (stationHost.getDockable(i).getComponent()
-//						.getBounds().getMinX() + stationHost.getDockable(i)
-//						.getComponent().getBounds().getMaxX()) / 2.0;
-//				if (Math.abs(mouseCoordinate.getX() - middleX) >= formerDistance){
-//					// the mouse is closer of the former dockable
-//					return stationHost.getDockable(i - 1);
-//				}
-//				formerDistance = Math.abs(mouseCoordinate.getX() - middleX);
-//			}
-//			return stationHost.getDockable(dockableCount - 1);
 		}
 		throw new IllegalArgumentException();
 	}
@@ -308,9 +297,6 @@ public abstract class ToolbarDropInfo<S extends AbstractToolbarDockStation>
 			// beneath mouse
 			SwingUtilities.convertPointFromScreen(coordDockableDragged,
 					getDockableBeneathMouse().getComponent());
-			if (getDockableBeneathMouse() == null){
-				return null;
-			}
 			if (getItem() == getDockableBeneathMouse()){
 				return Position.CENTER;
 			} else{
@@ -318,16 +304,16 @@ public abstract class ToolbarDropInfo<S extends AbstractToolbarDockStation>
 				case VERTICAL:
 					if (coordDockableDragged.getY() <= coordDockableBeneathMouse
 							.getY()){
-						return Position.SOUTH;
-					} else{
 						return Position.NORTH;
+					} else{
+						return Position.SOUTH;
 					}
 				case HORIZONTAL:
 					if (coordDockableDragged.getX() <= coordDockableBeneathMouse
 							.getX()){
-						return Position.WEST;
-					} else{
 						return Position.EAST;
+					} else{
+						return Position.WEST;
 					}
 				}
 			}

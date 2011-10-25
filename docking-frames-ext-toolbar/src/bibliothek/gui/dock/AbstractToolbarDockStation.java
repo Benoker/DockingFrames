@@ -476,6 +476,7 @@ public abstract class AbstractToolbarDockStation extends
 	 * @param dropInfo
 	 */
 	private void drop( ToolbarDropInfo<?> dropInfo ){
+		// System.out.println(dropInfo.toSummaryString());
 		if (dropInfo.getItemPositionVSBeneathDockable() != Position.CENTER){
 			// Note: Computation of index to insert drag dockable is not the
 			// same
@@ -486,6 +487,7 @@ public abstract class AbstractToolbarDockStation extends
 			// move()...)
 			int dropIndex;
 			int indexBeneathMouse = indexOf(dropInfo.getDockableBeneathMouse());
+			// System.out.println("	=> Drop index beneath mouse: " + indexBeneathMouse);
 			if (dropInfo.isMove()){
 				switch (this.getOrientation()) {
 				case VERTICAL:
@@ -530,7 +532,7 @@ public abstract class AbstractToolbarDockStation extends
 				dropIndex = indexBeneathMouse + increment;
 				drop(dropInfo.getItem(), dropIndex);
 			}
-			System.out.println(dropInfo.toSummaryString());
+			// System.out.println(dropInfo.toSummaryString());
 		}
 	}
 
