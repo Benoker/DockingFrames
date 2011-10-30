@@ -8,6 +8,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.ToolbarTabDockStation;
 
 /**
  * The default implementation of {@link ToolbarStrategy}.
@@ -65,6 +66,9 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 		// return true;
 		// }
 		if( child instanceof ToolbarDockStation && parent instanceof ScreenDockStation ) {
+			return true;
+		}
+		if( child instanceof ComponentDockable && parent instanceof ToolbarTabDockStation ){
 			return true;
 		}
 		return parent instanceof ToolbarInterface;

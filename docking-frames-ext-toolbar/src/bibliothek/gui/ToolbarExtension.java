@@ -29,6 +29,7 @@ import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
 import bibliothek.gui.dock.control.relocator.Merger;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
@@ -45,6 +46,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockTitle;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
+import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
@@ -105,8 +107,26 @@ public class ToolbarExtension implements Extension{
 		icons.setIconDefault( "toolbar.item.shrink", loadIcon( "shrink.png" ) );
 		
 		controller.addActionGuard( new ExpandedActionGuard( controller ) );
+		
+		// add or remove a filter for preventing fullscreen
+		final ToolbarFullscreenFilter filter = new ToolbarFullscreenFilter( controller );
+		controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
+			@Override
+			public void dockStationRegistering( DockController controller, DockStation station ){
+				if( station instanceof ScreenDockStation ){
+					((ScreenDockStation)station).addFullscreenFilter( filter );
+				}
+			}
+			
+			@Override
+			public void dockStationUnregistered( DockController controller, DockStation station ){
+				if( station instanceof ScreenDockStation ){
+					((ScreenDockStation)station).removeFullscreenFilter( filter );
+				}
+			}
+		});
 	}
-
+	
 	private Icon loadIcon( String name ){
 		try{
 			InputStream in = getClass().getResourceAsStream( "/data/bibliothek/gui/toolbar/" + name );

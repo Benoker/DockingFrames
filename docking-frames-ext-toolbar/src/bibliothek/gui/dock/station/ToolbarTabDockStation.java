@@ -9,6 +9,7 @@ import bibliothek.gui.dock.StackDockStation;
 public class ToolbarTabDockStation extends StackDockStation{
 	public ToolbarTabDockStation(){
 		setSmallMinimumSize( false );
+		setTitleIcon( null );
 	}
 	
 	@Override

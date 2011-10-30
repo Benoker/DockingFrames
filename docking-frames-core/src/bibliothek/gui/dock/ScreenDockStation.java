@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
@@ -66,6 +66,8 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockWindowFactory;
+import bibliothek.gui.dock.station.screen.FullscreenActionSource;
+import bibliothek.gui.dock.station.screen.ScreenDockFullscreenFilter;
 import bibliothek.gui.dock.station.screen.ScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
@@ -325,6 +327,12 @@ public class ScreenDockStation extends AbstractDockStation {
 				parent = dockable == null ? null : dockable.getDockParent();
 			}
 			if( parent == ScreenDockStation.this ){
+				for( ScreenDockFullscreenFilter filter : filters ){
+					if( !filter.isFullscreenEnabled( dockable )){
+						return false;
+					}
+				}
+				
 				boolean state = isFullscreen( dockable );
 				setFullscreen( dockable, !state );
 				return true;
@@ -334,6 +342,12 @@ public class ScreenDockStation extends AbstractDockStation {
 		}
 	};
     
+	/** a list of filters that can disable fullscreen mode for some windows */
+	private List<ScreenDockFullscreenFilter> filters = new ArrayList<ScreenDockFullscreenFilter>();
+	
+	/** all the {@link FullscreenActionSource}s that are currently used */
+	private List<FullscreenActionSource> filterSources = new LinkedList<FullscreenActionSource>();
+	
     /**
      * Constructs a new <code>ScreenDockStation</code>.
      * @param owner the window which will be used as parent for the 
@@ -432,14 +446,11 @@ public class ScreenDockStation extends AbstractDockStation {
         this.fullscreenAction = fullScreenAction;
     }
 
-    public DefaultDockActionSource getDirectActionOffers( Dockable dockable ) {
+    public DockActionSource getDirectActionOffers( Dockable dockable ) {
         if( fullscreenAction == null )
             return null;
         else{
-            DefaultDockActionSource source = new DefaultDockActionSource(new LocationHint( LocationHint.DIRECT_ACTION, LocationHint.VERY_RIGHT ));
-            source.add( fullscreenAction );
-
-            return source;
+            return createFullscreenSource( dockable, new LocationHint( LocationHint.DIRECT_ACTION, LocationHint.VERY_RIGHT ));
         }
     }
 
@@ -462,9 +473,34 @@ public class ScreenDockStation extends AbstractDockStation {
         if( parent != this )
             return null;
 
-        DefaultDockActionSource source = new DefaultDockActionSource( fullscreenAction );
-        source.setHint( new LocationHint( LocationHint.INDIRECT_ACTION, LocationHint.VERY_RIGHT ));
-        return source;
+        return createFullscreenSource( dockable, new LocationHint( LocationHint.INDIRECT_ACTION, LocationHint.VERY_RIGHT ));
+    }
+    
+    private DockActionSource createFullscreenSource( final Dockable dockable, LocationHint hint ){
+    	return new FullscreenActionSource( fullscreenAction, hint ){
+    		private boolean listening;
+    		
+    		protected boolean isFullscreenEnabled(){
+    			for( ScreenDockFullscreenFilter filter : filters ){
+    				if( !filter.isFullscreenEnabled( dockable )){
+    					return false;
+    				}
+    			}
+    			return true;
+    		}
+    		
+    		protected void listen( boolean listening ){
+    			if( this.listening != listening ){
+    				this.listening = listening;
+	    			if( listening ){
+	    				filterSources.add( this );
+	    			}
+	    			else{
+	    				filterSources.remove( this );
+	    			}
+    			}
+    		}
+    	};
     }
     
     /**
@@ -1018,6 +1054,32 @@ public class ScreenDockStation extends AbstractDockStation {
     		throw new IllegalArgumentException( "dockable is not known to this station" );
     	}
     	window.setFullscreen( fullscreen );
+    }
+    
+    /**
+     * Adds the new filter <code>filter</code> to this station. The filter can deny {@link Dockable}s the
+     * possibility of being in fullscreen mode.
+     * @param filter the new filter, not <code>null</code>
+     */
+    public void addFullscreenFilter( ScreenDockFullscreenFilter filter ){
+    	filters.add( filter );
+    	filterChanged();
+    }
+    
+    /**
+     * Removes <code>filter</code> from this station.
+     * @param filter the filter to remove
+     * @see #addFullscreenFilter(ScreenDockFullscreenFilter)
+     */
+    public void removeFullscreenFilter( ScreenDockFullscreenFilter filter ){
+    	filters.remove( filter );
+    	filterChanged();
+    }
+    
+    private void filterChanged(){
+    	for( FullscreenActionSource source : filterSources ){
+    		source.update();
+    	}
     }
     
     /**

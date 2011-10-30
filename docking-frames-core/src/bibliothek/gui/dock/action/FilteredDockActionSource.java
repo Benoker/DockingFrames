@@ -39,66 +39,6 @@ import bibliothek.gui.dock.event.DockActionSourceListener;
  *
  */
 public abstract class FilteredDockActionSource extends AbstractDockActionSource{
-	/*
-	public static void main( String[] args ){
-		SimpleButtonAction a = new SimpleButtonAction();
-		a.setText( "a" );
-		
-		SimpleButtonAction b = new SimpleButtonAction();
-		b.setText( "b" );
-		
-		SimpleButtonAction c = new SimpleButtonAction();
-		c.setText( "c" );
-		
-		SimpleButtonAction A = new SimpleButtonAction();
-		A.setText( "A" );
-		
-		SimpleButtonAction B = new SimpleButtonAction();
-		B.setText( "B" );
-		
-		SimpleButtonAction C = new SimpleButtonAction();
-		C.setText( "C" );
-		
-		DefaultDockActionSource def = new DefaultDockActionSource();
-		FilteredDockActionSource source = new FilteredDockActionSource( def ){
-			@Override
-			protected boolean include( DockAction action ){
-				SimpleButtonAction button = (SimpleButtonAction)action;
-				return Character.isUpperCase( button.getText().charAt( 0 ) );
-			}
-		};
-		
-		source.addDockActionSourceListener( new DockActionSourceListener(){
-			public void actionsAdded( DockActionSource source, int firstIndex, int lastIndex ){
-				System.out.println( "+ " + firstIndex + "/" + lastIndex );
-			}
-
-			public void actionsRemoved( DockActionSource source, int firstIndex, int lastIndex ){
-				System.out.println( "- " + firstIndex + "/" + lastIndex );
-			}			
-		});
-		
-		print( source );
-		def.add( a, A, b, B );
-		print( source );
-		def.add( 0, C, c );
-		print( source );
-		def.remove( a );
-		print( source );
-		def.remove( A );
-		print( source );
-		def.remove( 0, def.getDockActionCount() );
-		print( source );
-	}
-	
-	private static void print( DockActionSource s ){
-		System.out.print( s.getDockActionCount() + " >" );
-		for( DockAction action : s )
-			System.out.print( " " + ((SimpleButtonAction)action).getText() );
-		System.out.println();
-	}
-	*/
-	
 	/** the source from which DockActions are fetched */
 	private DockActionSource source;
 	
