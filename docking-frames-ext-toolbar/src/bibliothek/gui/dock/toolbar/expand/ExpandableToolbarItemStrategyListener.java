@@ -15,16 +15,24 @@ public interface ExpandableToolbarItemStrategyListener {
 	public void expanded( Dockable item );
 	
 	/**
+	 * Called if <code>item</code> was stretched.
+	 * @param item the item whose state changed
+	 */
+	public void stretched( Dockable item );
+	
+	/**
 	 * Called if <code>item</code> was made small.
 	 * @param item the item show state changed
 	 */
 	public void shrunk( Dockable item );
 	
 	/**
-	 * Called if the {@link ExpandableToolbarItemStrategy#isExpandable(Dockable)} property
-	 * changed for <code>item</code>.
-	 * @param item the item whose state changed
-	 * @param expandable the new state
+	 * Called if the result of {@link ExpandableToolbarItemStrategy#isEnabled(Dockable, ExpandedState)} changed
+	 * for <code>item</code> and <code>state</code>.
+	 * @param item the item whose enablement changed
+	 * @param state the state whose enablement changed
+	 * @param enabled whether <code>item</code> can be in mode <code>state</code>
 	 */
-	public void expandableChanged( Dockable item, boolean expandable );
+	public void enablementChanged( Dockable item, ExpandedState state, boolean enabled );
+	
 }

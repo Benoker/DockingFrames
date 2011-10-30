@@ -56,6 +56,9 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
+import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
+import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
@@ -71,7 +74,7 @@ import bibliothek.util.Path;
  */
 public abstract class AbstractToolbarDockStation extends
 		AbstractDockableStation implements PositionedDockStation,
-		OrientedDockStation, ToolbarInterface, ToolbarElementInterface{
+		OrientedDockStation, ToolbarInterface, ToolbarElementInterface, ExpandableToolbarItem{
 
 	/**
 	 * The graphical representation of this station: the pane which contains
@@ -108,8 +111,11 @@ public abstract class AbstractToolbarDockStation extends
 	/** all registered {@link OrientingDockStationListener}s. */
 	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
 
-	/** all registered {@link ToolbarDockStationListener}s */
-	private List<ToolbarDockStationListener> toolbarListeners = new ArrayList<ToolbarDockStationListener>();
+	/** all registered {@link ExpandableToolbarItemListener}s */
+	private List<ExpandableToolbarItemListener> expandableListeners = new ArrayList<ExpandableToolbarItemListener>();
+	
+	/** the current behavior of this station */
+	private ExpandedState state = ExpandedState.SHRUNK;
 	
 	/** current {@link PlaceholderStrategy} */
 	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
@@ -198,58 +204,80 @@ public abstract class AbstractToolbarDockStation extends
 		// there's no child which is more important than another
 	}
 
-	public boolean isExpanded(){
-		return getDockableCount() == 1 && getDockable( 0 ) instanceof ToolbarTabDockStation;
+	public ExpandedState getExpandedState(){
+		return state;
 	}
 	
-	public void expand(){
-		DockController controller = getController();
-		if( controller != null ){
-			controller.freezeLayout();
-		}
-		try{
-			Dockable focused = null;
-			
-			Dockable[] children = new Dockable[ getDockableCount() ];
-			for( int i = 0; i < children.length; i++ ){
-				children[ i ] = getDockable( i );
-				if( controller != null && controller.isFocused( children[ i ] )){
-					focused = children[ i ];
+	public void setExpandedState( ExpandedState state ){
+		if( this.state != state ){
+			DockController controller = getController();
+			if( controller != null ){
+				controller.freezeLayout();
+			}
+			try{
+				ExpandedState oldState = this.state;
+				
+				if( this.state != ExpandedState.SHRUNK ){
+					shrink();
+				}
+				if( state == ExpandedState.EXPANDED ){
+					expand();
+				}
+				else if( state == ExpandedState.STRETCHED ){
+					stretch();
+				}
+				this.state = state;
+				
+				for( ExpandableToolbarItemListener listener : expandableListeners ){
+					listener.changed( this, oldState, state );
 				}
 			}
-			
-			for( int i = children.length-1; i >= 0; i-- ){
-				remove( i );
-			}
-			
-			StackDockStation station = new ToolbarTabDockStation();
-			for( Dockable child : children ){
-				station.drop( child );
-			}
-			
-			drop( station );
-			if( focused != null ){
-				station.setFrontDockable( focused );
-				controller.setFocusedDockable( focused, true );
-			}
-			
-			for( ToolbarDockStationListener listener : toolbarListeners() ){
-				listener.expanded( this );
+			finally{
+				if( controller != null ){
+					controller.meltLayout();
+				}
 			}
 		}
-		finally{
-			if( controller != null ){
-				controller.meltLayout();
+	}
+	
+	private void expand(){
+		// state is "shrunk"
+		
+		DockController controller = getController();
+		Dockable focused = null;
+		
+		Dockable[] children = new Dockable[ getDockableCount() ];
+		for( int i = 0; i < children.length; i++ ){
+			children[ i ] = getDockable( i );
+			if( controller != null && controller.isFocused( children[ i ] )){
+				focused = children[ i ];
 			}
 		}
+		
+		for( int i = children.length-1; i >= 0; i-- ){
+			remove( i );
+		}
+		
+		StackDockStation station = new ToolbarTabDockStation();
+		for( Dockable child : children ){
+			station.drop( child );
+		}
+		
+		drop( station );
+		if( focused != null ){
+			station.setFrontDockable( focused );
+			controller.setFocusedDockable( focused, true );
+		}
+	}
+	
+	public void stretch(){
+		// state is "shrunk"
 	}
 	
 	public void shrink(){
-		DockController controller = getController();
-		if( controller != null ){
-			controller.freezeLayout();
-		}
-		try{
+		if( state == ExpandedState.EXPANDED ){
+			DockController controller = getController();
+		
 			DockStation child = getDockable( 0 ).asDockStation();
 			Dockable focused = child.getFrontDockable();
 			remove( 0 );
@@ -267,15 +295,6 @@ public abstract class AbstractToolbarDockStation extends
 			}
 			if( focused != null && controller != null ){
 				controller.setFocusedDockable( focused, true );
-			}
-			
-			for( ToolbarDockStationListener listener : toolbarListeners() ){
-				listener.expanded( this );
-			}
-		}
-		finally{
-			if( controller != null ){
-				controller.meltLayout();
 			}
 		}
 	}
@@ -506,7 +525,7 @@ public abstract class AbstractToolbarDockStation extends
 		System.out.println(this.toString() + "## prepareDrop(...) ##");
 		DockController controller = getController();
 		
-		if( isExpanded() ){
+		if( getExpandedState() == ExpandedState.EXPANDED ){
 			return null;
 		}
 		
@@ -786,7 +805,7 @@ public abstract class AbstractToolbarDockStation extends
 
 	@Override
 	public boolean canDrag( Dockable dockable ){
-		if( isExpanded() ){
+		if( getExpandedState() == ExpandedState.EXPANDED ){
 			return false;
 		}
 		
@@ -1092,31 +1111,23 @@ public abstract class AbstractToolbarDockStation extends
 		return this.position;
 	}
 
-	/**
-	 * Adds the new observer <code>listener</code> to this station.
-	 * @param listener the new observer, not <code>null</code>
-	 */
-	public void addToolbarDockStationListener( ToolbarDockStationListener listener ){
+	public void addExpandableListener( ExpandableToolbarItemListener listener ) {
 		if( listener == null ){
 			throw new IllegalArgumentException( "listener must not be null" );
 		}
-		toolbarListeners.add( listener );
+		expandableListeners.add( listener );
+	}
+	
+	public void removeExpandableListener( ExpandableToolbarItemListener listener ){
+		expandableListeners.remove( listener );
 	}
 	
 	/**
-	 * Removes the observer <code>listener</code> from this station.
-	 * @param listener the listener to remove
-	 */
-	public void removeToolbarDockStationListener( ToolbarDockStationListener listener ){
-		toolbarListeners.remove( listener );
-	}
-	
-	/**
-	 * Gets all the {@link ToolbarDockStationListener}s that are currently registered.
+	 * Gets all the {@link ExpandableToolbarItemListener}s that are currently registered.
 	 * @return all the listeners
 	 */
-	protected ToolbarDockStationListener[] toolbarListeners(){
-		return toolbarListeners.toArray( new ToolbarDockStationListener[ toolbarListeners.size() ] );
+	protected ExpandableToolbarItemListener[] expandableListeners(){
+		return expandableListeners.toArray( new ExpandableToolbarItemListener[ expandableListeners.size() ] );
 	}
 	
 	public void addOrientingDockStationListener(

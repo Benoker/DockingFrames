@@ -4,6 +4,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemStrategyListener;
+import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
@@ -14,6 +15,8 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
  * @author Benjamin Sigg
  */
 public interface ExpandableToolbarItemStrategy {
+
+	
 	/** an identifier to exchange the strategy */
 	public static final PropertyKey<ExpandableToolbarItemStrategy> STRATEGY = 
 			new PropertyKey<ExpandableToolbarItemStrategy>( "expandable toolbar item strategy", new DynamicPropertyFactory<ExpandableToolbarItemStrategy>(){
@@ -36,26 +39,27 @@ public interface ExpandableToolbarItemStrategy {
 	public void uninstall( DockController controller );
 	
 	/**
-	 * Tells whether the {@link Dockable} <code>item</code> can be expanded or shrunk.
-	 * @param item the item which is to be tested
-	 * @return <code>true</code> if this strategy knows how to handle <code>item</code>
+	 * Tells whether the {@link Dockable} <code>item</code> can have the state <code>state</code>.
+	 * @param item the item to check
+	 * @param state the state that might be applied to <code>item</code>
+	 * @return <code>true</code> if this strategy knows how to change the state of <code>item</code>
+	 * to <code>state</code>
 	 */
-	public boolean isExpandable( Dockable item );
+	public boolean isEnabled( Dockable item, ExpandedState state );
+
+	/**
+	 * Gets the current state <code>item</code> has.
+	 * @param item some {@link Dockable}
+	 * @return the state or <code>null</code> if <code>item</code> is not supported by this strategy.
+	 */
+	public ExpandedState getState( Dockable item );
 	
 	/**
-	 * Tells whether this item is in its "large" state.
-	 * @param item the item whose state is requested
-	 * @return <code>true</code> if this item is large
+	 * Changes the state of <code>item</code> to <code>state</code>.
+	 * @param item the item whose state is changed
+	 * @param state the new state, this is a state which is {@link #isEnabled(Dockable, ExpandedState) enabled}
 	 */
-	public boolean isExpanded( Dockable item );
-	
-	/**
-	 * Tells the <code>item</code> to show up in its "large" state.
-	 * @param item the item whose state should be changed 
-	 * @param expanded <code>true</code> if this item should make itself
-	 * large, <code>false</code> if it should make itself small
-	 */
-	public void setExpanded( Dockable item, boolean expanded );
+	public void setState( Dockable item, ExpandedState state );
 	
 	/**
 	 * Adds a listener to this strategy, the listener is to be informed if the state of

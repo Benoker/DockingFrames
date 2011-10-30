@@ -24,8 +24,14 @@ public class ExpandedActionGuard implements ActionGuard{
 	/** all the {@link ExpandSource}s that are currently used */
 	private Map<Dockable, ExpandSource> sources = new HashMap<Dockable, ExpandSource>();
 	
-	/** the action that is added to all {@link Dockable}s */
-	private ExpandAction action;
+	/** action added to enlarge {@link Dockable}s */
+	private DockAction largerAction;
+	
+	/** action added to shrink {@link Dockable}s */
+	private DockAction smallerAction;
+	
+	/** action added to switch {@link Dockable}s between two state */
+	private DockAction switchAction;
 
 	/** where to show {@link #action} */
 	private LocationHint locationHint = new LocationHint( LocationHint.ACTION_GUARD, LocationHint.LITTLE_RIGHT );
@@ -47,7 +53,7 @@ public class ExpandedActionGuard implements ActionGuard{
 				newValue.install( controller );
 				for( ExpandSource source : sources.values() ){
 					newValue.addExpandedListener( source );
-					source.expandableChanged( source.dockable, newValue.isExpandable( source.dockable ) );
+					source.update();
 				}
 			}
 		}
@@ -60,7 +66,10 @@ public class ExpandedActionGuard implements ActionGuard{
 	public ExpandedActionGuard( DockController controller ){
 		this.controller = controller;
 		strategy.setProperties( controller );
-		action = new ExpandAction( controller );
+		
+		largerAction = new LargeExpandAction( controller );
+		smallerAction = new SmallExpandAction( controller );
+		switchAction = new SwitchExpandAction( controller );
 	}
 	
 	@Override
@@ -105,7 +114,7 @@ public class ExpandedActionGuard implements ActionGuard{
 	 */
 	private class ExpandSource extends AbstractDockActionSource implements ExpandableToolbarItemStrategyListener{
 		private Dockable dockable;
-		private boolean showing = false;
+		private int stateCount;
 		
 		/**
 		 * Creates a new source.
@@ -115,16 +124,40 @@ public class ExpandedActionGuard implements ActionGuard{
 			this.dockable = dockable;
 		}
 		
+		private void calculateStateCount(){
+			stateCount = 0;
+			ExpandableToolbarItemStrategy strategy = getStrategy();
+			for( ExpandedState state : ExpandedState.values() ){
+				if( strategy.isEnabled( dockable, state )){
+					stateCount++;
+				}
+			}
+		}
+		
 		@Override
-		public void expandableChanged( Dockable item, boolean expandable ){
+		public void enablementChanged( Dockable item, ExpandedState state, boolean enabled ){
 			if( item == dockable ){
-				if( showing != expandable ){
-					showing = expandable;
-					if( showing ){
-						fireAdded( 0, 0 );
+				update();
+			}
+		}
+		
+		/**
+		 * Updates the actions that are shown on this source.
+		 */
+		public void update(){
+			if( hasListeners() ){
+				int oldCount = getDockActionCount();
+				calculateStateCount();
+				int newCount = getDockActionCount();
+				
+				if( oldCount != newCount ){
+					stateCount = 0;
+					if( oldCount > 0 ){
+						fireRemoved( 0, oldCount-1 );
 					}
-					else{
-						fireRemoved( 0, 0 );
+					calculateStateCount();
+					if( newCount > 0 ){
+						fireAdded( 0, newCount-1 );
 					}
 				}
 			}
@@ -157,24 +190,34 @@ public class ExpandedActionGuard implements ActionGuard{
 			if( index < 0 || index >= getDockActionCount() ){
 				throw new IllegalArgumentException( "index out of bounds" );
 			}
-			return action;
+			if( stateCount == 2 ){
+				return switchAction;
+			}
+			else{
+				if( index == 0 ){
+					return smallerAction;
+				}
+				else{
+					return largerAction;
+				}
+			}
 		}
 		
 		@Override
 		public int getDockActionCount(){
-			if( hasListeners() ){
-				if( showing ){
-					return 1;
-				}
-				else{
+			if( !hasListeners() ){
+				calculateStateCount();
+			}
+			switch( stateCount ){
+				case 0:
+				case 1:
 					return 0;
-				}
-			}
-			if( getStrategy().isExpandable( dockable )){
-				return 1;
-			}
-			else{
-				return 0;
+				case 2:
+					return 1;
+				case 3:
+					return 2;
+				default:
+					return 0;
 			}
 		}
 		
@@ -187,7 +230,7 @@ public class ExpandedActionGuard implements ActionGuard{
 		public void addDockActionSourceListener( DockActionSourceListener listener ){
 			if( !hasListeners() ){
 				set( this, true );
-				showing = getStrategy().isExpandable( dockable );
+				calculateStateCount();
 			}
 			super.addDockActionSourceListener( listener );
 		}
@@ -210,5 +253,9 @@ public class ExpandedActionGuard implements ActionGuard{
 			// ignore
 		}
 		
+		@Override
+		public void stretched( Dockable item ){
+			// ignore
+		}
 	}
 }
