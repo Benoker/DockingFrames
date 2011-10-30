@@ -783,7 +783,13 @@ public class CControl {
     	ResourceBundle bundleCore = ResourceBundle.getBundle( "data.bibliothek.gui.dock.core.locale.text", locale, DockController.class.getClassLoader() );
     	ResourceBundle bundleCommon = ResourceBundle.getBundle( "data.bibliothek.gui.dock.common.locale.common", locale, CControl.class.getClassLoader() );
     	
-    	getController().getTexts().setScheme( Priority.DEFAULT, new DefaultTextScheme( bundleCommon, bundleCore ) );
+    	List<ResourceBundle> list = getController().getTexts().loadExtensionBundles( locale );
+    	
+    	ResourceBundle[] bundles = list.toArray( new ResourceBundle[ list.size() + 2 ] );
+    	bundles[ bundles.length-2 ] = bundleCore;
+    	bundles[ bundles.length-1 ] = bundleCommon;
+    	
+    	getController().getTexts().setScheme( Priority.DEFAULT, new DefaultTextScheme( bundles ) );
     }
 
     /**

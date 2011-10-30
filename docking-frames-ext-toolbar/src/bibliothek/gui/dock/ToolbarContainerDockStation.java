@@ -209,6 +209,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 		};
 		sideDisplayers.addDockableDisplayerListener(listener);
 		centerDisplayers.addDockableDisplayerListener(listener);
+		setTitleIcon( null );
 	}
 
 	/**

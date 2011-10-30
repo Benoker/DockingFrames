@@ -111,9 +111,7 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 			this.component = component;
 		}
 
-		if( icon != null ) {
-			setTitleIcon( icon );
-		}
+		setTitleIcon( icon );
 		setTitleText( title );
 	}
 	

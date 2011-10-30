@@ -145,6 +145,8 @@ public abstract class AbstractToolbarDockStation extends
 						AbstractToolbarDockStation.this.discard(displayer);
 					}
 				});
+		
+		setTitleIcon( null );
 	}
 
 	/**
