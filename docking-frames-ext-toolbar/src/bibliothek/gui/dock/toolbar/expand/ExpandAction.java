@@ -80,39 +80,39 @@ public class ExpandAction extends GroupedButtonDockAction<Boolean>{
 		textExpand = new DockActionText( "toolbar.item.expand", this ){
 			@Override
 			protected void changed( String oldValue, String newValue ){
-				setText( Boolean.TRUE, newValue );	
-			}
-		};
-		textExpandTooltip = new DockActionText( "toolbar.item.expand.tooltip", this ){
-			@Override
-			protected void changed( String oldValue, String newValue ){
-				setTooltip( Boolean.TRUE, newValue );	
-			}
-		};
-		
-		textShrink = new DockActionText( "toolbar.item.shrink", this ){
-			@Override
-			protected void changed( String oldValue, String newValue ){
 				setText( Boolean.FALSE, newValue );	
 			}
 		};
-		textShrinkTooltip = new DockActionText( "toolbar.item.shrink.tooltip", this ){
+		textExpandTooltip = new DockActionText( "toolbar.item.expand.tooltip", this ){
 			@Override
 			protected void changed( String oldValue, String newValue ){
 				setTooltip( Boolean.FALSE, newValue );	
 			}
 		};
 		
+		textShrink = new DockActionText( "toolbar.item.shrink", this ){
+			@Override
+			protected void changed( String oldValue, String newValue ){
+				setText( Boolean.TRUE, newValue );	
+			}
+		};
+		textShrinkTooltip = new DockActionText( "toolbar.item.shrink.tooltip", this ){
+			@Override
+			protected void changed( String oldValue, String newValue ){
+				setTooltip( Boolean.TRUE, newValue );	
+			}
+		};
+		
 		iconExpand = new DockActionIcon( "toolbar.item.expand", this ){
 			@Override
 			protected void changed( Icon oldValue, Icon newValue ){
-				setIcon( Boolean.TRUE, newValue );
+				setIcon( Boolean.FALSE, newValue );
 			}
 		};
 		iconShrink = new DockActionIcon( "toolbar.item.shrink", this ){
 			@Override
 			protected void changed( Icon oldValue, Icon newValue ){
-				setIcon( Boolean.FALSE, newValue );
+				setIcon( Boolean.TRUE, newValue );
 			}
 		};
 		

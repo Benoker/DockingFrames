@@ -30,6 +30,9 @@ public class ExpandedActionGuard implements ActionGuard{
 	/** where to show {@link #action} */
 	private LocationHint locationHint = new LocationHint( LocationHint.ACTION_GUARD, LocationHint.LITTLE_RIGHT );
 	
+	/** the controller in whose realm this guard is used */
+	private DockController controller;
+	
 	/** the currently used strategy to decide which items are expandable and expanded */
 	private PropertyValue<ExpandableToolbarItemStrategy> strategy = new PropertyValue<ExpandableToolbarItemStrategy>( ExpandableToolbarItemStrategy.STRATEGY ){
 		@Override
@@ -38,8 +41,10 @@ public class ExpandedActionGuard implements ActionGuard{
 				for( ExpandSource source : sources.values() ){
 					oldValue.removeExpandedListener( source );
 				}
+				oldValue.uninstall( controller );
 			}
 			if( newValue != null ){
+				newValue.install( controller );
 				for( ExpandSource source : sources.values() ){
 					newValue.addExpandedListener( source );
 					source.expandableChanged( source.dockable, newValue.isExpandable( source.dockable ) );
@@ -48,7 +53,12 @@ public class ExpandedActionGuard implements ActionGuard{
 		}
 	};
 	
+	/**
+	 * Creates a new {@link ExpandedActionGuard}. 
+	 * @param controller the controller in whose realm this guard is used
+	 */
 	public ExpandedActionGuard( DockController controller ){
+		this.controller = controller;
 		strategy.setProperties( controller );
 		action = new ExpandAction( controller );
 	}

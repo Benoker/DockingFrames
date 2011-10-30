@@ -1,10 +1,12 @@
 package bibliothek.gui.dock;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemStrategyListener;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
  * An {@link ExpandableToolbarItemStrategy} is a strategy that allows to expand and
@@ -14,7 +16,24 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 public interface ExpandableToolbarItemStrategy {
 	/** an identifier to exchange the strategy */
 	public static final PropertyKey<ExpandableToolbarItemStrategy> STRATEGY = 
-			new PropertyKey<ExpandableToolbarItemStrategy>( "expandable toolbar item strategy", new ConstantPropertyFactory<ExpandableToolbarItemStrategy>( new DefaultExpandableToolbarItemStrategy() ), true );
+			new PropertyKey<ExpandableToolbarItemStrategy>( "expandable toolbar item strategy", new DynamicPropertyFactory<ExpandableToolbarItemStrategy>(){
+				@Override
+				public ExpandableToolbarItemStrategy getDefault( PropertyKey<ExpandableToolbarItemStrategy> key, DockProperties properties ){
+					return new DefaultExpandableToolbarItemStrategy();
+				}
+			}, true );
+	
+	/**
+	 * Called if this strategy is used by <code>controller</code>.
+	 * @param controller the controller using this strategy
+	 */
+	public void install( DockController controller );
+	
+	/**
+	 * Called if this strategy is no longer used by <code>controller</code>.
+	 * @param controller the controller which is no longer using this strategy
+	 */
+	public void uninstall( DockController controller );
 	
 	/**
 	 * Tells whether the {@link Dockable} <code>item</code> can be expanded or shrunk.

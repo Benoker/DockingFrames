@@ -3,7 +3,9 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2008 Benjamin Sigg
+ * Copy
+import java.awt.Dimension;
+right (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +30,7 @@ package bibliothek.gui.dock;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -198,6 +201,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /** A listener observing the children for changes of their icon or titletext */
     private Listener listener = new Listener();
+    
+    /** whether the result of {@link Component#getMinimumSize()} should be a small value */
+    private boolean smallMinimumSize = true;
     
     /** strategy for selecting placeholders */
     private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) {
@@ -624,7 +630,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public boolean isStationVisible() {
         DockStation parent = getDockParent();
         if( parent != null )
-            return parent.isVisible( this );
+            return parent.isChildShowing( this );
         else
             return panel.isDisplayable();
     }
@@ -867,7 +873,26 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	placeholderStrategy.setValue( strategy );
     }
     
-
+    /**
+     * Sets whether the result of {@link Component#getMinimumSize()} should be small. A small value
+     * allows clients to make this {@link StackDockStation} small if it is on a {@link SplitDockStation} or another station
+     * that pays attention to the minimum size. This even works if the {@link Dockable}s do not have a small minimum size.
+     * @param smallMinimumSize whether the minimum size should be really small
+     */
+    public void setSmallMinimumSize( boolean smallMinimumSize ){
+		this.smallMinimumSize = smallMinimumSize;
+		getComponent().invalidate();
+	}
+    
+    /**
+     * Tells whether the result of {@link Component#getMinimumSize()} should be small.
+     * @return whether the minimum size is small
+     * @see #setSmallMinimumSize(boolean)
+     */
+    public boolean isSmallMinimumSize(){
+		return smallMinimumSize;
+	}
+    
     public StationDropOperation prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
         DockStation parent = getDockParent();
         Point point = new Point( x, y );
@@ -1585,6 +1610,15 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             getBasePane().removeAll();
             getBasePane().setLayout( new BorderLayout() );
             getBasePane().add( content, BorderLayout.CENTER );
+        }
+        
+        public Dimension getMinimumSize(){
+        	if( isSmallMinimumSize() ){
+        		return new Dimension( 5, 5 );
+        	}
+        	else{
+        		return super.getMinimumSize();
+        	}
         }
         
         @Override

@@ -1,6 +1,9 @@
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.PositionedDockStation;
 import bibliothek.gui.Position;

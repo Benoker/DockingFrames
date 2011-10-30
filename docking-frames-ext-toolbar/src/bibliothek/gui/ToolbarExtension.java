@@ -34,6 +34,7 @@ import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.ToolbarMiniButton;
+import bibliothek.gui.dock.station.ToolbarTabDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDisplayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDockTitleFactory;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
@@ -185,6 +186,7 @@ public class ToolbarExtension implements Extension{
 		result.add( new ToolbarDockStationFactory() );
 		result.add( new ToolbarGroupDockStationFactory() );
 		result.add( new ToolbarContainerDockStationFactory() );
+		result.add( new ToolbarTabDockStationFactory() );
 		return result;
 	}
 	

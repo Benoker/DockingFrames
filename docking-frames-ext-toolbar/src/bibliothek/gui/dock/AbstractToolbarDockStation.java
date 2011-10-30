@@ -40,6 +40,7 @@ import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.ToolbarTabDockStation;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -107,6 +108,9 @@ public abstract class AbstractToolbarDockStation extends
 	/** all registered {@link OrientingDockStationListener}s. */
 	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
 
+	/** all registered {@link ToolbarDockStationListener}s */
+	private List<ToolbarDockStationListener> toolbarListeners = new ArrayList<ToolbarDockStationListener>();
+	
 	/** current {@link PlaceholderStrategy} */
 	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
 			PlaceholderStrategy.PLACEHOLDER_STRATEGY){
@@ -194,6 +198,88 @@ public abstract class AbstractToolbarDockStation extends
 		// there's no child which is more important than another
 	}
 
+	public boolean isExpanded(){
+		return getDockableCount() == 1 && getDockable( 0 ) instanceof ToolbarTabDockStation;
+	}
+	
+	public void expand(){
+		DockController controller = getController();
+		if( controller != null ){
+			controller.freezeLayout();
+		}
+		try{
+			Dockable focused = null;
+			
+			Dockable[] children = new Dockable[ getDockableCount() ];
+			for( int i = 0; i < children.length; i++ ){
+				children[ i ] = getDockable( i );
+				if( controller != null && controller.isFocused( children[ i ] )){
+					focused = children[ i ];
+				}
+			}
+			
+			for( int i = children.length-1; i >= 0; i-- ){
+				remove( i );
+			}
+			
+			StackDockStation station = new ToolbarTabDockStation();
+			for( Dockable child : children ){
+				station.drop( child );
+			}
+			
+			drop( station );
+			if( focused != null ){
+				station.setFrontDockable( focused );
+				controller.setFocusedDockable( focused, true );
+			}
+			
+			for( ToolbarDockStationListener listener : toolbarListeners() ){
+				listener.expanded( this );
+			}
+		}
+		finally{
+			if( controller != null ){
+				controller.meltLayout();
+			}
+		}
+	}
+	
+	public void shrink(){
+		DockController controller = getController();
+		if( controller != null ){
+			controller.freezeLayout();
+		}
+		try{
+			DockStation child = getDockable( 0 ).asDockStation();
+			Dockable focused = child.getFrontDockable();
+			remove( 0 );
+			
+			Dockable[] children = new Dockable[ child.getDockableCount() ];
+			for( int i = 0; i < children.length; i++ ){
+				children[ i ] = child.getDockable( i );
+			}
+			for( int i = children.length-1; i >= 0; i-- ){
+				child.drag( children[ i ] );
+			}
+			
+			for( Dockable next : children ){
+				drop( next );
+			}
+			if( focused != null && controller != null ){
+				controller.setFocusedDockable( focused, true );
+			}
+			
+			for( ToolbarDockStationListener listener : toolbarListeners() ){
+				listener.expanded( this );
+			}
+		}
+		finally{
+			if( controller != null ){
+				controller.meltLayout();
+			}
+		}
+	}
+	
 	/**
 	 * Gets the placeholders of this station using a
 	 * {@link PlaceholderListItemConverter} to encode the children. The
@@ -416,8 +502,14 @@ public abstract class AbstractToolbarDockStation extends
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+		
 		System.out.println(this.toString() + "## prepareDrop(...) ##");
 		DockController controller = getController();
+		
+		if( isExpanded() ){
+			return null;
+		}
+		
 		// check whether this station has to check if the mouse is in the
 		// override-zone of its parent & (if this parent exist) if
 		// the mouse is in the override-zone
@@ -541,7 +633,7 @@ public abstract class AbstractToolbarDockStation extends
 	@Override
 	public void drop( Dockable dockable ){
 		System.out.println(this.toString() + "## drop(Dockable dockable)##");
-		this.drop(dockable, getDockableCount());
+		this.drop(dockable, getDockableCount(), true);
 	}
 
 	@Override
@@ -644,14 +736,20 @@ public abstract class AbstractToolbarDockStation extends
 	 * @return whether the operation was succesfull or not
 	 */
 	public boolean drop( Dockable dockable, int index ){
+		return drop( dockable, index, false );
+	}
+	
+	private boolean drop( Dockable dockable, int index, boolean force ){
 		// note: merging of two ToolbarGroupDockStations is done by the
 		// ToolbarGroupDockStationMerger
 		System.out.println(this.toString()
 				+ "## drop(Dockable dockable, int index)##");
-		if (this.accept(dockable)){
-			dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
-			if (dockable == null){
-				return false;
+		if (force || this.accept(dockable)){
+			if( !force ){
+				dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+				if (dockable == null){
+					return false;
+				}
 			}
 			add(dockable, index);
 			return true;
@@ -688,6 +786,10 @@ public abstract class AbstractToolbarDockStation extends
 
 	@Override
 	public boolean canDrag( Dockable dockable ){
+		if( isExpanded() ){
+			return false;
+		}
+		
 		System.out.println(this.toString()
 				+ "## canDrag(Dockable dockable) ## ");
 		return true;
@@ -990,6 +1092,33 @@ public abstract class AbstractToolbarDockStation extends
 		return this.position;
 	}
 
+	/**
+	 * Adds the new observer <code>listener</code> to this station.
+	 * @param listener the new observer, not <code>null</code>
+	 */
+	public void addToolbarDockStationListener( ToolbarDockStationListener listener ){
+		if( listener == null ){
+			throw new IllegalArgumentException( "listener must not be null" );
+		}
+		toolbarListeners.add( listener );
+	}
+	
+	/**
+	 * Removes the observer <code>listener</code> from this station.
+	 * @param listener the listener to remove
+	 */
+	public void removeToolbarDockStationListener( ToolbarDockStationListener listener ){
+		toolbarListeners.remove( listener );
+	}
+	
+	/**
+	 * Gets all the {@link ToolbarDockStationListener}s that are currently registered.
+	 * @return all the listeners
+	 */
+	protected ToolbarDockStationListener[] toolbarListeners(){
+		return toolbarListeners.toArray( new ToolbarDockStationListener[ toolbarListeners.size() ] );
+	}
+	
 	public void addOrientingDockStationListener(
 			OrientingDockStationListener listener ){
 		orientingListeners.add(listener);

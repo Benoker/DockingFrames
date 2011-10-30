@@ -411,6 +411,14 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		meta.component.setVisible( getSelectedDockable() == dockable );
 	}
 
+	public Dimension getMinimumSize( Dockable dockable ){
+		return components.get( dockable ).getComponent().getMinimumSize();
+	}
+	
+	public Dimension getPreferredSize( Dockable dockable ){
+		return components.get( dockable ).getComponent().getPreferredSize();
+	}
+	
 	public Dockable getDockableAt( int index ){
 		return getDockable( index );
 	}

@@ -1,6 +1,7 @@
 package bibliothek.gui.dock.station;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 
@@ -68,5 +69,10 @@ public class ToolbarMiniButton extends BasicMiniButton{
 		
 		setMouseOverBorder( line );
 		setMousePressedBorder( line );
+	}
+	
+	@Override
+	protected Dimension getMinimumIconSize(){
+		return new Dimension( 3, 3 );
 	}
 }
