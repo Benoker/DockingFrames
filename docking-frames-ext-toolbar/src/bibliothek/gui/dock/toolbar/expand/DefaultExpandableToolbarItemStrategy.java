@@ -109,7 +109,10 @@ public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarIt
 
 	@Override
 	public ExpandedState getState( Dockable item ){
-		return ((ToolbarGroupDockStation) item).getExpandedState();
+		if( item instanceof ToolbarGroupDockStation ){
+			return ((ToolbarGroupDockStation) item).getExpandedState();
+		}
+		return null;
 	}
 
 	@Override
