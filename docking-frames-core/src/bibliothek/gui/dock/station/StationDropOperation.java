@@ -84,7 +84,7 @@ public interface StationDropOperation {
 	
 	/**
 	 * Some {@link DockStation}s may use the combining feature of {@link DockableDisplayer}s
-	 * ({@link DockableDisplayer#prepareCombination(bibliothek.gui.dock.station.support.CombinerSource, boolean)})
+	 * ({@link DockableDisplayer#prepareCombination(bibliothek.gui.dock.station.support.CombinerSource, bibliothek.gui.dock.station.support.Enforcement)})
 	 * to combine some {@link Dockable}s. This method returns the information that was provided by the displayer.<br>
 	 * If {@link #getCombination()} does not return <code>null</code>, then the result of 
 	 * {@link CombinerTarget#getDisplayerCombination()} and this method should be the same.

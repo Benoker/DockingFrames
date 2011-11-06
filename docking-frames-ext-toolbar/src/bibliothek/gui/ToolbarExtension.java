@@ -60,6 +60,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.toolbar.expand.ExpandManager;
 import bibliothek.gui.dock.toolbar.expand.ExpandedActionGuard;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
@@ -109,6 +110,7 @@ public class ToolbarExtension implements Extension{
 		icons.setIconDefault( "toolbar.item.smaller", loadIcon( "smaller.png" ) );
 		
 		controller.addActionGuard( new ExpandedActionGuard( controller ) );
+		new ExpandManager( controller );
 		
 		// add or remove a filter for preventing fullscreen
 		final ToolbarFullscreenFilter filter = new ToolbarFullscreenFilter( controller );

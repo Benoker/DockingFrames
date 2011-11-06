@@ -90,7 +90,7 @@ public class MediumBoundaryRestriction extends AbstractBoundaryRestriction{
 		
 		Rectangle result = new Rectangle( target );
 
-		result.width = Math.max( 100, result.width );
+		result.width = Math.max( 50, result.width );
 		result.height = Math.max( 50, result.height );
 		
 		result.x = Math.max( screen.x - center.x, result.x );

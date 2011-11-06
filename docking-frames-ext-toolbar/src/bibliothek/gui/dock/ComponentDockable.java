@@ -226,7 +226,7 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 				content.add( component, state.toString() );
 			}
 			
-			ExpandedState nearest = getNearestState( state );
+			ExpandedState nearest = getNearestState( this.state );
 			if( nearest != null ){
 				contentLayout.show( content, nearest.toString() );
 				content.revalidate();
