@@ -34,6 +34,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -170,11 +171,11 @@ public interface DockableDisplayer {
      * over it. This method is usually called by a {@link Combiner} or by a {@link DockStation}, but other modules
      * may call this method as well.
      * @param source information about the dockable that is dropped, the location of the mouse, etc...
-     * @param force if <code>false</code>, then this method should return <code>null</code> unless the mouse is
-     * at a very special, visually marked spot where an operation does not surprise the user. If <code>true</code>, then
-     * this method may or may not return <code>null</code>.
+     * @param force tells how much the caller would like the result not to be <code>null</code>, if the
+     * {@link Enforcement#getForce() force} property is high, then the result should more likely not be <code>null</code>.
+     * Note that a result of <code>null</code> is always a valid result, even if the caller does not like it. 
      * @return the operation that could be performed or <code>null</code> if this displayer does not
      * have any specific information
      */
-    public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force );
+    public DisplayerCombinerTarget prepareCombination( CombinerSource source, Enforcement force );
 }

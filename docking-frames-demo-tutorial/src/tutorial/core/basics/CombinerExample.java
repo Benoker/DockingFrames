@@ -26,6 +26,7 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.themes.CombinerValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -93,9 +94,9 @@ public class CombinerExample {
 	/* This is our custom Combiner. It has customized painting code, but the final result of combining two
 	 * Dockables will be the same as if using the standard Combiner. */
 	private static class CustomCombiner implements Combiner{
-		public CombinerTarget prepare( final CombinerSource source, boolean force ){
+		public CombinerTarget prepare( final CombinerSource source, Enforcement force ){
 			/* We do not combine anything unless we are forced */
-			if( !force ){
+			if( force.getForce() < 0.5f ){
 				return null;
 			}
 			

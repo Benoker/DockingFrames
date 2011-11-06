@@ -61,6 +61,7 @@ import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.TabDisplayerCombinerTarget;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
@@ -310,7 +311,7 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		this.location = location;
 	}
 	
-	public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
+	public DisplayerCombinerTarget prepareCombination( CombinerSource source, Enforcement force ){
 		TabDisplayerCombinerTarget target = new TabDisplayerCombinerTarget( this, this, source, force );
 		if( target.isValid() ){
 			return target;

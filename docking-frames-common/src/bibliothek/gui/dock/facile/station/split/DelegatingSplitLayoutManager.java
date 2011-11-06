@@ -56,12 +56,12 @@ public class DelegatingSplitLayoutManager implements SplitLayoutManager {
         delegate.install( station );
     }
 
-    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        return delegate.prepareDrop( station, x, y, titleX, titleY, checkOverrideZone, dockable );
+    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable ) {
+        return delegate.prepareDrop( station, x, y, titleX, titleY, dockable );
     }
 
-    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        return delegate.prepareMove( station, x, y, titleX, titleY, checkOverrideZone, dockable );
+    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable ) {
+        return delegate.prepareMove( station, x, y, titleX, titleY, dockable );
     }
 
     public void uninstall( SplitDockStation station ) {

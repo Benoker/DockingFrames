@@ -62,6 +62,7 @@ import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.title.ActionsDockTitleEvent;
@@ -878,7 +879,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	}
     }
 
-    public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
+    public DisplayerCombinerTarget prepareCombination( CombinerSource source, Enforcement force ){
     	if( decorator instanceof TabDecorator ){
     		TabDisplayerCombinerTarget target = new TabDisplayerCombinerTarget( this, ((TabDecorator)decorator).getStackComponent(), source, force );
     		if( target.isValid() ){

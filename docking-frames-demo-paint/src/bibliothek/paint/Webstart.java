@@ -55,6 +55,11 @@ public class Webstart implements Demonstration {
         return "Paint";
     }
 
+    public static void main( String[] args ){
+    	Core core = new Core( true );
+        core.startup( null );
+	}
+    
     public void show( Monitor monitor ) {
         Core core = new Core( true );
         core.startup( monitor );

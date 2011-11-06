@@ -35,6 +35,8 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.title.ActivityDockTitleEvent;
@@ -201,10 +203,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		return listeners.toArray( new DockStationListener[ listeners.size() ] );
 	}
 
-	public boolean canCompare( DockStation station ){
-		return false;
-	}
-
 	public boolean canDrag( Dockable dockable ){
 	    ChessFigure figure = (ChessFigure)dockable;
 		return figure.getFigure().getPlayer() == board.getPlayer();
@@ -225,10 +223,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	
 	public void requestChildDisplayer( DisplayerRequest request ){
 		// ignore
-	}
-	
-	public int compare( DockStation station ){
-		return 0;
 	}
 
 	public void drag( Dockable dockable ){
@@ -356,10 +350,6 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		return theme;
 	}
 
-	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ){
-		return false;
-	}
-
 	public boolean isStationShowing(){
 		return isStationVisible();
 	}
@@ -378,11 +368,17 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		return isStationVisible();
 	}
 
+	public DockStationDropLayer[] getLayers(){
+		return new DockStationDropLayer[]{
+				new DefaultDropLayer( this )
+		};
+	}
+	
 	public void move( Dockable dockable, DockableProperty property ) {
 	    // do nothing
 	}
 
-	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
 		return prepare( mouseX, mouseY, (ChessFigure)dockable );
 	}
 	

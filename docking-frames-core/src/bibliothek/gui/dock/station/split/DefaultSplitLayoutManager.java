@@ -30,7 +30,6 @@ import java.awt.Point;
 
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
@@ -52,17 +51,11 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         return dockable;
     }
     
-    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable ) {
         if( station.isFullScreen() )
             return null;
         
         if( station.getDockableCount() == 0 ){
-            DockStation parent = station.getDockParent();
-            if( parent != null ){
-                if( checkOverrideZone && parent.isInOverrideZone( x, y, station, dockable ))
-                    return null;
-            }
-            
             PutInfo putInfo = new PutInfo( null, PutInfo.Put.CENTER, dockable, true );
             putInfo.setDockable( dockable );
             putInfo = validatePutInfo( station, putInfo );
@@ -84,22 +77,11 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
                 calculateDivider( station, putInfo, null );
             }
             
-            DockStation parent = station.getDockParent();
-            if( parent != null && putInfo != null ){
-                if( checkOverrideZone && parent.isInOverrideZone( x, y, station, dockable )){
-                    if( putInfo.getPut() == PutInfo.Put.CENTER ){
-                        return null;
-                    }
-                    
-                    return putInfo;
-                }
-            }
-            
             return putInfo;
         }
     }
     
-    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable ) {
         if( station.isFullScreen() )
             return null;
         
@@ -124,15 +106,6 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         if( putInfo != null ){
             putInfo.setDockable( dockable );
             calculateDivider( station, putInfo, leaf );
-        }
-        
-        DockStation parent = station.getDockParent();
-        if( parent != null && putInfo != null ){
-            if( checkOverrideZone && parent.isInOverrideZone( x, y, station, dockable )){
-                if( putInfo.getPut() == PutInfo.Put.CENTER ){
-                    return null;
-                }
-            }
         }
         
         return putInfo;

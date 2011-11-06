@@ -44,6 +44,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
@@ -788,7 +789,7 @@ public abstract class SplitNode{
 
     				Combiner combiner = access.getOwner().getCombiner();
     				CombinerSource source = new NodeCombinerSource( dockables[0], dockables[1], key.getTree().getPlaceholderMap( key ) );
-    				CombinerTarget target = combiner.prepare( source, true );
+    				CombinerTarget target = combiner.prepare( source, Enforcement.HARD );
     				
     				Dockable combination = combiner.combine( source, target );
     				removePlaceholderMap = true;

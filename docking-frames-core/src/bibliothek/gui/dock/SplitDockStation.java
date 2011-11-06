@@ -3,7 +3,13 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copy
+import bibliothek.gui.dock.station.split.PutInfo.Put;
+
+import bibliothek.gui.dock.station.split.level.SplitOverrideDropLevel;
+
+import bibliothek.gui.dock.station.level.DefaultDropLevel;
+right (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -87,6 +93,8 @@ import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
@@ -94,6 +102,7 @@ import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
+import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitDividerStrategy;
 import bibliothek.gui.dock.station.split.SplitDockAccess;
@@ -114,11 +123,13 @@ import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.split.SplitPlaceholderConverter;
 import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
-import bibliothek.gui.dock.station.split.PutInfo.Put;
+import bibliothek.gui.dock.station.split.layer.SideSnapDropLayer;
+import bibliothek.gui.dock.station.split.layer.SplitOverrideDropLayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
@@ -680,45 +691,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public boolean accept( DockStation base, Dockable neighbour ){
-		return true;
-	}
-	
-	/**
-	 * Tells whether <code>next</code> can be dropped over <code>old</code>.
-	 * @param old some old dockable
-	 * @param next some new dockable
-	 * @return <code>true</code> if combining is allowed
-	 */
-	protected boolean acceptable( Dockable old, Dockable next ){
-		if( !old.accept( this, next )){
-			return false;
-		}
-		if( !next.accept( this )){
-			return false;
-		}
-		DockController controller = getController();
-		if( controller != null ){
-			return controller.getAcceptance().accept( this, old, next );
-		}
-		return true;
-	}
-	
-	/**
-	 * Tells whether <code>next</code> can be dropped on this station
-	 * @param next some new dockable
-	 * @return <code>true</code> if combining is allowed
-	 */
-	protected boolean acceptable( Dockable next ){
-		if( !accept( next )){
-			return false;
-		}
-		if( !next.accept( this )){
-			return false;
-		}
-		DockController controller = getController();
-		if( controller != null ){
-			return controller.getAcceptance().accept( this, next );
-		}
 		return true;
 	}
 	
@@ -1388,12 +1360,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return new SplitPlaceholderConverter( this );
 	}
 
-	public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+	public DockStationDropLayer[] getLayers(){
+		return new DockStationDropLayer[]{
+				new DefaultDropLayer( this ),
+				new SplitOverrideDropLayer( this ),
+				new SideSnapDropLayer( this )
+		};
+	}
+	
+	public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
 		PutInfo putInfo = null;
 		boolean move = dockable.getDockParent() == this;
 		
 		if( move ){
-			putInfo = layoutManager.getValue().prepareMove(this, x, y, titleX, titleY, checkOverrideZone, dockable);
+			putInfo = layoutManager.getValue().prepareMove(this, x, y, titleX, titleY, dockable);
 			if( putInfo != null ){
 				prepareCombine( putInfo, x, y, move );
 			}
@@ -1403,7 +1383,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				putInfo = null;
 			}
 			else{
-				putInfo = layoutManager.getValue().prepareDrop(this, x, y, titleX, titleY, checkOverrideZone, dockable);
+				putInfo = layoutManager.getValue().prepareDrop(this, x, y, titleX, titleY, dockable);
 			}
 			
 			if( putInfo != null ){
@@ -1432,13 +1412,24 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				
 				SplitDockCombinerSource source = new SplitDockCombinerSource( putInfo, this, mouseOnStation );
 					
-				CombinerTarget target = getCombiner().prepare( source, putInfo.getPut() == PutInfo.Put.CENTER || putInfo.getPut() == PutInfo.Put.TITLE );
+				Enforcement force;
+				if( putInfo.getPut() == PutInfo.Put.CENTER ){
+					force = Enforcement.EXPECTED;
+				}
+				else if( putInfo.getPut() == PutInfo.Put.TITLE ){
+					force = Enforcement.HARD;
+				}
+				else{
+					force = Enforcement.WHISHED;
+				}
+				
+				CombinerTarget target = getCombiner().prepare( source, force );
 				if( target == null && putInfo.isCombining() && putInfo.getDockable().asDockStation() != null ){
 					DockController controller = getController();
 					if( controller != null ){
 						Merger merger = controller.getRelocator().getMerger();
 						
-						target = getCombiner().prepare( source, true );
+						target = getCombiner().prepare( source, Enforcement.HARD );
 						putInfo.setCombination( source, target );
 
 						if( !merger.canMerge( new SplitDropOperation( putInfo, move ), this, putInfo.getDockable().asDockStation() ) ){
@@ -1501,7 +1492,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			access.arm();
 			DockUtilities.checkLayoutLocked();
 			if( getDockableCount() == 0 ) {
-				if( !acceptable( dockable )){
+				if( !DockUtilities.acceptable( this, dockable ) ){
 					return false;
 				}
 				
@@ -1548,7 +1539,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				}
 	
 				private void handleNeighbour( SplitNode node ){
-					if( acceptable( dockable )){
+					if( DockUtilities.acceptable( SplitDockStation.this, dockable ) ){
 						double x = node.getX();
 						double y = node.getY();
 						double width = node.getWidth();
@@ -1610,7 +1601,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				}
 	
 				if( info.bestLeafIntersection > 0.75 ) {
-					if( station != null && station.accept(dockable) && dockable.accept(station) ) {
+					if( station != null && DockUtilities.acceptable( station, dockable ) ) {
 						station.drop(dockable);
 						validate();
 						return true;
@@ -1624,7 +1615,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 	
 			if( info.bestNode != null ) {
-				if( !acceptable( dockable )){
+				if( !DockUtilities.acceptable( this, dockable ) ){
 					return false;
 				}
 	
@@ -1813,7 +1804,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * otherwise
 	 */
 	protected boolean dropOver( Leaf leaf, Dockable dockable, DockableProperty property, CombinerSource source, CombinerTarget target ){
-		if( !acceptable( leaf.getDockable(), dockable )){
+		if( !DockUtilities.acceptable( this, leaf.getDockable(), dockable ) ){
 			return false;
 		}
 		
@@ -1825,7 +1816,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			if( source == null || target == null ){
 				PutInfo info = new PutInfo( leaf, Put.TITLE, dockable, true );
 				source = new SplitDockCombinerSource( info, this, null );
-				target = combiner.prepare( source, true );
+				target = combiner.prepare( source, Enforcement.HARD );
 			}
 			
 			if( leaf.getDockable() != null ){
@@ -1884,7 +1875,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
      * @return <code>true</code> if the operation was a success, <code>false</code> otherwise
 	 */
 	protected boolean dropAside( SplitNode neighbor, PutInfo.Put put, Dockable dockable, Leaf leaf, double divider, DockHierarchyLock.Token token ){
-		if( !acceptable( dockable )){
+		if( !DockUtilities.acceptable( this, dockable ) ){
 			return false;
 		}
 		
@@ -2056,19 +2047,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return root().submit(factory);
 	}
 
-	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ){
-		if( isFullScreen() )
-			return false;
-
-		if( getDockParent() != null && getDockParent().isInOverrideZone(x, y, invoker, drop) )
-			return true;
-
-		Point point = new Point(x, y);
-		SwingUtilities.convertPointFromScreen(point, this);
-
-		return root().isInOverrideZone(point.x, point.y);
-	}
-
 	public boolean canDrag( Dockable dockable ){
 		return true;
 	}
@@ -2112,59 +2090,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			fireTitleExchanged(title);
 
 		fireTitleExchanged(null);
-	}
-
-	public Rectangle getStationBounds(){
-		Point location = new Point(0, 0);
-		SwingUtilities.convertPointToScreen(location, this);
-		if( isAllowSideSnap() )
-			return new Rectangle(location.x - borderSideSnapSize, location.y - borderSideSnapSize, getWidth() + 2 * borderSideSnapSize, getHeight() + 2 * borderSideSnapSize);
-		else
-			return new Rectangle(location.x, location.y, getWidth(), getHeight());
-	}
-
-	public boolean canCompare( DockStation station ){
-		if( !isAllowSideSnap() )
-			return false;
-
-		if( station.asDockable() != null ) {
-			Component component = station.asDockable().getComponent();
-			Component root = SwingUtilities.getRoot(getComponent());
-			if( root != null && root == SwingUtilities.getRoot(component) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public int compare( DockStation station ){
-		if( !isAllowSideSnap() )
-			return 0;
-
-		if( station.asDockable() != null ) {
-			Component component = station.asDockable().getComponent();
-			Component root = SwingUtilities.getRoot(getComponent());
-			if( root != null && root == SwingUtilities.getRoot(component) ) {
-				Rectangle sizeThis = getStationBounds();
-				Rectangle sizeOther = station.getStationBounds();
-
-				if( sizeThis == null && sizeOther == null )
-					return 0;
-
-				if( sizeThis == null )
-					return -1;
-
-				if( sizeOther == null )
-					return 1;
-
-				if( sizeThis.width * sizeThis.height > sizeOther.width * sizeOther.height )
-					return -1;
-				if( sizeThis.width * sizeThis.height < sizeOther.width * sizeOther.height )
-					return 1;
-			}
-		}
-
-		return 0;
 	}
 
 	public Dockable asDockable(){

@@ -3,7 +3,15 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copy
+import bibliothek.gui.dock.accept.CombinatoryAcceptance.Combination;
+
+import bibliothek.gui.dock.station.screen.level.ScreenWindowLayer;
+
+import bibliothek.gui.dock.station.screen.level.ScreenLayer;
+
+import bibliothek.gui.dock.station.level.DockStationDropLayer;
+right (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -63,6 +71,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockWindowFactory;
@@ -75,22 +84,25 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowHandle;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
+import bibliothek.gui.dock.station.screen.layer.ScreenLayer;
+import bibliothek.gui.dock.station.screen.layer.ScreenWindowLayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.Enforcement;
+import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
-import bibliothek.gui.dock.station.support.PlaceholderList.Level;
-import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -735,7 +747,16 @@ public class ScreenDockStation extends AbstractDockStation {
             listeners.fireDockableSelected( oldSelected, newSelected );
     }
 
-    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    public DockStationDropLayer[] getLayers() {
+    	DockStationDropLayer[] result = new DockStationDropLayer[ getDockableCount()+1 ];
+    	result[0] = new ScreenLayer( this );
+    	for( int i = 1; i < result.length; i++ ){
+    		result[i] = new ScreenWindowLayer( this, getWindow( i-1 ));
+    	}
+    	return result;
+    }
+    
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
         return prepare( x, y, titleX, titleY, dockable, dockable.getDockParent() != this );
     }
     
@@ -751,10 +772,10 @@ public class ScreenDockStation extends AbstractDockStation {
         dropInfo.dockable = dockable;
         dropInfo.move = !drop;
         
-        boolean force = true;
+        Enforcement force = Enforcement.HARD;
         dropInfo.combine = searchCombineDockable( x, y, dockable, true );
         if( dropInfo.combine == null ){
-        	force = false;
+        	force = Enforcement.EXPECTED;
         	dropInfo.combine = searchCombineDockable( x, y, dockable, false );
         }
         
@@ -820,8 +841,6 @@ public class ScreenDockStation extends AbstractDockStation {
      * @return the window which might become the parent of <code>drop</code>.
      */
     protected ScreenDockWindow searchCombineDockable( int x, int y, Dockable drop, boolean combineArea ){
-        DockAcceptance acceptance = getController() == null ? null : getController().getAcceptance();
-        
         for( ScreenDockWindowHandle handle : dockables.dockables() ){
         	ScreenDockWindow window = handle.getWindow();
         	
@@ -836,10 +855,8 @@ public class ScreenDockStation extends AbstractDockStation {
             if( candidate ){
                 Dockable child = window.getDockable();
                 
-                if( acceptance == null || acceptance.accept( this, child, drop )){
-                    if( drop.accept( this, child ) && child.accept( this, drop )){
-                        return window;
-                    }
+                if( DockUtilities.acceptable( this, child, drop ) ){
+                	return window;
                 }
             }
         }
@@ -1014,10 +1031,6 @@ public class ScreenDockStation extends AbstractDockStation {
             
             window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ), false );
         }
-    }
-
-    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ) {
-        return searchCombineDockable( x, y, drop, true ) != null;
     }
 
     public boolean canDrag( Dockable dockable ) {
@@ -1336,7 +1349,7 @@ public class ScreenDockStation extends AbstractDockStation {
     	info.titleX = info.x;
     	info.titleY = info.y;
     	
-    	info.combiner = combiner.prepare( info, true );
+    	info.combiner = combiner.prepare( info, Enforcement.HARD );
     	
     	combine( info, info.combiner, property );
     }
@@ -1786,16 +1799,6 @@ public class ScreenDockStation extends AbstractDockStation {
 
     public String getFactoryID() {
         return ScreenDockStationFactory.ID;
-    }
-
-    @Override
-    public boolean canCompare( DockStation station ) {
-        return true;
-    }
-    
-    @Override
-    public int compare( DockStation station ) {
-        return -1;
     }
     
     /**
