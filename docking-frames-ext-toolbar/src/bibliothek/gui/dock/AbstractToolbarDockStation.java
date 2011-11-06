@@ -520,7 +520,7 @@ public abstract class AbstractToolbarDockStation extends
 
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
-			int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+			int titleX, int titleY, Dockable dockable ){
 		
 		System.out.println(this.toString() + "## prepareDrop(...) ##");
 		DockController controller = getController();
@@ -529,15 +529,6 @@ public abstract class AbstractToolbarDockStation extends
 			return null;
 		}
 		
-		// check whether this station has to check if the mouse is in the
-		// override-zone of its parent & (if this parent exist) if
-		// the mouse is in the override-zone
-		if (checkOverrideZone & this.getDockParent() != null){
-			if (this.getDockParent().isInOverrideZone(mouseX, mouseY, this,
-					dockable)){
-				return null;
-			}
-		}
 		// check if the dockable and the station accept each other
 		if (this.accept(dockable) & dockable.accept(this)){
 			// check if controller exist and if the controller accept that
@@ -795,12 +786,6 @@ public abstract class AbstractToolbarDockStation extends
 	@Override
 	public void move( Dockable dockable, DockableProperty property ){
 		// TODO pending
-	}
-
-	@Override
-	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
-			int y, D invoker, Dockable drop ){
-		return false;
 	}
 
 	@Override
