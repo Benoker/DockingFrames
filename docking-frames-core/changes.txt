@@ -655,6 +655,7 @@
  ! API: During a drag and drop operation a DockStation now appears to consist of many layers instead of only one layer. This allows more complex rules to find the target of a drop operation. The new layers are described by the interface "DockStationDropLevel", the concept of the "override zone" has been completely replaced by this new layer mechanism.
  - Bugfix: SplitDockStation did ignore the DockAcceptance in certain situations
  - Bugfix: VetoableDockRelocatorListener.searched is now actually called
+ - API: Workarounds-API is now public, clients can register custom workarounds (e.g. to resolve issues with JWebBrowser).
  
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

@@ -44,7 +44,7 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
-import bibliothek.util.JavaVersionWorkaround;
+import bibliothek.util.Workarounds;
 
 /**
  * A panel containing two children: a "content pane" and a "glass pane". The
@@ -172,7 +172,7 @@ public class GlassedPane extends JPanel{
             
             setFocusable( false );
             
-            JavaVersionWorkaround.markAsGlassPane( this );
+            Workarounds.getDefault().markAsGlassPane( this );
         }
 
 //        @Override

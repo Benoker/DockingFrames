@@ -35,7 +35,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import bibliothek.gui.dock.util.BackgroundComponent;
-import bibliothek.util.JavaVersionWorkaround;
+import bibliothek.util.Workarounds;
 
 /**
  * A panel which contains two children, the "base pane" and the "overlay pane".<br>
@@ -183,7 +183,7 @@ public class OverpaintablePanel extends JLayeredPane {
     private class Overlay extends JPanel{
         public Overlay(){
             setOpaque( false );
-            JavaVersionWorkaround.markAsGlassPane( this );
+            Workarounds.getDefault().markAsGlassPane( this );
         }
         
         @Override
