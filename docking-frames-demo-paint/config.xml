@@ -2396,7 +2396,7 @@
 	</pictures>
 	<resources>
 		<resource name="CLookAndFeelMenuPiece">
-			<index>3</index>
+			<key>l.6.Nimbus.com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel</key>
 		</resource>
 		<resource name="ccontrol.frontend">
 			<areas/>
@@ -2407,31 +2407,54 @@
 							<root name="ccontrol center">
 								<layout factory="predefined" placeholder="dock.single.ccontrol\ center">
 									<replacement id="rootccontrol center"/>
-									<delegate id="delegate_SplitDockStationFactory">
-										<fullscreen-action>false</fullscreen-action>
-										<node nodeId="1293551127564" orientation="VERTICAL" divider="0.7571144625361738">
-											<node nodeId="1293533691140" orientation="HORIZONTAL" divider="0.38636363636363635">
-												<leaf id="2" nodeId="1293532777226">
+									<delegate id="delegate_CommonDockStationFactory">
+										<id>ccontrol center</id>
+										<root>true</root>
+										<content delegate="SplitDockStationFactory">
+											<fullscreen-action>false</fullscreen-action>
+											<node nodeId="1293551127564" orientation="VERTICAL" divider="0.7571121369547784">
+												<node nodeId="1293533691140" orientation="HORIZONTAL" divider="0.38636363636363635">
+													<leaf id="2" nodeId="1293532777226">
+														<placeholders>
+															<placeholder>dock.single.PictureListDockable</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.PlaceholderList</format>
+														</placeholder-map>
+													</leaf>
+													<leaf id="0" nodeId="1265545542869">
+														<placeholders>
+															<placeholder>dock.single.picture\ area</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.SplitDockStation</format>
+															<entry>
+																<key shared="true">
+																	<placeholder>dock.multi.\0\ page</placeholder>
+																	<placeholder>dock.multi.\1\ page</placeholder>
+																</key>
+																<item key="0.id" type="l">1293532773896</item>
+																<item key="0.map" type="p">
+																	<version>0</version>
+																	<format>dock.PlaceholderList</format>
+																</item>
+																<item key="0.array" type="b">true</item>
+																<item key="0.type" type="s">l</item>
+																<item key=".id" type="l">1319982393990</item>
+																<item key=".type" type="s">r</item>
+															</entry>
+														</placeholder-map>
+													</leaf>
+												</node>
+												<leaf id="1" nodeId="1293551127563">
 													<placeholders>
-														<placeholder>dock.single.PictureListDockable</placeholder>
-													</placeholders>
-													<placeholder-map>
-														<version>0</version>
-														<format>dock.PlaceholderList</format>
-													</placeholder-map>
-												</leaf>
-												<leaf id="1" nodeId="1265545542869">
-													<placeholders>
-														<placeholder>dock.single.picture\ area</placeholder>
+														<placeholder>dock.single.ColorDockable</placeholder>
 													</placeholders>
 												</leaf>
 											</node>
-											<leaf id="0" nodeId="1293551127563">
-												<placeholders>
-													<placeholder>dock.single.ColorDockable</placeholder>
-												</placeholders>
-											</leaf>
-										</node>
+										</content>
 									</delegate>
 								</layout>
 								<adjacent>
@@ -2441,30 +2464,24 @@
 								</adjacent>
 								<children ignore="false">
 									<child>
-										<layout factory="predefined" placeholder="dock.single.ColorDockable">
-											<replacement id="dockablesingle ColorDockable"/>
-											<delegate id="delegate_ccontrol backup factory id">
-												<id>ColorDockable</id>
-												<area/>
-											</delegate>
-										</layout>
-										<children ignore="false"/>
-									</child>
-									<child>
 										<layout factory="predefined" placeholder="dock.single.picture\ area">
-											<replacement id="rootpicture area"/>
-											<delegate id="delegate_SplitDockStationFactory">
-												<fullscreen-action>false</fullscreen-action>
-												<leaf id="0" nodeId="1293532773896">
-													<placeholders>
-														<placeholder>dock.multi.\0\ page</placeholder>
-														<placeholder>dock.multi.\1\ page</placeholder>
-													</placeholders>
-													<placeholder-map>
-														<version>0</version>
-														<format>dock.PlaceholderList</format>
-													</placeholder-map>
-												</leaf>
+											<replacement id="dockablesingle picture area"/>
+											<delegate id="delegate_CommonDockStationFactory">
+												<id>picture area</id>
+												<root>true</root>
+												<content delegate="SplitDockStationFactory">
+													<fullscreen-action>false</fullscreen-action>
+													<leaf id="0" nodeId="1293532773896">
+														<placeholders>
+															<placeholder>dock.multi.\0\ page</placeholder>
+															<placeholder>dock.multi.\1\ page</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.PlaceholderList</format>
+														</placeholder-map>
+													</leaf>
+												</content>
 											</delegate>
 										</layout>
 										<adjacent>
@@ -2531,6 +2548,16 @@
 										</children>
 									</child>
 									<child>
+										<layout factory="predefined" placeholder="dock.single.ColorDockable">
+											<replacement id="dockablesingle ColorDockable"/>
+											<delegate id="delegate_ccontrol backup factory id">
+												<id>ColorDockable</id>
+												<area/>
+											</delegate>
+										</layout>
+										<children ignore="false"/>
+									</child>
+									<child>
 										<layout factory="predefined" placeholder="dock.single.PictureListDockable">
 											<replacement id="dockablesingle PictureListDockable"/>
 											<delegate id="delegate_ccontrol backup factory id">
@@ -2545,28 +2572,31 @@
 							<root name="external">
 								<layout factory="predefined">
 									<replacement id="rootexternal"/>
-									<delegate id="delegate_screen dock">
-										<placeholders>
-											<version>0</version>
-											<format>dock.PlaceholderList</format>
-											<entry>
-												<key shared="false">
-													<placeholder>dock.single.PictureListDockable</placeholder>
-													<placeholder>dock.single.ColorDockable</placeholder>
-												</key>
-												<item key="item" type="b">true</item>
-												<item key="item-keys" type="a">
-													<item type="s">height</item>
-													<item type="s">width</item>
-													<item type="s">y</item>
-													<item type="s">x</item>
-												</item>
-												<item key="item.height" type="i">368</item>
-												<item key="item.width" type="i">498</item>
-												<item key="item.y" type="i">489</item>
-												<item key="item.x" type="i">1053</item>
-											</entry>
-										</placeholders>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="screen dock">
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.single.PictureListDockable</placeholder>
+														<placeholder>dock.single.ColorDockable</placeholder>
+													</key>
+													<item key="item" type="b">true</item>
+													<item key="item-keys" type="a">
+														<item type="s">height</item>
+														<item type="s">width</item>
+														<item type="s">y</item>
+														<item type="s">x</item>
+													</item>
+													<item key="item.height" type="i">368</item>
+													<item key="item.width" type="i">498</item>
+													<item key="item.y" type="i">489</item>
+													<item key="item.x" type="i">1053</item>
+												</entry>
+											</placeholders>
+										</content>
 									</delegate>
 								</layout>
 								<adjacent>
@@ -2579,23 +2609,26 @@
 							<root name="ccontrol north">
 								<layout factory="predefined">
 									<replacement id="rootccontrol north"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="SOUTH"/>
-										<placeholders>
-											<version>0</version>
-											<format>dock.PlaceholderList</format>
-											<entry>
-												<key shared="false">
-													<placeholder>dock.multi.\0\ page</placeholder>
-												</key>
-											</entry>
-											<entry>
-												<key shared="false">
-													<placeholder>dock.single.PictureListDockable</placeholder>
-													<placeholder>dock.single.ColorDockable</placeholder>
-												</key>
-											</entry>
-										</placeholders>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="SOUTH"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.multi.\0\ page</placeholder>
+													</key>
+												</entry>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.single.PictureListDockable</placeholder>
+														<placeholder>dock.single.ColorDockable</placeholder>
+													</key>
+												</entry>
+											</placeholders>
+										</content>
 									</delegate>
 								</layout>
 								<adjacent>
@@ -2608,12 +2641,15 @@
 							<root name="ccontrol south">
 								<layout factory="predefined">
 									<replacement id="rootccontrol south"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="NORTH"/>
-										<placeholders>
-											<version>0</version>
-											<format>dock.PlaceholderList</format>
-										</placeholders>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="NORTH"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+											</placeholders>
+										</content>
 									</delegate>
 								</layout>
 								<adjacent>
@@ -2626,12 +2662,15 @@
 							<root name="ccontrol east">
 								<layout factory="predefined">
 									<replacement id="rootccontrol east"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="WEST"/>
-										<placeholders>
-											<version>0</version>
-											<format>dock.PlaceholderList</format>
-										</placeholders>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="WEST"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+											</placeholders>
+										</content>
 									</delegate>
 								</layout>
 								<adjacent>
@@ -2644,17 +2683,20 @@
 							<root name="ccontrol west">
 								<layout factory="predefined">
 									<replacement id="rootccontrol west"/>
-									<delegate id="delegate_flap dock">
-										<window auto="false" direction="EAST"/>
-										<placeholders>
-											<version>0</version>
-											<format>dock.PlaceholderList</format>
-											<entry>
-												<key shared="false">
-													<placeholder>dock.single.PictureListDockable</placeholder>
-												</key>
-											</entry>
-										</placeholders>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="EAST"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.single.PictureListDockable</placeholder>
+													</key>
+												</entry>
+											</placeholders>
+										</content>
 									</delegate>
 								</layout>
 								<adjacent>

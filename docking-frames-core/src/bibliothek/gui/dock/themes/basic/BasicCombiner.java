@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
@@ -48,7 +49,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  * @author Benjamin Sigg
  */
 public class BasicCombiner implements Combiner {
-	public CombinerTarget prepare( final CombinerSource source, boolean force ){
+	public CombinerTarget prepare( final CombinerSource source, Enforcement force ){
 		DockableDisplayer displayer = source.getOldDisplayer();
 		if( displayer != null ){
 			DisplayerCombinerTarget operation = displayer.prepareCombination( source, force );
@@ -57,7 +58,7 @@ public class BasicCombiner implements Combiner {
 			}
 		}
 		
-		if( !force ){
+		if( force.getForce() < 0.5f ){
 			return null;
 		}
 		

@@ -27,7 +27,6 @@
 package bibliothek.gui;
 
 import java.awt.Component;
-import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 
@@ -41,6 +40,7 @@ import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -310,10 +310,6 @@ public interface DockStation extends DockElement{
      * The station can refuse <code>dockable</code>, in this case nothing this method just returns <code>null</code>.
      * There are some constraints:
      * <ul>
-     * <li>The result should be <code>null</code> if this station is dockable,
-     * <code>checkOverrideZone</code> is <code>true</code> and the mouse is in
-     * the override-zone. of the parent. However, that condition is just "good manners" and may
-     * be broken.</li>
      * <li>This method should use {@link #accept(Dockable)} and {@link Dockable#accept(DockStation)}
      * or {@link Dockable#accept(DockStation, Dockable)} to ensure that the desired
      * drop-location is valid.</li>
@@ -330,13 +326,11 @@ public interface DockStation extends DockElement{
      * title is dragged
      * @param titleY the y-location of the dragged title or <code>mouseY</code> if no
      * title is dragged
-     * @param checkOverrideZone whether this station has to check if the mouse
-     * is in the override-zone of its parent
      * @param dockable the element which will be dropped
      * @return an object describing where the {@link Dockable} can be dropped or <code>null</code> if
      * no drop operation is possible
      */
-    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
+    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable );
     
     /**
      * Adds <code>dockable</code> to this station. The station can decide
@@ -372,27 +366,39 @@ public interface DockStation extends DockElement{
      */
     public void move( Dockable dockable, DockableProperty property );
     
+//    /**
+//     * If the controller asks a station if a child could be dropped or moved,
+//     * the controller assumes that no other station has interest in this event.
+//     * However if this station is a dockable, and has a parent, the parent might
+//     * be interested in the new child. This dockable station has to ask the
+//     * parent if the current location of the mouse is in the override-zone. This
+//     * station should not accept a child if the parent returns <code>true</code>.<br>
+//     * On the other hand, this station could be asked by a child whether the mouse
+//     * is in the override-zone. If the mouse hits a point of special interest,
+//     * then the method should return <code>true</code>.<br>
+//     * Note: if this station is asked and is a dockable station itself, then
+//     * this method should ask the parent for his override-zone too.
+//     * @param x the x-coordinate of the mouse on the screen
+//     * @param y the y-coordinate of the mouse on the screen
+//     * @param invoker a child of this station which invoked the method
+//     * @param drop a {@link Dockable} which might become a child
+//     * @param <D> the type of <code>invoker</code>
+//     * @return <code>true</code> if the location of the mouse is of special
+//     * interest
+//     */
+//    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop );
+    
     /**
-     * If the controller asks a station if a child could be dropped or moved,
-     * the controller assumes that no other station has interest in this event.
-     * However if this station is a dockable, and has a parent, the parent might
-     * be interested in the new child. This dockable station has to ask the
-     * parent if the current location of the mouse is in the override-zone. This
-     * station should not accept a child if the parent returns <code>true</code>.<br>
-     * On the other hand, this station could be asked by a child whether the mouse
-     * is in the override-zone. If the mouse hits a point of special interest,
-     * then the method should return <code>true</code>.<br>
-     * Note: if this station is asked and is a dockable station itself, then
-     * this method should ask the parent for his override-zone too.
-     * @param x the x-coordinate of the mouse on the screen
-     * @param y the y-coordinate of the mouse on the screen
-     * @param invoker a child of this station which invoked the method
-     * @param drop a {@link Dockable} which might become a child
-     * @param <D> the type of <code>invoker</code>
-     * @return <code>true</code> if the location of the mouse is of special
-     * interest
+     * Gets a description of all the areas of the screen where this {@link DockStation} can handle a drop event.<br>
+     * Everytime the mouse is moved or released during a drag &amp; drop operation, this method is called for
+     * all {@link DockStation}s. The returned {@link DockStationDropLayer}s are then filtered and ordered, the resulting
+     * order defines the order in which the method {@link #prepareDrop(int, int, int, int, boolean, Dockable)} is
+     * called.
+     * @return all the layers of this station, must not be <code>null</code>, must not contain <code>null</code>,
+     * must not contain the same entry twice. The array or the {@link DockStationDropLayer}s may be modified,
+     * hence this method should always create new objects.
      */
-    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop );
+    public DockStationDropLayer[] getLayers();
     
     /**
      * Tells whether <code>dockable</code> can be removed from this station or not.
@@ -451,36 +457,4 @@ public interface DockStation extends DockElement{
      * is not a {@link Dockable}
      */
     public void replace( DockStation old, Dockable next );
-    
-    /**
-     * Gets a rectangle in which all points of the station are. The user is
-     * only able to move a {@link Dockable} into this area onto this station. 
-     * @return the bounds, relative to the screen, <code>null</code> to indicate that
-     * this station has not any bounds
-     */
-    public Rectangle getStationBounds();
-    
-    /**
-     * Tells whether this station knows a rule how to compare itself with
-     * <code>station</code>. See {@link #compare(DockStation)} for more
-     * details.
-     * @param station another station
-     * @return <code>true</code> if a call to {@link #compare(DockStation) compare}
-     * will not end in an exception and return another value than 0
-     */
-    public boolean canCompare( DockStation station );
-    
-    /**
-     * Compares this station with <code>station</code>. The comparison is needed
-     * if the {@link #getStationBounds() stations bounds} of the two station
-     * have common points. On a drag-event, the controller needs a way to
-     * decide which station is more important (and receives the opportunity 
-     * to get a new child first). The controller will use the method
-     * <code>compare</code> to do this. This method works like
-     * {@link Comparable#compareTo(Object)}.
-     * @param station another station
-     * @return a number less/equal/higher than zero, if this station has
-     * higher/equal/lesser priority than <code>station</code>.
-     */
-    public int compare( DockStation station );
 }

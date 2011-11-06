@@ -54,6 +54,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
@@ -348,7 +349,7 @@ public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements Docka
 	 * As the {@link NoTitleDisplayer} does not show any decorations, there is no need to
 	 * prepare for a combination. Hence this method always returns <code>null</code>.
 	 */
-	public DisplayerCombinerTarget prepareCombination( CombinerSource source, boolean force ){
+	public DisplayerCombinerTarget prepareCombination( CombinerSource source, Enforcement force ){
 		return null;
 	}
 	

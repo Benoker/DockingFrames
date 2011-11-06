@@ -78,11 +78,10 @@ public interface SplitLayoutManager {
      * @param y the y-coordinate of the mouse on the screen
      * @param titleX the location of the title or <code>x</code> if no title is grabbed
      * @param titleY the location of the title or <code>y</code> if no title is grabbed
-     * @param checkOverrideZone whether to respect the override zone of the parent
      * @param dockable the element that might be dropped
      * @return where to drop <code>dockable</code> or <code>null</code> if the element should not be dropped
      */
-    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
+    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable );
 
     /**
      * Call forwarded from {@link DockStation#prepareDrop(int, int, int, int, boolean, Dockable) DockStation.prepareDrop} if
@@ -93,12 +92,11 @@ public interface SplitLayoutManager {
      * @param y the y-coordinate of the mouse on the screen
      * @param titleX the location of the title or <code>x</code> if no title is grabbed
      * @param titleY the location of the title or <code>y</code> if no title is grabbed
-     * @param checkOverrideZone whether to respect the override zone of the parent
      * @param dockable the element that might be dropped
      * @return where to drop <code>dockable</code> or <code>null</code> if the element should not be dropped
      * @see #prepareDrop(SplitDockStation, int, int, int, int, boolean, Dockable)
      */
-    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable );
+    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable );
     
     /**
      * Calculates the value a divider should have if the {@link Dockable}
