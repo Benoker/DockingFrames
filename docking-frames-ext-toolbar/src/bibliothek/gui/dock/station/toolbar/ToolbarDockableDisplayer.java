@@ -41,7 +41,7 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer{
 			@Override
 			public void request( DisplayerRequest request ){
 				ToolbarDockableDisplayer displayer = new ToolbarDockableDisplayer( request.getParent(), request.getTarget(), request.getTitle(), autoOrientation );
-				displayer.setDefaultBorder( BorderFactory.createLineBorder( color, 2 ) );
+				//displayer.setDefaultBorder( BorderFactory.createLineBorder( color, 2 ) );
 				displayer.setDefaultBorderHint( true );
 				displayer.setRespectBorderHint( false );
 				request.answer( displayer );

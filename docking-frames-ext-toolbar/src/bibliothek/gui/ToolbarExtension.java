@@ -60,6 +60,7 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.NullTitleFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandManager;
 import bibliothek.gui.dock.toolbar.expand.ExpandedActionGuard;
 import bibliothek.gui.dock.util.IconManager;
@@ -254,7 +255,7 @@ public class ToolbarExtension implements Extension{
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, ToolbarDockTitle.createFactory( new Color( 255, 255, 150 ) ) );
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitle.createFactory( new Color( 255, 255, 100 ) ) );
 				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_SIDE, ToolbarDockTitle.createFactory( new Color( 255, 255, 50 ) ) );
-				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_CENTER, ToolbarDockTitle.createFactory( Color.YELLOW ) );
+				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_CENTER, NullTitleFactory.INSTANCE );
 				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitle.createFactory( Color.RED ) );
 			}
 			

@@ -1,4 +1,3 @@
-import java.awt.Window;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -7,10 +6,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.ComponentDockable;
-import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;

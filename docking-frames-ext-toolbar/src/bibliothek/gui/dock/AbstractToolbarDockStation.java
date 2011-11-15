@@ -1216,8 +1216,8 @@ public abstract class AbstractToolbarDockStation extends
 		public OverpaintablePanelBase(){
 			basePane.setBorder(new CompoundBorder(new EtchedBorder(),
 					new EmptyBorder(new Insets(5, 5, 5, 5))));
-			basePane.setBackground(Color.GREEN);
-			dockablePane.setBackground(Color.RED);
+			// basePane.setBackground(Color.GREEN);
+			// dockablePane.setBackground(Color.RED);
 			basePane.add(dockablePane);
 
 			setBasePane(basePane);

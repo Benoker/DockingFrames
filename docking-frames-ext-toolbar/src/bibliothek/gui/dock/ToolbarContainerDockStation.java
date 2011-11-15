@@ -209,7 +209,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 		};
 		sideDisplayers.addDockableDisplayerListener(listener);
 		centerDisplayers.addDockableDisplayerListener(listener);
-		setTitleIcon( null );
+		setTitleIcon(null);
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			throw new IllegalArgumentException();
 		}
 		panel.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(
-				new Insets(5, 5, 5, 5))));
+				new Insets(1, 1, 1, 1))));
 		panel.setBackground(new Color(31, 73, 125));
 		return panel;
 	}
