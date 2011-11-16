@@ -8,8 +8,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.AbstractToolbarDockStation;
-import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OverpaintablePanel;

@@ -16,9 +16,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
+import bibliothek.gui.dock.ContainerLineStation;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.action.ActionType;
@@ -39,9 +39,9 @@ import bibliothek.gui.dock.station.ToolbarTabDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDisplayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDockTitleFactory;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
+import bibliothek.gui.dock.station.toolbar.ContainerLinePropertyFactory;
+import bibliothek.gui.dock.station.toolbar.ContainerLineStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockTitle;
@@ -188,7 +188,8 @@ public class ToolbarExtension implements Extension{
 	private Collection<DockablePropertyFactory> createPropertyFactoryExtension(){
 		List<DockablePropertyFactory> result = new ArrayList<DockablePropertyFactory>();
 		result.add( new ToolbarPropertyFactory() );
-		result.add( new ToolbarContainerPropertyFactory() );
+		result.add( new ContainerLinePropertyFactory() );
+		// result.add( new ToolbarContainerPropertyFactory() );
 		return result;
 	}
 	
@@ -210,7 +211,8 @@ public class ToolbarExtension implements Extension{
 		result.add( new ToolbarPartDockFactory() );
 		result.add( new ToolbarDockStationFactory() );
 		result.add( new ToolbarGroupDockStationFactory() );
-		result.add( new ToolbarContainerDockStationFactory() );
+		result.add( new ContainerLineStationFactory() );
+		// result.add( new ToolbarContainerDockStationFactory() );
 		result.add( new ToolbarTabDockStationFactory() );
 		return result;
 	}
@@ -247,15 +249,17 @@ public class ToolbarExtension implements Extension{
 				ThemeManager manager = controller.getThemeManager();
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 150, 150 ), false ) );
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 100, 100 ), false ) );
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.side", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 50, 50 ),false ) );
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.center", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.RED, false ) );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 50, 50 ),false ) );
+				// manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.side", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 50, 50 ),false ) );
+				// manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container.center", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.RED, false ) );
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.ORANGE, true ) );
 				
 				DockTitleManager titles = controller.getDockTitleManager();
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, ToolbarDockTitle.createFactory( new Color( 255, 255, 150 ) ) );
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitle.createFactory( new Color( 255, 255, 100 ) ) );
-				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_SIDE, ToolbarDockTitle.createFactory( new Color( 255, 255, 50 ) ) );
-				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_CENTER, NullTitleFactory.INSTANCE );
+				titles.registerTheme( ContainerLineStation.TITLE_ID, ToolbarDockTitle.createFactory( new Color( 255, 255, 50 ) ) );
+				// titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_SIDE, ToolbarDockTitle.createFactory( new Color( 255, 255, 50 ) ) );
+				// titles.registerTheme( ToolbarContainerDockStation.TITLE_ID_CENTER, NullTitleFactory.INSTANCE );
 				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitle.createFactory( Color.RED ) );
 			}
 			
