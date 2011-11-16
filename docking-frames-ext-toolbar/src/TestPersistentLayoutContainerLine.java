@@ -19,6 +19,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ContainerLineStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.station.Orientation;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
@@ -41,8 +42,9 @@ public class TestPersistentLayoutContainerLine {
 		ComponentDockable button3 = new ComponentDockable( new JButton( "Three" ));
 		ComponentDockable button4 = new ComponentDockable( new JButton( "Four" ));
 		ComponentDockable button5 = new ComponentDockable( new JButton( "Five" ));
-		ContainerLineStation rootEast = new ContainerLineStation();
 		ContainerLineStation rootWest = new ContainerLineStation();
+		ContainerLineStation rootNorth = new ContainerLineStation();
+		rootNorth.setOrientation(Orientation.HORIZONTAL);
 		
 		frontend.addDockable( "one", button1 );
 		frontend.addDockable( "two", button2 );
@@ -50,7 +52,7 @@ public class TestPersistentLayoutContainerLine {
 		frontend.addDockable( "four", button4 );
 		frontend.addDockable( "five", button5 );
 		frontend.addRoot( "rootwest", rootWest );
-		frontend.addRoot( "rooteast", rootEast );
+		frontend.addRoot( "rootnorth", rootNorth );
 		
 		frontend.getController().getRegister().addDockRegisterListener( new DockRegisterListener(){
 			@Override
@@ -91,7 +93,7 @@ public class TestPersistentLayoutContainerLine {
 		
 		frame.getContentPane().add(pane);
 		pane.add( rootWest.getComponent(), BorderLayout.WEST );
-		pane.add( rootEast.getComponent(), BorderLayout.EAST );
+		pane.add( rootNorth.getComponent(), BorderLayout.NORTH );
 		
 		final File layout = new File("layout.xml");
 		boolean layouted = false;

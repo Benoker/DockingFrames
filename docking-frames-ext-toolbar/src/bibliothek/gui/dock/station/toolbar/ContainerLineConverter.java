@@ -35,7 +35,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  * A helper interface used by the {@link ContainerLineStation} to read and write
  * {@link PlaceholderMap}s.
  * @author Benjamin Sigg
- * @Herve Guillaume
+ * @author Herve Guillaume
  */
 public interface ContainerLineConverter {
 	/**

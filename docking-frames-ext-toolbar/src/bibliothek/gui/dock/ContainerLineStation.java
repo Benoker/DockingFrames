@@ -63,18 +63,38 @@ import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
 
+/**
+ * A {@link Dockable} and a {@link Dockstation} which stands a group of
+ * {@link ToolbarDockStation}. As dockable it can be put in every
+ * {@link DockStation}. As DockStation it accepts only
+ * {@link ToolbarElementInterface}s. When ToolbarElement are added, all the
+ * ComponentDockable extracted from the element are merged together and wrapped
+ * in a {@link ToolbarDockstation} before to be added.
+ * 
+ * @author Herve Guillaume
+ */
 public class ContainerLineStation extends AbstractDockableStation implements
-		ToolbarInterface, OrientingDockStation{
+		ToolbarInterface, OrientingDockStation, OrientedDockStation{
 
 	/** the id of the {@link DockTitleFactory} used with this station */
 	public static final String TITLE_ID = "toolbar.container";
-
 	/**
 	 * This id is forwarded to {@link Extension}s which load additional
 	 * {@link DisplayerFactory}s
 	 */
 	public static final String DISPLAYER_ID = "toolbar.container";
 
+	/** the orientation of the station */
+	private Orientation orientation = Orientation.VERTICAL;
+	
+	/** The containerPane */
+	private JPanel containerPanel;
+	/**
+	 * The graphical representation of this station: the pane which contains
+	 * toolbars
+	 */
+	protected OverpaintablePanelBase mainPanel = new OverpaintablePanelBase();
+	
 	/** dockables associate with the container pane */
 	private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
 
@@ -91,21 +111,11 @@ public class ContainerLineStation extends AbstractDockableStation implements
 	private int indexBeneathMouse = -1;
 	/** closest side of the the closest dockable above the mouse */
 	private Position sideAboveMouse = null;
-	/** the orientation of the station */
-	private Orientation orientation = Orientation.VERTICAL;
 	/**
 	 * Tells if this station is in prepareDrop state and should draw something
 	 * accordingly
 	 */
 	boolean prepareDropDraw = false;
-
-	/** The containerPane */
-	private JPanel containerPanel;
-	/**
-	 * The graphical representation of this station: the pane which contains
-	 * toolbars
-	 */
-	protected OverpaintablePanelBase mainPanel = new OverpaintablePanelBase();
 
 	/** all registered {@link OrientingDockStationListener}s. */
 	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
@@ -136,6 +146,7 @@ public class ContainerLineStation extends AbstractDockableStation implements
 				DISPLAYER_ID);
 
 		DockableDisplayerListener listener = new DockableDisplayerListener(){
+			@Override
 			public void discard( DockableDisplayer displayer ){
 				ContainerLineStation.this.discard(displayer);
 			}
@@ -251,6 +262,7 @@ public class ContainerLineStation extends AbstractDockableStation implements
 						ContainerLineStation.this.setDockables(list, false);
 					}
 
+					@Override
 					public void finished(
 							DockablePlaceholderList<StationChildHandle> list ){
 						if (getController() != null){
@@ -321,6 +333,7 @@ public class ContainerLineStation extends AbstractDockableStation implements
 		return new ContainerLineProperty(index, null);
 	}
 
+	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, Dockable dockable ){
 		System.out.println(this.toString() + "## prepareDrop(...) ##");
@@ -392,16 +405,19 @@ public class ContainerLineStation extends AbstractDockableStation implements
 		}
 	}
 
+	@Override
 	public void addOrientingDockStationListener(
 			OrientingDockStationListener listener ){
 		orientingListeners.add(listener);
 	}
 
+	@Override
 	public void removeOrientingDockStationListener(
 			OrientingDockStationListener listener ){
 		orientingListeners.remove(listener);
 	}
 
+	@Override
 	public Orientation getOrientationOf( Dockable child ){
 		return this.orientation;
 	}
@@ -526,6 +542,7 @@ public class ContainerLineStation extends AbstractDockableStation implements
 	 *            a new child
 	 * @return <code>true</code> if dropping was successfull
 	 */
+	@Override
 	public void drop( Dockable dockable ){
 		System.out.println(this.toString() + "## drop(Dockable dockable )##");
 		this.drop(dockable, getDockables().dockables().size());
@@ -719,6 +736,7 @@ public class ContainerLineStation extends AbstractDockableStation implements
 	 * 
 	 * @return the orientation
 	 */
+	@Override
 	public Orientation getOrientation(){
 		return orientation;
 	}
@@ -729,6 +747,7 @@ public class ContainerLineStation extends AbstractDockableStation implements
 	 * @param orientation
 	 *            the orientation
 	 */
+	@Override
 	public void setOrientation( Orientation orientation ){
 		this.orientation = orientation;
 	}
@@ -764,7 +783,6 @@ public class ContainerLineStation extends AbstractDockableStation implements
 		DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking(
 				this, dockable);
 		try{
-			JPanel panel = getContainerPanel();
 			int index = indexOf(dockable);
 			DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables()
 					.dockables();
@@ -773,7 +791,7 @@ public class ContainerLineStation extends AbstractDockableStation implements
 			// System.out.println(index);
 			StationChildHandle sideHandle = dockables.get(index);
 			dockables.remove(index);
-			panel.remove(sideHandle.getDisplayer().getComponent());
+			getContainerPanel().remove(sideHandle.getDisplayer().getComponent());
 			sideHandle.destroy();
 
 			mainPanel.getContentPane().revalidate();
@@ -842,13 +860,11 @@ public class ContainerLineStation extends AbstractDockableStation implements
 
 	private void insertAt( StationChildHandle handle, int index ){
 		Dockable dockable = handle.getDockable();
-
-		JPanel panel = getContainerPanel();
 		if (dockable instanceof OrientedDockStation){
 			((OrientedDockStation) dockable).setOrientation(this.orientation);
 		}
 		dockable.setDockParent(this);
-		panel.add(handle.getDisplayer().getComponent(), index);
+		getContainerPanel().add(handle.getDisplayer().getComponent(), index);
 		mainPanel.getContentPane().setBounds(0, 0,
 				mainPanel.getContentPane().getPreferredSize().width,
 				mainPanel.getContentPane().getPreferredSize().height);
@@ -883,24 +899,19 @@ public class ContainerLineStation extends AbstractDockableStation implements
 	 * @author Herve Guillaume
 	 */
 	protected class OverpaintablePanelBase extends OverpaintablePanel{
-		/**
-		 * The content Pane of this {@link OverpaintablePanel}
-		 */
-		private JPanel content;
 
 		/**
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
 			containerPanel = createPanel();
-			content = containerPanel;
 			// content.setBounds( 0, 0, content.getPreferredSize().width,
 			// content.getPreferredSize().height );
 			// this.setPreferredSize( new Dimension(
 			// content.getPreferredSize().width,
 			// content.getPreferredSize().height ) );
-			setBasePane(content);
-			setContentPane(content);
+			setBasePane(containerPanel);
+			setContentPane(containerPanel);
 			this.getContentPane().revalidate();
 			this.getContentPane().repaint();
 		}

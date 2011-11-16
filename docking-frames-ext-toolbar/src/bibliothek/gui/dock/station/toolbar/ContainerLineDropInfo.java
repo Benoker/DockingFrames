@@ -23,7 +23,7 @@ import bibliothek.gui.dock.station.support.DockablePlaceholderList;
  * 
  * @author Herve Guillaume
  */
-public class ContainerLineDropInfo implements StationDropOperation{
+public abstract class ContainerLineDropInfo implements StationDropOperation{
 	/** The {@link Dockable} which is inserted */
 	private Dockable dragDockable;
 	/**
@@ -76,16 +76,11 @@ public class ContainerLineDropInfo implements StationDropOperation{
 		return stationHost;
 	}
 
-	public void destroy(){
-		// nothing to do
-	}
+	public abstract void destroy();
 
-	public void draw(){
-		// TODO
-	}
+	public abstract void draw();
 
-	public void execute(){
-	}
+	public abstract void execute();
 
 	public CombinerTarget getCombination(){
 		// not supported by this kind of station
