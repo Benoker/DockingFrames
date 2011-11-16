@@ -6,6 +6,7 @@ import bibliothek.gui.dock.layout.DockablePropertyFactory;
 /**
  * Creates new {@link ToolbarContainerProperty}s.
  * @author Benjamin Sigg
+ * @author Herve Guillaume
  */
 public class ToolbarContainerPropertyFactory implements DockablePropertyFactory{
 	/** the unique identifier of this factory */

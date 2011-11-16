@@ -35,6 +35,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  * A helper interface used by the {@link ToolbarContainerDockStation} to read and write
  * {@link PlaceholderMap}s.
  * @author Benjamin Sigg
+ * @author Herve Guillaume
  */
 public interface ToolbarContainerConverter {
 	/**

@@ -28,7 +28,6 @@ package bibliothek.gui.dock.station.toolbar;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.Position;
 import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.station.StationChildHandle;
@@ -44,27 +43,20 @@ import bibliothek.util.Path;
  * Default implementation of {@link ToolbarContainerConverter}. This converter supports all features
  * necessary to read and write {@link PlaceholderMap}s.
  * @author Benjamin Sigg
+ * @author Herve Guillaume
  */
 public class DefaultToolbarContainerConverter implements ToolbarContainerConverter {
 	@Override
 	public PlaceholderMap getPlaceholders( ToolbarContainerDockStation station ){
 		PlaceholderMap result = new PlaceholderMap( new Path( "dock.ToolbarContainerStation" ), 0 );
-		result.put( result.newKey( "north" ), "list", station.getDockables( Position.NORTH ).toMap() );
-		result.put( result.newKey( "south" ), "list", station.getDockables( Position.SOUTH ).toMap() );
-		result.put( result.newKey( "east" ), "list", station.getDockables( Position.EAST ).toMap() );
-		result.put( result.newKey( "west" ), "list", station.getDockables( Position.WEST ).toMap() );
-		result.put( result.newKey( "center" ), "list", station.getDockables( Position.CENTER ).toMap() );
+		result.put( result.newKey( "content" ), "list", station.getDockables().toMap() );
 		return result;
 	}
 
 	@Override
 	public PlaceholderMap getPlaceholders( ToolbarContainerDockStation station, Map<Dockable, Integer> children ){
 		PlaceholderMap result = new PlaceholderMap( new Path( "dock.ToolbarContainerStation" ), 0 );
-		result.put( result.newKey( "north" ), "list", convert( station, station.getDockables( Position.NORTH ), children ) );
-		result.put( result.newKey( "south" ), "list", convert( station, station.getDockables( Position.SOUTH ), children ) );
-		result.put( result.newKey( "east" ), "list", convert( station, station.getDockables( Position.EAST ), children ) );
-		result.put( result.newKey( "west" ), "list", convert( station, station.getDockables( Position.WEST ), children ) );
-		result.put( result.newKey( "center" ), "list", convert( station, station.getDockables( Position.CENTER ), children ) );
+		result.put( result.newKey( "content" ), "list", convert( station, station.getDockables(), children ) );
 		return result;
 	}
 	
@@ -98,32 +90,24 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 
 	@Override
 	public void setPlaceholders( ToolbarContainerDockStation station, PlaceholderMap map ){
-		if( !map.getFormat().equals( new Path( "dock.ToolbarContainerStation" ) ) ) {
+		if( !map.getFormat().equals( new Path( "dock.ContainerLineStation" ) ) ) {
 			throw new IllegalArgumentException( "unknown format: " + map.getFormat() );
 		}
 		if( map.getVersion() != 0 ) {
 			throw new IllegalArgumentException( "unknown version: " + map.getVersion() );
 		}
 		
-		station.setPlaceholders( Position.NORTH, map.getMap( map.newKey( "north" ), "list" ) );
-		station.setPlaceholders( Position.SOUTH, map.getMap( map.newKey( "south" ), "list" ) );
-		station.setPlaceholders( Position.EAST, map.getMap( map.newKey( "east" ), "list" ) );
-		station.setPlaceholders( Position.WEST, map.getMap( map.newKey( "west" ), "list" ) );
-		station.setPlaceholders( Position.CENTER, map.getMap( map.newKey( "center" ), "list" ) );
+		station.setPlaceholders( map.getMap( map.newKey( "content" ), "list" ) );
 	}
 
 	@Override
 	public void setPlaceholders( ToolbarContainerDockStation station, ToolbarContainerConverterCallback callback, PlaceholderMap map, Map<Integer, Dockable> children ){
-		convert( station, callback, Position.NORTH, map.getMap( map.newKey( "north" ), "list" ), children );
-		convert( station, callback, Position.EAST, map.getMap( map.newKey( "east" ), "list" ), children );
-		convert( station, callback, Position.WEST, map.getMap( map.newKey( "west" ), "list" ), children );
-		convert( station, callback, Position.SOUTH, map.getMap( map.newKey( "south" ), "list" ), children );
-		convert( station, callback, Position.CENTER, map.getMap( map.newKey( "center" ), "list" ), children );
+		convert( station, callback, map.getMap( map.newKey( "content" ), "list" ), children );
 	}
 	
-	private void convert( final ToolbarContainerDockStation station, final ToolbarContainerConverterCallback callback, final Position area, PlaceholderMap map, final Map<Integer, Dockable> children ){
+	private void convert( final ToolbarContainerDockStation station, final ToolbarContainerConverterCallback callback, PlaceholderMap map, final Map<Integer, Dockable> children ){
 		DockablePlaceholderList<StationChildHandle> list = new DockablePlaceholderList<StationChildHandle>();
-		callback.setDockables( area, list );
+		callback.setDockables( list );
 		list.read( map, new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
 			private DockHierarchyLock.Token token;
 			
@@ -137,15 +121,15 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 				DockUtilities.ensureTreeValidity( station, dockable );
 				token = DockHierarchyLock.acquireLinking( station, dockable );
 				
-				StationChildHandle handle = callback.wrap( area, dockable );
-				callback.adding( area, handle );
+				StationChildHandle handle = callback.wrap( dockable );
+				callback.adding( handle );
 				return handle;
 			}
 			
 			@Override
 			public void added( StationChildHandle handle ){
 				try{
-					callback.added( area, handle );
+					callback.added( handle );
 				}
 				finally{
 					token.release();

@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
@@ -44,6 +44,7 @@ import bibliothek.util.xml.XElement;
 /**
  * A factory used to read and write the layout of a {@link ToolbarContainerDockStation}.
  * @author Benjamin Sigg
+ * @author Herve Guillaume
  */
 public class ToolbarContainerDockStationFactory implements DockFactory<ToolbarContainerDockStation, PerspectiveElement, ToolbarContainerDockStationLayout>{
 	/** the unique, unmodifiable identifier of this factory */
@@ -138,6 +139,6 @@ public class ToolbarContainerDockStationFactory implements DockFactory<ToolbarCo
 	 * @return the new station, not <code>null</code>
 	 */
 	protected ToolbarContainerDockStation createStation(){
-		return new ToolbarContainerDockStation();
+		return new ToolbarContainerDockStation(ToolbarContainerDockStation.DEFAULT_ORIENTATION);
 	}
 }

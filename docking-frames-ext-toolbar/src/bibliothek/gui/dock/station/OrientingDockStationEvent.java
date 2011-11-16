@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 
 /**
  * An event fired by an {@link OrientedDockStation} if one or many children changed their orientation.

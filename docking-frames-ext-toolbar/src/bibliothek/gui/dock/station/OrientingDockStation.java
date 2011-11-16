@@ -1,6 +1,7 @@
 package bibliothek.gui.dock.station;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 
 import bibliothek.gui.DockStation;
 

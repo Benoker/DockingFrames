@@ -14,12 +14,12 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ContainerLineStation;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.event.DockRegisterListener;
-import bibliothek.gui.dock.station.Orientation;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
@@ -42,9 +42,8 @@ public class TestPersistentLayoutContainerLine {
 		ComponentDockable button3 = new ComponentDockable( new JButton( "Three" ));
 		ComponentDockable button4 = new ComponentDockable( new JButton( "Four" ));
 		ComponentDockable button5 = new ComponentDockable( new JButton( "Five" ));
-		ContainerLineStation rootWest = new ContainerLineStation();
-		ContainerLineStation rootNorth = new ContainerLineStation();
-		rootNorth.setOrientation(Orientation.HORIZONTAL);
+		ToolbarContainerDockStation rootWest = new ToolbarContainerDockStation(Orientation.VERTICAL);
+		ToolbarContainerDockStation rootNorth = new ToolbarContainerDockStation(Orientation.HORIZONTAL);
 		
 		frontend.addDockable( "one", button1 );
 		frontend.addDockable( "two", button2 );

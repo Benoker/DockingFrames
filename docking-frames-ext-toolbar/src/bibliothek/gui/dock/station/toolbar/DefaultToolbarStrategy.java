@@ -4,7 +4,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.ComponentDockable;
-import bibliothek.gui.dock.ContainerLineStation;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
@@ -44,7 +44,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 		}
 
 		// if( station instanceof ToolbarContainerDockStation ) {
-		if( station instanceof ContainerLineStation ) {
+		if( station instanceof ToolbarContainerDockStation ) {
 			if( dockable instanceof ToolbarDockStation ){
 			//if( dockable.getClass() == ToolbarDockStation.class ) {
 				return dockable;

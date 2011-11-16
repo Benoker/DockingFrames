@@ -6,6 +6,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
@@ -44,7 +45,7 @@ public class TestToolbarDockStation {
 		System.out.println("###############################################################");
 		System.out.println("##################  NEW CONTAINER  ############################");
 		System.out.println("###############################################################");
-		ToolbarContainerDockStation toolbarStation = new ToolbarContainerDockStation();
+		ToolbarContainerDockStation toolbarStation = new ToolbarContainerDockStation(Orientation.HORIZONTAL);
 		controller.add( toolbarStation );
 		System.out.println("###############################################################");
 		System.out.println("##################  NEW COMPONENT  ############################");
@@ -75,9 +76,9 @@ public class TestToolbarDockStation {
 		System.out.println("###############################################################");
 		System.out.println("##################  TOOLBAR DROP INTO CONTAINER  ##############");
 		System.out.println("###############################################################");
-		toolbarStation.drop( toolbar1, Position.WEST );
-		toolbarStation.drop( toolbar2, Position.WEST );
-		toolbarStation.drop( toolbar3, Position.NORTH );
+		toolbarStation.drop( toolbar1 );
+		toolbarStation.drop( toolbar2 );
+		toolbarStation.drop( toolbar3 );
 		
 //		ToolbarDockStation toolbar3 = new ToolbarDockStation();
 //		ComponentDockable dockable6 = new ComponentDockable( new JButton( "Six" ) );

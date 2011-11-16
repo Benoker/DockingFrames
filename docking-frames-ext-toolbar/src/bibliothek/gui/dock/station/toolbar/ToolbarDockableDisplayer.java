@@ -11,10 +11,10 @@ import javax.swing.border.LineBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.Orientation;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;

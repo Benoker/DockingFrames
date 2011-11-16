@@ -9,11 +9,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
-import bibliothek.gui.dock.ContainerLineStation;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DirectWindowProvider;
@@ -43,10 +44,10 @@ public class TestContainerLineStation{
 		System.out.println("###############################################################");
 		System.out.println("##################  NEW CONTAINER  ############################");
 		System.out.println("###############################################################");
-		ContainerLineStation toolbarStationWest = new ContainerLineStation();
+		ToolbarContainerDockStation toolbarStationWest = new ToolbarContainerDockStation(Orientation.VERTICAL);
 		controller.add( toolbarStationWest );
 		pane.add(toolbarStationWest.getComponent(), BorderLayout.WEST);
-		ContainerLineStation toolbarStationEast = new ContainerLineStation();
+		ToolbarContainerDockStation toolbarStationEast = new ToolbarContainerDockStation(Orientation.VERTICAL);
 		controller.add( toolbarStationEast );
 		pane.add(toolbarStationEast.getComponent(), BorderLayout.EAST);
 		System.out.println("###############################################################");

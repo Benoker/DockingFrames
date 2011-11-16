@@ -1,32 +1,19 @@
+import java.awt.BorderLayout;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
-import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockController;
-import bibliothek.gui.PositionedDockStation;
-import bibliothek.gui.Position;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.DefaultDockable;
-import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 
-/**
- * I have two questions.
- * 
- * First, When I add StackDockStation to the ToolbarDockStation do I need to add
- * the StackDockStation to the controller at the same time?
- * 
- * Second, the FlapDockStation drop in the ToolbarContainterDockStation is 
- * visible. But if I drop a StackDockStation, the stack station is not
- * visible. Any idea why?
- *  
- * 
- * */
+
 public class TestToolbarDockAndStack {
 
 	/**
@@ -35,12 +22,18 @@ public class TestToolbarDockAndStack {
 	public static void main( String[] args ){
 
 		DockController controller = new DockController();
+		
+		JPanel pane = new JPanel(new BorderLayout());
 
 		/**
 		 * Create a ToolbarContainerDockStation
 		 * */
-		ToolbarContainerDockStation toolbarStation = new ToolbarContainerDockStation();
-		controller.add( toolbarStation );
+		ToolbarContainerDockStation toolbarStationWest = new ToolbarContainerDockStation(Orientation.VERTICAL);
+		pane.add(toolbarStationWest.getComponent(), BorderLayout.WEST);
+		ToolbarContainerDockStation toolbarStationNorth = new ToolbarContainerDockStation(Orientation.HORIZONTAL);
+		pane.add(toolbarStationNorth.getComponent(), BorderLayout.NORTH);
+		controller.add( toolbarStationWest );
+		controller.add( toolbarStationNorth );
 
 		ToolbarGroupDockStation group1 = new ToolbarGroupDockStation();
 		ComponentDockable dockable1 = new ComponentDockable( new JButton( "One" ) );
@@ -54,7 +47,7 @@ public class TestToolbarDockAndStack {
 
 		ToolbarDockStation toolbar1 = new ToolbarDockStation();
 		toolbar1.drop( group1 );
-		toolbarStation.drop( toolbar1, Position.WEST );
+		toolbarStationWest.drop( toolbar1 );
 
 		ToolbarGroupDockStation group2 = new ToolbarGroupDockStation();
 		ComponentDockable dockable5 = new ComponentDockable( new JButton( "Five" ) );
@@ -70,7 +63,7 @@ public class TestToolbarDockAndStack {
 		ToolbarDockStation toolbar2 = new ToolbarDockStation();
 		toolbar2.drop( group2 );
 		toolbar2.drop( group3 );
-		toolbarStation.drop( toolbar2, Position.EAST );
+		toolbarStationNorth.drop( toolbar2 );
 
 		/**
 		 * Create a stack and add it in the center area
@@ -83,14 +76,16 @@ public class TestToolbarDockAndStack {
 		stackStation.drop( dockable10 );
 		// controller.add(stackStation);
 		System.out.println( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" );
-		toolbarStation.drop( stackStation );
+		pane.add(stackStation.getComponent(), BorderLayout.CENTER);
+		//toolbarStation.drop( stackStation );
 		System.out.println( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" );
 
 		/**
 		 * Display frame
 		 * */
 		JFrame frame = new JFrame();
-		frame.add( toolbarStation.getComponent() );
+		frame.getContentPane().add(pane);
+		//frame.add( toolbarStation.getComponent() );
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		frame.setBounds( 20, 20, 400, 400 );
 		frame.setVisible( true );

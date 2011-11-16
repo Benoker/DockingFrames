@@ -1,4 +1,4 @@
-package bibliothek.gui.dock.station;
+package bibliothek.gui;
 
 /**
  * Describe the orientation
