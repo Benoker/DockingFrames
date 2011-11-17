@@ -31,6 +31,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 /**
  * Describes the layout of a {@link ToolbarContainerDockStation}
  * @author Benjamin Sigg
+ * @author Herve Guillaume
  */
 public class ToolbarContainerDockStationLayout {
 	/** the encoded layout of the {@link ToolbarContainerDockStation} */

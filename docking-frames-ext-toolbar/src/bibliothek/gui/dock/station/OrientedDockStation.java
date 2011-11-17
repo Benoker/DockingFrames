@@ -1,5 +1,7 @@
 package bibliothek.gui.dock.station;
 
+import bibliothek.gui.Orientation;
+
 
 /**
  * An oriented dockstation is a station where dockables are oriented either

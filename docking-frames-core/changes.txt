@@ -653,7 +653,11 @@
  ! API: The "check" methods of MouseFocusObserver have been removed
  - API: Added magnet feature to ScreenDockStation, clients can configure the feature through an AttractorStrategy or a MagnetStrategy. The feature allows windows to snap in place, and to stick together on movement and resizing.
  ! API: Creating a DockableDisplayer now requires the use of a DisplayerRequest. Instead of just one possibility to replace the factory creating DockableDisplayers, clients and extensions have now several possiblities, e.g. directly in a Dockable or in a DockStation
-  
+ ! API: ScreenDockStation can now filter which dockables are fullscreen enabled and which are not, see ScreenDockFullscreenFilter
+ ! API: During a drag and drop operation a DockStation now appears to consist of many layers instead of only one layer. This allows more complex rules to find the target of a drop operation. The new layers are described by the interface "DockStationDropLevel", the concept of the "override zone" has been completely replaced by this new layer mechanism.
+ - Bugfix: SplitDockStation did ignore the DockAcceptance in certain situations
+ - Bugfix: VetoableDockRelocatorListener.searched is now actually called
+
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
 - Drop StackDockStation over Dockable and merge them

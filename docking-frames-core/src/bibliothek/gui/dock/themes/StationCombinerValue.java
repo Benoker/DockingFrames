@@ -33,6 +33,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
@@ -57,10 +58,10 @@ public class StationCombinerValue extends StationThemeItemValue<Combiner> implem
     	super( id, KIND_STATION, ThemeManager.COMBINER_TYPE, station );
     }
 
-    public CombinerTarget prepare( CombinerSource source, boolean force ){
+    public CombinerTarget prepare( CombinerSource source, Enforcement force ){
     	Combiner combiner = get();
     	if( combiner == null ){
-    		if( force ){
+    		if( force.getForce() > 0.5f ){
     			combiner = new BasicCombiner();
     		}
     		else{

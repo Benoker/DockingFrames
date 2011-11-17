@@ -84,6 +84,19 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     /** border used when the mouse is pressed and the button is selected */
     private Border mousePressedSelectedBorder;
     
+    /** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the normal state. */
+    private String borderKeyNormal = BORDER_KEY_NORMAL;
+    /** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the mouse hover state. */
+    private String borderKeyMouseOver = BORDER_KEY_MOUSE_OVER;
+    /** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the mouse pressed state. */
+    private String borderKeyMousePressed = BORDER_KEY_MOUSE_PRESSED;
+    /** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the selected state. */
+    private String borderKeyNormalSelected = BORDER_KEY_NORMAL_SELECTED;
+    /** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the selected mouse hover state. */
+    private String borderKeyMouseOverSelected = BORDER_KEY_MOUSE_OVER_SELECTED;
+    /** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the selected mouse pressed state. */
+    private String borderKeyMousePressedSelected = BORDER_KEY_MOUSE_PRESSED_SELECTED;
+    
     /** the model storing the properties for this button */
     private M model;
     
@@ -206,6 +219,26 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     }
     
     /**
+     * Gets the key for modifying the border which was set by {@link #setMouseOverBorder(Border)}.
+     * @return the key, not <code>null</code> 
+     */
+    public String getBorderKeyMouseOver(){
+		return borderKeyMouseOver;
+	}
+    
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMouseOverBorder(Border)}.
+     * @param borderKeyMouseOver the new key, not <code>null</code>
+     */
+    public void setBorderKeyMouseOver( String borderKeyMouseOver ){
+    	if( borderKeyMouseOver == null ){
+    		throw new IllegalArgumentException( "key must not be null" );
+    	}
+		this.borderKeyMouseOver = borderKeyMouseOver;
+		updateBorder();
+	}
+    
+    /**
      * Gets the border which is shown when the mouse is pressed and over
      * this button. 
      * @return the border, may be <code>null</code>
@@ -226,6 +259,26 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     }
 
     /**
+     * Gets the key for modifying the border which was set by {@link #setMousePressedBorder(Border)}.
+     * @return the key, not <code>null</code> 
+     */
+    public String getBorderKeyMousePressed(){
+		return borderKeyMousePressed;
+	}
+    
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMousePressedBorder(Border)}.
+     * @param borderKeyMousePressed the new key, not <code>null</code>
+     */
+    public void setBorderKeyMousePressed( String borderKeyMousePressed ){
+    	if( borderKeyMousePressed == null ){
+    		throw new IllegalArgumentException( "key must not be null" );
+    	}
+		this.borderKeyMousePressed = borderKeyMousePressed;
+		updateBorder();
+	}
+
+    /**
      * Gets the default-border.
      * @return the border, may be <code>null</code>
      */
@@ -242,6 +295,26 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         this.normalBorder = normalBorder;
         updateBorder();
     }
+
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMouseNormalBorder(Border)}.
+     * @return the key, not <code>null</code> 
+     */
+    public String getBorderKeyNormal(){
+		return borderKeyNormal;
+	}
+    
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMouseNormalBorder(Border)}.
+     * @param borderKeyMousePressed the new key, not <code>null</code>
+     */
+    public void setBorderKeyNormal( String borderKeyNormal ){
+    	if( borderKeyNormal == null ){
+    		throw new IllegalArgumentException( "key must not be null" );
+    	}
+		this.borderKeyNormal = borderKeyNormal;
+		updateBorder();
+	}
     
     /**
      * Gets the border which is used when this button is selected.
@@ -258,6 +331,26 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     public void setNormalSelectedBorder( Border normalSelectedBorder ) {
         this.normalSelectedBorder = normalSelectedBorder;
         updateBorder();
+    }
+
+    /**
+     * Gets the key for modifying the border which was set by {@link #setNormalSelectedBorder(Border)}.
+     * @return the key, not <code>null</code> 
+     */
+    public String getBorderKeyNormalSelected(){
+		return borderKeyNormalSelected;
+	}
+    
+    /**
+     * Gets the key for modifying the border which was set by {@link #setNormalSelectedBorder(Border)}.
+     * @param borderKeyNormalSelected the new key, not <code>null</code>
+     */
+    public void setBorderKeyNormalSelected( String borderKeyNormalSelected ){
+    	if( borderKeyNormalSelected == null ){
+    		throw new IllegalArgumentException( "key must not be null" );
+    	}
+		this.borderKeyNormalSelected = borderKeyNormalSelected;
+		updateBorder();
     }
     
     /**
@@ -278,7 +371,27 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         this.mouseOverSelectedBorder = mouseOverSelectedBorder;
         updateBorder();
     }
+
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMouseOverSelectedBorder(Border)}.
+     * @return the key, not <code>null</code> 
+     */
+    public String getBorderKeyMouseOverSelected(){
+		return borderKeyMouseOverSelected;
+	}
     
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMouseOverSelectedBorder(Border)}.
+     * @param borderKeyMouseOverSelected the new key, not <code>null</code>
+     */
+    public void setBorderKeyMouseOverSelected( String borderKeyMouseOverSelected ){
+    	if( borderKeyMouseOverSelected == null ){
+    		throw new IllegalArgumentException( "key must not be null" );
+    	}
+		this.borderKeyMouseOverSelected = borderKeyMouseOverSelected;
+		updateBorder();
+	}
+
     /**
      * Gets the border which is used when the mouse is pressed and this button
      * is selected.
@@ -297,6 +410,26 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         this.mousePressedSelectedBorder = mousePressedSelectedBorder;
         updateBorder();
     }
+    
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMousePressedSelectedBorder(Border)}.
+     * @return the key, not <code>null</code> 
+     */
+    public String getBorderKeyMousePressedSelected(){
+		return borderKeyMousePressedSelected;
+	}
+    
+    /**
+     * Gets the key for modifying the border which was set by {@link #setMousePressedSelectedBorder(Border)}.
+     * @param borderKeyMousePressedSelected the new key, not <code>null</code>
+     */
+    public void setBorderKeyMousePressedSelected( String borderKeyMousePressedSelected ){
+    	if( borderKeyMousePressedSelected == null ){
+    		throw new IllegalArgumentException( "key must not be null" );
+    	}
+		this.borderKeyMousePressedSelected = borderKeyMousePressedSelected;
+		updateBorder();
+	}
     
     @Override
     public void paint( Graphics g ){
@@ -439,22 +572,22 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
 			Border border = null;
 			switch( i ){
 				case 0:
-					border = getBorder( getNormalBorder(), BORDER_KEY_NORMAL );
+					border = getBorder( getNormalBorder(), borderKeyNormal );
 					break;
 				case 1:
-					border = getBorder( getMouseOverBorder(), BORDER_KEY_MOUSE_OVER );
+					border = getBorder( getMouseOverBorder(), borderKeyMouseOver );
 					break;
 				case 2:
-					border = getBorder( getMousePressedBorder(), BORDER_KEY_MOUSE_PRESSED );
+					border = getBorder( getMousePressedBorder(), borderKeyMousePressed );
 					break;
 				case 3:
-				    border = getBorder( getNormalSelectedBorder(), BORDER_KEY_NORMAL_SELECTED );
+				    border = getBorder( getNormalSelectedBorder(), borderKeyNormalSelected );
 				    break;
 				case 4:
-				    border = getBorder( getMouseOverSelectedBorder(), BORDER_KEY_MOUSE_OVER_SELECTED );
+				    border = getBorder( getMouseOverSelectedBorder(), borderKeyMouseOverSelected );
 				    break;
 				case 5:
-				    border = getBorder( getMousePressedSelectedBorder(), BORDER_KEY_MOUSE_PRESSED_SELECTED );
+				    border = getBorder( getMousePressedSelectedBorder(), borderKeyMousePressedSelected );
 				    break;
 			}
 			
@@ -476,21 +609,21 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     protected void updateBorder(){
         if( model.isEnabled() && model.isMousePressed() ){
             if( model.isSelected() )
-                setBorder( getBorder( getMousePressedSelectedBorder(), BORDER_KEY_MOUSE_PRESSED_SELECTED ) );
+                setBorder( getBorder( getMousePressedSelectedBorder(), borderKeyMousePressedSelected ) );
             else
-                setBorder( getBorder( getMousePressedBorder(), BORDER_KEY_MOUSE_PRESSED ) );
+                setBorder( getBorder( getMousePressedBorder(), borderKeyMousePressed ) );
         }
         else if( model.isEnabled() && model.isMouseInside() ){
             if( model.isSelected() )
-                setBorder( getBorder( getMouseOverSelectedBorder(), BORDER_KEY_MOUSE_OVER_SELECTED ) );
+                setBorder( getBorder( getMouseOverSelectedBorder(), borderKeyMouseOverSelected ) );
             else
-                setBorder( getBorder( getMouseOverBorder(), BORDER_KEY_MOUSE_OVER ) );
+                setBorder( getBorder( getMouseOverBorder(), borderKeyMouseOver ) );
         }
         else{
             if( model.isSelected() )
-                setBorder( getBorder( getNormalSelectedBorder(), BORDER_KEY_NORMAL_SELECTED ) );
+                setBorder( getBorder( getNormalSelectedBorder(), borderKeyNormalSelected ) );
             else
-                setBorder( getBorder( getNormalBorder(), BORDER_KEY_NORMAL ) );
+                setBorder( getBorder( getNormalBorder(), borderKeyNormal ) );
         }
     }
     

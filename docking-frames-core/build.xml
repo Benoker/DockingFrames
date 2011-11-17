@@ -120,17 +120,17 @@
 		<property name="name.paint" value="docking-frames-demo-paint"/>
 		<property name="name.sizeAndColor" value="docking-frames-demo-size-and-color"/>
 
-		<property name="location.chess" value="[JavaForge]Chess"/>
-		<property name="location.common" value="[JavaForge]Common"/>
-		<property name="location.layouts" value="[JavaForge]CommonLayouts"/>
-		<property name="location.tutorial" value="[JavaForge]Tutorial"/>
-		<property name="location.demonstration" value="[JavaForge]Demonstration"/>
-		<property name="location.demonstrationInterface" value="[JavaForge]DemonstrationInterface"/>
-		<property name="location.core" value="[JavaForge]DockingFrames"/>
-		<property name="location.help" value="[JavaForge]Help"/>
-		<property name="location.notes" value="[JavaForge]Notes"/>
-		<property name="location.paint" value="[JavaForge]Paint"/>
-		<property name="location.sizeAndColor" value="[JavaForge]SizeAndColor"/>
+		<property name="location.chess" value="docking-frames-demo-chess"/>
+		<property name="location.common" value="docking-frames-common"/>
+		<property name="location.layouts" value="docking-frames-demo-layouts"/>
+		<property name="location.tutorial" value="docking-frames-demo-tutorial"/>
+		<property name="location.demonstration" value="docking-frames-demo-app"/>
+		<property name="location.demonstrationInterface" value="docking-frames-demo-app-ice"/>
+		<property name="location.core" value="docking-frames-core"/>
+		<property name="location.help" value="docking-frames-demo-help"/>
+		<property name="location.notes" value="docking-frames-demo-notes"/>
+		<property name="location.paint" value="docking-frames-demo-paint"/>
+		<property name="location.sizeAndColor" value="docking-frames-demo-size-and-color"/>
 	</target>
 
 	<target name="doc" depends="source, paths">

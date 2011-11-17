@@ -27,19 +27,16 @@ the GNU Lesser General Public
  */
 package bibliothek.gui.dock.control.relocator;
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +47,6 @@ import javax.swing.event.MouseInputAdapter;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
-import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.accept.DockAcceptance;
@@ -63,6 +59,7 @@ import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.layer.OrderedLayerCollection;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.extension.ExtensionName;
@@ -221,21 +218,35 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
         
-        for( int i = 0; i < 2; i++ ){
-            boolean checkOverrideZone = i == 0;
-            
-            for( DockStation station : list ){
-            	StationDropOperation operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, checkOverrideZone, dockable );
-            	
-            	boolean merge = canMerge( operation, station, dockable );
-            	            	
-                if( operation != null ){
-                   	if( merge ){
-                   		return new MergeOperation( getController(), getMerger(), station, operation );
-                   	}
-                   	return new DropOperation( getController(), station, operation );
-                }
-            }
+        for( DockStation station : list ){
+        	StationDropOperation operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        	RelocateOperation result = null;
+        	
+        	boolean merge = canMerge( operation, station, dockable );
+
+        	if( operation != null ){
+        		if( merge ){
+        			result = new MergeOperation( getController(), getMerger(), station, operation );
+        		}
+        		else{
+        			result = new DropOperation( getController(), station, operation );
+        		}
+        	}
+        	
+        	if( result != null ){
+	        	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, result.getImplicit( dockable ), station );
+	        	fireSearched( event );
+	        	
+	        	if( event.isForbidden() ){
+	        		result = null;
+	        	}
+	        	else if( event.isCanceled() ){
+	        		cancel();
+	        		return null;
+	        	}
+	        	
+	        	return result;
+        	}
         }
         
         return null;
@@ -297,35 +308,21 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @return a list of stations
      */
     protected List<DockStation> listStationsOrdered( int x, int y, Dockable moved ){
-        List<DockStation> result = new LinkedList<DockStation>();
+    	OrderedLayerCollection collection = new OrderedLayerCollection();
         DockStation movedStation = moved.asDockStation();
         DockController controller = getController();
         
         if( !isCancelLocation( x, y, moved )){
-	        for( DockStation station : controller.getRegister().listDockStations() ){   
-	            if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
-	                if( station.isStationShowing() && isStationValid( station ) ){
-	                    Rectangle bounds = station.getStationBounds();
-	                    if( bounds == null || bounds.contains( x, y )){
-	                        int index = 0;
-	                        
-	                        // insertion sort
-	                        for( DockStation resultStation : result ){
-	                            int compare = compare( resultStation, station );
-	                            if( compare < 0 )
-	                                break;
-	                            else
-	                                index++;
-	                        }
-	                        
-	                        result.add( index, station );
-	                    }
+        	for( DockStation station : controller.getRegister().listDockStations() ){
+        		if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
+        			if( station.isStationShowing() && isStationValid( station ) ){
+        				collection.add( station );
 	                }
 	            }
-	        }        
+	        }
         }
-	    return result;
-    }    
+	    return collection.sort( x, y );
+    }
     
     /**
      * Checks whether the mouse is at a location that cancels a drag and drop operation. This method just calls
@@ -370,98 +367,6 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     @ClientOnly
     protected boolean isStationValid( DockStation station ){
     	return true;
-    }
-    
-    /**
-     * Tries to decide which station is over the other stations.
-     * @param a the first station
-     * @param b the second station
-     * @return a number less/equal/greater than zero if
-     * a is less/equal/more visible than b. 
-     */
-    protected int compare( DockStation a, DockStation b ){
-    	if( a == b )
-    		return 0;
-    	
-        if( DockUtilities.isAncestor( a, b ))
-            return -1;
-        
-        if( DockUtilities.isAncestor( b, a ))
-            return 1;
-        
-        if( a.canCompare( b )){
-            int result = a.compare( b );
-            if( result != 0 ){
-            	return result;
-            }
-        }
-        
-        if( b.canCompare( a )){
-            int result = -b.compare( a );
-            if( result != 0 ){
-            	return result;
-            }
-        }
-        
-        Dockable dockA = a.asDockable();
-        Dockable dockB = b.asDockable();
-        
-        if( dockA != null && dockB != null ){
-            Component compA = dockA.getComponent();
-            Component compB = dockB.getComponent();
-            
-            Window windowA = SwingUtilities.getWindowAncestor( compA );
-            Window windowB = SwingUtilities.getWindowAncestor( compB );
-
-            if( windowA != null && windowB != null ){
-                if( windowA == windowB ){
-                	if( DockUI.isOverlapping( compA, compB )){
-                		return 1;
-                	}
-                	if( DockUI.isOverlapping( compB, compA )){
-                		return -1;
-                	}
-                }
-                else{
-                	if( isParent( windowA, windowB ))
-                        return -1;
-                    
-                    if( isParent( windowB, windowA ))
-                        return 1;
-                    
-	                boolean mouseOverA = windowA.getMousePosition() != null;
-	                boolean mouseOverB = windowB.getMousePosition() != null;
-	                
-	                if( mouseOverA && !mouseOverB ){
-	                	return 1;
-	                }
-	                if( !mouseOverA && mouseOverB ){
-	                	return -1;
-	                }
-                }
-            }
-        }
-        return 0;
-    }
-        
-    /**
-     * Tells whether <code>parent</code> is really a parent of <code>child</code>
-     * or not.
-     * @param parent a window which may be an ancestor of <code>child</code>
-     * @param child a window which may be child of <code>parent</code>
-     * @return <code>true</code> if <code>parent</code> is an
-     * ancestor of <code>child</code>
-     */
-    private boolean isParent( Window parent, Window child ){
-        Window temp = child.getOwner();
-        while( temp != null ){
-            if( temp == parent )
-                return true;
-            
-            temp = temp.getOwner();
-        }
-        
-        return false;
     }
     
     /**

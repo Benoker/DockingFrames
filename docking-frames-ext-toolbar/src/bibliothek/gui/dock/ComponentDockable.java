@@ -1,9 +1,15 @@
 package bibliothek.gui.dock;
 
+import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -14,6 +20,10 @@ import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DockableIcon;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.toolbar.expand.ExpandableStateController;
+import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
+import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
+import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
@@ -25,11 +35,23 @@ import bibliothek.gui.dock.util.icon.DockIcon;
  * 
  * @author Herve Guillaume
  */
-public class ComponentDockable extends AbstractDockable implements ToolbarElementInterface {
+public class ComponentDockable extends AbstractDockable implements ToolbarElementInterface, ExpandableToolbarItem {
 
 	/** the component */
-	private Component component;
+	private JPanel content;
+	
+	/** the layout of {@link #content} */
+	private CardLayout contentLayout;
+	
+	/** all the {@link ExpandableToolbarItemListener}s */
+	private List<ExpandableToolbarItemListener> expandableListeners = new ArrayList<ExpandableToolbarItemListener>();
 
+	/** the current state of this {@link ExpandableToolbarItem} */
+	private ExpandedState state = ExpandedState.SHRUNK;
+	
+	/** the {@link Component}s to show in differnet states */
+	private Component[] components = new Component[ ExpandedState.values().length ];
+	
 	/**
 	 * Constructs a new ComponentDockable
 	 */
@@ -107,21 +129,150 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 	 */
 	public ComponentDockable( Component component, String title, Icon icon ){
 		super( PropertyKey.DOCKABLE_TITLE, PropertyKey.DOCKABLE_TOOLTIP );
+		
+		contentLayout = new CardLayout(){
+			@Override
+			public Dimension preferredLayoutSize( Container parent ){
+				synchronized( parent.getTreeLock() ){
+					Component current = getNearestComponent( state );
+					if( current == null ){
+						return new Dimension( 10, 10 );
+					}
+					return current.getPreferredSize();
+				}
+			}
+			
+			@Override
+			public Dimension minimumLayoutSize( Container parent ){
+				synchronized( parent.getTreeLock() ){
+					Component current = getNearestComponent( state );
+					if( current == null ){
+						return new Dimension( 10, 10 );
+					}
+					return current.getMinimumSize();
+				}
+			}
+			
+			@Override
+			public Dimension maximumLayoutSize( Container parent ){
+				synchronized( parent.getTreeLock() ){
+					Component current = getNearestComponent( state );
+					if( current == null ){
+						return new Dimension( 10, 10 );
+					}
+					return current.getMaximumSize();
+				}
+			}
+		};
+		
+		content = new JPanel( contentLayout );
+		
+		new ExpandableStateController( this );
+		
 		if( component != null ) {
-			this.component = component;
+			setComponent( component, ExpandedState.SHRUNK );
 		}
 
-		if( icon != null ) {
-			setTitleIcon( icon );
-		}
+		setTitleIcon( icon );
 		setTitleText( title );
+	}
+	
+	private Component getNearestComponent( ExpandedState state ){
+		int index = state.ordinal();
+		while( index >= 0 ){
+			if( components[index] != null ){
+				return components[index];
+			}
+			index--;
+		}
+		
+		index = state.ordinal()+1;
+		while( index < components.length ){
+			if( components[index] != null ){
+				return components[index];
+			}
+			index++;
+		}
+		return null;
+	}
+	
+	private ExpandedState getNearestState( ExpandedState state ){
+		Component nearest = getNearestComponent( state );
+		if( nearest == null ){
+			return null;
+		}
+		for( ExpandedState next : ExpandedState.values() ){
+			if( components[ next.ordinal() ] == nearest ){
+				return next;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Sets the {@link Component} which should be shown if in state <code>state</code>. Please
+	 * note that the same {@link Component} cannot be used for more than one state.
+	 * @param component the component to add
+	 * @param state the state in which to show <code>component</code>
+	 */
+	public void setComponent( Component component, ExpandedState state ){
+		Component previous = components[ state.ordinal() ];
+		if( previous != component ){
+			if( previous != null ){
+				content.remove( previous );
+			}
+			components[ state.ordinal() ] = component;
+			if( component != null ){
+				content.add( component, state.toString() );
+			}
+			
+			ExpandedState nearest = getNearestState( this.state );
+			if( nearest != null ){
+				contentLayout.show( content, nearest.toString() );
+				content.revalidate();
+			}
+		}
+	}
+	
+	@Override
+	public void setExpandedState( ExpandedState state ){
+		if( this.state != state ){
+			ExpandedState oldState = this.state;
+			this.state = state;
+			ExpandedState nearest = getNearestState( state );
+			if( nearest != null ){
+				contentLayout.show( content, nearest.toString() );
+			}
+			content.revalidate();
+			for( ExpandableToolbarItemListener listener : expandableListeners.toArray( new ExpandableToolbarItemListener[ expandableListeners.size() ] )){
+				listener.changed( this, oldState, state );
+			}
+		}
+	}
+	
+	@Override
+	public ExpandedState getExpandedState(){
+		return state;
 	}
 	
 	@Override
 	public Component getComponent(){
-		return component;
+		return content;
 	}
 
+	@Override
+	public void addExpandableListener( ExpandableToolbarItemListener listener ){
+		if( listener == null ){
+			throw new IllegalArgumentException( "listener must not be null" );
+		}
+		expandableListeners.add( listener );	
+	}
+	
+	@Override
+	public void removeExpandableListener( ExpandableToolbarItemListener listener ){
+		expandableListeners.remove( listener );
+	}
+	
 	@Override
 	public DockStation asDockStation(){
 		return null;

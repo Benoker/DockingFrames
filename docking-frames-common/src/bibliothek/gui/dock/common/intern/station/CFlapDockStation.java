@@ -41,6 +41,10 @@ import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.event.DockStationAdapter;
+import bibliothek.gui.dock.station.flap.layer.FlapOverrideDropLayer;
+import bibliothek.gui.dock.station.flap.layer.WindowDropLayer;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
@@ -99,6 +103,25 @@ public class CFlapDockStation extends FlapDockStation implements CommonDockStati
 	@Override
 	public CommonDockable asDockable(){
 		return null;
+	}
+	
+	@Override
+	public DockStationDropLayer[] getLayers(){
+		return new DockStationDropLayer[]{
+				new DefaultDropLayer( this ){
+					@Override
+					public Component getComponent(){
+						return CFlapDockStation.this.getComponent();
+					}
+				},
+    			new FlapOverrideDropLayer( this ){
+					@Override
+					public Component getComponent(){
+						return CFlapDockStation.this.getComponent();
+					}
+				},
+    			new WindowDropLayer( this )
+		};
 	}
 	
 	@Override

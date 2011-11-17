@@ -95,7 +95,8 @@ public class MenuLineLayoutPossibility {
 	}
 	
 	/**
-	 * Gets the size this layout requires.
+	 * Gets the size this layout requires, this {@link Dimension} does not include the preferred or minimal size
+	 * required for the {@link #getPane() tab pane}.
 	 * @return the size
 	 */
 	public Dimension getSize(){

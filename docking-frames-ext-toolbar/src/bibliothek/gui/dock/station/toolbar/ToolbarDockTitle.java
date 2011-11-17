@@ -1,19 +1,17 @@
 package bibliothek.gui.dock.station.toolbar;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
 
 import javax.swing.JComponent;
-import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockElement;
-import bibliothek.gui.dock.title.ActivityDockTitleEvent;
+import bibliothek.gui.ToolbarExtension;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitle;
-import bibliothek.gui.dock.title.DockTitleEvent;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -23,7 +21,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * shows a line with a width or height of 5 pixels and a custom color. 
  * @author Benjamin Sigg
  */
-public class ToolbarDockTitle extends JComponent implements DockTitle{
+public class ToolbarDockTitle extends AbstractDockTitle {
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitle}s.
 	 * @param color the color of the title
@@ -48,117 +46,34 @@ public class ToolbarDockTitle extends JComponent implements DockTitle{
 		};
 	}
 	
-	private Dockable dockable;
 	private Color color;
 	private Orientation orientation = Orientation.FREE_HORIZONTAL;
-	private boolean active = false;
-	private DockTitleVersion origin;
 	
 	public ToolbarDockTitle( DockTitleVersion origin, Dockable dockable, Color color ){
-		this.dockable = dockable;
+		super( dockable, origin, true );
 		this.color = color;
-		this.origin = origin;
 	}
 	
 	@Override
-	public DockElement getElement(){
-		return dockable;
+	protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
+		return dockable.getController().getActionViewConverter().createView( 
+				action, ToolbarExtension.TOOLBAR_TITLE, dockable );
 	}
-
-	@Override
-	public boolean isUsedAsTitle(){
-		return true;
-	}
-
-	@Override
-	public boolean shouldFocus(){
-		return true;
-	}
-
-	@Override
-	public boolean shouldTransfersFocus(){
-		return false;
-	}
-
-	@Override
-	public Point getPopupLocation( Point click, boolean popupTrigger ){
-		return null; // no support for popups
-	}
-
-	@Override
-	public Component getComponent(){
-		return this;
-	}
-
-	@Override
-	public void addMouseInputListener( MouseInputListener listener ){
-		addMouseListener( listener );
-		addMouseMotionListener( listener );
-	}
-
-	@Override
-	public void removeMouseInputListener( MouseInputListener listener ){
-		removeMouseListener( listener );
-		removeMouseMotionListener( listener );
-	}
-
-	@Override
-	public Dockable getDockable(){
-		return dockable;
-	}
-
-	@Override
-	public void setOrientation( Orientation orientation ){
-		this.orientation = orientation;
-		invalidate();
-		repaint();
-	}
-
-	@Override
-	public Orientation getOrientation(){
-		return orientation;
-	}
-
-	@Override
-	public void changed( DockTitleEvent event ){
-		if( event instanceof ActivityDockTitleEvent ){
-			active = ((ActivityDockTitleEvent)event).isActive();
-			repaint();
-		}
-	}
-
-	@Override
-	public boolean isActive(){
-		return active;
-	}
-
-	@Override
-	public void bind(){
-		// nothing to do
-	}
-
-	@Override
-	public void unbind(){
-		// nothing to do	
-	}
-
-	@Override
-	public DockTitleVersion getOrigin(){
-		return origin;
-	}
-	
+		
 	@Override
 	public Dimension getPreferredSize(){
-		if( orientation.isHorizontal() ){
-			return new Dimension( 10, 5 );
-		}
-		else{
-			return new Dimension( 5, 10 );
-		}
+		Dimension size = super.getPreferredSize();
+		return new Dimension( Math.max( 5, size.width ), Math.max( 5, size.height ));
 	}
 	
 	@Override
-	protected void paintComponent( Graphics g ){
+	public void setActive( boolean active ){
+		super.setActive( active );
+		repaint();
+	}
+	
+	@Override
+	public void paintBackground( Graphics g, JComponent component ){
 		g.setColor( color );
 		g.fillRect( 0, 0, getWidth(), getHeight() );
 		

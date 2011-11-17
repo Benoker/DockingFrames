@@ -40,6 +40,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.support.CombinerSource;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
@@ -68,7 +69,7 @@ public class TabDisplayerCombinerTarget implements DisplayerCombinerTarget{
 	 * @param source information about the {@link Dockable} that is going to be dropped
 	 * @param force whether this target should be forced to be valid in more cases
 	 */
-	public TabDisplayerCombinerTarget( DockableDisplayer displayer, StackDockComponent stack, CombinerSource source, boolean force ){
+	public TabDisplayerCombinerTarget( DockableDisplayer displayer, StackDockComponent stack, CombinerSource source, Enforcement force ){
 		this.displayer = displayer;
 		this.stack = stack;
 		Point mouse = source.getMousePosition();
@@ -85,7 +86,7 @@ public class TabDisplayerCombinerTarget implements DisplayerCombinerTarget{
 						index = 0;
 					}
 				}
-				else if( force ){
+				else if( force.getForce() > 0.9f ){
 					index = 1;
 				}
 			}
@@ -98,7 +99,7 @@ public class TabDisplayerCombinerTarget implements DisplayerCombinerTarget{
 						index = 0;
 					}
 				}
-				else if( force ){
+				else if( force.getForce() > 0.9f ){
 					index = 1;
 				}
 			}

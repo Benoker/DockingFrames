@@ -391,7 +391,13 @@ public class DockController {
      */
     protected UIScheme<String, TextValue, TextBridge> createDefaultTextScheme(){
     	ResourceBundle bundle = ResourceBundle.getBundle( "data.bibliothek.gui.dock.core.locale.text", Locale.getDefault(), this.getClass().getClassLoader() );
-    	return new DefaultTextScheme( bundle );
+    	
+    	List<ResourceBundle> list = texts.loadExtensionBundles( Locale.getDefault() );
+    	
+    	ResourceBundle[] bundles = list.toArray( new ResourceBundle[ list.size()+1] );
+    	bundles[ bundles.length-1 ] = bundle;
+    	
+    	return new DefaultTextScheme( bundles );
     }
     
     /**

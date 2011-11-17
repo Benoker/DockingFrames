@@ -31,6 +31,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.MenuLayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
@@ -91,6 +92,14 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 	public Dimension getPreferredSize(){
 		List<MenuLineLayoutPossibility> layouts = listLayouts();
 		Dimension bestSize = new Dimension( 0, 0 );
+		Dimension dockableSize = new Dimension();
+		
+		TabPane pane = getPane();
+		for( Dockable dockable : pane.getDockables()){
+			Dimension size = pane.getPreferredSize( dockable );
+			dockableSize.width = Math.max( dockableSize.width, size.width );
+			dockableSize.height = Math.max( dockableSize.height, size.height );
+		}
 		
 		if( getPane().getDockTabPlacement().isHorizontal() ){
 			for( MenuLineLayoutPossibility layout : layouts ){
@@ -101,6 +110,8 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 					}
 				}
 			}
+			bestSize.width = Math.max( bestSize.width, dockableSize.width );
+			bestSize.height += dockableSize.height;
 		}
 		else{
 			for( MenuLineLayoutPossibility layout : layouts ){
@@ -111,6 +122,8 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 					}
 				}
 			}
+			bestSize.width += dockableSize.width;
+			bestSize.height = Math.max( bestSize.height, dockableSize.height );
 		}
 		
 		return bestSize;
@@ -123,6 +136,14 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 	public Dimension getMinimumSize(){
 		List<MenuLineLayoutPossibility> layouts = listLayouts();
 		Dimension bestSize = null;
+		Dimension dockableSize = new Dimension();
+		
+		TabPane pane = getPane();
+		for( Dockable dockable : pane.getDockables()){
+			Dimension size = pane.getMinimumSize( dockable );
+			dockableSize.width = Math.max( dockableSize.width, size.width );
+			dockableSize.height = Math.max( dockableSize.height, size.height );
+		}
 		
 		if( getPane().getDockTabPlacement().isHorizontal() ){
 			for( MenuLineLayoutPossibility layout : layouts ){
@@ -131,6 +152,8 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 					bestSize = size;
 				}
 			}
+			bestSize.width = Math.max( bestSize.width, dockableSize.width );
+			bestSize.height += dockableSize.height;
 		}
 		else{
 			for( MenuLineLayoutPossibility layout : layouts ){
@@ -139,6 +162,8 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 					bestSize = size;
 				}
 			}
+			bestSize.width += dockableSize.width;
+			bestSize.height = Math.max( bestSize.height, dockableSize.height );
 		}
 		
 		return bestSize;

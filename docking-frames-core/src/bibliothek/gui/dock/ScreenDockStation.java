@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.accept.DockAcceptance;
-import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
@@ -63,9 +63,12 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockWindowFactory;
+import bibliothek.gui.dock.station.screen.FullscreenActionSource;
+import bibliothek.gui.dock.station.screen.ScreenDockFullscreenFilter;
 import bibliothek.gui.dock.station.screen.ScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
@@ -75,6 +78,8 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowHandle;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
+import bibliothek.gui.dock.station.screen.layer.ScreenLayer;
+import bibliothek.gui.dock.station.screen.layer.ScreenWindowLayer;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.screen.magnet.DefaultMagnetStrategy;
 import bibliothek.gui.dock.station.screen.magnet.MagnetController;
@@ -86,6 +91,7 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
@@ -325,6 +331,12 @@ public class ScreenDockStation extends AbstractDockStation {
 				parent = dockable == null ? null : dockable.getDockParent();
 			}
 			if( parent == ScreenDockStation.this ){
+				for( ScreenDockFullscreenFilter filter : filters ){
+					if( !filter.isFullscreenEnabled( dockable )){
+						return false;
+					}
+				}
+				
 				boolean state = isFullscreen( dockable );
 				setFullscreen( dockable, !state );
 				return true;
@@ -334,6 +346,12 @@ public class ScreenDockStation extends AbstractDockStation {
 		}
 	};
     
+	/** a list of filters that can disable fullscreen mode for some windows */
+	private List<ScreenDockFullscreenFilter> filters = new ArrayList<ScreenDockFullscreenFilter>();
+	
+	/** all the {@link FullscreenActionSource}s that are currently used */
+	private List<FullscreenActionSource> filterSources = new LinkedList<FullscreenActionSource>();
+	
     /**
      * Constructs a new <code>ScreenDockStation</code>.
      * @param owner the window which will be used as parent for the 
@@ -432,14 +450,11 @@ public class ScreenDockStation extends AbstractDockStation {
         this.fullscreenAction = fullScreenAction;
     }
 
-    public DefaultDockActionSource getDirectActionOffers( Dockable dockable ) {
+    public DockActionSource getDirectActionOffers( Dockable dockable ) {
         if( fullscreenAction == null )
             return null;
         else{
-            DefaultDockActionSource source = new DefaultDockActionSource(new LocationHint( LocationHint.DIRECT_ACTION, LocationHint.VERY_RIGHT ));
-            source.add( fullscreenAction );
-
-            return source;
+            return createFullscreenSource( dockable, new LocationHint( LocationHint.DIRECT_ACTION, LocationHint.VERY_RIGHT ));
         }
     }
 
@@ -462,9 +477,34 @@ public class ScreenDockStation extends AbstractDockStation {
         if( parent != this )
             return null;
 
-        DefaultDockActionSource source = new DefaultDockActionSource( fullscreenAction );
-        source.setHint( new LocationHint( LocationHint.INDIRECT_ACTION, LocationHint.VERY_RIGHT ));
-        return source;
+        return createFullscreenSource( dockable, new LocationHint( LocationHint.INDIRECT_ACTION, LocationHint.VERY_RIGHT ));
+    }
+    
+    private DockActionSource createFullscreenSource( final Dockable dockable, LocationHint hint ){
+    	return new FullscreenActionSource( fullscreenAction, hint ){
+    		private boolean listening;
+    		
+    		protected boolean isFullscreenEnabled(){
+    			for( ScreenDockFullscreenFilter filter : filters ){
+    				if( !filter.isFullscreenEnabled( dockable )){
+    					return false;
+    				}
+    			}
+    			return true;
+    		}
+    		
+    		protected void listen( boolean listening ){
+    			if( this.listening != listening ){
+    				this.listening = listening;
+	    			if( listening ){
+	    				filterSources.add( this );
+	    			}
+	    			else{
+	    				filterSources.remove( this );
+	    			}
+    			}
+    		}
+    	};
     }
     
     /**
@@ -778,7 +818,16 @@ public class ScreenDockStation extends AbstractDockStation {
             listeners.fireDockableSelected( oldSelected, newSelected );
     }
 
-    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    public DockStationDropLayer[] getLayers() {
+    	DockStationDropLayer[] result = new DockStationDropLayer[ getDockableCount()+1 ];
+    	result[0] = new ScreenLayer( this );
+    	for( int i = 1; i < result.length; i++ ){
+    		result[i] = new ScreenWindowLayer( this, getWindow( i-1 ));
+    	}
+    	return result;
+    }
+    
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
         return prepare( x, y, titleX, titleY, dockable, dockable.getDockParent() != this );
     }
     
@@ -794,10 +843,10 @@ public class ScreenDockStation extends AbstractDockStation {
         dropInfo.dockable = dockable;
         dropInfo.move = !drop;
         
-        boolean force = true;
+        Enforcement force = Enforcement.HARD;
         dropInfo.combine = searchCombineDockable( x, y, dockable, true );
         if( dropInfo.combine == null ){
-        	force = false;
+        	force = Enforcement.EXPECTED;
         	dropInfo.combine = searchCombineDockable( x, y, dockable, false );
         }
         
@@ -863,8 +912,6 @@ public class ScreenDockStation extends AbstractDockStation {
      * @return the window which might become the parent of <code>drop</code>.
      */
     protected ScreenDockWindow searchCombineDockable( int x, int y, Dockable drop, boolean combineArea ){
-        DockAcceptance acceptance = getController() == null ? null : getController().getAcceptance();
-        
         for( ScreenDockWindowHandle handle : dockables.dockables() ){
         	ScreenDockWindow window = handle.getWindow();
         	
@@ -879,10 +926,8 @@ public class ScreenDockStation extends AbstractDockStation {
             if( candidate ){
                 Dockable child = window.getDockable();
                 
-                if( acceptance == null || acceptance.accept( this, child, drop )){
-                    if( drop.accept( this, child ) && child.accept( this, drop )){
-                        return window;
-                    }
+                if( DockUtilities.acceptable( this, child, drop ) ){
+                	return window;
                 }
             }
         }
@@ -1021,6 +1066,32 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
+     * Adds the new filter <code>filter</code> to this station. The filter can deny {@link Dockable}s the
+     * possibility of being in fullscreen mode.
+     * @param filter the new filter, not <code>null</code>
+     */
+    public void addFullscreenFilter( ScreenDockFullscreenFilter filter ){
+    	filters.add( filter );
+    	filterChanged();
+    }
+    
+    /**
+     * Removes <code>filter</code> from this station.
+     * @param filter the filter to remove
+     * @see #addFullscreenFilter(ScreenDockFullscreenFilter)
+     */
+    public void removeFullscreenFilter( ScreenDockFullscreenFilter filter ){
+    	filters.remove( filter );
+    	filterChanged();
+    }
+    
+    private void filterChanged(){
+    	for( FullscreenActionSource source : filterSources ){
+    		source.update();
+    	}
+    }
+    
+    /**
      * Tells this station what to do on a double click on a child. If set
      * to <code>true</code>, then the childs fullscreen mode gets changed.
      * @param expand whether to react on double clicks
@@ -1057,10 +1128,6 @@ public class ScreenDockStation extends AbstractDockStation {
             
             window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ), false );
         }
-    }
-
-    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ) {
-        return searchCombineDockable( x, y, drop, true ) != null;
     }
 
     public boolean canDrag( Dockable dockable ) {
@@ -1379,7 +1446,7 @@ public class ScreenDockStation extends AbstractDockStation {
     	info.titleX = info.x;
     	info.titleY = info.y;
     	
-    	info.combiner = combiner.prepare( info, true );
+    	info.combiner = combiner.prepare( info, Enforcement.HARD );
     	
     	combine( info, info.combiner, property );
     }
@@ -1829,16 +1896,6 @@ public class ScreenDockStation extends AbstractDockStation {
 
     public String getFactoryID() {
         return ScreenDockStationFactory.ID;
-    }
-
-    @Override
-    public boolean canCompare( DockStation station ) {
-        return true;
-    }
-    
-    @Override
-    public int compare( DockStation station ) {
-        return -1;
     }
     
     /**

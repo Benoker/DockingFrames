@@ -11,10 +11,10 @@ import javax.swing.border.LineBorder;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.Orientation;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
@@ -41,7 +41,7 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer{
 			@Override
 			public void request( DisplayerRequest request ){
 				ToolbarDockableDisplayer displayer = new ToolbarDockableDisplayer( request.getParent(), request.getTarget(), request.getTitle(), autoOrientation );
-				displayer.setDefaultBorder( BorderFactory.createLineBorder( color, 2 ) );
+				//displayer.setDefaultBorder( BorderFactory.createLineBorder( color, 2 ) );
 				displayer.setDefaultBorderHint( true );
 				displayer.setRespectBorderHint( false );
 				request.answer( displayer );

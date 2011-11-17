@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.stack.tab;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import bibliothek.gui.DockController;
@@ -82,6 +83,20 @@ public interface TabPane {
 	 * @return the list of children, not <code>null</code> but maybe empty
 	 */
 	public Dockable[] getDockables();
+	
+	/**
+	 * Gets the minimum size that is required to show the child <code>dockable</code>.
+	 * @param dockable one of the children of this pane
+	 * @return the minimum size required to show <code>dockable</code>
+	 */
+	public Dimension getMinimumSize( Dockable dockable );
+
+	/**
+	 * Gets the preferred size that is required to show the child <code>dockable</code>.
+	 * @param dockable one of the children of this pane
+	 * @return the preferred size required to show <code>dockable</code>
+	 */
+	public Dimension getPreferredSize( Dockable dockable );
 	
 	/**
 	 * Gets the currently selected {@link Dockable} on this pane (this

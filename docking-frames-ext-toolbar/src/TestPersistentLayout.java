@@ -12,6 +12,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
@@ -39,7 +40,7 @@ public class TestPersistentLayout {
 		ComponentDockable button3 = new ComponentDockable( new JButton( "Three" ));
 		ComponentDockable button4 = new ComponentDockable( new JButton( "Four" ));
 		ComponentDockable button5 = new ComponentDockable( new JButton( "Five" ));
-		ToolbarContainerDockStation root = new ToolbarContainerDockStation();
+		ToolbarContainerDockStation root = new ToolbarContainerDockStation(Orientation.VERTICAL);
 		
 		frontend.addDockable( "one", button1 );
 		frontend.addDockable( "two", button2 );

@@ -26,13 +26,9 @@
 
 package bibliothek.gui.dock.station;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.io.IOException;
 
 import javax.swing.Icon;
-import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -45,10 +41,13 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.util.Todo;
@@ -185,28 +184,17 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
      * @return <code>true</code> if acceptable
      */
     public boolean acceptable( Dockable child ){
-    	if( !accept( child )){
-    		return false;
-    	}
-    	if( !child.accept( this )){
-    		return false;
-    	}
-    	
-    	DockController controller = getController();
-    	if( controller != null ){
-    		if( !controller.getAcceptance().accept( this, child )){
-    			return false;
-    		}
-    	}
-    	return true;
+    	return DockUtilities.acceptable( this, child );
     }
-
-    public boolean canCompare( DockStation station ) {
-        return false;
-    }
-
-    public int compare( DockStation station ) {
-        return 0;
+    
+    /**
+     * Tells whether this station accepts <code>child</code> as combination with <code>old</code>.
+     * @param old some child of this station
+     * @param next a new child
+     * @return <code>true</code> if <code>old</code> and <code>next</code> can be combined
+     */
+    public boolean acceptable( Dockable old, Dockable next ){
+    	return DockUtilities.acceptable( this, old, next );
     }
 
     public void changed( Dockable dockable, DockTitle title, boolean active ) {
@@ -220,15 +208,13 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
     public void requestChildDisplayer( DisplayerRequest request ){
 	    // ignore	
     }
-    
-    public Rectangle getStationBounds() {
-        Component component = getComponent();
-        Point location = new Point( 0, 0 );
-        SwingUtilities.convertPointToScreen( location, component );
-        return new Rectangle( location.x, location.y, component.getWidth(), component.getHeight() );
+
+    public DockStationDropLayer[] getLayers(){
+    	return new DockStationDropLayer[]{
+    			new DefaultDropLayer( this )
+    	};
     }
     
-
     /**
      * Invokes {@link DockStationListenerManager#fireDockablesRepositioned(Dockable...)} for
      * all children starting at index <code>fromIndex</code>.

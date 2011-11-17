@@ -3,9 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copy
-import bibliothek.gui.dock.util.extension.Extension;
-right (C) 2007 Benjamin Sigg
+ * Copyright (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -91,19 +89,24 @@ import bibliothek.gui.dock.station.flap.FlapWindowFactory;
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
 import bibliothek.gui.dock.station.flap.button.DefaultButtonContentFilter;
+import bibliothek.gui.dock.station.flap.layer.FlapOverrideDropLayer;
+import bibliothek.gui.dock.station.flap.layer.WindowDropLayer;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.StationCombinerValue;
@@ -119,6 +122,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 import bibliothek.util.Path;
@@ -533,7 +537,7 @@ public class FlapDockStation extends AbstractDockableStation {
                 controller.addDockableFocusListener( controllerListener );
                 controller.getFocusController().addVetoListener( controllerListener );
                 
-                if( isStationVisible() )
+                if( isStationShowing() )
                     setFrontDockable( oldFrontDockable );
             }
             
@@ -1126,21 +1130,6 @@ public class FlapDockStation extends AbstractDockableStation {
         title.changed( event );
     }
     
-    @Override
-    public Rectangle getStationBounds() {
-        Point point = new Point( 0, 0 );
-        SwingUtilities.convertPointToScreen( point, getComponent() );
-        Rectangle result = new Rectangle( point.x, point.y, getComponent().getWidth(), getComponent().getHeight() );
-        
-        if( window != null && window.isWindowVisible() ){
-        	Rectangle bounds = window.getWindowBounds();
-        	
-            result = SwingUtilities.computeUnion( bounds.x, bounds.y, bounds.width, bounds.height, result );
-        }
-        
-        return result;
-    }
-
     /**
      * Sets the current drop-information. The information is forwarded
      * to the popup-window and the button-panel (if they exist).
@@ -1183,6 +1172,15 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     public boolean isFlapWindow( FlapWindow window ){
     	return this.window == window;
+    }
+    
+    /**
+     * Gets the window which is currently used by this station. The window
+     * may or may not be shown currently. Callers should not modify the window.
+     * @return the current window, might be <code>null</code>
+     */
+    public FlapWindow getFlapWindow(){
+    	return window;
     }
     
     public PlaceholderMap getPlaceholders(){
@@ -1331,7 +1329,15 @@ public class FlapDockStation extends AbstractDockableStation {
 		buttonPane.resetTitles();
     }
 
-    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
+    public DockStationDropLayer[] getLayers(){
+    	return new DockStationDropLayer[]{
+    			new DefaultDropLayer( this ),
+    			new FlapOverrideDropLayer( this ),
+    			new WindowDropLayer( this )
+    	};
+    }
+    
+    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ) {
     	boolean move = dockable.getDockParent() == this;
     	
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
@@ -1342,12 +1348,10 @@ public class FlapDockStation extends AbstractDockableStation {
         SwingUtilities.convertPointFromScreen( mouse, buttonPane );
         FlapDropInfo dropInfo = null;
         
-        boolean strong = buttonPane.titleContains( mouse.x, mouse.y );
-        
         DockAcceptance acceptance = getController().getAcceptance();
         
         // if mouse over window title: force combination
-        if( !strong && window != null && window.isWindowVisible() ){
+        if( window != null && window.isWindowVisible() ){
             DockTitle title = window.getDockTitle();
             
             if( title != null ){
@@ -1355,37 +1359,24 @@ public class FlapDockStation extends AbstractDockableStation {
                 Point point = new Point( mouseX, mouseY );
                 SwingUtilities.convertPointFromScreen( point, c );
                 Dockable child = window.getDockable();
-                boolean combine = c.contains( point ) &&
-                	dockable.accept( this, child ) &&
-                	child.accept( this, dockable ) &&
-				   	acceptance.accept( this, child, dockable );
+                boolean combine = c.contains( point ) && acceptable( child, dockable );
                 
                 if( combine ){
-                	dropInfo = prepareCombine( dockable, window, new Point( mouseX, mouseY ), combine, true );
+                	dropInfo = prepareCombine( dockable, window, new Point( mouseX, mouseY ), combine, Enforcement.HARD );
                 }
             }
         }
         
         // maybe a parent station wants to catch the event
-        if( !strong && dropInfo == null ){
-            DockStation parent = getDockParent();
-            if( parent != null ){
-                if( checkOverrideZone && parent.isInOverrideZone( mouseX, mouseY, this, dockable ))
-                    return null;
-            }
-        }
         
         // if mouse over window: force combination
         if( window != null && window.isWindowVisible() && dropInfo == null ){
             Point point = new Point( mouseX, mouseY );
             Dockable child = window.getDockable();
-            boolean combine = window.containsScreenPoint(point) &&
-                dockable.accept( this, child) &&
-                child.accept( this, dockable ) &&
-                acceptance.accept( this, child, dockable );
+            boolean combine = window.containsScreenPoint(point) && acceptable( child, dockable );
             
             if( combine ){
-            	dropInfo = prepareCombine( dockable, window, point, false, true );
+            	dropInfo = prepareCombine( dockable, window, point, false, Enforcement.HARD );
             }
         }
         
@@ -1443,7 +1434,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * @param force whether a combination must happen or not
      * @return the combination, <code>null</code> if a combination is not desired for the given arguments
      */
-    private FlapDropInfo prepareCombine( Dockable dockable, FlapWindow window, final Point mouseOnScreen, final boolean mouseOverTitle, boolean force ){
+    private FlapDropInfo prepareCombine( Dockable dockable, FlapWindow window, final Point mouseOnScreen, final boolean mouseOverTitle, Enforcement force ){
     	final Dockable child = window.getDockable();
     	final DockableDisplayer displayer = window.getDisplayer();
     	
@@ -1621,18 +1612,17 @@ public class FlapDockStation extends AbstractDockableStation {
             }
         }
     }
-
-    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop ) {
-        Point mouse = new Point( x, y );
+    
+    /**
+     * Tells whether the point <code>x/y</code> is over the buttons of this station.
+     * @param x the x-coordinate on the screen
+     * @param y the y-coordinate on the screen
+     * @return <code>true</code> if the point <code>x/y</code> is over the buttons
+     */
+    public boolean isOverButtons( int x, int y ){
+    	Point mouse = new Point( x, y );
         SwingUtilities.convertPointFromScreen( mouse, buttonPane );
-        if( buttonPane.contains( mouse ) && accept( drop ) && drop.accept( this ))
-            return true;
-        
-        DockStation parent = getDockParent();
-        if( parent != null )
-            return parent.isInOverrideZone( x, y, invoker, drop );
-
-        return false;
+        return buttonPane.contains( mouse );
     }
 
     public boolean canDrag( Dockable dockable ) {
@@ -1674,7 +1664,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     @Override
     public boolean isVisible( Dockable dockable ) {
-        return isStationVisible() && (getFrontDockable() == dockable);
+        return isStationShowing() && (getFrontDockable() == dockable);
     }
     
     /**
@@ -1871,7 +1861,7 @@ public class FlapDockStation extends AbstractDockableStation {
 			}
 		};
 		
-		CombinerTarget target = combiner.prepare( info, true );
+		CombinerTarget target = combiner.prepare( info, Enforcement.HARD );
 		return combine( info, target, property );
     }
     
@@ -2277,7 +2267,7 @@ public class FlapDockStation extends AbstractDockableStation {
         public void dockableFocused( DockableFocusEvent event ) {
             Dockable front = getFrontDockable();
             
-            if( isStationVisible() ){
+            if( isStationShowing() ){
                 if( front == null || (front != null && isHold( front )))
                     return;
                 

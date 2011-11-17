@@ -173,7 +173,7 @@ public class StickMagnetGraph {
 		}
 
 		LinkedList<Integer> queue = new LinkedList<Integer>();
-		queue.push( index );
+		queue.add( index );
 		
 		while( !queue.isEmpty() ){
 			index = queue.poll();

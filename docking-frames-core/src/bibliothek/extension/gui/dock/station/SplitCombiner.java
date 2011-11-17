@@ -44,6 +44,7 @@ import bibliothek.gui.dock.station.split.SplitDockPathProperty.Location;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.themes.basic.BasicCombiner;
 import bibliothek.util.ClientOnly;
@@ -55,7 +56,7 @@ import bibliothek.util.ClientOnly;
  */
 @ClientOnly
 public class SplitCombiner extends BasicCombiner{
-	public CombinerTarget prepare( CombinerSource source, boolean force ){
+	public CombinerTarget prepare( CombinerSource source, Enforcement force ){
 		if( source.isMouseOverTitle() || !(source.getParent() instanceof ScreenDockStation) ){
 			return super.prepare( source, force );
 		}

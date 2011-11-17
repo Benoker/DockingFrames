@@ -1,5 +1,7 @@
 package bibliothek.gui.dock.station;
 
+import bibliothek.gui.Orientation;
+
 /**
  * A listener that is added to an {@link OrientingDockStation}.
  * @author Benjamin Sigg

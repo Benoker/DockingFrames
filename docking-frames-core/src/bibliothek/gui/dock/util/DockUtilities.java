@@ -647,6 +647,58 @@ public class DockUtilities {
     }
     
     /**
+     * Tells whether the {@link Dockable} <code>child</code> can be dropped over
+     * <code>parent</code>.
+     * @param parent the new parent
+     * @param child the new child
+     * @return <code>true</code> if the parent and the child accept each other
+     */
+    public static boolean acceptable( DockStation parent, Dockable child ){
+    	if( !parent.accept( child )){
+    		return false;
+    	}
+    	if( !child.accept( parent )){
+    		return false;
+    	}
+    	
+    	DockController controller = parent.getController();
+    	if( controller == null ){
+    		controller = child.getController();
+    	}
+    	if( controller != null ){
+    		return controller.getAcceptance().accept( parent, child );
+    	}
+    	return true;
+    }
+    
+    /**
+     * Tells whether the {@link Dockable} <code>next</code> can be dropped over <code>old</code>.
+     * @param parent the parent of <code>old</code>
+     * @param old the existing child
+     * @param next the new child
+     * @return <code>true</code> if the parent and the child accept each other
+     */
+    public static boolean acceptable( DockStation parent, Dockable old, Dockable next ){
+		if( !old.accept( parent, next )){
+			return false;
+		}
+		if( !next.accept( parent )){
+			return false;
+		}
+		DockController controller = parent.getController();
+		if( controller == null ){
+			controller = old.getController();
+		}
+		if( controller == null ){
+			controller = next.getController();
+		}
+		if( controller != null ){
+			return controller.getAcceptance().accept( parent, old, next );
+		}
+		return true;
+    }
+    
+    /**
      * Ensures that {@link #checkLayoutLocked()} never prints out any warnings.
      */
     public static void disableCheckLayoutLocked(){

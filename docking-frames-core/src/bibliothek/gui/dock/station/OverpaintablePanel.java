@@ -27,6 +27,7 @@ package bibliothek.gui.dock.station;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 
@@ -178,6 +179,18 @@ public class OverpaintablePanel extends JLayeredPane {
         
         base.setBounds( x, y, width, height );
         overlay.setBounds( x, y, width, height );
+    }
+    
+    public Dimension getMinimumSize(){
+    	return base.getMinimumSize();
+    }
+    
+    public Dimension getPreferredSize(){
+    	return base.getPreferredSize();
+    }
+    
+    public Dimension getMaximumSize(){
+    	return base.getMaximumSize();
     }
     
     private class Overlay extends JPanel{

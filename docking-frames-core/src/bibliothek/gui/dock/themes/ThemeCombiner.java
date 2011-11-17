@@ -37,6 +37,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.Enforcement;
 
 /**
  * A {@link Combiner} that forwards calls to the {@link Combiner} of the
@@ -59,7 +60,7 @@ public class ThemeCombiner implements Combiner{
 	}
 
 
-	public CombinerTarget prepare( CombinerSource source, boolean force ){
+	public CombinerTarget prepare( CombinerSource source, Enforcement force ){
 		Combiner combiner = get( source );
 		CombinerTarget delegate = combiner.prepare( source, force );
 		if( delegate == null ){

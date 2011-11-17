@@ -4,10 +4,11 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.ComponentDockable;
-import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.ToolbarTabDockStation;
 
 /**
  * The default implementation of {@link ToolbarStrategy}.
@@ -42,6 +43,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 			}
 		}
 
+		// if( station instanceof ToolbarContainerDockStation ) {
 		if( station instanceof ToolbarContainerDockStation ) {
 			if( dockable instanceof ToolbarDockStation ){
 			//if( dockable.getClass() == ToolbarDockStation.class ) {
@@ -65,6 +67,9 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 		// return true;
 		// }
 		if( child instanceof ToolbarDockStation && parent instanceof ScreenDockStation ) {
+			return true;
+		}
+		if( child instanceof ComponentDockable && parent instanceof ToolbarTabDockStation ){
 			return true;
 		}
 		return parent instanceof ToolbarInterface;

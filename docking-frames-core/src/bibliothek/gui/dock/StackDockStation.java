@@ -28,6 +28,7 @@ package bibliothek.gui.dock;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -70,6 +71,8 @@ import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
@@ -79,18 +82,19 @@ import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.stack.TabContent;
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
+import bibliothek.gui.dock.station.stack.TabDropLayer;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
-import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -198,6 +202,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /** A listener observing the children for changes of their icon or titletext */
     private Listener listener = new Listener();
+    
+    /** whether the result of {@link Component#getMinimumSize()} should be a small value */
+    private boolean smallMinimumSize = true;
     
     /** strategy for selecting placeholders */
     private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) {
@@ -624,7 +631,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public boolean isStationVisible() {
         DockStation parent = getDockParent();
         if( parent != null )
-            return parent.isVisible( this );
+            return parent.isChildShowing( this );
         else
             return panel.isDisplayable();
     }
@@ -641,7 +648,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public Dockable getDockable( int index ) {
         return dockables.dockables().get( index ).getDockable();
     }
-    
+
     public DockableProperty getDockableProperty( Dockable dockable, Dockable target ) {
     	int index = indexOf( dockable );
     	PlaceholderStrategy strategy = getPlaceholderStrategy();
@@ -867,76 +874,94 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	placeholderStrategy.setValue( strategy );
     }
     
+    /**
+     * Sets whether the result of {@link Component#getMinimumSize()} should be small. A small value
+     * allows clients to make this {@link StackDockStation} small if it is on a {@link SplitDockStation} or another station
+     * that pays attention to the minimum size. This even works if the {@link Dockable}s do not have a small minimum size.
+     * @param smallMinimumSize whether the minimum size should be really small
+     */
+    public void setSmallMinimumSize( boolean smallMinimumSize ){
+		this.smallMinimumSize = smallMinimumSize;
+		getComponent().invalidate();
+	}
+    
+    /**
+     * Tells whether the result of {@link Component#getMinimumSize()} should be small.
+     * @return whether the minimum size is small
+     * @see #setSmallMinimumSize(boolean)
+     */
+    public boolean isSmallMinimumSize(){
+		return smallMinimumSize;
+	}
 
-    public StationDropOperation prepareMove( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ) {
-        DockStation parent = getDockParent();
+    @Override
+    public DockStationDropLayer[] getLayers(){
+	    return new DockStationDropLayer[]{
+	    		new DefaultDropLayer( this ),
+	    		new TabDropLayer( this )
+	    };
+    }
+    
+    /**
+     * Tells whether the point <code>x/y</code> on the screen is exactly over a tab.
+     * @param x the x-coordinate on the screen
+     * @param y the y-coordinate on the screen
+     * @return <code>true</code> if the point is directly over a tab
+     */
+    public boolean isOverTabs( int x, int y ){
+    	Point point = new Point( x, y );
+        SwingUtilities.convertPointFromScreen( point, panel );
+        
+        return exactTabIndexAt( point.x, point.y ) != null;
+    }
+
+    /**
+     * Tells whether the point <code>x/y</code> on the screen is exactly over the only
+     * {@link DockTitle} currently shown by this station. This method always returns
+     * <code>false</code> if this station has not exactly one child.
+     * @param x the x-coordinate on the screen
+     * @param y the y-coordinate on the screen
+     * @return <code>true</code> if the point is directly over the title
+     */
+    public boolean isOverTitle( int x, int y ){
+    	if( dockables.dockables().size() == 1 ){
+            DockTitle title = dockables.dockables().get( 0 ).getDisplayer().getTitle();
+            if( title != null ){
+                Component component = title.getComponent();
+                Point p = new Point( x, y );
+                SwingUtilities.convertPointFromScreen( p, component );
+
+                return component.getBounds().contains( p );
+            }
+        }
+    	return false;
+    }
+    
+    public StationDropOperation prepareMove( int x, int y, int titleX, int titleY, Dockable dockable ) {
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, panel );
         
-        Insert insert = null;
-        
-        if( parent != null ){
-            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
-                if( dockables.dockables().size() > 1 ){
-                	insert = exactTabIndexAt( point.x, point.y );
-                    if( validate( insert, dockable ) ){
-                        return new StackDropOperation( dockable, insert, true );
-                    }
-                }
-                return null;
-            }
-        }
-        
-        insert = tabIndexAt( point.x, point.y );
+        Insert insert = tabIndexAt( point.x, point.y );
         if( validate( insert, dockable )){
         	return new StackDropOperation( dockable, insert, true );
         }
         return null;
     }
     
-    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
     	if( dockable.getDockParent() == this ){
-    		return prepareMove( x, y, titleX, titleY, checkOverrideZone, dockable );
+    		return prepareMove( x, y, titleX, titleY, dockable );
     	}
     	
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
     		return null;
     	}
     	
-        DockStation parent = getDockParent();
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, panel );
         
-        Insert insert = null;
-        
-        if( parent != null ){
-            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
-                if( dockables.dockables().size() > 1 ){
-                	insert = exactTabIndexAt( point.x, point.y );
-                    if( validate( insert, dockable )){
-                        return new StackDropOperation( dockable, insert, false );
-                    }
-                }
-                else if( dockables.dockables().size() == 1 ){
-                    DockTitle title = dockables.dockables().get( 0 ).getDisplayer().getTitle();
-                    if( title != null ){
-                        Component component = title.getComponent();
-                        Point p = new Point( x, y );
-                        SwingUtilities.convertPointFromScreen( p, component );
+        Insert insert = tabIndexAt( point.x, point.y );
 
-                        if( component.getBounds().contains( p )){
-                        	insert = new Insert( 0, true );
-                        	if( validate( insert, dockable )){
-                        		return new StackDropOperation( dockable, insert, false );
-                        	}
-                        }
-                    }
-                }
-                return null;
-            }
-        }
-        
-        insert = tabIndexAt( point.x, point.y );
         if( validate( insert, dockable )){
         	return new StackDropOperation( dockable, insert, false );
         }
@@ -1127,16 +1152,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         }
                
         return null;
-    }    
-
-    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
-            int y, D invoker, Dockable drop ){
-        
-        DockStation parent = getDockParent();
-        if( parent != null )
-            return parent.isInOverrideZone( x, y, invoker, drop );
-        
-        return false;
     }
 
     public boolean canDrag( Dockable dockable ) {
@@ -1585,6 +1600,15 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             getBasePane().removeAll();
             getBasePane().setLayout( new BorderLayout() );
             getBasePane().add( content, BorderLayout.CENTER );
+        }
+        
+        public Dimension getMinimumSize(){
+        	if( isSmallMinimumSize() ){
+        		return new Dimension( 5, 5 );
+        	}
+        	else{
+        		return super.getMinimumSize();
+        	}
         }
         
         @Override
