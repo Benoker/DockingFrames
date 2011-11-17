@@ -38,6 +38,7 @@ import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -57,7 +58,7 @@ public class ToolbarDockStationFactory implements DockFactory<ToolbarDockStation
 	@Override
 	public ToolbarDockStationLayout getLayout( ToolbarDockStation element, Map<Dockable, Integer> children ){
 		PlaceholderMap map = element.getPlaceholders( children );
-		return new ToolbarDockStationLayout( map );
+		return new ToolbarDockStationLayout( map, element.getExpandedState() );
 	}
 
 	@Override
@@ -67,24 +68,27 @@ public class ToolbarDockStationFactory implements DockFactory<ToolbarDockStation
 
 	@Override
 	public void setLayout( ToolbarDockStation element, ToolbarDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+		element.setExpandedState( layout.getState(), false );
 		element.setPlaceholders( layout.getPlaceholders(), children );
 	}
 
 	@Override
 	public void setLayout( ToolbarDockStation element, ToolbarDockStationLayout layout, PlaceholderStrategy placeholders ){
-		// no settings to transfer
+		element.setExpandedState( layout.getState(), false );
 	}
 
 	@Override
 	public void write( ToolbarDockStationLayout layout, DataOutputStream out ) throws IOException{
 		Version.write( out, Version.VERSION_1_1_1 );
 		layout.getPlaceholders().write( out );
+		out.writeUTF( layout.getState().name() );
 	}
 
 	@Override
 	public void write( ToolbarDockStationLayout layout, XElement element ){
 		XElement xplaceholders = element.addElement( "placeholders" );
 		layout.getPlaceholders().write( xplaceholders );
+		element.addElement( "expanded" ).setString( layout.getState().name() );
 	}
 
 	@Override
@@ -95,17 +99,25 @@ public class ToolbarDockStationFactory implements DockFactory<ToolbarDockStation
 		PlaceholderMap map = new PlaceholderMap( in, placeholders );
 		map.setPlaceholderStrategy( null );
 
-		return new ToolbarDockStationLayout( map );
+		ExpandedState state = ExpandedState.valueOf( in.readUTF() );
+		
+		return new ToolbarDockStationLayout( map, state );
 	}
 
 	@Override
 	public ToolbarDockStationLayout read( XElement element, PlaceholderStrategy strategy ){
 		XElement xplaceholders = element.getElement( "placeholders" );
-
+		XElement xexpanded = element.getElement( "expanded" );
+		
 		PlaceholderMap map = new PlaceholderMap( xplaceholders, strategy );
 		map.setPlaceholderStrategy( null );
+		
+		ExpandedState state = ExpandedState.SHRUNK;
+		if( xexpanded != null ){
+			state = ExpandedState.valueOf( xexpanded.getString() );
+		}
 
-		return new ToolbarDockStationLayout( map );
+		return new ToolbarDockStationLayout( map, state );
 	}
 
 	@Override

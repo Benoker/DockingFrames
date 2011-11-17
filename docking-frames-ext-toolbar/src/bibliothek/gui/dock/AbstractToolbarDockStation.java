@@ -61,6 +61,7 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 
 /**
@@ -204,6 +205,23 @@ public abstract class AbstractToolbarDockStation extends
 		return state;
 	}
 
+	/**
+	 * Sets the {@link ExpandedState} of this station.
+	 * @param state the new state, not <code>null</code>
+	 * @param action if <code>true</code>, then {@link #setExpandedState(ExpandedState)} is called. Otherwise
+	 * the property is changed without actually performing any actions. The later option should only be used
+	 * while loading a layout.
+	 */
+	@FrameworkOnly
+	public void setExpandedState( ExpandedState state, boolean action ){
+		if( action ){
+			setExpandedState( state );
+		}
+		else{
+			this.state = state;
+		}
+	}
+	
 	public void setExpandedState( ExpandedState state ){
 		if (this.state != state){
 			DockController controller = getController();
