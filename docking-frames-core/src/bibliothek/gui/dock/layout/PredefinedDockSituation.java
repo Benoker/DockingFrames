@@ -50,6 +50,7 @@ import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PredefinedPerspective;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.extension.ExtensionManager;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;

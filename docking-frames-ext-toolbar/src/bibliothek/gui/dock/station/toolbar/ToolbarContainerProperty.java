@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Path;
@@ -37,9 +38,6 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 	 * 
 	 * @param index
 	 *            the index of a child of a {@link DockStation}
-	 * @param area
-	 *            where the child is in respect to the center of the station,
-	 *            not <code>null</code>
 	 * @param placeholder
 	 *            the name of the child, can be <code>null</code>
 	 */

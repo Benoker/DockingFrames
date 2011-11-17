@@ -21,7 +21,7 @@ import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
 /**
- * A {@link Dockable} and a {@link Dockstation} which stands a group of
+ * A {@link Dockable} and a {@link DockStation} which stands a group of
  * {@link ToolbarGroupDockStation}. As dockable it can be put in
  * {@link DockStation} which implements marker interface
  * {@link ToolbarInterface} or in {@link ScreenDockStation}, so that a

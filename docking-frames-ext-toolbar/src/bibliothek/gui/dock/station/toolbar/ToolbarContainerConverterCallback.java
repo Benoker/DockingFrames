@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station.toolbar;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.util.FrameworkOnly;

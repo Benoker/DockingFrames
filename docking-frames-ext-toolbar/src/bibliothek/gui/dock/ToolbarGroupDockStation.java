@@ -20,7 +20,7 @@ import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
 /**
- * A {@link Dockable} and a {@link Dockstation} which stands for a group of
+ * A {@link Dockable} and a {@link DockStation} which stands for a group of
  * {@link ComponentDockable}. As dockable it can be put in {@link DockStation}
  * which implements marker interface {@link ToolbarInterface}. As DockStation it
  * accept a {@link ComponentDockable} or a {@link ToolbarGroupDockStation}

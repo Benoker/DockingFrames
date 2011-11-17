@@ -50,10 +50,14 @@ public abstract class ToolbarDropInfo<S extends AbstractToolbarDockStation>
 	/**
 	 * Constructs a new info.
 	 * 
-	 * @param station
-	 *            the owner of this info
 	 * @param dockable
-	 *            the {@link Dockable} which will be inserted
+	 *            the dockable to drop
+	 * @param stationHost
+	 *            the station where drop the dockable
+	 * @param mouseX
+	 *            the mouse position on X axis
+	 * @param mouseY
+	 *            the mouse position on Y axis
 	 */
 	public ToolbarDropInfo( Dockable dockable, S stationHost, int mouseX,
 			int mouseY ){

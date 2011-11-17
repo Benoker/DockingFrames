@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.toolbar;
 
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
