@@ -14,4 +14,9 @@ public class ToolbarTabDockStationFactory extends StackDockStationFactory{
 	protected StackDockStation createStation(){
 		return new ToolbarTabDockStation();
 	}
+	
+	@Override
+	public String getID(){
+		return FACTORY_ID;
+	}
 }

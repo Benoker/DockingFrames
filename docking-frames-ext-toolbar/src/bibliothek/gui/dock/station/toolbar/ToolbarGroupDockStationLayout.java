@@ -27,6 +27,7 @@ package bibliothek.gui.dock.station.toolbar;
 
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 /**
  * Describes the layout of a {@link ToolbarGroupDockStation}.
@@ -36,12 +37,17 @@ public class ToolbarGroupDockStationLayout {
 	/** the encoded layout of the {@link ToolbarGroupDockStation} */
 	private PlaceholderMap placeholders;
 	
+	/** whether the children are big or small */
+	private ExpandedState state;
+	
 	/**
 	 * Creates a new layout object.
 	 * @param placeholders the encoded layout of the {@link ToolbarGroupDockStation}, not <code>null</code>
+	 * @param state whether the children are big or small
 	 */
-	public ToolbarGroupDockStationLayout( PlaceholderMap placeholders ){
+	public ToolbarGroupDockStationLayout( PlaceholderMap placeholders, ExpandedState state ){
 		this.placeholders = placeholders;
+		this.state = state;
 	}
 	
 	/**
@@ -50,5 +56,13 @@ public class ToolbarGroupDockStationLayout {
 	 */
 	public PlaceholderMap getPlaceholders(){
 		return placeholders;
+	}
+	
+	/**
+	 * Tells whether the children are big or small.
+	 * @return the size of the children
+	 */
+	public ExpandedState getState(){
+		return state;
 	}
 }
