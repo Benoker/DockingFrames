@@ -1,5 +1,6 @@
 package bibliothek.gui.dock;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -136,12 +137,6 @@ public abstract class AbstractToolbarDockStation extends
 		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
 				+ ".toolbar", this);
 		setOrientation(this.orientation);
-
-		// basePanel.setLayout( new BoxLayout( basePanel, BoxLayout.Y_AXIS ) );
-		// basePanel.setBorder( new CompoundBorder( new EtchedBorder(), new
-		// EmptyBorder( new Insets( 5, 5, 5, 5 ) ) ) );
-		// basePanel.setBackground( new Color( 255, 255, 128 ) );
-
 		displayerFactory = createDisplayerFactory();
 		displayers = new DisplayerCollection(this, displayerFactory,
 				getDisplayerId());
@@ -949,7 +944,8 @@ public abstract class AbstractToolbarDockStation extends
 				// oriented. This is the case when this station is
 				// instantiated but not drop in any station which could give it
 				// an orientation
-				((OrientedDockStation) dockable).setOrientation(getOrientation());
+				((OrientedDockStation) dockable)
+						.setOrientation(getOrientation());
 			}
 		}
 
@@ -1059,7 +1055,7 @@ public abstract class AbstractToolbarDockStation extends
 				OrientedDockStation group = (OrientedDockStation) d;
 				group.setOrientation(this.getOrientation());
 			}
-		}
+		}		
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
 		fireOrientingEvent();
@@ -1129,12 +1125,6 @@ public abstract class AbstractToolbarDockStation extends
 		private static final long serialVersionUID = -4399008463139189130L;
 
 		/**
-		 * The content Pane of this {@link OverpaintablePanel} (with a
-		 * BoxLayout)
-		 */
-		private JPanel dockablePane = new SizeFixedPanel();
-
-		/**
 		 * This pane is the base of this OverpaintablePanel and contains both
 		 * title and content panes (with a BoxLayout) A panel with a fixed size
 		 * (minimum, maximum and preferred size are same values). Computation of
@@ -1148,9 +1138,9 @@ public abstract class AbstractToolbarDockStation extends
 			@Override
 			public Dimension getPreferredSize(){
 				Dimension pref = super.getPreferredSize();
-				Insets insets = getInsets();
-				pref.height += insets.top + insets.bottom;
-				pref.width += insets.left + insets.right;
+				// Insets insets = getInsets();
+				// pref.height += insets.top + insets.bottom;
+				// pref.width += insets.left + insets.right;
 				return pref;
 			}
 
@@ -1165,6 +1155,11 @@ public abstract class AbstractToolbarDockStation extends
 			}
 		}
 
+		/**
+		 * The content Pane of this {@link OverpaintablePanel} (with a
+		 * BoxLayout)
+		 */
+		private JPanel dockablePane = new SizeFixedPanel();
 		/**
 		 * This pane is the base of this OverpaintablePanel and contains both
 		 * title and content panes (with a BoxLayout)
@@ -1188,12 +1183,9 @@ public abstract class AbstractToolbarDockStation extends
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			basePane.setBorder(new CompoundBorder(new EtchedBorder(),
-					new EmptyBorder(new Insets(5, 5, 5, 5))));
 			// basePane.setBackground(Color.GREEN);
 			// dockablePane.setBackground(Color.RED);
 			basePane.add(dockablePane);
-
 			setBasePane(basePane);
 		}
 
@@ -1204,12 +1196,12 @@ public abstract class AbstractToolbarDockStation extends
 
 		@Override
 		public Dimension getMinimumSize(){
-			return this.getPreferredSize();
+			return getBasePane().getPreferredSize();
 		}
 
 		@Override
 		public Dimension getMaximumSize(){
-			return this.getPreferredSize();
+			return getBasePane().getPreferredSize();
 		}
 
 		/**

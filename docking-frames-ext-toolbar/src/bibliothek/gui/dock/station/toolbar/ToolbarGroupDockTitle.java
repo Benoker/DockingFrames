@@ -21,7 +21,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * shows a line with a width or height of 5 pixels and a custom color. 
  * @author Benjamin Sigg
  */
-public class ToolbarDockTitle extends AbstractDockTitle {
+public class ToolbarGroupDockTitle extends AbstractDockTitle {
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitle}s.
 	 * @param color the color of the title
@@ -36,7 +36,7 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 			
 			@Override
 			public void request( DockTitleRequest request ){
-				request.answer( new ToolbarDockTitle( request.getVersion(), request.getTarget(), color ) );
+				request.answer( new ToolbarGroupDockTitle( request.getVersion(), request.getTarget(), color ) );
 			}
 			
 			@Override
@@ -49,7 +49,7 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 	private Color color;
 	private Orientation orientation = Orientation.FREE_HORIZONTAL;
 	
-	public ToolbarDockTitle( DockTitleVersion origin, Dockable dockable, Color color ){
+	public ToolbarGroupDockTitle( DockTitleVersion origin, Dockable dockable, Color color ){
 		super( dockable, origin, true );
 		this.color = color;
 	}
@@ -77,8 +77,11 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 		g.setColor( color );
 		g.fillRect( 0, 0, getWidth(), getHeight() );
 		
+		int inset = getWidth() / 8;
+		
+		
 		if( isActive() ){
-			g.setColor( Color.GRAY );
+			g.setColor( Color.GREEN );
 			g.fillRect( 0, 0, getWidth(), getHeight() );
 		}
 	}

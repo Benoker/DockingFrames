@@ -1,5 +1,6 @@
 package bibliothek.gui.dock;
 
+import java.awt.Color;
 import java.io.IOException;
 
 import bibliothek.gui.DockController;
@@ -17,6 +18,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.NullTitleFactory;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
@@ -44,6 +46,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	 */
 	public ToolbarDockStation(){
 		init();
+		this.mainPanel.getContentPane().setBackground(Color.YELLOW);
+		this.mainPanel.getBasePane().setBackground(Color.ORANGE);
 	}
 	
 	@Override
@@ -68,7 +72,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	
 	@Override
 	protected DockTitleVersion registerTitle( DockController controller ){
-		return controller.getDockTitleManager().getVersion( TITLE_ID, BasicDockTitleFactory.FACTORY );
+		return controller.getDockTitleManager().getVersion( TITLE_ID, NullTitleFactory.INSTANCE );
 	}
 
 	@Override

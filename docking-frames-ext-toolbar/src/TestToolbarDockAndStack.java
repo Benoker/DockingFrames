@@ -1,8 +1,11 @@
 import java.awt.BorderLayout;
+import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Orientation;
@@ -36,13 +39,21 @@ public class TestToolbarDockAndStack {
 		controller.add( toolbarStationNorth );
 
 		ToolbarGroupDockStation group1 = new ToolbarGroupDockStation();
-		ComponentDockable dockable1 = new ComponentDockable( new JButton( "One" ) );
+		JButton button = new JButton( "One" );
+		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		ComponentDockable dockable1 = new ComponentDockable( button );
 		group1.drop( dockable1 );
-		ComponentDockable dockable2 = new ComponentDockable( new JButton( "Two" ) );
+		button = new JButton( "Two" );
+		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		ComponentDockable dockable2 = new ComponentDockable( button );
 		group1.drop( dockable2 );
-		ComponentDockable dockable3 = new ComponentDockable( new JButton( "Three" ) );
+		button = new JButton( "Three" );
+		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		ComponentDockable dockable3 = new ComponentDockable( button );
 		group1.drop( dockable3 );
-		ComponentDockable dockable4 = new ComponentDockable( new JButton( "Four" ) );
+		button = new JButton( "Four" );
+		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		ComponentDockable dockable4 = new ComponentDockable( button );
 		group1.drop( dockable4 );
 
 		ToolbarDockStation toolbar1 = new ToolbarDockStation();

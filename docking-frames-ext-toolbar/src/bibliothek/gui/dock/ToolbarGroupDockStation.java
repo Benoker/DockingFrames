@@ -1,5 +1,6 @@
 package bibliothek.gui.dock;
 
+import java.awt.Color;
 import java.io.IOException;
 
 import bibliothek.gui.DockController;
@@ -39,6 +40,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 */
 	public ToolbarGroupDockStation(){
 		init();
+		this.mainPanel.getContentPane().setBackground(Color.GREEN);
+		this.mainPanel.getBasePane().setBackground(Color.CYAN);
 	}
 	
 	@Override

@@ -16,16 +16,6 @@ import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 
-/**
- * You will see that program test work. But, some exceptions has launched as:
- * "java.lang.IllegalStateException: the parent of 'ComponentDockable@148cc8c'
- * is not 'ToolbarContainerDockStation@1815859' but
- * 'ToolbarGroupDockStation@fe748f'" You can generate this exception in a simple
- * way: launch the program and drag and drop the button "Five" in the north area
- * It seems that the problem comes from line as: dockable.setDockParent(this); e.g.
- * in method add(...) from ToolbarContainerDockStation. I have to address this issue.
- * 
- * */
 public class TestToolbarDockStation {
 
 	/**
