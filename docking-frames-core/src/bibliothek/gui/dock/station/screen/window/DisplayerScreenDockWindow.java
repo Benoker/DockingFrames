@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Component;
 import java.awt.Insets;
@@ -41,6 +41,9 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.screen.ScreenDockFullscreenStrategy;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
@@ -82,14 +85,43 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     /** the algorithm that paints the background */
     private Background background = new Background();
     
+    /** a helper class moving the entire window if the title is dragged by the mouse */
+    private WindowMover titleMover;
+    
+    /** the configuration that was used to create this window */
+    private WindowConfiguration configuration;
+    
     /**
      * Creates a new window
      * @param station the owner of this window, not <code>null</code>
+     * @param configuration default configuration of this window, cannot be changed once the window is
+     * created
      */
-    public DisplayerScreenDockWindow( ScreenDockStation station  ){
+    public DisplayerScreenDockWindow( ScreenDockStation station, WindowConfiguration configuration ){
         if( station == null )
             throw new IllegalArgumentException( "station must not be null" );
         this.station = station;
+        this.configuration = configuration;
+    }
+    
+    /**
+     * Called the first time when a {@link Dockable} is set.
+     * @param configuration the configuration that is to be applied
+     */
+    protected void init( WindowConfiguration configuration ){
+        if( configuration.isMoveOnTitleGrab() ){
+        	titleMover = createTitleMover();
+        }
+    }
+    
+    /**
+     * Creates a new {@link WindowMover} which is used to move this window if the {@link DockTitle}
+     * is dragged by the mouse. This method is only called if {@link WindowConfiguration#isMoveOnTitleGrab()}
+     * returns true.
+     * @return the new mover, can be <code>null</code>
+     */
+    protected WindowMover createTitleMover(){
+    	return new WindowMover( this );
     }
     
     public void addScreenDockWindowListener( ScreenDockWindowListener listener ){
@@ -199,11 +231,19 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     }
     
     public void setDockable( Dockable dockable ) {
+    	if( dockable != null && configuration != null ){
+    		init( configuration );
+    		configuration = null;
+    	}
+    	
     	// remove old displayer
         if( handle != null ){
         	DockableDisplayer displayer = handle.getDisplayer();
         	displayer.removeDockableDisplayerListener( displayerListener );
             handle.destroy();
+            if( titleMover != null ){
+            	titleMover.setElement( null );
+            }
             handle = null;
         }
         
@@ -211,13 +251,29 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         DockableDisplayer displayer = null;
         
         if( dockable != null ){
-        	handle = new StationChildHandle( station, station.getDisplayers(), dockable, showTitle ? station.getTitleVersion() : null );
+        	handle = new StationChildHandle( station, station.getDisplayers(), dockable, showTitle ? station.getTitleVersion() : null ){
+        		@Override
+        		protected void updateTitle( DockTitle title ){
+        			titleChanging( title );
+        			super.updateTitle( title );
+        		}
+        	};
         	handle.updateDisplayer();
             displayer = handle.getDisplayer();
             displayer.addDockableDisplayerListener( displayerListener );
         }
         
         showDisplayer( displayer );
+    }
+    
+    /**
+     * Called if the currently shown {@link DockTitle} is about to change to <code>title</code>.
+     * @param title the new title, can be <code>null</code>
+     */
+    protected void titleChanging( DockTitle title ){
+    	if( titleMover != null ){
+    		titleMover.setElement( title );
+    	}
     }
     
     /**

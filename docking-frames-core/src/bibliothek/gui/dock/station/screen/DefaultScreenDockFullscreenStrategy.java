@@ -35,6 +35,8 @@ import java.awt.Toolkit;
 import java.awt.Window;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.window.ScreenDockDialog;
+import bibliothek.gui.dock.station.screen.window.ScreenDockFrame;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;

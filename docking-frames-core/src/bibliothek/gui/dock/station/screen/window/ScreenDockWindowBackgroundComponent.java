@@ -23,9 +23,10 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import bibliothek.gui.dock.station.StationBackgroundComponent;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
 

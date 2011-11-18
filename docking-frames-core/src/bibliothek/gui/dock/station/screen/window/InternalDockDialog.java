@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Component;
 import java.awt.Point;
@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 /**
  * A {@link ScreenDockWindow} that has a {@link JDesktopPane} as parent.
@@ -48,10 +49,11 @@ public class InternalDockDialog extends AbstractScreenDockWindow{
 	/**
 	 * Creates the new dialog
 	 * @param station the owner of this dialog
+	 * @param configuration the configuration to apply during creation of this window
 	 * @param desktop the parent of this dialog
 	 */
-	public InternalDockDialog( ScreenDockStation station, JDesktopPane desktop ){
-		super( station );
+	public InternalDockDialog( ScreenDockStation station, WindowConfiguration configuration, JDesktopPane desktop ){
+		super( station, configuration );
 		this.desktop = desktop;
 		init();
 	}

@@ -27,6 +27,8 @@ package bibliothek.gui.dock.station.screen;
 
 import java.awt.Rectangle;
 
+import bibliothek.gui.dock.station.screen.window.ScreenDockDialog;
+
 /**
  * Restricts the boundaries of a {@link ScreenDockDialog}, a restriction might be,
  * that the dialog can't be placed outside the screen.

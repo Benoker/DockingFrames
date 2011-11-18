@@ -3,7 +3,9 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copy
+import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
+right (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,7 +68,6 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.screen.BoundaryRestriction;
 import bibliothek.gui.dock.station.screen.DefaultScreenDockFullscreenStrategy;
-import bibliothek.gui.dock.station.screen.DefaultScreenDockWindowFactory;
 import bibliothek.gui.dock.station.screen.FullscreenActionSource;
 import bibliothek.gui.dock.station.screen.ScreenDockFullscreenFilter;
 import bibliothek.gui.dock.station.screen.ScreenDockFullscreenStrategy;
@@ -74,8 +75,8 @@ import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockStationListener;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowConfiguration;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
-import bibliothek.gui.dock.station.screen.ScreenDockWindowHandle;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
 import bibliothek.gui.dock.station.screen.layer.ScreenLayer;
@@ -85,6 +86,10 @@ import bibliothek.gui.dock.station.screen.magnet.DefaultMagnetStrategy;
 import bibliothek.gui.dock.station.screen.magnet.MagnetController;
 import bibliothek.gui.dock.station.screen.magnet.MagnetStrategy;
 import bibliothek.gui.dock.station.screen.magnet.MultiAttractorStrategy;
+import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfiguration;
+import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowFactory;
+import bibliothek.gui.dock.station.screen.window.ScreenDockWindowHandle;
+import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -152,6 +157,22 @@ public class ScreenDockStation extends AbstractDockStation {
         new PropertyKey<ScreenDockWindowFactory>( "ScreenDockStation.window_factory", 
         		new ConstantPropertyFactory<ScreenDockWindowFactory>( new DefaultScreenDockWindowFactory() ), true );
     
+    /** 
+     * A key for a property telling how to configure new windows. Replacing the configuration always leads to closing
+     * and recreating all windows. 
+     */
+    public static final PropertyKey<ScreenDockWindowConfiguration> WINDOW_CONFIGURATION = 
+    		new PropertyKey<ScreenDockWindowConfiguration>( "ScreenDockStation.window_configuration",
+    			new PropertyFactory<ScreenDockWindowConfiguration>(){
+    				public ScreenDockWindowConfiguration getDefault( PropertyKey<ScreenDockWindowConfiguration> key, DockProperties properties ){
+    					return new DefaultScreenDockWindowConfiguration( properties.getController() );
+    				}
+    					
+    				public ScreenDockWindowConfiguration getDefault( PropertyKey<ScreenDockWindowConfiguration> key ){
+    					return new DefaultScreenDockWindowConfiguration( null );	
+    				}
+    			}, true);
+    
     /** a key for a property telling how to handle fullscreen mode */
     public static final PropertyKey<ScreenDockFullscreenStrategy> FULL_SCREEN_STRATEGY =
     	new PropertyKey<ScreenDockFullscreenStrategy>( "ScreenDockStation.full_screen_strategy",
@@ -196,6 +217,7 @@ public class ScreenDockStation extends AbstractDockStation {
     				return strategy;
     			}
     		}, true );
+    
     
     /** The visibility state of the windows */
     private boolean showing = false;
@@ -254,10 +276,19 @@ public class ScreenDockStation extends AbstractDockStation {
     /** a factory used to create new windows for this station */
     private PropertyValue<ScreenDockWindowFactory> windowFactory =
         new PropertyValue<ScreenDockWindowFactory>( ScreenDockStation.WINDOW_FACTORY ){
-        @Override
-        protected void valueChanged( ScreenDockWindowFactory oldValue, ScreenDockWindowFactory newValue ) {
-            // ignore   
-        }
+	        @Override
+	        protected void valueChanged( ScreenDockWindowFactory oldValue, ScreenDockWindowFactory newValue ) {
+	        	updateWindows( true );   
+	        }
+    };
+    
+    /** a strategy for telling {@link #windowFactory} how to create new windows */
+    private PropertyValue<ScreenDockWindowConfiguration> windowConfiguration =
+    	new PropertyValue<ScreenDockWindowConfiguration>( ScreenDockStation.WINDOW_CONFIGURATION ){
+    		@Override
+    		protected void valueChanged( ScreenDockWindowConfiguration oldValue, ScreenDockWindowConfiguration newValue ){
+	    		updateWindows( true );
+    		}
     };
     
     /** the current fullscreen strategy */
@@ -744,8 +775,9 @@ public class ScreenDockStation extends AbstractDockStation {
 						
 				        listeners.fireDockableAdding( dockable );
 				        
-				        ScreenDockWindow window = createWindow();
-				        ScreenDockWindowHandle handle = new ScreenDockWindowHandle( dockable, window );
+				        WindowConfiguration configuration = getConfiguration( dockable );
+				        ScreenDockWindow window = createWindow( configuration );
+				        ScreenDockWindowHandle handle = new ScreenDockWindowHandle( dockable, window, configuration );
 				        window.setController( getController() );
 				        window.setFullscreenStrategy( getFullscreenStrategy() );
 				        window.setDockable( dockable );
@@ -1189,8 +1221,9 @@ public class ScreenDockStation extends AbstractDockStation {
 	        
 	        listeners.fireDockableAdding( dockable );
 	        
-	        ScreenDockWindow window = createWindow();
-	        register( dockable, placeholder, window );
+	        WindowConfiguration configuration = getConfiguration( dockable );
+	        ScreenDockWindow window = createWindow(configuration);
+	        register( dockable, placeholder, window, configuration );
 	        window.setDockable( dockable );
 	        
 	        bounds = new Rectangle( bounds );
@@ -1625,10 +1658,11 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param placeholder the name of <code>dockable</code>, used to place the new
      * {@link ScreenDockWindowHandle} at its correct position. Can be <code>null</code>.
      * @param window the window which was newly created
+     * @param configuration the configuration that was used to create <code>window</code>
      * @return the newly created handle for <code>window</code>
      */
-    protected ScreenDockWindowHandle register( Dockable dockable, Path placeholder, ScreenDockWindow window ){
-    	ScreenDockWindowHandle handle = new ScreenDockWindowHandle( dockable, window );
+    protected ScreenDockWindowHandle register( Dockable dockable, Path placeholder, ScreenDockWindow window, WindowConfiguration configuration ){
+    	ScreenDockWindowHandle handle = new ScreenDockWindowHandle( dockable, window, configuration );
     	
     	if( placeholder != null ){
     		if( dockables.getDockableAt( placeholder ) != null ){
@@ -1694,11 +1728,26 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
+     * Gets the {@link WindowConfiguration} which should be used to create a new {@link ScreenDockWindow}
+     * for <code>dockable</code>.
+     * @param dockable the element that is going to be shown
+     * @return its confugration, not <code>null</code>
+     */
+    protected WindowConfiguration getConfiguration( Dockable dockable ){
+    	WindowConfiguration result =  windowConfiguration.getValue().getConfiguration( this, dockable );
+    	if( result == null ){
+    		result = new WindowConfiguration();
+    	}
+    	return result;
+    }
+    
+    /**
      * Creates a new window which is associated with this station.
+     * @param configuration the configuration that should be used to set up the new window
      * @return the new window
      */
-    protected ScreenDockWindow createWindow(){
-        return getWindowFactory().createWindow( this );
+    protected ScreenDockWindow createWindow( WindowConfiguration configuration ){
+    	return getWindowFactory().createWindow( this, configuration );
     }
     
     /**
@@ -1706,6 +1755,16 @@ public class ScreenDockStation extends AbstractDockStation {
      * by new windows created by {@link ScreenDockWindowFactory#updateWindow(ScreenDockWindow, ScreenDockStation)}.
      */
     protected void updateWindows(){
+    	updateWindows( false );
+    }
+    
+    /**
+     * Update all windows either by calling {@link ScreenDockWindowFactory#updateWindow(ScreenDockWindow, ScreenDockStation)}
+     * or by calling {@link ScreenDockWindowFactory#createWindow(ScreenDockStation, WindowConfiguration)}.
+     * @param force if <code>true</code>, then {@link ScreenDockWindowFactory#createWindow(ScreenDockStation, WindowConfiguration) createWindow}
+     * is used and all windows are replaced, if <code>false</code> the factory is allowed to do optimizations.
+     */
+    protected void updateWindows( boolean force ){
     	ScreenDockWindowFactory factory = getWindowFactory();
     	
     	Integer delay = PREVENT_FOCUS_STEALING_DELAY.getDefault( null );
@@ -1716,7 +1775,17 @@ public class ScreenDockStation extends AbstractDockStation {
     	
     	for( ScreenDockWindowHandle handle : dockables.dockables() ){
     		final ScreenDockWindow oldWindow = handle.getWindow();
-    		final ScreenDockWindow newWindow = factory.updateWindow( oldWindow, this );
+    		final ScreenDockWindow newWindow;
+    		final WindowConfiguration configuration;
+    		
+    		if( force ){
+    			configuration = getConfiguration( oldWindow.getDockable() );
+    			newWindow = createWindow( configuration );
+    		}
+    		else{
+    			configuration = handle.getConfiguration();
+    			newWindow = factory.updateWindow( oldWindow, configuration, this );
+    		}
     		
     		if( newWindow != null && newWindow != oldWindow ){
     			Dockable dockable = oldWindow.getDockable();
@@ -1737,7 +1806,7 @@ public class ScreenDockStation extends AbstractDockStation {
     	        }
     	        
     			oldWindow.destroy();
-    			handle.setWindow( newWindow );
+    			handle.setWindow( newWindow, configuration );
     			
     	        newWindow.setController( getController() );
     	        newWindow.setFullscreenStrategy( getFullscreenStrategy() );
@@ -1804,14 +1873,40 @@ public class ScreenDockStation extends AbstractDockStation {
         return windowFactory;
     }
     
+
     /**
-     * Sets the factory that will be used to create new windows for this station,
-     * already existing windows are not affected by this change.
+     * Sets the factory that will be used to create new windows for this station, Calling this
+     * method will result in closing all existing windows and creating new windows.
      * @param factory the new factory, <code>null</code> to set the default
      * value
      */
     public void setWindowFactory( ScreenDockWindowFactory factory ){
         windowFactory.setValue( factory );
+    }
+    
+    /**
+     * Gets the configuration which is currently used to create new windows.
+     * @return the configuration, not <code>null</code>
+     */
+    public ScreenDockWindowConfiguration getWindowConfiguration(){
+    	return windowConfiguration.getValue();
+    }
+    
+    /**
+     * Gets the property which represents the window configuration.
+     * @return the property, not <code>null</code>
+     */
+    protected PropertyValue<ScreenDockWindowConfiguration> getWindowConfigurationProperty(){
+		return windowConfiguration;
+	}
+    
+    /**
+     * Sets the configuration which should be used to create new windows. Calling this method
+     * results in closing all existing windows and creating new windows.
+     * @param configuration the new configuration or <code>null</code> to use the default configuration
+     */
+    public void setWindowConfiguration( ScreenDockWindowConfiguration configuration ){
+    	windowConfiguration.setValue( configuration );
     }
     
     /**

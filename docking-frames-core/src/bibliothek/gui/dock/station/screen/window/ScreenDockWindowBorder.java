@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.border.Border;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.color.ColorManager;

@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,35 +25,25 @@
  */
 package bibliothek.gui.dock.station.screen;
 
-import javax.swing.JDesktopPane;
-
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
 
 /**
- * A simple factory creating new instances of {@link InternalDockDialog}.
+ * A {@link ScreenDockWindowConfiguration} is a strategy creating {@link WindowConfiguration}s 
+ * for all children of a {@link ScreenDockStation}.
  * @author Benjamin Sigg
- * @see InternalBoundaryRestriction
  */
-public class InternalScreenDockWindowFactory implements ScreenDockWindowFactory{
-	/** the parent for new windows */
-	private JDesktopPane desktop;
-	
+public interface ScreenDockWindowConfiguration {
 	/**
-	 * Creates the factory. All windows will have <code>desktop</code> as parent.
-	 * @param desktop the parent for new windows
+	 * Creates a new configuration for a {@link ScreenDockWindow} that is going to show
+	 * <code>dockable</code>. This configuration is only used to set up the new {@link ScreenDockWindow},
+	 * any further modifications will not affect the window. A {@link ScreenDockWindowFactory} or a 
+	 * {@link ScreenDockWindow} might ignore some parts or the entire configuration, altough the default
+	 * implementations all try to follow the configuration.
+	 * @param station the future or current parent of <code>dockable</code>
+	 * @param dockable the element which is going to be shown
+	 * @return the new configuration, or <code>null</code> if a default configuration should be used
 	 */
-	public InternalScreenDockWindowFactory( JDesktopPane desktop ){
-		if( desktop == null ){
-			throw new IllegalArgumentException( "desktop must not be null" );
-		}
-		this.desktop = desktop;
-	}
-	
-	public ScreenDockWindow updateWindow( ScreenDockWindow window, ScreenDockStation station ){
-		return null;
-	}
-	
-	public ScreenDockWindow createWindow( ScreenDockStation station ){
-		return new InternalDockDialog( station, desktop );
-	}
+	public WindowConfiguration getConfiguration( ScreenDockStation station, Dockable dockable );
 }

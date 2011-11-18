@@ -23,11 +23,12 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Rectangle;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 
@@ -39,6 +40,9 @@ public class ScreenDockWindowHandle implements PlaceholderListItem<Dockable>{
 	/** the window represented by this handle */
 	private ScreenDockWindow window;
 	
+	/** the configuration that was used to set up {@link #window} */
+	private WindowConfiguration configuration;
+	
 	/** the element shown by {@link #window} */
 	private Dockable dockable;
 	
@@ -46,8 +50,9 @@ public class ScreenDockWindowHandle implements PlaceholderListItem<Dockable>{
 	 * Creates a new handle.
 	 * @param dockable the element shown by <code>window</code>
 	 * @param window the window which is represented by this handle, not <code>null</code>
+	 * @param configuration the configuration which was used to create <code>window</code>, not <code>null</code>
 	 */
-	public ScreenDockWindowHandle( Dockable dockable, ScreenDockWindow window ){
+	public ScreenDockWindowHandle( Dockable dockable, ScreenDockWindow window, WindowConfiguration configuration ){
 		if( dockable == null ){
 			throw new IllegalArgumentException( "dockable must not be null" );
 		}
@@ -55,8 +60,14 @@ public class ScreenDockWindowHandle implements PlaceholderListItem<Dockable>{
 		if( window == null ){
 			throw new IllegalArgumentException( "window must not be null" );
 		}
+		
+		if( configuration == null ){
+			throw new IllegalArgumentException( "configuration must not be null" );
+		}
+		
 		this.dockable = dockable;
 		this.window = window;
+		this.configuration = configuration;
 	}
 	
 	public Dockable asDockable() {
@@ -81,12 +92,22 @@ public class ScreenDockWindowHandle implements PlaceholderListItem<Dockable>{
 	}
 	
 	/**
+	 * Gets the configuration which was used to set up {@link #getWindow() the window}.
+	 * @return the configuration, not <code>null</code>
+	 */
+	public WindowConfiguration getConfiguration(){
+		return configuration;
+	}
+	
+	/**
 	 * Sets the window which is represented by this handle.
 	 * @param window the new window, not <code>null</code>
+	 * @param configuration the configuration that was used to set up <code>window</code>
 	 */
-	public void setWindow( ScreenDockWindow window ){
+	public void setWindow( ScreenDockWindow window, WindowConfiguration configuration ){
 		this.window.setDockable( null );
 		this.window = window;
+		this.configuration = configuration;
 		window.setDockable( dockable );
 	}
 	

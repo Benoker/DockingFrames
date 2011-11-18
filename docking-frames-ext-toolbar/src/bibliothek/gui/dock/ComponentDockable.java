@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -51,6 +52,9 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 	
 	/** the {@link Component}s to show in differnet states */
 	private Component[] components = new Component[ ExpandedState.values().length ];
+	
+	/** all registered {@link MouseInputListener}s */
+	private List<MouseInputListener> mouseListeners = new ArrayList<MouseInputListener>();
 	
 	/**
 	 * Constructs a new ComponentDockable
@@ -209,6 +213,30 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 		return null;
 	}
 	
+	@Override
+	public void addMouseInputListener( MouseInputListener listener ){
+		super.addMouseInputListener( listener );
+		mouseListeners.add( listener );
+		for( Component component : components ){
+			if( component != null ){
+				component.addMouseListener( listener );
+				component.addMouseMotionListener( listener );
+			}
+		}
+	}
+	
+	@Override
+	public void removeMouseInputListener( MouseInputListener listener ){
+		super.removeMouseInputListener( listener );
+		mouseListeners.remove( listener );
+		for( Component component : components ){
+			if( component != null ){
+				component.removeMouseListener( listener );
+				component.removeMouseMotionListener( listener );
+			}
+		}
+	}
+	
 	/**
 	 * Sets the {@link Component} which should be shown if in state <code>state</code>. Please
 	 * note that the same {@link Component} cannot be used for more than one state.
@@ -220,10 +248,19 @@ public class ComponentDockable extends AbstractDockable implements ToolbarElemen
 		if( previous != component ){
 			if( previous != null ){
 				content.remove( previous );
+				for( MouseInputListener listener : mouseListeners ){
+					previous.removeMouseListener( listener );
+					previous.removeMouseMotionListener( listener );
+				}
 			}
+			
 			components[ state.ordinal() ] = component;
 			if( component != null ){
 				content.add( component, state.toString() );
+				for( MouseInputListener listener : mouseListeners ){
+					component.addMouseListener( listener );
+					component.addMouseMotionListener( listener );
+				}
 			}
 			
 			ExpandedState nearest = getNearestState( this.state );
