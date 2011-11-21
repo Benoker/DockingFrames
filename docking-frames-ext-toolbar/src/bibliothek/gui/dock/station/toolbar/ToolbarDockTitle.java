@@ -47,7 +47,6 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 	}
 	
 	private Color color;
-	private Orientation orientation = Orientation.FREE_HORIZONTAL;
 	
 	public ToolbarDockTitle( DockTitleVersion origin, Dockable dockable, Color color ){
 		super( dockable, origin, true );
@@ -79,7 +78,7 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 		
 		if( isActive() ){
 			g.setColor( Color.BLACK );
-			if( orientation.isHorizontal() ){
+			if( getOrientation().isHorizontal() ){
 				g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
 			}
 			else{
