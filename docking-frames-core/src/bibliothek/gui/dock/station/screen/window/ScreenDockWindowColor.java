@@ -23,22 +23,23 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
-import bibliothek.gui.dock.themes.border.DockBorder;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.util.UIValue;
+import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.util.Path;
 
 /**
- * A {@link DockBorder} that represents a {@link ScreenDockWindow}.
+ * Represents a color that is used to paint something of a {@link ScreenDockWindow}.
  * @author Benjamin Sigg
  */
-public interface ScreenDockWindowDockBorder extends DockBorder{
+public interface ScreenDockWindowColor extends DockColor{
 	/** the type of this {@link UIValue} */
-	public static final Path KIND = DockBorder.KIND.append( "screenWindow" );
+	public static final Path KIND_SCREEN_WINDOW_COLOR = DockColor.KIND_DOCK_COLOR.append( "screenWindow" );
 	
 	/**
-	 * Gets the window which is represented by this border.
+	 * Gets the window for which this color is used.
 	 * @return the window, not <code>null</code>
 	 */
 	public ScreenDockWindow getWindow();

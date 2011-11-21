@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -55,8 +55,10 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.screen.ScreenDockWindowBorder.Position;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.station.screen.magnet.MagnetizedOperation;
+import bibliothek.gui.dock.station.screen.window.ScreenDockWindowBorder.Position;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
@@ -141,21 +143,23 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * Creates a new window. Subclasses must call {@link #init(Component, Container, boolean)}
      * when using this constructor.
      * @param station the owner of this window
+     * @param configuration the configuration to apply during creation of this window
      */
-    protected AbstractScreenDockWindow( ScreenDockStation station ){
-        super( station );
+    protected AbstractScreenDockWindow( ScreenDockStation station, WindowConfiguration configuration ){
+        super( station, configuration );
     }
     
     /**
      * Creates a new window. 
      * @param station the owner of this window
+     * @param configuration the configuration to apply during creation of this window
      * @param window the root component of this window
      * @param contentParent the container onto which the contents of this window will be put
      * @param resizeable whether this window should create its own resizing system or not
      * @see #init(Component, Container, boolean)
      */
-    public AbstractScreenDockWindow( ScreenDockStation station, Component window, Container contentParent, boolean resizeable ){
-        super( station );
+    public AbstractScreenDockWindow( ScreenDockStation station, WindowConfiguration configuration, Component window, Container contentParent, boolean resizeable ){
+        super( station, configuration );
         init( window, contentParent, resizeable );
     }
 
@@ -222,6 +226,16 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 		});
         
         addScreenDockWindowListener( windowListener );
+    }
+    
+    @Override
+    protected WindowMover createTitleMover(){
+    	return new WindowMover( this ){
+    		@Override
+    		protected void convertPointToScreen( Point point, Component component ){
+    			AbstractScreenDockWindow.this.convertPointToScreen( point, component );
+    		}
+    	};
     }
     
     @Override

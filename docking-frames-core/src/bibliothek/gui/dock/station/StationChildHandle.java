@@ -199,17 +199,7 @@ public class StationChildHandle implements PlaceholderListItem<Dockable>{
 			titleRequest = new DockTitleRequest( station, dockable, version ) {
 				@Override
 				protected void answer( DockTitle old, DockTitle title ){
-					if( displayer != null ){
-						DockTitle oldTitle = displayer.getTitle();
-						if( oldTitle != null ){
-							dockable.unbind( oldTitle );
-						}
-						
-						if( title != null ){
-							dockable.bind( title );
-						}
-						displayer.setTitle( title );
-					}
+					updateTitle( title );
 				}
 			};
 		}
@@ -228,6 +218,24 @@ public class StationChildHandle implements PlaceholderListItem<Dockable>{
 	public void requestTitle(){
 		if( titleRequest != null ){
 			titleRequest.request();
+		}
+	}
+	
+	/**
+	 * Called if the current {@link DockTitle} needs to be exchanged.
+	 * @param title the new title, may be <code>null</code>
+	 */
+	protected void updateTitle( DockTitle title ){
+		if( displayer != null ){
+			DockTitle oldTitle = displayer.getTitle();
+			if( oldTitle != null ){
+				dockable.unbind( oldTitle );
+			}
+			
+			if( title != null ){
+				dockable.bind( title );
+			}
+			displayer.setTitle( title );
 		}
 	}
 }

@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -35,6 +35,8 @@ import javax.swing.JFrame;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -153,24 +155,26 @@ public class DefaultScreenDockWindowFactory implements ScreenDockWindowFactory {
         return titleText;
     }
     
-    public ScreenDockWindow updateWindow( ScreenDockWindow window, ScreenDockStation station ){
-    	return createWindow( station );
+    
+    public ScreenDockWindow updateWindow( ScreenDockWindow window, WindowConfiguration configuration, ScreenDockStation station ){
+    	return createWindow( station, configuration );
     }
     
-    public ScreenDockWindow createWindow( ScreenDockStation station ) {
+    
+    public ScreenDockWindow createWindow( ScreenDockStation station, WindowConfiguration configuration ){
         AbstractScreenDockWindow window;
         
         if( kind == Kind.FRAME ){
-            window = new ScreenDockFrame( station, undecorated );
+            window = new ScreenDockFrame( station, configuration, undecorated );
         }
         else{
             Window owner = station.getOwner();
             if( owner instanceof Frame )
-                window = new ScreenDockDialog( station, (Frame)owner, undecorated );
+                window = new ScreenDockDialog( station, configuration, (Frame)owner, undecorated );
             else if( owner instanceof Dialog )
-                window = new ScreenDockDialog( station, (Dialog)owner, undecorated );
+                window = new ScreenDockDialog( station, configuration, (Dialog)owner, undecorated );
             else
-                window = new ScreenDockDialog( station, undecorated );
+                window = new ScreenDockDialog( station, configuration, undecorated );
         }
         
         window.setShowTitle( showDockTitle );

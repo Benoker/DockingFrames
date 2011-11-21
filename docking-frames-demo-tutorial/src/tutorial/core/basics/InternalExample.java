@@ -15,8 +15,8 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.screen.InternalBoundaryRestriction;
 import bibliothek.gui.dock.station.screen.InternalFullscreenStrategy;
-import bibliothek.gui.dock.station.screen.InternalScreenDockWindowFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
+import bibliothek.gui.dock.station.screen.window.InternalScreenDockWindowFactory;
 import bibliothek.gui.dock.util.DockProperties;
 
 @Tutorial(title="JDesktopPane", id="Internal")

@@ -25,7 +25,9 @@
  */
 package bibliothek.gui.dock.station.screen;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
 
 /**
  * A {@link ScreenDockWindowFactory} can create new {@link ScreenDockWindow}s.
@@ -37,17 +39,20 @@ public interface ScreenDockWindowFactory {
     /**
      * Creates a new window which will be used by <code>station</code>. 
      * @param station the owner of the window
+     * @param configuration information about how the window has to look depending on its future 
+     * {@link Dockable} and on the current {@link ScreenDockWindowConfiguration}.
      * @return the new window
      */
-    public ScreenDockWindow createWindow( ScreenDockStation station );
+    public ScreenDockWindow createWindow( ScreenDockStation station, WindowConfiguration configuration );
     
     /**
      * This method is called if the result of {@link ScreenDockStation#getOwner()} changed, i.e. if
      * the {@link ScreenDockStation} has a new owner. This method may replace the existing <code>window</code>
      * with a new window if necessary.
      * @param window the currently shown window
+     * @param conifugration the configuration that was used to create <code>window</code>
      * @param station the owner of the window
      * @return the replacement, a value of <code>null</code> or <code>window</code> means that nothing happens
      */
-    public ScreenDockWindow updateWindow( ScreenDockWindow window, ScreenDockStation station );
+    public ScreenDockWindow updateWindow( ScreenDockWindow window, WindowConfiguration configuration, ScreenDockStation station );
 }

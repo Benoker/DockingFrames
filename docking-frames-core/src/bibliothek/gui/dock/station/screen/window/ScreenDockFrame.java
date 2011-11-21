@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import javax.swing.Icon;
 import javax.swing.JDialog;
@@ -31,6 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JRootPane;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
@@ -46,10 +47,11 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
      * Creates a new dialog. Note that the constructors with
      * an owner window are preferred.
      * @param station the station to which this dialog is responsible
+     * @param configuration the configuration to apply during creation of this window
      * @param undecorated whether the dialog should suppress the default decorations
      */
-    public ScreenDockFrame( ScreenDockStation station, boolean undecorated ){
-        super( station );
+    public ScreenDockFrame( ScreenDockStation station, WindowConfiguration configuration, boolean undecorated ){
+        super( station, configuration );
         this.frame = new JFrame();
         init( undecorated );
     }

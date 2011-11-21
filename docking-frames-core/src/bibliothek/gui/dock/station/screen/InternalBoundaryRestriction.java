@@ -31,6 +31,8 @@ import java.awt.Rectangle;
 
 import javax.swing.JDesktopPane;
 
+import bibliothek.gui.dock.station.screen.window.InternalScreenDockWindowFactory;
+
 /**
  * This boundary restriction is based on a {@link JDesktopPane}. It makes sure that the top border part of a
  * window is always visible.

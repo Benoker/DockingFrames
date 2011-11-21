@@ -24,7 +24,7 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.station.screen;
+package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -33,6 +33,7 @@ import javax.swing.JDialog;
 import javax.swing.JRootPane;
 
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 /**
  * An implementation of {@link ScreenDockWindow} which uses a {@link JDialog}.
@@ -47,10 +48,11 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
      * Creates a new dialog. Note that the constructors with
      * an owner window are preferred.
      * @param station the station to which this dialog is responsible
+     * @param configuration the configuration to apply during creation of this window
      * @param undecorated whether the dialog should suppress the default decorations
      */
-    public ScreenDockDialog( ScreenDockStation station, boolean undecorated ){
-        super( station );
+    public ScreenDockDialog( ScreenDockStation station, WindowConfiguration configuration, boolean undecorated ){
+        super( station, configuration );
         this.dialog = new JDialog();
         init( undecorated );
     }
@@ -58,11 +60,12 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
     /**
      * Creates a new dialog.
      * @param station the station to which this dialog is responsible
+     * @param configuration the configuration to apply during creation of this window
      * @param frame the owner of the dialog
      * @param undecorated whether the dialog should suppress the default decorations
      */
-    public ScreenDockDialog( ScreenDockStation station, Frame frame, boolean undecorated ){
-        super( station );
+    public ScreenDockDialog( ScreenDockStation station, WindowConfiguration configuration, Frame frame, boolean undecorated ){
+        super( station, configuration );
         this.dialog = new JDialog( frame );
         init( undecorated );
     }
@@ -70,11 +73,12 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
     /**
      * Creates a new dialog.
      * @param station the station to which this dialog is responsible
+     * @param configuration the configuration to apply during creation of this window
      * @param dialog the owner of this dialog
      * @param undecorated whether the dialog should suppress the default decorations
      */
-    public ScreenDockDialog( ScreenDockStation station, Dialog dialog, boolean undecorated ){
-        super( station );
+    public ScreenDockDialog( ScreenDockStation station, WindowConfiguration configuration, Dialog dialog, boolean undecorated ){
+        super( station, configuration );
         this.dialog = new JDialog( dialog );
         init( undecorated );
     }
