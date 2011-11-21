@@ -1756,10 +1756,29 @@ public class DockFrontend {
     }
     
     /**
+     * Deletes all settings known to this frontend, this method is equivalent of calling
+     * {@link #delete(String)} with all known names for settings. 
+     * @return the number of settings that were deleted
+     * @see #delete(String)
+     */
+    public int deleteAll(){
+    	int count = 0;
+    	Set<String> settings = getSettings();
+    	String[] array = settings.toArray( new String[ settings.size() ] );
+    	for( String name : array ){
+    		if( delete( name ) ){
+    			count++;
+    		}
+    	}
+    	return count;
+    }
+    
+    /**
      * Deletes the setting with the given <code>name</code>.
      * @param name the name of the setting to delete
      * @return <code>true</code> if the setting was deleted, <code>false</code>
      * if the setting was unknown anyway.
+     * @see #deleteAll()
      */
     public boolean delete( String name ){
     	if( name == null )
@@ -1817,11 +1836,27 @@ public class DockFrontend {
     
     /**
      * Reads the settings of this frontend from <code>in</code>. The layout
-     * will be changed according to the contents that are read.
+     * will be changed according to the contents that are read. All existing
+     * settings are deleted by this method.
      * @param in the stream to read from
      * @throws IOException if there are any problems
      */
     public void read( DataInputStream in ) throws IOException{
+    	read( in, false );
+    }
+
+    /**
+     * Reads the settings of this frontend from <code>in</code>. The layout
+     * will be changed according to the contents that are read.
+     * @param in the stream to read from
+     * @param keepExistingSettings whether to keep or to delete (see {@link #deleteAll()}) the
+     * existing settings.
+     * @throws IOException if there are any problems
+     */
+    public void read( DataInputStream in, boolean keepExistingSettings ) throws IOException{
+	    if( !keepExistingSettings ){
+			deleteAll();
+		}
         Version version = Version.read( in );
         version.checkCurrent();
         
@@ -1898,10 +1933,25 @@ public class DockFrontend {
     }
     
     /**
-     * Reads the contents of this frontend from an xml element.
+     * Reads the contents of this frontend from an xml element. All existing settings
+     * are deleted (see {@link #deleteAll()}) by this method.
      * @param element the element to read
      */
     public void readXML( XElement element ){
+    	readXML( element, false );
+    }
+    
+    /**
+     * Reads the contents of this frontend from an xml element.
+     * @param element the element to read
+     * @param keepExistingSettings whether to keep or to delete (see {@link #deleteAll()}) the
+     * existing settings.
+     */
+    public void readXML( XElement element, boolean keepExistingSettings ){
+    	if( !keepExistingSettings ){
+    		deleteAll();
+    	}
+    	
         XElement xsettings = element.getElement( "settings" );
         if( xsettings != null ){
             for( XElement xsetting : xsettings.getElements( "setting" )){

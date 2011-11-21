@@ -922,6 +922,21 @@ public class CControl {
     }
     
     /**
+     * Gets the currently focused {@link CDockable}. This might be <code>null</code> if some
+     * {@link Dockable} that is not a {@link CommonDockable} has the focus.
+     * @return the currently focused {@link CDockable}, can be <code>null</code>
+     * @see #addFocusListener(CFocusListener)
+     * @see DockController#getFocusedDockable()
+     */
+    public CDockable getFocusedCDockable(){
+    	Dockable focused = getController().getFocusedDockable();
+    	if( focused instanceof CommonDockable ){
+    		return ((CommonDockable)focused).getDockable();
+    	}
+    	return null;
+    }
+    
+    /**
      * Adds a new veto focus listener to this control. The listener gets
      * informed about pending changes in the focus.
      * @param listener the new listener
