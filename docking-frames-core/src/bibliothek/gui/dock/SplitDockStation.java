@@ -1820,9 +1820,12 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 			
 			if( leaf.getDockable() != null ){
-				DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, leaf.getDockable() );
+				Dockable oldDockable = leaf.getDockable();
+				DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, oldDockable );
 				try{
+					dockStationListeners.fireDockableRemoving( oldDockable );
 					leaf.setDockable( null, token );
+					dockStationListeners.fireDockableRemoved( oldDockable );
 				}
 				finally{
 					token.release();

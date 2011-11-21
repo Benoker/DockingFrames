@@ -657,6 +657,11 @@
  - Bugfix: VetoableDockRelocatorListener.searched is now actually called
  - API: Workarounds-API is now public, clients can register custom workarounds (e.g. to resolve issues with JWebBrowser).
  
+[v1.1.1p6a]
+ ! Bugfix: Memory Leak in FlatTab, listener was added twice
+ ! Bugfix: Memory Leaf in RoundRectButton, listener was not removed properly 
+ ! Bugfix: SplitDockStation did not fire dockable removing eveng if the method "dropOver" was called
+
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
 - Drop StackDockStation over Dockable and merge them
