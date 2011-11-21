@@ -137,6 +137,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	public ToolbarContainerDockStation( Orientation orientation ){
 		this.orientation = orientation;
 		mainPanel = new OverpaintablePanelBase();
+		mainPanel.setOpaque(false);
+		mainPanel.repaint();
 		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
 				+ ".toolbar", this);
 

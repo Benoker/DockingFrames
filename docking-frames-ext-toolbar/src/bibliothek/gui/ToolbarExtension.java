@@ -47,11 +47,11 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockTitle;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockTitleGrip;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockTitleRoundedBound;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
-import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockTitle;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockTitlePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
@@ -308,11 +308,12 @@ public class ToolbarExtension implements Extension{
 				// ToolbarDockTitlePoint
 				// .createFactory(new Color(255, 0, 0)));
 				titles.registerTheme(ToolbarDockStation.TITLE_ID,
-						NullTitleFactory.INSTANCE);
+						ToolbarDockTitleGrip.createFactory(new Color(80, 80,
+								80)));
 				titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,
 						NullTitleFactory.INSTANCE);
 				titles.registerTheme(ToolbarContainerDockStation.TITLE_ID,
-						ToolbarDockTitleGrip.createFactory(new Color(80, 80,
+						ToolbarDockTitleRoundedBound.createFactory(new Color(80, 80,
 								80)));
 				titles.registerTheme(ScreenToolbarDockTitleFactory.TITLE_ID,
 						ToolbarDockTitle.createFactory(Color.RED));

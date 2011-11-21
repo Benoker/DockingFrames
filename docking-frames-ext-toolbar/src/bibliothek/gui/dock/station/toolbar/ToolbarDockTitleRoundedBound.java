@@ -1,10 +1,16 @@
 package bibliothek.gui.dock.station.toolbar;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBufferInt;
@@ -14,6 +20,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarExtension;
@@ -24,16 +31,18 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
- * A simplistic implementation of a {@link DockTitle}. This particular
- * implementation shows a line of dot.
+ * A implementation of a {@link DockTitle}. This particular implementation shows
+ * round rectangular grip. Usually, this kind of title is used as top level
+ * title, it means with toolbar and not with group components or components.
  * 
  * @author Herve Guillaume
  */
-public class ToolbarDockTitlePoint extends AbstractDockTitle{
+public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
 	/**
-	 * Creates a new factory that creates new {@link ToolbarDockTitlePoint}s.
+	 * Creates a new factory that creates new {@link ToolbarDockTitle}s.
 	 * 
 	 * @param color
 	 *            the color of the title
@@ -48,8 +57,8 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 
 			@Override
 			public void request( DockTitleRequest request ){
-				request.answer(new ToolbarDockTitlePoint(request.getVersion(),
-						request.getTarget(), color));
+				request.answer(new ToolbarDockTitleRoundedBound(request
+						.getVersion(), request.getTarget(), color));
 			}
 
 			@Override
@@ -62,10 +71,11 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 	private Color color;
 	private Orientation orientation = Orientation.FREE_HORIZONTAL;
 
-	public ToolbarDockTitlePoint( DockTitleVersion origin, Dockable dockable,
-			Color color ){
+	public ToolbarDockTitleRoundedBound( DockTitleVersion origin,
+			Dockable dockable, Color color ){
 		super(dockable, origin, true);
 		this.color = color;
+		this.setOpaque(false);
 	}
 
 	@Override
@@ -87,62 +97,38 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 		repaint();
 	}
 
-	@Override
-	public void paintBackground( Graphics g, JComponent component ){
-		g.setColor(color);
-		g.fillRect(0, 0, getWidth(), getHeight());
-
-		int inset = getWidth() / 8;
-
-		if (isActive()){
-			g.setColor(Color.GREEN);
-			g.fillRect(0, 0, getWidth(), getHeight());
-		}
-	}
-
-	/**
-	 * This is the minimum width when the orientation is vertical. It is the
-	 * minimum height when the orientation is horizontal.
-	 */
-	private static final int HEADER_SIZE = 9;
-
-	private static final Image POINT;
-	private static final int POINT_DISTANCE = 4;
-
-	// this model draw an image ==> so the background is behind and invisible
-	static{
-		ColorModel colorModel = new DirectColorModel(24, 0xff0000, 0x00ff00,
-				0x0000ff);
-		SampleModel sampleModel = colorModel.createCompatibleSampleModel(3, 3);
-		int[] pixels = new int[] { 0xffd6cfc6, 0xffb3b0ab, 0xffefebe7,
-				0xffb3b0a3, 0xff8d887a, 0xffffffff, 0xffe7e7e7, 0xffffffff,
-				0xfffbffff, };
-
-		DataBufferInt dataBuffer = new DataBufferInt(pixels, 9);
-		WritableRaster writableRaster = Raster.createWritableRaster(
-				sampleModel, dataBuffer, new Point());
-		POINT = new BufferedImage(colorModel, writableRaster, false, null);
-	}
+	// @Override
+	// public void paintBackground( Graphics g, JComponent component ){
+	// System.out.println("Paint BACKGROUND");
+	// g.setColor( Color.GREEN );
+	// g.fillRect( 0, 0, getWidth(), getHeight() );
+	//
+	// if( isActive() ){
+	// g.setColor( Color.GREEN );
+	// if( orientation.isHorizontal() ){
+	// g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
+	// }
+	// else{
+	// g.drawLine( getWidth()/2, 1, getWidth()/2, getHeight()-1 );
+	// }
+	// }
+	// }
 
 	@Override
 	protected void paintComponent( Graphics g ){
+		super.paintComponents(g);
+		Graphics2D g2D = (Graphics2D) g;
+		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2D.setColor(color);
 		if (orientation == Orientation.FREE_HORIZONTAL){
-			// Draw a horizontal handle.
-			int x = 4;
-			int y = 3;
-			while (x < getWidth() - POINT_DISTANCE){
-				g.drawImage(POINT, x, y, this);
-				x += POINT_DISTANCE;
-			}
+			RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double(0,
+					0, getWidth(), getHeight() * 2, 8, 8);
+			g2D.fill(rectangleRounded);
 		} else{
-			// Draw a vertical handle.
-			int x = 3;
-			int y = 4;
-			while (y < getHeight() - POINT_DISTANCE){
-				g.drawImage(POINT, x, y, this);
-				y += POINT_DISTANCE;
-			}
-
+			Rectangle2D rectangle = new Rectangle2D.Double(0, 0, getWidth(),
+					getHeight());
+			g2D.fill(rectangle);
 		}
 	}
 

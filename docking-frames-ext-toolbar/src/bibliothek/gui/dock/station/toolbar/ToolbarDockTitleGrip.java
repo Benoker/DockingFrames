@@ -4,7 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Stroke;
@@ -28,17 +27,16 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
- * A very simplistic implementation of a {@link DockTitle}. This particular
+ * A simplistic implementation of a {@link DockTitle}. This particular
  * implementation shows a grip.
  * 
  * @author Herve Guillaume
  */
 public class ToolbarDockTitleGrip extends AbstractDockTitle{
 	/**
-	 * Creates a new factory that creates new {@link ToolbarDockTitle}s.
+	 * Creates a new factory that creates new {@link ToolbarDockTitleGrip}s.
 	 * 
 	 * @param color
 	 *            the color of the title
@@ -153,7 +151,6 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 
 	@Override
 	protected void paintComponent( Graphics g ){
-		g.setColor(Color.darkGray);
 		g.setColor(Color.darkGray);
 
 		Color clearColor = Color.white;
