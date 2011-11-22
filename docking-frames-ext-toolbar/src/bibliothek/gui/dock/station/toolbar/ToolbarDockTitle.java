@@ -78,7 +78,7 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 		
 		if( isActive() ){
 			g.setColor( Color.BLACK );
-			if( orientation.isHorizontal() ){
+			if( getOrientation().isHorizontal() ){
 				g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
 			}
 			else{

@@ -21,10 +21,13 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
+import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
+import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XIO;
@@ -53,6 +56,16 @@ public class TestPersistentLayout{
 		screenStation.setShowing(true);
 		frontend.addRoot("rootScreen", screenStation);
 
+		// Disable the expand state action button
+		frontend.getController().getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, 
+                new DefaultExpandableToolbarItemStrategy(){
+            @Override
+            public boolean isEnabled( Dockable item, ExpandedState state ){
+                return false;
+            }
+        });
+		
+		
 		icon = new ImageIcon(
 				TestPersistentLayout.class
 						.getResource("/resources/film.png"));

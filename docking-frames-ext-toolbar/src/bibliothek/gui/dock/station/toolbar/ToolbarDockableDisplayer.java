@@ -74,7 +74,7 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer{
 	 */
 	public ToolbarDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, boolean autoOrientation ){
 		super( station, dockable, title );
-		
+		this.setTransparent(true);
 		if( autoOrientation && dockable.asDockStation() instanceof OrientedDockStation ){
 			getComponent().addComponentListener( new ComponentAdapter(){
 				public void componentResized( ComponentEvent e ){

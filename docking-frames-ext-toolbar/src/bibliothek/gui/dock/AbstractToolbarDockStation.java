@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
@@ -202,21 +203,25 @@ public abstract class AbstractToolbarDockStation extends
 
 	/**
 	 * Sets the {@link ExpandedState} of this station.
-	 * @param state the new state, not <code>null</code>
-	 * @param action if <code>true</code>, then {@link #setExpandedState(ExpandedState)} is called. Otherwise
-	 * the property is changed without actually performing any actions. The later option should only be used
-	 * while loading a layout.
+	 * 
+	 * @param state
+	 *            the new state, not <code>null</code>
+	 * @param action
+	 *            if <code>true</code>, then
+	 *            {@link #setExpandedState(ExpandedState)} is called. Otherwise
+	 *            the property is changed without actually performing any
+	 *            actions. The later option should only be used while loading a
+	 *            layout.
 	 */
 	@FrameworkOnly
 	public void setExpandedState( ExpandedState state, boolean action ){
-		if( action ){
-			setExpandedState( state );
-		}
-		else{
+		if (action){
+			setExpandedState(state);
+		} else{
 			this.state = state;
 		}
 	}
-	
+
 	public void setExpandedState( ExpandedState state ){
 		if (this.state != state){
 			DockController controller = getController();
@@ -966,7 +971,10 @@ public abstract class AbstractToolbarDockStation extends
 						.setOrientation(getOrientation());
 			}
 		}
-
+		// Component comp = handle.getDisplayer().getComponent();
+		// if (comp instanceof JComponent) {
+		// ((JComponent) comp).setOpaque(false);
+		// }
 		mainPanel.dockablePane.add(handle.getDisplayer().getComponent(), index);
 		mainPanel.dockablePane.invalidate();
 
@@ -1073,7 +1081,7 @@ public abstract class AbstractToolbarDockStation extends
 				OrientedDockStation group = (OrientedDockStation) d;
 				group.setOrientation(this.getOrientation());
 			}
-		}		
+		}
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
 		fireOrientingEvent();
@@ -1182,7 +1190,6 @@ public abstract class AbstractToolbarDockStation extends
 		 * This pane is the base of this OverpaintablePanel and contains both
 		 * title and content panes (with a BoxLayout)
 		 */
-		@SuppressWarnings("serial")
 		private JPanel basePane = new SizeFixedPanel(); // {
 
 		// @Override
@@ -1205,6 +1212,9 @@ public abstract class AbstractToolbarDockStation extends
 			// dockablePane.setBackground(Color.RED);
 			basePane.add(dockablePane);
 			setBasePane(basePane);
+			this.setSolid(false);
+			dockablePane.setOpaque(false);
+			basePane.setOpaque(false);
 		}
 
 		@Override

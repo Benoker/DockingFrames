@@ -35,6 +35,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Herve Guillaume
  */
 public class ToolbarDockTitleGrip extends AbstractDockTitle{
+	
+	private Color color;
+	
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitleGrip}s.
 	 * 
@@ -61,9 +64,6 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 			}
 		};
 	}
-
-	private Color color;
-	private Orientation orientation = Orientation.FREE_HORIZONTAL;
 
 	public ToolbarDockTitleGrip( DockTitleVersion origin, Dockable dockable,
 			Color color ){
@@ -156,8 +156,7 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 		Color clearColor = Color.white;
 		int lineOffset = 5;
 		int headerOffset = 3;
-		if (orientation == Orientation.FREE_HORIZONTAL){
-
+		if (getOrientation().isHorizontal()){
 			// Draw a horizontal handle.
 			int width = getSize().width;
 
@@ -176,7 +175,6 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 					headerOffset + 2);
 
 		} else{
-
 			// Draw a vertical handle.
 			int height = getSize().height;
 

@@ -41,6 +41,9 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * @author Herve Guillaume
  */
 public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
+
+	private Color color;
+
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitle}s.
 	 * 
@@ -68,14 +71,12 @@ public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
 		};
 	}
 
-	private Color color;
-	private Orientation orientation = Orientation.FREE_HORIZONTAL;
-
 	public ToolbarDockTitleRoundedBound( DockTitleVersion origin,
 			Dockable dockable, Color color ){
 		super(dockable, origin, true);
 		this.color = color;
-		this.setOpaque(false);
+//		this.setOpaque(false);
+//		this.setTransparent(true);
 	}
 
 	@Override
@@ -97,38 +98,21 @@ public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
 		repaint();
 	}
 
-	// @Override
-	// public void paintBackground( Graphics g, JComponent component ){
-	// System.out.println("Paint BACKGROUND");
-	// g.setColor( Color.GREEN );
-	// g.fillRect( 0, 0, getWidth(), getHeight() );
-	//
-	// if( isActive() ){
-	// g.setColor( Color.GREEN );
-	// if( orientation.isHorizontal() ){
-	// g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
-	// }
-	// else{
-	// g.drawLine( getWidth()/2, 1, getWidth()/2, getHeight()-1 );
-	// }
-	// }
-	// }
-
 	@Override
-	protected void paintComponent( Graphics g ){
+	public void paintBackground( Graphics g, JComponent component ){
 		super.paintComponents(g);
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.setColor(color);
-		if (orientation == Orientation.FREE_HORIZONTAL){
+		if (getOrientation().isHorizontal()){
 			RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double(0,
 					0, getWidth(), getHeight() * 2, 8, 8);
 			g2D.fill(rectangleRounded);
 		} else{
-			Rectangle2D rectangle = new Rectangle2D.Double(0, 0, getWidth(),
-					getHeight());
-			g2D.fill(rectangle);
+			RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double(0,
+					0, getWidth() * 2, getHeight(), 8, 8);
+			g2D.fill(rectangleRounded);
 		}
 	}
 

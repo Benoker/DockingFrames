@@ -137,8 +137,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	public ToolbarContainerDockStation( Orientation orientation ){
 		this.orientation = orientation;
 		mainPanel = new OverpaintablePanelBase();
-		mainPanel.setOpaque(false);
-		mainPanel.repaint();
 		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
 				+ ".toolbar", this);
 
@@ -175,8 +173,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			break;
 		}
 		panel.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(
-				new Insets(1, 1, 1, 1))));
-		panel.setBackground(new Color(31, 73, 125));
+				new Insets(5, 5, 5, 5))));
+		panel.setBackground(Color.pink);
 		return panel;
 	}
 
@@ -923,8 +921,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			// this.setPreferredSize( new Dimension(
 			// content.getPreferredSize().width,
 			// content.getPreferredSize().height ) );
-			setBasePane(containerPanel);
-			setContentPane(containerPanel);
+			this.setBasePane(containerPanel);
+			this.setContentPane(containerPanel);
+			this.setSolid(false);
 			this.getContentPane().revalidate();
 			this.getContentPane().repaint();
 		}

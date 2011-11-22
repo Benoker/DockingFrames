@@ -308,7 +308,7 @@ public class ToolbarExtension implements Extension{
 				// ToolbarDockTitlePoint
 				// .createFactory(new Color(255, 0, 0)));
 				titles.registerTheme(ToolbarDockStation.TITLE_ID,
-						ToolbarDockTitleGrip.createFactory(new Color(80, 80,
+						ToolbarDockTitlePoint.createFactory(new Color(80, 80,
 								80)));
 				titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,
 						NullTitleFactory.INSTANCE);

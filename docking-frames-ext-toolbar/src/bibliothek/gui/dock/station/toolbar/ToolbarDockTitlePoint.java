@@ -32,6 +32,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Herve Guillaume
  */
 public class ToolbarDockTitlePoint extends AbstractDockTitle{
+	
+	private Color color;
+	
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitlePoint}s.
 	 * 
@@ -58,9 +61,6 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 			}
 		};
 	}
-
-	private Color color;
-	private Orientation orientation = Orientation.FREE_HORIZONTAL;
 
 	public ToolbarDockTitlePoint( DockTitleVersion origin, Dockable dockable,
 			Color color ){
@@ -126,7 +126,7 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 
 	@Override
 	protected void paintComponent( Graphics g ){
-		if (orientation == Orientation.FREE_HORIZONTAL){
+		if (getOrientation().isHorizontal()){
 			// Draw a horizontal handle.
 			int x = 4;
 			int y = 3;
