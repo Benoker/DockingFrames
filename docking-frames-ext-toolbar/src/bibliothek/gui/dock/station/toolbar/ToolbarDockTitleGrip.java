@@ -1,22 +1,10 @@
 package bibliothek.gui.dock.station.toolbar;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Stroke;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DirectColorModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 
 import javax.swing.JComponent;
-import javax.swing.UIManager;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarExtension;
@@ -95,64 +83,16 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 		g.setColor(color);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		int inset = getWidth() / 8;
-
 		if (isActive()){
 			g.setColor(Color.GREEN);
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 	}
 
-	/**
-	 * This is the minimum width when the orientation is vertical. It is the
-	 * minimum height when the orientation is horizontal.
-	 */
-	private static final int HEADER_SIZE = 9;
-
-	private static final Image POINT;
-	private static final int POINT_DISTANCE = 4;
-
-	// this model draw an image ==> so the background is behind and invisible
-	static{
-		ColorModel colorModel = new DirectColorModel(24, 0xff0000, 0x00ff00,
-				0x0000ff);
-		SampleModel sampleModel = colorModel.createCompatibleSampleModel(3, 3);
-		int[] pixels = new int[] { 0xffd6cfc6, 0xffb3b0ab, 0xffefebe7,
-				0xffb3b0a3, 0xff8d887a, 0xffffffff, 0xffe7e7e7, 0xffffffff,
-				0xfffbffff, };
-
-		DataBufferInt dataBuffer = new DataBufferInt(pixels, 9);
-		WritableRaster writableRaster = Raster.createWritableRaster(
-				sampleModel, dataBuffer, new Point());
-		POINT = new BufferedImage(colorModel, writableRaster, false, null);
-	}
-
-	private static Color light = Color.white;
-	private static Color shadow = Color.gray;
-	private static final Stroke STROKE;
-
-	static{
-		float[] pattern = { 1.0f, 3.0f };
-		STROKE = new BasicStroke(1, BasicStroke.CAP_BUTT,
-				BasicStroke.JOIN_MITER, 1.0f, pattern, 0.0f);
-		Color lafLight = (Color) UIManager.getDefaults().get(
-				"InternalFrame.borderLight");
-		Color lafShadow = (Color) UIManager.getDefaults().get(
-				"TabbedPane.borderHightlightColor");
-		if (lafLight != null){
-			light = lafLight;
-		}
-
-		if (lafShadow != null){
-			shadow = lafShadow;
-		}
-
-	}
-
 	@Override
 	protected void paintComponent( Graphics g ){
 		g.setColor(Color.darkGray);
-
+		Color shadow = Color.gray;
 		Color clearColor = Color.white;
 		int lineOffset = 5;
 		int headerOffset = 3;

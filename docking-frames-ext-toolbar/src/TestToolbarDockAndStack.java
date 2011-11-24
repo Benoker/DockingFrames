@@ -55,19 +55,19 @@ public class TestToolbarDockAndStack{
 
 		ToolbarGroupDockStation group1 = new ToolbarGroupDockStation();
 		JButton button = new JButton("One");
-		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
 		ComponentDockable dockable1 = new ComponentDockable(button);
 		group1.drop(dockable1);
-		button = new JButton("Two");
-		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		button = new JButton("One");
+		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
 		ComponentDockable dockable2 = new ComponentDockable(button);
 		group1.drop(dockable2);
-		button = new JButton("Three");
-		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		button = new JButton("One");
+		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
 		ComponentDockable dockable3 = new ComponentDockable(button);
 		group1.drop(dockable3);
-		button = new JButton("Four");
-		button.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+		button = new JButton("One");
+		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
 		ComponentDockable dockable4 = new ComponentDockable(button);
 		group1.drop(dockable4);
 
@@ -76,16 +76,16 @@ public class TestToolbarDockAndStack{
 		toolbarStationWest.drop(toolbar1);
 
 		ToolbarGroupDockStation group2 = new ToolbarGroupDockStation();
-		ComponentDockable dockable5 = new ComponentDockable(new JButton("Five"));
+		ComponentDockable dockable5 = new ComponentDockable(new JButton("One"));
 		group2.drop(dockable5);
-		ComponentDockable dockable6 = new ComponentDockable(new JButton("Six"));
+		ComponentDockable dockable6 = new ComponentDockable(new JButton("One"));
 		group2.drop(dockable6);
 		ToolbarGroupDockStation group3 = new ToolbarGroupDockStation();
 		ComponentDockable dockable7 = new ComponentDockable(
-				new JButton("Seven"));
+				new JButton("One"));
 		group3.drop(dockable7);
 		ComponentDockable dockable8 = new ComponentDockable(
-				new JButton("Eight"));
+				new JButton("One"));
 		group3.drop(dockable8);
 
 		ToolbarDockStation toolbar2 = new ToolbarDockStation();
@@ -98,9 +98,9 @@ public class TestToolbarDockAndStack{
 		 * */
 		StackDockStation stackStation = new StackDockStation();
 		controller.add(stackStation);
-		DefaultDockable dockable9 = new DefaultDockable("First");
+		DefaultDockable dockable9 = new DefaultDockable("One");
 		stackStation.drop(dockable9);
-		DefaultDockable dockable10 = new DefaultDockable("Second");
+		DefaultDockable dockable10 = new DefaultDockable("One");
 		stackStation.drop(dockable10);
 		// controller.add(stackStation);
 		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");

@@ -1,26 +1,13 @@
 package bibliothek.gui.dock.station.toolbar;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DirectColorModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 
 import javax.swing.JComponent;
-import javax.swing.UIManager;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarExtension;
@@ -31,7 +18,6 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.title.DockTitle.Orientation;
 
 /**
  * A implementation of a {@link DockTitle}. This particular implementation shows
@@ -75,8 +61,6 @@ public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
 			Dockable dockable, Color color ){
 		super(dockable, origin, true);
 		this.color = color;
-//		this.setOpaque(false);
-//		this.setTransparent(true);
 	}
 
 	@Override

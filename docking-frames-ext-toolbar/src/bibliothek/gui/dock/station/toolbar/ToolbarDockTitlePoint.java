@@ -92,19 +92,11 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 		g.setColor(color);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		int inset = getWidth() / 8;
-
 		if (isActive()){
 			g.setColor(Color.GREEN);
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 	}
-
-	/**
-	 * This is the minimum width when the orientation is vertical. It is the
-	 * minimum height when the orientation is horizontal.
-	 */
-	private static final int HEADER_SIZE = 9;
 
 	private static final Image POINT;
 	private static final int POINT_DISTANCE = 4;

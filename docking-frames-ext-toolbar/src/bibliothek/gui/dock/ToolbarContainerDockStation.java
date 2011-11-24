@@ -162,6 +162,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 */
 	private JPanel createPanel(){
 		JPanel panel = new JPanel();
+		panel.setOpaque(false);
 		switch (orientation) {
 		case HORIZONTAL:
 			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -172,9 +173,11 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			panel.setAlignmentY(Component.TOP_ALIGNMENT);
 			break;
 		}
-		panel.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(
-				new Insets(5, 5, 5, 5))));
-		panel.setBackground(Color.pink);
+		// panel.setBorder(new CompoundBorder(new EtchedBorder(), new
+		// EmptyBorder(
+		// new Insets(1, 1, 1, 1))));
+		panel.setBorder(new EmptyBorder(
+				new Insets(3, 3, 3, 3)));
 		return panel;
 	}
 
