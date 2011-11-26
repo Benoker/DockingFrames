@@ -45,12 +45,12 @@ public class ToolbarAttractorStrategy implements AttractorStrategy{
 	
 	@Override
 	public Attraction stick( ScreenDockStation parent, Dockable moved, Dockable fixed ){
-		return attraction( parent, moved, fixed );
+		return Attraction.NEUTRAL;
 	}
 	
 	/**
-	 * Calculates the result of {@link #attract(ScreenDockStation, Dockable, Dockable)} and of
-	 * {@link #stick(ScreenDockStation, Dockable, Dockable)}.
+	 * Calculates the result of {@link #attract(ScreenDockStation, Dockable, Dockable)}. Subclasses may use
+	 * this method to calculate {@link #stick(ScreenDockStation, Dockable, Dockable)} as well.
 	 * @param parent the parent of <code>moved</code> and <code>fixed</code>
 	 * @param moved the {@link Dockable} that was moved
 	 * @param fixed the {@link Dockable} that was not moved
