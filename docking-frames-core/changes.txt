@@ -658,9 +658,9 @@
  - API: Workarounds-API is now public, clients can register custom workarounds (e.g. to resolve issues with JWebBrowser).
  
 [v1.1.1p6a]
- ! Bugfix: Memory Leak in FlatTab, listener was added twice
- ! Bugfix: Memory Leaf in RoundRectButton, listener was not removed properly 
- ! Bugfix: SplitDockStation did not fire dockable removing eveng if the method "dropOver" was called
+ - Bugfix: Memory Leak in FlatTab, listener was added twice
+ - Bugfix: Memory Leaf in RoundRectButton, listener was not removed properly 
+ - Bugfix: SplitDockStation did not fire dockable removing eveng if the method "dropOver" was called
  - API: CControl offers the new method "getFocusedCDockable", which returns the currently focused CDockable or null 
  - API: Added DockFrontend.deleteAll, which quickly deletes all settings of the frontend.
  ! API: DockFrontend.readXml/read now deletes the existing settings, this is how most developers would expect the method to work.
