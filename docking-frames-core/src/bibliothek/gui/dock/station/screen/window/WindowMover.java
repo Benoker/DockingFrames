@@ -41,6 +41,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.screen.magnet.MagnetController;
 import bibliothek.gui.dock.station.screen.magnet.MagnetizedOperation;
@@ -214,6 +215,13 @@ public class WindowMover {
 					DockController controller = window.getStation().getController();
 					if( controller != null ){
 						relocator = controller.getRelocator().createRemote( window.getDockable() );
+						relocator.setShowImageWindow( false );
+						
+						DockableDisplayer displayer = window.getDockableDisplayer();
+						if( displayer != null ){
+							relocator.setTitle( displayer.getTitle() );
+						}
+						
 						Reaction reaction = relocator.init( startPoint.x, startPoint.y, 0, 0, e.getModifiersEx() );
 						switch( reaction ){
 							case BREAK:

@@ -39,7 +39,7 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  *
  */
-public interface DirectRemoteRelocator {
+public interface DirectRemoteRelocator extends BasicRemoteRelocator{
     /**
      * This method starts a drag & drop operation. This method simulates
      * a mouse-pressed event.
