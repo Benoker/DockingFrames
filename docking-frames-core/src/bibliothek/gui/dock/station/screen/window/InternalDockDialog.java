@@ -55,16 +55,16 @@ public class InternalDockDialog extends AbstractScreenDockWindow{
 	public InternalDockDialog( ScreenDockStation station, WindowConfiguration configuration, JDesktopPane desktop ){
 		super( station, configuration );
 		this.desktop = desktop;
-		init();
+		initDialog( configuration );
 	}
 	
-	private void init(){
+	private void initDialog( WindowConfiguration configuration ){
 		dialog = new JPanel();
 		dialog.setVisible( false );
 		desktop.add( dialog );
 		desktop.setLayer( dialog, JDesktopPane.MODAL_LAYER );
 		
-		init( dialog, dialog, true );
+		init( dialog, dialog, configuration, true );
 	}
 	
 	@Override

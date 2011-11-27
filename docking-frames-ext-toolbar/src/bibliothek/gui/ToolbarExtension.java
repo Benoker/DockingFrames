@@ -37,10 +37,13 @@ import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.ToolbarMiniButton;
 import bibliothek.gui.dock.station.ToolbarTabDockStationFactory;
+import bibliothek.gui.dock.station.screen.ScreenDockWindowConfiguration;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDisplayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDockTitleFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarInserter;
+import bibliothek.gui.dock.station.screen.ToolbarWindowConfiguration;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
+import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfiguration;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
@@ -186,6 +189,9 @@ public class ToolbarExtension implements Extension {
 		if( extension.getName().equals( TextManager.TEXT_EXTENSION ) ) {
 			return (Collection<E>) createBundles( (Locale) extension.get( TextManager.TEXT_EXTENSION_LOCALE ) );
 		}
+		if( extension.getName().equals( DefaultScreenDockWindowConfiguration.CONFIGURATION_EXTENSION ) ) {
+			return (Collection<E>) createWindowConfigurationExtension( controller );
+		}
 
 		return null;
 	}
@@ -283,5 +289,11 @@ public class ToolbarExtension implements Extension {
 
 		};
 		return Collections.singleton( extension );
+	}
+
+	private Collection<ScreenDockWindowConfiguration> createWindowConfigurationExtension( DockController controller ){
+		List<ScreenDockWindowConfiguration> result = new ArrayList<ScreenDockWindowConfiguration>();
+		result.add( new ToolbarWindowConfiguration( controller ) );
+		return result;
 	}
 }

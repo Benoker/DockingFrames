@@ -54,7 +54,7 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
     public ScreenDockDialog( ScreenDockStation station, WindowConfiguration configuration, boolean undecorated ){
         super( station, configuration );
         this.dialog = new JDialog();
-        init( undecorated );
+        init( undecorated, configuration );
     }
     
     /**
@@ -67,7 +67,7 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
     public ScreenDockDialog( ScreenDockStation station, WindowConfiguration configuration, Frame frame, boolean undecorated ){
         super( station, configuration );
         this.dialog = new JDialog( frame );
-        init( undecorated );
+        init( undecorated, configuration );
     }
 
     /**
@@ -80,10 +80,10 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
     public ScreenDockDialog( ScreenDockStation station, WindowConfiguration configuration, Dialog dialog, boolean undecorated ){
         super( station, configuration );
         this.dialog = new JDialog( dialog );
-        init( undecorated );
+        init( undecorated, configuration );
     }
     
-    private void init( boolean undecorated ){
+    private void init( boolean undecorated, WindowConfiguration configuration ){
         if( undecorated ){
             dialog.setUndecorated( true );
             dialog.getRootPane().setWindowDecorationStyle( JRootPane.NONE );
@@ -92,7 +92,7 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
         dialog.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
         dialog.setModal( false );
         
-        init( dialog, dialog.getContentPane(), undecorated );
+        init( dialog, dialog.getContentPane(), configuration, undecorated );
     }
     
     public void setPreventFocusStealing( boolean prevent ){

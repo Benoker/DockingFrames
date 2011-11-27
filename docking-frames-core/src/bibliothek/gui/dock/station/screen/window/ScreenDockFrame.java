@@ -53,10 +53,10 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
     public ScreenDockFrame( ScreenDockStation station, WindowConfiguration configuration, boolean undecorated ){
         super( station, configuration );
         this.frame = new JFrame();
-        init( undecorated );
+        init( undecorated, configuration );
     }
         
-    private void init( boolean undecorated ){
+    private void init( boolean undecorated, WindowConfiguration configuration ){
         if( undecorated ){
             frame.setUndecorated( true );
             frame.getRootPane().setWindowDecorationStyle( JRootPane.NONE );
@@ -64,7 +64,7 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
         
         frame.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
         
-        init( frame, frame.getContentPane(), undecorated );
+        init( frame, frame.getContentPane(), configuration, undecorated );
     }
 
     /**

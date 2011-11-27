@@ -611,6 +611,7 @@ public class ScreenDockStation extends AbstractDockStation {
         
         restriction.setProperties( controller );
         windowFactory.setProperties( controller );
+        windowConfiguration.setProperties( controller );
         fullscreenStrategy.setProperties( controller );
         placeholderStrategy.setProperties( controller );
         magnet.setController( controller );
