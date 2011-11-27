@@ -141,6 +141,10 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         return onPut;
     }    
     
+    public boolean hasTarget(){
+    	return operation != null;
+    }
+    
     public DirectRemoteRelocator createDirectRemote( Dockable dockable ){
     	return createDirectRemote( dockable, false );
     }
@@ -229,7 +233,6 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
         Inserter inserter = getInserter();
-        
         for( DockStation station : list ){
         	StationDropOperation operation = null;
         	DefaultInserterSource inserterSource = new DefaultInserterSource( station, dockable, mouseX, mouseY, titleX, titleY );
@@ -272,7 +275,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        		cancel();
 	        		return null;
 	        	}
-	        	
+
 	        	return result;
         	}
         }

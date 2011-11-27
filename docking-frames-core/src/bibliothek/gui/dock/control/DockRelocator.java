@@ -131,7 +131,14 @@ public interface DockRelocator {
      * is put as soon as the user releases the mouse.
      * @return <code>true</code> if a Dockable is moved
      */
-    public boolean isOnPut();    
+    public boolean isOnPut();
+    
+    /**
+     * Tells whether the current drag and drop operation has a target, i.e. if the operation would be a success
+     * if it would end now.
+     * @return whether the current operation has a target, <code>false</code> if there is no operation running
+     */
+    public boolean hasTarget();
 
     /**
      * Cancels the current drag and drop operation (if there is any). All evidence of a DnD operation is

@@ -76,6 +76,13 @@ public class ScreenToolbarInserter implements Inserter{
 		if( !strategy.isToolbarPart( source.getChild() )){
 			return null;
 		}
+		
+		if( source.getParent().accept( source.getChild() ) && source.getChild().accept( source.getParent() )){
+			// if a DockAcceptance does not allow the combination, while the involved elements does, we better
+			// assume the DockAcceptance has a good reason.
+			return null;
+		}
+		
 		return new Operation( source );
 	}
 	

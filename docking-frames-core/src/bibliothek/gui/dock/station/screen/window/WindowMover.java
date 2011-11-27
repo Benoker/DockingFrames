@@ -34,7 +34,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
@@ -65,110 +69,11 @@ public class WindowMover {
 	private DockElementRepresentative element;
 	
 	/** a listener that is added to the current {@link #element} */
-	private MouseInputAdapter listener = new MouseInputAdapter(){
-		private Rectangle startBoundaries;
-		private Point startPoint;
-		private MagnetizedOperation magnet;
-		private RemoteRelocator relocator;
-		
-		public void mousePressed( MouseEvent e ){
-			if( !e.isConsumed() && !window.isFullscreen() ){
-				if( allowDragAndDrop ){
-					DockController controller = window.getStation().getController();
-					if( controller != null ){
-						relocator = controller.getRelocator().createRemote( window.getDockable() );
-						Reaction reaction = relocator.init( startPoint.x, startPoint.y, 0, 0, e.getModifiersEx() );
-						switch( reaction ){
-							case BREAK:
-							case BREAK_CONSUMED:
-								relocator = null;
-						}
-					}
-				}
-				
-				int buttons = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
-				buttons &= e.getModifiersEx();
-				
-				if( Integer.bitCount( buttons ) == 1 && e.getButton() == MouseEvent.BUTTON1 ){
-					e.consume();
-					startBoundaries = window.getWindowBounds();
-					startPoint = e.getPoint();
-					convertPointToScreen( startPoint, e.getComponent() );
-					
-					magnet = window.getStation().getMagnetController().start( window );
-				}
-			}
-		}
-		
-		public void mouseDragged( MouseEvent e ){
-			if( !e.isConsumed() ){
-				Point current = e.getPoint();
-				convertPointToScreen( current, e.getComponent() );
-				
-				if( startPoint != null ){
-					e.consume();
-					
-					int dx = current.x - startPoint.x;
-					int dy = current.y - startPoint.y;
-					
-					Rectangle bounds = new Rectangle( startBoundaries.x + dx, startBoundaries.y + dy, startBoundaries.width, startBoundaries.height );
-					bounds = magnet.attract( bounds );
-					window.setWindowBounds( bounds, true );				
-				}
-				
-				if( relocator != null ){
-					Reaction reaction = relocator.drag( current.x, current.y, e.getModifiersEx() );
-					switch( reaction ){
-						case BREAK:
-							relocator = null;
-							break;
-						case BREAK_CONSUMED:
-							relocator = null;
-							e.consume();
-							break;
-						case CONTINUE_CONSUMED:
-							e.consume();
-							break;
-					}
-				}
-			}
-		}
-		
-		public void mouseReleased( MouseEvent e ){
-			if( !e.isConsumed() ){
-				e.consume();
-				
-				Point current = e.getPoint();
-				convertPointToScreen( current, e.getComponent() );
-				
-				if( relocator != null ){
-					Reaction reaction = relocator.drop( current.x, current.y, e.getModifiersEx() );
-
-					switch( reaction ){
-						case BREAK:
-							relocator = null;
-							break;
-						case BREAK_CONSUMED:
-							relocator = null;
-							e.consume();
-							break;
-						case CONTINUE_CONSUMED:
-							e.consume();
-							break;
-					}
-				}
-				
-				if( e.getButton() == MouseEvent.BUTTON1 ){
-					if( magnet != null ){
-						magnet.stop();
-					}
-					startPoint = null;
-					startBoundaries = null;
-				}
-			}
-		}
-	};
-
+	private MouseInputAdapter listener = new Listener();
+	
+	/** the currently applied {@link DragAcceptance} */
+	private DragAcceptance acceptance;
+	
 	/**
 	 * Creates a new mover
 	 * @param window the window which is to be moved, must not be <code>null</code>
@@ -189,8 +94,21 @@ public class WindowMover {
 			this.element.removeMouseInputListener( listener );
 		}
 		this.element = element;
+		uninstallDragAcceptance();
 		if( this.element != null ){
 			this.element.addMouseInputListener( listener );
+		}
+	}
+	
+	private void installDragAcceptance(){
+		uninstallDragAcceptance();
+		acceptance = new DragAcceptance( window.getStation().getController() );
+	}
+	
+	private void uninstallDragAcceptance(){
+		if( acceptance != null ){
+			acceptance.destroy();
+			acceptance = null;
 		}
 	}
 	
@@ -211,16 +129,16 @@ public class WindowMover {
 	}
 	
 	/**
-	 * 
-	 * @param resetOnDropable
+	 * Sets whether the window jumps back to its starting position if a dropable stop is found.
+	 * @param resetOnDropable whether the window can jump back to its starting position
 	 */
 	public void setResetOnDropable( boolean resetOnDropable ){
 		this.resetOnDropable = resetOnDropable;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Tells whether the window jumps back to its starting position if a dropable stop is found.
+	 * @return whether the window can jump back
 	 */
 	public boolean isResetOnDropable(){
 		return resetOnDropable;
@@ -233,5 +151,165 @@ public class WindowMover {
 	 */
 	protected void convertPointToScreen( Point point, Component component ){
 		SwingUtilities.convertPointToScreen( point, component );
+	}
+	
+	/**
+	 * A {@link DragAcceptance} is a {@link DockAcceptance} that prevents the {@link ScreenDockStation} from acting
+	 * as potential parent of the moved {@link ScreenDockWindow}. 
+	 * @author Benjamin Sigg
+	 */
+	private class DragAcceptance implements DockAcceptance{
+		private DockController controller;
+		
+		/**
+		 * Creates the new acceptance
+		 * @param controller the controller in whose realm this {@link DockAcceptance} is required
+		 */
+		public DragAcceptance( DockController controller ){
+			this.controller = controller;
+			controller.addAcceptance( this );
+		}
+		
+		public boolean accept( DockStation parent, Dockable child ){
+			return parent != window.getStation();
+		}
+		
+		public boolean accept( DockStation parent, Dockable child, Dockable next ){
+			return true;
+		}
+		
+		/**
+		 * Uninstalls this {@link DockAcceptance}
+		 */
+		public void destroy(){
+			controller.removeAcceptance( this );
+		}
+	}
+	
+	/**
+	 * This listener is added to the {@link DockElementRepresentative} which is monitored by this {@link WindowMover}
+	 * @author Benjamin Sigg
+	 */
+	private class Listener extends MouseInputAdapter{
+		private Rectangle startBoundaries;
+		private Point startPoint;
+		private MagnetizedOperation magnet;
+		private RemoteRelocator relocator;
+		
+		public void mousePressed( MouseEvent e ){
+			if( !e.isConsumed() && !window.isFullscreen() ){
+				int buttons = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
+				buttons &= e.getModifiersEx();
+				
+				if( Integer.bitCount( buttons ) == 1 && e.getButton() == MouseEvent.BUTTON1 ){
+					e.consume();
+					startBoundaries = window.getWindowBounds();
+					startPoint = e.getPoint();
+					convertPointToScreen( startPoint, e.getComponent() );
+					
+					magnet = window.getStation().getMagnetController().start( window );
+				}
+				
+				if( allowDragAndDrop ){
+					DockController controller = window.getStation().getController();
+					if( controller != null ){
+						relocator = controller.getRelocator().createRemote( window.getDockable() );
+						Reaction reaction = relocator.init( startPoint.x, startPoint.y, 0, 0, e.getModifiersEx() );
+						switch( reaction ){
+							case BREAK:
+							case BREAK_CONSUMED:
+								relocator = null;
+								break;
+							case CONTINUE:
+							case CONTINUE_CONSUMED:
+								installDragAcceptance();
+								break;
+						}
+					}
+				}
+			}
+		}
+		
+		public void mouseDragged( MouseEvent e ){
+			if( !e.isConsumed() ){
+				Point current = e.getPoint();
+				convertPointToScreen( current, e.getComponent() );
+				
+				if( relocator != null ){
+					Reaction reaction = relocator.drag( current.x, current.y, e.getModifiersEx() );
+					switch( reaction ){
+						case BREAK:
+							relocator = null;
+							break;
+						case BREAK_CONSUMED:
+							relocator = null;
+							e.consume();
+							break;
+						case CONTINUE_CONSUMED:
+							e.consume();
+							break;
+					}
+				}
+				
+
+				if( startPoint != null ){
+					e.consume();
+					
+					int dx = current.x - startPoint.x;
+					int dy = current.y - startPoint.y;
+					
+					Rectangle bounds = null;
+					
+					if( relocator != null && resetOnDropable ){
+						DockController controller = window.getStation().getController();
+						if( controller != null && controller.getRelocator().hasTarget()){
+							bounds = startBoundaries;
+						}
+					}
+					if( bounds == null ){
+						bounds = new Rectangle( startBoundaries.x + dx, startBoundaries.y + dy, startBoundaries.width, startBoundaries.height );
+					}
+					bounds = magnet.attract( bounds );
+					window.setWindowBounds( bounds, true );				
+				}
+			}
+		}
+		
+		public void mouseReleased( MouseEvent e ){
+			if( !e.isConsumed() ){
+				e.consume();
+				
+				Point current = e.getPoint();
+				convertPointToScreen( current, e.getComponent() );
+				
+				if( relocator != null ){
+					Reaction reaction = relocator.drop( current.x, current.y, e.getModifiersEx() );
+
+					switch( reaction ){
+						case BREAK:
+							relocator = null;
+							uninstallDragAcceptance();
+							break;
+						case BREAK_CONSUMED:
+							relocator = null;
+							uninstallDragAcceptance();
+							e.consume();
+							break;
+						case CONTINUE_CONSUMED:
+							e.consume();
+							break;
+					}
+				}
+				
+				if( e.getButton() == MouseEvent.BUTTON1 ){
+					if( magnet != null ){
+						magnet.stop();
+					}
+					startPoint = null;
+					startBoundaries = null;
+					uninstallDragAcceptance();
+				}
+			}
+		}
 	}
 }

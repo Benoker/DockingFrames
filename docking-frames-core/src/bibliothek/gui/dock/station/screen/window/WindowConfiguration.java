@@ -42,10 +42,10 @@ public class WindowConfiguration {
 	private boolean moveOnTitleGrab = false;
 	
 	/** only required if {@link #moveOnTitleGrab}, starts a drag and drop operation if the mouse is over an area where dropping is possible */
-	private boolean dropIfPossible = true;
+	private boolean allowDragAndDropOnTitle = true;
 	
-	/** only required if {@link #moveOnTitleGrab} and {@link #dropIfPossible}, the window jumps back into its original position if dropping is possible */
-	private boolean jumpIfDropable = true;
+	/** only required if {@link #moveOnTitleGrab} and {@link #allowDragAndDropOnTitle}, the window jumps back into its original position if dropping is possible */
+	private boolean resetOnDropable = true;
 	
 	/** whether the user can change the size of the window */
 	private boolean resizeable = true;
@@ -69,38 +69,38 @@ public class WindowConfiguration {
 	/**
 	 * Sets whether a drag and drop operation starts if the mouse is over an area where drag and drop would be possible.
 	 * This setting only has an effect if {@link #isMoveOnTitleGrab()} returns <code>true</code>.
-	 * @param dropIfPossible whether drag and drop should be possible even if the window is already moved around
+	 * @param allowDragAndDropOnTitle whether drag and drop should be possible even if the window is already moved around
 	 */
-	public void setDropIfPossible( boolean dropIfPossible ){
-		this.dropIfPossible = dropIfPossible;
+	public void setAllowDragAndDropOnTitle( boolean allowDragAndDropOnTitle ){
+		this.allowDragAndDropOnTitle = allowDragAndDropOnTitle;
 	}
 	
 	/**
 	 * Tells whether a drag and drop operation starts whenever possible, only has an effect if {@link #isMoveOnTitleGrab()}
 	 * is <code>true</code>.
 	 * @return whether the operation starts
-	 * @see #setDropIfPossible(boolean)
+	 * @see #setAllowDragAndDropOnTitle(boolean)
 	 */
-	public boolean isDropIfPossible(){
-		return dropIfPossible;
+	public boolean isAllowDragAndDropOnTitle(){
+		return allowDragAndDropOnTitle;
 	}
 	
 	/**
 	 * Sets whether a window jumps back into its starting position if dropping is possible, only has an effect if 
-	 * {@link #isMoveOnTitleGrab()} and {@link #isDropIfPossible()} return <code>true</code>.
-	 * @param jumpIfDropable whether the window jumps back to its original position
+	 * {@link #isMoveOnTitleGrab()} and {@link #isAllowDragAndDropOnTitle()} return <code>true</code>.
+	 * @param resetOnDropable whether the window jumps back to its original position
 	 */
-	public void setJumpIfDropable( boolean jumpIfDropable ){
-		this.jumpIfDropable = jumpIfDropable;
+	public void setResetOnDropable( boolean resetOnDropable ){
+		this.resetOnDropable = resetOnDropable;
 	}
 	
 	/**
 	 * Tells whether a window jumps back to its starting position.
 	 * @return whether the window jumps back
-	 * @see #setJumpIfDropable(boolean)
+	 * @see #setResetOnDropable(boolean)
 	 */
-	public boolean isJumpIfDropable(){
-		return jumpIfDropable;
+	public boolean isResetOnDropable(){
+		return resetOnDropable;
 	}
 	
 	/**
