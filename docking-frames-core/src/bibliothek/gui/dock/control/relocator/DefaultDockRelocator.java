@@ -73,7 +73,10 @@ import bibliothek.util.Path;
  */
 public class DefaultDockRelocator extends AbstractDockRelocator{
 	/** Path of an {@link ExtensionName} that adds new {@link Merger}s */
-	public static final Path MERGE_EXTENSION = new Path("dock.merger");
+	public static final Path MERGE_EXTENSION = new Path( "dock.merger" );
+	
+	/** Path of an {@link ExtensionName} that adds new {@link Inserter}s */
+	public static final Path INSERTER_EXTENSION = new Path( "dock.inserter" );
 	
 	/** Name of a parameter of an {@link ExtensionName} pointing to <code>this</code> */
 	public static final String EXTENSION_PARAM = "relocator";
@@ -108,18 +111,26 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 		merger.add( new StackMerger() );
 		merger.add( new TabMerger() );
 		
+		final MultiInserter inserter = new MultiInserter();
+		
 		setup.add( new ControllerSetupListener(){
 		    public void done( DockController controller ) {
 		        controller.addRepresentativeListener( new Listener() );
 		        
-		        List<Merger> mergers = controller.getExtensions().load( new ExtensionName<Merger>( MERGE_EXTENSION, Merger.class, EXTENSION_PARAM, this ));
+		        List<Merger> mergers = controller.getExtensions().load( new ExtensionName<Merger>( MERGE_EXTENSION, Merger.class, EXTENSION_PARAM, DefaultDockRelocator.this ));
 				for( Merger next : mergers ){
 					merger.add( next );
+				}
+				
+				List<Inserter> inserters = controller.getExtensions().load( new ExtensionName<Inserter>( INSERTER_EXTENSION, Inserter.class, EXTENSION_PARAM, DefaultDockRelocator.this ));
+				for( Inserter next : inserters ){
+					inserter.add( next );
 				}
 		    }
 		});
 		
 		setMerger( merger );
+		setInserter( inserter );
 	}
 	
 	public boolean isOnMove(){
@@ -217,9 +228,26 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
+        Inserter inserter = getInserter();
         
         for( DockStation station : list ){
-        	StationDropOperation operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        	StationDropOperation operation = null;
+        	DefaultInserterSource inserterSource = new DefaultInserterSource( station, dockable, mouseX, mouseY, titleX, titleY );
+        	
+        	if( inserter != null ){
+        		operation = inserter.before( inserterSource );
+        	}
+        	if( operation == null ){
+        		operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        		if( inserter != null ){
+        			inserterSource.setOperation( operation );
+        			operation = inserter.after( inserterSource );
+        			if( operation == null ){
+        				operation = inserterSource.getOperation();
+        			}
+        		}
+        	}
+        	
         	RelocateOperation result = null;
         	
         	boolean merge = canMerge( operation, station, dockable );

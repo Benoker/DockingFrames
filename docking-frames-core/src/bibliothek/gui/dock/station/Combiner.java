@@ -29,6 +29,8 @@ package bibliothek.gui.dock.station;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.relocator.Inserter;
+import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.Enforcement;
@@ -38,6 +40,8 @@ import bibliothek.gui.dock.station.support.Enforcement;
  * one {@link Dockable}. How this is done, is up to the Combiner, but
  * most Combiners will create a new {@link DockStation} and put the Dockables
  * onto this new station.
+ * @see Merger
+ * @see Inserter
  */
 public interface Combiner {
     /**

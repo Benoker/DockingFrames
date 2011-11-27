@@ -27,6 +27,7 @@ package bibliothek.gui.dock.control;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.relocator.Inserter;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
 
@@ -91,6 +92,18 @@ public interface DockRelocator {
      * @param merger the new algorithm, can be <code>null</code>
      */
     public void setMerger( Merger merger );
+    
+    /**
+     * Gets the algorithm used to override decisions of a {@link DockStation}.
+     * @return the algorithm, can be <code>null</code>
+     */
+    public Inserter getInserter();
+    
+    /**
+     * Sets the algorithm which is used to override decisions of a {@link DockStation}.
+     * @param inserter the algorithm, can be <code>null</code>
+     */
+    public void setInserter( Inserter inserter );
     
     /**
      * Adds a mode to this relocator, a mode can be activated or deactivated

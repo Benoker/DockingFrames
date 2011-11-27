@@ -66,7 +66,7 @@ public class MultiMerger implements Merger{
 	}
 	
 	/**
-	 * Gets the <code>index</code>'th merger in this set of mergers.
+	 * Gets the <code>index</code>'th merger in this list of mergers.
 	 * @param index the location
 	 * @return the merger, not <code>null</code>
 	 */

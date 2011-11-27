@@ -11,6 +11,7 @@ import javax.swing.JTextArea;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
+import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
@@ -25,6 +26,8 @@ public class TestToolbarContainerDockStation{
 		frame.add( pane );
 
 		DockController controller = new DockController();
+		ScreenDockStation screen = new ScreenDockStation( frame );
+		controller.add( screen );
 
 		System.out.println("###############################################################");
 		System.out.println("##################  NEW CONTAINER  ############################");
@@ -47,6 +50,7 @@ public class TestToolbarContainerDockStation{
 		
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		frame.setBounds( 20, 20, 500, 500 );
+		screen.setShowing( true );
 		frame.setVisible( true );
 		System.out.println("##############################################");
 		System.out.println("##################  MAIN END  ################");

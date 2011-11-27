@@ -658,6 +658,9 @@
  - Bugfix: SplitDockStation did ignore the DockAcceptance in certain situations
  - Bugfix: VetoableDockRelocatorListener.searched is now actually called
 
+[v1.1.1pToolbar]
+ - API: New Inserter can override drop operations before and after they are created
+
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
 - Drop StackDockStation over Dockable and merge them

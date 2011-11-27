@@ -16,9 +16,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
-import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.action.ActionType;
@@ -28,6 +28,7 @@ import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
+import bibliothek.gui.dock.control.relocator.Inserter;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.layout.DockSituation;
@@ -38,11 +39,11 @@ import bibliothek.gui.dock.station.ToolbarMiniButton;
 import bibliothek.gui.dock.station.ToolbarTabDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDisplayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDockTitleFactory;
+import bibliothek.gui.dock.station.screen.ScreenToolbarInserter;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
-import bibliothek.gui.dock.station.toolbar.DefaultToolbarDockTitle;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockTitle;
@@ -52,7 +53,6 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockTitlePoint;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
 import bibliothek.gui.dock.themes.DockThemeExtension;
@@ -165,6 +165,9 @@ public class ToolbarExtension implements Extension {
 		if( extension.getName().equals( DefaultDockRelocator.MERGE_EXTENSION ) ) {
 			return (Collection<E>) createMergerExtension();
 		}
+		if( extension.getName().equals( DefaultDockRelocator.INSERTER_EXTENSION ) ) {
+			return (Collection<E>) createInserterExtension( controller );
+		}
 		if( extension.getName().equals( ScreenDockStation.ATTRACTOR_STRATEGY_EXTENSION ) ) {
 			return (Collection<E>) createAttractorStrategies();
 		}
@@ -198,6 +201,12 @@ public class ToolbarExtension implements Extension {
 		List<Merger> result = new ArrayList<Merger>();
 		result.add( new ToolbarGroupDockStationMerger() );
 		result.add( new ToolbarDockStationMerger() );
+		return result;
+	}
+
+	private Collection<Inserter> createInserterExtension( DockController controller ){
+		List<Inserter> result = new ArrayList<Inserter>();
+		result.add( new ScreenToolbarInserter( controller ) );
 		return result;
 	}
 
