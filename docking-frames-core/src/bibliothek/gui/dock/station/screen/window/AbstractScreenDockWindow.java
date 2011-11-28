@@ -158,9 +158,9 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * @param resizeable whether this window should create its own resizing system or not
      * @see #init(Component, Container, boolean)
      */
-    public AbstractScreenDockWindow( ScreenDockStation station, WindowConfiguration configuration, Component window, Container contentParent, boolean resizeable ){
+    public AbstractScreenDockWindow( ScreenDockStation station, WindowConfiguration configuration, Component window, Container contentParent ){
         super( station, configuration );
-        init( window, contentParent, resizeable );
+        init( window, contentParent, configuration, configuration.isResizeable() );
     }
 
     /**
@@ -172,14 +172,14 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * contents of this window. This method will change the {@link LayoutManager}
      * and add a child to <code>contentParent</code>. This component can be
      * the same as <code>window</code>.
-     * @param resizeable If <code>true</code>, then a new border is installed
+     * @param borderAllowed If <code>true</code> and if {@link WindowConfiguration#isResizeable()}, then a new border is installed
      * for the {@link #getDisplayerParent() displayer parent}, and some {@link MouseListener}s
      * are installed. When the mouse is over the border it will change the cursor
      * and the user can resize or move the window. If <code>false</code>
      * nothing happens and the resizing system has to be implemented by the
      * subclass.
      */
-    protected void init( Component window, Container contentParent, boolean resizeable ){
+    protected void init( Component window, Container contentParent, WindowConfiguration configuration, boolean borderAllowed ){
         if( window == null )
             throw new IllegalArgumentException( "window must not be null" );
         
@@ -190,13 +190,18 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         
         content = createContent();
         content.setController( getController() );
-        contentParent.setLayout( new GridLayout( 1, 1 ) );
+        if( configuration.isResizeable() ){
+        	contentParent.setLayout( new GridLayout( 1, 1 ) );
+        }
+        else{
+        	contentParent.setLayout( new ResizingLayoutManager( this, window ) );
+        }
         contentParent.add( content );
 
         Container parent = getDisplayerParent();
         parent.setLayout( new GridLayout( 1, 1 ));
 
-        if( resizeable ){
+        if( configuration.isResizeable() && borderAllowed ){
             if( parent instanceof JComponent ){
             	border = new ScreenDockWindowBorder( this, (JComponent)parent );
             	border.setController( getController() );
@@ -387,13 +392,15 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     public void setWindowBounds( Rectangle bounds, boolean screenCoordinates ){
         Rectangle valid = getStation().getBoundaryRestriction().check( this, bounds );
 
-        if( valid != null )
-            window.setBounds( valid );
-        else
-            window.setBounds( bounds );
+        if( valid != null ){
+        	bounds = valid;
+        }
 
-        invalidate();
-        validate();
+        if( !window.getBounds().equals( bounds )){
+        	window.setBounds( bounds );
+        	invalidate();
+        	validate();
+        }
     }
 
     public void checkWindowBounds() {

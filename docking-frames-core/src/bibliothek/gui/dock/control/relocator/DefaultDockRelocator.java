@@ -73,7 +73,10 @@ import bibliothek.util.Path;
  */
 public class DefaultDockRelocator extends AbstractDockRelocator{
 	/** Path of an {@link ExtensionName} that adds new {@link Merger}s */
-	public static final Path MERGE_EXTENSION = new Path("dock.merger");
+	public static final Path MERGE_EXTENSION = new Path( "dock.merger" );
+	
+	/** Path of an {@link ExtensionName} that adds new {@link Inserter}s */
+	public static final Path INSERTER_EXTENSION = new Path( "dock.inserter" );
 	
 	/** Name of a parameter of an {@link ExtensionName} pointing to <code>this</code> */
 	public static final String EXTENSION_PARAM = "relocator";
@@ -108,18 +111,26 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 		merger.add( new StackMerger() );
 		merger.add( new TabMerger() );
 		
+		final MultiInserter inserter = new MultiInserter();
+		
 		setup.add( new ControllerSetupListener(){
 		    public void done( DockController controller ) {
 		        controller.addRepresentativeListener( new Listener() );
 		        
-		        List<Merger> mergers = controller.getExtensions().load( new ExtensionName<Merger>( MERGE_EXTENSION, Merger.class, EXTENSION_PARAM, this ));
+		        List<Merger> mergers = controller.getExtensions().load( new ExtensionName<Merger>( MERGE_EXTENSION, Merger.class, EXTENSION_PARAM, DefaultDockRelocator.this ));
 				for( Merger next : mergers ){
 					merger.add( next );
+				}
+				
+				List<Inserter> inserters = controller.getExtensions().load( new ExtensionName<Inserter>( INSERTER_EXTENSION, Inserter.class, EXTENSION_PARAM, DefaultDockRelocator.this ));
+				for( Inserter next : inserters ){
+					inserter.add( next );
 				}
 		    }
 		});
 		
 		setMerger( merger );
+		setInserter( inserter );
 	}
 	
 	public boolean isOnMove(){
@@ -129,6 +140,10 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     public boolean isOnPut() {
         return onPut;
     }    
+    
+    public boolean hasTarget(){
+    	return operation != null;
+    }
     
     public DirectRemoteRelocator createDirectRemote( Dockable dockable ){
     	return createDirectRemote( dockable, false );
@@ -217,9 +232,25 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
-        
+        Inserter inserter = getInserter();
         for( DockStation station : list ){
-        	StationDropOperation operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        	StationDropOperation operation = null;
+        	DefaultInserterSource inserterSource = new DefaultInserterSource( station, dockable, mouseX, mouseY, titleX, titleY );
+        	
+        	if( inserter != null ){
+        		operation = inserter.before( inserterSource );
+        	}
+        	if( operation == null ){
+        		operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        		if( inserter != null ){
+        			inserterSource.setOperation( operation );
+        			operation = inserter.after( inserterSource );
+        			if( operation == null ){
+        				operation = inserterSource.getOperation();
+        			}
+        		}
+        	}
+        	
         	RelocateOperation result = null;
         	
         	boolean merge = canMerge( operation, station, dockable );
@@ -244,7 +275,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        		cancel();
 	        		return null;
 	        	}
-	        	
+
 	        	return result;
         	}
         }
@@ -469,6 +500,26 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @return how this relocator reacts on the event
      */
     protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable, boolean always, boolean forceDrag ){
+    	return dragMouseDragged( x, y, modifiers, title, dockable, always, forceDrag, true );
+    }
+    
+    /**
+     * Handles a mouse-pressed event.
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @param modifiers the state of the mouse, see {@link MouseEvent#getModifiersEx()}
+     * @param title the title which might be grabbed by the mouse
+     * @param dockable the dockable which is moved around
+     * @param always <code>true</code> if the drag event should be executed and
+     * restrictions to this relocator ignored.
+     * @param forceDrag if this flag is set to <code>true</code>, then dragging will always start even
+     * if one of the usual conditions is not met. I.e. dragging will start even if <code>dockable</code>
+     * does not have a parent of even if the parent does not allow dragging. This flag should be used
+     * with caution.
+     * @param showMovingImage whether to show a {@link MovingImage}
+     * @return how this relocator reacts on the event
+     */
+    protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable, boolean always, boolean forceDrag, boolean showMovingImage ){
         if( pressPointScreen == null )
             return Reaction.BREAK;
         
@@ -495,7 +546,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             
             int distance = Math.abs( x - pressPointScreen.x ) + Math.abs( y - pressPointScreen.y );
             if( always || distance >= getDragDistance() ){
-            	Reaction result = initiateOperation( dockable, title, mouse );
+            	Reaction result = initiateOperation( dockable, title, mouse, showMovingImage );
             	if( result != null ){
             		return result;
             	}
@@ -511,7 +562,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         return Reaction.CONTINUE_CONSUMED;
     }
     
-    private Reaction initiateOperation( Dockable dockable, DockTitle title, Point mouse ){
+    private Reaction initiateOperation( Dockable dockable, DockTitle title, Point mouse, boolean showMovingImage ){
     	if( movingImageWindow != null ){
             // That means, that an old window was not closed correctly
             movingImageWindow.close();
@@ -528,11 +579,13 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     		return Reaction.BREAK_CONSUMED;
     	}
     	if( !event.isForbidden() ){
-        	movingImageWindow = getTitleWindow( dockable, title );
-            if( movingImageWindow != null ){
-                updateTitleWindowPosition( mouse );
-                movingImageWindow.setVisible( true );
-            }
+    		if( showMovingImage ){
+	        	movingImageWindow = getTitleWindow( dockable, title );
+	            if( movingImageWindow != null ){
+	                updateTitleWindowPosition( mouse );
+	                movingImageWindow.setVisible( true );
+	            }
+    		}
             
             onMove = true;
             
@@ -826,8 +879,14 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         /** the Dockable which might be moved by this relocator */
         private Dockable dockable;
         
+        /** the dragged title (optional) */
+        private DockTitle title;
+        
         /** whether to force dragging anyway */
         private boolean forceDrag;
+        
+        /** whether a {@link MovingImage} can be shown */
+        private boolean showMovingImage = true;
         
         /**
          * Creates a new remote
@@ -842,17 +901,25 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             this.forceDrag = forceDrag;
         }
         
+        public void setTitle( DockTitle title ){
+			this.title = title;
+		}
+        
+        public void setShowImageWindow( boolean imageWindow ){
+        	showMovingImage = imageWindow;
+        }
+        
         public void cancel() {
             titleDragCancel();
             onMove = false;
         }
 
         public void drag( int x, int y, boolean always ) {
-            dragMouseDragged( x, y, InputEvent.BUTTON1_DOWN_MASK, null, dockable, always, forceDrag );
+            dragMouseDragged( x, y, InputEvent.BUTTON1_DOWN_MASK, title, dockable, always, forceDrag, showMovingImage );
         }
         
         public Reaction drag( int x, int y, int modifiers ) {
-            return dragMouseDragged( x, y, modifiers, null, dockable, false, forceDrag );
+            return dragMouseDragged( x, y, modifiers, title, dockable, false, forceDrag, showMovingImage );
         }
 
         public void drop( int x, int y ) {

@@ -44,7 +44,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 		}
 
 		// if( station instanceof ToolbarContainerDockStation ) {
-		if( station instanceof ToolbarContainerDockStation ) {
+		if( station instanceof ToolbarContainerDockStation || station instanceof ScreenDockStation ) {
 			if( dockable instanceof ToolbarDockStation ){
 			//if( dockable.getClass() == ToolbarDockStation.class ) {
 				return dockable;

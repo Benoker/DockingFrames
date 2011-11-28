@@ -102,7 +102,7 @@ import bibliothek.gui.Dockable;
  *  
  * @author Benjamin Sigg
  */
-public interface RemoteRelocator {
+public interface RemoteRelocator extends BasicRemoteRelocator{
     /**
      * Tells a caller of a method whether the {@link RemoteRelocator} has
      * finished the drag & drop operation or not.
@@ -118,6 +118,8 @@ public interface RemoteRelocator {
         /** The operation is finished, but the event was consumed */
         BREAK_CONSUMED;
     }
+    
+
     
     /**
      * This method starts or cancels a drag & drop operation. This method simulates

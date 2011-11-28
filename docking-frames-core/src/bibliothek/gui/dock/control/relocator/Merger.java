@@ -26,11 +26,18 @@
 package bibliothek.gui.dock.control.relocator;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.DockRelocator;
+import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
- * An algorithm used during drag and drop to merge two {@link DockStation}s.
+ * An algorithm used during drag and drop to merge two {@link DockStation}s. The {@link Merger} usually is not
+ * accessed by the involved {@link DockStation}s or {@link Dockable}s directly, rather it is accessed
+ * by the {@link DockRelocator} once a {@link StationDropOperation} has been found.
  * @author Benjamin Sigg
+ * @see Combiner
+ * @see Inserter
  */
 public interface Merger {
 	/**

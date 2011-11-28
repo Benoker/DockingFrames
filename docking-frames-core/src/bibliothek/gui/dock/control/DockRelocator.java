@@ -27,6 +27,7 @@ package bibliothek.gui.dock.control;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.relocator.Inserter;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
 
@@ -93,6 +94,18 @@ public interface DockRelocator {
     public void setMerger( Merger merger );
     
     /**
+     * Gets the algorithm used to override decisions of a {@link DockStation}.
+     * @return the algorithm, can be <code>null</code>
+     */
+    public Inserter getInserter();
+    
+    /**
+     * Sets the algorithm which is used to override decisions of a {@link DockStation}.
+     * @param inserter the algorithm, can be <code>null</code>
+     */
+    public void setInserter( Inserter inserter );
+    
+    /**
      * Adds a mode to this relocator, a mode can be activated or deactivated
      * when the user presses a button like "ctrl" or "shift" during a 
      * drag and drop operation.
@@ -118,7 +131,14 @@ public interface DockRelocator {
      * is put as soon as the user releases the mouse.
      * @return <code>true</code> if a Dockable is moved
      */
-    public boolean isOnPut();    
+    public boolean isOnPut();
+    
+    /**
+     * Tells whether the current drag and drop operation has a target, i.e. if the operation would be a success
+     * if it would end now.
+     * @return whether the current operation has a target, <code>false</code> if there is no operation running
+     */
+    public boolean hasTarget();
 
     /**
      * Cancels the current drag and drop operation (if there is any). All evidence of a DnD operation is

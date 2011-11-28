@@ -111,6 +111,8 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     protected void init( WindowConfiguration configuration ){
         if( configuration.isMoveOnTitleGrab() ){
         	titleMover = createTitleMover();
+        	titleMover.setAllowDragAndDrop( configuration.isAllowDragAndDropOnTitle() );
+        	titleMover.setResetOnDropable( configuration.isResetOnDropable() );
         }
     }
     

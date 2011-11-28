@@ -67,6 +67,9 @@ public abstract class AbstractDockRelocator implements DockRelocator{
     /** Algorithm to merge two {@link DockStation}s */
     private Merger merger = null;
     
+    /** Algorithm used to override the result of {@link DockStation#prepareDrop(int, int, int, int, bibliothek.gui.Dockable)} */
+    private Inserter inserter = null;
+    
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller whose dockables are moved
@@ -213,21 +216,21 @@ public abstract class AbstractDockRelocator implements DockRelocator{
 		this.dragDistance = dragDistance;
 	}
     
-    /**
-     * Gets an algorithm useful for merging two {@link DockStation}s.
-     * @return the algorithm, can be <code>null</code>
-     */
     public Merger getMerger(){
 		return merger;
 	}
     
-    /**
-     * Sets an algorithm for merging two {@link DockStation}s.
-     * @param merger the new algorithm, can be <code>null</code>
-     */
     public void setMerger( Merger merger ){
 		this.merger = merger;
 	}
+    
+    public void setInserter( Inserter inserter ){
+    	this.inserter = inserter;
+    }
+    
+    public Inserter getInserter(){
+	    return inserter;
+    }
     
     /**
      * Adds a mode to this relocator, a mode can be activated or deactivated
