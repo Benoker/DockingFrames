@@ -8,13 +8,12 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.layer.LayerPriority;
 
 /**
- * Describes the area around a {@link ToolbarGroupDockStation} where the user
+ * Describes the area around a {@link ToolbarDockStation} where the user
  * can drop a {@link Dockable} into.
  * 
  * @author Herve Guillaume

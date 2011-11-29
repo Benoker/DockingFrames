@@ -15,8 +15,8 @@ import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
@@ -53,7 +53,7 @@ public class TestToolbarDockAndStack{
 					}
 				});
 
-		ToolbarGroupDockStation group1 = new ToolbarGroupDockStation();
+		ToolbarDockStation group1 = new ToolbarDockStation();
 		JButton button = new JButton("One");
 		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
 		ComponentDockable dockable1 = new ComponentDockable(button);
@@ -71,16 +71,16 @@ public class TestToolbarDockAndStack{
 		ComponentDockable dockable4 = new ComponentDockable(button);
 		group1.drop(dockable4);
 
-		ToolbarDockStation toolbar1 = new ToolbarDockStation();
+		ToolbarGroupDockStation toolbar1 = new ToolbarGroupDockStation();
 		toolbar1.drop(group1);
 		toolbarStationWest.drop(toolbar1);
 
-		ToolbarGroupDockStation group2 = new ToolbarGroupDockStation();
+		ToolbarDockStation group2 = new ToolbarDockStation();
 		ComponentDockable dockable5 = new ComponentDockable(new JButton("One"));
 		group2.drop(dockable5);
 		ComponentDockable dockable6 = new ComponentDockable(new JButton("One"));
 		group2.drop(dockable6);
-		ToolbarGroupDockStation group3 = new ToolbarGroupDockStation();
+		ToolbarDockStation group3 = new ToolbarDockStation();
 		ComponentDockable dockable7 = new ComponentDockable(
 				new JButton("One"));
 		group3.drop(dockable7);
@@ -88,7 +88,7 @@ public class TestToolbarDockAndStack{
 				new JButton("One"));
 		group3.drop(dockable8);
 
-		ToolbarDockStation toolbar2 = new ToolbarDockStation();
+		ToolbarGroupDockStation toolbar2 = new ToolbarGroupDockStation();
 		toolbar2.drop(group2);
 		toolbar2.drop(group3);
 		toolbarStationNorth.drop(toolbar2);

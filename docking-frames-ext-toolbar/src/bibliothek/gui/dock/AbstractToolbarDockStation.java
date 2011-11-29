@@ -903,10 +903,10 @@ public abstract class AbstractToolbarDockStation extends
 
 	/**
 	 * Insert one dockable at the index. The dockable can be a
-	 * {@link ComponentDockable}, {@link ToolbarGroupDockStation} or a
-	 * {@link ToolbarDockStation} (see method accept()). All the
+	 * {@link ComponentDockable}, {@link ToolbarDockStation} or a
+	 * {@link ToolbarGroupDockStation} (see method accept()). All the
 	 * ComponentDockable extracted from the element are merged together and
-	 * wrapped in a {@link ToolbarGroupDockStation} before to be inserted at the
+	 * wrapped in a {@link ToolbarDockStation} before to be inserted at the
 	 * index
 	 * 
 	 * @param dockable

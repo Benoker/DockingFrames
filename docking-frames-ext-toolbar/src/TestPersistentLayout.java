@@ -24,7 +24,7 @@ import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
@@ -166,13 +166,13 @@ public class TestPersistentLayout{
 //		}
 //
 //		if (!layouted){
-			ToolbarGroupDockStation group = new ToolbarGroupDockStation();
+			ToolbarDockStation group = new ToolbarDockStation();
 			group.drop(button1);
 			group.drop(button2);
 			group.drop(button3);
 			group.drop(button4);
 
-			ToolbarGroupDockStation toolbar = new ToolbarGroupDockStation();
+			ToolbarDockStation toolbar = new ToolbarDockStation();
 			toolbar.drop(group);
 
 			rootWest.drop(toolbar);

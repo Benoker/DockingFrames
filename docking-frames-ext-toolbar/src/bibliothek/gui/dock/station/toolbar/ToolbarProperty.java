@@ -5,8 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Path;
@@ -14,7 +14,7 @@ import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
- * Described the location of a child of a {@link ToolbarDockStation} or a {@link ToolbarGroupDockStation}. 
+ * Described the location of a child of a {@link ToolbarGroupDockStation} or a {@link ToolbarDockStation}. 
  * @author Benjamin Sigg
  */
 public class ToolbarProperty extends AbstractDockableProperty{

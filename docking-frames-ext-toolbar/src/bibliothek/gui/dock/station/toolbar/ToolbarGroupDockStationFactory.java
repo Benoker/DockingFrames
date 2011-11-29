@@ -43,13 +43,13 @@ import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
- * A factory for reading and writing {@link ToolbarGroupDockStation}s.
+ * A factory used to store and load {@link ToolbarGroupDockStation}s.
  * @author Benjamin Sigg
  */
 public class ToolbarGroupDockStationFactory implements DockFactory<ToolbarGroupDockStation, PerspectiveElement, ToolbarGroupDockStationLayout> {
 	/** the unique, unmodifiable identifier of this factory */
 	public static final String ID = "ToolbarGroupDockStationFactory";
-	
+
 	@Override
 	public String getID(){
 		return ID;
@@ -123,7 +123,7 @@ public class ToolbarGroupDockStationFactory implements DockFactory<ToolbarGroupD
 	@Override
 	public void estimateLocations( ToolbarGroupDockStationLayout layout, LocationEstimationMap children ){
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class ToolbarGroupDockStationFactory implements DockFactory<ToolbarGroupD
 
 	@Override
 	public void layoutPerspective( PerspectiveElement perspective, ToolbarGroupDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
-		
+
 	}
 
 	/**

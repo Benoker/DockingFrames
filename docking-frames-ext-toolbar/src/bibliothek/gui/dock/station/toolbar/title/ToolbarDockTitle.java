@@ -1,4 +1,4 @@
-package bibliothek.gui.dock.station.toolbar;
+package bibliothek.gui.dock.station.toolbar.title;
 
 import java.awt.Color;
 import java.awt.Dimension;

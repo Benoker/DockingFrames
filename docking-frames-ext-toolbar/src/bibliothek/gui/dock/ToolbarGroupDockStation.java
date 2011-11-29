@@ -7,6 +7,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -15,19 +16,25 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
+import bibliothek.gui.dock.station.toolbar.layer.ToolbarSlimDropLayer;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.title.NullTitleFactory;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
 /**
- * A {@link Dockable} and a {@link DockStation} which stands for a group of
- * {@link ComponentDockable}. As dockable it can be put in {@link DockStation}
- * which implements marker interface {@link ToolbarInterface}. As DockStation it
- * accept a {@link ComponentDockable} or a {@link ToolbarGroupDockStation}
+ * A {@link Dockable} and a {@link DockStation} which stands a group of
+ * {@link ToolbarDockStation}. As dockable it can be put in
+ * {@link DockStation} which implements marker interface
+ * {@link ToolbarInterface} or in {@link ScreenDockStation}, so that a
+ * ToolbarDockStation can be floattable. As DockStation it accepts a
+ * {@link ToolbarElementInterface}. All the ComponentDockable extracted from the
+ * element are merged together and wrapped in a {@link ToolbarDockStation}
+ * before to be added
  * 
  * @author Herve Guillaume
  */
@@ -40,12 +47,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 * {@link DisplayerFactory}s
 	 */
 	public static final String DISPLAYER_ID = "toolbar.groupk";
-	
+
 	/** 
 	 *  Size of the border outside this station where a {@link Dockable} will still
 	 *  be considered to be dropped onto this station. Measured in pixel.
 	 */
-	private int borderSideSnapSize = 25;
+	private int borderSideSnapSize = 0;
 	/** 
 	 * Whether the bounds of this station are slightly bigger than the station itself.
 	 * Used together with {@link #borderSideSnapSize} to grab Dockables "out of the sky".
@@ -58,8 +65,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 */
 	public ToolbarGroupDockStation(){
 		init();
-		this.mainPanel.getContentPane().setBackground(Color.GREEN);
-		this.mainPanel.getBasePane().setBackground(Color.CYAN);
+		this.mainPanel.getContentPane().setBackground(Color.YELLOW);
+		this.mainPanel.getBasePane().setBackground(Color.ORANGE);
 	}
 
 	@Override
@@ -80,38 +87,14 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	@Override
 	protected DefaultDisplayerFactoryValue createDisplayerFactory(){
 		return new DefaultDisplayerFactoryValue(ThemeManager.DISPLAYER_FACTORY
-				+ ".toolbar.group", this);
+				+ ".toolbar", this);
 	}
 
 	@Override
 	protected DockTitleVersion registerTitle( DockController controller ){
 		return controller.getDockTitleManager().getVersion(TITLE_ID,
-				BasicDockTitleFactory.FACTORY);
+				NullTitleFactory.INSTANCE);
 	}
-
-	@Override
-	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[]{
-				new DefaultDropLayer( this ),
-				new SideSnapDropLayer( this ),
-		};
-	}
-	
-	@Override
-	public boolean accept( Dockable child ){
-		System.out.println(this.toString() + "## accept(Dockable child) ##");
-		return getToolbarStrategy().isToolbarGroupPart(child);
-	}
-
-	@Override
-	public boolean accept( DockStation station ){
-		System.out.println(this.toString()
-				+ "## accept(DockStation station) ##");
-		return getToolbarStrategy().isToolbarGroupPartParent(station, this);
-	}
-
-	// TODO don't use ToolbarProperty but a custom class, would be much safer if
-	// the layout is screwed up
 
 	@Override
 	protected DockableProperty getDockableProperty( Dockable child,
@@ -133,7 +116,28 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	protected Path getPlaceholder( DockableProperty property ){
 		return ((ToolbarProperty) property).getPlaceholder();
 	}
-	
+
+	@Override
+	public DockStationDropLayer[] getLayers(){
+		return new DockStationDropLayer[]{
+				new DefaultDropLayer( this ),
+				new SideSnapDropLayer( this ),
+		};
+	}
+
+	@Override
+	public boolean accept( Dockable child ){
+		System.out.println(this.toString() + "## accept(Dockable child) ##");
+		return getToolbarStrategy().isToolbarPart(child);
+	}
+
+	@Override
+	public boolean accept( DockStation station ){
+		System.out.println(this.toString()
+				+ "## accept(DockStation station) ##");
+		return getToolbarStrategy().isToolbarGroupPartParent(station, this);
+	}
+
 	/**
 	 * There is an invisible border around the station. If a {@link Dockable} is
 	 * dragged inside this border, its considered to be on the station and will
@@ -183,5 +187,5 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	public boolean isAllowSideSnap(){
 		return allowSideSnap;
 	}
-
+	
 }

@@ -8,13 +8,13 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
-import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRegisterListener;
 
 /**
- * The default implementation of an {@link ExpandableToolbarItemStrategy} searches for {@link ToolbarGroupDockStation}s.
+ * The default implementation of an {@link ExpandableToolbarItemStrategy} searches for {@link ToolbarDockStation}s.
  * @author Benjamin Sigg
  */
 public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarItemStrategy {
@@ -104,20 +104,20 @@ public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarIt
 
 	@Override
 	public boolean isEnabled( Dockable item, ExpandedState state ){
-		return item instanceof ToolbarGroupDockStation;
+		return item instanceof ToolbarDockStation;
 	}
 
 	@Override
 	public ExpandedState getState( Dockable item ){
-		if( item instanceof ToolbarGroupDockStation ){
-			return ((ToolbarGroupDockStation) item).getExpandedState();
+		if( item instanceof ToolbarDockStation ){
+			return ((ToolbarDockStation) item).getExpandedState();
 		}
 		return null;
 	}
 
 	@Override
 	public void setState( Dockable item, ExpandedState state ){
-		((ToolbarGroupDockStation) item).setExpandedState( state );
+		((ToolbarDockStation) item).setExpandedState( state );
 	}
 
 	@Override

@@ -1,17 +1,8 @@
-package bibliothek.gui.dock.station.toolbar;
+package bibliothek.gui.dock.station.toolbar.title;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DirectColorModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 
 import javax.swing.JComponent;
 
@@ -27,16 +18,16 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
  * A simplistic implementation of a {@link DockTitle}. This particular
- * implementation shows a line of dot.
+ * implementation shows a grip.
  * 
  * @author Herve Guillaume
  */
-public class ToolbarDockTitlePoint extends AbstractDockTitle{
+public class ToolbarDockTitleGrip extends AbstractDockTitle{
 	
 	private Color color;
 	
 	/**
-	 * Creates a new factory that creates new {@link ToolbarDockTitlePoint}s.
+	 * Creates a new factory that creates new {@link ToolbarDockTitleGrip}s.
 	 * 
 	 * @param color
 	 *            the color of the title
@@ -51,7 +42,7 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 
 			@Override
 			public void request( DockTitleRequest request ){
-				request.answer(new ToolbarDockTitlePoint(request.getVersion(),
+				request.answer(new ToolbarDockTitleGrip(request.getVersion(),
 						request.getTarget(), color));
 			}
 
@@ -62,7 +53,7 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 		};
 	}
 
-	public ToolbarDockTitlePoint( DockTitleVersion origin, Dockable dockable,
+	public ToolbarDockTitleGrip( DockTitleVersion origin, Dockable dockable,
 			Color color ){
 		super(dockable, origin, true);
 		this.color = color;
@@ -98,43 +89,48 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 		}
 	}
 
-	private static final Image POINT;
-	private static final int POINT_DISTANCE = 4;
-
-	// this model draw an image ==> so the background is behind and invisible
-	static{
-		ColorModel colorModel = new DirectColorModel(24, 0xff0000, 0x00ff00,
-				0x0000ff);
-		SampleModel sampleModel = colorModel.createCompatibleSampleModel(3, 3);
-		int[] pixels = new int[] { 0xffd6cfc6, 0xffb3b0ab, 0xffefebe7,
-				0xffb3b0a3, 0xff8d887a, 0xffffffff, 0xffe7e7e7, 0xffffffff,
-				0xfffbffff, };
-
-		DataBufferInt dataBuffer = new DataBufferInt(pixels, 9);
-		WritableRaster writableRaster = Raster.createWritableRaster(
-				sampleModel, dataBuffer, new Point());
-		POINT = new BufferedImage(colorModel, writableRaster, false, null);
-	}
-
 	@Override
 	protected void paintComponent( Graphics g ){
+		g.setColor(Color.darkGray);
+		Color shadow = Color.gray;
+		Color clearColor = Color.white;
+		int lineOffset = 5;
+		int headerOffset = 3;
 		if (getOrientation().isHorizontal()){
 			// Draw a horizontal handle.
-			int x = 4;
-			int y = 3;
-			while (x < getWidth() - POINT_DISTANCE){
-				g.drawImage(POINT, x, y, this);
-				x += POINT_DISTANCE;
-			}
+			int width = getSize().width;
+
+			// Draw the light line.
+			g.setColor(clearColor);
+			g.drawLine(lineOffset, headerOffset, width - lineOffset,
+					headerOffset);
+			g.drawLine(lineOffset, headerOffset + 1, width - lineOffset,
+					headerOffset + 1);
+
+			// Draw the shadow.
+			g.setColor(shadow);
+			g.drawLine(width - lineOffset + 1, headerOffset, width
+					- lineOffset + 1, headerOffset + 2);
+			g.drawLine(lineOffset, headerOffset + 2, width - lineOffset,
+					headerOffset + 2);
+
 		} else{
 			// Draw a vertical handle.
-			int x = 3;
-			int y = 4;
-			while (y < getHeight() - POINT_DISTANCE){
-				g.drawImage(POINT, x, y, this);
-				y += POINT_DISTANCE;
-			}
+			int height = getSize().height;
 
+			// Draw the light line.
+			g.setColor(clearColor);
+			g.drawLine(headerOffset, lineOffset, headerOffset, height
+					- lineOffset);
+			g.drawLine(headerOffset + 1, lineOffset, headerOffset + 1,
+					height - lineOffset);
+
+			// Draw the shadow.
+			g.setColor(shadow);
+			g.drawLine(headerOffset, height - lineOffset + 1,
+					headerOffset + 2, height - lineOffset + 1);
+			g.drawLine(headerOffset + 2, lineOffset, headerOffset + 2,
+					height - lineOffset);
 		}
 	}
 

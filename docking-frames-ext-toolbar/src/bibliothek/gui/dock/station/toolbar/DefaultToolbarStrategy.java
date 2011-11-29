@@ -6,8 +6,8 @@ import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.station.ToolbarTabDockStation;
 
 /**
@@ -27,16 +27,16 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 		// return result;
 		// }
 		// }
-		if( station instanceof ToolbarGroupDockStation ) {
+		if( station instanceof ToolbarDockStation ) {
 			return dockable;
 		}
 
-		if( station instanceof ToolbarDockStation ) {
-			if( dockable instanceof ToolbarGroupDockStation ) {
+		if( station instanceof ToolbarGroupDockStation ) {
+			if( dockable instanceof ToolbarDockStation ) {
 				return dockable;
 			}
 			else {
-				ToolbarGroupDockStation result = new ToolbarGroupDockStation();
+				ToolbarDockStation result = new ToolbarDockStation();
 				result.setController( station.getController() );
 				result.drop( dockable );
 				return result;
@@ -45,12 +45,12 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 
 		// if( station instanceof ToolbarContainerDockStation ) {
 		if( station instanceof ToolbarContainerDockStation || station instanceof ScreenDockStation ) {
-			if( dockable instanceof ToolbarDockStation ){
+			if( dockable instanceof ToolbarGroupDockStation ){
 			//if( dockable.getClass() == ToolbarDockStation.class ) {
 				return dockable;
 			}
 			else {
-				ToolbarDockStation result = new ToolbarDockStation();
+				ToolbarGroupDockStation result = new ToolbarGroupDockStation();
 				result.setController( station.getController() );
 				result.drop( dockable );
 				return result;
@@ -66,7 +66,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 		// && parent instanceof ScreenDockStation){
 		// return true;
 		// }
-		if( child instanceof ToolbarDockStation && parent instanceof ScreenDockStation ) {
+		if( child instanceof ToolbarGroupDockStation && parent instanceof ScreenDockStation ) {
 			return true;
 		}
 		if( child instanceof ComponentDockable && parent instanceof ToolbarTabDockStation ){
@@ -77,11 +77,11 @@ public class DefaultToolbarStrategy implements ToolbarStrategy {
 
 	@Override
 	public boolean isToolbarGroupPart( Dockable dockable ){
-		return dockable instanceof ComponentDockable || dockable instanceof ToolbarGroupDockStation;
+		return dockable instanceof ComponentDockable || dockable instanceof ToolbarDockStation;
 	}
 
 	@Override
 	public boolean isToolbarPart( Dockable dockable ){
-		return dockable instanceof ToolbarDockStation || isToolbarGroupPart( dockable );
+		return dockable instanceof ToolbarGroupDockStation || isToolbarGroupPart( dockable );
 	}
 }

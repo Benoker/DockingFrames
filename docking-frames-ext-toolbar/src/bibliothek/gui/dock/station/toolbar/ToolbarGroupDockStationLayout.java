@@ -30,11 +30,11 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 /**
- * Describes the layout of a {@link ToolbarGroupDockStation}.
+ * A layout object describing the contents of a {@link ToolbarGroupDockStation}.
  * @author Benjamin Sigg
  */
 public class ToolbarGroupDockStationLayout {
-	/** the encoded layout of the {@link ToolbarGroupDockStation} */
+	/** the encoded layout of a {@link ToolbarGroupDockStation} */
 	private PlaceholderMap placeholders;
 	
 	/** whether the children are big or small */
@@ -42,17 +42,17 @@ public class ToolbarGroupDockStationLayout {
 	
 	/**
 	 * Creates a new layout object.
-	 * @param placeholders the encoded layout of the {@link ToolbarGroupDockStation}, not <code>null</code>
+	 * @param map the encoded layout of a {@link ToolbarGroupDockStation}, not <code>null</code>
 	 * @param state whether the children are big or small
 	 */
-	public ToolbarGroupDockStationLayout( PlaceholderMap placeholders, ExpandedState state ){
-		this.placeholders = placeholders;
+	public ToolbarGroupDockStationLayout( PlaceholderMap map, ExpandedState state ){
+		this.placeholders = map;
 		this.state = state;
 	}
 	
 	/**
-	 * Gets the encoded layout.
-	 * @return the encoded layout, not <code>null</code>
+	 * Gets the encoded layout of a {@link ToolbarGroupDockStation}.
+	 * @return the encoded layout
 	 */
 	public PlaceholderMap getPlaceholders(){
 		return placeholders;

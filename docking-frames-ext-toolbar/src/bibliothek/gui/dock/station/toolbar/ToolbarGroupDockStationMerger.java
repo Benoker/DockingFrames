@@ -2,9 +2,10 @@ package bibliothek.gui.dock.station.toolbar;
 
 import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.control.relocator.Merger;
 
 /**
- * An algorithm that allows to merge {@link ToolbarGroupDockStation}s together.
+ * A {@link Merger} for merging two {@link ToolbarGroupDockStation}s.
  * 
  * @author Herve Guillaume
  * @author Benjamin Sigg

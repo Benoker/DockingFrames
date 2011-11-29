@@ -19,8 +19,8 @@ import javax.swing.JComponent;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.MenuDockAction;
@@ -47,17 +47,17 @@ import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfigur
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockTitle;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockTitleGrip;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockTitleRoundedBound;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
-import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
+import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
+import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitle;
+import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleGrip;
+import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleRoundedBound;
 import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
@@ -205,8 +205,8 @@ public class ToolbarExtension implements Extension{
 
 	private Collection<Merger> createMergerExtension(){
 		List<Merger> result = new ArrayList<Merger>();
-		result.add(new ToolbarGroupDockStationMerger());
 		result.add(new ToolbarDockStationMerger());
+		result.add(new ToolbarGroupDockStationMerger());
 		return result;
 	}
 
@@ -225,8 +225,8 @@ public class ToolbarExtension implements Extension{
 	private Collection<DockFactory<?, ?, ?>> createDockFactories(){
 		List<DockFactory<?, ?, ?>> result = new ArrayList<DockFactory<?, ?, ?>>();
 		result.add(new ToolbarPartDockFactory());
-		result.add(new ToolbarDockStationFactory());
 		result.add(new ToolbarGroupDockStationFactory());
+		result.add(new ToolbarDockStationFactory());
 		result.add(new ToolbarContainerDockStationFactory());
 		result.add(new ToolbarTabDockStationFactory());
 		return result;
@@ -271,8 +271,8 @@ public class ToolbarExtension implements Extension{
 				// titles.registerTheme(ToolbarDockStation.TITLE_ID,
 				// ToolbarDockTitlePoint
 				// .createFactory(new Color(255, 0, 0)));
-				titles.registerTheme( ToolbarDockStation.TITLE_ID, ToolbarDockTitleGrip.createFactory( new Color( 80, 80, 80 ) ) );
-				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
+				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitleGrip.createFactory( new Color( 80, 80, 80 ) ) );
+				titles.registerTheme( ToolbarDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
 				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
 				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
 			}

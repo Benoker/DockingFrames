@@ -61,11 +61,11 @@ import bibliothek.gui.dock.util.extension.Extension;
 
 /**
  * A {@link Dockable} and a {@link DockStation} which stands for a group of
- * {@link ToolbarDockStation}. As dockable it can be put in every
+ * {@link ToolbarGroupDockStation}. As dockable it can be put in every
  * {@link DockStation}. As DockStation it accepts only
  * {@link ToolbarElementInterface}s. When ToolbarElement are added, all the
  * ComponentDockable extracted from the element are merged together and wrapped
- * in a {@link ToolbarDockStation} before to be added.
+ * in a {@link ToolbarGroupDockStation} before to be added.
  * 
  * @author Herve Guillaume
  */
@@ -817,10 +817,10 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	/**
 	 * Add one dockable at the index position. The dockable can be a
-	 * {@link ComponentDockable}, {@link ToolbarGroupDockStation} or a
-	 * {@link ToolbarDockStation} (see method accept()). All the
+	 * {@link ComponentDockable}, {@link ToolbarDockStation} or a
+	 * {@link ToolbarGroupDockStation} (see method accept()). All the
 	 * ComponentDockable extracted from the element are merged together and
-	 * wrapped in a {@link ToolbarGroupDockStation} before to be added at index
+	 * wrapped in a {@link ToolbarDockStation} before to be added at index
 	 * position
 	 * 
 	 * @param dockable

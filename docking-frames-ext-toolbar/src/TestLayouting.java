@@ -5,8 +5,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.control.SingleParentRemover;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 
@@ -31,7 +31,7 @@ public class TestLayouting {
 
 		ComponentDockable dockable = new ComponentDockable( new JButton( "hello" ) );
 
-		ToolbarGroupDockStation group = new ToolbarGroupDockStation(){
+		ToolbarDockStation group = new ToolbarDockStation(){
 			@Override
 			public boolean accept( DockStation station ){
 				return true;
@@ -39,7 +39,7 @@ public class TestLayouting {
 		};
 		group.drop( dockable );
 		
-		ToolbarDockStation toolbar = new ToolbarDockStation();
+		ToolbarGroupDockStation toolbar = new ToolbarGroupDockStation();
 		toolbar.drop( group );
 
 		boolean dropped = screen.drop( toolbar, initial );
