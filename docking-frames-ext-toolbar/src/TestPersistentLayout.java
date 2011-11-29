@@ -153,19 +153,19 @@ public class TestPersistentLayout{
 		final File layout = new File("layout.xml");
 		boolean layouted = false;
 
-		if (layout.exists()){
-			try{
-				FileInputStream in = new FileInputStream(layout);
-				XElement element = XIO.readUTF(in);
-				in.close();
-				frontend.readXML(element);
-				layouted = true;
-			} catch (IOException e){
-				e.printStackTrace();
-			}
-		}
-
-		if (!layouted){
+//		if (layout.exists()){
+//			try{
+//				FileInputStream in = new FileInputStream(layout);
+//				XElement element = XIO.readUTF(in);
+//				in.close();
+//				frontend.readXML(element);
+//				layouted = true;
+//			} catch (IOException e){
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		if (!layouted){
 			ToolbarGroupDockStation group = new ToolbarGroupDockStation();
 			group.drop(button1);
 			group.drop(button2);
@@ -177,7 +177,7 @@ public class TestPersistentLayout{
 
 			rootWest.drop(toolbar);
 			rootNorth.drop(button5);
-		}
+//		}
 
 		frame.setBounds(20, 20, 400, 400);
 		frame.addWindowListener(new WindowAdapter(){

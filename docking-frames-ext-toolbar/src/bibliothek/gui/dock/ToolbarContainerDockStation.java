@@ -1,8 +1,6 @@
 package bibliothek.gui.dock;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
@@ -15,9 +13,7 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -879,12 +875,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 		}
 		dockable.setDockParent(this);
 		getContainerPanel().add(handle.getDisplayer().getComponent(), index);
-		mainPanel.getContentPane().setBounds(0, 0,
-				mainPanel.getContentPane().getPreferredSize().width,
-				mainPanel.getContentPane().getPreferredSize().height);
-		mainPanel.setPreferredSize(new Dimension(mainPanel.getContentPane()
-				.getPreferredSize().width, mainPanel.getContentPane()
-				.getPreferredSize().height));
+		// mainPanel.getContentPane().setBounds(0, 0,
+		// mainPanel.getContentPane().getPreferredSize().width,
+		// mainPanel.getContentPane().getPreferredSize().height);
+		// mainPanel.setPreferredSize(new Dimension(mainPanel.getContentPane()
+		// .getPreferredSize().width, mainPanel.getContentPane()
+		// .getPreferredSize().height));
 		mainPanel.getContentPane().revalidate();
 		mainPanel.getContentPane().repaint();
 	}

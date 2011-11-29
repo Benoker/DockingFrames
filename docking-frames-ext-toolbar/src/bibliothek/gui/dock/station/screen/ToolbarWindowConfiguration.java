@@ -37,7 +37,7 @@ public class ToolbarWindowConfiguration implements ScreenDockWindowConfiguration
 			WindowConfiguration configuration = new WindowConfiguration();
 			configuration.setMoveOnTitleGrab( true );
 			configuration.setAllowDragAndDropOnTitle( true );
-			configuration.setResetOnDropable( true );
+			configuration.setResetOnDropable( false );
 			configuration.setResizeable( false );
 			return configuration;
 		}

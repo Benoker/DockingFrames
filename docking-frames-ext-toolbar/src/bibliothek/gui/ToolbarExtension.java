@@ -265,7 +265,7 @@ public class ToolbarExtension implements Extension{
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 150, 150 ), false ) );
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 100, 100 ), false ) );
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( new Color( 255, 50, 50 ), false ) );
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.ORANGE, true ) );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.ORANGE, false ) );
 
 				DockTitleManager titles = controller.getDockTitleManager();
 				// titles.registerTheme(ToolbarDockStation.TITLE_ID,
@@ -274,7 +274,7 @@ public class ToolbarExtension implements Extension{
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, ToolbarDockTitleGrip.createFactory( new Color( 80, 80, 80 ) ) );
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
 				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
-				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitle.createFactory( Color.RED ) );
+				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
 			}
 
 			@Override
