@@ -50,11 +50,11 @@ public class TestPersistentLayout{
 
 		final DockFrontend frontend = new DockFrontend(frame);
 
-		DirectWindowProvider windowProvider = new DirectWindowProvider();
-		windowProvider.setWindow(frame);
-		ScreenDockStation screenStation = new ScreenDockStation(windowProvider);
-		screenStation.setShowing(true);
-		frontend.addRoot("rootScreen", screenStation);
+//		DirectWindowProvider windowProvider = new DirectWindowProvider();
+//		windowProvider.setWindow(frame);
+//		ScreenDockStation screenStation = new ScreenDockStation(windowProvider);
+//		screenStation.setShowing(true);
+//		frontend.addRoot("rootScreen", screenStation);
 
 		// Disable the expand state action button
 		frontend.getController().getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, 

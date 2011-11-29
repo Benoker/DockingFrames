@@ -15,7 +15,7 @@ import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
-import bibliothek.gui.dock.station.toolbar.layer.ToolbarOverrideDropLayer;
+import bibliothek.gui.dock.station.toolbar.layer.ToolbarSlimDropLayer;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
@@ -48,10 +48,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	public static final String DISPLAYER_ID = "toolbar";
 
 	/**
-	 * Size of the insets on the two lateral sides of this station, which define
-	 * two lateral areas where no drop action can be done (Measured in pixel).
+	 * Size of the lateral zone where no drop action can be done (Measured in
+	 * pixel).
 	 */
-	private int insetsSideOverrideSize = 25;
+	private int lateralNodropZoneSize = 25;
 
 	/**
 	 * Creates a new {@link ToolbarDockStation}.
@@ -112,8 +112,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[] { new DefaultDropLayer(this),
-				new ToolbarOverrideDropLayer(this) };
+		return new DockStationDropLayer[] { new ToolbarSlimDropLayer(this) };
 	}
 
 	@Override
@@ -130,35 +129,29 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	}
 
 	/**
-	 * There are insets on the two lateral sides of this station. These insets
-	 * define two areas where no {@link Dockable} can be dropped (so, this is
-	 * the parent station which will be notified to this drop action).
+	 * Sets the size of the two lateral zones where no drop action can be done
+	 * (Measured in pixel).
 	 * 
-	 * @param insetsSideOverrideSize
-	 *            the size of the insets on the two lateral sides (in pixel)
+	 * @param lateralNodropZoneSize
+	 *            the size of the rectangular lateral zones (in pixel)
 	 * @throws IllegalArgumentException
 	 *             if the size is smaller than 0
 	 */
-	public void setInsetsSideOverrideSize( int insetsSideOverrideSize ){
-		if (insetsSideOverrideSize < 0)
+	public void setLateralNodropZoneSize( int lateralNodropZoneSize ){
+		if (lateralNodropZoneSize < 0)
 			throw new IllegalArgumentException(
 					"borderSideSnapeSize must not be less than 0");
-		/**
-		 * Size of the insets on the two lateral sides of this station, which
-		 * define the area where a drop action is transfered to the parent
-		 * station. Measured in pixel.
-		 */
-		this.insetsSideOverrideSize = insetsSideOverrideSize;
+		this.lateralNodropZoneSize = lateralNodropZoneSize;
 	}
 
 	/**
-	 * Gets the size of the insets on the two lateral sides which define the two
-	 * lateral areas where dropped action can be done.
+	 * Gets the size of the two lateral zones where no drop action can be done
+	 * (Measured in pixel).
 	 * 
-	 * @return the size, in pixel, of the insets on the two lateral sides
+	 * @return the size of the rectangular lateral zones (in pixel)
 	 */
-	public int getInsetsSideOverrideSize(){
-		return insetsSideOverrideSize;
+	public int getLateralNodropZoneSize(){
+		return lateralNodropZoneSize;
 	}
 
 }

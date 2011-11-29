@@ -1280,6 +1280,8 @@ public abstract class AbstractToolbarDockStation extends
 					// the base pane
 					Rectangle rectBeneathMouse = componentBeneathMouse
 							.getBounds();
+					g.drawRect(rectBeneathMouse.x, rectBeneathMouse.y,
+							rectBeneathMouse.width, rectBeneathMouse.height);
 					Point pBeneath = rectBeneathMouse.getLocation();
 					SwingUtilities.convertPointToScreen(pBeneath,
 							componentBeneathMouse.getParent());
