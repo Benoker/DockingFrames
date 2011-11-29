@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.screen;
 
+import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -42,7 +43,7 @@ public class MediumBoundaryRestriction extends AbstractBoundaryRestriction{
 			Rectangle target = window.getWindowBounds();
 			center = new Point( target.width/2, target.height/2 );
 		}
-		return validate( window.getWindowBounds(), center, center );
+		return validate( window, window.getWindowBounds(), center, center );
 	}
 
 	@Override
@@ -60,17 +61,18 @@ public class MediumBoundaryRestriction extends AbstractBoundaryRestriction{
 			search.x += target.x - bounds.x;
 			search.y += target.y - bounds.y;
 		}
-		return validate( target, center, search );
+		return validate( window, target, center, search );
 	}
 	
 	/**
 	 * Ensures that <code>center</code> will be in a visible part of the screen.
+	 * @param window the window whose boundaries are checked
 	 * @param target the next boundaries for a window
 	 * @param center the point that should remain visible
 	 * @param search the point used to find the best matching screen device
 	 * @return a set of boundaries that is as close to <code>target</code> as possible
 	 */
-	protected Rectangle validate( Rectangle target, Point center, Point search ) {
+	protected Rectangle validate( ScreenDockWindow window, Rectangle target, Point center, Point search ) {
 		Rectangle screen = findDevice( search.x + target.x, search.y + target.y );
 		if( screen == null ){
 			return null;
@@ -90,8 +92,10 @@ public class MediumBoundaryRestriction extends AbstractBoundaryRestriction{
 		
 		Rectangle result = new Rectangle( target );
 
-		result.width = Math.max( 50, result.width );
-		result.height = Math.max( 50, result.height );
+		Dimension minimum = window.getMinimumWindowSize();
+		
+		result.width = Math.max( minimum.width, result.width );
+		result.height = Math.max( minimum.height, result.height );
 		
 		result.x = Math.max( screen.x - center.x, result.x );
 		result.y = Math.max( screen.y - center.y, result.y );

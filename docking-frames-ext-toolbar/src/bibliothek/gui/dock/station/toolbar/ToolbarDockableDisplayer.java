@@ -128,11 +128,12 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer{
 		Orientation orientation = null;
 		
 		if( station instanceof OrientingDockStation && dockable != null ){
-			orientation = ((OrientingDockStation)station).getOrientationOf( getDockable() );
+			orientation = ((OrientingDockStation)station).getOrientationOf( dockable );
 		}
 		else if( dockable != null && dockable.asDockStation() instanceof OrientedDockStation ){
 			orientation = ((OrientedDockStation)dockable.asDockStation()).getOrientation();
 		}
+		
 		if( orientation != null ){
 			switch( orientation ){
 				case HORIZONTAL:

@@ -59,7 +59,6 @@ public class ResizingLayoutManager extends GridLayout{
 	public void layoutContainer( Container parent ){
 		Rectangle bounds = window.getWindowBounds();
 		Dimension size = windowComponent.getPreferredSize();
-
 		if( bounds.width != size.width || bounds.height != size.height ){
 			window.setWindowBounds( new Rectangle( bounds.getLocation(), size ), true );
 		}
