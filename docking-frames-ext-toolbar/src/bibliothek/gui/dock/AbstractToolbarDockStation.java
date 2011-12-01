@@ -79,18 +79,18 @@ public abstract class AbstractToolbarDockStation extends
 	 * The graphical representation of this station: the pane which contains
 	 * component
 	 */
-	protected OverpaintablePanelBase mainPanel = new OverpaintablePanelBase();
+	protected OverpaintablePanelBase mainPanel; // = new OverpaintablePanelBase();
 
 	/**
 	 * a helper class ensuring that all properties of the
 	 * {@link DockableDisplayer}s are set correctly
 	 */
-	private DisplayerCollection displayers;
+	protected DisplayerCollection displayers;
 	/**
 	 * a factory used by {@link #displayers} to create new
 	 * {@link DockableDisplayer}s
 	 */
-	private DefaultDisplayerFactoryValue displayerFactory;
+	protected DefaultDisplayerFactoryValue displayerFactory;
 	/** a factory creating new {@link DockTitle}s */
 	private DockTitleVersion title;
 
@@ -99,16 +99,16 @@ public abstract class AbstractToolbarDockStation extends
 	/** Alignment of the content of this station */
 	private Orientation orientation = Orientation.HORIZONTAL;
 	/** A paint to draw lines */
-	private DefaultStationPaintValue paint;
+	protected DefaultStationPaintValue paint;
 	/** the index of the closest dockable above the mouse */
-	private int indexBeneathMouse = -1;
+	protected int indexBeneathMouse = -1;
 	/** closest side of the the closest dockable above the mouse */
-	private Position sideBeneathMouse = null;
+	protected Position sideBeneathMouse = null;
 	/**
 	 * Tells if this station is in prepareDrop state and should draw something
 	 * accordingly
 	 */
-	boolean prepareDropDraw = false;
+	protected boolean prepareDropDraw = false;
 
 	/** all registered {@link OrientingDockStationListener}s. */
 	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
@@ -137,23 +137,24 @@ public abstract class AbstractToolbarDockStation extends
 		// nothing
 	}
 
-	protected void init(){
-		mainPanel = new OverpaintablePanelBase();
-		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
-				+ ".toolbar", this);
-		setOrientation(this.orientation);
-		displayerFactory = createDisplayerFactory();
-		displayers = new DisplayerCollection(this, displayerFactory,
-				getDisplayerId());
-		displayers
-				.addDockableDisplayerListener(new DockableDisplayerListener(){
-					public void discard( DockableDisplayer displayer ){
-						AbstractToolbarDockStation.this.discard(displayer);
-					}
-				});
-
-		setTitleIcon(null);
-	}
+	protected abstract void init();
+//	{
+//		mainPanel = new OverpaintablePanelBase();
+//		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
+//				+ ".toolbar", this);
+//		setOrientation(this.orientation);
+//		displayerFactory = createDisplayerFactory();
+//		displayers = new DisplayerCollection(this, displayerFactory,
+//				getDisplayerId());
+//		displayers
+//				.addDockableDisplayerListener(new DockableDisplayerListener(){
+//					public void discard( DockableDisplayer displayer ){
+//						AbstractToolbarDockStation.this.discard(displayer);
+//					}
+//				});
+//
+//		setTitleIcon(null);
+//	}
 
 	/**
 	 * Creates a new {@link DefaultDisplayerFactoryValue}, a factory used to
@@ -180,7 +181,7 @@ public abstract class AbstractToolbarDockStation extends
 	}
 
 	/**
-	 * Grants direct access to the list of {@link Dockable}s, sublcasses should
+	 * Grants direct access to the list of {@link Dockable}s, subclasses should
 	 * not modify the list unless the fire the appropriate events.
 	 * 
 	 * @return the list of dockables
@@ -532,8 +533,6 @@ public abstract class AbstractToolbarDockStation extends
 	 */
 	protected abstract DockableProperty getDockableProperty( Dockable child,
 			Dockable target, int index, Path placeholder );
-	
-	protected abstract StationDropOperation createStationDropOperation();
 
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
@@ -598,7 +597,7 @@ public abstract class AbstractToolbarDockStation extends
 	 * 
 	 * @param dropInfo
 	 */
-	private void drop( ToolbarDropInfo<?> dropInfo ){
+	protected void drop( ToolbarDropInfo<?> dropInfo ){
 		// System.out.println(dropInfo.toSummaryString());
 		if (dropInfo.getItemPositionVSBeneathDockable() != Position.CENTER){
 			// Note: Computation of index to insert drag dockable is not the
@@ -976,8 +975,8 @@ public abstract class AbstractToolbarDockStation extends
 						.setOrientation(getOrientation());
 			}
 		}
-		mainPanel.dockablePane.add(handle.getDisplayer().getComponent(), index);
-		mainPanel.dockablePane.invalidate();
+		mainPanel.getContentPane().add(handle.getDisplayer().getComponent(), index);
+		mainPanel.getContentPane().invalidate();
 
 		// mainPanel.getContentPane().setBounds( 0, 0,
 		// mainPanel.getContentPane().getPreferredSize().width,
@@ -1053,10 +1052,10 @@ public abstract class AbstractToolbarDockStation extends
 			dockable.setDockParent(null);
 
 			dockables.remove(index);
-			mainPanel.dockablePane.remove(handle.getDisplayer().getComponent());
+			mainPanel.getContentPane().remove(handle.getDisplayer().getComponent());
 			mainPanel.doLayout();
-			mainPanel.dockablePane.revalidate();
-			mainPanel.dockablePane.repaint();
+			mainPanel.getContentPane().revalidate();
+			mainPanel.getContentPane().repaint();
 			handle.destroy();
 			listeners.fireDockableRemoved(dockable);
 			fireDockablesRepositioned(index);
@@ -1145,17 +1144,18 @@ public abstract class AbstractToolbarDockStation extends
 	 * 
 	 * @author Herve Guillaume
 	 */
-	protected class OverpaintablePanelBase extends SecureContainer{
+	protected abstract class OverpaintablePanelBase extends SecureContainer{
+		
+		public abstract void updateAlignment();
+		
 		/**
 		 * Generated serial number
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
 
 		/**
-		 * This pane is the base of this OverpaintablePanel and contains both
-		 * title and content panes (with a BoxLayout) A panel with a fixed size
-		 * (minimum, maximum and preferred size are same values). Computation of
-		 * the size are take insets into account.
+		 * A panel with a fixed size (minimum, maximum and preferred size have
+		 * same values). Computation of the size takes insets into account.
 		 * 
 		 * @author Herve Guillaume
 		 * 
@@ -1211,8 +1211,10 @@ public abstract class AbstractToolbarDockStation extends
 		public OverpaintablePanelBase(){
 			// basePane.setBackground(Color.GREEN);
 			// dockablePane.setBackground(Color.RED);
+
 			basePane.add(dockablePane);
 			setBasePane(basePane);
+			setContentPane(dockablePane);
 			this.setSolid(false);
 			dockablePane.setOpaque(false);
 			basePane.setOpaque(false);
@@ -1233,36 +1235,36 @@ public abstract class AbstractToolbarDockStation extends
 			return getBasePane().getPreferredSize();
 		}
 
-		/**
-		 * Update alignment with regards to the current orientation of this
-		 * {@linl ToolbarDockStation}
-		 */
-		private void updateAlignment(){
-			if (AbstractToolbarDockStation.this.getOrientation() != null){
-				switch (AbstractToolbarDockStation.this.getOrientation()) {
-				case HORIZONTAL:
-					dockablePane.setLayout(new BoxLayout(dockablePane,
-							BoxLayout.X_AXIS));
-					basePane.setLayout(new BoxLayout(basePane, BoxLayout.X_AXIS));
-					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
-					basePane.setAlignmentY(Component.CENTER_ALIGNMENT);
-					dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-					basePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-					break;
-				case VERTICAL:
-					dockablePane.setLayout(new BoxLayout(dockablePane,
-							BoxLayout.Y_AXIS));
-					basePane.setLayout(new BoxLayout(basePane, BoxLayout.Y_AXIS));
-					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
-					basePane.setAlignmentY(Component.TOP_ALIGNMENT);
-					dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
-					basePane.setAlignmentX(Component.CENTER_ALIGNMENT);
-					break;
-				default:
-					throw new IllegalArgumentException();
-				}
-			}
-		}
+		// /**
+		// * Update alignment with regards to the current orientation of this
+		// * {@linl ToolbarDockStation}
+		// */
+		// private void updateAlignment(){
+		// if (AbstractToolbarDockStation.this.getOrientation() != null){
+		// switch (AbstractToolbarDockStation.this.getOrientation()) {
+		// case HORIZONTAL:
+		// dockablePane.setLayout(new BoxLayout(dockablePane,
+		// BoxLayout.X_AXIS));
+		// basePane.setLayout(new BoxLayout(basePane, BoxLayout.X_AXIS));
+		// dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
+		// basePane.setAlignmentY(Component.CENTER_ALIGNMENT);
+		// dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		// basePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		// break;
+		// case VERTICAL:
+		// dockablePane.setLayout(new BoxLayout(dockablePane,
+		// BoxLayout.Y_AXIS));
+		// basePane.setLayout(new BoxLayout(basePane, BoxLayout.Y_AXIS));
+		// dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
+		// basePane.setAlignmentY(Component.TOP_ALIGNMENT);
+		// dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
+		// basePane.setAlignmentX(Component.CENTER_ALIGNMENT);
+		// break;
+		// default:
+		// throw new IllegalArgumentException();
+		// }
+		// }
+		// }
 
 		@Override
 		protected void paintOverlay( Graphics g ){
