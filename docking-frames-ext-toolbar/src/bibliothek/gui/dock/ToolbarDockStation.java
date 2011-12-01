@@ -27,12 +27,10 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationDropOperation;
-import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
-import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.toolbar.layer.ToolbarSlimDropLayer;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
@@ -190,6 +188,11 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		return lateralNodropZoneSize;
 	}
 
+	// /////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////
+
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, Dockable dockable ){
@@ -247,11 +250,73 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			return null;
 		}
 	}
-
-	// /////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////
-	// /////////////////////////////////////////////////////////////
+	
+	/**
+	 * Drop thanks to information collect by dropInfo
+	 * 
+	 * @param dropInfo
+	 */
+	protected void drop( ToolbarDropInfo<?> dropInfo ){
+		// System.out.println(dropInfo.toSummaryString());
+		if (dropInfo.getItemPositionVSBeneathDockable() != Position.CENTER){
+			// Note: Computation of index to insert drag dockable is not the
+			// same
+			// between a move() and a drop(), because with a move() it is as if
+			// the
+			// drag dockable were remove first then added again in the list
+			// (Note: It's wird beacause indeed drag() is called after
+			// move()...)
+			int dropIndex;
+			int indexBeneathMouse = indexOf(dropInfo.getDockableBeneathMouse());
+			// System.out.println("	=> Drop index beneath mouse: " +
+			// indexBeneathMouse);
+			if (dropInfo.isMove()){
+				switch (this.getOrientation()) {
+				case VERTICAL:
+					if (dropInfo.getItemPositionVSBeneathDockable() == Position.SOUTH){
+						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+							dropIndex = indexBeneathMouse + 1;
+						} else{
+							dropIndex = indexBeneathMouse;
+						}
+					} else{
+						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+							dropIndex = indexBeneathMouse;
+						} else{
+							dropIndex = indexBeneathMouse - 1;
+						}
+					}
+					move(dropInfo.getItem(), dropIndex);
+					break;
+				case HORIZONTAL:
+					if (dropInfo.getItemPositionVSBeneathDockable() == Position.EAST){
+						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+							dropIndex = indexBeneathMouse + 1;
+						} else{
+							dropIndex = indexBeneathMouse;
+						}
+					} else{
+						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+							dropIndex = indexBeneathMouse;
+						} else{
+							dropIndex = indexBeneathMouse - 1;
+						}
+					}
+					move(dropInfo.getItem(), dropIndex);
+					break;
+				}
+			} else{
+				int increment = 0;
+				if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH
+						|| dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+					increment++;
+				}
+				dropIndex = indexBeneathMouse + increment;
+				drop(dropInfo.getItem(), dropIndex);
+			}
+			// System.out.println(dropInfo.toSummaryString());
+		}
+	}
 
 	/**
 	 * This panel is used as base of the station. All children of the station

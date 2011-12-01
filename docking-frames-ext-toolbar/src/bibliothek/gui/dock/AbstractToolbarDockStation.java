@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -30,13 +29,11 @@ import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
-import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.ToolbarTabDockStation;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
@@ -46,11 +43,9 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
-import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -534,130 +529,130 @@ public abstract class AbstractToolbarDockStation extends
 	protected abstract DockableProperty getDockableProperty( Dockable child,
 			Dockable target, int index, Path placeholder );
 
-	@Override
-	public StationDropOperation prepareDrop( int mouseX, int mouseY,
-			int titleX, int titleY, Dockable dockable ){
+//	@Override
+//	public StationDropOperation prepareDrop( int mouseX, int mouseY,
+//			int titleX, int titleY, Dockable dockable ){
+//
+//		System.out.println(this.toString() + "## prepareDrop(...) ##");
+//		DockController controller = getController();
+//
+//		if (getExpandedState() == ExpandedState.EXPANDED){
+//			return null;
+//		}
+//
+//		// check if the dockable and the station accept each other
+//		if (this.accept(dockable) & dockable.accept(this)){
+//			// check if controller exist and if the controller accept that
+//			// the dockable become a child of this station
+//			if (controller != null){
+//				if (!controller.getAcceptance().accept(this, dockable)){
+//					return null;
+//				}
+//			}
+//			return new ToolbarDropInfo<AbstractToolbarDockStation>(dockable,
+//					this, mouseX, mouseY){
+//				@Override
+//				public void execute(){
+//					drop(this);
+//				}
+//
+//				// Note: draw() is called first by the Controller. It seems
+//				// destroy() is called after, after a new StationDropOperation
+//				// is created
+//
+//				@Override
+//				public void destroy(){
+//					// without this line, nothing is displayed except if you
+//					// drag another component
+//					AbstractToolbarDockStation.this.indexBeneathMouse = -1;
+//					AbstractToolbarDockStation.this.sideBeneathMouse = null;
+//					AbstractToolbarDockStation.this.prepareDropDraw = false;
+//					AbstractToolbarDockStation.this.mainPanel.repaint();
+//				}
+//
+//				@Override
+//				public void draw(){
+//					// without this line, nothing is displayed
+//					AbstractToolbarDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
+//					AbstractToolbarDockStation.this.prepareDropDraw = true;
+//					AbstractToolbarDockStation.this.sideBeneathMouse = this
+//							.getSideDockableBeneathMouse();
+//					// without this line, line is displayed only on the first
+//					// component met
+//					AbstractToolbarDockStation.this.mainPanel.repaint();
+//				}
+//			};
+//		} else{
+//			return null;
+//		}
+//	}
 
-		System.out.println(this.toString() + "## prepareDrop(...) ##");
-		DockController controller = getController();
-
-		if (getExpandedState() == ExpandedState.EXPANDED){
-			return null;
-		}
-
-		// check if the dockable and the station accept each other
-		if (this.accept(dockable) & dockable.accept(this)){
-			// check if controller exist and if the controller accept that
-			// the dockable become a child of this station
-			if (controller != null){
-				if (!controller.getAcceptance().accept(this, dockable)){
-					return null;
-				}
-			}
-			return new ToolbarDropInfo<AbstractToolbarDockStation>(dockable,
-					this, mouseX, mouseY){
-				@Override
-				public void execute(){
-					drop(this);
-				}
-
-				// Note: draw() is called first by the Controller. It seems
-				// destroy() is called after, after a new StationDropOperation
-				// is created
-
-				@Override
-				public void destroy(){
-					// without this line, nothing is displayed except if you
-					// drag another component
-					AbstractToolbarDockStation.this.indexBeneathMouse = -1;
-					AbstractToolbarDockStation.this.sideBeneathMouse = null;
-					AbstractToolbarDockStation.this.prepareDropDraw = false;
-					AbstractToolbarDockStation.this.mainPanel.repaint();
-				}
-
-				@Override
-				public void draw(){
-					// without this line, nothing is displayed
-					AbstractToolbarDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
-					AbstractToolbarDockStation.this.prepareDropDraw = true;
-					AbstractToolbarDockStation.this.sideBeneathMouse = this
-							.getSideDockableBeneathMouse();
-					// without this line, line is displayed only on the first
-					// component met
-					AbstractToolbarDockStation.this.mainPanel.repaint();
-				}
-			};
-		} else{
-			return null;
-		}
-	}
-
-	/**
-	 * Drop thanks to information collect by dropInfo
-	 * 
-	 * @param dropInfo
-	 */
-	protected void drop( ToolbarDropInfo<?> dropInfo ){
-		// System.out.println(dropInfo.toSummaryString());
-		if (dropInfo.getItemPositionVSBeneathDockable() != Position.CENTER){
-			// Note: Computation of index to insert drag dockable is not the
-			// same
-			// between a move() and a drop(), because with a move() it is as if
-			// the
-			// drag dockable were remove first then added again in the list
-			// (Note: It's wird beacause indeed drag() is called after
-			// move()...)
-			int dropIndex;
-			int indexBeneathMouse = indexOf(dropInfo.getDockableBeneathMouse());
-			// System.out.println("	=> Drop index beneath mouse: " +
-			// indexBeneathMouse);
-			if (dropInfo.isMove()){
-				switch (this.getOrientation()) {
-				case VERTICAL:
-					if (dropInfo.getItemPositionVSBeneathDockable() == Position.SOUTH){
-						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
-							dropIndex = indexBeneathMouse + 1;
-						} else{
-							dropIndex = indexBeneathMouse;
-						}
-					} else{
-						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
-							dropIndex = indexBeneathMouse;
-						} else{
-							dropIndex = indexBeneathMouse - 1;
-						}
-					}
-					move(dropInfo.getItem(), dropIndex);
-					break;
-				case HORIZONTAL:
-					if (dropInfo.getItemPositionVSBeneathDockable() == Position.EAST){
-						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
-							dropIndex = indexBeneathMouse + 1;
-						} else{
-							dropIndex = indexBeneathMouse;
-						}
-					} else{
-						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
-							dropIndex = indexBeneathMouse;
-						} else{
-							dropIndex = indexBeneathMouse - 1;
-						}
-					}
-					move(dropInfo.getItem(), dropIndex);
-					break;
-				}
-			} else{
-				int increment = 0;
-				if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH
-						|| dropInfo.getSideDockableBeneathMouse() == Position.EAST){
-					increment++;
-				}
-				dropIndex = indexBeneathMouse + increment;
-				drop(dropInfo.getItem(), dropIndex);
-			}
-			// System.out.println(dropInfo.toSummaryString());
-		}
-	}
+//	/**
+//	 * Drop thanks to information collect by dropInfo
+//	 * 
+//	 * @param dropInfo
+//	 */
+//	protected void drop( ToolbarDropInfo<?> dropInfo ){
+//		// System.out.println(dropInfo.toSummaryString());
+//		if (dropInfo.getItemPositionVSBeneathDockable() != Position.CENTER){
+//			// Note: Computation of index to insert drag dockable is not the
+//			// same
+//			// between a move() and a drop(), because with a move() it is as if
+//			// the
+//			// drag dockable were remove first then added again in the list
+//			// (Note: It's wird beacause indeed drag() is called after
+//			// move()...)
+//			int dropIndex;
+//			int indexBeneathMouse = indexOf(dropInfo.getDockableBeneathMouse());
+//			// System.out.println("	=> Drop index beneath mouse: " +
+//			// indexBeneathMouse);
+//			if (dropInfo.isMove()){
+//				switch (this.getOrientation()) {
+//				case VERTICAL:
+//					if (dropInfo.getItemPositionVSBeneathDockable() == Position.SOUTH){
+//						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+//							dropIndex = indexBeneathMouse + 1;
+//						} else{
+//							dropIndex = indexBeneathMouse;
+//						}
+//					} else{
+//						if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH){
+//							dropIndex = indexBeneathMouse;
+//						} else{
+//							dropIndex = indexBeneathMouse - 1;
+//						}
+//					}
+//					move(dropInfo.getItem(), dropIndex);
+//					break;
+//				case HORIZONTAL:
+//					if (dropInfo.getItemPositionVSBeneathDockable() == Position.EAST){
+//						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+//							dropIndex = indexBeneathMouse + 1;
+//						} else{
+//							dropIndex = indexBeneathMouse;
+//						}
+//					} else{
+//						if (dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+//							dropIndex = indexBeneathMouse;
+//						} else{
+//							dropIndex = indexBeneathMouse - 1;
+//						}
+//					}
+//					move(dropInfo.getItem(), dropIndex);
+//					break;
+//				}
+//			} else{
+//				int increment = 0;
+//				if (dropInfo.getSideDockableBeneathMouse() == Position.SOUTH
+//						|| dropInfo.getSideDockableBeneathMouse() == Position.EAST){
+//					increment++;
+//				}
+//				dropIndex = indexBeneathMouse + increment;
+//				drop(dropInfo.getItem(), dropIndex);
+//			}
+//			// System.out.println(dropInfo.toSummaryString());
+//		}
+//	}
 
 	@Override
 	public void drop( Dockable dockable ){
@@ -787,7 +782,7 @@ public abstract class AbstractToolbarDockStation extends
 		return false;
 	}
 
-	private void move( Dockable dockable, int indexWhereInsert ){
+	protected void move( Dockable dockable, int indexWhereInsert ){
 		System.out.println(this.toString() + "## move() ## ==> Index: "
 				+ indexWhereInsert);
 		DockController controller = getController();
