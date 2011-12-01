@@ -276,29 +276,30 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 				}, placeholders, children);
 	}
 
-	/**
-	 * Exchanges the list of dockables on the side <code>position</code>.
-	 * 
-	 * @param position
-	 *            the position whose list gets reloaded
-	 * @param map
-	 *            the encoded list
-	 * @throws IllegalStateException
-	 *             if there are any children on this station
-	 */
-	public void setPlaceholders( Position position, PlaceholderMap map ){
-		if (getDockableCount() > 0){
-			throw new IllegalStateException(
-					"there are children on this station");
-		}
-		try{
-			DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>(
-					map);
-			setDockables(next, true);
-		} catch (IllegalArgumentException ex){
-			// silent;
-		}
-	}
+	// /**
+	// * Exchanges the list of dockables on the side <code>position</code>.
+	// *
+	// * @param position
+	// * the position whose list gets reloaded
+	// * @param map
+	// * the encoded list
+	// * @throws IllegalStateException
+	// * if there are any children on this station
+	// */
+	// public void setPlaceholders( Position position, PlaceholderMap map ){
+	// if (getDockableCount() > 0){
+	// throw new IllegalStateException(
+	// "there are children on this station");
+	// }
+	// try{
+	// DockablePlaceholderList<StationChildHandle> next = new
+	// DockablePlaceholderList<StationChildHandle>(
+	// map);
+	// setDockables(next, true);
+	// } catch (IllegalArgumentException ex){
+	// // silent;
+	// }
+	// }
 
 	/**
 	 * Creates a {@link ToolbarContainerConverter} which will be used for one

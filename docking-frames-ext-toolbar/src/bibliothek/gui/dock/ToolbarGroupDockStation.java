@@ -16,10 +16,8 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
-import bibliothek.gui.dock.station.toolbar.layer.ToolbarSlimDropLayer;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.ThemeManager;
-import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.NullTitleFactory;
@@ -52,7 +50,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 *  Size of the border outside this station where a {@link Dockable} will still
 	 *  be considered to be dropped onto this station. Measured in pixel.
 	 */
-	private int borderSideSnapSize = 0;
+	private int borderSideSnapSize = 4;
 	/** 
 	 * Whether the bounds of this station are slightly bigger than the station itself.
 	 * Used together with {@link #borderSideSnapSize} to grab Dockables "out of the sky".

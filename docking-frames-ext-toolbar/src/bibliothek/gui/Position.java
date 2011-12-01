@@ -7,5 +7,5 @@ package bibliothek.gui;
  * 
  */
 public enum Position {
-	NORTH, SOUTH, EAST, WEST, CENTER
+	NORTH, EAST, SOUTH, WEST, CENTER
 }

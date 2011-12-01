@@ -4,20 +4,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
+import java.awt.Graphics2D;
+import java.awt.BasicStroke;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -1265,6 +1263,7 @@ public abstract class AbstractToolbarDockStation extends
 
 		@Override
 		protected void paintOverlay( Graphics g ){
+			Graphics2D g2D = (Graphics2D) g;
 			DefaultStationPaintValue paint = getPaint();
 			if (indexBeneathMouse != null){
 				Component componentBeneathMouse = dockables.dockables()
@@ -1280,8 +1279,12 @@ public abstract class AbstractToolbarDockStation extends
 					// the base pane
 					Rectangle rectBeneathMouse = componentBeneathMouse
 							.getBounds();
-					g.drawRect(rectBeneathMouse.x, rectBeneathMouse.y,
-							rectBeneathMouse.width, rectBeneathMouse.height);
+					Rectangle2D rect = new Rectangle2D.Double(rectBeneathMouse.x,
+							rectBeneathMouse.y, rectBeneathMouse.width,
+							rectBeneathMouse.height);
+					g2D.setColor(Color.RED);
+					g2D.setStroke(new BasicStroke(3));
+					g2D.draw(rect);
 					Point pBeneath = rectBeneathMouse.getLocation();
 					SwingUtilities.convertPointToScreen(pBeneath,
 							componentBeneathMouse.getParent());

@@ -46,7 +46,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * Size of the lateral zone where no drop action can be done (Measured in
 	 * pixel).
 	 */
-	private int lateralNodropZoneSize = 0;
+	private int lateralNodropZoneSize = 4;
 
 	/**
 	 * Creates a new {@link ToolbarDockStation}.
