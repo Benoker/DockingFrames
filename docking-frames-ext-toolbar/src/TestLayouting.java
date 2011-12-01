@@ -27,7 +27,7 @@ public class TestLayouting {
 
 		ScreenDockStation screen = new ScreenDockStation( controller.getRootWindowProvider() );
 		controller.add( screen );
-		ScreenDockProperty initial = new ScreenDockProperty( 20, 20, 200, 30 );
+		ScreenDockProperty initial = new ScreenDockProperty( 20, 20, 200, 20 );
 
 		ComponentDockable dockable = new ComponentDockable( new JButton( "hello" ) );
 

@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -323,6 +324,10 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     
     public Rectangle getNormalBounds() {
 	    return normalBounds;
+    }
+    
+    public Dimension getMinimumWindowSize(){
+    	return getWindowComponent().getMinimumSize();
     }
 
     public void setController( DockController controller ) {

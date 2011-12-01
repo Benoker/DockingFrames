@@ -2,13 +2,12 @@ package bibliothek.gui.dock.station.toolbar;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.ComponentDockable;
-import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.ToolbarTabDockStation;
 
 /**
@@ -57,7 +56,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			}
 		}
 
-		if (station instanceof ToolbarContainerDockStation){
+		if (station instanceof ToolbarContainerDockStation || station instanceof ScreenDockStation){
 			if (dockable instanceof ToolbarGroupDockStation){
 				return dockable;
 			} else{
@@ -75,7 +74,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 	public boolean isToolbarGroupPartParent( DockStation parent, Dockable child ){
 		// floating policy
 		if (parent instanceof ScreenDockStation
-				&& child instanceof ToolbarElementInterface) {
+				&& child instanceof ToolbarGroupDockStation) {
 			return true;
 		}
 		// ?? policy

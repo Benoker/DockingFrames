@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.screen;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -200,6 +201,14 @@ public interface ScreenDockWindow {
      * @return the boundaries, can be <code>null</code>
      */
     public Rectangle getNormalBounds();
+    
+    /**
+     * Gets the minimum size this window should have. Usually these boundaries
+     * are used by a {@link BoundaryRestriction}, but there are no guarantees that
+     * the window is not made smaller than this size.
+     * @return the minimum size
+     */
+    public Dimension getMinimumWindowSize();
     
     /**
      * Ensures the correctness of the boundaries of this window. This method

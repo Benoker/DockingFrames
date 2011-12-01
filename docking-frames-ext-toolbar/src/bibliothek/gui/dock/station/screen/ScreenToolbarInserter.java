@@ -30,10 +30,13 @@ import java.awt.Dimension;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.control.relocator.Inserter;
 import bibliothek.gui.dock.control.relocator.InserterSource;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.station.OrientedDockStation;
+import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
@@ -90,10 +93,15 @@ public class ScreenToolbarInserter implements Inserter{
 	 * Called if the toolbar item defined by <code>source</code> has to be put onto
 	 * the {@link ScreenDockStation} defined by <code>source</code>.
 	 * @param source all the information about the operation
+	 * @param orientation the preferred orientation of the new window, might be <code>null</code>
 	 */
-	protected void execute( InserterSource source ){
+	protected void execute( InserterSource source, Orientation orientation ){
 		ToolbarStrategy strategy = getStrategy();
+				
 		Dockable item = strategy.ensureToolbarLayer( source.getParent(), source.getChild() );
+		if( orientation != null && item.asDockStation() instanceof OrientedDockStation ){
+			((OrientedDockStation)item).setOrientation( orientation );
+		}
 		
 		ScreenDockStation station = (ScreenDockStation)source.getParent();
 		
@@ -111,6 +119,7 @@ public class ScreenToolbarInserter implements Inserter{
 	 */
 	private class Operation implements StationDropOperation{
 		private InserterSource source;
+		private Orientation orientation;
 		
 		/**
 		 * Creates a new operation
@@ -118,6 +127,17 @@ public class ScreenToolbarInserter implements Inserter{
 		 */
 		public Operation( InserterSource source ){
 			this.source = source;
+			
+			Dockable dockable = source.getChild();
+			DockStation parent = dockable.getDockParent();
+			
+			orientation = null;
+			if( parent instanceof OrientingDockStation ){
+				orientation = ((OrientingDockStation)parent).getOrientationOf( dockable );
+			}
+			else if( dockable.asDockStation() instanceof OrientedDockStation ){
+				orientation = ((OrientedDockStation)dockable.asDockStation()).getOrientation();
+			}
 		}
 		
 		@Override
@@ -137,7 +157,7 @@ public class ScreenToolbarInserter implements Inserter{
 
 		@Override
 		public void execute(){
-			ScreenToolbarInserter.this.execute( source );
+			ScreenToolbarInserter.this.execute( source, orientation );
 		}
 
 		@Override
