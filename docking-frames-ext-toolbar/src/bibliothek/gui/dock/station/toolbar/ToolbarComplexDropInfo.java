@@ -11,6 +11,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
+import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -25,15 +26,14 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
  * @param <S>
  *            the kind of station using this {@link ToolbarDropInfo}
  */
-public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
-		implements StationDropOperation{
+public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	/** The {@link Dockable} which is inserted */
 	private Dockable dragDockable;
 	/**
 	 * The {@link Dockable} which received the dockbale (WARNING: this can be
 	 * different to his original dock parent!)
 	 */
-	private S stationHost;
+	private ToolbarGroupDockStation stationHost;
 	/** Location of the mouse */
 	private int mouseX, mouseY;
 	/** closest dockable beneath the mouse with regards to the mouse coordinates */
@@ -43,7 +43,12 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 	 * coordinates
 	 */
 	private Position sideDockableBeneathMouse = null;
-	
+	/**
+	 * Position of the drag dockable with regards to the closest component above
+	 * the mouse
+	 */
+	private Position dragDockablePosition;
+
 	/**
 	 * Constructs a new info.
 	 * 
@@ -56,8 +61,8 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 	 * @param mouseY
 	 *            the mouse position on Y axis
 	 */
-	public ToolbarComplexDropInfo( Dockable dockable, S stationHost,
-			int mouseX, int mouseY ){
+	public ToolbarComplexDropInfo( Dockable dockable,
+			ToolbarGroupDockStation stationHost, int mouseX, int mouseY ){
 		System.out.println(this.toString()
 				+ "## new ToolbarComplexDropInfo ## ");
 		this.dragDockable = dockable;
@@ -70,7 +75,7 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 		return dragDockable;
 	}
 
-	public S getTarget(){
+	public ToolbarGroupDockStation getTarget(){
 		return stationHost;
 	}
 
@@ -96,9 +101,9 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 	}
 
 	/**
-	 * Gets the <code>index</code> of the component beneath the mouse
+	 * Gets the <code>Dockable</code> beneath the mouse.
 	 * 
-	 * @return the index
+	 * @return the dockable and <code>null</code> if there's no dockable
 	 */
 	public Dockable getDockableBeneathMouse(){
 		if (dockableBeneathMouse == null){
@@ -110,9 +115,9 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 	/**
 	 * Gets the closest <code>side</code> of the component beneath the mouse.
 	 * Example: if the mouse is over a button, near the top of the button, this
-	 * return NORTH position
+	 * return {@link Position#NORTH})
 	 * 
-	 * @return the side
+	 * @return the closest side
 	 */
 	public Position getSideDockableBeneathMouse(){
 		if (sideDockableBeneathMouse == null){
@@ -123,17 +128,22 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 	}
 
 	/**
-	 * Gets the relative position of drag dockable with the closest dockable
-	 * above the mouse.
+	 * Gets the relative position between: the initial position of the dockable
+	 * and the dockable beneath the mouse. The relative position is computed
+	 * either on horizontal or vertical axis.
 	 * 
-	 * @return the position
+	 * @return the relative position (if the drag dockable and the dockable
+	 *         beneath mouse are the same, return {@link Position#CENTER})
 	 */
-	public Position getItemPositionVSBeneathDockable( Orientation axis ){
-		return computeItemPositionVSBeneathDockable(axis);
+	public Position getItemPositionVSBeneathDockable(){
+		if (dragDockablePosition == null){
+			dragDockablePosition = computeItemPositionVSBeneathDockable();
+		}
+		return computeItemPositionVSBeneathDockable();
 	}
 
 	/**
-	 * compute the closest dockable beneath the mouse (euclidean distance)
+	 * Computes the closest dockable beneath the mouse (euclidean distance)
 	 * 
 	 * @return the dockable and <code>null</code> if there's no dockable
 	 */
@@ -236,27 +246,22 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 				maxDist = dist;
 				sideWin = pos;
 			}
-
 		}
 		return sideWin;
-
 	}
 
 	/**
-	 * Computes the relative position between: the drag dockable original
-	 * position and the dockable beneath the mouse. The relative position is
+	 * Computes the relative position between: the initial position of the
+	 * dockable and the dockable beneath the mouse. The relative position is
 	 * computed either on horizontal or vertical axis.
-	 * 
-	 * @param axis
-	 *            indicates if the relative position is computed on the
-	 *            horizontal or the vertical axis
 	 * 
 	 * @return the relative position (if the drag dockable and the dockable
 	 *         beneath mouse are the same, return {@link Position#CENTER})
 	 */
-	private Position computeItemPositionVSBeneathDockable( Orientation axis ){
+	private Position computeItemPositionVSBeneathDockable(){
 		Point coordDockableDragged = getItem().getComponent().getLocation();
-		if (getDockableBeneathMouse() != null){
+		if (getDockableBeneathMouse() != null
+				&& getSideDockableBeneathMouse() != null){
 			Point coordDockableBeneathMouse = getDockableBeneathMouse()
 					.getComponent().getLocation();
 			// The dockable is now in the frame of reference of the dockable
@@ -266,6 +271,13 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 			if (getItem() == getDockableBeneathMouse()){
 				return Position.CENTER;
 			} else{
+				Orientation axis;
+				if (getSideDockableBeneathMouse() == Position.EAST
+						|| getSideDockableBeneathMouse() == Position.WEST){
+					axis = Orientation.HORIZONTAL;
+				} else{
+					axis = Orientation.VERTICAL;
+				}
 				switch (axis) {
 				case VERTICAL:
 					if (coordDockableDragged.getY() <= coordDockableBeneathMouse
@@ -296,7 +308,7 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 	}
 
 	/**
-	 * Return a string describing field values
+	 * Returns a string describing field values
 	 * 
 	 * @return string describing fields
 	 */
@@ -306,8 +318,7 @@ public abstract class ToolbarComplexDropInfo<S extends OrientedDockStation>
 				+ getTarget() + ln + "	=> Dockable beneath mouse:"
 				+ getDockableBeneathMouse() + ln + "	=> Closest side:"
 				+ this.getSideDockableBeneathMouse() + ln
-				+ "	=> Drag dockable VS dockable beneath mouse:"
-				+ " Horizontal -> " + this.getItemPositionVSBeneathDockable(Orientation.HORIZONTAL)
-				+ " / Vertical -> " + this.getItemPositionVSBeneathDockable(Orientation.VERTICAL);
+				+ "	=> Drag dockable VS dockable beneath mouse: "
+				+ this.getItemPositionVSBeneathDockable();
 	}
 }

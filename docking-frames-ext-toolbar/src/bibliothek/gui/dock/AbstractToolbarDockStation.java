@@ -101,9 +101,14 @@ public abstract class AbstractToolbarDockStation extends
 	/** A paint to draw lines */
 	private DefaultStationPaintValue paint;
 	/** the index of the closest dockable above the mouse */
-	private Integer indexBeneathMouse = null;
+	private int indexBeneathMouse = -1;
 	/** closest side of the the closest dockable above the mouse */
 	private Position sideBeneathMouse = null;
+	/**
+	 * Tells if this station is in prepareDrop state and should draw something
+	 * accordingly
+	 */
+	boolean prepareDropDraw = false;
 
 	/** all registered {@link OrientingDockStationListener}s. */
 	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
@@ -527,6 +532,8 @@ public abstract class AbstractToolbarDockStation extends
 	 */
 	protected abstract DockableProperty getDockableProperty( Dockable child,
 			Dockable target, int index, Path placeholder );
+	
+	protected abstract StationDropOperation createStationDropOperation();
 
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
@@ -563,8 +570,9 @@ public abstract class AbstractToolbarDockStation extends
 				public void destroy(){
 					// without this line, nothing is displayed except if you
 					// drag another component
-					AbstractToolbarDockStation.this.indexBeneathMouse = null;
+					AbstractToolbarDockStation.this.indexBeneathMouse = -1;
 					AbstractToolbarDockStation.this.sideBeneathMouse = null;
+					AbstractToolbarDockStation.this.prepareDropDraw = false;
 					AbstractToolbarDockStation.this.mainPanel.repaint();
 				}
 
@@ -572,6 +580,7 @@ public abstract class AbstractToolbarDockStation extends
 				public void draw(){
 					// without this line, nothing is displayed
 					AbstractToolbarDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
+					AbstractToolbarDockStation.this.prepareDropDraw = true;
 					AbstractToolbarDockStation.this.sideBeneathMouse = this
 							.getSideDockableBeneathMouse();
 					// without this line, line is displayed only on the first
@@ -748,7 +757,7 @@ public abstract class AbstractToolbarDockStation extends
 	protected abstract Path getPlaceholder( DockableProperty property );
 
 	/**
-	 * Dropps <code>dockable</code> at location <code>index</code>.
+	 * Drops <code>dockable</code> at location <code>index</code>.
 	 * 
 	 * @param dockable
 	 *            the element to add
@@ -889,12 +898,10 @@ public abstract class AbstractToolbarDockStation extends
 	 * @return the location or -1 if the child was not found
 	 */
 	public int indexOf( Dockable dockable ){
-		int index = 0;
-		for (StationChildHandle handle : dockables.dockables()){
-			if (handle.getDockable() == dockable){
-				return index;
+		for (int i = 0; i < dockables.dockables().size(); i++){
+			if (dockables.dockables().get(i).getDockable() == dockable){
+				return i;
 			}
-			index++;
 		}
 		return -1;
 	}
@@ -969,10 +976,6 @@ public abstract class AbstractToolbarDockStation extends
 						.setOrientation(getOrientation());
 			}
 		}
-		// Component comp = handle.getDisplayer().getComponent();
-		// if (comp instanceof JComponent) {
-		// ((JComponent) comp).setOpaque(false);
-		// }
 		mainPanel.dockablePane.add(handle.getDisplayer().getComponent(), index);
 		mainPanel.dockablePane.invalidate();
 
@@ -984,7 +987,7 @@ public abstract class AbstractToolbarDockStation extends
 		// mainPanel.getContentPane().getPreferredSize().height ) );
 		// mainPanel.doLayout();
 		mainPanel.revalidate();
-		// mainPanel.getContentPane().repaint();
+		mainPanel.getContentPane().repaint();
 	}
 
 	/**
@@ -1265,58 +1268,66 @@ public abstract class AbstractToolbarDockStation extends
 		protected void paintOverlay( Graphics g ){
 			Graphics2D g2D = (Graphics2D) g;
 			DefaultStationPaintValue paint = getPaint();
-			if (indexBeneathMouse != null){
-				Component componentBeneathMouse = dockables.dockables()
-						.get(indexBeneathMouse).getDisplayer().getComponent();
-				if (componentBeneathMouse != null){
-					// WARNING:
-					// 1. This rectangle stands for the component beneath
-					// mouse. His coordinates are in the frame of reference his
-					// direct parent.
-					// 2. g is in the frame of reference of the overlayPanel
-					// 3. So we need to translate this rectangle in the frame of
-					// reference of the overlay panel, which is the same that
-					// the base pane
-					Rectangle rectBeneathMouse = componentBeneathMouse
-							.getBounds();
-					Rectangle2D rect = new Rectangle2D.Double(
-							rectBeneathMouse.x, rectBeneathMouse.y,
-							rectBeneathMouse.width, rectBeneathMouse.height);
-					g2D.setColor(Color.RED);
-					g2D.setStroke(new BasicStroke(3));
-					g2D.draw(rect);
-					Point pBeneath = rectBeneathMouse.getLocation();
-					SwingUtilities.convertPointToScreen(pBeneath,
-							componentBeneathMouse.getParent());
-					SwingUtilities.convertPointFromScreen(pBeneath,
-							this.getBasePane());
-					Rectangle rectangleTranslated = new Rectangle(pBeneath.x,
-							pBeneath.y, rectBeneathMouse.width,
-							rectBeneathMouse.height);
-					switch (AbstractToolbarDockStation.this.getOrientation()) {
-					case VERTICAL:
-						int y;
-						if (sideBeneathMouse == Position.NORTH){
-							y = rectangleTranslated.y;
-						} else{
-							y = rectangleTranslated.y
-									+ rectangleTranslated.height;
+			if (prepareDropDraw){
+				if (indexBeneathMouse != -1){
+					Component componentBeneathMouse = dockables.dockables()
+							.get(indexBeneathMouse).getDisplayer()
+							.getComponent();
+					if (componentBeneathMouse != null){
+						// WARNING:
+						// 1. This rectangle stands for the component beneath
+						// mouse. His coordinates are in the frame of reference
+						// his
+						// direct parent.
+						// 2. g is in the frame of reference of the overlayPanel
+						// 3. So we need to translate this rectangle in the
+						// frame of
+						// reference of the overlay panel, which is the same
+						// that
+						// the base pane
+						Rectangle rectBeneathMouse = componentBeneathMouse
+								.getBounds();
+						Rectangle2D rect = new Rectangle2D.Double(
+								rectBeneathMouse.x, rectBeneathMouse.y,
+								rectBeneathMouse.width, rectBeneathMouse.height);
+						g2D.setColor(Color.RED);
+						g2D.setStroke(new BasicStroke(3));
+						g2D.draw(rect);
+						Point pBeneath = rectBeneathMouse.getLocation();
+						SwingUtilities.convertPointToScreen(pBeneath,
+								componentBeneathMouse.getParent());
+						SwingUtilities.convertPointFromScreen(pBeneath,
+								this.getBasePane());
+						Rectangle rectangleTranslated = new Rectangle(
+								pBeneath.x, pBeneath.y, rectBeneathMouse.width,
+								rectBeneathMouse.height);
+						switch (AbstractToolbarDockStation.this
+								.getOrientation()) {
+						case VERTICAL:
+							int y;
+							if (sideBeneathMouse == Position.NORTH){
+								y = rectangleTranslated.y;
+							} else{
+								y = rectangleTranslated.y
+										+ rectangleTranslated.height;
+							}
+							paint.drawInsertionLine(g, rectangleTranslated.x,
+									y, rectangleTranslated.x
+											+ rectangleTranslated.width, y);
+							break;
+						case HORIZONTAL:
+							int x;
+							if (sideBeneathMouse == Position.WEST){
+								x = rectangleTranslated.x;
+							} else{
+								x = rectangleTranslated.x
+										+ rectangleTranslated.width;
+							}
+							paint.drawInsertionLine(g, x,
+									rectangleTranslated.y, x,
+									rectangleTranslated.y
+											+ rectangleTranslated.height);
 						}
-						paint.drawInsertionLine(g, rectangleTranslated.x, y,
-								rectangleTranslated.x
-										+ rectangleTranslated.width, y);
-						break;
-					case HORIZONTAL:
-						int x;
-						if (sideBeneathMouse == Position.WEST){
-							x = rectangleTranslated.x;
-						} else{
-							x = rectangleTranslated.x
-									+ rectangleTranslated.width;
-						}
-						paint.drawInsertionLine(g, x, rectangleTranslated.y, x,
-								rectangleTranslated.y
-										+ rectangleTranslated.height);
 					}
 				}
 			}

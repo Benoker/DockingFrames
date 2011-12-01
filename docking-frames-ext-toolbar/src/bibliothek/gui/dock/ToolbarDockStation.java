@@ -10,6 +10,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DisplayerFactory;
+import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
@@ -82,6 +83,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	protected DockTitleVersion registerTitle( DockController controller ){
 		return controller.getDockTitleManager().getVersion(TITLE_ID,
 				BasicDockTitleFactory.FACTORY);
+	}
+	
+	protected abstract StationDropOperation createStationDropOperation() {
+		return 
 	}
 
 	@Override
