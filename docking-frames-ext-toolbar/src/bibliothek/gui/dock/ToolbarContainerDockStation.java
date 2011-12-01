@@ -391,9 +391,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 					// Reminder: if dockable beneath mouse doesn't belong to
 					// this, then indexOf return -1
 					ToolbarContainerDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
-					System.out
-							.println("draw: "
-									+ ToolbarContainerDockStation.this.indexBeneathMouse);
 					ToolbarContainerDockStation.this.prepareDropDraw = true;
 					ToolbarContainerDockStation.this.sideAboveMouse = this
 							.getSideDockableBeneathMouse();

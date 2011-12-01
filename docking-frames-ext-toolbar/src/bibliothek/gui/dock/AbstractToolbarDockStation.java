@@ -1279,9 +1279,9 @@ public abstract class AbstractToolbarDockStation extends
 					// the base pane
 					Rectangle rectBeneathMouse = componentBeneathMouse
 							.getBounds();
-					Rectangle2D rect = new Rectangle2D.Double(rectBeneathMouse.x,
-							rectBeneathMouse.y, rectBeneathMouse.width,
-							rectBeneathMouse.height);
+					Rectangle2D rect = new Rectangle2D.Double(
+							rectBeneathMouse.x, rectBeneathMouse.y,
+							rectBeneathMouse.width, rectBeneathMouse.height);
 					g2D.setColor(Color.RED);
 					g2D.setStroke(new BasicStroke(3));
 					g2D.draw(rect);
