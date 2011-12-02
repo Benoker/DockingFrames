@@ -1,11 +1,6 @@
 package bibliothek.gui.dock.station.toolbar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.Position;
 import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -13,6 +8,7 @@ import bibliothek.gui.dock.station.StationDropOperation;
 /**
  * An algorithm allowing to merge two {@link AbstractToolbarDockStation}s together.
  * @author Benjamin Sigg
+ * @author Herve Guillaume
  */
 public abstract class AbstractToolbarMerger implements Merger {
 	/**
@@ -25,29 +21,6 @@ public abstract class AbstractToolbarMerger implements Merger {
 	@Override
 	public boolean canMerge( StationDropOperation operation, DockStation parent, DockStation child ){
 		return (operation == null || !operation.isMove()) && parent instanceof AbstractToolbarDockStation && validType( (AbstractToolbarDockStation)parent ) && child instanceof AbstractToolbarDockStation && validType( (AbstractToolbarDockStation)child );
-	}
-
-	@Override
-	public void merge( StationDropOperation operation, DockStation parent, DockStation child ){
-		merge( (ToolbarDropInfo<?>) operation, (AbstractToolbarDockStation) parent, (AbstractToolbarDockStation) child );
-	}
-
-	public void merge( ToolbarDropInfo<?> operation, AbstractToolbarDockStation parent, AbstractToolbarDockStation child ){
-		// WARNING: if I don't do a copy of dockables, problem occurs.
-		// Perhaps due to concurrent access to the dockable (drop in
-		// goal area ==> drag in origin area)?
-		int count = child.getDockableCount();
-		List<Dockable> insertDockables = new ArrayList<Dockable>();
-		for( int i = 0; i < count; i++ ) {
-			insertDockables.add( child.getDockable( i ) );
-		}
-		int increment = 0;
-		if( operation.getSideDockableBeneathMouse() == Position.SOUTH || operation.getSideDockableBeneathMouse() == Position.EAST ) {
-			increment++;
-		}
-		int dropIndex = parent.indexOf( operation.getDockableBeneathMouse() ) + increment;
-		for( int i = 0; i < count; i++ ) {
-			parent.drop( insertDockables.get( i ), dropIndex++ );
-		}
-	}
+	}	
+	
 }
