@@ -1,0 +1,209 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+\usepackage{color}
+
+\lstset{language=Java}
+\lstset{breaklines=true, numbers=left}
+\lstset{tabsize=4}
+
+\definecolor{CommentColor}{rgb}{0,0.5,0} 
+\definecolor{KeywordColor}{rgb}{0,0,0.5}
+
+\lstset{commentstyle=\scriptsize\color{CommentColor}\itshape}
+\lstset{keywordstyle=\scriptsize\color{KeywordColor}\bfseries}
+\lstset{basicstyle=\scriptsize}
+\lstset{identifierstyle=\scriptsize}
+\lstset{stringstyle=\scriptsize}
+
+% \lstset{basicstyle=\ttfamily}
+
+\newcommand{\src}[1]{\lstinline[basicstyle=\normalsize\ttfamily,keywordstyle=\normalsize\ttfamily,identifierstyle=\normalsize\ttfamily]|#1|}
+
+\title{DockingFrames 1.0.5 - FAQ}
+\author{Benjamin Sigg}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\begin{abstract}Some questions that are frequently asked.
+\end{abstract}
+
+\section{Writing applications}
+This section deals with questions that are related to writing code.
+\subsection{How to write a close-button?}
+A "close-button" is some button, most times a cross in the upper right edge, that closes a \src{Dockable} when pressed.
+\subsubsection{Solution 1: FDockable}
+When using the common-project, then you can use \src{DefaultSingleCDockable} or \src{DefaultMultipleCDockable}. Both \src{CDockable}s contain a method \\\src{setCloseable}. Call that method with \src{true}.
+\begin{lstlisting}
+DefaultSingleCDockable dockable = ...
+dockable.setCloseable( true );
+\end{lstlisting}
+If you implement the interface \src{SingleCDockable} or \src{MultipleCDockable} directly, then ensure that \src{isCloseable} returns \src{true}.
+
+\subsubsection{Solution 2: DockFrontend}
+When using a \src{DockFrontend}, register the \src{Dockable} at the \src{DockFrontend} and call \src{setHideable}.
+\begin{lstlisting}
+DockFrontend frontend = ...
+Dockable dockable = ...
+
+frontend.add( dockable, "a unique id" );
+frontend.setHideable( dockable, true );
+\end{lstlisting}
+
+\subsubsection{Solution 3: CloseAction}
+If you use the common-project, then a \src{DockAction} called \src{CloseAction} is available. Add the action to the \src{Dockable}s which should be closeable, for example you could use an \src{ActionGuard}:
+\begin{lstlisting}
+public class CloseGuard implements ActionGuard{
+	private DockActionSource source;
+    
+	public CloseGuard( DockController controller ){
+		DockAction close = new CloseAction( controller );
+		source = new DefaultDockActionSource(
+			new LocationHint(
+				LocationHint.ACTION_GUARD,
+				LocationHint.RIGHT_OF_ALL ),
+			close );
+	}
+
+	public boolean react( Dockable dockable ) {
+		return true;
+	}
+	public DockActionSource getSource( Dockable dockable ) {
+		return source;
+	}
+}
+\end{lstlisting}
+And later:
+\begin{lstlisting}
+DockController controller = ...
+controller.addActionGuard( new CloseGuard( controller ));
+\end{lstlisting}
+
+\subsubsection{Solution 4: New DockAction}
+If \src{CloseAction} of the common-project can't be used, then a new \src{DockAction} must be written.
+\begin{lstlisting}
+public class CloseAction extends SimpleButtonAction{
+	public CloseAction( DockController controller ){
+		setText( "Close" );
+		setIcon( new ImageIcon( "close.png" ));
+	}
+
+	@Override
+	public void action( Dockable dockable ) {
+		DockStation parent = dockable.getDockParent();
+		if( parent != null )
+			parent.drag( dockable );
+	}
+}
+\end{lstlisting}
+This action is then used as described in the third solution.
+
+\subsection{How do I layout the contents of a SplitDockStation?}
+The \src{SplitDockStation} has a complex layout. How can new \src{Dockable}s be added to \src{SplitDockStation} such that they have a certain location and size?
+
+\subsubsection{Solution 1: SplitDockProperty}
+A \src{SplitDockProperty} describes the size and location of a \src{Dockable} on a \src{SplitDockStation} by storing the \src{x}, \src{y} coordinates, and the \src{width} and \src{height}. All the properties are normalized such that they are between 0 and 1.
+
+A client can create new \src{SplitDockProperty}s and call \src{drop}:
+\begin{lstlisting}
+SplitDockStation station = ...
+Dockable alpha = ...
+Dockable beta = ...
+
+if( !station.drop( alpha, SplitDockProperty.NORTH ) )
+	station.drop( alpha );
+
+if( !station.drop( beta, new SplitDockProperty( 0, 0, 1, 1 )))
+	station.drop( beta );
+\end{lstlisting}
+A few words to this code: in lines \src{5} and \src{8}, the result of \src{drop} needs to be checked. It is possible, that \src{SplitDockStation} refuses to add a \src{Dockable}.
+
+\src{SplitDockStation} internally has a binary tree in whose leafs the \src{Dockable}s are stored, and the nodes determine the proportions between the \src{Dockable}s. Each \src{drop} adds a new branch into that tree. The \src{SplitDockProperty} is only a hint where to insert the branch, and will not be stored for later use. So this station does \textbf{not} work like a \src{LayoutManager}, the order in which the \src{Dockable}s are dropped is important. The first \src{Dockable} will always get boundaries of \src{0,0,1,1}.
+
+\subsubsection{Solution 2: SplitDockPathProperty}
+As set earlier, \src{SplitDockStation} is internally organized as a binary tree. A \src{SplitDockPathProperty} is the description of the exact location of a branch. It is used like \src{SplitDockProperty}:
+\begin{lstlisting}
+SplitDockStation station = ...
+Dockable dockable = ...
+
+SplitDockPathProperty path = new SplitDockPathProperty();
+path.add( SplitDockPathProperty.Location.BOTTOM, 0.4 );
+path.add( SplitDockPathProperty.Location.LEFT, 0.25 );
+if( !station.drop( dockable, path ))
+	station.drop( dockable );
+\end{lstlisting}
+In lines \src{5,6} a branch to the bottom left edge is created.
+
+\subsubsection{Solution 3: SplitDockTree}
+A \src{SplitDockTree} is an exact model of the internal binary tree that every \src{SplitDockStation} has. When calling \src{dropTree}, all \src{Dockable}s will be removed from the station, and the new tree will replace the old one.
+\begin{lstlisting}
+SplitDockStation station = ...
+Dockable[] dockables = ...
+
+SplitDockTree tree = new SplitDockTree();
+tree.root(
+	tree.horizontal(
+		tree.vertical( 
+			dockables[0], 
+			dockables[1], 
+			0.4 ),
+		tree.vertical(
+			tree.put(
+				dockables[2] ),
+			tree.put(
+				dockables[3],
+				dockables[4] ) )
+	)
+);
+station.dropTree( tree );
+\end{lstlisting}
+Note that several \src{Dockable}s can be put at the same location as shown in lines \src{14-16}.
+
+\subsubsection{Solution 4: SplitDockGrid}
+A \src{SplitDockGrid} is an algorithm that takes several \src{Dockable}s and their desired location, and creates a \src{SplitDockTree} that matches these locations as good as possible.
+
+The use is straight forward:
+\begin{lstlisting}
+SplitDockStation station = ...
+Dockable[] dockables = ...
+
+SplitDockGrid grid = new SplitDockGrid();
+grid.addDockable( 0.0, 0.0, 0.5, 0.5, dockables[0] );
+grid.addDockable( 0.0, 0.5, 0.5, 0.5, dockables[1] );
+grid.addDockable( 0.5, 0.0, 0.5, 0.5, dockables[2] );
+grid.addDockable( 0.5, 0.5, 0.5, 0.5, dockables[3] );
+station.dropTree( grid.toTree() );
+\end{lstlisting}
+
+There is also the possibility to model the layout with a \src{String}:
+\begin{lstlisting}
+SplitDockStation station = ...
+Dockable[] dockables = ...
+
+Map<String, Dockable[]> map = new HashMap<String, Dockable[]>();
+for( int i = 0; i < dockables.length; i++ ){
+	map.put( 
+		String.valueOf( i ), 
+		new Dockable[]{ dockables[i] });
+}
+
+String layout = 
+	"0022\n"+
+	"0022\n"+
+	"1133\n"+
+	"1133";
+
+SplitDockGrid grid = new SplitDockGrid( layout, map );
+station.dropTree( grid.toTree() );
+\end{lstlisting}
+The layout is defined in lines \src{12-15}, just image a raster where the characters tell which \src{Dockable} should overlap a given cell.
+
+\subsubsection{Solution 5: Start and store}
+If your application is able to store the layout, then just start the application, make the layout by hand, and store the layout.
+
+The common-project or \src{DockFrontend} can help you storing one or several layouts.
+
+\end{document}

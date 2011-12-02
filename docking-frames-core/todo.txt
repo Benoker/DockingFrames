@@ -1,0 +1,34 @@
+- [Done] EclipseTheme: tab selection if tabs overlap
+- [Done] EclipseTheme: Border replaceable (perhaps together with the TabPainter?)
+- [Done] Double click on DockTitle or Dockable, use global mechanism instead of the SplitDockStation-mechanism
+- ScreenDockStation: truly support multiple screens. Check location of dialog only after mouse has been released
+- [Done] Commons: new layer that simplifies DF. Should not contain more than 5 public interfaces
+- [Done] A global way to use the keyboard to give additional commands when moving a Dockable
+- All DockStations: make sure the children do not get too small, for example use "getPreferredSize" or a similar mechanism.
+- [Done] ShapedGradientPainter & others: exchangeable colors
+- [Done] Store and load DockSituation from XML?
+- [Done] Allow StackDockStations to have different colors on the tab.
+- [Done] Possibility to fix size of Dockables on SplitDockStations
+- [Done] Guide: mention ColorSchemes and the new layout capabilities of SplitDockStation
+- SplitDockStation: droping children with SplitDockProperty does not work when the stations size is too small (or the station is not child of a frame?)
+- [Done] Problems with LaF jtatto, decorated windows
+- [Done] Problem with Nimbus, colors not found
+- [Done] Actions (minimize, ...) of CDockable should be customizeable and hideable
+- [Done] More flexibility in different stations for common, for example only one minimizing-area
+- Size request on invisible panels?
+- ButtonPanel: handling add/remove actions and how many actions should be on the menu, is not yet very save and needs too much resources
+- [Done] When a StackDockStation is visible: changing from EclipseTheme to BubbleTheme will leave some Dockable-Components invisible (tested with "Paint").
+- [Done] DockController.putRepresentative: should also work for DoubleClickListeners and the Relocator
+- [Done] Support for tooltips on titles and tabs?
+- [Done] FlatTab and others: tabs at different locations
+- [Done] Eclipse-Theme: curves are not painted smoothly
+- [Done] Maximize externalized dockable: may become maximized on the screen
+- Allow to move a dockable to the edge of a SplitDockStation, even if the station is within a maximized frame
+- MouseFocusObserver: when canceling an event but the user clicked on a tab, then the event is still processed.
+- Bug: title of FlapDockStation no longer receives mouse pressed events.
+- Allow to hide the actions in non-selected tab in the EclipseTheme.
+- Allow to transfer focus using "requestFocus" or a similar method.
+- Update listeners: always inform before closing a Dockable
+- [done] CDocakble.getAction
+- BasicMovingImageFactory: backup plan for null-DockTitles 
+- ColorManager: better support ColorSchemes, "ColorScheme.transmitAll" should be removed  

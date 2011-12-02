@@ -1,0 +1,371 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<groupId>org.dockingframes</groupId>
+	<artifactId>docking-frames-base</artifactId>
+	<version>1.1.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<modules>
+
+		<module>docking-frames-core</module>
+		<module>docking-frames-common</module>
+
+		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar on
+			maven -->
+		<!-- <module>docking-frames-ext-glass</module> -->
+
+		<!-- TODO activate this later -->
+
+		<!-- <module>docking-frames-demo-app</module> -->
+		<!-- <module>docking-frames-demo-app-ice</module> -->
+		<!-- <module>docking-frames-demo-chess</module> -->
+		<!-- <module>docking-frames-demo-help</module> -->
+		<!-- <module>docking-frames-demo-layouts</module> -->
+		<!-- <module>docking-frames-demo-notes</module> -->
+		<!-- <module>docking-frames-demo-paint</module> -->
+		<!-- <module>docking-frames-demo-size-and-color</module> -->
+		<!-- <module>docking-frames-demo-tutorial</module> -->
+
+	</modules>
+
+	<name>${project.artifactId}</name>
+	<description>${project.name}</description>
+
+	<!-- TODO is this correct? -->
+	<url>http://dock.javaforge.com//</url>
+
+	<!-- TODO is this correct? -->
+	<organization>
+		<name>Docking Frames</name>
+		<url>http://www.dockingframes.org</url>
+	</organization>
+
+	<scm>
+		<url>https://github.com/Benoker/DockingFrames</url>
+		<connection>scm:git:git://github.com/Benoker/DockingFrames.git</connection>
+		<developerConnection>scm:git:git@github.com:Benoker/DockingFrames.git</developerConnection>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License, version 2.1</name>
+			<url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>benjamin_sigg@gmx.ch</id>
+			<email>benjamin_sigg@gmx.ch</email>
+			<name>Benjamin Sigg</name>
+			<properties>
+				<credits>the creator</credits>
+			</properties>
+			<roles>
+				<role>owner</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>Janni Kovacs</id>
+			<email>Janni Kovacs</email>
+			<name>Janni Kovacs</name>
+			<properties>
+				<credits>By finding bugs I didn't imagine that they even could
+					exist, by asking for features I considered nonsense, by writing the
+					first StackDockComponent, and by having a critical question for
+					every change I made.By writing the initial version of the
+					EclipseTheme.</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>Ivan Seidl</id>
+			<email>Ivan Seidl</email>
+			<name>Ivan Seidl</name>
+			<properties>
+				<credits>By helping me understand, how hard it is to get into
+					DockingFrames without proper tutorials or guides. By contributing a
+					new set of icons for the BubbleTheme.</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>scrnick</id>
+			<email>scrnick</email>
+			<name>scrnick</name>
+			<properties>
+				<credits>By being the first one writing a non-trivial patch.
+				</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>Parag Shah</id>
+			<email>Parag Shah</email>
+			<name>Parag Shah</name>
+			<properties>
+				<credits>By contributing a new split-layout-manager (which will be
+					made available in v1.0.7).</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>Steffen Kux</id>
+			<email>Steffen Kux</email>
+			<name>Steffen Kux</name>
+			<properties>
+				<credits>Steffen wrote a library producing glass effects, this
+					library was used by Thomas.</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>Thomas Hilbert</id>
+			<email>Thomas Hilbert</email>
+			<name>Thomas Hilbert</name>
+			<properties>
+				<credits>Thomas wrote a new fancy tab for the EclipseTheme. He also
+					provided a new set of icons for the EclipseTheme.</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>andrei.pozolotin@gmail.com</id>
+			<email>andrei.pozolotin@gmail.com</email>
+			<name>Andrei Pozolotin</name>
+			<properties>
+				<credits>converted project to maven and published to central repo</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<properties>
+
+		<javaVersion>1.5</javaVersion>
+
+	</properties>
+
+	<build>
+
+		<!-- TODO change to maven convention src/main/java; then remove this -->
+		<sourceDirectory>src</sourceDirectory>
+
+		<!-- TODO change to maven convention src/main/resources; then remove this -->
+		<resources>
+			<resource>
+				<directory>src/data</directory>
+				<includes>
+					<include>**/*.*</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<pluginManagement>
+
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>wagon-maven-plugin</artifactId>
+					<version>1.0-beta-3</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.scm</groupId>
+					<artifactId>maven-scm-provider-svnexe</artifactId>
+					<version>1.4</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
+		<plugins>
+
+			<plugin>
+				<!-- enforce java version -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${javaVersion}</source>
+					<target>${javaVersion}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<!-- include extra manifest entries -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<profiles>
+
+
+	</profiles>
+
+	<reporting>
+
+		<!-- TODO generate & publish full project site -->
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>summary</report>
+							<report>dependencies</report>
+							<report>project-team</report>
+							<report>license</report>
+							<report>issue-tracking</report>
+							<report>mailing-list</report>
+							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<linkJavadoc>true</linkJavadoc>
+					<!-- <javadocDir>/path/to/javadocs</javadocDir> -->
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<quiet>true</quiet>
+					<verbose>false</verbose>
+					<links>
+						<link>http://java.sun.com/javase/1.6.0/docs/api</link>
+						<show>public</show>
+					</links>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-surefire-report-plugin</artifactId> -->
+			<!-- <version>2.6</version> -->
+			<!-- <reportSets> -->
+			<!-- <reportSet> -->
+			<!-- <reports> -->
+			<!-- <report>report-only</report> -->
+			<!-- </reports> -->
+			<!-- </reportSet> -->
+			<!-- </reportSets> -->
+			<!-- </plugin> -->
+
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-checkstyle-plugin</artifactId> -->
+			<!-- <version>2.5</version> -->
+			<!-- <configuration> -->
+			<!-- <configLocation>checkstyle/checkstyle_checks.xml</configLocation> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>2.3.1</version>
+			</plugin>
+
+		</plugins>
+
+	</reporting>
+
+</project>

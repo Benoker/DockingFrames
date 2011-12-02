@@ -1,0 +1,18 @@
+\section{Extensions} \label{sec:extensions}
+Extensions allow libraries to add new code to the framework, this code will be treated as if it were always part of the framework. Basically it is a plug-in mechanism. Currently there are not many points where an extension can be inserted, new extension-points will be added when needed.
+
+\src{Extension}s are collected by the \src{ExtensionManager}. Any module can call \src{load} to load extensions that match some \src{ExtensionName}. 
+
+\designbox{Extensions were introduced in 1.0.8 to allow the usage of the glass-components. The glass-components could not be added directly to the framework due to licencing issues.} 
+
+\subsubsection{Glass Extension}
+
+
+\subsubsection{Extension Points}
+A number of extensions exists. The following list only includes the extensions of the \src{Core} library.
+
+\begin{description}
+ \extension{ChoiceExtension}{ChoiceExtension.CHOICE\_EXTENSION}{Allows to add additional entries to a \src{Choice}. A \src{Choice} is a preference allowing the user to pick one of many items.}
+ \extension{DockThemeExtension}{DockThemeExtension.DOCK\_THEME\_EXTENSION}{Allows to modify a \src{DockTheme} during the installation process.}
+ \extension{ColorScheme}{ColorScheme.EXTENSION\_NAME}{Allows to extend or override the contents of a \src{ColorScheme}.}
+\end{description}

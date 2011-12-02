@@ -1,0 +1,19 @@
+<html>
+Chess is a demonstration how DockingFrames can be modified to
+support new functionality.<br>
+Several steps were necessary in order to create Chess:
+<ul>
+	<li>The pieces are implementations of Dockable</li>
+	<li>The board itself is a new DockStation</li>
+	<li>The titles of the pieces (only visible when "Show DockTitles" is selected)
+	are subclasses of BasicDockTitle. The board normally shows them, but
+	they can be suppressed by a DockTheme (that's why they are not visible when
+	"Show DockTitles" is not selected).</li>
+	<li>In order to show the possible moves of a piece when pressing the mouse,
+	the drag&amp;drop mechanism had to be exchanged. Normally the user must
+	move the mouse before drag&amp;drop starts working. This modification was
+	done by subclassing the DefaultDockRelocator, most of his code could be reused.</li>
+</ul>
+The board is tightly coupled with the pieces and can not display other Dockables.
+But given the time, one could certainly write a more general DockStation.
+</html>

@@ -1,0 +1,668 @@
+[Beta v1.0.0]
+-
+
+[Beta v1.0.1]
+- Bugfix: popup menu of a DockTitle did not open on right click under Windows XP
+- Bugfix: Connection between DockableDisplayer and Dockable was not broken automatically (memory leak)
+- Bugfix: Connection between MultiDockActionSource and its children was not broken automatically (memory leak)
+- Bugfix: FullScreenListener was not removed from Map (memory leak)
+- API: StackDockStation now reads a StackDockComponentFactory out of the DockProperties, and changes its StackDockComponent according to the factory. DockThemes no longer have to exchange the components manually.
+- Layout: Left-click on AbstractDockTitle will open a popup menu more often
+- Bugfix: SplitDockStation did not properly remove the front-dockable when requested
+- Layout: FlapDockStation now changes the selected child when the mouse is released, not when the mouse is pressed.
+- Layout: The DockTitles shown as Buttons for FlapDockStation have additional behavior when the mouse is pressed.
+- Bugfix: added some dirty hacks to ensure that the title-drag-window will close itself when the first event was ignored. That happend when the Window was not visible when dispose was called.
+- Bugfix: PopupController did not calculate the correct position of the mouse
+- Bugfix: AbstractDockTitle did not calculate the correct position and size of its icon when explicitly asked
+- Bugfix: NPE thrown by SecureFlapWindow when closing the window a second time
+- API: delete some subclasses of Combiner which are no longer needed (Bubble/FlatCombiner)
+- Layout: BasicStationPaint now uses the highlight-background color of TextField to paint. That should look better with different look and feels.
+- Bugfix: SplitDockStation's compare-method now ensures that the station does not overlap other, smaller stations
+- Layout: New "Eclipse Theme", written by Janni Kovacs
+- API: DockableDisplayer now tells whether a point lies inside its title or not. The drag n drop gets more flexibel this way
+- Bugfix: SecureScreenDockDialog throws NPE when closing
+- API: DockActionSource has now to implement Iterable<DockAction>
+- API: New DockActionSource "FilteredDockActionSource"
+- Bugfix: EclipseStackDockComponent now shows all DockActions
+- API: New DockHierarchyListener gets informed when the path to a Dockable changes
+- API: New HierarchyDockActionSource, lists all actions of a Dockable even when the hierarchy changes
+- API: No rebind of DockTitles after a drag&drop event, the DockHierarchyListener can be used by the titles which need change
+- API: Dockable now offers a "local" and a "global" DockActionSource. The global source always contains all available actions
+- Layout, API: MenuableButtonPanel, allows to use menus when there is no space for buttons. Automatically used by AbstractDockTitle
+- API: DockableDisplayer is now an interface
+- API, Bugfix: replaced every occurence of "binded" by "bound", thanks Uwe for correcting me
+- API: When adding a Dockable to a DockStation, the station will ensure that no cycles are built into the dock-tree, and that the Dockable is properly removed from its former parent
+- Layout: StackDockStation tries to paint the insertion-line now between its tabs
+- API: ScreenDockDialog should always stay in the screen in which it has been created, this feature is not tested
+
+[Release 1.0 - v1.0.2]
+- API: new DoubleClickController, allows handling double clicks on a global scale. Makes the FullScreenClickableListener obsolete.
+- Layout: double click on shaped- or rect-tabs in EclipseTheme has now the same effects a double click on a title.
+- Bugfix: DockHierarchyEvents were not properly dispatched by the SplitDockStation
+- Bugfix: ShapedGradientPainter did not recognize MouseEvents properly
+- Layout, API: the TabPainter of the EclipseTheme now determines the border of some components
+- Bugfix: Some DockHierarchyEvents were lost
+- API: KeyEvents are caught by the KeyBoardController. Some DockActions can now be triggered by a KeyEvent.
+- API: DockAction has additional method "trigger" which results in the execution of a default-action.
+- API: all create*-methods of DockController moved into a new interface DockControllerFactory
+- API: new DockRelocatorMode, changes behaviour of drag&drop operations subject to the pressed keys on the keyboard.
+- API: DockController can tell which Component is child (in the logic of the dock-tree) of which Dockable. Scheme can be influenced by clients through DockController#putRepresentative.
+- Layout, API: DockStations have to decide whether a child can be accepted or not, the DockRelocator no longer does this. That gives more flexibility.
+- API: MovingTitleGetter replaced by DockableMovingImageFactory, gives more flexibility
+- Layout: FlatTheme now shows a screencapture of the Dockable that is moved by the user instead of the DockTitle
+- Bugfix: The method "drop" on many DockStations did not ensure that the tree gets no cycles
+- Bugfix: MultiDockActionSource added the wrong listener to its children, the effect was that some updates were lost
+- Bugfix: SplitDockStation: full-screen elements not properly removed on drag-operation.
+- API: new SplitDockPathProperty, allows to store the location of a child of a SplitDockStation. Replaces SplitDockProperty whenever possible, but the SplitDockProperty remains a valid way to describe the boundaries of a Dockable.
+- Bugfix: DockUtilities.isAnchestor failed when the ancestor was a ScreenDockStation
+- Bugfix: Memoryleak in ButtonPanel
+- Bugfix: ButtonPanel did not show all visualisations if a DockAction occurred more than once in the DockActionSource
+- Bugfix: MenuMenuHandler could create a memoryleak by not properly unbinding the visualization of a DockAction
+- API: ComponentHierarchyObserver collects all Components which are used in the realm of a specific DockController
+- Bugfix: empty SplitDockStation could throw NullPointerException during drag&drop operation
+- API: removed the necessity to create GlassedPane's in a restricted environment manually
+- API: extensive reorganisation of packages in order to let the important classes/interfaces be in the top-level packages
+! API: OverpaintablePanel, using a "base" and a "content"-pane, calls to "setContentPane" now have to be replaced by "setBasePane"
+- Bugfix: ScreencaupterMovingImageFactory could throw IllegalArgumentException, thanks Peter for finding that bug
+- Bugfix: DockController.ensureFocusSet could throw NPE
+- API, Bugfix: AbstractDockable, changing the "action-offers" through "setActionOffers" will immediately be visible anywhere.
+- Bugfix: DockFrontend.clean could be stuck in an infinite loop
+- API: DockFrontendListener.showed renamed to shown
+- API: DockFrontendListener.shown/hidden is now called for every Dockable, even if the Dockable was not shown or hidden through the methods of DockFrontend.
+- API: The SingleParentRemover of DockController can now be exchanged, the property "singleParentRemove" has been deleted: if a remover is present, it is used. Otherwise the feature is disabled.
+- API: DockControllerListener replaced by several smaller listeners that handle only one kind of events.
+- API: New property ScreenDockStation.BOUNDARY_RESTRICTION: allows to put restrictions on size and location of children of a ScreenDockStation.
+- Bugfix: FlapDockStationFactory did not read layout correctly when Dockables were missing
+- API: Many factories divided in two parts. Part 1 is the factory, part 2 is the "layout". A layout is snapshot of some data. Factories can read and write layouts from/to streams and xml files. Factories can convert layouts into the original data.
+- API: Support for xml, intended for debugging purposes.
+- Bugfix: SplitDockStation fired dockableAdding/Added-Event to often.
+
+[v1.0.3]
+- API: DefaultkeyBoardController renamed to DefaultKeyboardController
+- Doc: Correction for GlassedPane and OverpaintablePanel
+- Bugfix: SingleCDockableListMenuPiece did not hide non-CommonDockables
+- Bugfix: DockFrontend did not fire show/hide events properly when loading a new set of properties.    
+- API: DefaultDockable and DefaultCDockable now have BorderLayout set as default LayoutManager
+- Bugfix: unique id of MultipleCDockables was not always created correctly, so unique ids were not always unique
+- Bugfix: Several bugs in the Common project concerning the transition of modes of children of CWorkingAreas.
+- Bugfix: SingleParentRemover removed DockStations when DockUI updated DockTheme
+- API: The tree of a SplitDockStation is now accessible and modifiable from outside
+- API: New SplitLayoutManager calculates where to drop, and how to divide, elements of a SplitDockStation
+- API: CDockables can now try to lock their size during resize
+! API: CDockableListener divided into CDockableStateListener and CDockablePropertyListener
+- API: FlapDockStation uses now a FlapLayoutManager to arrange its children
+! API: Streamed FlapDockLayout broken compared to previous version.
+- API: The size and hold-property of a minimized CDockable are now stored and remain on different FlapDockStations  
+- API: Many graphical elements now use the ColorManager and the ColorSchemes
+- API: CDockables have a ColorMap that is used to change the color of tabs and titles
+- API: Common uses its own set of DockThemes
+- Bugfix: EclipseTheme Shaped/RectGradientPaint did not do "doLayout" correct, the effect was that some buttons got too small
+- API: LookAndFeel changes noted by DockController and forwarded to all UIListeners
+- Bugfix: Memoryleak in FlatTab and BubbleStackDockComponent
+- Bugfix: StateManager did not store the old location of a Dockable that was maximized, but not registered, when working with XML files
+- API: new buttons for the EclipseTheme
+! API: XElement now extends XContainer, and no longer XAttribute. XAttribute extends XContainer as well.
+- Layout: New set of icons for EclipseTheme
+- Layout: Icons of BubbleTheme replaced by LGPL 2.1 compatible images
+- API: CDockables can now request a size they would like to have, and in most environments they will get this size
+! API: DockFactories can now create any Object they want, and are no longer required to create DockLayouts. DockLayout has been converted into a class that wraps the Object that was created by a DockFactory
+
+[v1.0.4]
+- Bugfix: BubbleDisplayer did not calculate its "getDockableInsets" correctly. A flaw in the design of BasicDockableDisplayer caused the failure.
+! API: almost everyone that uses a Input/OutputStream now writes the version number into the stream. This will help to implement backwards compatibility. This should be the last break in the file format.
+! API: DockableListener has an additional method "titleExchanged" which can be used to exchange a DockTitle.
+! API: CDockable and subclasses can now hide or show their titles at any time.
+- Layout: BubbleDisplayer now shows a border if the title is not null, or if the dockable is not a station
+- API: PredefinedDockSituation can use backup factories for elements that are missing in the cache. DockFrontend supports these backup factories as well, Dockables read by the backup-factory are automatically added to the frontend.
+- API: DockFactories can now be unregistered from DockFrontend
+- Layout: DockActions are triggered by pressing SPACE on the focused button, DropDownActions pop up when the DOWN (non numpad) key is pressed
+! API: BasicDropDownButtonHandler now requests a BasicDropDownButtonTrigger instead of a BasicTrigger
+- Layout: New FocusTraversalPolicies allow to navigate within all elements of a DockableDisplayer (including title).
+! API: CDockable.getClose() has been moved into CommonDockable
+- API: CDockable has an additional method "getAction" which is used by various modules to override their default actions (for example the state manager)
+- API: new action CBlank, which does not show anything. 
+- Bugfix: ButtonPanel could throw an IndexOutOfBoundsException if an invisible action was in the DockActionSource
+- Bugfix: CDockable did not go into normalized-mode when externalized and never normalized before
+- API: additional interface CStation in common, allows clients to implement their own new stations. Two new stations: CMinimizeArea and CGridArea.
+! API: changes in CLocation in order to allow CStations
+- Bugfix: CDockables could not be opened maximized.
+! API: Every CStation can now be a "working area", CWorkingArea remains in the system as the default working areas.
+- API: CControl supports backup factories for single dockables
+- API: DockFrontend supports "empty dockables". That means that DockFrontend can store properties for Dockables which are not registered at the frontend
+- Bugfix: Unbind was called to often on some DockActions when they were children of a Menu-Action
+
+[v1.0.5]
+- Layout: Changed the default KeyStroke to close a CDockable/hide a Dockable from ctrl+c to ctrl+F4, Andrew pointed out that ctrl+c already has a special meaning...
+- API: new listeners (CFocusListener, CKeyboardListener, CDoubleClickListener, global KeyListener) which can be added to CDockable (local information) or directly to CControl (global information)
+- API: CDockableStateListener, CDockablePropertyListener can now be added to CControl as well.
+- Layout: all DockThemes now support FocusTraversalPolicies such that each DockAction and element of a Dockable can be reached
+- API: the DockableSelector/DockableSelection allow users to select new Dockables with the keyboard
+- API: DockController can find the root-window of an application, the window can also be set directly using "setRootWindow".
+! API: DockTheme has an additional method getDockableSelection 
+- API: the ComponentHierarchyObserver includes now DockTitles in its search for Components
+- Bugfix: when using LookAndFeels that could draw window decarations on their own (like JTattoo), then FlapWindow, ScreenDockDialog and others could have decorations. Their JRootPane is now explicitly advised not to have any decorations.
+- API: some LookAndFeels use their own scheme how to name colors. With LookAndFeelColors it is now possible to use a specialized algorithm for different LookAndFeels to extract their colors.
+- Bugfix: BasicTheme did not update colors for key paint.line, paint.divider and paint.division. Hence the color used to indicate drag and drop elements was black on most systems.
+- Bugfix, Layout: The bounds of children of SplitDockStation are now always within the station, rounding errors are cut away.
+- Layout: EclipseTheme uses more colors directly from the LookAndFeel.
+! API: TabPainter does no longer paint the strip, it now creates an object that paints the strip. That object can now work with the color-map. 
+- Bugfix: Focus system could throw a NPE. 
+- Layout: colors of the Nimbus LookAndFeel can be extracted under jdk 1.6.0_10
+- Bugfix: RexTabbedComponent does no longer add and remove children, it uses now a CardLayout. LookAndFeel changes work now also with the EclipseTheme.
+- Bugfix: Chessdemo did not correctly calculate the "en passent" maneuver
+- API: KeyboardController does no longer fire events when the source of the event could not be found, hence the KeyboardListener does no longer receive null as source.
+- API: KeyboardController supports now "global KeyListeners". This listeners get informed about any event that the KeyboardController handles, even if there is no DockElement as source of the event.
+- API: clients can now add and remove Components from the ComponentHiearchyObserver, DockController will add the root-window to the observer if it knows the root window.
+- Bugfix: when focusing a normalized CDockable that was hidden by a maximized element, then the focused Dockable did not replace the maximized element.
+- Bugfix: when changing the ExtendedMode of a CDockable, directly or indirectly, then state-events could be lost.
+! API: DockableFocusListener/ComponentHierarchyObserverListener now use events
+! API: DockableFocusAdapter deleted, no longer necessary
+! API: DockableFocusListener divided into DockableFocusListener/DockableSelectionListener
+
+[v1.0.6]
+- Layout: when dropping something into SplitDockStation, the old leaf always gets at least 25% of the original space.
+- API: the inner classes of LockedResizeLayoutManager made public such that they can be given to other classes.
+! API, Layout: Dockables can now have a tooltip, this tooltip is shown on titles and tabs. (!: Dockable.getTitleToolTip, DockableListener.titleToolTipChanged).
+- API: New UIProperties, a generalisation of ColorManager
+! API: ColorManager extends UIProperties, ColorProbider replaced by ColorBridge which extends UIBridge, DockColor extends UIValue.
+- API, Layout: The ConflictResolver in common can now be used to resolve conflicts on resize when locked CDockables are around. Can be applied using the key CControl.RESIZE_LOCK_CONFLICT_RESOLVER
+- API: New ConflictResolver "FullLockConflictResolver" inspired by the behavior of VLDocking
+- Bugfix: DefaultConflictResolver creates now better combinations of ResizeRequests if the combined requests have different priority
+! API: The size request is now handled with RequestDimension and no longer with Dimension. This allows to issue requests only for one of width or height, and to lock only one of width or height
+- API: new interface DockElementRepresentative which creates a link between a Component and a DockElement. Allows a unified way to make popup menus, drag and drop Dockables and more
+! API: Dockable and DockTitle now also implement DockElementRepresentative
+- Bugfix: when opening a CDockable that would stack on another CDockable which was maximized, the layout could get scrambled.
+- Layout: Closing a maximized CDockable will not normalize other maximized Dockables
+- API, Layout: Clicking on the "close-action" in common and calling "setVisible( false )" will now have the exact same effects.
+- API: new preferences package, includes new MenuPieces
+! API: SimpleModifierMask has been deleted, it gets replaced by ModiferMask which is no longer an interface. Reason is that a modifier mask does not need to be very sophisticated and chances of additional implementions are hardly given. Also the preferences can now operate with the modifier masks.
+- API: BasicTheme and subclasses read their ColorScheme from the Properties using a PropertyKey
+- API: AbstractCDockable can have default-locations, the default locations are set using the new method CStateManager#setLocation(Dockable, ExtendedMode, CLocation)
+- Layout: OverpaintablePanel now supports Borders
+- Bugfix: Dockables can now be dropped onto SplitDockStation using some position information even if the station has a size of 0/0.
+- Bugfix: CSplitLocation.expandProperty did process the first element of a tree-path twice.
+- Bugfix: CStateManager.getLocation did return null when it should produce a result. 
+- Bugfix: There were also some CLocations which did not return the correct result causing getLocation to fail. 
+- API: CControl uses now a ThemeMap to select its DockTheme. The method "setTheme( DockTheme )" has been marked as deprecated and is replaced by "setTheme( String )".
+! API: the DockTheme of a CControl is no longer stored by the CThemeMenuPiece but directly by its ThemeMap. 
+! API: ThemeMenuPiece rewritten in order to use and support ThemeMap. ThemeMenuPiece does no longer contain a list of ThemeFactories.
+- Bugfix: Moving away from EclipseTheme could left some Dockables invisible
+- Bugfix: updateColors in varios DockThemes could throw NPE (found by Parag Shah)
+- Bugfix: JCheckBoxMenuItem and JRadioButtonMenuItem did not work in popup-menu
+- API: new method "createRoot" in SplitDockStation, allows clients to use their own roots.
+- API: new method "setResizingEnabled" in SplitDockStation
+- Layout: when a picture of a Dockable is needed, that contains AWT-components, different AWTComponentCaptureStrategies can be used
+! API: MultiColorProviderFactory renamed to MultiColorBridgeFactory
+
+[v1.0.7]
+! API: Each Dockable can now configure a DockableDisplayerHints which is used by the parent of the Dockable. The hints tell the parent how to draw elements around the Dockable. Dockables must implement the new method configureDisplayerHints.
+- API: new AdjacentDockFactory, something like a DockFactory that can store additional information about a Dockable.
+- Layout: The button-title on FlapDockStation can be colorized as well, new keys for ColorMap in Common
+- API: CControl can now be created without a JFrame
+- API: new WindowProvider allows to later set the root-window of CControl, DockFrontend, DockController or ScreenDockStation. Also allows to change the root window.
+- Bugfix: SplitDockStation: a Dockable could be dropped over another dockable which did not accept the combination
+! API: new ScreenDockWindowFactory: creates the windows for ScreenDockStation. ScreenDockDialog inherits from a new class.
+- API: FlapDockProperty stores now also holding state and window size
+! API: DockFactory now uses DockableLayoutInfo instead of Dockable when setting up a layout
+- API: DockSituation has new methods "estimateLocation" to estimate the DockableProperty of Dockables even if they or their parents are not yet created
+- API: DockSituation has a new method "fillMissing" to convert byte[]- or xml-data to DockLayout even after the DockLayoutComposition was already read
+- API: DockFrontend#setSetting now tries to fill missing gaps in the layout before applying it.
+- Bugfix: Dropping a CGrid with 3 or more stacked elements produced an exception
+- API: DockFrontend stores also the layout of invisible elements (using DockFactories)
+- Bugfix: DockFrontend.read from DataInputStream did mark the main Setting as "entry=true" while it should have been "entry=false"
+- API: 'DockFrontend.listFrontendEntries()' and 'getFontendEntry( String key )' allow access to any information a frontend knows about a (missing or not missing) Dockable
+- API: Order of operations in PreferenceTable reversed.
+- API: Eduardo Born suggested an upgrade of CGrid: if some dockables are placed at the exact same location they are stacked
+- API: new CControlRegister for better access to all the elements that are used by a CControl
+- Bugfix: DockFocusTraversalPolicy could create infinite recursion if used together with javax.swing.LegacyGlueFocusTraversalPolicy
+- API: New methods to change the fonts of titles and tabs. The interface DockFont provides some keys which can be used together with FontManager to change fonts.
+- API: Common supports new font system as well, the new FontMap can be used just like the ColorMap.
+- Bugfix: CWoringArea.deploy did not correctly change the working-area of the newly added children
+- Layout: more than just one DockStation can be marked as beeing the parent of maximized Dockables in Common, the interface MaximizeArea has been introduced for that
+- Bugfix: When using the same coordinates in SplitDockGrid twice or more times, an exception occured
+- API: VetoableDockFrontendListener.hiding is now also called when appliying a new layout. The method showing is not called because the elements to show do not yet exist.
+- Bugfix: FlapWindow did not always get the correct size when its parent got resized while the window was invisible. Fixed by Peter.
+- API: CGrid/SplitDockGrid: new method select/setSelected to preselect a CDockable/Dockable in a stack of Dockables. 
+- Bugfix: Dropping a CWorkingArea with children did not work
+- Bugfix: Dropping a CDockable with no location but a working-area will automatically use the working-areas default location.
+- Bugfix: AbstractCDockable did ignore to set some extended modes if some other extended modes were disabled. This was caused by a missing "break" in a "switch case"-statement. 
+! Bugfix, API: new AppletWindowProvider, WindowProvider tells now whether the window is visible or not. Allows to use "imaginary" windows that do not exist.
+- Bugfix: SecureScreenDockStation: did not use SecureScreenDockWindowFactory if not explicitly adviced to do so
+! API: CWorkingArea extends now CGridArea, these two classes have now almost the same behavior. CGridArea is now also a CDockable.
+! API: CControlFactory does no longer create CWorkingAreas but has an additional method to create SplitDockStations which implement CommonDockable.
+! API: CommonDockable no longer has the method getClose but getSources. This allows to continue using the old mechanism but break some coupling.
+- Bugfix: DockFrontend.updateLocation could throw an exception if a dockable in the tree was also registered as root station.
+- Bugfix: When a minimized CDockable was made invisible and then visible again, its extension-mode-buttons were not correctly set.
+- API: new LocaleListener, to be added to a DockUI, will be informed when the Locale changes.
+! API, Bugfix: PropertyKey requires now a PropertyFactory instead of an Object as default value, this is to prevent memory leaks. No object that can have observers must be global.
+- API, Bugfix: DockController.freezeLayout, meltLayout, isLayoutFrozen to temporarily freeze the layout such that clients can safely update the tree of DockStations and Dockables.
+
+[v1.0.8]
+- Bugfix: EclipseStackDockComponent contained an unnecessary and not correctly updated list of dockables causing an IndexOutOfBoundsException on JREs of version <= 1.5.0_12
+! API: DockableDisplayers can be observed by a DockableDisplayerListener, all DockStations can replace DockableDisplayers any time.
+! API: EclipseThemeConnector can be observed by a EclipseThemeConnectorListener
+- Layout: New CommonEclipseThemeConnector ensures that CDockable with no title do not have a tab if not necessary in the EclipseTheme
+- Bugfix: workaround for bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6797587 , AWT components not painted properly if behind a glass-pane
+! API: FocusObserver calls additional method "handleVeto" if a veto was spoken, the method currently consumes the event making it invisible for the application
+! API: FocusVetoListener returns a more details description how to handle a veto.
+- Bugfix: DockStations check whether dropping some Dockable would create an invalid Component-tree, and forbid such drag and drop operations
+- API: new CVetoFocusListener in Common, can speak a veto for some focus changes
+- API: new SingleTabDecider and support for single tabs: the SingleTabDecider decides which Dockables are displayed with a single tab, the property can be changed during runtime.
+- API: CDockable has a new property "singleTabShown" which is forwarded to a SingleTabDecider
+! API: DockProperties now supports different priorities for values, "default", "theme" and "client".
+- API: new property StackDockStation.TAB_PLACEMENT globally sets where to put tabs
+- API: new TabLayoutManager to handle the positioning of tabs on a StackDockStation
+- Bugfix: SimpleDockAction did not unbind itself correctly due of events fired in an unfortunate order. Repaired thanks to an anonymous user.
+- Bugfix: when making an selected Dockable on a StackDockStation invisible, a new Dockable should be properly selected.
+- API: New action "CPanelPopup" in common provides an easy way to create a popup-action with an arbitrary component as content.
+- Bugfix: RequestDimension( int, boolean ) did not set the height property.
+- API: CDockable has new method "getAction" and "getActionCount" to access CActions that were added.
+- Bugfix: Wrong index in MultiDockActionSource.add( DockActionSource ) could lead to IndexOutOfBoundsException
+! API: CStateManager got replaced by LocationModeManage. CControl.getStateManager is renamed to CControl.getLocationManager.
+	-: CControl.setMaximizeArea(String) throws now an exception if called with an unknown id
+	-: CStation has now one generic argument
+- API: CContentArea.setMinimumAreaSize and FlapDockStation.setMinimumSize allow to set the minimum size of a FlapDockStation
+- API: the new key FlapDockStation.MINIMUM_SIZE sets the default minimum size of FlapDockStations
+- API: AbstractDockable has a new method "add/removeKeyListener" to register any KeyEvent that is related to a Dockable (children are ignored)
+- Bugfix: Cursor on the SplitDockStation sometimes does not change from arrow to default cursor. Should happen less often now, patch by Eduardo Born.
+! API: Each node in a SplitDockStation is now associated with a unique identifier. This unique identifier is stored persistently and might help to put a Dockable to its old location when using the drop-method.
+  - Effect: If two dockables were on the same stack, then they will be merged again independent of the location.
+! API: DockTitleFactory has been changed. Now a DockTitleRequest is installed on the factory, the factory may trigger this request anytimes (also more than once). The new class StationChildHandle manages the interaction between Dockable, DockableDisplayer, DockTitle and DockTitleRequest.
+- Bugfix: FlatTab did not react on mouse-dragged events in a "secure environment".
+- Bugfix: StackDockStation was not always removed if it had only one child and this one child was a CDockable associated with a CWorkingArea
+- API: CVetoClosingListener can be added to CControl or CDockable and gets informed before a CDockable (or a set of CDockables) is closed. It may also stop the operation. 
+! API: some methods of DockFrontend have been moved to DefaultLayoutChangeStrategy, new CLayoutChangeStrategy to handle special needs of Common (i.e. MultipleCDockables that are not registered at the DockFrontend)
+- Bugfix: moving a Dockable on a FlapDockStation did throw an exception if the destination index was too big
+- Bugfix: if a CDockable is removed and the CMissingDockableStrategy tells to store information about that dockable, then its location remains stored.
+- API: AbstractCDockable has a new method "createCommonDockable". Clients can use this method to use a customized Dockable as intern representation of a CDocakble.
+! API: Placeholder support: a placeholder is a Path (a string) that remains in data structures when a Dockable is removed.
+    -: New interface PlaceholderStrategy to create and manage placeholders. The CPlaceholderStrategy is a strategy utilized by Common to issue a placeholder for each SingleCDockable
+    -: The tree of a SplitDockStation contains a new element "Placeholder" which is a leaf. All nodes can store placeholders.
+    -: FlapDockStation and StackDockStation use PlaceholderList to manager placeholders.
+    -: DockSituation stores for each element a placeholder. Even if the element cannot be loaded again, the placeholder remains available.
+    -: PlaceholderMap allows to describe placeholders in DockStations that no longer exist.
+    -: All layouts stored either in XML or in binary format will automatically be updated on load, older versions cannot read layout information written by this version
+- Bugfix: If TabPlacement was "left" or "right", then new tabs in a StackDockStation could be too big. Reason for this bug was that new tabs were not properly initialized and assumed that TabPlacement was "top".     
+- Bugfix: StackDockStation did not add its children correctly to the StackDockComponent, leading to some missing tabs.    
+- Bugfix: Normalizing a externalized CDockable could throw an Exception
+- Bugfix: StackDockStation could not be moved around in Common even if children would allow it
+- Bugfix: Dragging a station away from another station did not store placeholders
+- Bugfix: During drag&drop, dragging the mouse over a tab of a StackDockStation could exchange the selected Dockable
+- Feature: The new Merger interface allows two DockStations to be merged automatically. It is used by the DockableRelocator class. The implementation StackMerger merges two StackDockStations into one, it is installed per default.
+- Bugfix: dragging a Dockable over a child of a ScreenDockStation could throw an exception (in the Common framework).
+- Bugfix: StackDockStation did not fire dockable-selected event properly when using the DefaultStackDockComponent
+! API: BaseTabComponent is no longer responsible for keeping icon and text up to date, this must be handled by the StackDockComponent. This means that the EclipseTheme now respects the text and icon set by the StackDockStation.
+- Bugfix: Tabs with unequal height were positioned strangely
+- Bugfix: Popup menus are now enabled for tabs on a DefaultStackDockComponent
+- API: A StackDockStation with only one child can still show a tab depending on the type of StackDockComponent
+- API: ScreenDockStation now supports fullscreen mode for its children. What "fullscreen" means can be influenced by a ScreenDockFullscreenStrategy.
+- Bugfix: If DockRegister was stalled and a DockStation was added/removed to the register and later Dockables added/removed from that station, then the DockRegister could miss these modifications and store too many/few Dockables.
+- Bugfix: CActionSource did not fire events when removing or replacing actions
+- Bugfix: CLocationModeManager#setLocation(Dockable,ExtendedMode,CLocation) did not compare the correct objects and has always thrown an exception
+- Bugfix: Minimized CDockables did not appear at the correct location if corner components were used
+- Bugfix: Dragging a maximized CDockable could throw an exception
+- Bugfix: Dragging a tab from a BasicStackDockComponent could throw an exception
+- Bugfix: Path did not encode non-java identifiers right.
+- API: EclipseDockableDisplayer now also respects TabContentFilter
+! API: TabContentFilter has additional methods dealing with StackDockComponents. StackDockStationFilterListener renamed to TabContentFilter.
+- Bugfix: EclipseMenu did not update its icon automatically
+- Bugfix: StackDockStation.move(Dockable,DockableProperty) could throw exception if destination index was too big
+- Bugfix: AbstractScreenDockWindow.setDockable did call updateTitleIcon instead of updateTitleText
+- Bugfix: DockTitleTab caused exception when uninstalled
+- Bugfix: Instead of doing nothing, PropertyPreferences now load their default value if they cannot read any other value
+- Bugfix: When deploying a CGrid some Dockables did not appear: the tree of the SplitDockStation was cleaned up too early before all Dockables had been inserted, leading to a corrupted tree
+- Bugfix: SplitDockStation did assign leaf-id to node when using drop(SplitDockPathProperty). As a result unmaximizing a stack of CDockables could destroy the stack.
+- Bugfix: SplitDockStation does now always update the boundaries of its tree before dropping a dockable. Wrong boundaries did lead to Dockables dropped at the wrong location even if the used DockableProperty was correct.
+- Bugfix: Path now encodes its content when using "toString" and decodes contents on creation. Meaning inside a Path object the items are never encoded.
+- Bugfix: MouseFocusObserver no longer calls "component.requestFocusInWindow" if the component does not belong to a Dockable
+- Bugfix: SplitDockStation is now much more strict when it comes to enforcing the uniqueness of placeholders
+- Bugfix: If a CStation was registered at a CControl and later the same object was registered as a SingleCDockable, then CControl did not assign a unique identifier to that Station/Dockable.
+- Bugfix: SimpleDockAction.KeyForwarder caused a memory leak by not removing its listeners properly
+- Bugfix: CLocations returning null as root but have an ExtendedMode are (again) supported.
+- Bugfix: When moving/dragging a Dockable from a SplitDockStation with size-locked Dockables, the locked Dockables got resized even if it was not necessary.
+- Bugfix (by ilvisne, Beni): SimpleDockAction did not unregister itself completely, as a result there was a memory leak
+- API: FlapDockStation supports factory for creating the window
+- Bugfix: DockUI now stalls all events rather than setting the SingleParentRemover to null when updating the DockTheme of a station
+- Bugfix: CLayoutChangeStrategy.replaceMultipleDockables could throw a NPE
+- Bugfix: CDockable.getBaseLocation did return null when a location was actually available
+- Bugfix (by Thomas): Glass Extension no longer throws Exception if width or height of tab is 0
+- Bugfix (by Thomas): Cursor should no longer remain arrow when moved away from a divider of a SplitDockStation
+- API: StackDockComponent now offers a method "createDefaultRepresentation". This allows code to be executed when clicking on, or dragging of, an empty space arounds tabs.
+- API/Bugfix: Clicking on a child action of a DropDownMenu that is shown as submenu now changes the selection of the button as well
+- Bugfix: solved an issue where buttons on a Eclipse-Tab could not be pressed it the tab was not selected.  
+- Bugfix: Removing all items of a CombinedStackDockComponent left them invisible
+- API: New SplitDockFullScreenProperty allows clients to point locations to the fullscreen dockable of a SplitDockStation
+- API: CMaximizedLocation now extends AbstractStackholdingLocation
+- API: New OrientationToRotationStrategy, allows clients to specify how to rotate text on a DockTitle
+- Bugfix: repaired an issue where buttons on a FlapDockStation where not shown due to a race condition. Also repaired an issue where the button had a false size due to a missing border.
+- Bugfix: resolved an issue where the CDockableStateListener was not called when the mode changed.
+
+[v1.1.0p1]
+! API: SingleCDockableBackupFactory replaced by SingleCDockableFactory
+- API: CControl now supports filters for SingleCDockableFactories. With a filter one factory can create many Dockables. There is no longer a need to know all of the identifiers that were used when storing a layout. 
+       MultipleCDockableFactory will not receive such support: clients with content that changes can already use the factories layout-object to implement their own filtering/backup mechanism.
+- API: DefaultFlapWindowFactory now detects JDesktopPanes and automatically uses a JInternalDialog instead of a JDialog as window for the FlapDockStation.
+- Bugfix: When dropping a Dockable, DockStations in Windows under the mouse are preferred.
+- API: Added support for JDesktopPane and JInternalFrames. The FlapDockStation will automatically detect them, for the ScreenDockStation special factories and strategies have to be set (the Internal... classes).  
+- Bugfix: CSplitDockStationHandle did throw an exception on removal, because it could not handle a "null" mode.
+! API: Changed the interface "Combiner". The interface has now much more control of how two Dockables are going to be merged, it can now also paint on the station to help the user understand of what is going to happen once the mouse is released
+- API: Added "SplitCombiner", a Combiner that creates SplitDockStations instead of StackDockStations.
+
+[v1.1.0p2]
+! API: PlaceholderList is now abstract and has more generic arguments. There are two new subclasses: DockablePlaceholderList and PerspectivePlaceholderList.
+! API: DockFactory has additional methods and generic arguments to deal with PerspectiveElements
+! API: various classes and interfaces needed new generic parameters or needed to be made abstract in order to implement the perspective mechanism. Clients should not be affected (much) by these changes as these classes/interfaces are mostly used in a layer that is not interesting for clients.
+- API: New perspective API in Core and Common: an additional view of the layout. This one can be easily modified through source code.
+- API: Many PreferenceModels now grant access to the Preference objects such that clients can modify them directly
+- API: CControl.initExternalizeArea can now be overriden by clients to create a custom ScreenDockStation for externalized items
+- Bugfix: DockFrontend no longer stores the same Dockable twice if root-stations are nested
+! API: Common now stores the identifier of the working-area which owns a SingleCDockable and changes the working-area property when loading a layout. This is necessary for perspectives which would otherwise work very unintuitive.
+- Bugfix: The history of the location of a MultipleCDockable is loaded and applied but only if the MultipleCDockable can be created while loading a persistent layout.
+- API: MultipleCDockables now also use placeholders. However, all placeholders for a MultipleCDockable are removed if the MultipleCDockable is closed (unless the MissingCDockableStrategy tells otherwise)
+- Bugfix: ScreenDockStation and its strategies now properly support multi monitor environments. The default BoundaryRestriction is now "MEDIUM" instead of "FREE".
+
+[v1.1.0p3]
+ ! API: UIProperties now depend on an UIScheme. Basically the UIScheme is a self filling map and UIProperties acts as (mutable) cache. ColorScheme now depends on UIScheme and several methods that were related to ColorScheme got obsolete and were removed.
+ - API: DockTheme is now managed by a specialized class ThemeManager and no longer by DockController.
+ ! API: While the interface DockTheme was not changed, many of its methods should no longer be invoked directly. Instead the ThemeManager and the DockProperties should be used.
+ - Bugfix: DefaultCControlRegister, adding a CContentArea did not have any effect.
+ - Bugfix: changing properties like maximizeable of a CDockable did not update the actions
+ - Bugfix: did run FindBug and found some bugs of lesser importance
+ - API: New interface BackgroundPaint allows clients to paint the background of the Components of this framework
+ - Bugfix: several bugs related to perspectives
+ - API: CGridPerspective now initializes its grid with content and support placeholders
+ - API: New border "ScreenDockWindowBorder" for windows of a ScreenDockStation. The new border gives a visual feedback to the user whether he currently is hovering or dragging the window. Colors can be replaced throught the ColorManager, and the entire border can be replaced as well.
+ - API: New interface BorderModifier allows clients to replace most of the borders of the framework (see also ThemeManager)
+ - Bugfix: MediumBoundaryRestriction ensure that a window has a size of at least 100x50, this prevents a window from disappearing because it is too small
+ - Bugfix: CDockables keep focus when extended mode changes
+ 
+[v1.1.0p4]
+! API: There is a new property "restricted environment" in DockController. If that property is set to true, then the framework configures itself such that it can run in a restricted environment like an applet. All the Secure... classes have been rendered obsolete due to this new property. The obsolete classes will remain for this version in the framework to keep backwards compatibility, they will however be removed in the next version.
+! API: SplitDockStationFactory now stores whether the SplitDockStation did have a fullscreen-action or not. The method SplitDockStationFactory.createStation has been modified.
+! API: renamed classes/interfaces/methods: 
+		FocusController -> VisibilityFocusObserver, 
+		DockController.getFocusObserver -> DockController.getMouseFocusObserver
+		new interface "FocusController"
+! API: FocusVetoListener  is now added to FocusController instead of MouseFocusObserver and will now be asked to veto a focus change for any change that is initialized by the framework itself.
+- API: New interface FocusStrategy allows the framework to select a special Component of a Dockable to receive the focus
+- API: CDockable has new method "getFocusComponent", AbstractCDockable has new method "setFocusDockable". With these methods a FocusStrategy decides which component to focus when focus is transfered to a CDockable
+- API: Due to the new DefaultFocusStrategy focusing is now more pretictable: a click on a title or tab means that the framework tries to focus the previously focused Component (on the selected Dockable) again.
+! API: The enum "FlapDockStation.ButtonContent" is now defined as class "ButtonContent" in its own file. The old constants remain and clients only have to update their imports.
+- API: The button-title of a FlapDockStation now supports DockStations: one button is painted for each child, pressing that button will focus the child. The button also support drag and drop operations.
+! API: The preferences have been updated to handle the additional options for button-titles: the ButtonContentPreference got replaced by ButtonContentPreferenceModel
+- Bugfix: GlassedPane now also check the extended modifiers of MouseEvents and resets its internal state if no button is pressed. Even if some MouseEvents are not properly delivered (e.g. due to a popup-menu opening) the user can continue working by moving around the mouse a bit.
+- Bugfix: Several smaller, non critical issues regarding colors, borders and the position of components
+- API: The new CGroupBehavior allows clients to group CDockables: grouped CDockables will usually stick together when the user changes the ExtendedMode of one Dockable. The user still can grab the title of one Dockable and drag it away from the others. The StackGroupBehavior is installed as default behavior.
+- API: There is now a default icon set of all Dockables and DockStations. The icon can be changed using the PropertyKeys "PropertyKey.DOCKABLE_ICON" and "PropertyKey.DOCK_STATION_ICON".
+
+[v1.1.0p5]
+! API: The IconManager now extends UIProperties, all the icons of the framework must now be accessed through the class "DockIcon" (which is an UIValue).
+! API: Icons are now only handled by the IconManager. Both DockUI (Core project) and Resources (Common project) no longer handle any icons. The Common project no longer makes a distingtion between "local" and "foreign" icons.
+! Bugfix: The unique identifiers of SplitNodes (a node used by a SplitDockStation) are now checked when a new node is inserted into the tree. The unique identifier of parent nodes may be changed to ensure the identifiers really are unique.
+! APi: All the strings that are used by the framework are now collected by the TextManager, which is yet another UIProperties.
+! API: DockStationListener has an additional method "dockableRepositioned"
+- API: A new listener DockableStateListener can be added to Dockables, the listener receives notifications for events related to changed layouts
+- API: Calling (C)Dockable.setTitleIcon( null ) now makes the icon invisible, and does no longer restore the default icon.
+- Bugfix: Layout could not be stored in byte-array format due to a NullPointerException
+- API: CAction and CDecorateableAction are no longer an abstract class as there was no reason to keep them abstract
+- API: MenuPieces now have a method "bind" and "unbind" which are automatically called if the root-menu is shown or hidden (see Component.isShown()).
+- API: RootMenuPiece now accepts a parent in order to handle "bind" und "unbind" correctly.
+! API: The class "bibliothek.gui.dock.support.util.Resources" has been removed. The TextManager now is responsible for all the strings. The bundle is now loaded in CControl.initTexts using a DefaultTextScheme.
+- API: FrontendSettingsList now orders its items alphabetically
+- Bugfix: Deutsche Übersetzung aktualisiert (German translation updated)
+- Bugfix: FocusController now does not select a (more or less) random Component if the caller indicates that Swing itself will issue a focus request in the future. This means that clicking on the dropdown-button of a JCombobBox will not close the popup again because focus is transfered.
+! API: CDockableStateListener no longer has one method for each ExtendedMode, instead one method handles all possible ExtendedModes. Clients can extend CDockableAdapter to keep the old API.
+- Bugfix: Some StationPaints did not properly use the colors from the ColorManager
+- Bugfix: CGlassStationPaint was not applied when using the Glass extension
+- API: The new CDockableLocationListener can be used to observe location and visibility (to the user) of a CDockable
+
+[v1.1.0p5a]
+- Bugfix: StackDockStation and FlapDockStation did not fire dockablesRepositioned if its content was only moved
+
+[v1.1.0p5b]
+! API: DockSituation can now use a PlaceholderStrategy to load the intermediate format and another strategy to load the final DockElements. The DockFactories had to be modified in order to allow this.
+- Bugfix: In Common, placeholders are no longer removed in the intermediate layout
+- Bugfix: The FocusStrategy can now decide whether to transfer focus if the user clicked on a non-focusable Component or not. Currently focus is not transfered if the user clicked on a JComboBox
+- API: The content-pane of a Dockable is no longer focusable
+
+[v1.1.0p5c]
+- Bugfix: Perspectives did ignore the "ignoreChildren" tag. DockFactories did throw NPE if called with a perspective that has the "ignoreChildren" tag set to true.
+- API: Additional method "isWorkingArea" in "CStationPerspective".
+! API: DockRelocator has two additional methods "getRemote" and "getDirectRemote" with a parameter "forceDrag". If that parameter is true, then a DnD operation can be forced to start.
+- Bugfix: NoStackTheme.Meta, field "meta" was never set.
+
+[v1.1.0p6]
+- Bugfix: CombinerTarget is created earlier on SplitDockStation in order to allow the Combiner to paint the DnD operation
+- Bugfix: Merger can now also be applied on a move operation. The child DockStation in a merge operation only gets removed from its parent if the parent is not the parent DockStation of the operation
+! API: CGroupBehavior now creates a CGroupMovement and does not execute its changes directly
+! API: CMaximizedBehavior and all associated methods have been removed, the ordinary CGroupBehavior can now perform all necessary tasks
+- Bugfix: Maximizing a minimized CDockable on a stack now maximizes the entire stack
+- Bugfix: Externalizing a minimized CDockable that has no size makes now sure that the window has a minimum size and (if possible) is not placed at 0/0
+- API: Actions of the button of a FlapDockStation can be filtered through the ButtonContent and the ButtonContentFilter. The default implementation will show any action that has the annotation ButtonContentAction.
+- API: A stack of minimized CDockable now shows the "normalize" button per default. The exact behavior of which buttons are visible can be configured through the CGroupBehavior, the ButtonContent and the ButtonContentFilter.
+- Bugfix: Reordering the children of a dockable DockStation that is shown on a FlapDockStation now also reorders the actions on the button.
+
+[v1.1.0p6a]
+- API: Remove children and attributes of XElement
+- Bugfix: focus is no longer lost if maximizing a Dockable by pressing ctrl+m
+- API: New DefaultFrontendPerspectiveCache, a default implementation of the interface FrontendPerspectiveCache
+- Bugfix: Glass Extension now also works if Common is not in the classpath
+- Bugfix: The default behavior of CControl was to set always "secure environment = false". The parameter is now set to the correct value depending on the environment in which an application runs.
+- Bugfix: Common, tabs are no longer reordered when maximizing or unmaximizing a stack of Dockables
+- Bugfix: FlapDockStation on JDesktopPane, invalid window remembers state and informs FlapDockStation that it cannot be used any longer. This prevents a bug where Dockables were selected but did not show up.
+- Bugfix: A NPE was thrown when applying Nimbus and other LookAndFeels
+! API: Several methods removed from DockUI including the LocaleListener (this functionality was replaced by the TextManager)
+! API: Removed the class Resources in Common (this functionality was replaced by the TextManager)
+
+[v.1.10p6b]
+- Bugfix: using a DockSituationIgnore often caused a NPE
+
+[v1.1.0p6c]
+- Bugfix: PlaceholderMap.PlaceholderKey#shrink did not produce a valid key and let to NPEs.
+- API: Printing a warning if modifying the contents of a DockStation while being in a listener.
+
+[v1.1.0p6d]
+- API: while changing the hierarchy of Dockables and DockStations there is now a lock which prevents concurrent modifications. The lock is called "DockHierarchyLock" and can be acquired by calling DockController.getHierarchyLock. Clients can temporarily disable the lock.
+- Bugfix: it is now much harder to remove a CDockable from its working-area by putting it into a stack and moving it around together with this stack
+- Bugfix: PlaceholderList did throw NPE when reading an entry with no placeholders and no dockable
+- Bugfix: SingleParentRemover now also performs a check when elements have been added, this way invalid new DockStations can be found as well.
+- Bugfix: Some CLocations did return a wrong result on "findProperty".
+
+[v1.1.0p6e]
+- API: missing getter methods for various CLocations
+- Bugfix: CLocation.findProperty should now be consistent for all properties
+! API: renamed method in StackDockComponentParent to prevent conflicts with methods in other interfaces but with the same signature
+- API: StackDockStation now sets itself as parent of a Dockable after it has registered the child on itself
+
+[v1.1.0p6f]
+! Bugfix: added the parameter "station" to EclipseThemeConnector.getTitleBarKind in order to allow the connector to select the correct title-bar before the dockable station relation has been made.
+
+[v1.1.0p6g]
+- Bugfix: trying to drop the child of a SplitDockStation on itself if there is no other child no longer produces a NPE.
+
+[v1.1.0p7]
+- API: Added methods to DockHierarchyLock that allow code to be executed directly after the lock has been released.
+- API: Added MissingPerspectiveStrategy to CControl, this allows clients to create missing CStationPerspectives
+- Bugfix: If a CStationPerspective is missing in a CPerspective, then no NPE will be thrown when loading a layout. Instead the data for the missing station will silently be dropped.
+- Bugfix: Making a CDockable visible when a DockAcceptance forbids the location of the CDockable will force the CDockable to appear on the default DockStation - even if that station is forbidden by the DockAcceptance as well.
+! API: CControlFactory has now to create CommonStations instead of DockStations.
+! API: CommonStation no longer extends CommonDockable, all DockStations used by the Common framework now implement CommonStation
+! API: New interface CommonElement, changed the types of several methods in CommonStation/CommonDockable, added generics. The type system should now enforce the correct implementation of all the different methods.
+- API: CContentArea is now based on CGridArea and CMinimizedArea which greatly reduces complexity
+! API: AdjacentDockFactorys can now also write meta data for PerspectiveElements
+- Bugfix: changing the LookAndFeel now again updates all the colors
+- Bugfix: Colors.brighter did make a color darker
+
+[v1.1.0p7a]
+- Bugfix: location of center area of CContentArea is no longer null
+
+[v.1.1.0p7b]
+- Bugfix: DockFrontend.isShown is now more accurate and no longer delayed until all events concerning the DockRegister have been fired
+- Bugfix: CContentArea now properly initializes its MinimizeStation and no NPE is thrown when minimizing a CDockable
+- Bugfix: The operation to drag a CDockable to a minimize area is no longer overriden by the center area
+
+[v.1.1.0p7c]
+! API: All methods of the CGroupBehavior now have access to the LocationModeManager, the checks CStackGroupBehavior performs are now more generic and do no longer depend on internal knowledge of when which method is called. 
+- API: On maximizing, a CSplitDockStationHandle now stores the location of the Dockable that represents the group instead of the Dockable that triggered the action. This allows CStations to represent a group.
+- API: DockRegister has a new method "setProtected". Protected DockStations are never automatically deregistered when their parent is set to null.
+- API: DockFrontend.isHiddenRootStation tells whether some DockElement is a root-station and a dockable without parent
+- API: CDockable.hasParent tells whether a CDockable is visible and not a root station
+- API/Bugfix: Invoking "setVisible" now checks "hasParent" and not "isVisible", as a result invoking "setVisible(true)" on a root CStation now places the station somewhere.
+- API/Bugfix: DockFrontend.show is now also executed for hidden root-stations
+- Bugfix: Glass Extension: should now throw less exceptions if a tab is smaller than 1x1 pixels.
+- Bugfix: The ArchGradientPainter and CGlassEclipseTabPainter now update their field "wasPreviousSelected" every time "update" is executed. This prevents a bug where the wrong size of the tabs was calculated because of the property having the wrong value.
+- Bugfix: Again updated the PlaceholderMap.PlaceholderKey.shrink methods, now they should work
+
+[v1.1.0p7d]
+- Bugfix: CGlassEclipseTabPainter did not update the icon correct, as a result the size of the tab was calculated wrong
+! API: the PopupController is now accessible for clients through DockController.getPopupController. Clients can install their custom DockPopupMenuFactories for changing the way the popup menu behaves
+! API: DockRelocator is now an interface.
+- API: New VetoableDockRelocatorListener can be added to DockRelocator and receives events when something happens that involves a drag and drop operation
+- Bugfix: mmodelski found a bug in the ScreenDockStation.drop method. Also added the "drop over ratio" property because of his suggestion.
+
+[v1.1.0p7e]
+- Bugfix: Title-Tooltips are now supported by the EclipseTheme
+! API: moved some methods from MutableCControlRegister to CControlRegister
+- API: Added methods to CGrid to add placeholders for SingleCDockables and MultipleCDockables
+- API: Divided SimpleDropDownAction into two classes, clients can subclass AbstractSimpleDropDownAction if a custom DockActionSource should be used
+- API: CButton is no longer abstract and clients can now add ActionListeners instead of subclassing the action (which is still an option)
+- Todo: Reclassified several "todo"s to be in version 1.1.1 instead of 1.1.0, allowing final 1.1.0 to be finished soon.
+
+[v1.1.0]
+- Bugfix: Dropping a Dockable on a FlapDockStation could remove another child if the placeholders had a bad order
+- Bugfix: Dropping a Dockable on a SplitDockStation with children that have a fixed size and have an outstanding resize operation now updates the boundaries of the children twice: the first time to reflect the new child, the second time to reflect the resized station
+
+[v1.1.1p1]
+- Bugfix: If a CDockable is made visible without a known location, then the default location stored in CLocationModeManager is checked as well.
+- Bugfix: CLocationMode.getCLocation did return null even if there was enough information to return a non-null result.
+- API: MultipleCDockables are now registered at the DockFrontend just like SingleCDockables. This adds better support for persistent location storage to MultipleCDockable.
+- API: CDockable has new method "getAutoBaseLocation" which tells where exactly an invisible dockable will appear.
+- Bugfix: The identifier for storing meta information of missing MultipleCDockables was calculated the wrong way resulting in an invalid identifier. This prevented the framework from storing location information. 
+- API: CControlPerspective has additional methods to write and read a single perspective, aka "import/export feature".
+- API: DefaultMultipleCDockable now accepts "null" as factory, null will be replaced by "NullMultipleCDockableFactory.NULL" 
+! API: FlapLayoutManager has an additional property "isHoldSwitchable" that tells whether the "sticky" button is visible for some Dockable
+- API: CDockable has a new property "isMinimizedHoldSwitchable" that tells whether the "sticky" button is visible for some Dockable
+- API: CDockable has a new action key "ACTION_KEY_MINIMIZED_HOLD" which allows client to replace the sticky action shown when a dockable is minimized
+- Bugfix: DockHierarchyLock.runOnRelease has a timeout for how long the method blocks if not called from the EDT. This prevents a deadlock if some unfortunate chain of events happened. 
+- Bugfix: LockedResizeLayoutManager should no longer throw NPEs when accessed in a multi threading application
+- API: DefaultIconScheme now also stores custom DockIconBridges
+- API: The icon used when there are too many Dockables on a StackDockStation and the EclipseTheme is used, now depends on the actual number of overflowing Dockables. Clients can use their own icon by installing a DockIconBridge for type TabMenuDockIcon.KIND_TAB_MENU.
+! API: Added method "dragged", "dragging", and "searched" to VetoableDockRelocatorListener, the method "draging" was removed and got replaced by "searched". 
+- API: New method DockController.getRepresentative searches for all DockElementRepresentatives of a DockElement. Also DockUtilities.getShowingComponent now checks the DockElementRepresentatives as well.
+- API: The default set of icons is now loaded in DockController.createDefaultIconScheme
+- API: New property IconManager.MINIMUM_ICON_SIZE tells the framework how small icons can get. The size of some Components does not shrink below this number.
+- Bugfix: The unique identifier for LookAndFeels known to the LookAndFeelList no longer depends on the order in which the LookAndFeels are found.
+! API: Extracted inner classes of MenuLineLayout for more flexibility. 
+! API: TabsLayoutBlock is now an interface. The new factory MenuLineLayoutFactory creates the different LayoutBlocks used by the MenuLineLayout, clients can make use of the MenuLineLayoutFactory to alter the behavior of a single block of components.
+- API: If using the MenuLineLayout: the new MenuLineOrder (created by MenuLineLayoutFactory) defines order, weight, alignment and extend of tabs, menus and info component
+- API: FlatTheme and BubbleTheme now also support the MenuLineLayout, they now install a MenuLineLayout instead of a RowLayout
+- Bugfix: Calling CControlPerspective.getPerspective on an application with no Dockables failed.
+- Bugfix: DefaultSplitLayoutManager should no longer throw NPE when a node returns "null" as minimum size
+! API: New interface DockFrontendPerspective should allow clients to modify a perspective related to a DockFrontend more easily
+- API: PlaceholderMap now also allows to store Paths
+- API: SplitDockStation.get/setPlaceholders is now implemented
+
+{Removal of deprecated items}
+! API: SizeManager and all subclasses have been removed without replacement. They were created to support persistent storage of the layout of a SplitDockStation, this job is now done by placeholders.
+! API: DockFrontend.add replaced by addDockable
+! API: CControl removed several methods to add/remove dockables and factories
+! API: CWorkingArea removed methods "isTitleSuppressed/setTitleSuppressed", these methods are replaced by "is/setTitleShown"
+! API: SingleCDockableBackupFactory replaced by SingleCDockableFactory
+! API: Methods related to UIListener moved from DockController to ThemeManager
+! API: DockController.getFocusObserver replaced by getMouseFocusObserver
+! API: Several methods from DockUI (like "getCombiner") replaced by methods from the ThemeManager
+! API: DockRelocatorListener got completely replaced by VetoableDockRelocatorListener
+
+[v.1.1.1p2]
+! API: All resources (icons, localization) have been put into subfolders, this should prevent any collision of resources with any other project.
+! API: The drag'n'drop interface of DockStation has been heavily modified. All the methods related to drag and drop have been removed except "prepareDrop". "prepareDrop" now returns an object that is used to execute the operation.
+! API: Renamed StackDockComponent.setTabPlacemenet to setDockTabPlacement to prevent collision of names with JTabbedPane
+! API: The DockableDisplayer can now influence a drag and drop operation through a "DisplayerCombinerTarget". This allows displayers that show a tab (like in the EclipseTheme) to place a Dockable "left" or "right" to the existing dockable. Also the displayer can now paint markings to help the user to find out, what will happen. 
+- API: New property StackDockStation.IMMUTABLE_SELECTED_INDEX prevents the StackDockStation from switching the selection index when dropping a Dockable (but has no effect on the FocusManager!).
+- Bugfix: EclipseStationPaint did dispose Graphics context that should not be disposed
+
+[v1.1.1p3]
+! API: CAction now wrapps around a CommonDockAction and no longer a DockAction. This allows clients to use annotations like EclipseTabDockAction on CActions as well. 
+- API: The new TabMerger allows StackDockStations to be dropped on and merged with Dockables with one tab (like in the EclipseTheme).
+- Bugfix: Text and Icons are now set for invisible tabs as well, thus the LayoutManager can now correctly guess the preferred size of the tabs.
+- API: New DockTitleEvent "ActionsDockTitleEvent" informs a DockTitle about the actions it should display, most of the built in DockTitles will support this feature
+- API: New DockActionDistributor interface allows clients to define where actions apper (on a title, on a tab or on a info component).
+- API: BasicDockableDisplayer/BasicDockableDisplayerDecorator now create a DockActionSource and forward this source to the DockTitle. That way the dislpayer/decorator can apply a filter to the actions.
+- API: BubbleTheme now allows clients to show actions on tabs and on an info component, see the new BubbleTheme.ACTION_DISTRIBUTOR property.
+- API: FlatTheme now allows clients to show actions on tabs and on an info component, see the new FlatTheme.ACTION_DISTRIBUTOR property.
+- Bugfix: The framework should now also handle the NimbusLookAndFeel (whose package was renamed, so much for backwards compatibility...) under Java 7 
+- API: Added some additional interfaces to prevent constructors like "<A extends SimpleButtonDockAction & CommonDockable>", as these constructors are not working well together with the compiler.
+
+[v1.1.1p4]
+- Bugfix: DockElementRepresentative.shouldTransfersFocus is now respected by the DefaultFocusStrategy, meaning that clicking on an element like a tab now forwards the focus directly into a Dockable.
+- API: Focus ownership is now transfered more aggressively: focus transfer can be delayed up to 200 milliseconds after the user clicked the mouse.
+! API: FocusStrategy now receives a FocusStrategyRequest instead of several parameters.
+
+[v1.1.1p4a]
+- Bugfix: ScreenDockPerspective did not update the parent property of its children
+
+[v1.1.1p5]
+* DropDownIcon
+ ! API: DropDownMiniButton.setDropDownIconColor removed, this color can now be configured throught the ColorManager and the key "action.dropdown.arrow"
+ - API: The icon can now be replaced through the IconManager using the key DropDownIcon.ICON_KEY
+ - API: The default icon resizes itself according to IconManager.MINIMUM_ICON_SIZE
+
+* Focus
+ ! API: The FocusStrategy can now decide whether a Dockable that was drag&dropped should keep its focus. The default implementation allows a Dockable to lose the focus if its new parent is a FlapDockStation (when it was "minimized").
+
+* Perspectives
+ - Bugfix: MultipleCDockables on non-root working stations no longer lead to exceptions
+ - Bugfix: Non-root CStations are now correctly identified as CStations and not as SingleCDockables (which they are as well, but being a CStation is a more important attribute).
+ ! API: CPerspective.add/getRoot was renamed to add/getStation as "root" was a misleading name. The items consisted and are consisting of all CStations of a CControl, including nested stations.
+ - API: CControlPerspective allows now to read/write "entry" (partial) and "non-entry" (full) layouts.
+ ! API: MissingPerspectiveStrategy.createRoot renamed to createStation because the method can create any kind of station, not just root stations.
+ 
+* General 
+ - Bugfix: UIProperties.put could throw a NullPointerException if no UIScheme was set 
+ ! API: CDockable.getControl now returns a CControl
+ - API: New interface "CStationContainer" is an abstraction of Components that show a set of CStations, like for example the CContentArea. This interface allows the framework to be more general and there is no need to assume any set of CStations is a CContentArea. 
+ - API: CControl does now a sanity check for unique identifiers, an identifier must not be null and contain at least one sign that is not a whitespace
+ - API: The size of ScreenDockWindows is now limited to the size of the biggest screen device, the exact behavior can be modified by implementing a new BoundaryRestriction
+ - Bugfix: SingleParentRemover now also can remove DockStations that were just added into the tree (meaning, invalid stations will no longer show up).
+ ! API: CDockable.isMinimizeHold/isMinimizeHoldSwitchable renamed in isSticky/isStickySwitchable. "sticky" is a much better name for a property than "minimizeHold".
+ - API: SplitDockPerspective now supports reading and writing PlaceholderMaps, just like SplitDockStation
+ ! API: All "Secure"-classes, needed to support unsigned applets, have been removed (they were already deprecated and the documentation clearly stated, that they will be removed). The property DockController.set/getSecureEnvironment is to be used instead of the secure-classes.
+ - API: Clients can tell BackgroundComponents to be transparent or to be solid by calling BackgroundComponent.setTransparency. There is no alpha value, a component either paints its background or it does not.
+
+[v1.1.1p5a]
+ - Bugfix/API: New CommonDockStationFactory and CommonDockStationLayout are used to persistently store the layout of CStations. This new facillity allows clients to dynamically create new root-CStations that are also SingleCDockables while loading a layout. 
+ ! API: CommonDockStation has a new method "getConverterID" which tells what DockFactory to use for reading and writing the layout
+
+[v1.1.1p5b]
+ - Bugfix: FlapDockStation did create a drag&drop operation even if it already knew that the operation was invalid, as a result an Exception was thrown later.
+ - Bugfix: CGroupBehaviors no longer forwards actions to DockStations if these DockStations do not support the action.
+ ! API: The property telling whether the user can see a Dockable is now called "showing" and no longer "dockable-visible". This should prevent more confusion about "visibility" vs "true visibility" (the later term is no longer to be used, its now "showing").
+ - API: The new property SplitDockStation.DIVIDER_STRATEGY and the interface SplitDividerStrategy allow a client to specify a custom algorithm for resizing the children of a SplitDockStation
+ - Bugfix/API: Yet another update to the focus system: focus is now handled by "FocusRequest" objects. One request wins, the others get canceled. The system refuses to grant focus to an invalid component (e.g. one that is not visible) if there are still requests pending. 
+
+[v1.1.1p5c]
+ - API: DockRelocator offers a method "cancel" to cancel any DnD operation at any time.
+ - API: ScreenDockWindow now closes and reopens its ScreenDockWindows if the owner window (the root window) changed. This way the windows stay open if the client switches to a new root frame.
+ ! API: In order to prevent focus stealing ScreenDockWindow has a new method "setPreventFocusStealing". This method is only used if the root window changed. Focus stealing prevention is unset after ScreenDockStation.PREVENT_FOCUS_STEALING_DELAY milliseconds.
+ - API: New CStationContainerHistoryRewriter tries to ensure that a CDockable stays on the same CStationContainer as long as possible.
+ - Bugfix: A removed MultipleCDockable did not forget its unique identifier, when adding it again this caused an exception if another dockable got that unique id.
+ - Bugfix: The location of a removed CDockable could be forgotten even if CControl.shoudStore returned true.
+
+[v1.1.1p6]
+ - API: New GlobalMouseDispatcher collects and distributes MouseEvents. Can be used by clients to listen to events.
+ ! API: The "check" methods of MouseFocusObserver have been removed
+ - API: Added magnet feature to ScreenDockStation, clients can configure the feature through an AttractorStrategy or a MagnetStrategy. The feature allows windows to snap in place, and to stick together on movement and resizing.
+ ! API: Creating a DockableDisplayer now requires the use of a DisplayerRequest. Instead of just one possibility to replace the factory creating DockableDisplayers, clients and extensions have now several possiblities, e.g. directly in a Dockable or in a DockStation
+ ! API: ScreenDockStation can now filter which dockables are fullscreen enabled and which are not, see ScreenDockFullscreenFilter
+ ! API: During a drag and drop operation a DockStation now appears to consist of many layers instead of only one layer. This allows more complex rules to find the target of a drop operation. The new layers are described by the interface "DockStationDropLevel", the concept of the "override zone" has been completely replaced by this new layer mechanism.
+ - Bugfix: SplitDockStation did ignore the DockAcceptance in certain situations
+ - Bugfix: VetoableDockRelocatorListener.searched is now actually called
+
+[v1.1.1pToolbar]
+ - API: New Inserter can override drop operations before and after they are created
+
+[Todo]
+- DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
+- Drop StackDockStation over Dockable and merge them
+- EclipseTheme: Drop Dockable over Dockable and allow to select which Dockable has which index in the new StackDockStation.
+- SingleParentRemover: Implement bugfix as described in the file

@@ -1,0 +1,141 @@
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copyright (C) 2011 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+package bibliothek.gui.dock.station.toolbar;
+
+import java.util.Map;
+
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockHierarchyLock;
+import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Path;
+
+/**
+ * Default implementation of {@link ToolbarContainerConverter}. This converter supports all features
+ * necessary to read and write {@link PlaceholderMap}s.
+ * @author Benjamin Sigg
+ * @author Herve Guillaume
+ */
+public class DefaultToolbarContainerConverter implements ToolbarContainerConverter {
+	@Override
+	public PlaceholderMap getPlaceholders( ToolbarContainerDockStation station ){
+		PlaceholderMap result = new PlaceholderMap( new Path( "dock.ToolbarContainerStation" ), 0 );
+		result.put( result.newKey( "content" ), "list", station.getDockables().toMap() );
+		return result;
+	}
+
+	@Override
+	public PlaceholderMap getPlaceholders( ToolbarContainerDockStation station, Map<Dockable, Integer> children ){
+		PlaceholderMap result = new PlaceholderMap( new Path( "dock.ToolbarContainerStation" ), 0 );
+		result.put( result.newKey( "content" ), "list", convert( station, station.getDockables(), children ) );
+		return result;
+	}
+	
+	private PlaceholderMap convert( ToolbarContainerDockStation station, DockablePlaceholderList<StationChildHandle> list, final Map<Dockable, Integer> children ){
+		final PlaceholderStrategy strategy = station.getPlaceholderStrategy();
+		
+		return list.toMap( new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
+			@Override
+			public ConvertedPlaceholderListItem convert( int index, StationChildHandle handle ){
+				Dockable dockable = handle.getDockable();
+				
+				ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+    			Integer id = children.get( dockable );
+    			if( id == null ){
+    				return null;
+    			}
+    			
+    			item.putInt( "id", id );
+    			item.putInt( "index", index );
+    			if( strategy != null ){
+    				Path placeholder = strategy.getPlaceholderFor( dockable );
+    				if( placeholder != null ){
+    					item.putString( "placeholder", placeholder.toString() );
+    					item.setPlaceholder( placeholder );
+    				}
+    			}
+    			return item;
+			}
+		});
+	}
+
+	@Override
+	public void setPlaceholders( ToolbarContainerDockStation station, PlaceholderMap map ){
+		if( !map.getFormat().equals( new Path( "dock.ContainerLineStation" ) ) ) {
+			throw new IllegalArgumentException( "unknown format: " + map.getFormat() );
+		}
+		if( map.getVersion() != 0 ) {
+			throw new IllegalArgumentException( "unknown version: " + map.getVersion() );
+		}
+		
+		station.setPlaceholders( map.getMap( map.newKey( "content" ), "list" ) );
+	}
+
+	@Override
+	public void setPlaceholders( ToolbarContainerDockStation station, ToolbarContainerConverterCallback callback, PlaceholderMap map, Map<Integer, Dockable> children ){
+		convert( station, callback, map.getMap( map.newKey( "content" ), "list" ), children );
+	}
+	
+	private void convert( final ToolbarContainerDockStation station, final ToolbarContainerConverterCallback callback, PlaceholderMap map, final Map<Integer, Dockable> children ){
+		DockablePlaceholderList<StationChildHandle> list = new DockablePlaceholderList<StationChildHandle>();
+		callback.setDockables( list );
+		list.read( map, new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
+			private DockHierarchyLock.Token token;
+			
+			public StationChildHandle convert( ConvertedPlaceholderListItem item ){
+				int id = item.getInt( "id" );
+				Dockable dockable = children.get( id );
+				if( dockable == null ){
+					return null;
+				}
+				
+				DockUtilities.ensureTreeValidity( station, dockable );
+				token = DockHierarchyLock.acquireLinking( station, dockable );
+				
+				StationChildHandle handle = callback.wrap( dockable );
+				callback.adding( handle );
+				return handle;
+			}
+			
+			@Override
+			public void added( StationChildHandle handle ){
+				try{
+					callback.added( handle );
+				}
+				finally{
+					token.release();
+				}
+			}
+		});
+		callback.finished( list );
+	}
+}

@@ -1,0 +1,296 @@
+\section{Load and Save layouts}
+The layout of an application consists of the location, size and relationship of all the \src{Dockable}s and \src{DockStation}s. \src{DockingFrames} offers methods to store this layout persistently. Applications should use persistent layouts because the user certainly does not want to set up his preferred layout everytime when the application restarts.
+
+\src{DockingFrames} distinguishes between local and global layout information:
+\begin{enumerate}
+ \item Local information describes the relationship between one \src{Dockable} and its parent(s). Local information is represented by a chain of \linebreak \src{DockableProperty}s, and each \src{DockStation} offers a method \linebreak \src{getDockableProperty} to find the location of one of its children.
+ \item Global information describes the relationship of an entire tree of \linebreak \src{Dockable}s and \src{DockStation}s. The class \src{DockSituation} offers methods to extract and to apply this data.
+\end{enumerate}
+
+It should be notet that applications need to handle both local and global information in order to create a truly persistent layout. Local information is needed to store the location of \src{Dockable}s which are invisible (not in the tree), global information is needed when stopping and starting the application. There are no algorithms implemented to create global information out of local information, and there are only basic algorithms which create local information out of global information. In any case, conversion between these two formats should be considered not to be possible.
+
+\infobox{For many applications the easiest solution to handle persistent layouts is to use a \src{DockFrontend} and completely ignore all the other sections of this chapter (see chapter \ref{sec:DockFrontend}).}
+
+\subsection{Placeholders}
+Placeholders are an optional extension that allow clients to link global and local information. The idea behind placeholders is, that some \src{Dockable}s can be assigned a unique identifier. If such a \src{Dockable} is removed from a \src{DockStation}, then a placeholder remains. At later time when the \src{Dockable} is added again to that station, the placeholder can be used to place the element at its former location. Placeholders are stored in the global and the local layout information, and thus build a link.
+
+In \src{Core} this mechanism is normally disabled. Clients must implement a new \src{PlaceholderStrategy} and install the strategy using the property key \src{PlaceholderStrategy.PLACEHOLDER\_STRATEGY}. The strategy should be set up before reading a layout, otherwise all placeholders will be marked as invalid and be deleted. The strategy should also be applied to any \src{DockSituation} that is created by clients.
+
+\codebox{An implementation of a \src{PlaceholderStrategy} can be found in the example ``Persistent Layout: Placeholders''.}
+
+\designbox{Placeholders were introduced in version 1.0.8. One of the reasons they were not used earlier is that they make data structures complex. Also detecting and removing invalid and outdated placeholders requires some work.}
+
+\classbox{Most \src{DockStation}s use the \src{PlaceholderList} and the \src{PlacehoderMap} to manage their \src{Dockable}s and placeholders.}
+
+\subsection{Local: DockableProperty}
+Every \src{DockStation} can create \src{DockableProperty}-objects for its children. Each of these \src{DockableProperty}s contains the position, size, placeholder and/or other data about one child. 
+
+Some \src{DockStation}s are also \src{Dockable}s. Those stations are not only able to create \src{DockableProperties} for their children but their parents can create a property for them. These two properties can be strung together to form a chain describing the position of a grand-child on its grand-parent.
+
+\subsubsection{Creation}
+How to create a \src{DockableProperty}? One way is of course just to create new objects using \src{new XYProperty(...)}. The other way is to retrieve them from some \src{DockStation}s and \src{Dockable}s:
+\begin{lstlisting}
+Dockable dockable = ...
+
+DockStation root = DockUtilities.getRoot( dockable );
+DockableProperty location = DockUtilities.getPropertyChain( root, dockable );
+\end{lstlisting}
+In line \src{1} we get some unknown \src{Dockable}. In line \src{3} the \src{DockStation} which is at the top of the tree of stations and \src{Dockable}s is searched. Then in line \src{4} the location of \src{dockable} in respect to \src{root} is determined.
+
+\classbox{There are seven \src{DockableProperties} present in the framework.
+\begin{description}
+ \item[StackDockProperty] for \src{StackDockStation}, contains just the index of the \src{Dockable} in the stack.
+ \item[FlapDockProperty] for \src{FlapDockStation}, contains index, size and whether the \src{Dockable} should hold its position when not focused.
+ \item[ScreenDockProperty] for \src{ScreenDockStation}, contains the boundaries of a \src{Dockable} on the screen.
+ \item[SplitDockProperty] for \src{SplitDockStation}. This deprecated property contains the boundaries of a \src{Dockable} on the station.
+ \item[SplitDockPathProperty] also for \src{SplitDockStation}. This new property contains the exact path leading to a \src{Dockable} in the tree that is used internally by the \src{SplitDockStation}.
+ \item[SplitDockPlaceholderProperty] also for \src{SplitDockStation}. This property stores a placeholder, an identifier whose position is already known to the \src{SplitDockStation}. If the placeholder is not found, then a backup property can be applied.
+ \item[SplitDockFullScreenProperty] also for \src{SplitDockStation}. This property points to a child that is maximized.
+\end{description}
+}
+
+\subsubsection{Usage}
+How to apply a \src{DockableProperty}? Every \src{DockStation} has a method \src{drop} that takes a \src{Dockable} and its position. That might look like this:
+\begin{lstlisting}
+Dockable dockable = ...
+DockStation root = ...
+DockableProperty location = ...
+
+if( !root.drop( dockable, location )){
+  root.drop( dockable );
+}
+\end{lstlisting}
+In lines \src{1-3} some elements that were stored earlier are described. In line \src{5} we try to drop \src{dockable} on \src{root}, if that fails we just drop it somewhere (line \src{6}).
+
+\src{DockableProperty}s are not safe to use. If the tree of stations and \src{Dockable}s changes, then an earlier created \src{DockableProperty} might not be consistent anymore. The method \src{drop} of \src{DockStation} checks for consistency and returns \src{false} if a \src{DockableProperty} is no longer valid.
+
+\warningbox{Always check the result of \src{drop}, if it is \src{false} then the operation was canceled by the station because the property is invalid.}
+
+\subsubsection{Storage}
+\src{DockableProperty}s can be stored either as byte-stream or in xml-format by a \src{PropertyTransformer}. A set of \src{DockablePropertyFactories} is used by the transformer to store and load properties. The factories for the default properties are always installed. If a developer adds new properties then he should use the method \src{addFactory} to install new factories for them.
+
+\infobox{If using \src{DockFrontend} the method \src{registerFactory} can be used to add a new \src{DockablePropertyFactory}. This factory will then be used by the global transformer of the frontent.}
+
+\subsection{Global: DockSituation}
+The layout of a whole set of \src{Dockable}s and \src{DockStation}s can be stored with the help of a \src{DockSituation}. A \src{DockSituation} is a set of algorithms that transform the layout information from one format into another, e.g. from the dock-tree (built by stations and \src{Dockable}s) to an xml-file. A \src{DockSituation} uses various factories for these transformations.
+
+\codebox{An example featuring several aspects of global layouts is ``Persistent Layout: Global''.}
+
+\subsubsection{Basic Algorithms}
+Global layout information appears in five formats:
+\begin{description}
+ \item[dock-tree format] The set of \src{Dockable}s and \src{DockStation}s as they are seen by the user.
+ \item[binary format] A file containing binary data. This file is normally written by a \src{DataOuputStream} and read by a \src{DataInputStream}.
+ \item[xml format] A file containing xml. To write and read such a file the class \src{XIO} is used.
+ \item[layout-composition format] An intermediate format that consists of a set of \src{DockLayoutComposition}s. These objects are organized in a tree that has the same form as the dock-tree.
+ \item[perspective format] A lightweight version of the ``dock-tree format'', for easy modification by clients. More about perspectives can be found in section \ref{sec:perspectives}.
+\end{description}
+If converting from \src{a} to \src{b} then a \src{DockSituation} will always first convert \src{a} to \src{layout-composition} and then \src{layout-composition} to \src{b}.
+
+\warningbox{\src{DockSituation} always creates new files or new objects. In its basic form it is not able to reuse existing elements.}
+
+A \src{DockSituation} uses different factories and strategies for these conversions:
+\begin{description}
+ \item[DockFactory] These factories are responsible to load or store the layout of a single \src{Dockable} or \src{DockStation}. Like \src{DockSituation} they need to support different formats, but they are free to choose any object as intermediate format.
+ \item[AdjacentDockFactory] They function the same way as \src{DockFactories} but can be used for arbitrary dock-elements. \src{AdjacentDockFactories} are used to store additional information about elements, that can, but does not have to be, layout information.
+ \item[MissingDockFactory] These are used when another factory is missing. The \src{MissingDockFactory} can try to read the xml-format or binary-format and convert it to the intermediate format.
+ \item[DockSituationIgnore] This strategy allows a \src{DockSituation} to ignore dock-elements when storing the layout. That can be helpful if for example an application has \src{Dockable}s which show only temporary information that will be lost on shutdown anyway.
+ \item[PlaceholderStrategy] This strategy filters placeholders, invalid placeholders are removed from the layout.
+ \end{description}
+
+A \src{DockSituation} can handle missing factories when reading xml or binary format. It first tries to use a \src{MissingDockFatory} to read the data, if that fails it either throws away the data (for \src{AdjacentDockFactories}) or stores the data in the layout-composition as ``bubble'' in its raw format. These ``bubbles'' can be converted later when the missing factories are found.
+
+\classbox{A \src{DockLayoutComposition} contains a lot of information. First of all a list of children to build the tree. Then a list of \src{DockLayout}s which represent the information from \src{AdjacentDockFactories}. Each \src{DockLayout} contains a unique identifier for the factory and the data generated by the factory. Finally a \src{DockLayoutComposition} contains a \src{DockLayoutInfo} which represents the data of or for a \src{DockFactory}. A \src{DockLayoutInfo} either contains a \src{DockLayout} (the normal case) or some data in xml or binary format. The later case happens if a factory was missing while reading a file, the information gets stored until it can be read later.}
+
+\infobox{The method \src{fillMissing} can be used to read ``bubbles'' in raw format. The method \src{estimateLocations} can be used to build \src{DockableProperty}s for the elements. These are the positions were the elements would come to rest if the layout information were converted into a dock-tree.}
+
+\subsubsection{Basic Usage}
+How is a \src{DockSituation} utilized in order to load or store the layout of an application?
+
+Each \src{Dockable} and each \src{DockStation} has a method \src{getFactoryID}. This method returns an identifier that has to match the unique identifier that is returned by the method \src{getID} of \src{DockFactory}. The first step in using a \src{DockSituation} will always be to make sure that for any identifier a matching \src{DockFactory} is available. Clients have to call the method \src{add} of \src{DockSituation} to do so.
+
+\infobox{Default factories are installed for \src{DefaultDockable}, \src{SplitDockStation}, \src{StackDockStation} and \src{FlapDockStation}.}
+
+\warningbox{The \src{ScreenDockStationFactory} for \src{ScreenDockStation} is not installed per default. This factory requires a \src{WindowProvider} to create the station, and since this provider cannot be guessed by \src{DockSituation} the factory is missing. Clients have to add \src{ScreenDockStationFactory} manually.}
+
+Afterwards clients just have to call \src{write} or \src{writeXML} to write a set of \src{DockStation}s and their children. Clients can later call \src{read} or \src{readXML} to read the same map of elements. Note that every call to \src{read} or \src{readXML} will create a new set of \src{Dockable}- and \src{DockStation}-objects.
+
+Let't give an example how to write an xml file:
+\begin{lstlisting}
+try{
+	JFrame frame = ...
+	DockStation root = ...
+
+	DockSituation situation = new DockSituation();
+	situation.add( new ScreenDockStationFactory( frame ) );
+	situation.add( new MySpecialFactory() );
+
+	Map<String, DockStation> map = new HashMap<String, DockStation>();
+	map.put( "root", root );
+
+	XElement xlayout = new XElement( "layout" );
+	situation.writeXML( map, xlayout );
+
+	FileOutputStream out = new FileOutputStream( "layout.xml" );
+	XIO.writeUTF( xlayout, out );
+	out.close();
+}
+catch( IOException ex ){
+	ex.printStackTrace();
+}
+\end{lstlisting}
+On line \src{2} the main-frame of the application is given and on line \src{3} the applications root \src{DockStation}. The first step is to create a new \src{DockSituation} on line \src{5} and add the missing \src{ScreenDockStationFactory} on line \src{6}. Then other factories that are not part of \src{DockingFrames} but the application itself can be added like on line \src{7}. On lines \src{9, 10} a map with all the root-stations of the application is built up. Then on line \src{12} we prepare for writing in xml-format by creating a \src{XElement}. The situation converts the dock-tree to xml-format in line \src{13}. Finally on lines \src{15-17} the xml-tree is written into a file ``layout.xml''.
+
+The next example shows how reading from binary format can look like:
+\begin{lstlisting}
+try{
+	JFrame frame = ...
+
+	DockSituation situation = new DockSituation();
+	situation.add( new ScreenDockStationFactory( frame ) );
+	situation.add( new MySpecialFactory() );
+
+	FileInputStream fileStream = new FileInputStream( "layout" );
+	DataInputStream in = new DataInputStream( fileStream );
+
+	Map<String, DockStation> map = situation.read( in );
+
+	in.close();
+
+	SplitDockStation station = (SplitDockStation)map.get( "root" );
+	frame.add( station.getComponent() );
+}
+catch( IOException ex ){
+	ex.printStackTrace();
+}
+\end{lstlisting}
+What happens here? In line \src{2} the main frame of the application is defined. In lines \src{4-6} a \src{DockSituation} is set up. In lines \src{8, 9} a file is opened. In line \src{11} that file gets read by the \src{DockSituation} and a map that was earlier given to \src{write} is returned. In line \src{15} the fact that \src{map} was earlier given to \src{write} is used to guess that there is a \src{SplitDockStation} with key ``root'' in the map. Finally in line \src{16} that station is put onto the main-frame which now shows the new elements.
+
+\subsubsection{Reuse existing Dockables}
+The major drawback of the basic algorithms is that they always create new \src{Dockable}s and \src{DockStation}s. It is nearly impossible to just change the layout while an application is running, a layout can only be loaded on startup. \src{PredefinedDockSituation} builds upon \src{DockSituation} and extends the algorithms in a way that they can reuse existing dock-elements.
+
+The extended algorithm uses a special \src{DockFactory}, called \src{PreloadFactory}, that is wrapped around the factories provided by the client. Writing does not change much, the \src{PreloadFactory} delegates the work just to the original \src{DockFactory}. Reading however is more interesting, the \src{PreloadFactory} forwards an already existing dock-element to the the original \src{DockFactory} which then updates the layout of the element.
+
+A side effect of this implementation is that for the basic algorithms no factory seems ever to be missing. In fact the issue of missing factories is just moved to the \src{PreloadFactory}. The \src{PreloadFactory} can however store data in its raw format if necessary.
+
+\classbox{A \src{PreloadFactory} uses a \src{PreloadedLayout} as intermediate format. This \src{PreloadedLayout} contains the unique identifier of the original \src{DockFactory} and a \src{DockLayoutInfo}. The \src{DockLayoutInfo} contains either data in raw format or in the intermediate format of the original factory.}
+
+What happens if a \src{PredefinedDockSituation} finds layout information for an element, has all the necessary factories but not the element itself? The default behavior is to ignore the information. However it is possible to use backup-\src{DockFactories}. These backup factories will create new elements if the originals are missing. They are also used when reading raw format and the original factory is missing. These backup factories are added through \src{addBackup}, they have to use a \src{BackupFactoryData} as intermediate format.
+
+\warningbox{Note that the \src{MissingDockFactory} of \src{DockSituation} is not used for elements that were predefined on writing, because for those elements the \src{PreloadFactory} - which is never missing - was used.}
+
+\designbox{The existence of these two sets of algorithms, basic and extended, lays in the history of \src{DockingFrames}. First the basic algorithms were written. They did their job well for small applications. But when applications began to grow it became evident that their were not sufficient. Instead of rewriting them another layer was added. The division in two sets of algorithms has also the advantage of reduced complexity.}
+
+\src{PredefinedDockSituation} is used in the same way as \src{DockSituation}. The only difference is the possibility to predefine elements. The method \src{put} can be used for that. This method expects a unique identifier for any new element.
+
+An example can look like this:
+\begin{lstlisting}
+	DockStation rootStation = ...
+	Dockable fileTreeDockable = ...
+	Dockable contentDockable = ...
+
+	PredefinedDockSituation situation = new PredefinedDockSituation();
+
+	// setup situation {...}
+
+	situation.put( "root", rootStation );
+	situation.put( "file-tree", fileTreeDockable );
+	situation.put( "content", contentDockable );
+
+	// read or write {...}
+\end{lstlisting}
+In lines \src{1-3} some \src{DockStation}s and \src{Dockable}s are defined. These are the elements that are always present and need not to be recreated when loading a layout. In line \src{5} a new \src{PredefinedDockSituation} is created. Then the basic setup (adding factories, ...) is done in line \src{7}. In the lines \src{9-11} the predefenied elements are added to the situation. For each of them a unique identifier is choosen. Finally in line \src{13} we can either write or read the layout.
+
+\infobox{Any \src{String} can be used as unique identifier. Small identifiers with no special characters are however much less likely to attract any kind of trouble.}
+
+\subsubsection{Exctract local information}
+It is possible to exctract \src{DockableProperty}s from a global layout with the help of a \src{DockSituation}. First the layout data is required in its intermediate format. This data can only be accessed if the client uses its own format to store layout data. As an example, storing the layout of one \src{DockStation} using XML:
+
+\begin{lstlisting}
+public void write( StackDockStation station, DockSituation situation, XElement out ){
+	DockLayoutComposition intermediate = situation.convert(station);
+	situation.writeCompositionXML(intermediate, out.addElement("layout"));
+}
+\end{lstlisting}
+
+Once the client has acquired the data in its intermediate format it can use \src{estimateLocations} to assign locations to each node in the tree of compositions. An example using XML:
+
+\begin{lstlisting}
+ public void read( DockSituation situation, XElement in ){
+	// acquire intermediate data
+	DockLayoutComposition intermediate = situation.readCompositionXML(in.getElement("layout"));
+
+	// guess locations
+	situation.estimateLocations(intermediate);
+
+	// get the location of the root (which will be null, because the root has no parent)
+	DockableProperty location = intermediate.getLayout().getLocation();
+}
+\end{lstlisting}
+
+It is up to the client to find out which \src{DockLayoutComposition} represents which \src{Dockable}. A custom \src{DockFactory} can help by storing some keys in the layout which can later be identified by the client.
+
+\infobox{A \src{DockFrontend} will estimate locations of those missing \src{Dockable}s for which \src{addEmpty} was called.}
+
+\classbox{If using a \src{PredefinedDockSituation}, the method \src{listEstimatedLocations} is of interest as it returns a map of identifier-location pairs. The identifiers are the identifiers of the \src{Dockable}s which were added by the client to the situation.}
+
+
+\subsection{Perspectives} \label{sec:perspectives}
+Layout information appears in different formats, perspectives is one of these formats. Perspectives offer clients a way to read, modify or build layout information using lightweight objects and keeping typesafety.
+
+In order to work with perspectives clients need access to a \src{Perspective} object:
+\begin{itemize}
+ \item Any \src{DockSitutation} offers a method \src{createPerspective} which sets up a new \src{Perspective} using the current settings of the \src{DockSituation}.
+ \item \src{DockFrontend} offers a method \src{getPerspective}. Clients can provide a \src{FrontendPerspectiveCache} which basically converts \src{Dockable}s and \src{DockStation}s to their counterparts in the perspective API. This is required for clients that introduce their own \src{DockFactory}s.
+\end{itemize}
+
+\infobox{The \src{FrontendPerspectiveCache} allows clients to use their own, specialized classes to describe \src{Dockable}s and \src{DockStation}s. This may not be necessary for all clients, these clients can make use of the \src{DefaultFrontendPerspectiveCache}. }
+
+Once a \src{Perspective} object is aquired it can be used to directly read and write the xml, binary or the intermediate format. Clients using a \src{DockSituation} should use the \src{convert} methods to create or apply the intermediate format. Clients using a \src{DockFrontend} should use the \src{get/setSetting} methods in order to access and apply layouts through the intermediate format.
+
+\src{Perspective} creates objects of type \src{PerspectiveElement}. There are various subtypes of this interface, in fact for each type of \src{Dockable} or \src{DockStation} of the framework there is a subtype representing exactly that item (e.g. \linebreak \src{SplitDockPerspective} represents \src{SplitDockStation}). Clients are free to move around elements in any way they wish. However, the perspective API does not enforce the correctness of the layout, it is the clients responsibility to build a layout that actually makes sense.
+
+\codebox{An example showing how to use perspectives to build the layout is ``Persistent Layout: Perspectives''.}
+
+\subsection{DockFrontend} \label{sec:DockFrontend}
+\src{DockFrontend} offers storage for local and for global layout information. Clients need to register their \src{Dockable}s through \src{addDockable} if they want access to the full range of storage-features.
+
+Layout information can be stored in xml- or binary-format. The methods \src{write}, \src{writeXML}, \src{read} and \src{readXML} will take care of this.
+
+\subsubsection{Local}
+Whenever \src{hide} is called for a registered \src{Dockable} its local position gets stored. If later \src{show} is called this position is reapplied and the element shows up at the same (or nearly the same) location it was earlier.
+
+\subsubsection{Global}
+\src{DockFrontend} internally uses a \src{PredefinedDockSituation} to store the global layout. All root-\src{DockStation}s and all registered \src{Dockable}s are automatically added to this situation. The global layout can either be stored on disk or it can be stored in memory. It is possible to store more than just one layout in memory and allow the user to choose from different layouts. There are methods to interact with the layouts in memory:
+
+\begin{description}
+ \item[save] Saves the current layout in memory. Clients can provide a name for the layout or use the name of the last loaded layout.
+ \item[load] Loads a layout. The name of the layout is used as key.
+ \item[delete] Deletes a layout from memory.
+ \item[getSettings] Gets a set of names for the different layouts.
+ \item[getCurrentSetting] Gets the name of the layout that is currently loaded, can be \src{null}.
+ \item[setCurrentSetting] If there is a layout with the name given to this method than that layout is loaded. Otherwise the current layout gets saved with the new name.
+\end{description}
+
+\subsubsection{Missing Dockables}
+The default behavior of \src{DockFrontend} is to throw away information for missing \src{Dockable}s. It is however possible to change that behavior.
+
+If data needs to be stored for a missing \src{Dockable} then \src{DockFrontend} uses an ``empty entry''. Clients can define new empty entries by invoking the method \src{addEmpty}. Existing entries can be removed with \src{removeEmpty}, with \src{listEmpty} all empty entries can be accessed. Once an entry has been marked as ``empty'' it can switch between filled and empty as many times as necessary without loosing its layout information. The \src{DockFrontend} can even store data in raw xml or binary format and convert this data later once an appropriate \src{DockFactory} becomes known.
+
+\infobox{``Empty entries'' are best to be used if a client already knows the identifiers of all the \src{Dockable}s that can eventually be registered at the \src{DockFrontend}.}
+
+Another way is to register backup-\src{DockFactories} by calling the method \src{registerBackupFactory}. These factories will create new \src{Dockable}s which are then automatically registered.
+
+\infobox{A backup-factory is the strongest weapon against missing information. If there is a possibility to use them, use them.}
+
+And finally there is the \src{MissingDockableStrategy} which can be set using \src{setMissingDockableStrategy}:
+\begin{itemize}
+ \item It allows to create ``empty entries'' automatically. There are two methods \src{shouldStoreShown} and \src{shouldStoreHidden} which have to check the identifiers and to return \src{true} to allow a new empty entry.
+ \item It allows to use new \src{DockFactories} as soon as they become known. Normally \src{DockFrontend} does not change the layout without the explizit command from a client (by invoking \src{setSetting} directly or indirectly). If \src{shouldCreate} returns \src{true} however \src{DockFrontend} will update the layout as soon as enough information is available to do so.
+\end{itemize}
+
+\infobox{\src{MissingDockableStrategy} should be used when no information about what is missing is available. It allows to run a ``do whatever is possible''-strategy.}
+
+\warningbox{If a strategy allows to store anything and a client often uses different identifiers for their \src{Dockable}s, then layouts will start to grow and never stop. Don't forget to delete outdated information.}
+
+\classbox{The interface \src{MissingDockableStragey} offers two default implementations: \src{DISCARD\_ALL} and \src{STORE\_ALL}. The first implementation is set as default and allows nothing, the second one allows everything.}

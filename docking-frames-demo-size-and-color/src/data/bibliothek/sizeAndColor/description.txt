@@ -1,0 +1,15 @@
+<html>
+This application demonstrates two new features of version 1.0.3. Both features
+are rooted in the core-library, and used in the common-project. This application
+builds upon the common-project.
+<ul>
+	<li><b>Size feature:</b> the size of a panel can be locked. This does
+	not prevent the user from changing the panels size. But when the underlying
+	DockStation gets resized, then the panel remains unchanged.<br>
+	It is also possible to request a size. Multiple requests can be processed
+	at one time, so space can be distributed equally among all requests.</li>
+	<li><b>Color feature:</b> Many Components now read their colors from a
+	central repository. It is possible to change the contents of that repository,
+	it is even possible to create conditions when to use which color.</li>
+</ul>
+</html>

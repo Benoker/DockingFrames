@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<project name="glass" default="default" basedir="../">
+	<import file="../docking-frames-core/build.xml"/>
+	
+	<target name="default" depends="source, bin, doc">
+		<delete>
+			<fileset dir="${glass.temp}"/>
+		</delete>
+	</target>
+
+	<target name="paths" depends="dock.paths">
+		<property name="glass.base" value="glass"/>
+		<property name="glass.source" value="${glass.base}/src"/>
+		<property name="glass.bin" value="${glass.base}/bin"/>
+		<property name="glass.temp" value="${glass.base}/temp"/>
+		<property name="glass.doc" value="${glass.base}/doc"/>
+		<property name="glasslib" value="glasslib.jar"/>
+
+		<property name="name.glass" value="docking-frames-ext-glass"/>
+		
+		<property name="location.glass" value="docking-frames-ext-glass"/>
+	</target>
+	
+	<target name="doc" depends="source, paths, dock.paths">
+		<mkdir dir="${glass.doc}/${name.glass}"/>
+		<javadoc destdir="${glass.doc}/${name.glass}" use="true" splitindex="true" useexternalfile="true">
+			<fileset dir="${glass.source}/${name.glass}">
+				<include name="**/*.java"/>
+			</fileset>
+			<classpath path="${bin}/${name.common}.jar"/>
+			<classpath path="${bin}/${name.core}.jar"/>
+			<classpath path="${glass.bin}/${glasslib}"/>
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+			<link href="${doc}/${name.common}"/>
+		</javadoc>
+	</target>
+	
+	<target name="bin" depends="source, bin.dir, bin.glass, paths">
+		<jar destfile="${glass.bin}/${name.glass}.jar">
+			<fileset dir="${glass.temp}/${name.glass}"/>
+			<manifest>
+				<attribute name="Class-Path" value="${glasslib} ${name.common}.jar ${name.core}.jar"/>
+			</manifest>
+		</jar>
+		<copy tofile="${glass.bin}/glasslib_license.txt" file="${location.glass}/libs/glassLib/license.txt"/>
+	</target>
+
+	<!-- Compiling -->
+	<target name="bin.glass" depends="source, bin.dir">
+		<copy tofile="${glass.bin}/${glasslib}" file="${location.glass}/libs/glassLib/${glasslib}"/>
+		<javac srcdir="${glass.source}/${name.glass}" destdir="${glass.temp}/${name.glass}">
+			<classpath path="${bin}/${name.common}.jar"/>
+			<classpath path="${bin}/${name.core}.jar"/>
+			<classpath path="${glass.bin}/${glasslib}"/>
+		</javac>
+		<copy todir="${glass.temp}/${name.glass}">
+			<fileset dir="${glass.source}/${name.glass}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Paths -->
+	<target name="bin.dir" depends="clean, paths">
+		<mkdir dir="${glass.base}"/>
+		<mkdir dir="${glass.bin}"/>
+		<mkdir dir="${glass.temp}"/>
+		<mkdir dir="${glass.temp}/${name.glass}"/>
+	</target>
+
+	<!-- copy source -->
+	<target name="source" depends="source dir, clean, paths">
+		<copy todir="${glass.source}/${name.glass}">
+			<fileset dir="${location.glass}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- paths source -->
+	<target name="source dir" depends="clean, paths">
+		<mkdir dir="${glass.base}"/>
+		<mkdir dir="${glass.source}"/>
+		<mkdir dir="${glass.source}/${name.glass}"/>
+	</target>
+
+
+	<target name="clean" depends="paths">
+		<delete dir="${glass.base}"/>
+	</target>
+</project>

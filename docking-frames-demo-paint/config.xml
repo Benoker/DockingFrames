@@ -1,0 +1,3047 @@
+<?xml version='1.0'?>
+<config>
+	<pictures>
+		<picture>
+			<name>Apple</name>
+			<shapes>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="194" y="172"/>
+					<point x="474" y="528"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="280" y="172"/>
+					<point x="562" y="534"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="228" y="416"/>
+					<point x="354" y="568"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="222" y="388"/>
+					<point x="350" y="550"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="214" y="394"/>
+					<point x="364" y="534"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="190" y="360"/>
+					<point x="340" y="510"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="192" y="334"/>
+					<point x="332" y="480"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="192" y="306"/>
+					<point x="320" y="462"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="170" y="280"/>
+					<point x="348" y="426"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="204" y="264"/>
+					<point x="360" y="388"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="240" y="200"/>
+					<point x="444" y="358"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="292" y="180"/>
+					<point x="452" y="358"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="262" y="220"/>
+					<point x="410" y="384"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="232" y="256"/>
+					<point x="388" y="474"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="230" y="378"/>
+					<point x="396" y="530"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="302" y="374"/>
+					<point x="444" y="506"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="320" y="356"/>
+					<point x="478" y="540"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="394" y="388"/>
+					<point x="526" y="504"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="374" y="322"/>
+					<point x="552" y="456"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="384" y="278"/>
+					<point x="534" y="430"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="382" y="238"/>
+					<point x="554" y="374"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="382" y="218"/>
+					<point x="538" y="348"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="350" y="174"/>
+					<point x="524" y="318"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="336" y="190"/>
+					<point x="492" y="326"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="280" y="204"/>
+					<point x="434" y="352"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="226" y="228"/>
+					<point x="394" y="374"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="210" y="270"/>
+					<point x="366" y="428"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="238" y="340"/>
+					<point x="398" y="486"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="258" y="386"/>
+					<point x="388" y="510"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="236" y="392"/>
+					<point x="418" y="560"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="292" y="442"/>
+					<point x="464" y="550"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="332" y="428"/>
+					<point x="494" y="540"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="386" y="404"/>
+					<point x="538" y="520"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="412" y="374"/>
+					<point x="548" y="478"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="444" y="324"/>
+					<point x="576" y="428"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="420" y="278"/>
+					<point x="544" y="376"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="390" y="244"/>
+					<point x="548" y="334"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="468" y="210"/>
+					<point x="368" y="338"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="404" y="200"/>
+					<point x="258" y="300"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="344" y="188"/>
+					<point x="226" y="316"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="382" y="190"/>
+					<point x="284" y="296"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="472" y="174"/>
+					<point x="342" y="318"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="538" y="228"/>
+					<point x="414" y="382"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="550" y="302"/>
+					<point x="418" y="490"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="358" y="332"/>
+					<point x="550" y="482"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="332" y="334"/>
+					<point x="504" y="522"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="300" y="386"/>
+					<point x="472" y="578"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="286" y="432"/>
+					<point x="498" y="564"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="352" y="386"/>
+					<point x="570" y="542"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="386" y="366"/>
+					<point x="564" y="496"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="418" y="312"/>
+					<point x="588" y="434"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="388" y="264"/>
+					<point x="568" y="384"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="360" y="218"/>
+					<point x="564" y="330"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="370" y="222"/>
+					<point x="590" y="338"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="408" y="284"/>
+					<point x="580" y="436"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="412" y="308"/>
+					<point x="580" y="454"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="404" y="340"/>
+					<point x="560" y="480"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="400" y="360"/>
+					<point x="564" y="516"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="380" y="384"/>
+					<point x="530" y="536"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="346" y="400"/>
+					<point x="504" y="550"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="314" y="398"/>
+					<point x="466" y="562"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="276" y="412"/>
+					<point x="444" y="598"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="244" y="404"/>
+					<point x="394" y="536"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="234" y="374"/>
+					<point x="418" y="542"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="236" y="360"/>
+					<point x="404" y="510"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="208" y="330"/>
+					<point x="394" y="490"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="210" y="294"/>
+					<point x="380" y="466"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="244" y="272"/>
+					<point x="404" y="424"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="258" y="222"/>
+					<point x="422" y="406"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="254" y="214"/>
+					<point x="442" y="394"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="270" y="196"/>
+					<point x="458" y="358"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="290" y="198"/>
+					<point x="470" y="340"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="310" y="180"/>
+					<point x="486" y="332"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="374" y="180"/>
+					<point x="550" y="348"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="402" y="204"/>
+					<point x="552" y="366"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="400" y="230"/>
+					<point x="546" y="418"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="402" y="294"/>
+					<point x="540" y="458"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="438" y="350"/>
+					<point x="542" y="500"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="426" y="404"/>
+					<point x="516" y="528"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="374" y="418"/>
+					<point x="480" y="546"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="346" y="432"/>
+					<point x="450" y="564"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="314" y="462"/>
+					<point x="402" y="582"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="278" y="458"/>
+					<point x="378" y="582"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="230" y="448"/>
+					<point x="340" y="558"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="220" y="424"/>
+					<point x="330" y="520"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="206" y="370"/>
+					<point x="304" y="500"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="192" y="346"/>
+					<point x="306" y="484"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="210" y="332"/>
+					<point x="322" y="482"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="182" y="300"/>
+					<point x="320" y="448"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="208" y="244"/>
+					<point x="324" y="402"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="220" y="254"/>
+					<point x="368" y="414"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="248" y="248"/>
+					<point x="384" y="390"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="264" y="216"/>
+					<point x="380" y="356"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="276" y="210"/>
+					<point x="428" y="374"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="294" y="202"/>
+					<point x="462" y="354"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="366" y="210"/>
+					<point x="536" y="350"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="416" y="222"/>
+					<point x="556" y="368"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="448" y="332"/>
+					<point x="532" y="446"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="398" y="340"/>
+					<point x="526" y="482"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="422" y="354"/>
+					<point x="546" y="482"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="390" y="304"/>
+					<point x="516" y="476"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="372" y="374"/>
+					<point x="478" y="518"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="350" y="402"/>
+					<point x="452" y="530"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="294" y="388"/>
+					<point x="390" y="542"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="242" y="394"/>
+					<point x="366" y="560"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="250" y="400"/>
+					<point x="344" y="522"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="220" y="336"/>
+					<point x="352" y="520"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="236" y="364"/>
+					<point x="328" y="482"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="224" y="332"/>
+					<point x="328" y="468"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="242" y="358"/>
+					<point x="326" y="474"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="242" y="328"/>
+					<point x="326" y="434"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="220" y="282"/>
+					<point x="332" y="422"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="230" y="232"/>
+					<point x="364" y="392"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="280" y="250"/>
+					<point x="388" y="394"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="280" y="232"/>
+					<point x="384" y="374"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="312" y="206"/>
+					<point x="440" y="356"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="360" y="236"/>
+					<point x="488" y="368"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="382" y="218"/>
+					<point x="514" y="366"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="422" y="208"/>
+					<point x="550" y="362"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="412" y="230"/>
+					<point x="588" y="410"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="472" y="286"/>
+					<point x="600" y="450"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="488" y="330"/>
+					<point x="580" y="484"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="486" y="404"/>
+					<point x="554" y="558"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="402" y="432"/>
+					<point x="518" y="560"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="426" y="458"/>
+					<point x="516" y="570"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="378" y="430"/>
+					<point x="546" y="586"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="436" y="420"/>
+					<point x="550" y="548"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="426" y="376"/>
+					<point x="560" y="480"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="448" y="292"/>
+					<point x="590" y="414"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="432" y="264"/>
+					<point x="586" y="382"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="458" y="298"/>
+					<point x="572" y="436"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="466" y="358"/>
+					<point x="562" y="500"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="452" y="416"/>
+					<point x="552" y="554"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="426" y="432"/>
+					<point x="526" y="568"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="394" y="466"/>
+					<point x="490" y="582"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="374" y="462"/>
+					<point x="474" y="562"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="334" y="460"/>
+					<point x="460" y="586"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="272" y="440"/>
+					<point x="402" y="558"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="286" y="462"/>
+					<point x="442" y="600"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="308" y="422"/>
+					<point x="450" y="558"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="290" y="372"/>
+					<point x="428" y="536"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="272" y="396"/>
+					<point x="414" y="552"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="258" y="336"/>
+					<point x="392" y="480"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="234" y="304"/>
+					<point x="362" y="454"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="238" y="268"/>
+					<point x="386" y="418"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="270" y="270"/>
+					<point x="422" y="394"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="282" y="226"/>
+					<point x="424" y="370"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="320" y="222"/>
+					<point x="454" y="342"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-65536</color>
+					<point x="326" y="198"/>
+					<point x="470" y="336"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="384" y="246"/>
+					<point x="338" y="116"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="392" y="226"/>
+					<point x="356" y="106"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="342" y="112"/>
+					<point x="406" y="250"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="338" y="114"/>
+					<point x="394" y="248"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="340" y="110"/>
+					<point x="404" y="264"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="356" y="118"/>
+					<point x="396" y="248"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="352" y="112"/>
+					<point x="408" y="246"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="338" y="112"/>
+					<point x="386" y="260"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="354" y="112"/>
+					<point x="406" y="252"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="336" y="106"/>
+					<point x="400" y="226"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="328" y="114"/>
+					<point x="392" y="256"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="352" y="132"/>
+					<point x="392" y="230"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="336" y="114"/>
+					<point x="396" y="260"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="356" y="122"/>
+					<point x="408" y="262"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="344" y="132"/>
+					<point x="400" y="234"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="340" y="118"/>
+					<point x="262" y="84"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="338" y="114"/>
+					<point x="264" y="88"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="344" y="106"/>
+					<point x="264" y="74"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="340" y="108"/>
+					<point x="254" y="86"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="346" y="112"/>
+					<point x="244" y="64"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="354" y="112"/>
+					<point x="274" y="80"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="340" y="108"/>
+					<point x="290" y="78"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5874112</color>
+					<point x="348" y="114"/>
+					<point x="272" y="90"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="350" y="98"/>
+					<point x="608" y="112"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="384" y="78"/>
+					<point x="584" y="134"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="418" y="66"/>
+					<point x="558" y="150"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="442" y="60"/>
+					<point x="528" y="132"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="454" y="74"/>
+					<point x="540" y="138"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="472" y="88"/>
+					<point x="544" y="144"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="458" y="82"/>
+					<point x="544" y="134"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="462" y="88"/>
+					<point x="530" y="132"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="434" y="88"/>
+					<point x="516" y="132"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="434" y="84"/>
+					<point x="520" y="124"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="450" y="78"/>
+					<point x="508" y="118"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="456" y="82"/>
+					<point x="520" y="114"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="498" y="96"/>
+					<point x="560" y="124"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="522" y="82"/>
+					<point x="586" y="108"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="540" y="76"/>
+					<point x="580" y="118"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="530" y="94"/>
+					<point x="580" y="134"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="548" y="98"/>
+					<point x="594" y="122"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="576" y="98"/>
+					<point x="596" y="116"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="532" y="90"/>
+					<point x="584" y="112"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="464" y="102"/>
+					<point x="520" y="118"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="436" y="86"/>
+					<point x="516" y="122"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="430" y="82"/>
+					<point x="504" y="118"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="424" y="90"/>
+					<point x="480" y="120"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="394" y="94"/>
+					<point x="468" y="128"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="396" y="84"/>
+					<point x="482" y="140"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="404" y="106"/>
+					<point x="452" y="134"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="396" y="112"/>
+					<point x="456" y="144"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="386" y="98"/>
+					<point x="444" y="122"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="374" y="88"/>
+					<point x="426" y="116"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="370" y="96"/>
+					<point x="438" y="116"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="386" y="96"/>
+					<point x="456" y="120"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="408" y="92"/>
+					<point x="494" y="132"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="450" y="106"/>
+					<point x="506" y="128"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="440" y="100"/>
+					<point x="516" y="136"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="454" y="76"/>
+					<point x="526" y="102"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="464" y="58"/>
+					<point x="526" y="106"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="460" y="64"/>
+					<point x="554" y="116"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="490" y="54"/>
+					<point x="526" y="84"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="486" y="68"/>
+					<point x="544" y="126"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="514" y="132"/>
+					<point x="556" y="150"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="480" y="94"/>
+					<point x="526" y="136"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="464" y="142"/>
+					<point x="530" y="164"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="458" y="134"/>
+					<point x="508" y="158"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="482" y="132"/>
+					<point x="520" y="152"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="452" y="114"/>
+					<point x="518" y="158"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="414" y="114"/>
+					<point x="478" y="144"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="408" y="102"/>
+					<point x="456" y="128"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="408" y="78"/>
+					<point x="470" y="118"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="408" y="74"/>
+					<point x="468" y="110"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="444" y="66"/>
+					<point x="522" y="114"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="530" y="104"/>
+					<point x="582" y="142"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="510" y="120"/>
+					<point x="560" y="154"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="514" y="116"/>
+					<point x="572" y="140"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.RectangleShape</class>
+					<color>-16733679</color>
+					<point x="510" y="106"/>
+					<point x="574" y="134"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-16777216</color>
+					<point x="185" y="60"/>
+					<point x="185" y="60"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-16777216</color>
+					<point x="155" y="26"/>
+					<point x="155" y="26"/>
+				</shape>
+			</shapes>
+		</picture>
+		<picture>
+			<name>Face</name>
+			<shapes>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-5596928</color>
+					<point x="240" y="106"/>
+					<point x="582" y="554"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-13434829</color>
+					<point x="284" y="178"/>
+					<point x="404" y="368"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-13434829</color>
+					<point x="424" y="186"/>
+					<point x="546" y="378"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="422" y="464"/>
+					<point x="500" y="430"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="416" y="468"/>
+					<point x="340" y="434"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="416" y="464"/>
+					<point x="348" y="436"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="414" y="458"/>
+					<point x="316" y="434"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="402" y="470"/>
+					<point x="306" y="430"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="408" y="462"/>
+					<point x="320" y="434"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="416" y="464"/>
+					<point x="482" y="440"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="436" y="468"/>
+					<point x="478" y="438"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="422" y="462"/>
+					<point x="484" y="422"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="454" y="448"/>
+					<point x="496" y="424"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="430" y="466"/>
+					<point x="504" y="424"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="420" y="462"/>
+					<point x="506" y="422"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="442" y="460"/>
+					<point x="492" y="430"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="452" y="312"/>
+					<point x="514" y="380"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="450" y="310"/>
+					<point x="498" y="366"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="450" y="312"/>
+					<point x="504" y="362"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="482" y="330"/>
+					<point x="514" y="364"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="466" y="330"/>
+					<point x="516" y="374"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="464" y="324"/>
+					<point x="506" y="366"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="468" y="320"/>
+					<point x="518" y="370"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="456" y="300"/>
+					<point x="504" y="348"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="468" y="304"/>
+					<point x="520" y="362"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="482" y="326"/>
+					<point x="524" y="364"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="474" y="322"/>
+					<point x="502" y="358"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="460" y="318"/>
+					<point x="510" y="366"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="460" y="326"/>
+					<point x="506" y="370"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="468" y="334"/>
+					<point x="502" y="364"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="464" y="332"/>
+					<point x="494" y="360"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="470" y="320"/>
+					<point x="512" y="362"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="478" y="324"/>
+					<point x="520" y="360"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="472" y="324"/>
+					<point x="496" y="362"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="456" y="334"/>
+					<point x="490" y="366"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="448" y="322"/>
+					<point x="490" y="360"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="458" y="320"/>
+					<point x="508" y="360"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="468" y="322"/>
+					<point x="506" y="358"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="462" y="302"/>
+					<point x="490" y="334"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="326" y="304"/>
+					<point x="374" y="356"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="318" y="308"/>
+					<point x="372" y="354"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="330" y="302"/>
+					<point x="388" y="350"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="344" y="314"/>
+					<point x="380" y="356"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="324" y="308"/>
+					<point x="374" y="350"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="330" y="314"/>
+					<point x="380" y="354"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="336" y="306"/>
+					<point x="382" y="346"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="324" y="296"/>
+					<point x="372" y="342"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="334" y="326"/>
+					<point x="378" y="368"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="336" y="326"/>
+					<point x="360" y="350"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="328" y="322"/>
+					<point x="370" y="356"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="330" y="314"/>
+					<point x="368" y="356"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="324" y="314"/>
+					<point x="360" y="362"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="328" y="314"/>
+					<point x="370" y="360"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="328" y="300"/>
+					<point x="368" y="340"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="332" y="304"/>
+					<point x="364" y="352"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="324" y="298"/>
+					<point x="376" y="340"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="330" y="296"/>
+					<point x="370" y="338"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="336" y="296"/>
+					<point x="372" y="334"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="346" y="300"/>
+					<point x="378" y="330"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="330" y="314"/>
+					<point x="370" y="362"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="322" y="304"/>
+					<point x="378" y="350"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="452" y="296"/>
+					<point x="514" y="354"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="476" y="308"/>
+					<point x="510" y="350"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="314" y="298"/>
+					<point x="374" y="356"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="332" y="296"/>
+					<point x="372" y="350"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="338" y="294"/>
+					<point x="388" y="354"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="332" y="290"/>
+					<point x="378" y="342"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="464" y="314"/>
+					<point x="508" y="370"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="456" y="306"/>
+					<point x="496" y="340"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="468" y="302"/>
+					<point x="518" y="354"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="468" y="306"/>
+					<point x="504" y="352"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.OvalShape</class>
+					<color>-16770305</color>
+					<point x="460" y="308"/>
+					<point x="492" y="346"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="416" y="114"/>
+					<point x="428" y="48"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="416" y="114"/>
+					<point x="446" y="52"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="448" y="58"/>
+					<point x="414" y="112"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="536" y="182"/>
+					<point x="592" y="248"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="534" y="176"/>
+					<point x="596" y="226"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="536" y="180"/>
+					<point x="592" y="224"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="528" y="184"/>
+					<point x="594" y="246"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="532" y="186"/>
+					<point x="596" y="226"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="518" y="162"/>
+					<point x="588" y="204"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="514" y="164"/>
+					<point x="586" y="200"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="506" y="154"/>
+					<point x="584" y="196"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="514" y="162"/>
+					<point x="606" y="184"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="508" y="152"/>
+					<point x="598" y="188"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="506" y="150"/>
+					<point x="570" y="180"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="500" y="146"/>
+					<point x="560" y="158"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="428" y="114"/>
+					<point x="470" y="48"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="426" y="100"/>
+					<point x="460" y="56"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="440" y="108"/>
+					<point x="476" y="62"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="450" y="110"/>
+					<point x="508" y="62"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="460" y="118"/>
+					<point x="510" y="68"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="468" y="110"/>
+					<point x="516" y="84"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="466" y="126"/>
+					<point x="528" y="100"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="460" y="128"/>
+					<point x="544" y="124"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="476" y="136"/>
+					<point x="578" y="156"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="496" y="136"/>
+					<point x="552" y="148"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="472" y="124"/>
+					<point x="550" y="130"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="474" y="142"/>
+					<point x="528" y="114"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="470" y="126"/>
+					<point x="530" y="114"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="470" y="118"/>
+					<point x="522" y="76"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="448" y="118"/>
+					<point x="500" y="70"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="446" y="114"/>
+					<point x="488" y="56"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="440" y="98"/>
+					<point x="448" y="56"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="442" y="108"/>
+					<point x="482" y="50"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="448" y="110"/>
+					<point x="500" y="68"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="456" y="106"/>
+					<point x="496" y="82"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="460" y="110"/>
+					<point x="524" y="82"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="478" y="124"/>
+					<point x="528" y="88"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="500" y="130"/>
+					<point x="556" y="134"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="498" y="134"/>
+					<point x="570" y="146"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="520" y="156"/>
+					<point x="572" y="174"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="434" y="106"/>
+					<point x="480" y="58"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="424" y="110"/>
+					<point x="440" y="62"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="418" y="98"/>
+					<point x="440" y="54"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="414" y="110"/>
+					<point x="404" y="50"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="420" y="96"/>
+					<point x="416" y="54"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="408" y="110"/>
+					<point x="400" y="56"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="402" y="104"/>
+					<point x="386" y="50"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="402" y="110"/>
+					<point x="364" y="42"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="400" y="106"/>
+					<point x="352" y="54"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="280" y="176"/>
+					<point x="232" y="212"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="292" y="168"/>
+					<point x="240" y="212"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="304" y="166"/>
+					<point x="234" y="196"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="302" y="164"/>
+					<point x="242" y="190"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="300" y="160"/>
+					<point x="264" y="188"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="306" y="156"/>
+					<point x="258" y="174"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="304" y="152"/>
+					<point x="264" y="162"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="312" y="144"/>
+					<point x="268" y="160"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="326" y="146"/>
+					<point x="252" y="154"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="326" y="140"/>
+					<point x="268" y="144"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="320" y="140"/>
+					<point x="282" y="140"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="334" y="134"/>
+					<point x="294" y="126"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="352" y="126"/>
+					<point x="298" y="96"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="372" y="116"/>
+					<point x="336" y="78"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="380" y="118"/>
+					<point x="344" y="72"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="386" y="110"/>
+					<point x="358" y="70"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="384" y="98"/>
+					<point x="380" y="54"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="394" y="106"/>
+					<point x="352" y="54"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="376" y="110"/>
+					<point x="338" y="68"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="368" y="122"/>
+					<point x="326" y="80"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="362" y="126"/>
+					<point x="320" y="96"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="360" y="126"/>
+					<point x="320" y="90"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="346" y="126"/>
+					<point x="290" y="106"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="332" y="130"/>
+					<point x="270" y="134"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="318" y="128"/>
+					<point x="274" y="120"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="334" y="124"/>
+					<point x="276" y="116"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="352" y="120"/>
+					<point x="318" y="106"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="360" y="120"/>
+					<point x="326" y="88"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="368" y="116"/>
+					<point x="342" y="82"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="380" y="116"/>
+					<point x="360" y="80"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="376" y="108"/>
+					<point x="360" y="64"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="374" y="114"/>
+					<point x="338" y="72"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="358" y="112"/>
+					<point x="322" y="74"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="352" y="122"/>
+					<point x="302" y="90"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="336" y="128"/>
+					<point x="288" y="102"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="328" y="136"/>
+					<point x="266" y="130"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="306" y="142"/>
+					<point x="266" y="150"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-10066330</color>
+					<point x="288" y="156"/>
+					<point x="244" y="172"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="418" y="470"/>
+					<point x="486" y="436"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="416" y="460"/>
+					<point x="476" y="438"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="418" y="464"/>
+					<point x="328" y="432"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="412" y="472"/>
+					<point x="346" y="442"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="410" y="470"/>
+					<point x="444" y="460"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="422" y="456"/>
+					<point x="478" y="440"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="398" y="456"/>
+					<point x="434" y="456"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="384" y="456"/>
+					<point x="434" y="452"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="424" y="458"/>
+					<point x="474" y="436"/>
+				</shape>
+				<shape>
+					<class>bibliothek.paint.model.LineShape</class>
+					<color>-5636096</color>
+					<point x="428" y="456"/>
+					<point x="486" y="434"/>
+				</shape>
+			</shapes>
+		</picture>
+	</pictures>
+	<resources>
+		<resource name="CLookAndFeelMenuPiece">
+			<key>l.6.Nimbus.com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel</key>
+		</resource>
+		<resource name="ccontrol.frontend">
+			<areas/>
+			<frontend>
+				<current>
+					<base>
+						<roots>
+							<root name="ccontrol center">
+								<layout factory="predefined" placeholder="dock.single.ccontrol\ center">
+									<replacement id="rootccontrol center"/>
+									<delegate id="delegate_CommonDockStationFactory">
+										<id>ccontrol center</id>
+										<root>true</root>
+										<content delegate="SplitDockStationFactory">
+											<fullscreen-action>false</fullscreen-action>
+											<node nodeId="1293551127564" orientation="VERTICAL" divider="0.7571121369547784">
+												<node nodeId="1293533691140" orientation="HORIZONTAL" divider="0.38636363636363635">
+													<leaf id="2" nodeId="1293532777226">
+														<placeholders>
+															<placeholder>dock.single.PictureListDockable</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.PlaceholderList</format>
+														</placeholder-map>
+													</leaf>
+													<leaf id="0" nodeId="1265545542869">
+														<placeholders>
+															<placeholder>dock.single.picture\ area</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.SplitDockStation</format>
+															<entry>
+																<key shared="true">
+																	<placeholder>dock.multi.\0\ page</placeholder>
+																	<placeholder>dock.multi.\1\ page</placeholder>
+																</key>
+																<item key="0.id" type="l">1293532773896</item>
+																<item key="0.map" type="p">
+																	<version>0</version>
+																	<format>dock.PlaceholderList</format>
+																</item>
+																<item key="0.array" type="b">true</item>
+																<item key="0.type" type="s">l</item>
+																<item key=".id" type="l">1319982393990</item>
+																<item key=".type" type="s">r</item>
+															</entry>
+														</placeholder-map>
+													</leaf>
+												</node>
+												<leaf id="1" nodeId="1293551127563">
+													<placeholders>
+														<placeholder>dock.single.ColorDockable</placeholder>
+													</placeholders>
+												</leaf>
+											</node>
+										</content>
+									</delegate>
+								</layout>
+								<adjacent>
+									<layout factory="dock.RootStationAdjacentFactory">
+										<type>dock.CContentArea.center</type>
+									</layout>
+								</adjacent>
+								<children ignore="false">
+									<child>
+										<layout factory="predefined" placeholder="dock.single.picture\ area">
+											<replacement id="dockablesingle picture area"/>
+											<delegate id="delegate_CommonDockStationFactory">
+												<id>picture area</id>
+												<root>true</root>
+												<content delegate="SplitDockStationFactory">
+													<fullscreen-action>false</fullscreen-action>
+													<leaf id="0" nodeId="1293532773896">
+														<placeholders>
+															<placeholder>dock.multi.\0\ page</placeholder>
+															<placeholder>dock.multi.\1\ page</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.PlaceholderList</format>
+														</placeholder-map>
+													</leaf>
+												</content>
+											</delegate>
+										</layout>
+										<adjacent>
+											<layout factory="dock.RootStationAdjacentFactory">
+												<type>dock.CWorkingArea</type>
+											</layout>
+										</adjacent>
+										<children ignore="false">
+											<child>
+												<layout factory="delegate_StackDockStationFactory">
+													<selected>0</selected>
+													<placeholders>
+														<version>0</version>
+														<format>dock.PlaceholderList</format>
+														<entry>
+															<key shared="false">
+																<placeholder>dock.multi.\0\ page</placeholder>
+															</key>
+															<item key="convert" type="b">true</item>
+															<item key="convert-keys" type="a">
+																<item type="s">id</item>
+																<item type="s">index</item>
+																<item type="s">placeholder</item>
+															</item>
+															<item key="dock.id" type="i">0</item>
+															<item key="dock.index" type="i">0</item>
+															<item key="dock.placeholder" type="s">dock.multi.\0\ page</item>
+														</entry>
+														<entry>
+															<key shared="false">
+																<placeholder>dock.multi.\1\ page</placeholder>
+															</key>
+															<item key="convert" type="b">true</item>
+															<item key="convert-keys" type="a">
+																<item type="s">id</item>
+																<item type="s">index</item>
+																<item type="s">placeholder</item>
+															</item>
+															<item key="dock.id" type="i">1</item>
+															<item key="dock.index" type="i">1</item>
+															<item key="dock.placeholder" type="s">dock.multi.\1\ page</item>
+														</entry>
+													</placeholders>
+												</layout>
+												<children ignore="false">
+													<child>
+														<layout factory="delegate_page" placeholder="dock.multi.\0\ page">
+															<id>0 page</id>
+															<area>picture area</area>
+															<multiple>Apple</multiple>
+														</layout>
+														<children ignore="false"/>
+													</child>
+													<child>
+														<layout factory="delegate_page" placeholder="dock.multi.\1\ page">
+															<id>1 page</id>
+															<area>picture area</area>
+															<multiple>Face</multiple>
+														</layout>
+														<children ignore="false"/>
+													</child>
+												</children>
+											</child>
+										</children>
+									</child>
+									<child>
+										<layout factory="predefined" placeholder="dock.single.ColorDockable">
+											<replacement id="dockablesingle ColorDockable"/>
+											<delegate id="delegate_ccontrol backup factory id">
+												<id>ColorDockable</id>
+												<area/>
+											</delegate>
+										</layout>
+										<children ignore="false"/>
+									</child>
+									<child>
+										<layout factory="predefined" placeholder="dock.single.PictureListDockable">
+											<replacement id="dockablesingle PictureListDockable"/>
+											<delegate id="delegate_ccontrol backup factory id">
+												<id>PictureListDockable</id>
+												<area/>
+											</delegate>
+										</layout>
+										<children ignore="false"/>
+									</child>
+								</children>
+							</root>
+							<root name="external">
+								<layout factory="predefined">
+									<replacement id="rootexternal"/>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="screen dock">
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.single.PictureListDockable</placeholder>
+														<placeholder>dock.single.ColorDockable</placeholder>
+													</key>
+													<item key="item" type="b">true</item>
+													<item key="item-keys" type="a">
+														<item type="s">height</item>
+														<item type="s">width</item>
+														<item type="s">y</item>
+														<item type="s">x</item>
+													</item>
+													<item key="item.height" type="i">368</item>
+													<item key="item.width" type="i">498</item>
+													<item key="item.y" type="i">489</item>
+													<item key="item.x" type="i">1053</item>
+												</entry>
+											</placeholders>
+										</content>
+									</delegate>
+								</layout>
+								<adjacent>
+									<layout factory="dock.RootStationAdjacentFactory">
+										<type>dock.CExternalizeArea</type>
+									</layout>
+								</adjacent>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol north">
+								<layout factory="predefined">
+									<replacement id="rootccontrol north"/>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="SOUTH"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.multi.\0\ page</placeholder>
+													</key>
+												</entry>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.single.PictureListDockable</placeholder>
+														<placeholder>dock.single.ColorDockable</placeholder>
+													</key>
+												</entry>
+											</placeholders>
+										</content>
+									</delegate>
+								</layout>
+								<adjacent>
+									<layout factory="dock.RootStationAdjacentFactory">
+										<type>dock.CContentArea.minimize</type>
+									</layout>
+								</adjacent>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol south">
+								<layout factory="predefined">
+									<replacement id="rootccontrol south"/>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="NORTH"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+											</placeholders>
+										</content>
+									</delegate>
+								</layout>
+								<adjacent>
+									<layout factory="dock.RootStationAdjacentFactory">
+										<type>dock.CContentArea.minimize</type>
+									</layout>
+								</adjacent>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol east">
+								<layout factory="predefined">
+									<replacement id="rootccontrol east"/>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="WEST"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+											</placeholders>
+										</content>
+									</delegate>
+								</layout>
+								<adjacent>
+									<layout factory="dock.RootStationAdjacentFactory">
+										<type>dock.CContentArea.minimize</type>
+									</layout>
+								</adjacent>
+								<children ignore="false"/>
+							</root>
+							<root name="ccontrol west">
+								<layout factory="predefined">
+									<replacement id="rootccontrol west"/>
+									<delegate id="delegate_CommonDockStationFactory">
+										<root>true</root>
+										<content delegate="flap dock">
+											<window auto="false" direction="EAST"/>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+												<entry>
+													<key shared="false">
+														<placeholder>dock.single.PictureListDockable</placeholder>
+													</key>
+												</entry>
+											</placeholders>
+										</content>
+									</delegate>
+								</layout>
+								<adjacent>
+									<layout factory="dock.RootStationAdjacentFactory">
+										<type>dock.CContentArea.minimize</type>
+									</layout>
+								</adjacent>
+								<children ignore="false"/>
+							</root>
+						</roots>
+						<children/>
+					</base>
+					<modes>
+						<dockables>
+							<entry id="single PictureListDockable" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.externalized</mode>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.externalized">
+										<mode>dock.mode.externalized</mode>
+										<root>external</root>
+										<location>
+											<property factory="screen dock">
+												<x>1053</x>
+												<y>489</y>
+												<width>498</width>
+												<height>368</height>
+												<fullscreen>false</fullscreen>
+												<placeholder>dock.single.PictureListDockable</placeholder>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>0</index>
+												<placeholder>dock.single.PictureListDockable</placeholder>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPlaceholderProperty">
+												<placeholder>dock.single.PictureListDockable</placeholder>
+												<backup-path>
+													<node location="TOP" size="0.7571214392803598" id="1293551127564"/>
+													<node location="LEFT" size="0.38636363636363635" id="1293533691140"/>
+													<leaf id="1293532777226"/>
+												</backup-path>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>0</index>
+												<holding>false</holding>
+												<size>400</size>
+												<placeholder>dock.single.PictureListDockable</placeholder>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>0</index>
+												<placeholder>dock.single.PictureListDockable</placeholder>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="multi 1 page" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>picture area</root>
+										<location>
+											<property factory="SplitDockPlaceholderProperty">
+												<placeholder>dock.multi.\1\ page</placeholder>
+												<backup-path>
+													<leaf id="1293532773896"/>
+												</backup-path>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>0</index>
+												<placeholder>dock.multi.\1\ page</placeholder>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>0</index>
+												<holding>false</holding>
+												<size>400</size>
+												<placeholder>dock.multi.\1\ page</placeholder>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="single ColorDockable" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.externalized</mode>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.externalized">
+										<mode>dock.mode.externalized</mode>
+										<root>external</root>
+										<location>
+											<property factory="screen dock">
+												<x>1053</x>
+												<y>489</y>
+												<width>498</width>
+												<height>368</height>
+												<fullscreen>false</fullscreen>
+												<placeholder>dock.single.ColorDockable</placeholder>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>0</index>
+												<placeholder>dock.single.ColorDockable</placeholder>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPlaceholderProperty">
+												<placeholder>dock.single.ColorDockable</placeholder>
+												<backup-path>
+													<node location="LEFT" size="0.7363590407164777" id="1293533691140"/>
+													<leaf id="1293532777226"/>
+												</backup-path>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>0</index>
+												<placeholder>dock.single.ColorDockable</placeholder>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>0</index>
+												<holding>false</holding>
+												<size>400</size>
+												<placeholder>dock.single.ColorDockable</placeholder>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>0</index>
+												<placeholder>dock.single.ColorDockable</placeholder>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="single picture area" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>ccontrol center</root>
+										<location>
+											<property factory="SplitDockPropertyFactory">
+												<x>0.0</x>
+												<y>0.0</y>
+												<width>1.0</width>
+												<height>1.0</height>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="multi 0 page" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>picture area</root>
+										<location>
+											<property factory="SplitDockPlaceholderProperty">
+												<placeholder>dock.multi.\0\ page</placeholder>
+												<backup-path>
+													<leaf id="1293532773896"/>
+												</backup-path>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>1</index>
+												<placeholder>dock.multi.\0\ page</placeholder>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.maximized">
+										<mode>dock.mode.maximized</mode>
+										<root>ccontrol center</root>
+										<location/>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>2</index>
+												<holding>false</holding>
+												<size>400</size>
+												<placeholder>dock.multi.\0\ page</placeholder>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>1</index>
+												<placeholder>dock.multi.\0\ page</placeholder>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+						</dockables>
+						<modes>
+							<entry id="dock.mode.maximized"/>
+						</modes>
+					</modes>
+					<multi-factories>
+						<factory id="page">
+							<dockable id="0 page"/>
+							<dockable id="1 page"/>
+						</factory>
+					</multi-factories>
+				</current>
+			</frontend>
+		</resource>
+		<resource name="ccontrol.preferences">
+			<child name="dock">
+				<child name="DockableSelector">
+					<child name="INIT_SELECTION">
+						<value type="javax.swing.KeyStroke">shift ctrl pressed E</value>
+					</child>
+				</child>
+				<child name="DockRelocatorMode">
+					<child name="NO_COMBINATION_MASK">
+						<value type="dock.modifier_mask" on="512" off="8640"/>
+					</child>
+					<child name="SCREEN_MASK">
+						<value type="dock.modifier_mask" on="64" off="9088"/>
+					</child>
+				</child>
+				<child name="common">
+					<child name="control">
+						<child name="maximize_change">
+							<value type="javax.swing.KeyStroke">ctrl pressed M</value>
+						</child>
+						<child name="maximize"/>
+						<child name="normalize">
+							<value type="javax.swing.KeyStroke">ctrl pressed N</value>
+						</child>
+						<child name="minimize"/>
+						<child name="externalize">
+							<value type="javax.swing.KeyStroke">ctrl pressed E</value>
+						</child>
+					</child>
+				</child>
+				<child name="layout">
+					<child name="ButtonContent">
+						<value type="dock.choice">ita</value>
+					</child>
+					<child name="tabplacement">
+						<value type="dock.choice">theme</value>
+					</child>
+					<child name="tabcontentfilter">
+						<value type="dock.choice">all</value>
+					</child>
+				</child>
+				<child name="theme">
+					<child name="bubble">
+						<child name="colorscheme">
+							<value type="dock.choice">gbr</value>
+						</child>
+					</child>
+					<child name="eclipse">
+						<child name="tab">
+							<value type="dock.choice">round</value>
+						</child>
+						<child name="icons">
+							<value type="java.lang.Boolean">false</value>
+						</child>
+					</child>
+				</child>
+				<child name="ButtonContent">
+					<child name="knob">
+						<value type="dock.choice">theme</value>
+					</child>
+					<child name="icon">
+						<value type="dock.choice">theme</value>
+					</child>
+					<child name="text">
+						<value type="dock.choice">theme</value>
+					</child>
+					<child name="children">
+						<value type="dock.choice">theme</value>
+					</child>
+					<child name="actions">
+						<value type="dock.choice">theme</value>
+					</child>
+					<child name="filter">
+						<value type="dock.choice">theme</value>
+					</child>
+				</child>
+			</child>
+		</resource>
+		<resource name="dock.ui.ThemeMap">
+			<key>eclipse</key>
+		</resource>
+	</resources>
+</config>

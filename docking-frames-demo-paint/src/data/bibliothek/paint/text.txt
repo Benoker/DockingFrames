@@ -1,0 +1,21 @@
+<html>An application which was written using the "common"-project.<br>
+The "common"-project is a layer atop of DockingFrames, and implements the basic
+set of functionality most applications need. In this case "common" was used
+as follows:<br>
+<ul>
+	<li>The "list of pictures" and "color choice"-panels are subclasses of
+	SingleCDockable - they exist only once in the application.</li>
+	<li>The panel showing a picture is a subclass of MultipleCDockable -
+	many of these panels can exist at the same time.</li>
+	<li>The actions like "select a shape" or "erase a shape" are subclasses of
+	CButton and CRadioButton. The similarity with JButton or JRadioButton
+	is not happenstance.</li>
+	<li>Other actions like "maximize" or "minimize" are automatically added by
+	the "common"-project.</li>
+	<li>The menu is entirely created by "MenuPieces", objects which add or remove
+	menu-items by themselfs. There are several "MenuPieces" defined in the
+	"common"-project, and not a single item has to be created by the application itself.</li>
+</ul>
+The whole application consists of 20 classes, none of them with more than 200 lines 
+of code - most times it is no more than 50 lines of code.
+</html>
