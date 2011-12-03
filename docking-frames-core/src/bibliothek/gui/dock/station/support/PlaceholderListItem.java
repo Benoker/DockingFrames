@@ -28,7 +28,9 @@ package bibliothek.gui.dock.station.support;
 import bibliothek.gui.Dockable;
 
 /**
- * An item in a {@link PlaceholderList}.
+ * An item in a {@link PlaceholderList}.<br>
+ * Clients should notice that there are no restrictions on what <code>D</code> actually is. While the default implementation
+ * assumes that <code>D</code> is some kind of {@link Dockable}, it could as well be something else, e.g. a list of dockables. 
  * @author Benjamin Sigg
  * @param <D> the representation of a {@link Dockable}, may or may not be a subinterface of {@link Dockable}
  */

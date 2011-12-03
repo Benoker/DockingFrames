@@ -93,7 +93,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		
 		@Override
 		protected boolean visible( Item item ){
-			return item.isPlaceholder();
+			return true;
 		}
 		
 		@Override
@@ -524,7 +524,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	/**
 	 * Gets a mutable view of all pure placeholders of this list. A
 	 * pure placeholder is an entry in this list with the dockable
-	 * set to <code>null</code>
+	 * set to <code>null</code>.
 	 * @return the placeholders
 	 */
 	public Filter<Set<Path>> purePlaceholders(){
@@ -844,6 +844,15 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			throw new IndexOutOfBoundsException();
 		}
 		return entry.index( Level.BASE );
+	}
+	
+	/**
+	 * Clears this list, all entries are removed
+	 */
+	public void clear(){
+		head = null;
+		headDockable = null;
+		headPlaceholder = null;
 	}
 	
 	private Entry head( Level level ){
@@ -1218,7 +1227,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			}
 			this.placeholderSet = placeholderSet;
 		}
-		
+
 		/**
 		 * Removes all placeholders that are in <code>placeholders</code>.
 		 * @param placeholders the paths to remove

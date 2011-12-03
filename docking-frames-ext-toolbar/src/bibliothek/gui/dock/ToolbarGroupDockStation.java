@@ -6,11 +6,12 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Map;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -24,7 +25,6 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
-import bibliothek.gui.dock.ToolbarDockStation.OverpaintablePanelBase;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -32,29 +32,29 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OrientedDockStation;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
-import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarComplexDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
+import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.gui.dock.title.NullTitleFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
-import bibliothek.util.Path;
 
 /**
  * A {@link Dockable} and a {@link DockStation} which stands a group of
@@ -79,8 +79,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	public static final String DISPLAYER_ID = "toolbar.group";
 
 	/** A list of all children organized in columns and lines */
-	protected ArrayList<DockablePlaceholderList<StationChildHandle>> dockables = new ArrayList<DockablePlaceholderList<StationChildHandle>>();
+	private DockablePlaceholderToolbarGrid<StationChildHandle> dockables = new DockablePlaceholderToolbarGrid<StationChildHandle>();
 
+	/** The {@link PlaceholderStrategy} that is used by {@link #dockables} */
+	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
+		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
+			dockables.setStrategy( newValue );
+		}
+	};
+	
 	/**
 	 * The graphical representation of this station: the pane which contains
 	 * component
@@ -144,19 +151,20 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 * @return the column location or -1 if the child was not found
 	 */
 	public int column( Dockable dockable ){
-		if (dockables != null){
-			int column = 0;
-			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-				for (StationChildHandle handle : dockablePlaceHolderList
-						.dockables()){
-					if (handle.getDockable() == dockable){
-						return column;
-					}
-				}
-				column++;
-			}
-		}
-		return -1;
+		return dockables.getColumn( dockable );
+//		if (dockables != null){
+//			int column = 0;
+//			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
+//				for (StationChildHandle handle : dockablePlaceHolderList
+//						.dockables()){
+//					if (handle.getDockable() == dockable){
+//						return column;
+//					}
+//				}
+//				column++;
+//			}
+//		}
+//		return -1;
 	}
 
 	/**
@@ -167,19 +175,20 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 * @return the line location or -1 if the child was not found
 	 */
 	public int line( Dockable dockable ){
-		if (dockables != null){
-			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-				int line = 0;
-				for (StationChildHandle handle : dockablePlaceHolderList
-						.dockables()){
-					if (handle.getDockable() == dockable){
-						return line;
-					}
-					line++;
-				}
-			}
-		}
-		return -1;
+		return dockables.getLine( dockable );
+//		if (dockables != null){
+//			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
+//				int line = 0;
+//				for (StationChildHandle handle : dockablePlaceHolderList
+//						.dockables()){
+//					if (handle.getDockable() == dockable){
+//						return line;
+//					}
+//					line++;
+//				}
+//			}
+//		}
+//		return -1;
 	}
 
 	// ########################################################
@@ -193,30 +202,33 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public int getDockableCount(){
-		int count = 0;
-		if (dockables != null){
-			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-				count += dockablePlaceHolderList.dockables().size();
-			}
-		} else{
-			return 0;
-		}
-		return count;
+		return dockables.size();
+//		int count = 0;
+//		if (dockables != null){
+//			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
+//				count += dockablePlaceHolderList.dockables().size();
+//			}
+//		} else{
+//			return 0;
+//		}
+//		return count;
 	}
 
 	@Override
 	public Dockable getDockable( int index ){
-		int count = -1;
-		for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-			for (StationChildHandle handle : dockablePlaceHolderList
-					.dockables()){
-				count++;
-				if (count >= index){
-					return handle.getDockable();
-				}
-			}
-		}
-		return null;
+		return dockables.get( index ).asDockable();
+		
+//		int count = -1;
+//		for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
+//			for (StationChildHandle handle : dockablePlaceHolderList
+//					.dockables()){
+//				count++;
+//				if (count >= index){
+//					return handle.getDockable();
+//				}
+//			}
+//		}
+//		return null;
 	}
 
 	@Override
@@ -286,17 +298,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	public void setController( DockController controller ){
 		if (getController() != controller){
 			if (getController() != null){
-				for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-					dockablePlaceHolderList.unbind();
-				}
+				dockables.unbind();
 			}
-			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-				for (StationChildHandle handle : dockablePlaceHolderList
-						.dockables()){
-					handle.setTitleRequest(null);
-				}
+			Iterator<StationChildHandle> iter = dockables.items();
+			while( iter.hasNext() ){
+				iter.next().setTitleRequest( null );
 			}
-
+			
 			super.setController(controller);
 			// if not set controller of the DefaultStationPaintValue, call to
 			// DefaultStationPaintValue do nothing
@@ -307,21 +315,18 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 				title = registerTitle(controller);
 			}
 			paint.setController(controller);
-			// TODO => placeholderStrategy.setProperties(controller);
+			placeholderStrategy.setProperties(controller);
 			displayerFactory.setController(controller);
 			displayers.setController(controller);
 			mainPanel.setController(controller);
 
 			if (getController() != null){
-				for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-					dockablePlaceHolderList.bind();
-				}
+				dockables.bind();
 			}
-			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-				for (StationChildHandle handle : dockablePlaceHolderList
-						.dockables()){
-					handle.setTitleRequest(title, true);
-				}
+			
+			iter = dockables.items();
+			while( iter.hasNext() ){
+				iter.next().setTitleRequest( title, true );
 			}
 		}
 	}
@@ -549,13 +554,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		try{
 			listeners.fireDockableAdding(dockable);
 
-			StationChildHandle handle = new StationChildHandle(this,
-					displayers, dockable, title);
+			StationChildHandle handle = new StationChildHandle(this, displayers, dockable, title);
 			handle.updateDisplayer();
 			// add in the list of dockable
-			DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList = dockables
-					.get(column);
-			dockablePlaceHolderList.dockables().add(line, handle);
+			dockables.insert( column, line, handle );
+
 			// add in the main panel
 			insertAt(handle, column, line);
 			listeners.fireDockableAdded(dockable);
@@ -612,11 +615,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		// TODO
 	}
 	
-	private void insertAt( StationChildHandle handle, int column ){
-		// TODO
-		// don't forget to add an intermediate column panel
-	}
-
 	@Override
 	public void drag( Dockable dockable ){
 		// TODO Auto-generated method stub
@@ -674,17 +672,24 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	protected void discard( DockableDisplayer displayer ){
 		Dockable dockable = displayer.getDockable();
 
-		int index = indexOf(dockable);
-		if (index < 0){
-			throw new IllegalArgumentException(
-					"displayer is not a child of this station: " + displayer);
-		}
+//		int index = indexOf(dockable);
+//		if (index < 0){
+//			throw new IllegalArgumentException(
+//					"displayer is not a child of this station: " + displayer);
+//		}
 
-		StationChildHandle handle = dockables.dockables().get(index);
+		StationChildHandle handle = dockables.get( dockable );
+		if( handle == null ){
+			throw new IllegalArgumentException( "displayer is not child of this station: " + displayer );
+		}
 
 		mainPanel.getContentPane().remove(handle.getDisplayer().getComponent());
 		handle.updateDisplayer();
-		insertAt(handle, index);
+		
+		int column = dockables.getColumn( dockable );
+		int line = dockables.getLine( column, dockable );
+		
+		insertAt(handle, column, line);
 	}
 
 	/**
@@ -808,9 +813,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			DefaultStationPaintValue paint = getPaint();
 			if (prepareDropDraw){
 				if (indexBeneathMouse != -1){
-					Component componentBeneathMouse = getDockables()
-							.get(indexBeneathMouse).getDisplayer()
-							.getComponent();
+					Component componentBeneathMouse = dockables.get( indexBeneathMouse ).getDisplayer().getComponent();
 					if (componentBeneathMouse != null){
 						// WARNING:
 						// 1. This rectangle stands for the component beneath
@@ -881,29 +884,41 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	// ########################################################
 	// ############### PlaceHolder Managing ###################
 	// ########################################################
-
-	/**
-	 * Grants direct access to the list of {@link Dockable}s, subclasses should
-	 * not modify the list unless the fire the appropriate events.
-	 * 
-	 * @return the list of dockables
-	 */
-	protected PlaceholderList.Filter<StationChildHandle> getDockables(){
-		return dockables.dockables();
-	}
+//
+//	/**
+//	 * Grants direct access to the list of {@link Dockable}s, subclasses should
+//	 * not modify the list unless the fire the appropriate events.
+//	 * 
+//	 * @return the list of dockables
+//	 */
+//	protected PlaceholderList.Filter<StationChildHandle> getDockables(){
+//		return dockables.dockables();
+//	}
 
 	@Override
 	public PlaceholderMap getPlaceholders(){
-		// TODO Auto-generated method stub
-		return null;
+		return dockables.toMap();
 	}
 
+	/**
+	 * Converst this station into a {@link PlaceholderMap} using <code>identifiers</code> to
+	 * remember which {@link Dockable} was at which location.
+	 * @param identifiers the identifiers to apply
+	 * @return <code>this</code> as map
+	 */
+	public PlaceholderMap getPlaceholders( Map<Dockable, Integer> identifiers ){
+		return dockables.toMap( identifiers );
+	}
+	
 	@Override
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		// TODO Auto-generated method stub
-
+		dockables.fromMap( placeholders );
 	}
 
+	public void setPlaceholders( PlaceholderMap placeholders, Map<Integer, Dockable> children ){
+		fda
+	}
+	
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
 		// TODO Auto-generated method stub
