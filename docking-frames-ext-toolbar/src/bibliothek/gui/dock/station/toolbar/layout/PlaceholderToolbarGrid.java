@@ -93,10 +93,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		if( item == null ) {
 			throw new IllegalArgumentException( "item must not be null" );
 		}
-		if( strategy == null ) {
-			throw new IllegalStateException( "the PlaceholderStrategy must be set first" );
-		}
-
+		
 		PlaceholderList<D, S, P> list = getColumn( column );
 		if( list == null ) {
 			insert( column, item );
@@ -261,7 +258,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * Gets an iterator over all columns, including the columns with no content.
 	 * @return all columns
 	 */
-	public Iterator<PlaceholderList<D, S, P>> allColumns(){
+	protected Iterator<PlaceholderList<D, S, P>> allColumns(){
 		return new Iterator<PlaceholderList<D, S, P>>(){
 			private Iterator<PlaceholderList<?, ?, GridPlaceholderList.Column<D, S, P>>.Item> items = columns.list().iterator();
 
@@ -286,7 +283,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * support modifications nor is it concurrent.
 	 * @return the iterator
 	 */
-	public Iterator<PlaceholderList<D, S, P>> columns(){
+	protected Iterator<PlaceholderList<D, S, P>> columns(){
 		return new Iterator<PlaceholderList<D, S, P>>(){
 			private Iterator<PlaceholderList<?, ?, GridPlaceholderList.Column<D, S, P>>.Item> items = columns.list().iterator();
 			private PlaceholderList<D, S, P> next;
@@ -361,6 +358,28 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	}
 
 	/**
+	 * Gets the number of columns that are currently stored in this grid. Empty columns
+	 * are excluded.
+	 * @return the total number of non-empty columns
+	 */
+	public int getColumnCount(){
+		return columns.dockables().size();
+	}
+	
+	/**
+	 * Gets an iterator over the contents of the <code>index</code>'th non-empty column.
+	 * @param index the index of the non-empty column
+	 * @return the content of the non-empty column
+	 */
+	public Iterator<P> getColumnContent(int index){
+		PlaceholderList<D, S, P> list = getColumn( index );
+		if( list == null ){
+			throw new IllegalArgumentException( "index is out of bounds" );
+		}
+		return list.dockables().iterator();
+	}
+	
+	/**
 	 * Gets the non-empty column with index <code>index</code>.
 	 * @param index the index of the column
 	 * @return the non-empty column or <code>null</code> if no such column exists
@@ -369,18 +388,12 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		if( index < 0 ) {
 			return null;
 		}
-
-		int count = 0;
-		Iterator<PlaceholderList<D, S, P>> iter = columns();
-		while( iter.hasNext() ) {
-			PlaceholderList<D, S, P> next = iter.next();
-			if( count == index ) {
-				return next;
-			}
-			count++;
+		Filter<Column<D, S, P>> dockables = columns.dockables();
+		if( index >= dockables.size() ){
+			return null;
 		}
-
-		return null;
+		
+		return dockables.get( index ).getList();
 	}
 
 	/**

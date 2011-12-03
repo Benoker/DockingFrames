@@ -45,6 +45,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
+import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -569,6 +570,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	}
 
 	private void insertAt( StationChildHandle handle, int column, int line ){
+		mainPanel.getContentPane().add(handle.getDisplayer().getComponent());
+		mainPanel.getContentPane().revalidate();
+		
 		// TODO
 		// don't forget to add an intermediate column panel
 
@@ -781,11 +785,20 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		 * {@linl ToolbarDockStation}
 		 */
 		public void updateAlignment(){
-			if (ToolbarGroupDockStation.this.getOrientation() != null){
-				switch (ToolbarGroupDockStation.this.getOrientation()) {
+			Orientation orientation = ToolbarGroupDockStation.this.getOrientation();
+			
+			if (orientation != null){
+				dockablePane.setLayout( new ToolbarGridLayoutManager<StationChildHandle>( orientation, dockables ){
+					@Override
+					protected Component toComponent( StationChildHandle item ){
+						return item.getDisplayer().getComponent();
+					}
+				} );
+				
+				switch (orientation) {
 				case HORIZONTAL:
-					dockablePane.setLayout(new BoxLayout(dockablePane,
-							BoxLayout.X_AXIS));
+//					dockablePane.setLayout(new BoxLayout(dockablePane,
+//							BoxLayout.X_AXIS));
 					basePane.setLayout(new BoxLayout(basePane, BoxLayout.X_AXIS));
 					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
 					basePane.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -793,8 +806,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					basePane.setAlignmentX(Component.LEFT_ALIGNMENT);
 					break;
 				case VERTICAL:
-					dockablePane.setLayout(new BoxLayout(dockablePane,
-							BoxLayout.Y_AXIS));
+//					dockablePane.setLayout(new BoxLayout(dockablePane,
+//							BoxLayout.Y_AXIS));
 					basePane.setLayout(new BoxLayout(basePane, BoxLayout.Y_AXIS));
 					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
 					basePane.setAlignmentY(Component.TOP_ALIGNMENT);
