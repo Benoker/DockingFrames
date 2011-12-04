@@ -208,12 +208,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return the strategy, never <code>null</code>
 	 */
 	public ToolbarStrategy getToolbarStrategy(){
-		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController());
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
 		ToolbarStrategy result = value.getValue();
-		value.setProperties((DockController) null);
+		value.setProperties( (DockController) null );
 		return result;
 	}
-	
+
 	@Override
 	public Component getComponent(){
 		return mainPanel;
@@ -577,10 +577,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			int before = dockables.getColumnCount();
 			dockables.insert( column, line, handle );
 
-			if( dockable instanceof OrientedDockStation ){
-				((OrientedDockStation)dockable).setOrientation( getOrientation() );
+			if( dockable instanceof OrientedDockStation ) {
+				((OrientedDockStation) dockable).setOrientation( getOrientation() );
 			}
-			
+
 			// add in the main panel
 			addComponent( handle );
 			listeners.fireDockableAdded( dockable );
@@ -860,16 +860,16 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			basePane.setBackground( Color.GREEN );
-			dockablePane.setBackground( Color.RED );
+			//			basePane.setBackground( Color.GREEN );
+			//			dockablePane.setBackground( Color.RED );
 
 			basePane.setLayout( new BorderLayout() );
 			basePane.add( dockablePane, BorderLayout.CENTER );
 			setBasePane( basePane );
 			setContentPane( dockablePane );
-			//			this.setSolid( false );
-			//			dockablePane.setOpaque( false );
-			//			basePane.setOpaque( false );
+			this.setSolid( false );
+			dockablePane.setOpaque( false );
+			basePane.setOpaque( false );
 		}
 
 		@Override
