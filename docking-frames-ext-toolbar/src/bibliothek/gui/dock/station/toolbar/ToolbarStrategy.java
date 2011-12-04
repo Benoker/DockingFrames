@@ -37,9 +37,11 @@ public interface ToolbarStrategy {
 	 * @param parent a potential parent for <code>child</code>. It might be that an additional layer between
 	 * <code>parent</code> and <code>child</code> will be created.
 	 * @param child the potential new child of <code>parent</code>
+	 * @param strongRelation if <code>true</code>, then it must be possible to add <code>child</code> directly
+	 * to <code>parent</code>, if <code>false</code> the relation must be valid after calling {@link #ensureToolbarLayer(DockStation, Dockable)}. 
 	 * @return <code>true</code> if a combination between <code>child</code> and <code>parent</code> is possible
 	 */
-	public boolean isToolbarGroupPartParent( DockStation parent, Dockable child );
+	public boolean isToolbarGroupPartParent( DockStation parent, Dockable child, boolean strongRelation );
 
 	/**
 	 * Tells whether <code>dockable</code> represents a group of toolbar components, e.g. a group

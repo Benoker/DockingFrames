@@ -48,6 +48,7 @@ import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarComplexDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
@@ -62,6 +63,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
@@ -201,6 +203,17 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	// ############ General DockStation Managing ##############
 	// ########################################################
 
+	/**
+	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
+	 * @return the strategy, never <code>null</code>
+	 */
+	public ToolbarStrategy getToolbarStrategy(){
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController());
+		ToolbarStrategy result = value.getValue();
+		value.setProperties((DockController) null);
+		return result;
+	}
+	
 	@Override
 	public Component getComponent(){
 		return mainPanel;
@@ -374,7 +387,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public boolean accept( DockStation station ){
-		return getToolbarStrategy().isToolbarGroupPartParent( station, this );
+		return getToolbarStrategy().isToolbarGroupPartParent( station, this, false );
 	}
 
 	@Override
@@ -564,6 +577,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			int before = dockables.getColumnCount();
 			dockables.insert( column, line, handle );
 
+			if( dockable instanceof OrientedDockStation ){
+				((OrientedDockStation)dockable).setOrientation( getOrientation() );
+			}
+			
 			// add in the main panel
 			addComponent( handle );
 			listeners.fireDockableAdded( dockable );
@@ -691,6 +708,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public void replace( Dockable old, Dockable next ){
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean canReplace( Dockable old, Dockable next ){
+		return acceptable( next ) && getToolbarStrategy().isToolbarGroupPartParent( this, next, true );
 	}
 
 	/**
@@ -1022,6 +1043,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 				public StationChildHandle convert( Dockable dockable, ConvertedPlaceholderListItem item ){
 					listeners.fireDockableAdding( dockable );
 
+					dockable.setDockParent( ToolbarGroupDockStation.this );
 					StationChildHandle handle = createHandle( dockable );
 					addComponent( handle );
 
@@ -1158,36 +1180,36 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		boolean empty = false;
 		int destinationColumn = property.getColumn();
 		int destinationLine = property.getLine();
-		
+
 		Path placeholder = property.getPlaceholder();
-		if( placeholder != null ){
+		if( placeholder != null ) {
 			int column = dockables.getColumn( placeholder );
-			if( column != -1 ){
+			if( column != -1 ) {
 				int line = dockables.getLine( column, placeholder );
-				if( line != -1 ){
+				if( line != -1 ) {
 					empty = true;
 					destinationColumn = column;
 					destinationLine = line;
 				}
 			}
 		}
-		
-		if( !empty ){
+
+		if( !empty ) {
 			// ensure destination valid
 			destinationColumn = Math.min( destinationColumn, dockables.getColumnCount() );
-			if( destinationColumn == dockables.getColumnCount() || destinationColumn == -1){
+			if( destinationColumn == dockables.getColumnCount() || destinationColumn == -1 ) {
 				destinationLine = 0;
 			}
-			else{
-				destinationLine = Math.min( destinationLine, dockables.getLineCount( destinationColumn ));
+			else {
+				destinationLine = Math.min( destinationLine, dockables.getLineCount( destinationColumn ) );
 			}
 		}
-		
+
 		Level level;
-		if( empty ){
+		if( empty ) {
 			level = Level.BASE;
 		}
-		else{
+		else {
 			level = Level.DOCKABLE;
 		}
 		dockables.move( sourceColumn, sourceLine, destinationColumn, destinationLine, level );

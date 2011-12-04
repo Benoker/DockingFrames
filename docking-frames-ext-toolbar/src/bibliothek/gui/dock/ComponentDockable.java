@@ -366,7 +366,7 @@ public class ComponentDockable extends AbstractDockable implements
 		ToolbarStrategy strategy = value.getValue();
 		value.setProperties( (DockController)null );
 		
-		return strategy.isToolbarGroupPartParent( station, this );
+		return strategy.isToolbarGroupPartParent( station, this, false );
 	}
 
 	@Override

@@ -71,20 +71,48 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 	}
 
 	@Override
-	public boolean isToolbarGroupPartParent( DockStation parent, Dockable child ){
-		if( child instanceof ComponentDockable) {
-			return parent instanceof ToolbarDockStation;
+	public boolean isToolbarGroupPartParent( DockStation parent, Dockable child, boolean strong ){
+		if( strong ){
+			if( child instanceof ComponentDockable) {
+				return parent instanceof ToolbarDockStation;
+			}
+			
+			if( child instanceof ToolbarDockStation ){
+				return parent instanceof ToolbarGroupDockStation;
+			}
+			
+			if( child instanceof ToolbarGroupDockStation ){
+				return parent instanceof ToolbarContainerDockStation || parent instanceof ScreenDockStation;
+			}
+			
+			return false;
 		}
-		
-		if( child instanceof ToolbarDockStation ){
-			return parent instanceof ToolbarGroupDockStation;
+		else{
+			// floating policy
+			if (parent instanceof ScreenDockStation
+					&& child instanceof ToolbarGroupDockStation) {
+				return true;
+			}
+			// ?? policy
+			if (child instanceof ComponentDockable
+					&& parent instanceof ToolbarTabDockStation){
+				return true;
+			}
+			// docking and merging policy
+			if (parent instanceof ToolbarInterface){
+				if (child instanceof ComponentDockable
+						|| child instanceof ToolbarDockStation){
+					return true;
+				} else if (child instanceof ToolbarGroupDockStation
+						&& (parent instanceof ToolbarGroupDockStation || parent instanceof ToolbarContainerDockStation)){
+					return true;
+				} else{
+					return false;
+				}
+			} else{
+				return false;
+			}
 		}
-		
-		if( child instanceof ToolbarGroupDockStation ){
-			return parent instanceof ToolbarContainerDockStation || parent instanceof ScreenDockStation;
-		}
-		
-		return false;
 	}
 
 	@Override

@@ -251,7 +251,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public boolean accept( DockStation station ){
-		return getToolbarStrategy().isToolbarGroupPartParent(station, this);
+		return getToolbarStrategy().isToolbarGroupPartParent(station, this, false);
 	}
 
 	@Override

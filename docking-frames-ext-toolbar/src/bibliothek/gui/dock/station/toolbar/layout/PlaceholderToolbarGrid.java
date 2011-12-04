@@ -276,7 +276,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		Iterator<PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item> iter = columns.list().iterator();
 		while( iter.hasNext() ) {
 			PlaceholderList<?, ?, Column<D, S, P>>.Item item = iter.next();
-			if( item.getDockable().getList() != ignore ) {
+			if( item.getDockable() == null || item.getDockable().getList() != ignore ) {
 				item.removeAll( placeholders );
 				if( item.getPlaceholderSet() == null && item.isPlaceholder() ) {
 					iter.remove();
