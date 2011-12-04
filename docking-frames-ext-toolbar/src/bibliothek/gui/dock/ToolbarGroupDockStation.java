@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -45,6 +44,7 @@ import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarComplexDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.gui.dock.station.toolbar.layout.PlaceholderToolbarGridConverter;
@@ -59,7 +59,7 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
-import bibliothek.util.xml.XElement;
+import bibliothek.util.Path;
 
 /**
  * A {@link Dockable} and a {@link DockStation} which stands a group of
@@ -998,14 +998,98 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		// TODO Auto-generated method stub
-		return null;
+		int column = column( child );
+		int line = line( child );
+
+		if( target == null ) {
+			target = child;
+		}
+
+		PlaceholderStrategy strategy = placeholderStrategy.getValue();
+		Path placeholder = null;
+		if( strategy != null ) {
+			placeholder = strategy.getPlaceholderFor( target );
+			if( placeholder != null && column >= 0 && line >= 0 ) {
+				dockables.insertPlaceholder( column, line, placeholder );
+			}
+		}
+
+		return new ToolbarGroupProperty( column, line, placeholder );
 	}
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		// TODO Auto-generated method stub
+		if( property instanceof ToolbarGroupProperty ) {
+			return drop( dockable, (ToolbarGroupProperty) property );
+		}
 		return false;
+	}
+
+	/**
+	 * Tries to drop <code>dockable</code> at <code>property</code>.
+	 * @param dockable the element to drop
+	 * @param property the location of <code>dockable</code>
+	 * @return <code>true</code> if dropping was successfull, <code>false</code> otherwise
+	 */
+	public boolean drop( Dockable dockable, ToolbarGroupProperty property ){
+		Path placeholder = property.getPlaceholder();
+		
+		int column = property.getColumn();
+		int line = property.getLine();
+		
+		if( placeholder != null ) {
+			if( dockables.hasPlaceholder( placeholder ) ) {
+				StationChildHandle child = dockables.get( placeholder );
+				if( child == null ) {
+					if( acceptable( dockable ) ){
+						DockUtilities.checkLayoutLocked();
+						DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+						try {
+							DockUtilities.ensureTreeValidity( this, dockable );
+							listeners.fireDockableAdding( dockable );
+	
+							dockable.setDockParent( this );
+							StationChildHandle handle = createHandle( dockable );
+							dockables.put( placeholder, handle );
+							addComponent( handle );
+	
+							listeners.fireDockableAdded( dockable );
+						}
+						finally {
+							token.release();
+						}
+						return true;
+					}
+				}
+				else {
+					if( drop( child, dockable, property )){
+						return true;
+					}
+					
+					column = dockables.getColumn( child.getDockable() );
+					line = dockables.getLine( column, child.getDockable() ) + 1;
+				}
+			}
+		}
+		
+		if( !acceptable( dockable )){
+			return false;
+		}
+		
+		return drop( dockable, column, line );
+	}
+	
+	private boolean drop( StationChildHandle parent, Dockable child, ToolbarGroupProperty property ){
+		if( property.getSuccessor() == null ){
+			return false;
+		}
+		
+		DockStation station = parent.getDockable().asDockStation();
+		if( station == null ){
+			return false;
+		}
+		
+		return station.drop( child, property.getSuccessor() );
 	}
 
 	@Override
@@ -1013,5 +1097,4 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		// TODO Auto-generated method stub
 
 	}
-
 }

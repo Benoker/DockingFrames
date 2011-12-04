@@ -244,7 +244,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			int y = startPoint;
 
 			for( int i = 0; i < column.length; i++ ) {
-				column[i].component.setBounds( x, y, column[i].required.width, column[i].required.height );
+				column[i].component.setBounds( x, y, column[i].required.width, required.height );
 				x += column[i].required.width;
 			}
 		}
@@ -264,7 +264,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			int y = 0;
 
 			for( int i = 0; i < column.length; i++ ) {
-				column[i].component.setBounds( x, y, column[i].required.width, column[i].required.height );
+				column[i].component.setBounds( x, y, required.width, column[i].required.height );
 				y += column[i].required.height;
 			}
 		}

@@ -1,5 +1,6 @@
 package bibliothek.gui.dock.station.toolbar.layout;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.PlaceholderMap.Key;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList.Column;
@@ -99,7 +101,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			insert( column, item );
 		}
 		else {
-			list.dockables().add( line, item );
+			list.dockables().add( Math.min( line, list.dockables().size() ), item );
 			ensureRemoved( list, item );
 		}
 	}
@@ -116,7 +118,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		columnList.dockables().add( item );
 
 		Column<D, S, P> column = columns.createColumn( columnList );
-		columns.dockables().add( columnIndex, column );
+		columns.dockables().add( Math.min( columnIndex, columns.dockables().size()), column );
 
 		columnList.setStrategy( strategy );
 		if( bound ) {
@@ -124,6 +126,59 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		}
 
 		ensureRemoved( columnList, item );
+	}
+
+	/**
+	 * Tries to put <code>item</code> into this list at location <code>placeholder</code>. If there
+	 * is already an element at <code>placeholder</code>, then the old item is silenlty removed and
+	 * the new item inserted. This method may create a new non-empty column if necessary.
+	 * @param placeholder the name of the item
+	 * @param item the item to insert
+	 * @return <code>true</code> if insertion was a success, <code>false</code> otherwise
+	 */
+	public boolean put( Path placeholder, P item ){
+		int listIndex = columns.getListIndex( placeholder );
+		if( listIndex == -1 ) {
+			return false;
+		}
+		PlaceholderList<?, ?, Column<D, S, P>>.Item listItem = columns.list().get( listIndex );
+
+		Column<D, S, P> column = listItem.getDockable();
+		if( column != null ) {
+			return column.getList().put( placeholder, item ) != -1;
+		}
+		PlaceholderMap map = listItem.getPlaceholderMap();
+		if( map != null ) {
+			PlaceholderList<D, S, P> list = createColumn();
+			list.read( map, columns.getConverter() );
+			column = columns.createColumn( list );
+
+			listItem.setDockable( column );
+
+			if( column.getList().put( placeholder, item ) == -1 ) {
+				listItem.setDockable( null );
+				return false;
+			}
+			else {
+				listItem.setPlaceholderMap( null );
+				ensureRemoved( list, placeholder );
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Stores the placeholder <code>placeholder</code> in the designated column.
+	 * @param column the column in which to add <code>placeholder</code>
+	 * @param line the line in which to add <code>placeholder</code>
+	 * @param placeholder the placeholder to store
+	 */
+	public void insertPlaceholder( int column, int line, Path placeholder ){
+		columns.dockables().addPlaceholder( column, placeholder );
+		Column<D, S, P> item = columns.dockables().get( column );
+		item.getList().dockables().addPlaceholder( line, placeholder );
+		ensureRemoved( item.getList(), placeholder );
 	}
 
 	/**
@@ -139,7 +194,26 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 	private void ensureRemoved( PlaceholderList<D, S, P> ignore, P item ){
 		Set<Path> placeholders = getPlaceholders( item.asDockable() );
-		columns.removeAll( placeholders );
+		ensureRemoved( ignore, placeholders );
+	}
+
+	private void ensureRemoved( PlaceholderList<D, S, P> ignore, Path placeholder ){
+		Set<Path> set = new HashSet<Path>();
+		set.add( placeholder );
+		ensureRemoved( ignore, set );
+	}
+
+	private void ensureRemoved( PlaceholderList<D, S, P> ignore, Set<Path> placeholders ){
+		Iterator<PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item> iter = columns.list().iterator();
+		while( iter.hasNext() ) {
+			PlaceholderList<?, ?, Column<D, S, P>>.Item item = iter.next();
+			if( item.getDockable().getList() != ignore ) {
+				item.removeAll( placeholders );
+				if( item.getPlaceholderSet() == null && item.isPlaceholder() ) {
+					iter.remove();
+				}
+			}
+		}
 
 		for( Column<D, S, P> column : columns.dockables() ) {
 			if( column.getList() != ignore ) {
@@ -201,6 +275,34 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	}
 
 	/**
+	 * Tells whether this {@link PlaceholderToolbarGrid} knows a column which contains
+	 * the placeholder <code>placeholder</code>, this includes empty columns.
+	 * @param placeholder the placeholder to search
+	 * @return <code>true</code> if <code>placeholder</code> was found
+	 */
+	public boolean hasPlaceholder( Path placeholder ){
+		int listIndex = columns.getListIndex( placeholder );
+		if( listIndex == -1 ) {
+			return false;
+		}
+		PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( listIndex );
+
+		Column<D, S, P> column = item.getDockable();
+		if( column != null ) {
+			return column.getList().hasPlaceholder( placeholder );
+		}
+		PlaceholderMap map = item.getPlaceholderMap();
+		if( map != null ) {
+			for( Key key : map.getPlaceholders() ) {
+				if( key.contains( placeholder ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Gets the total count of items stored in this grid.
 	 * @return the total amount of items
 	 */
@@ -252,6 +354,26 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Searches the item which is at the location of <code>placeholder</code>.
+	 * @param placeholder some placeholder that may or may not be known to this grid
+	 * @return the item at <code>placeholder</code> or <code>null</code> either if <code>placeholder</code>
+	 * was not found or if there is no item stored
+	 */
+	public P get( Path placeholder ){
+		int listIndex = columns.getListIndex( placeholder );
+		if( listIndex == -1 ) {
+			return null;
+		}
+		PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( listIndex );
+
+		Column<D, S, P> column = item.getDockable();
+		if( column == null ) {
+			return null;
+		}
+		return column.getList().getDockableAt( placeholder );
 	}
 
 	/**

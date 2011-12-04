@@ -1022,6 +1022,13 @@ public class PlaceholderMap {
 		public Path[] getPlaceholders();
 		
 		/**
+		 * Tells whether this key knows <code>placeholder</code>.
+		 * @param placeholder the placeholder to search
+		 * @return whether <code>placeholder</code> was found
+		 */
+		public boolean contains( Path placeholder );
+		
+		/**
 		 * Gets the anchor. If the anchor is set, then this key cannot be deleted even if all
 		 * {@link #getPlaceholders() placeholders} are no longer valid. No two keys may have the
 		 * same anchor.
@@ -1204,6 +1211,15 @@ public class PlaceholderMap {
 		
 		public Path[] getPlaceholders(){
 			return placeholders;
+		}
+		
+		public boolean contains( Path placeholder ){
+			for( Path item : placeholders ){
+				if( item.equals( placeholder )){
+					return true;
+				}
+			}
+			return false;
 		}
 		
 		public boolean isShared(){

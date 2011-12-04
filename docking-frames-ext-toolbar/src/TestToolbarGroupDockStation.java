@@ -14,6 +14,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarGroupDockStation {
@@ -42,14 +43,18 @@ public class TestToolbarGroupDockStation {
 		frame.add( south.getComponent(), BorderLayout.SOUTH );
 
 		ToolbarGroupDockStation group = new ToolbarGroupDockStation();
-		
+
 		group.drop( createToolbar( "a", "b", "c" ), 0, 0 );
 		group.drop( createToolbar( "d", "e", "f" ), 0, 1 );
 		group.drop( createToolbar( "g", "h" ), 1, 0 );
 		group.drop( createToolbar( "i", "j" ), 1, 1 );
-		
+
+		group.drop( createToolbar( "k", "l" ), new ToolbarGroupProperty( 1, 0, null ) );
+		group.drop( createToolbar( "m", "n", "o" ), new ToolbarGroupProperty( 3, 2, null ) );
+		group.drop( createToolbar( "q", "r", "s" ), new ToolbarGroupProperty( 0, 5, null ) );
+
 		west.drop( group );
-		
+
 		frame.setBounds( 20, 20, 400, 400 );
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		frame.setVisible( true );

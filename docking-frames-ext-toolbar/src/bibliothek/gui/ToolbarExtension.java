@@ -19,8 +19,8 @@ import javax.swing.JComponent;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.MenuDockAction;
@@ -47,15 +47,15 @@ import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfigur
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
-import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationMerger;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
+import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
-import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitle;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleGrip;
 import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleRoundedBound;
 import bibliothek.gui.dock.themes.DockThemeExtension;
@@ -200,6 +200,7 @@ public class ToolbarExtension implements Extension{
 		List<DockablePropertyFactory> result = new ArrayList<DockablePropertyFactory>();
 		result.add(new ToolbarPropertyFactory());
 		result.add(new ToolbarContainerPropertyFactory());
+		result.add(new ToolbarGroupPropertyFactory());
 		return result;
 	}
 
