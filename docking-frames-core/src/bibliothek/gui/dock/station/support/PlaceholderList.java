@@ -291,6 +291,10 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 					converted.put( metaKey, map.get( placeholders[i], "dock." + metaKey ) );
 				}
 				
+				if( map.contains( placeholders[i], "map" )){
+					converted.setPlaceholderMap( map.getMap( placeholders[i], "map" ) );
+				}
+				
 				dockable = converter.convert( converted );
 			}
 			

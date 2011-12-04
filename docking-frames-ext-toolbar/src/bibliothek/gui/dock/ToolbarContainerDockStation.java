@@ -1,6 +1,8 @@
 package bibliothek.gui.dock;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -40,12 +43,12 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerConverterCallback;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
-import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.DefaultToolbarContainerConverter;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerConverter;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerConverterCallback;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
@@ -91,7 +94,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 * The graphical representation of this station: the pane which contains
 	 * toolbars
 	 */
-	protected OverpaintablePanelBase mainPanel = new OverpaintablePanelBase();
+	protected OverpaintablePanelBase mainPanel;
 
 	/** dockables associate with the container pane */
 	private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
@@ -158,7 +161,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 */
 	private JPanel createPanel(){
 		JPanel panel = new JPanel();
+		
 		panel.setOpaque(false);
+		
 		switch (orientation) {
 		case HORIZONTAL:
 			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -839,8 +844,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(
 					this, dockable);
 			try{
-				dockable.setDockParent(this);
 				listeners.fireDockableAdding(dockable);
+				dockable.setDockParent(this);
 				DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables()
 						.dockables();
 				if (dockable instanceof OrientedDockStation){

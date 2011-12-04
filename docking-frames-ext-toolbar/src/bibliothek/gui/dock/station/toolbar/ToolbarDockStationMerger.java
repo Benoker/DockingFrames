@@ -25,7 +25,7 @@ public class ToolbarDockStationMerger extends AbstractToolbarMerger {
 	@Override
 	public void merge( StationDropOperation operation, DockStation parent, DockStation child ){
 		ToolbarDropInfo<ToolbarDockStation> operationToolbar = (ToolbarDropInfo<ToolbarDockStation>) operation;
-		AbstractToolbarDockStation station = (AbstractToolbarDockStation) parent;
+		ToolbarDockStation station = (ToolbarDockStation) parent;
 		// WARNING: if I don't do a copy of dockables, problem occurs.
 		// Perhaps due to concurrent access to the dockable (drop in
 		// goal area ==> drag in origin area)?

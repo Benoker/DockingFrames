@@ -70,7 +70,8 @@ public class ConvertedPlaceholderListItem extends PlaceholderMetaMap{
 	}
 	
 	/**
-	 * Gets additional information about this item.
+	 * Gets additional information about this item. This is the map that was actually written,
+	 * not necessarily the map that was set by {@link #setPlaceholderMap(PlaceholderMap)}.
 	 * @return additional information, can be <code>null</code>
 	 * @see #setPlaceholderMap(PlaceholderMap)
 	 */

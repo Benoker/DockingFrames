@@ -221,6 +221,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	public void setOrientation( Orientation orientation ){
 		// it's very important to change position and orientation of inside
 		// dockables first, else doLayout() is done on wrong inside information
+		this.orientation = orientation;
 		for (int i = 0; i < getDockableCount(); i++){
 			Dockable d = getDockable(i);
 			if (d instanceof OrientedDockStation){

@@ -26,10 +26,10 @@ public class TestToolbarGroupDockStation {
 		ScreenDockStation screen = new ScreenDockStation( frame );
 		controller.add( screen );
 
-		ToolbarContainerDockStation west = new ToolbarContainerDockStation( Orientation.HORIZONTAL );
-		ToolbarContainerDockStation east = new ToolbarContainerDockStation( Orientation.HORIZONTAL );
-		ToolbarContainerDockStation north = new ToolbarContainerDockStation( Orientation.VERTICAL );
-		ToolbarContainerDockStation south = new ToolbarContainerDockStation( Orientation.VERTICAL );
+		ToolbarContainerDockStation west = new ToolbarContainerDockStation( Orientation.VERTICAL );
+		ToolbarContainerDockStation east = new ToolbarContainerDockStation( Orientation.VERTICAL );
+		ToolbarContainerDockStation north = new ToolbarContainerDockStation( Orientation.HORIZONTAL );
+		ToolbarContainerDockStation south = new ToolbarContainerDockStation( Orientation.HORIZONTAL );
 
 		controller.add( west );
 		controller.add( east );
