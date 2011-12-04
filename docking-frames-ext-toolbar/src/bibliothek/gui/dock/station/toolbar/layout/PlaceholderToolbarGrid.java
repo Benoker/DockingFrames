@@ -99,7 +99,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 		PlaceholderList<D, S, P> list = getColumn( column );
 		if( list == null ) {
-			insert( column, item );
+			insert( column, item, true );
 		}
 		else {
 			list.dockables().add( Math.min( line, list.dockables().size() ), item );
@@ -107,19 +107,61 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		}
 	}
 
+
+	/**
+	 * Adds the item <code>item</code> to a new column, the new column will have the index
+	 * <code>columnIndex</code>. If <code>columnIndex</code> is out of bounds, then the new column will
+	 * be added as near as possible to the preferred position. This method will try to reuse
+	 * an empty column, if one is available at the desired location.
+	 * @param columnIndex the column to add
+	 * @param item the item to store, not <code>null</code>
+	 */
+	public void insert( int columnIndex, P item ){
+		insert( columnIndex, item, true );
+	}
+	
 	/**
 	 * Adds the item <code>item</code> to a new column, the new column will have the index
 	 * <code>columnIndex</code>. If <code>columnIndex</code> is out of bounds, then the new column will
 	 * be added as near as possible to the preferred position.
 	 * @param columnIndex the column to add
 	 * @param item the item to store, not <code>null</code>
+	 * @param reuse if <code>false</code> then a new column will be built in any case, if <code>true</code>
+	 * then this grid tries to reuse an existing yet empty column if possible
 	 */
-	public void insert( int columnIndex, P item ){
+	public void insert( int columnIndex, P item, boolean reuse ){
 		PlaceholderList<D, S, P> columnList = createColumn();
+		Column<D, S, P> column = columns.createColumn( columnList );
+		boolean added = false;
+		
+		if( reuse ){
+			int baseIndex;
+			if( columns.dockables().size() > 0 ){
+				baseIndex = columns.levelToBase( Math.max( 0, Math.min( columns.dockables().size()-1, columnIndex ) ), Level.DOCKABLE );
+				baseIndex--;
+			}
+			else{
+				baseIndex = 0;
+			}
+
+			if( baseIndex >= 0 && baseIndex < columns.list().size() ){
+				PlaceholderList<?, ?, Column<D,S,P>>.Item columnItem = columns.list().get( baseIndex );
+				if( columnItem.getDockable() == null ){
+					PlaceholderMap map = columnItem.getPlaceholderMap();
+					if( map != null ){
+						columnList.read( map, columns.getConverter() );
+					}
+					columnItem.setDockable( column );
+					added = true;
+				}
+			}
+		}
+		
 		columnList.dockables().add( item );
 
-		Column<D, S, P> column = columns.createColumn( columnList );
-		columns.dockables().add( Math.max( 0, Math.min( columnIndex, columns.dockables().size() )), column );
+		if( !added ){
+			columns.dockables().add( Math.max( 0, Math.min( columnIndex, columns.dockables().size() )), column );
+		}
 
 		columnList.setStrategy( strategy );
 		if( bound ) {
