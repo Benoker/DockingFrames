@@ -10,6 +10,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -118,7 +119,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		columnList.dockables().add( item );
 
 		Column<D, S, P> column = columns.createColumn( columnList );
-		columns.dockables().add( Math.min( columnIndex, columns.dockables().size()), column );
+		columns.dockables().add( Math.max( 0, Math.min( columnIndex, columns.dockables().size() )), column );
 
 		columnList.setStrategy( strategy );
 		if( bound ) {
@@ -126,6 +127,74 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		}
 
 		ensureRemoved( columnList, item );
+	}
+
+	/**
+	 * Moves the item at <code>sourceColumn/sourceLine</code> to <code>destinationColumn/destinationLine</code>. The operation
+	 * behaves as if the item would first be removed from the source position, and afterwards inserted at the destination position. 
+	 * @param sourceColumn the column in which to find the item, only includes non-empty columns
+	 * @param sourceLine the line in the column in which to find the item
+	 * @param destinationColumn the column in which to insert the item
+	 * @param destinationLine the line at which to insert the item
+	 * @param destinationLevel the level at which to find <code>destinationColumn</code>, will be converted to an index
+	 * from {@link Level#BASE}
+	 * @throws IllegalArgumentException if any index is out of bounds
+	 */
+	public void move( int sourceColumn, int sourceLine, int destinationColumn, int destinationLine, Level destinationLevel ){
+		Filter<P> sourceList = columns.dockables().get( sourceColumn ).getList().dockables();
+		
+		if( destinationColumn == columns.size( destinationLevel )){
+			destinationColumn = columns.size( Level.BASE );
+		}
+		else if( destinationColumn >= 0 ){
+			destinationColumn = columns.levelToBase( destinationColumn, destinationLevel );
+		}
+		
+		if( sourceLine < 0 || sourceLine >= sourceList.size() ) {
+			throw new IllegalArgumentException( "sourceLine out of bounds: " + sourceLine );
+		}
+
+		if( destinationColumn < -1 || destinationColumn > columns.list().size() ) {
+			throw new IllegalArgumentException( "destinationColumn out of bounds: " + destinationColumn );
+		}
+
+		P value = sourceList.get( sourceLine );
+
+		PlaceholderList<D, S, P> list;
+		if( destinationColumn == -1 || destinationColumn == columns.list().size() ) {
+			list = createColumn();
+			if( destinationLine != 0 ) {
+				throw new IllegalArgumentException( "destinationLine is out of bounds: " + destinationLine );
+			}
+			PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item item = columns.new Item( columns.createColumn( list ) );
+			if( destinationColumn == -1 ){
+				columns.list().add( 0, item );
+			}
+			else{
+				columns.list().add( item );
+			}
+		}
+		else {
+			PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( destinationColumn );
+			if( item.getDockable() == null ) {
+				list = createColumn();
+				if( destinationLine != 0 ) {
+					throw new IllegalArgumentException( "destinationLine is out of bounds: " + destinationLine );
+				}
+				item.setDockable( columns.createColumn( list ) );
+			}
+			else{
+				list = item.getDockable().getList();
+				if( destinationLine < 0 || destinationLine > list.dockables().size() ){
+					throw new IllegalArgumentException("destinationLine out of bounds: " + destinationLine);
+				}
+			}
+		}
+		
+		list.dockables().move( sourceList, sourceLine, destinationLine );
+		
+		ensureRemoved( list, value );
+		purge();
 	}
 
 	/**
@@ -170,7 +239,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 	/**
 	 * Stores the placeholder <code>placeholder</code> in the designated column.
-	 * @param column the column in which to add <code>placeholder</code>
+	 * @param column the column in which to add <code>placeholder</code>, only includes non-empty columns
 	 * @param line the line in which to add <code>placeholder</code>
 	 * @param placeholder the placeholder to store
 	 */
@@ -244,6 +313,22 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	}
 
 	/**
+	 * Gets the index of the first column that contains <code>placeholder</code>.
+	 * @param placeholder the placeholder to search
+	 * @return the first column with <code>placeholder</code> or -1 if not found, this includes empty columns
+	 */
+	public int getColumn( Path placeholder ){
+		int index = 0;
+		for( PlaceholderList<?, ?, Column<D, S, P>>.Item item : columns.list() ) {
+			if( item.hasPlaceholder( placeholder ) ) {
+				return index;
+			}
+			index++;
+		}
+		return -1;
+	}
+
+	/**
 	 * Tells at which position <code>dockable</code> is within its column.
 	 * @param dockable the item to search
 	 * @return the location of <code>dockable</code>
@@ -272,6 +357,41 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			index++;
 		}
 		return -1;
+	}
+
+	/**
+	 * Tells at which line <code>placeholder</code> apperas in the first column that contains
+	 * <code>placeholder</code>. This includes empty columns.
+	 * @param placeholder the placeholder to search
+	 * @return the line at which <code>placeholder</code> was found
+	 */
+	public int getLine( Path placeholder ){
+		int column = getColumn( placeholder );
+		if( column == -1 ) {
+			return -1;
+		}
+		return getLine( column, placeholder );
+	}
+
+	/**
+	 * Tells at which line <code>placeholder</code> appears in the column <code>column</code>.
+	 * @param column the index of the column, this includes empty columns
+	 * @param placeholder the placeholder to search
+	 * @return the index the item would have or -1 if <code>placeholder</code> was not found
+	 */
+	public int getLine( int column, Path placeholder ){
+		PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( column );
+		if( item.getDockable() == null ) {
+			if( item.hasPlaceholder( placeholder ) ) {
+				return 0;
+			}
+			else {
+				return -1;
+			}
+		}
+		else {
+			return item.getDockable().getList().getDockableIndex( placeholder );
+		}
 	}
 
 	/**
@@ -489,6 +609,23 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		return columns.dockables().size();
 	}
 
+	/**
+	 * Tells how many items are currently stored at the non-empty column with index <code>column</code>.
+	 * @param column the index of a non-empty column
+	 * @return the size of the column
+	 */
+	public int getLineCount( int column ){
+		return columns.dockables().get( column ).getList().dockables().size();
+	}
+
+	/**
+	 * Gets the total number of columns, this includes empty columns.
+	 * @return the total number of columns
+	 */
+	public int getTotalColumnCount(){
+		return columns.list().size();
+	}
+		
 	/**
 	 * Gets an iterator over the contents of the <code>index</code>'th non-empty column.
 	 * @param index the index of the non-empty column

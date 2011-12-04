@@ -12,7 +12,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
@@ -26,6 +28,7 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
+import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -39,6 +42,7 @@ import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarComplexDropInfo;
@@ -557,12 +561,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			dockable.setDockParent( this );
 			StationChildHandle handle = createHandle( dockable );
 			// add in the list of dockable
+			int before = dockables.getColumnCount();
 			dockables.insert( column, line, handle );
 
 			// add in the main panel
 			addComponent( handle );
 			listeners.fireDockableAdded( dockable );
-			fireDockablesRepositioned( indexOf( dockable ) + 1 );
+			fireDockablesRepositioned( dockable, before != dockables.getColumnCount() );
 		}
 		finally {
 			token.release();
@@ -649,6 +654,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		if( dockable.getDockParent() != this ) {
 			throw new IllegalArgumentException( "not a child of this station: " + dockable );
 		}
+
+		int column = column( dockable );
+		int before = dockables.getColumnCount();
+
 		StationChildHandle handle = dockables.get( dockable );
 		DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
 		try {
@@ -659,11 +668,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			dockable.setDockParent( null );
 
 			listeners.fireDockableRemoved( dockable );
+			fireColumnRepositioned( column, before != dockables.getColumnCount() );
 		}
 		finally {
 			token.release();
 		}
-		fireDockablesRepositioned( 0 ); // TODO not every dockable got repositioned
 	}
 
 	@Override
@@ -682,6 +691,47 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public void replace( Dockable old, Dockable next ){
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * Fires {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])} for all {@link Dockable}s that
+	 * are in the same column as <code>dockable</code>, including <code>dockable</code>.
+	 * @param dockable some item from a column that changed
+	 * @param all whether there should be an event for all the columns after <code>dockable</code> as well
+	 */
+	protected void fireDockablesRepositioned( Dockable dockable ){
+		fireDockablesRepositioned( dockable, false );
+	}
+
+	/**
+	 * Fires {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])} for all {@link Dockable}s that
+	 * are in the same column as <code>dockable</code>, including <code>dockable</code>.
+	 * @param dockable some item from a column that changed
+	 */
+	protected void fireDockablesRepositioned( Dockable dockable, boolean all ){
+		fireColumnRepositioned( column( dockable ), all );
+	}
+
+	/**
+	 * Fires {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])} for all {@link Dockable}s in
+	 * the given <code>column</code>.
+	 * @param column the column for which to fire an event
+	 * @param all whether there should be an event for all the columns after <code>column</code> as well
+	 */
+	protected void fireColumnRepositioned( int column, boolean all ){
+		List<Dockable> list = new ArrayList<Dockable>();
+		int end = all ? dockables.getColumnCount() : column + 1;
+
+		for( int i = column; i < end; i++ ) {
+			Iterator<StationChildHandle> items = dockables.getColumnContent( i );
+			while( items.hasNext() ) {
+				list.add( items.next().getDockable() );
+			}
+		}
+
+		if( list.size() > 0 ) {
+			listeners.fireDockablesRepositioned( list.toArray( new Dockable[list.size()] ) );
+		}
 	}
 
 	// ########################################################
@@ -1033,27 +1083,29 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 */
 	public boolean drop( Dockable dockable, ToolbarGroupProperty property ){
 		Path placeholder = property.getPlaceholder();
-		
+
 		int column = property.getColumn();
 		int line = property.getLine();
-		
+
 		if( placeholder != null ) {
 			if( dockables.hasPlaceholder( placeholder ) ) {
 				StationChildHandle child = dockables.get( placeholder );
 				if( child == null ) {
-					if( acceptable( dockable ) ){
+					if( acceptable( dockable ) ) {
 						DockUtilities.checkLayoutLocked();
 						DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 						try {
 							DockUtilities.ensureTreeValidity( this, dockable );
 							listeners.fireDockableAdding( dockable );
-	
+							int before = dockables.getColumnCount();
+
 							dockable.setDockParent( this );
 							StationChildHandle handle = createHandle( dockable );
 							dockables.put( placeholder, handle );
 							addComponent( handle );
-	
+
 							listeners.fireDockableAdded( dockable );
+							fireDockablesRepositioned( dockable, before != dockables.getColumnCount() );
 						}
 						finally {
 							token.release();
@@ -1062,39 +1114,83 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 					}
 				}
 				else {
-					if( drop( child, dockable, property )){
+					if( drop( child, dockable, property ) ) {
 						return true;
 					}
-					
+
 					column = dockables.getColumn( child.getDockable() );
 					line = dockables.getLine( column, child.getDockable() ) + 1;
 				}
 			}
 		}
-		
-		if( !acceptable( dockable )){
+
+		if( !acceptable( dockable ) ) {
 			return false;
 		}
-		
+
 		return drop( dockable, column, line );
 	}
-	
+
 	private boolean drop( StationChildHandle parent, Dockable child, ToolbarGroupProperty property ){
-		if( property.getSuccessor() == null ){
+		if( property.getSuccessor() == null ) {
 			return false;
 		}
-		
+
 		DockStation station = parent.getDockable().asDockStation();
-		if( station == null ){
+		if( station == null ) {
 			return false;
 		}
-		
+
 		return station.drop( child, property.getSuccessor() );
 	}
 
 	@Override
 	public void move( Dockable dockable, DockableProperty property ){
-		// TODO Auto-generated method stub
+		if( property instanceof ToolbarGroupProperty ) {
+			move( dockable, (ToolbarGroupProperty) property );
+		}
+	}
 
+	private void move( Dockable dockable, ToolbarGroupProperty property ){
+		int sourceColumn = column( dockable );
+		int sourceLine = line( dockable );
+
+		boolean empty = false;
+		int destinationColumn = property.getColumn();
+		int destinationLine = property.getLine();
+		
+		Path placeholder = property.getPlaceholder();
+		if( placeholder != null ){
+			int column = dockables.getColumn( placeholder );
+			if( column != -1 ){
+				int line = dockables.getLine( column, placeholder );
+				if( line != -1 ){
+					empty = true;
+					destinationColumn = column;
+					destinationLine = line;
+				}
+			}
+		}
+		
+		if( !empty ){
+			// ensure destination valid
+			destinationColumn = Math.min( destinationColumn, dockables.getColumnCount() );
+			if( destinationColumn == dockables.getColumnCount() || destinationColumn == -1){
+				destinationLine = 0;
+			}
+			else{
+				destinationLine = Math.min( destinationLine, dockables.getLineCount( destinationColumn ));
+			}
+		}
+		
+		Level level;
+		if( empty ){
+			level = Level.BASE;
+		}
+		else{
+			level = Level.DOCKABLE;
+		}
+		dockables.move( sourceColumn, sourceLine, destinationColumn, destinationLine, level );
+		mainPanel.getContentPane().revalidate();
 	}
 }

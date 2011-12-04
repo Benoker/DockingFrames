@@ -51,8 +51,10 @@ public class TestToolbarGroupDockStation {
 
 		group.drop( createToolbar( "k", "l" ), new ToolbarGroupProperty( 1, 0, null ) );
 		group.drop( createToolbar( "m", "n", "o" ), new ToolbarGroupProperty( 3, 2, null ) );
-		group.drop( createToolbar( "q", "r", "s" ), new ToolbarGroupProperty( 0, 5, null ) );
+		group.drop( createToolbar( "q", "r", "s" ), new ToolbarGroupProperty( -1, 5, null ) );
 
+		// group.move( group.getDockable( 0 ), new ToolbarGroupProperty( 2, 1, null ) );
+		
 		west.drop( group );
 
 		frame.setBounds( 20, 20, 400, 400 );
