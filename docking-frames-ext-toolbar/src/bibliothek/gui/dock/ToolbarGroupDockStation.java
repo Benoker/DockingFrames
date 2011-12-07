@@ -8,6 +8,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -79,7 +80,7 @@ import bibliothek.util.Path;
  * 
  * @author Herve Guillaume
  */
-public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
+public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 	/** the id of the {@link DockTitleFactory} which is used by this station */
 	public static final String TITLE_ID = "toolbar.group";
@@ -93,9 +94,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	private DockablePlaceholderToolbarGrid<StationChildHandle> dockables = new DockablePlaceholderToolbarGrid<StationChildHandle>();
 
 	/** The {@link PlaceholderStrategy} that is used by {@link #dockables} */
-	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
-		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
-			dockables.setStrategy( newValue );
+	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
+			PlaceholderStrategy.PLACEHOLDER_STRATEGY){
+		@Override
+		protected void valueChanged( PlaceholderStrategy oldValue,
+				PlaceholderStrategy newValue ){
+			dockables.setStrategy(newValue);
 		}
 	};
 
@@ -109,7 +113,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * Size of the border outside this station where a {@link Dockable} will
 	 * still be considered to be dropped onto this station. Measured in pixel.
 	 */
-	private int borderSideSnapSize = 1;
+	private int borderSideSnapSize = 10;
 	/**
 	 * Whether the bounds of this station are slightly bigger than the station
 	 * itself. Used together with {@link #borderSideSnapSize} to grab Dockables
@@ -126,25 +130,28 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 */
 	public ToolbarGroupDockStation(){
 		init();
-		this.mainPanel.getContentPane().setBackground( Color.YELLOW );
-		this.mainPanel.getBasePane().setBackground( Color.ORANGE );
+		this.mainPanel.getContentPane().setBackground(Color.YELLOW);
+		this.mainPanel.getBasePane().setBackground(Color.ORANGE);
 	}
 
 	@Override
 	protected void init(){
 		mainPanel = new OverpaintablePanelBase();
-		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar", this );
-		setOrientation( this.getOrientation() );
+		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
+				+ ".toolbar", this);
+		setOrientation(this.getOrientation());
 		displayerFactory = createDisplayerFactory();
-		displayers = new DisplayerCollection( this, displayerFactory, getDisplayerId() );
-		displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
-			@Override
-			public void discard( DockableDisplayer displayer ){
-				ToolbarGroupDockStation.this.discard( displayer );
-			}
-		} );
+		displayers = new DisplayerCollection(this, displayerFactory,
+				getDisplayerId());
+		displayers
+				.addDockableDisplayerListener(new DockableDisplayerListener(){
+					@Override
+					public void discard( DockableDisplayer displayer ){
+						ToolbarGroupDockStation.this.discard(displayer);
+					}
+				});
 
-		setTitleIcon( null );
+		setTitleIcon(null);
 	}
 
 	// ########################################################
@@ -159,20 +166,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return the column location or -1 if the child was not found
 	 */
 	public int column( Dockable dockable ){
-		return dockables.getColumn( dockable );
-		//		if (dockables != null){
-		//			int column = 0;
-		//			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-		//				for (StationChildHandle handle : dockablePlaceHolderList
-		//						.dockables()){
-		//					if (handle.getDockable() == dockable){
-		//						return column;
-		//					}
-		//				}
-		//				column++;
-		//			}
-		//		}
-		//		return -1;
+		return dockables.getColumn(dockable);
 	}
 
 	/**
@@ -183,20 +177,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return the line location or -1 if the child was not found
 	 */
 	public int line( Dockable dockable ){
-		return dockables.getLine( dockable );
-		//		if (dockables != null){
-		//			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-		//				int line = 0;
-		//				for (StationChildHandle handle : dockablePlaceHolderList
-		//						.dockables()){
-		//					if (handle.getDockable() == dockable){
-		//						return line;
-		//					}
-		//					line++;
-		//				}
-		//			}
-		//		}
-		//		return -1;
+		return dockables.getLine(dockable);
 	}
 
 	// ########################################################
@@ -205,12 +186,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	/**
 	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
+	 * 
 	 * @return the strategy, never <code>null</code>
 	 */
+	@Override
 	public ToolbarStrategy getToolbarStrategy(){
-		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
+		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>(
+				ToolbarStrategy.STRATEGY, getController());
 		ToolbarStrategy result = value.getValue();
-		value.setProperties( (DockController) null );
+		value.setProperties((DockController) null);
 		return result;
 	}
 
@@ -222,32 +206,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	@Override
 	public int getDockableCount(){
 		return dockables.size();
-		//		int count = 0;
-		//		if (dockables != null){
-		//			for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-		//				count += dockablePlaceHolderList.dockables().size();
-		//			}
-		//		} else{
-		//			return 0;
-		//		}
-		//		return count;
 	}
 
 	@Override
 	public Dockable getDockable( int index ){
-		return dockables.get( index ).asDockable();
-
-		//		int count = -1;
-		//		for (DockablePlaceholderList<StationChildHandle> dockablePlaceHolderList : dockables){
-		//			for (StationChildHandle handle : dockablePlaceHolderList
-		//					.dockables()){
-		//				count++;
-		//				if (count >= index){
-		//					return handle.getDockable();
-		//				}
-		//			}
-		//		}
-		//		return null;
+		return dockables.get(index).asDockable();
 	}
 
 	@Override
@@ -295,8 +258,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 *             if the size is smaller than 0
 	 */
 	public void setBorderSideSnapSize( int borderSideSnapSize ){
-		if( borderSideSnapSize < 0 )
-			throw new IllegalArgumentException( "borderSideSnapeSize must not be less than 0" );
+		if (borderSideSnapSize < 0)
+			throw new IllegalArgumentException(
+					"borderSideSnapeSize must not be less than 0");
 
 		this.borderSideSnapSize = borderSideSnapSize;
 	}
@@ -314,38 +278,37 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public void setController( DockController controller ){
-		if( getController() != controller ) {
-			if( getController() != null ) {
+		if (getController() != controller){
+			if (getController() != null){
 				dockables.unbind();
 			}
 			Iterator<StationChildHandle> iter = dockables.items();
-			while( iter.hasNext() ) {
-				iter.next().setTitleRequest( null );
+			while (iter.hasNext()){
+				iter.next().setTitleRequest(null);
 			}
 
-			super.setController( controller );
+			super.setController(controller);
 			// if not set controller of the DefaultStationPaintValue, call to
 			// DefaultStationPaintValue do nothing
 
-			if( controller == null ) {
+			if (controller == null){
 				title = null;
+			} else{
+				title = registerTitle(controller);
 			}
-			else {
-				title = registerTitle( controller );
-			}
-			paint.setController( controller );
-			placeholderStrategy.setProperties( controller );
-			displayerFactory.setController( controller );
-			displayers.setController( controller );
-			mainPanel.setController( controller );
+			paint.setController(controller);
+			placeholderStrategy.setProperties(controller);
+			displayerFactory.setController(controller);
+			displayers.setController(controller);
+			mainPanel.setController(controller);
 
-			if( getController() != null ) {
+			if (getController() != null){
 				dockables.bind();
 			}
 
 			iter = dockables.items();
-			while( iter.hasNext() ) {
-				iter.next().setTitleRequest( title, true );
+			while (iter.hasNext()){
+				iter.next().setTitleRequest(title, true);
 			}
 		}
 	}
@@ -359,11 +322,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		// it's very important to change position and orientation of inside
 		// dockables first, else doLayout() is done on wrong inside information
 		this.orientation = orientation;
-		for( int i = 0; i < getDockableCount(); i++ ) {
-			Dockable d = getDockable( i );
-			if( d instanceof OrientedDockStation ) {
+		for (int i = 0; i < getDockableCount(); i++){
+			Dockable d = getDockable(i);
+			if (d instanceof OrientedDockStation){
 				OrientedDockStation group = (OrientedDockStation) d;
-				group.setOrientation( this.getOrientation() );
+				group.setOrientation(this.getOrientation());
 			}
 		}
 		mainPanel.updateAlignment();
@@ -377,41 +340,44 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[]{ new DefaultDropLayer( this ), new SideSnapDropLayer( this ), };
+		return new DockStationDropLayer[] { new DefaultDropLayer(this),
+				new SideSnapDropLayer(this), };
 	}
 
 	@Override
 	public boolean accept( Dockable child ){
-		return getToolbarStrategy().isToolbarGroupPart( child );
+		return getToolbarStrategy().isToolbarGroupPart(child);
 	}
 
 	@Override
 	public boolean accept( DockStation station ){
-		return getToolbarStrategy().isToolbarGroupPartParent( station, this, false );
+		return getToolbarStrategy().isToolbarGroupPartParent(station, this,
+				false);
 	}
 
 	@Override
-	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
-		System.out.println( this.toString() + "## prepareDrop(...) ##" );
+	public StationDropOperation prepareDrop( int mouseX, int mouseY,
+			int titleX, int titleY, Dockable dockable ){
+		// System.out.println(this.toString() + "## prepareDrop(...) ##");
 		DockController controller = getController();
 
-		if( getExpandedState() == ExpandedState.EXPANDED ) {
+		if (getExpandedState() == ExpandedState.EXPANDED){
 			return null;
 		}
 
 		// check if the dockable and the station accept each other
-		if( this.accept( dockable ) & dockable.accept( this ) ) {
+		if (this.accept(dockable) & dockable.accept(this)){
 			// check if controller exists and if the controller accepts that
 			// the dockable becomes a child of this station
-			if( controller != null ) {
-				if( !controller.getAcceptance().accept( this, dockable ) ) {
+			if (controller != null){
+				if (!controller.getAcceptance().accept(this, dockable)){
 					return null;
 				}
 			}
-			return new ToolbarComplexDropInfo( dockable, this, mouseX, mouseY ){
+			return new ToolbarComplexDropInfo(dockable, this, mouseX, mouseY){
 				@Override
 				public void execute(){
-					drop( this );
+					drop(this);
 				}
 
 				// Note: draw() is called first by the Controller. It seems
@@ -431,16 +397,16 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 				@Override
 				public void draw(){
 					// without this line, nothing is displayed
-					ToolbarGroupDockStation.this.indexBeneathMouse = indexOf( getDockableBeneathMouse() );
+					ToolbarGroupDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
 					ToolbarGroupDockStation.this.prepareDropDraw = true;
-					ToolbarGroupDockStation.this.sideBeneathMouse = this.getSideDockableBeneathMouse();
+					ToolbarGroupDockStation.this.sideBeneathMouse = this
+							.getSideDockableBeneathMouse();
 					// without this line, line is displayed only on the first
 					// component met
 					ToolbarGroupDockStation.this.mainPanel.repaint();
 				}
 			};
-		}
-		else {
+		} else{
 			return null;
 		}
 	}
@@ -453,76 +419,124 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	@Override
 	protected void drop( StationDropOperation dropInfo ){
 		ToolbarComplexDropInfo dropInfoGroup = (ToolbarComplexDropInfo) dropInfo;
-		if( dropInfoGroup.getItemPositionVSBeneathDockable() != Position.CENTER ) {
+		System.out
+				.println("Summarize Info: " + dropInfoGroup.toSummaryString());
+		if (dropInfoGroup.getItemPositionVSBeneathDockable() != Position.CENTER){
 			// Note: Computation of index to insert drag dockable is not the
 			// same between a move() and a drop(), because with a move() it is
 			// as if the drag dockable were remove first then added again in the
 			// list -> so the list is shrunk and the index are shifted behind
 			// the remove dockable. (Note: It's weird because indeed drag() is
 			// called after move()...)
-			if( dropInfoGroup.isMove() ) {
-				int line, column, shift = 0;
-				if( getOrientation() == Orientation.VERTICAL ) {
-					column = column( dropInfoGroup.getDockableBeneathMouse() );
-					if( dropInfoGroup.getItemPositionVSBeneathDockable() == Position.NORTH ) {
+			if (dropInfoGroup.isMove()){
+				int column, topShift = 0, lateralShift = 0;
+				if (getOrientation() == Orientation.VERTICAL){
+					column = column(dropInfoGroup.getDockableBeneathMouse());
+					if (dropInfoGroup.getItemPositionVSBeneathDockable() == Position.NORTH){
 						// index shifted because the drag dockable is above the
 						// dockable beneath mouse
-						shift = -1;
+						topShift = -1;
 					}
-					if( dropInfoGroup.getSideDockableBeneathMouse() == Position.SOUTH ) {
-						// the drag dockable is put below the dockable beneath
-						// mouse
-						line = indexBeneathMouse + 1 + shift;
-					}
-					else {
-						// the drag dockable is put above the dockable beneath
-						// mouse
-						line = indexBeneathMouse + shift;
-					}
-					drop( dropInfoGroup.getItem(), column, line );
-				}
-				else {
-					if( dropInfoGroup.getItemPositionVSBeneathDockable() == Position.WEST ) {
+					if (dropInfoGroup.getItemPositionVSBeneathDockable() == Position.WEST){
 						// index shifted because the drag dockable is at the
 						// left of the dockable beneath mouse
-						shift = -1;
+						lateralShift = -1;
 					}
-					if( dropInfoGroup.getSideDockableBeneathMouse() == Position.EAST ) {
-						// the drag dockable is put at the right of the dockable
-						// beneath mouse
-						column = indexBeneathMouse + 1 + shift;
-					}
-					else {
-						// the drag dockable is put at the left of the dockable
-						// beneath mouse
-						column = indexBeneathMouse + shift;
-					}
-					drop( dropInfoGroup.getItem(), column );
-				}
-			}
-			else {
-				if( getOrientation() == Orientation.VERTICAL ) {
-					if( dropInfoGroup.getSideDockableBeneathMouse() == Position.SOUTH ) {
-						// the drag dockable is put below the dockable beneath
-						// mouse
-						drop( dropInfoGroup.getItem(), column( dropInfoGroup.getDockableBeneathMouse() ), line( dropInfoGroup.getDockableBeneathMouse() ) + 1 );
-					}
-					else {
+					switch (dropInfoGroup.getSideDockableBeneathMouse()) {
+
+					case NORTH:
 						// the drag dockable is put above the dockable beneath
 						// mouse
-						drop( dropInfoGroup.getItem(), column( dropInfoGroup.getDockableBeneathMouse() ), line( dropInfoGroup.getDockableBeneathMouse() ) );
-					}
-				}
-				else {
-					if( dropInfoGroup.getSideDockableBeneathMouse() == Position.EAST ) {
+						drop(dropInfoGroup.getItem(), column, indexBeneathMouse
+								+ topShift);
+						break;
+					case EAST:
 						// the drag dockable is put at the right of the dockable
 						// beneath mouse
-						drop( dropInfoGroup.getItem(), column( dropInfoGroup.getDockableBeneathMouse() ) + 1 );
-					}
-					else {
+						drop(dropInfoGroup.getItem(), indexBeneathMouse + 1
+								+ lateralShift);
+						break;
+					case SOUTH:
+						// the drag dockable is put below the dockable beneath
+						// mouse
+						drop(dropInfoGroup.getItem(), column, indexBeneathMouse
+								+ 1 + topShift);
+						break;
+					case WEST:
 						// the drag dockable is put at the left of the dockable
 						// beneath mouse
-						drop( dropInfoGroup.getItem(), column( dropInfoGroup.getDockableBeneathMouse() ) );
+						drop(dropInfoGroup.getItem(), indexBeneathMouse
+								+ lateralShift);
+						break;
+					}
+
+				} else{
+
+				}
+
+			} else{
+
+				if (getOrientation() == Orientation.VERTICAL){
+					switch (dropInfoGroup.getSideDockableBeneathMouse()) {
+					case NORTH:
+						// the drag dockable is put above the dockable beneath
+						// mouse
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()),
+								line(dropInfoGroup.getDockableBeneathMouse()));
+						break;
+					case EAST:
+						// the drag dockable is put at the right of the dockable
+						// beneath mouse
+						System.out.println(column(dropInfoGroup
+								.getDockableBeneathMouse()));
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()) + 1);
+						break;
+					case SOUTH:
+						// the drag dockable is put below the dockable beneath
+						// mouse
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()),
+								line(dropInfoGroup.getDockableBeneathMouse()) + 1);
+						break;
+					case WEST:
+						// the drag dockable is put at the left of the dockable
+						// beneath mouse
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()));
+						break;
+					}
+				} else{
+					switch (dropInfoGroup.getSideDockableBeneathMouse()) {
+					case NORTH:
+						// the drag dockable is put above the dockable beneath
+						// mouse
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()));
+						break;
+					case EAST:
+						// the drag dockable is put at the right of the dockable
+						// beneath mouse
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()),
+								line(dropInfoGroup.getDockableBeneathMouse()) + 1);
+						break;
+					case SOUTH:
+						// the drag dockable is put below the dockable beneath
+						// mouse
+						System.out.println(column(dropInfoGroup
+								.getDockableBeneathMouse()));
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()) + 1);
+						break;
+					case WEST:
+						// the drag dockable is put at the left of the dockable
+						// beneath mouse
+						drop(dropInfoGroup.getItem(),
+								column(dropInfoGroup.getDockableBeneathMouse()),
+								line(dropInfoGroup.getDockableBeneathMouse()));
+						break;
 					}
 				}
 			}
@@ -531,7 +545,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public void drop( Dockable dockable ){
-		drop( dockable, 0, 0 );
+		drop(dockable, 0, 0);
 	}
 
 	/**
@@ -546,99 +560,96 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return true if the dockable has been inserted, false otherwise
 	 */
 	public boolean drop( Dockable dockable, int column, int line ){
-		return drop( dockable, column, line, false );
+		return drop(dockable, column, line, false);
 	}
 
 	public boolean drop( Dockable dockable, int column, int line, boolean force ){
-		if( force || this.accept( dockable ) ) {
-			if( !force ) {
-				dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
-				if( dockable == null ) {
+		if (force || this.accept(dockable)){
+			if (!force){
+				dockable = getToolbarStrategy().ensureToolbarLayer(this,
+						dockable);
+				if (dockable == null){
 					return false;
 				}
 			}
-			add( dockable, column, line );
+			add(dockable, column, line);
 			return true;
 		}
 		return false;
 	}
 
 	private void add( Dockable dockable, int column, int line ){
-		DockUtilities.ensureTreeValidity( this, dockable );
+		DockUtilities.ensureTreeValidity(this, dockable);
 		DockUtilities.checkLayoutLocked();
-		dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
-		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
-		try {
-			listeners.fireDockableAdding( dockable );
+		dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this,
+				dockable);
+		try{
+			listeners.fireDockableAdding(dockable);
 
-			dockable.setDockParent( this );
-			StationChildHandle handle = createHandle( dockable );
+			dockable.setDockParent(this);
+			StationChildHandle handle = createHandle(dockable);
 			// add in the list of dockable
 			int before = dockables.getColumnCount();
-			dockables.insert( column, line, handle );
+			dockables.insert(column, line, handle);
 
-			if( dockable instanceof OrientedDockStation ) {
-				((OrientedDockStation) dockable).setOrientation( getOrientation() );
+			if (dockable instanceof OrientedDockStation){
+				((OrientedDockStation) dockable)
+						.setOrientation(getOrientation());
 			}
 
 			// add in the main panel
-			addComponent( handle );
-			listeners.fireDockableAdded( dockable );
-			fireDockablesRepositioned( dockable, before != dockables.getColumnCount() );
-		}
-		finally {
+			addComponent(handle);
+			listeners.fireDockableAdded(dockable);
+			fireDockablesRepositioned(dockable,
+					before != dockables.getColumnCount());
+		} finally{
 			token.release();
 		}
 	}
 
 	/**
-	 * Creates a new {@link StationChildHandle} that wrapps around <code>dockable</code>. This method does
-	 * not add the handle to any list or fire any events, that is the callers responsibility. Callers should
-	 * also call {@link #addComponent(StationChildHandle)} with the new handle.
-	 * @param dockable the element that is to be wrapped
+	 * Creates a new {@link StationChildHandle} that wrapps around
+	 * <code>dockable</code>. This method does not add the handle to any list or
+	 * fire any events, that is the callers responsibility. Callers should also
+	 * call {@link #addComponent(StationChildHandle)} with the new handle.
+	 * 
+	 * @param dockable
+	 *            the element that is to be wrapped
 	 * @return a new {@link StationChildHandle} for the element
 	 */
 	private StationChildHandle createHandle( Dockable dockable ){
-		StationChildHandle handle = new StationChildHandle( this, displayers, dockable, title );
+		StationChildHandle handle = new StationChildHandle(this, displayers,
+				dockable, title);
 		handle.updateDisplayer();
 		return handle;
 	}
 
 	/**
-	 * Adds <code>handle</code> to the {@link #mainPanel} of this station. Note that this method only
-	 * cares about the {@link Component}-{@link Container} relationship, it does not store <code>handle</code>
-	 * in the {@link #dockables} list.
-	 * @param handle the handle to add
+	 * Adds <code>handle</code> to the {@link #mainPanel} of this station. Note
+	 * that this method only cares about the {@link Component}-{@link Container}
+	 * relationship, it does not store <code>handle</code> in the
+	 * {@link #dockables} list.
+	 * 
+	 * @param handle
+	 *            the handle to add
 	 */
 	private void addComponent( StationChildHandle handle ){
-		mainPanel.getContentPane().add( handle.getDisplayer().getComponent() );
+		mainPanel.getContentPane().add(handle.getDisplayer().getComponent());
 		mainPanel.getContentPane().revalidate();
-
-		// TODO
-		// don't forget to add an intermediate column panel
-
-		// Dockable dockable = handle.getDockable();
-		//
-		// dockable.setDockParent(this);
-		// if (dockable instanceof OrientedDockStation){
-		// if (getOrientation() != null){
-		// // it would be possible that this station was not already
-		// // oriented. This is the case when this station is
-		// // instantiated but not drop in any station which could give it
-		// // an orientation
-		// ((OrientedDockStation) dockable)
-		// .setOrientation(getOrientation());
-		// }
-		// }
-		// mainPanel.getContentPane().add(handle.getDisplayer().getComponent(),
-		// index);
-		// mainPanel.getContentPane().invalidate();
-		// mainPanel.revalidate();
-		// mainPanel.getContentPane().repaint();
 	}
 
+	/**
+	 * Removes <code>handle</code> of the {@link #mainPanel} of this station.
+	 * Note that this method only cares about the {@link Component}-
+	 * {@link Container} relationship, it does not remove <code>handle</code> of
+	 * the {@link #dockables} list.
+	 * 
+	 * @param handle
+	 *            the handle to remove
+	 */
 	private void removeComponent( StationChildHandle handle ){
-		mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
+		mainPanel.getContentPane().remove(handle.getDisplayer().getComponent());
 		mainPanel.getContentPane().revalidate();
 	}
 
@@ -652,106 +663,169 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return true if the dockable has been inserted, false otherwise
 	 */
 	public boolean drop( Dockable dockable, int column ){
-		// TODO
-		return false;
+		return drop(dockable, column, false);
 	}
 
 	public boolean drop( Dockable dockable, int column, boolean force ){
-		// TODO
+		if (force || this.accept(dockable)){
+			if (!force){
+				dockable = getToolbarStrategy().ensureToolbarLayer(this,
+						dockable);
+				if (dockable == null){
+					return false;
+				}
+			}
+			add(dockable, column);
+			return true;
+		}
 		return false;
 	}
 
 	private void add( Dockable dockable, int column ){
-		// TODO
-	}
-
-	@Override
-	public void drag( Dockable dockable ){
+		DockUtilities.ensureTreeValidity(this, dockable);
 		DockUtilities.checkLayoutLocked();
-		if( dockable.getDockParent() != this ) {
-			throw new IllegalArgumentException( "not a child of this station: " + dockable );
-		}
+		dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this,
+				dockable);
+		try{
+			listeners.fireDockableAdding(dockable);
+			dockable.setDockParent(this);
+			StationChildHandle handle = createHandle(dockable);
+			// add in the list of dockable
+			int before = dockables.getColumnCount();
+			dockables.insert(column, handle, false);
 
-		int column = column( dockable );
-		int before = dockables.getColumnCount();
+			if (dockable instanceof OrientedDockStation){
+				((OrientedDockStation) dockable)
+						.setOrientation(getOrientation());
+			}
 
-		StationChildHandle handle = dockables.get( dockable );
-		DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
-		try {
-			listeners.fireDockableRemoving( dockable );
-
-			dockables.remove( handle );
-			removeComponent( handle );
-			dockable.setDockParent( null );
-
-			listeners.fireDockableRemoved( dockable );
-			fireColumnRepositioned( column, before != dockables.getColumnCount() );
-		}
-		finally {
+			// add in the main panel
+			addComponent(handle);
+			listeners.fireDockableAdded(dockable);
+			fireDockablesRepositioned(dockable,
+					before != dockables.getColumnCount());
+		} finally{
 			token.release();
 		}
 	}
 
 	@Override
-	protected void remove( Dockable dockable ){
-		// TODO Auto-generated method stub
-		// don't forget to remove the intermediate column panel
+	public void drag( Dockable dockable ){
+		if (dockable.getDockParent() != this){
+			throw new IllegalArgumentException("not a child of this station: "
+					+ dockable);
+		}
+		remove(dockable);
 	}
 
 	@Override
-	protected void remove( int index ){
-		// TODO Auto-generated method stub
-		// don't forget to remove the intermediate column panel
+	protected void remove( Dockable dockable ){
+		DockUtilities.checkLayoutLocked();
+		int column = column(dockable);
+		int before = dockables.getColumnCount();
+
+		StationChildHandle handle = dockables.get(dockable);
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking(
+				this, dockable);
+		try{
+			listeners.fireDockableRemoving(dockable);
+
+			dockables.remove(handle);
+			removeComponent(handle);
+			dockable.setDockParent(null);
+
+			listeners.fireDockableRemoved(dockable);
+			fireColumnRepositioned(column, before != dockables.getColumnCount());
+		} finally{
+			token.release();
+		}
 	}
 
 	@Override
 	public void replace( Dockable old, Dockable next ){
 		// TODO Auto-generated method stub
-
+		DockUtilities.checkLayoutLocked();
+		DockController controller = getController();
+		if (controller != null)
+			controller.freezeLayout();
+		int column = dockables.getColumn(old);
+		int line = dockables.getLine(old);
+		int beforeCount = dockables.getColumnCount();
+		remove(old);
+		// if remove the old dockable delete a column we have to recreate it
+		if (beforeCount != dockables.getColumnCount()){
+			add(next, column);
+		} else{
+			add(next, column, line);
+		}
+		controller.meltLayout();
 	}
 
+	@Override
 	public boolean canReplace( Dockable old, Dockable next ){
-		return acceptable( next ) && getToolbarStrategy().isToolbarGroupPartParent( this, next, true );
+		return acceptable(next)
+				&& getToolbarStrategy().isToolbarGroupPartParent(this, next,
+						true);
 	}
 
 	/**
-	 * Fires {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])} for all {@link Dockable}s that
-	 * are in the same column as <code>dockable</code>, including <code>dockable</code>.
-	 * @param dockable some item from a column that changed
-	 * @param all whether there should be an event for all the columns after <code>dockable</code> as well
+	 * Fires
+	 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}
+	 * for all {@link Dockable}s that are in the same column as
+	 * <code>dockable</code>, including <code>dockable</code>.
+	 * 
+	 * @param dockable
+	 *            some item from a column that changed
+	 * @param all
+	 *            whether there should be an event for all the columns after
+	 *            <code>dockable</code> as well
 	 */
 	protected void fireDockablesRepositioned( Dockable dockable ){
-		fireDockablesRepositioned( dockable, false );
+		fireDockablesRepositioned(dockable, false);
 	}
 
 	/**
-	 * Fires {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])} for all {@link Dockable}s that
-	 * are in the same column as <code>dockable</code>, including <code>dockable</code>.
-	 * @param dockable some item from a column that changed
+	 * Fires
+	 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}
+	 * for all {@link Dockable}s that are in the same column as
+	 * <code>dockable</code>, including <code>dockable</code>.
+	 * 
+	 * @param dockable
+	 *            some item from a column that changed
+	 * @param all
+	 *            whether there should be an event for all the columns after the
+	 *            column of the dockable as well
 	 */
 	protected void fireDockablesRepositioned( Dockable dockable, boolean all ){
-		fireColumnRepositioned( column( dockable ), all );
+		fireColumnRepositioned(column(dockable), all);
 	}
 
 	/**
-	 * Fires {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])} for all {@link Dockable}s in
-	 * the given <code>column</code>.
-	 * @param column the column for which to fire an event
-	 * @param all whether there should be an event for all the columns after <code>column</code> as well
+	 * Fires
+	 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}
+	 * for all {@link Dockable}s in the given <code>column</code>.
+	 * 
+	 * @param column
+	 *            the column for which to fire an event
+	 * @param all
+	 *            whether there should be an event for all the columns after
+	 *            <code>column</code> as well
 	 */
 	protected void fireColumnRepositioned( int column, boolean all ){
 		List<Dockable> list = new ArrayList<Dockable>();
 		int end = all ? dockables.getColumnCount() : column + 1;
 
-		for( int i = column; i < end; i++ ) {
-			Iterator<StationChildHandle> items = dockables.getColumnContent( i );
-			while( items.hasNext() ) {
-				list.add( items.next().getDockable() );
+		for (int i = column; i < end; i++){
+			Iterator<StationChildHandle> items = dockables.getColumnContent(i);
+			while (items.hasNext()){
+				list.add(items.next().getDockable());
 			}
 		}
 
-		if( list.size() > 0 ) {
-			listeners.fireDockablesRepositioned( list.toArray( new Dockable[list.size()] ) );
+		if (list.size() > 0){
+			listeners.fireDockablesRepositioned(list.toArray(new Dockable[list
+					.size()]));
 		}
 	}
 
@@ -761,17 +835,19 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
-		DockUI.updateTheme( this, new ToolbarGroupDockStationFactory() );
+		DockUI.updateTheme(this, new ToolbarGroupDockStationFactory());
 	}
 
 	@Override
 	protected DefaultDisplayerFactoryValue createDisplayerFactory(){
-		return new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", this );
+		return new DefaultDisplayerFactoryValue(ThemeManager.DISPLAYER_FACTORY
+				+ ".toolbar.group", this);
 	}
 
 	@Override
 	protected DockTitleVersion registerTitle( DockController controller ){
-		return controller.getDockTitleManager().getVersion( TITLE_ID, BasicDockTitleFactory.FACTORY );
+		return controller.getDockTitleManager().getVersion(TITLE_ID,
+				BasicDockTitleFactory.FACTORY);
 	}
 
 	/**
@@ -786,20 +862,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	protected void discard( DockableDisplayer displayer ){
 		Dockable dockable = displayer.getDockable();
 
-		//		int index = indexOf(dockable);
-		//		if (index < 0){
-		//			throw new IllegalArgumentException(
-		//					"displayer is not a child of this station: " + displayer);
-		//		}
-
-		StationChildHandle handle = dockables.get( dockable );
-		if( handle == null ) {
-			throw new IllegalArgumentException( "displayer is not child of this station: " + displayer );
+		StationChildHandle handle = dockables.get(dockable);
+		if (handle == null){
+			throw new IllegalArgumentException(
+					"displayer is not child of this station: " + displayer);
 		}
 
-		removeComponent( handle );
+		removeComponent(handle);
 		handle.updateDisplayer();
-		addComponent( handle );
+		addComponent(handle);
 	}
 
 	/**
@@ -809,7 +880,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * 
 	 * @author Herve Guillaume
 	 */
-	protected class OverpaintablePanelBase extends SecureContainer {
+	protected class OverpaintablePanelBase extends SecureContainer{
 
 		/**
 		 * Generated serial number
@@ -824,13 +895,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		 * 
 		 */
 		@SuppressWarnings("serial")
-		private class SizeFixedPanel extends JPanel {
+		private class SizeFixedPanel extends JPanel{
 			@Override
 			public Dimension getPreferredSize(){
 				Dimension pref = super.getPreferredSize();
-				// Insets insets = getInsets();
-				// pref.height += insets.top + insets.bottom;
-				// pref.width += insets.left + insets.right;
+				Insets insets = getInsets();
+				pref.height += insets.top + insets.bottom;
+				pref.width += insets.left + insets.right;
 				return pref;
 			}
 
@@ -860,16 +931,16 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			//			basePane.setBackground( Color.GREEN );
-			//			dockablePane.setBackground( Color.RED );
+			// basePane.setBackground( Color.GREEN );
+			// dockablePane.setBackground( Color.RED );
 
-			basePane.setLayout( new BorderLayout() );
-			basePane.add( dockablePane, BorderLayout.CENTER );
-			setBasePane( basePane );
-			setContentPane( dockablePane );
-			this.setSolid( false );
-			dockablePane.setOpaque( false );
-			basePane.setOpaque( false );
+			basePane.setLayout(new BorderLayout());
+			basePane.add(dockablePane, BorderLayout.CENTER);
+			setBasePane(basePane);
+			setContentPane(dockablePane);
+			this.setSolid(false);
+			dockablePane.setOpaque(false);
+			basePane.setOpaque(false);
 		}
 
 		@Override
@@ -889,101 +960,144 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 		/**
 		 * Update alignment with regards to the current orientation of this
-		 * {@linl ToolbarDockStation}
+		 * {@link ToolbarGroupDockStation}
 		 */
 		public void updateAlignment(){
-			Orientation orientation = ToolbarGroupDockStation.this.getOrientation();
+			Orientation orientation = ToolbarGroupDockStation.this
+					.getOrientation();
 
-			if( orientation != null ) {
-				dockablePane.setLayout( new ToolbarGridLayoutManager<StationChildHandle>( orientation, dockables ){
-					@Override
-					protected Component toComponent( StationChildHandle item ){
-						return item.getDisplayer().getComponent();
-					}
-				} );
-
-				//				switch( orientation ){
-				//					case HORIZONTAL:
-				//						//					dockablePane.setLayout(new BoxLayout(dockablePane,
-				//						//							BoxLayout.X_AXIS));
-				//						basePane.setLayout( new BoxLayout( basePane, BoxLayout.X_AXIS ) );
-				//						dockablePane.setAlignmentY( Component.CENTER_ALIGNMENT );
-				//						basePane.setAlignmentY( Component.CENTER_ALIGNMENT );
-				//						dockablePane.setAlignmentX( Component.LEFT_ALIGNMENT );
-				//						basePane.setAlignmentX( Component.LEFT_ALIGNMENT );
-				//						break;
-				//					case VERTICAL:
-				//						//					dockablePane.setLayout(new BoxLayout(dockablePane,
-				//						//							BoxLayout.Y_AXIS));
-				//						basePane.setLayout( new BoxLayout( basePane, BoxLayout.Y_AXIS ) );
-				//						dockablePane.setAlignmentY( Component.TOP_ALIGNMENT );
-				//						basePane.setAlignmentY( Component.TOP_ALIGNMENT );
-				//						dockablePane.setAlignmentX( Component.CENTER_ALIGNMENT );
-				//						basePane.setAlignmentX( Component.CENTER_ALIGNMENT );
-				//						break;
-				//					default:
-				//						throw new IllegalArgumentException();
-				//				}
+			if (orientation != null){
+				dockablePane
+						.setLayout(new ToolbarGridLayoutManager<StationChildHandle>(
+								orientation, dockables){
+							@Override
+							protected Component toComponent(
+									StationChildHandle item ){
+								return item.getDisplayer().getComponent();
+							}
+						});
 			}
+			mainPanel.revalidate();
 		}
 
 		@Override
 		protected void paintOverlay( Graphics g ){
 			Graphics2D g2D = (Graphics2D) g;
+			g2D.setStroke(new BasicStroke(2));
 			DefaultStationPaintValue paint = getPaint();
-			if( prepareDropDraw ) {
-				if( indexBeneathMouse != -1 ) {
-					Component componentBeneathMouse = dockables.get( indexBeneathMouse ).getDisplayer().getComponent();
-					if( componentBeneathMouse != null ) {
-						// WARNING:
-						// 1. This rectangle stands for the component beneath
-						// mouse. His coordinates are in the frame of reference
-						// his
-						// direct parent.
-						// 2. g is in the frame of reference of the overlayPanel
-						// 3. So we need to translate this rectangle in the
-						// frame of
-						// reference of the overlay panel, which is the same
-						// that
-						// the base pane
-						Rectangle rectBeneathMouse = componentBeneathMouse.getBounds();
-						Rectangle2D rect = new Rectangle2D.Double( rectBeneathMouse.x, rectBeneathMouse.y, rectBeneathMouse.width, rectBeneathMouse.height );
-						g2D.setColor( Color.RED );
-						g2D.setStroke( new BasicStroke( 3 ) );
-						g2D.draw( rect );
+			if (prepareDropDraw){
+				if (indexBeneathMouse != -1){
+					Component componentBeneathMouse = dockables
+							.get(indexBeneathMouse).getDisplayer()
+							.getComponent();
+					if (componentBeneathMouse != null){
+						Rectangle rectToolbar = basePane.getBounds();
+						// Point pToolbar = rectToolbar.getLocation();
+						// SwingUtilities.convertPointToScreen(pToolbar,
+						// componentBeneathMouse.getParent());
+						// SwingUtilities.convertPointFromScreen(pToolbar,
+						// this.getBasePane());
+						// Rectangle rectangleToolbarTranslated = new Rectangle(
+						// pToolbar.x, pToolbar.y, rectToolbar.width,
+						// rectToolbar.height);
+						// Color color = new Color(0, 0, 255, 50);
+						// Rectangle2D rect = new Rectangle2D.Double(
+						// rectToolbar.x, rectToolbar.y,
+						// rectToolbar.width, rectToolbar.height);
+						// g2D.setColor(color);
+						// g2D.fill(rect);
+						g2D.setColor(Color.BLUE);
+
+						Rectangle rectBeneathMouse = componentBeneathMouse
+								.getBounds();
 						Point pBeneath = rectBeneathMouse.getLocation();
-						SwingUtilities.convertPointToScreen( pBeneath, componentBeneathMouse.getParent() );
-						SwingUtilities.convertPointFromScreen( pBeneath, this.getBasePane() );
-						Rectangle rectangleTranslated = new Rectangle( pBeneath.x, pBeneath.y, rectBeneathMouse.width, rectBeneathMouse.height );
-						switch( ToolbarGroupDockStation.this.getOrientation() ){
-							case VERTICAL:
-								int y;
-								if( sideBeneathMouse == Position.NORTH ) {
-									y = rectangleTranslated.y;
-								}
-								else {
-									y = rectangleTranslated.y + rectangleTranslated.height;
-								}
-								paint.drawInsertionLine( g, rectangleTranslated.x, y, rectangleTranslated.x + rectangleTranslated.width, y );
+						SwingUtilities.convertPointToScreen(pBeneath,
+								componentBeneathMouse.getParent());
+						SwingUtilities.convertPointFromScreen(pBeneath,
+								this.getBasePane());
+						Rectangle rectangleBeneathMouseTranslated = new Rectangle(
+								pBeneath.x, pBeneath.y, rectBeneathMouse.width,
+								rectBeneathMouse.height);
+						int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+						switch (ToolbarGroupDockStation.this.getOrientation()) {
+						case VERTICAL:
+							switch (sideBeneathMouse) {
+							case NORTH:
+								x1 = rectangleBeneathMouseTranslated.x;
+								x2 = rectangleBeneathMouseTranslated.x
+										+ rectangleBeneathMouseTranslated.width;
+								y1 = y2 = rectangleBeneathMouseTranslated.y;
 								break;
-							case HORIZONTAL:
-								int x;
-								if( sideBeneathMouse == Position.WEST ) {
-									x = rectangleTranslated.x;
-								}
-								else {
-									x = rectangleTranslated.x + rectangleTranslated.width;
-								}
-								paint.drawInsertionLine( g, x, rectangleTranslated.y, x, rectangleTranslated.y + rectangleTranslated.height );
+							case EAST:
+								x1 = x2 = rectangleBeneathMouseTranslated.x
+										+ rectangleBeneathMouseTranslated.width;
+								y1 = rectToolbar.y;
+								y2 = rectToolbar.y + rectToolbar.height;
+								break;
+							case SOUTH:
+								x1 = rectangleBeneathMouseTranslated.x;
+								x2 = rectangleBeneathMouseTranslated.x
+										+ rectangleBeneathMouseTranslated.width;
+								y1 = y2 = rectangleBeneathMouseTranslated.y
+										+ rectangleBeneathMouseTranslated.height;
+								break;
+							case WEST:
+								x1 = x2 = rectangleBeneathMouseTranslated.x;
+								y1 = rectToolbar.y;
+								y2 = rectToolbar.y + rectToolbar.height;
+								break;
+							default:
+								x1 = x2 = y1 = y2 = 0;
+							}
+							break;
+						case HORIZONTAL:
+							switch (sideBeneathMouse) {
+							case NORTH:
+								x1 = rectToolbar.x;
+								x2 = rectToolbar.x + rectToolbar.width;
+								y1 = y2 = rectangleBeneathMouseTranslated.y;
+								break;
+							case EAST:
+								x1 = x2 = rectangleBeneathMouseTranslated.x
+										+ rectangleBeneathMouseTranslated.width;
+								y1 = rectangleBeneathMouseTranslated.y;
+								y2 = rectangleBeneathMouseTranslated.y
+										+ rectangleBeneathMouseTranslated.height;
+								break;
+							case SOUTH:
+								x1 = rectToolbar.x;
+								x2 = rectToolbar.x + rectToolbar.width;
+								y1 = y2 = rectangleBeneathMouseTranslated.y
+										+ rectangleBeneathMouseTranslated.height;
+								break;
+							case WEST:
+								x1 = x2 = rectangleBeneathMouseTranslated.x;
+								y1 = rectangleBeneathMouseTranslated.y;
+								y2 = rectangleBeneathMouseTranslated.y
+										+ rectangleBeneathMouseTranslated.height;
+								break;
+							default:
+								x1 = x2 = y1 = y2 = 0;
+							}
+
+							break;
+						// paint.drawInsertionLine(g, x,
+						// rectangleTranslated.y, x,
+						// rectangleTranslated.y
+						// + rectangleTranslated.height);
 						}
+						g2D.drawLine(x1, y1, x2, y2);
 					}
 				}
+			} else {
+				System.out.println("DONT PAINT");
 			}
 		}
 
 		@Override
 		public String toString(){
-			return this.getClass().getSimpleName() + '@' + Integer.toHexString( this.hashCode() );
+			return this.getClass().getSimpleName() + '@'
+					+ Integer.toHexString(this.hashCode());
 		}
 
 	}
@@ -991,16 +1105,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	// ########################################################
 	// ############### PlaceHolder Managing ###################
 	// ########################################################
-	//
-	//	/**
-	//	 * Grants direct access to the list of {@link Dockable}s, subclasses should
-	//	 * not modify the list unless the fire the appropriate events.
-	//	 * 
-	//	 * @return the list of dockables
-	//	 */
-	//	protected PlaceholderList.Filter<StationChildHandle> getDockables(){
-	//		return dockables.dockables();
-	//	}
 
 	@Override
 	public PlaceholderMap getPlaceholders(){
@@ -1008,61 +1112,71 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	}
 
 	/**
-	 * Converst this station into a {@link PlaceholderMap} using <code>identifiers</code> to
-	 * remember which {@link Dockable} was at which location.
-	 * @param identifiers the identifiers to apply
+	 * Converts this station into a {@link PlaceholderMap} using
+	 * <code>identifiers</code> to remember which {@link Dockable} was at which
+	 * location.
+	 * 
+	 * @param identifiers
+	 *            the identifiers to apply
 	 * @return <code>this</code> as map
 	 */
 	public PlaceholderMap getPlaceholders( Map<Dockable, Integer> identifiers ){
-		return dockables.toMap( identifiers );
+		return dockables.toMap(identifiers);
 	}
 
 	@Override
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		dockables.fromMap( placeholders );
+		dockables.fromMap(placeholders);
 	}
 
-	public void setPlaceholders( PlaceholderMap placeholders, Map<Integer, Dockable> children ){
+	public void setPlaceholders( PlaceholderMap placeholders,
+			Map<Integer, Dockable> children ){
 		DockUtilities.checkLayoutLocked();
-		if( getDockableCount() > 0 ) {
-			throw new IllegalStateException( "this station still has children" );
+		if (getDockableCount() > 0){
+			throw new IllegalStateException("this station still has children");
 		}
 
 		DockController controller = getController();
 
-		try {
-			if( controller != null ) {
+		try{
+			if (controller != null){
 				controller.freezeLayout();
 			}
 
-			dockables.setStrategy( null );
+			dockables.setStrategy(null);
 			dockables.unbind();
 
-			dockables.fromMap( placeholders, children, new PlaceholderToolbarGridConverter<Dockable, StationChildHandle>(){
-				@Override
-				public StationChildHandle convert( Dockable dockable, ConvertedPlaceholderListItem item ){
-					listeners.fireDockableAdding( dockable );
+			dockables
+					.fromMap(
+							placeholders,
+							children,
+							new PlaceholderToolbarGridConverter<Dockable, StationChildHandle>(){
+								@Override
+								public StationChildHandle convert(
+										Dockable dockable,
+										ConvertedPlaceholderListItem item ){
+									listeners.fireDockableAdding(dockable);
 
-					dockable.setDockParent( ToolbarGroupDockStation.this );
-					StationChildHandle handle = createHandle( dockable );
-					addComponent( handle );
+									dockable.setDockParent(ToolbarGroupDockStation.this);
+									StationChildHandle handle = createHandle(dockable);
+									addComponent(handle);
 
-					return handle;
-				}
+									return handle;
+								}
 
-				@Override
-				public void added( StationChildHandle item ){
-					listeners.fireDockableAdded( item.getDockable() );
-				}
-			} );
+								@Override
+								public void added( StationChildHandle item ){
+									listeners.fireDockableAdded(item
+											.getDockable());
+								}
+							});
 
-			if( controller != null ) {
+			if (controller != null){
 				dockables.bind();
 			}
-			dockables.setStrategy( placeholderStrategy.getValue() );
-		}
-		finally {
-			if( controller != null ) {
+			dockables.setStrategy(placeholderStrategy.getValue());
+		} finally{
+			if (controller != null){
 				controller.meltLayout();
 			}
 		}
@@ -1070,38 +1184,42 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		int column = column( child );
-		int line = line( child );
+		int column = column(child);
+		int line = line(child);
 
-		if( target == null ) {
+		if (target == null){
 			target = child;
 		}
 
 		PlaceholderStrategy strategy = placeholderStrategy.getValue();
 		Path placeholder = null;
-		if( strategy != null ) {
-			placeholder = strategy.getPlaceholderFor( target );
-			if( placeholder != null && column >= 0 && line >= 0 ) {
-				dockables.insertPlaceholder( column, line, placeholder );
+		if (strategy != null){
+			placeholder = strategy.getPlaceholderFor(target);
+			if (placeholder != null && column >= 0 && line >= 0){
+				dockables.insertPlaceholder(column, line, placeholder);
 			}
 		}
 
-		return new ToolbarGroupProperty( column, line, placeholder );
+		return new ToolbarGroupProperty(column, line, placeholder);
 	}
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		if( property instanceof ToolbarGroupProperty ) {
-			return drop( dockable, (ToolbarGroupProperty) property );
+		if (property instanceof ToolbarGroupProperty){
+			return drop(dockable, (ToolbarGroupProperty) property);
 		}
 		return false;
 	}
 
 	/**
 	 * Tries to drop <code>dockable</code> at <code>property</code>.
-	 * @param dockable the element to drop
-	 * @param property the location of <code>dockable</code>
-	 * @return <code>true</code> if dropping was successfull, <code>false</code> otherwise
+	 * 
+	 * @param dockable
+	 *            the element to drop
+	 * @param property
+	 *            the location of <code>dockable</code>
+	 * @return <code>true</code> if dropping was successfull, <code>false</code>
+	 *         otherwise
 	 */
 	public boolean drop( Dockable dockable, ToolbarGroupProperty property ){
 		Path placeholder = property.getPlaceholder();
@@ -1109,84 +1227,86 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		int column = property.getColumn();
 		int line = property.getLine();
 
-		if( placeholder != null ) {
-			if( dockables.hasPlaceholder( placeholder ) ) {
-				StationChildHandle child = dockables.get( placeholder );
-				if( child == null ) {
-					if( acceptable( dockable ) ) {
+		if (placeholder != null){
+			if (dockables.hasPlaceholder(placeholder)){
+				StationChildHandle child = dockables.get(placeholder);
+				if (child == null){
+					if (acceptable(dockable)){
 						DockUtilities.checkLayoutLocked();
-						DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
-						try {
-							DockUtilities.ensureTreeValidity( this, dockable );
-							listeners.fireDockableAdding( dockable );
+						DockHierarchyLock.Token token = DockHierarchyLock
+								.acquireLinking(this, dockable);
+						try{
+							DockUtilities.ensureTreeValidity(this, dockable);
+							listeners.fireDockableAdding(dockable);
 							int before = dockables.getColumnCount();
 
-							dockable.setDockParent( this );
-							StationChildHandle handle = createHandle( dockable );
-							dockables.put( placeholder, handle );
-							addComponent( handle );
+							dockable.setDockParent(this);
+							StationChildHandle handle = createHandle(dockable);
+							dockables.put(placeholder, handle);
+							addComponent(handle);
 
-							listeners.fireDockableAdded( dockable );
-							fireDockablesRepositioned( dockable, before != dockables.getColumnCount() );
-						}
-						finally {
+							listeners.fireDockableAdded(dockable);
+							fireDockablesRepositioned(dockable,
+									before != dockables.getColumnCount());
+						} finally{
 							token.release();
 						}
 						return true;
 					}
-				}
-				else {
-					if( drop( child, dockable, property ) ) {
+				} else{
+					if (drop(child, dockable, property)){
 						return true;
 					}
 
-					column = dockables.getColumn( child.getDockable() );
-					line = dockables.getLine( column, child.getDockable() ) + 1;
+					column = dockables.getColumn(child.getDockable());
+					line = dockables.getLine(column, child.getDockable()) + 1;
 				}
 			}
 		}
 
-		if( !acceptable( dockable ) ) {
+		if (!acceptable(dockable)){
 			return false;
 		}
 
-		return drop( dockable, column, line );
+		return drop(dockable, column, line);
 	}
 
-	private boolean drop( StationChildHandle parent, Dockable child, ToolbarGroupProperty property ){
-		if( property.getSuccessor() == null ) {
+	@SuppressWarnings("static-method")
+	private boolean drop( StationChildHandle parent, Dockable child,
+			ToolbarGroupProperty property ){
+		if (property.getSuccessor() == null){
 			return false;
 		}
 
 		DockStation station = parent.getDockable().asDockStation();
-		if( station == null ) {
+		if (station == null){
 			return false;
 		}
 
-		return station.drop( child, property.getSuccessor() );
+		return station.drop(child, property.getSuccessor());
 	}
 
 	@Override
 	public void move( Dockable dockable, DockableProperty property ){
-		if( property instanceof ToolbarGroupProperty ) {
-			move( dockable, (ToolbarGroupProperty) property );
+		if (property instanceof ToolbarGroupProperty){
+			move(dockable, (ToolbarGroupProperty) property);
 		}
 	}
 
 	private void move( Dockable dockable, ToolbarGroupProperty property ){
-		int sourceColumn = column( dockable );
-		int sourceLine = line( dockable );
+		int sourceColumn = column(dockable);
+		int sourceLine = line(dockable);
 
 		boolean empty = false;
 		int destinationColumn = property.getColumn();
 		int destinationLine = property.getLine();
 
 		Path placeholder = property.getPlaceholder();
-		if( placeholder != null ) {
-			int column = dockables.getColumn( placeholder );
-			if( column != -1 ) {
-				int line = dockables.getLine( column, placeholder );
-				if( line != -1 ) {
+		if (placeholder != null){
+			int column = dockables.getColumn(placeholder);
+			if (column != -1){
+				int line = dockables.getLine(column, placeholder);
+				if (line != -1){
 					empty = true;
 					destinationColumn = column;
 					destinationLine = line;
@@ -1194,25 +1314,27 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			}
 		}
 
-		if( !empty ) {
+		if (!empty){
 			// ensure destination valid
-			destinationColumn = Math.min( destinationColumn, dockables.getColumnCount() );
-			if( destinationColumn == dockables.getColumnCount() || destinationColumn == -1 ) {
+			destinationColumn = Math.min(destinationColumn,
+					dockables.getColumnCount());
+			if (destinationColumn == dockables.getColumnCount()
+					|| destinationColumn == -1){
 				destinationLine = 0;
-			}
-			else {
-				destinationLine = Math.min( destinationLine, dockables.getLineCount( destinationColumn ) );
+			} else{
+				destinationLine = Math.min(destinationLine,
+						dockables.getLineCount(destinationColumn));
 			}
 		}
 
 		Level level;
-		if( empty ) {
+		if (empty){
 			level = Level.BASE;
-		}
-		else {
+		} else{
 			level = Level.DOCKABLE;
 		}
-		dockables.move( sourceColumn, sourceLine, destinationColumn, destinationLine, level );
+		dockables.move(sourceColumn, sourceLine, destinationColumn,
+				destinationLine, level);
 		mainPanel.getContentPane().revalidate();
 	}
 }

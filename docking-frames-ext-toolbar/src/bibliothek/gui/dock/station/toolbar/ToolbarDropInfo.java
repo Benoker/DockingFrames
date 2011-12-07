@@ -66,31 +66,39 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 		this.mouseY = mouseY;
 	}
 
+	@Override
 	public Dockable getItem(){
 		return dragDockable;
 	}
 
+	@Override
 	public S getTarget(){
 		return stationHost;
 	}
 
+	@Override
 	public abstract void destroy();
 
 	// enable this ToolbarDropInfo to draw some markings on the stationHost
+	@Override
 	public abstract void draw(); 
 
+	@Override
 	public abstract void execute();
 
+	@Override
 	public CombinerTarget getCombination(){
 		// not supported by this kind of station
 		return null;
 	}
 
+	@Override
 	public DisplayerCombinerTarget getDisplayerCombination(){
 		// not supported by this kind of station
 		return null;
 	}
 
+	@Override
 	public boolean isMove(){
 		return getItem().getDockParent() == getTarget();
 	}

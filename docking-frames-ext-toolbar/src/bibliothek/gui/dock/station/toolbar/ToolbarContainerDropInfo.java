@@ -68,30 +68,38 @@ public abstract class ToolbarContainerDropInfo implements StationDropOperation{
 		this.mouseY = mouseY;
 	}
 
+	@Override
 	public Dockable getItem(){
 		return dragDockable;
 	}
 
+	@Override
 	public DockStation getTarget(){
 		return stationHost;
 	}
 
+	@Override
 	public abstract void destroy();
 
+	@Override
 	public abstract void draw();
 
+	@Override
 	public abstract void execute();
 
+	@Override
 	public CombinerTarget getCombination(){
 		// not supported by this kind of station
 		return null;
 	}
 
+	@Override
 	public DisplayerCombinerTarget getDisplayerCombination(){
 		// not supported by this kind of station
 		return null;
 	}
 
+	@Override
 	public boolean isMove(){
 		return getItem().getDockParent() == getTarget();
 	}

@@ -111,6 +111,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		this.mainPanel.getBasePane().setBackground(Color.CYAN);
 	}
 
+	@Override
 	protected void init(){
 		mainPanel = new OverpaintablePanelBase();
 		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
@@ -121,6 +122,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				getDisplayerId());
 		displayers
 				.addDockableDisplayerListener(new DockableDisplayerListener(){
+					@Override
 					public void discard( DockableDisplayer displayer ){
 						ToolbarDockStation.this.discard(displayer);
 					}
@@ -251,13 +253,14 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public boolean accept( DockStation station ){
-		return getToolbarStrategy().isToolbarGroupPartParent(station, this, false);
+		return getToolbarStrategy().isToolbarGroupPartParent(station, this,
+				false);
 	}
 
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, Dockable dockable ){
-		System.out.println(this.toString() + "## prepareDrop(...) ##");
+		// System.out.println(this.toString() + "## prepareDrop(...) ##");
 		DockController controller = getController();
 
 		if (getExpandedState() == ExpandedState.EXPANDED){
@@ -366,7 +369,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public void drop( Dockable dockable ){
-		System.out.println(this.toString() + "## drop(Dockable dockable)##");
+		// System.out.println(this.toString() + "## drop(Dockable dockable)##");
 		this.drop(dockable, getDockableCount(), true);
 	}
 
@@ -386,8 +389,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	protected boolean drop( Dockable dockable, int index, boolean force ){
 		// note: merging of two ToolbarGroupDockStations is done by the
 		// ToolbarGroupDockStationMerger
-		System.out.println(this.toString()
-				+ "## drop(Dockable dockable, int index)##");
+		// System.out.println(this.toString()
+		// + "## drop(Dockable dockable, int index)##");
 		if (force || this.accept(dockable)){
 			if (!force){
 				dockable = getToolbarStrategy().ensureToolbarLayer(this,
@@ -407,8 +410,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * case of move action (it means when the dockable to insert already belongs
 	 * to this station), because in this case this dockable was removed first.
 	 * 
-	 * @param dockable the dockable to insert
-	 * @param index the index where insert the dockable
+	 * @param dockable
+	 *            the dockable to insert
+	 * @param index
+	 *            the index where insert the dockable
 	 */
 	protected void move( Dockable dockable, int index ){
 		DockController controller = getController();
@@ -498,14 +503,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public void drag( Dockable dockable ){
-		System.out.println(this.toString() + "## drag(Dockable dockable) ##");
+		// System.out.println(this.toString() +
+		// "## drag(Dockable dockable) ##");
 		if (dockable.getDockParent() != this)
 			throw new IllegalArgumentException(
 					"The dockable cannot be dragged, it is not child of this station.");
-		int index = this.indexOf(dockable);
-		if (index >= 0){
-			this.remove(index);
-		}
+		this.remove(dockable);
 	}
 
 	/**
@@ -519,9 +522,31 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 */
 	@Override
 	protected void remove( Dockable dockable ){
+		DockUtilities.checkLayoutLocked();
 		int index = this.indexOf(dockable);
-		if (index >= 0)
-			this.remove(index);
+		StationChildHandle handle = dockables.dockables().get(index);
+
+		if (getFrontDockable() == dockable)
+			setFrontDockable(null);
+
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking(
+				this, dockable);
+		try{
+			listeners.fireDockableRemoving(dockable);
+			dockable.setDockParent(null);
+
+			dockables.remove(index);
+			mainPanel.getContentPane().remove(
+					handle.getDisplayer().getComponent());
+			mainPanel.doLayout();
+			mainPanel.revalidate();
+			mainPanel.repaint();
+			handle.destroy();
+			listeners.fireDockableRemoved(dockable);
+			fireDockablesRepositioned(index);
+		} finally{
+			token.release();
+		}
 	}
 
 	/**
@@ -533,7 +558,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * @param index
 	 *            the index of the child that will be removed
 	 */
-	@Override
 	protected void remove( int index ){
 		DockUtilities.checkLayoutLocked();
 		StationChildHandle handle = dockables.dockables().get(index);
@@ -745,32 +769,33 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		@Override
 		protected void paintOverlay( Graphics g ){
 			Graphics2D g2D = (Graphics2D) g;
-			DefaultStationPaintValue paint = getPaint();
+			// DefaultStationPaintValue paint = getPaint();
 			if (prepareDropDraw){
 				if (indexBeneathMouse != -1){
 					Component componentBeneathMouse = getDockables()
 							.get(indexBeneathMouse).getDisplayer()
 							.getComponent();
 					if (componentBeneathMouse != null){
+						Rectangle rectToolbar = basePane.getBounds();
+						Color color = new Color(255, 0, 0, 50);
+						Rectangle2D rect = new Rectangle2D.Double(
+								rectToolbar.x, rectToolbar.y,
+								rectToolbar.width, rectToolbar.height);
+						g2D.setColor(color);
+						g2D.setStroke(new BasicStroke(2));
+						g2D.fill(rect);
+						g2D.setColor(Color.RED);
+
 						// WARNING:
 						// 1. This rectangle stands for the component beneath
 						// mouse. His coordinates are in the frame of reference
-						// his
-						// direct parent.
+						// his direct parent.
 						// 2. g is in the frame of reference of the overlayPanel
 						// 3. So we need to translate this rectangle in the
-						// frame of
-						// reference of the overlay panel, which is the same
-						// that
-						// the base pane
+						// frame of reference of the overlay panel, which is the
+						// same that the base pane
 						Rectangle rectBeneathMouse = componentBeneathMouse
 								.getBounds();
-						Rectangle2D rect = new Rectangle2D.Double(
-								rectBeneathMouse.x, rectBeneathMouse.y,
-								rectBeneathMouse.width, rectBeneathMouse.height);
-						g2D.setColor(Color.RED);
-						g2D.setStroke(new BasicStroke(3));
-						g2D.draw(rect);
 						Point pBeneath = rectBeneathMouse.getLocation();
 						SwingUtilities.convertPointToScreen(pBeneath,
 								componentBeneathMouse.getParent());
@@ -788,9 +813,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 								y = rectangleTranslated.y
 										+ rectangleTranslated.height;
 							}
-							paint.drawInsertionLine(g, rectangleTranslated.x,
-									y, rectangleTranslated.x
+							g2D.drawLine(rectangleTranslated.x, y,
+									rectangleTranslated.x
 											+ rectangleTranslated.width, y);
+							// paint.drawInsertionLine(g, rectangleTranslated.x,
+							// y, rectangleTranslated.x
+							// + rectangleTranslated.width, y);
 							break;
 						case HORIZONTAL:
 							int x;
@@ -800,10 +828,14 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 								x = rectangleTranslated.x
 										+ rectangleTranslated.width;
 							}
-							paint.drawInsertionLine(g, x,
-									rectangleTranslated.y, x,
+
+							g2D.drawLine(x, rectangleTranslated.y, x,
 									rectangleTranslated.y
 											+ rectangleTranslated.height);
+							// paint.drawInsertionLine(g, x,
+							// rectangleTranslated.y, x,
+							// rectangleTranslated.y
+							// + rectangleTranslated.height);
 						}
 					}
 				}

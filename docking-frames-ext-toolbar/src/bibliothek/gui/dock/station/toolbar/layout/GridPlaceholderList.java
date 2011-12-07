@@ -190,6 +190,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 			this.item = item;
 		}
 
+		@Override
 		public String toString(){
 			return item.toString();
 		}
@@ -198,6 +199,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 		 * Gets <code>this</code> if {@link #item} is some kind of station.
 		 * @return 
 		 */
+		@Override
 		public ColumnItem<D, S, P> asStation(){
 			S station = itemToStation( item );
 			if( station == null ) {
@@ -206,6 +208,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 			return new StationItem( station );
 		}
 
+		@Override
 		public Path getPlaceholder(){
 			return getItemPlaceholder( item );
 		}
@@ -329,6 +332,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 		 * Gets the list of {@link Dockable}s of this column.
 		 * @return the list of items
 		 */
+		@Override
 		public PlaceholderList<D, S, P> getList(){
 			return list;
 		}

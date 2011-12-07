@@ -46,6 +46,7 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 		this.placeholder = placeholder;
 	}
 
+	@Override
 	public DockableProperty copy(){
 		ToolbarContainerProperty copy = new ToolbarContainerProperty(index,
 				placeholder);
@@ -79,6 +80,7 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 		return placeholder;
 	}
 
+	@Override
 	public void store( DataOutputStream out ) throws IOException{
 		Version.write(out, Version.VERSION_1_1_1);
 		out.writeInt(index);
@@ -90,6 +92,7 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 		}
 	}
 
+	@Override
 	public void load( DataInputStream in ) throws IOException{
 		Version version = Version.read(in);
 		if (!version.equals(Version.VERSION_1_1_1)){
@@ -103,6 +106,7 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 		}
 	}
 
+	@Override
 	public void store( XElement element ){
 		element.addElement("index").setInt(index);
 		if (placeholder != null){
@@ -110,6 +114,7 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 		}
 	}
 
+	@Override
 	public void load( XElement element ){
 		XElement xindex = element.getElement("index");
 		XElement xplaceholder = element.getElement("placeholder");

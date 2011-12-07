@@ -111,6 +111,7 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 		list.read( map, new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
 			private DockHierarchyLock.Token token;
 			
+			@Override
 			public StationChildHandle convert( ConvertedPlaceholderListItem item ){
 				int id = item.getInt( "id" );
 				Dockable dockable = children.get( id );

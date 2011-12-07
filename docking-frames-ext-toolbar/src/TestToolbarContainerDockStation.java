@@ -13,8 +13,6 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
-import bibliothek.gui.dock.ToolbarDockStation;
-import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarContainerDockStation{

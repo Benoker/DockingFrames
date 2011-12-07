@@ -347,6 +347,7 @@ public class ComponentDockable extends AbstractDockable implements
 	@Override
 	protected DockIcon createTitleIcon(){
 		return new DockableIcon( "dockable.default", this ){
+			@Override
 			protected void changed( Icon oldValue, Icon newValue ){
 				fireTitleIconChanged( oldValue, newValue );
 			}
@@ -355,8 +356,8 @@ public class ComponentDockable extends AbstractDockable implements
 
 	@Override
 	public boolean accept( DockStation station ){
-		System.out.println(this.toString()
-				+ "## accept(DockStation station) ##");
+		// System.out.println(this.toString()
+		// + "## accept(DockStation station) ##");
 		
 		// as this method is called during drag&drop operations a DockController
 		// is available

@@ -12,10 +12,12 @@ public class ToolbarContainerPropertyFactory implements DockablePropertyFactory{
 	/** the unique identifier of this factory */
 	public static final String ID = "ToolbarContainerProperty";
 	
+	@Override
 	public String getID(){
 		return ID;
 	}
 	
+	@Override
 	public DockableProperty createProperty(){
 		return new ToolbarContainerProperty();
 	}

@@ -196,7 +196,7 @@ public class ToolbarExtension implements Extension{
 		return null;
 	}
 
-	private Collection<DockablePropertyFactory> createPropertyFactoryExtension(){
+	private static Collection<DockablePropertyFactory> createPropertyFactoryExtension(){
 		List<DockablePropertyFactory> result = new ArrayList<DockablePropertyFactory>();
 		result.add(new ToolbarPropertyFactory());
 		result.add(new ToolbarContainerPropertyFactory());
@@ -204,26 +204,26 @@ public class ToolbarExtension implements Extension{
 		return result;
 	}
 
-	private Collection<Merger> createMergerExtension(){
+	private static Collection<Merger> createMergerExtension(){
 		List<Merger> result = new ArrayList<Merger>();
 		result.add(new ToolbarDockStationMerger());
 		result.add(new ToolbarGroupDockStationMerger());
 		return result;
 	}
 
-	private Collection<Inserter> createInserterExtension( DockController controller ){
+	private static Collection<Inserter> createInserterExtension( DockController controller ){
 		List<Inserter> result = new ArrayList<Inserter>();
 		result.add( new ScreenToolbarInserter( controller ) );
 		return result;
 	}
 
-	private Collection<AttractorStrategy> createAttractorStrategies(){
+	private static Collection<AttractorStrategy> createAttractorStrategies(){
 		List<AttractorStrategy> result = new ArrayList<AttractorStrategy>();
 		result.add(new ToolbarAttractorStrategy());
 		return result;
 	}
 
-	private Collection<DockFactory<?, ?, ?>> createDockFactories(){
+	private static Collection<DockFactory<?, ?, ?>> createDockFactories(){
 		List<DockFactory<?, ?, ?>> result = new ArrayList<DockFactory<?, ?, ?>>();
 		result.add(new ToolbarPartDockFactory());
 		result.add(new ToolbarGroupDockStationFactory());
@@ -233,7 +233,7 @@ public class ToolbarExtension implements Extension{
 		return result;
 	}
 
-	private Collection<DockTitleFactory> createTitleFactories( DockTitleVersion version ){
+	private static Collection<DockTitleFactory> createTitleFactories( DockTitleVersion version ){
 		if (version.getID().equals(ScreenDockStation.TITLE_ID)){
 			List<DockTitleFactory> result = new ArrayList<DockTitleFactory>();
 			result.add( new ScreenToolbarDockTitleFactory( version.getController() ) );
@@ -242,7 +242,7 @@ public class ToolbarExtension implements Extension{
 		return null;
 	}
 
-	private Collection<DisplayerFactory> createDisplayerFactories( DockController controller, String id ){
+	private static Collection<DisplayerFactory> createDisplayerFactories( DockController controller, String id ){
 		if (id.equals(ScreenDockStation.DISPLAYER_ID)){
 			List<DisplayerFactory> result = new ArrayList<DisplayerFactory>();
 			result.add(new ScreenToolbarDisplayerFactory(controller));
@@ -257,7 +257,7 @@ public class ToolbarExtension implements Extension{
 		return result;
 	}
 
-	private Collection<DockThemeExtension> createDockThemeExtension(){
+	private static Collection<DockThemeExtension> createDockThemeExtension(){
 		DockThemeExtension extension = new DockThemeExtension(){
 
 			@Override
@@ -292,7 +292,7 @@ public class ToolbarExtension implements Extension{
 		return Collections.singleton(extension);
 	}
 
-	private Collection<ScreenDockWindowConfiguration> createWindowConfigurationExtension( DockController controller ){
+	private static Collection<ScreenDockWindowConfiguration> createWindowConfigurationExtension( DockController controller ){
 		List<ScreenDockWindowConfiguration> result = new ArrayList<ScreenDockWindowConfiguration>();
 		result.add( new ToolbarWindowConfiguration( controller ) );
 		return result;

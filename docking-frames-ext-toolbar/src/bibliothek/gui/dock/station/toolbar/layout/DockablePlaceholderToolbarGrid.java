@@ -56,6 +56,7 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 				}
 			}
 
+			@Override
 			public void handleDockStation( DockStation station ){
 				PlaceholderMap map = station.getPlaceholders();
 				if( map != null ) {

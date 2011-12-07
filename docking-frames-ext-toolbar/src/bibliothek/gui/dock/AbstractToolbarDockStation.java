@@ -9,7 +9,6 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -17,7 +16,6 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
-import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.ToolbarTabDockStation;
@@ -30,11 +28,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
-import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.FrameworkOnly;
-import bibliothek.util.Path;
 
 /**
  * Base class of a {@link DockStation} behaving like a typical toolbar: the
@@ -254,7 +250,7 @@ public abstract class AbstractToolbarDockStation extends
 		}
 
 		for (int i = children.length - 1; i >= 0; i--){
-			remove(i);
+			remove(getDockable(i));
 		}
 
 		StackDockStation station = new ToolbarTabDockStation();
@@ -279,7 +275,7 @@ public abstract class AbstractToolbarDockStation extends
 
 			DockStation child = getDockable(0).asDockStation();
 			Dockable focused = child.getFrontDockable();
-			remove(0);
+			remove(getDockable(0));
 
 			Dockable[] children = new Dockable[child.getDockableCount()];
 			for (int i = 0; i < children.length; i++){
@@ -402,16 +398,6 @@ public abstract class AbstractToolbarDockStation extends
 	 */
 	protected abstract void remove( Dockable dockable );
 
-	/**
-	 * Removes the child with the given <code>index</code> from this station.<br>
-	 * Note: clients may need to invoke {@link DockController#freezeLayout()}
-	 * and {@link DockController#meltLayout()} to ensure noone else adds or
-	 * removes <code>Dockable</code>s.
-	 * 
-	 * @param index
-	 *            the index of the child that will be removed
-	 */
-	protected abstract void remove( int index );
 
 	@Override
 	public boolean canReplace( Dockable old, Dockable next ){

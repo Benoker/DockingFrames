@@ -1,8 +1,6 @@
 package bibliothek.gui.dock;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
@@ -13,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -88,6 +85,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	/** the orientation of the station */
 	private Orientation orientation = Orientation.VERTICAL;
 
+	private int dockablesMaxNumber = -1;
+
 	/** The containerPane */
 	private JPanel containerPanel;
 	/**
@@ -140,8 +139,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 				+ ".toolbar", this);
 
 		displayerFactory = new DefaultDisplayerFactoryValue(
-				ThemeManager.DISPLAYER_FACTORY + ".toolbar.container",
-				this);
+				ThemeManager.DISPLAYER_FACTORY + ".toolbar.container", this);
 
 		displayer = new DisplayerCollection(this, displayerFactory,
 				DISPLAYER_ID);
@@ -161,9 +159,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 */
 	private JPanel createPanel(){
 		JPanel panel = new JPanel();
-		
+
 		panel.setOpaque(false);
-		
+
 		switch (orientation) {
 		case HORIZONTAL:
 			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -174,11 +172,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			panel.setAlignmentY(Component.TOP_ALIGNMENT);
 			break;
 		}
-		// panel.setBorder(new CompoundBorder(new EtchedBorder(), new
-		// EmptyBorder(
-		// new Insets(1, 1, 1, 1))));
-		panel.setBorder(new EmptyBorder(
-				new Insets(3, 3, 3, 3)));
+		panel.setBorder(new EmptyBorder(new Insets(3, 3, 3, 3)));
 		return panel;
 	}
 
@@ -242,8 +236,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 					@Override
 					public StationChildHandle wrap( Dockable dockable ){
 						return new StationChildHandle(
-								ToolbarContainerDockStation.this,
-								displayer, dockable, title);
+								ToolbarContainerDockStation.this, displayer,
+								dockable, title);
 					}
 
 					@Override
@@ -280,31 +274,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 				}, placeholders, children);
 	}
-
-	// /**
-	// * Exchanges the list of dockables on the side <code>position</code>.
-	// *
-	// * @param position
-	// * the position whose list gets reloaded
-	// * @param map
-	// * the encoded list
-	// * @throws IllegalStateException
-	// * if there are any children on this station
-	// */
-	// public void setPlaceholders( Position position, PlaceholderMap map ){
-	// if (getDockableCount() > 0){
-	// throw new IllegalStateException(
-	// "there are children on this station");
-	// }
-	// try{
-	// DockablePlaceholderList<StationChildHandle> next = new
-	// DockablePlaceholderList<StationChildHandle>(
-	// map);
-	// setDockables(next, true);
-	// } catch (IllegalArgumentException ex){
-	// // silent;
-	// }
-	// }
 
 	/**
 	 * Creates a {@link ToolbarContainerConverter} which will be used for one
@@ -345,7 +314,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, Dockable dockable ){
-		System.out.println(this.toString() + "## prepareDrop(...) ##");
+		// System.out.println(this.toString() + "## prepareDrop(...) ##");
 		DockController controller = getController();
 
 		// check if the dockable and the station accept each other
@@ -360,8 +329,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			Point mousePoint = new Point(mouseX, mouseY);
 			SwingUtilities.convertPointFromScreen(mousePoint,
 					mainPanel.getContentPane());
-
-			System.out.println("		==> MOUSE: " + mouseX + "/" + mouseY);
 
 			if (!getToolbarStrategy().isToolbarPart(dockable)){
 				// only ToolbarElementInterface can be drop or move into this
@@ -404,7 +371,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 					ToolbarContainerDockStation.this.mainPanel.repaint();
 				}
 			};
-			System.out.println(result.toSummaryString());
+			// System.out.println(result.toSummaryString());
 			return result;
 
 		} else{
@@ -427,6 +394,27 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	@Override
 	public Orientation getOrientationOf( Dockable child ){
 		return this.orientation;
+	}
+
+	/**
+	 * Sets the number of dockables that this station will accept (max = -1
+	 * indicates that there's no limit).
+	 * 
+	 * @param max
+	 *            the number of dockables accepted
+	 */
+	public void setDockablesMaxNumber( int max ){
+		dockablesMaxNumber = max;
+	}
+
+	/**
+	 * Gets the number of dockables that this station will accept.
+	 * 
+	 * @return the number of dockables accepted (-1 if there is no maximum
+	 *         number)
+	 */
+	public int getDockablesMaxNumber(){
+		return dockablesMaxNumber;
 	}
 
 	/**
@@ -549,7 +537,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 */
 	@Override
 	public void drop( Dockable dockable ){
-		System.out.println(this.toString() + "## drop(Dockable dockable )##");
+		// System.out.println(this.toString() +
+		// "## drop(Dockable dockable )##");
 		this.drop(dockable, getDockables().dockables().size());
 	}
 
@@ -562,13 +551,13 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 * @return <code>true</code> if dropping was successfull
 	 */
 	private boolean drop( Dockable dockable, int index ){
-		System.out.println(this.toString()
-				+ "## drop(Dockable dockable, int index )##");
+		// System.out.println(this.toString()
+		// + "## drop(Dockable dockable, int index )##");
 		return this.add(dockable, index);
 	}
 
 	private void move( Dockable dockable, int indexWhereInsert ){
-		System.out.println(this.toString() + "## move() ## ==> ");
+		// System.out.println(this.toString() + "## move() ## ==> ");
 		if (getToolbarStrategy().isToolbarPart(dockable)){
 			DockController controller = getController();
 			try{
@@ -587,21 +576,19 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	@Override
 	public void move( Dockable dockable, DockableProperty property ){
-		System.out.println(this.toString()
-				+ "## move(Dockable dockable, DockableProperty property) ## "
-				+ this.toString());
 	}
 
 	@Override
 	public boolean canDrag( Dockable dockable ){
-		System.out.println(this.toString()
-				+ "## canDrag(Dockable dockable) ## " + this.toString());
+		// System.out.println(this.toString()
+		// + "## canDrag(Dockable dockable) ## " + this.toString());
 		return true;
 	}
 
 	@Override
 	public void drag( Dockable dockable ){
-		System.out.println(this.toString() + "## drag(Dockable dockable) ##");
+		// System.out.println(this.toString() +
+		// "## drag(Dockable dockable) ##");
 		if (dockable.getDockParent() != this)
 			throw new IllegalArgumentException(
 					"The dockable cannot be dragged, it is not child of this station.");
@@ -610,9 +597,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	@Override
 	public boolean canReplace( Dockable old, Dockable next ){
-		System.out.println(this.toString()
-				+ "## canReplace(Dockable old, Dockable next) ## "
-				+ this.toString());
 		if (old.getClass() == next.getClass()){
 			return true;
 		} else{
@@ -622,9 +606,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	@Override
 	public void replace( Dockable old, Dockable next ){
-		System.out.println(this.toString()
-				+ "## replace(Dockable old, Dockable next) ## "
-				+ this.toString());
+		// System.out.println(this.toString()
+		// + "## replace(Dockable old, Dockable next) ## "
+		// + this.toString());
 		DockUtilities.checkLayoutLocked();
 		DockController controller = getController();
 		if (controller != null)
@@ -639,9 +623,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	@Override
 	public void replace( DockStation old, Dockable next ){
-		System.out.println(this.toString()
-				+ "## replace(DockStation old, Dockable next) ## "
-				+ this.toString());
+		// System.out.println(this.toString()
+		// + "## replace(DockStation old, Dockable next) ## "
+		// + this.toString());
 		replace(old.asDockable(), next);
 	}
 
@@ -684,15 +668,17 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	@Override
 	public boolean accept( Dockable child ){
-		System.out.println(this.toString() + "## accept(Dockable child) ##");
-		return true;
+		if (dockables.dockables().size() == -1){
+			return true;
+		} else if (dockables.dockables().size() >= dockablesMaxNumber){
+			return false;
+		} else{
+			return true;
+		}
 	}
 
 	@Override
 	public boolean accept( DockStation station ){
-		System.out.println(this.toString()
-				+ "## accept(DockStation station) ##");
-		// we can put this dockstation everywhere
 		return true;
 	}
 
@@ -760,8 +746,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			if (dockables.dockables().get(i).getDockable() instanceof OrientedDockStation){
 				((OrientedDockStation) dockables.dockables().get(i)
 						.getDockable()).setOrientation(this.orientation);
-				list.add((dockables.dockables().get(i)
-						.getDockable()));
+				list.add((dockables.dockables().get(i).getDockable()));
 			}
 		}
 		fireOrientingEvent(list.toArray(new Dockable[list.size()]));
@@ -804,8 +789,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			dockable.setDockParent(null);
 			StationChildHandle childHandle = dockables.get(index);
 			dockables.remove(index);
-			getContainerPanel()
-					.remove(childHandle.getDisplayer().getComponent());
+			getContainerPanel().remove(
+					childHandle.getDisplayer().getComponent());
 			childHandle.destroy();
 
 			mainPanel.getContentPane().revalidate();
@@ -833,8 +818,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 * @return <code>true</code> if dropping was successfull
 	 */
 	protected boolean add( Dockable dockable, int index ){
-		System.out.println(this.toString()
-				+ "## add( Dockable dockable, int index ) ##");
+		// System.out.println(this.toString()
+		// + "## add( Dockable dockable, int index ) ##");
 		DockUtilities.ensureTreeValidity(this, dockable);
 		DockUtilities.checkLayoutLocked();
 		ToolbarStrategy strategy = getToolbarStrategy();
@@ -852,8 +837,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 					((OrientedDockStation) dockable)
 							.setOrientation(this.orientation);
 				}
-				System.out.println("		==> INDEX: " + index);
-
 				StationChildHandle handle = new StationChildHandle(this,
 						displayer, dockable, title);
 				dockables.add(index, handle);
@@ -866,6 +849,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			}
 			fireOrientingEvent(dockable);
 			mainPanel.revalidate();
+			mainPanel.repaint();
 			return true;
 		}
 		return false;
@@ -878,12 +862,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 		}
 		dockable.setDockParent(this);
 		getContainerPanel().add(handle.getDisplayer().getComponent(), index);
-		// mainPanel.getContentPane().setBounds(0, 0,
-		// mainPanel.getContentPane().getPreferredSize().width,
-		// mainPanel.getContentPane().getPreferredSize().height);
-		// mainPanel.setPreferredSize(new Dimension(mainPanel.getContentPane()
-		// .getPreferredSize().width, mainPanel.getContentPane()
-		// .getPreferredSize().height));
 		mainPanel.getContentPane().revalidate();
 		mainPanel.getContentPane().repaint();
 	}
