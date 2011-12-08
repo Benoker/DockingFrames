@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -737,6 +738,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 			listeners.fireDockableRemoved(dockable);
 			fireColumnRepositioned(column, before != dockables.getColumnCount());
+			mainPanel.repaint(); // if we don't call repaint, the station is
+			// not repaint when we remove a ToolbarDockStation in a column and that
+			// it doesn't affect the number of column
 		} finally{
 			token.release();
 		}
@@ -887,6 +891,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
 
+		private final int INSETS_SIZE = 1;
+
 		/**
 		 * A panel with a fixed size (minimum, maximum and preferred size have
 		 * same values). Computation of the size takes insets into account.
@@ -967,6 +973,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					.getOrientation();
 
 			if (orientation != null){
+				// basePane.setBorder(new EmptyBorder(new Insets(INSETS_SIZE,
+				// INSETS_SIZE, INSETS_SIZE, INSETS_SIZE)));
 				dockablePane
 						.setLayout(new ToolbarGridLayoutManager<StationChildHandle>(
 								orientation, dockables){
@@ -1081,16 +1089,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 							}
 
 							break;
-						// paint.drawInsertionLine(g, x,
-						// rectangleTranslated.y, x,
-						// rectangleTranslated.y
-						// + rectangleTranslated.height);
 						}
-						g2D.drawLine(x1, y1, x2, y2);
+						paint.drawInsertionLine(g, x1, y1, x2, y2);
+						// g2D.drawLine(x1, y1, x2, y2);
 					}
 				}
-			} else {
-				System.out.println("DONT PAINT");
 			}
 		}
 

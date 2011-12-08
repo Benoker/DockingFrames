@@ -59,7 +59,6 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 	 */
 	public ToolbarDropInfo( Dockable dockable, S stationHost, int mouseX,
 			int mouseY ){
-		System.out.println(this.toString() + "## new ToolbarDropInfo ## ");
 		this.dragDockable = dockable;
 		this.stationHost = stationHost;
 		this.mouseX = mouseX;

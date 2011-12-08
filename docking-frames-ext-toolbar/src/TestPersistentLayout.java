@@ -27,6 +27,7 @@ import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DirectWindowProvider;
@@ -37,7 +38,7 @@ import bibliothek.util.xml.XIO;
 public class TestPersistentLayout{
 	public static void main( String[] args ){
 		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel pane = new JPanel(new BorderLayout());
 		final JToolBar toolBar = new JToolBar();
 		toolBar.setOrientation(SwingConstants.VERTICAL);
@@ -69,7 +70,13 @@ public class TestPersistentLayout{
 								return false;
 							}
 						});
-		
+		// install new station pain to change the color
+		BasicStationPaint paint = new BasicStationPaint();
+		Color color = new Color(16, 138, 230, 150);
+		paint.setColor(color);
+		frontend.getController().getThemeManager().setStationPaint(
+				ThemeManager.STATION_PAINT + ".toolbar", paint);
+
 		icon = new ImageIcon(
 				TestPersistentLayout.class.getResource("/resources/film.png"));
 		JButton button = new JButton(icon);

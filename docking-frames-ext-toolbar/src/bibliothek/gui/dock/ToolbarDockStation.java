@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -15,6 +16,7 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -30,6 +32,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OrientedDockStation;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -37,6 +40,7 @@ import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
@@ -665,9 +669,11 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
 
+		private final int INSETS_SIZE = 1;
+
 		/**
 		 * A panel with a fixed size (minimum, maximum and preferred size have
-		 * same values). Computation of the size takes insets into account.
+		 * same values).
 		 * 
 		 * @author Herve Guillaume
 		 * 
@@ -709,9 +715,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			// basePane.setBackground(Color.GREEN);
-			// dockablePane.setBackground(Color.RED);
-
 			basePane.add(dockablePane);
 			setBasePane(basePane);
 			setContentPane(dockablePane);
@@ -727,12 +730,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 		@Override
 		public Dimension getMinimumSize(){
-			return getBasePane().getPreferredSize();
+			return getPreferredSize();
 		}
 
 		@Override
 		public Dimension getMaximumSize(){
-			return getBasePane().getPreferredSize();
+			return getPreferredSize();
 		}
 
 		/**
@@ -743,6 +746,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			if (ToolbarDockStation.this.getOrientation() != null){
 				switch (ToolbarDockStation.this.getOrientation()) {
 				case HORIZONTAL:
+					basePane.setBorder(new EmptyBorder(new Insets(0,
+							INSETS_SIZE, 0, INSETS_SIZE + 1)));
 					dockablePane.setLayout(new BoxLayout(dockablePane,
 							BoxLayout.X_AXIS));
 					basePane.setLayout(new BoxLayout(basePane, BoxLayout.X_AXIS));
@@ -752,6 +757,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 					basePane.setAlignmentX(Component.LEFT_ALIGNMENT);
 					break;
 				case VERTICAL:
+					basePane.setBorder(new EmptyBorder(new Insets(INSETS_SIZE,
+							0, INSETS_SIZE + 1, 0)));
 					dockablePane.setLayout(new BoxLayout(dockablePane,
 							BoxLayout.Y_AXIS));
 					basePane.setLayout(new BoxLayout(basePane, BoxLayout.Y_AXIS));
@@ -777,7 +784,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 							.getComponent();
 					if (componentBeneathMouse != null){
 						Rectangle rectToolbar = basePane.getBounds();
-						Color color = new Color(255, 0, 0, 50);
+						//Color color = this.getController().getColors().get("paint.line");
+						Color color = new Color(16, 138, 230, 50);
 						Rectangle2D rect = new Rectangle2D.Double(
 								rectToolbar.x, rectToolbar.y,
 								rectToolbar.width, rectToolbar.height);
@@ -813,12 +821,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 								y = rectangleTranslated.y
 										+ rectangleTranslated.height;
 							}
-							g2D.drawLine(rectangleTranslated.x, y,
-									rectangleTranslated.x
-											+ rectangleTranslated.width, y);
-							// paint.drawInsertionLine(g, rectangleTranslated.x,
-							// y, rectangleTranslated.x
+							// g2D.drawLine(rectangleTranslated.x, y,
+							// rectangleTranslated.x
 							// + rectangleTranslated.width, y);
+							paint.drawInsertionLine(g, rectangleTranslated.x,
+									y, rectangleTranslated.x
+											+ rectangleTranslated.width, y);
 							break;
 						case HORIZONTAL:
 							int x;
@@ -829,13 +837,13 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 										+ rectangleTranslated.width;
 							}
 
-							g2D.drawLine(x, rectangleTranslated.y, x,
-									rectangleTranslated.y
-											+ rectangleTranslated.height);
-							// paint.drawInsertionLine(g, x,
-							// rectangleTranslated.y, x,
+							// g2D.drawLine(x, rectangleTranslated.y, x,
 							// rectangleTranslated.y
 							// + rectangleTranslated.height);
+							paint.drawInsertionLine(g, x,
+									rectangleTranslated.y, x,
+									rectangleTranslated.y
+											+ rectangleTranslated.height);
 						}
 					}
 				}

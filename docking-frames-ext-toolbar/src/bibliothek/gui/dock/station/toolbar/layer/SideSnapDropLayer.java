@@ -76,7 +76,6 @@ public class SideSnapDropLayer implements DockStationDropLayer{
 		SwingUtilities.convertPointFromScreen(point, getComponent());
 		Rectangle bounds = getComponent().getBounds();
 		if (bounds.contains(point)){
-			System.out.println("CONTAINS:FALSEFALSEFALSE");
 			// if the mouse in inside component, so it is not inside the snap
 			// extended zone
 			return false;
