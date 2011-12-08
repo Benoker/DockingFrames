@@ -261,6 +261,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				false);
 	}
 
+	public boolean accept(DockStation base, Dockable neighbor){
+		return false;
+	}
+	
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, Dockable dockable ){

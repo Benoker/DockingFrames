@@ -369,6 +369,11 @@ public class ComponentDockable extends AbstractDockable implements
 		
 		return strategy.isToolbarGroupPartParent( station, this, false );
 	}
+	
+	@Override
+	public boolean accept( DockStation base, Dockable neighbour ){
+		return false;
+	}
 
 	@Override
 	public String toString(){

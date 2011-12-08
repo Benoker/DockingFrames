@@ -107,6 +107,7 @@ public class TestToolbarGroupDockStation{
 		frame.setBounds(20, 20, 400, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		screen.setShowing( true );
 	}
 
 	private static ToolbarDockStation createToolbar( String ... buttons ){

@@ -355,6 +355,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		return getToolbarStrategy().isToolbarGroupPartParent(station, this,
 				false);
 	}
+	
+	public boolean accept(DockStation base, Dockable neighbor){
+		return false;
+	}
 
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
