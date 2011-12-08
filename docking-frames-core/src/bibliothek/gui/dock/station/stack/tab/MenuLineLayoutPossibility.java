@@ -37,6 +37,10 @@ import bibliothek.gui.dock.station.stack.tab.layouting.MenuLayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabsLayoutBlock;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A possibility for a layout of tabs, menus and actions as described by the {@link MenuLineLayout}.
@@ -70,10 +74,35 @@ public class MenuLineLayoutPossibility {
 	}
 	
 	/**
-	 * Tells whether this layout is a preferred layout. A preferred layout
-	 * shows all tabs, has no menu, and the info panel (if present)
-	 * has its preferred size.
-	 * @return <code>true</code> if this layout is a preferred layout
+	 * Tells how good this layout is. As higher a score, as better a layout is. The layout which shows
+	 * all components with their preferred size has a score of <code>1.0</code>, the layout which does not
+	 * show anything has a score of <code>0.0</code>.
+	 * @return the score of this layout
+	 */
+	@Todo( compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_1, priority=Priority.MINOR, 
+			description="Make this property easy modifiable by the clients")
+	public double getScore(){
+		double result = 0;
+		if( menuSize == null ){
+			result += 1;
+		}
+		else{
+			result += menuSize.getScore();
+		}
+		
+		if( infoSize != null ){
+			result += 10*infoSize.getScore();
+		}
+		
+		if( tabSize != null ){
+			result += 4*tabSize.getScore();
+		}
+		return result / 15.0; 
+	}
+	
+	/**
+	 * Tells whether this layout shows all items with their preferred size.
+	 * @return whether this layout is a preferred layout
 	 */
 	public boolean isPreferred(){
 		if( tabSize == null || !tabSize.isPreferred() || !getPane().getTabs().isAllTabs( tabSize ) )

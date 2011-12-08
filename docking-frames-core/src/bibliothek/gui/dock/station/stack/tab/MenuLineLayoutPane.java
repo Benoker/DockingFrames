@@ -176,6 +176,7 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 		
 		MenuLineLayoutPossibility best = null;
 		int bestSize = -1;
+		double bestScore = 0.0;
 		
 		MenuLineLayoutPossibility smallest = null;
 		int smallestSize = -1;
@@ -183,17 +184,11 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 		for( MenuLineLayoutPossibility layout : layouts ){
 			Dimension size = conversion.viewToModel( layout.getSize() );
 			if( size.width <= space ){
-				if( layout.isPreferred() ){
-					if( (best == null || !best.isPreferred()) || bestSize < size.width ){
-						bestSize = size.width;
-						best = layout;
-					}
-				}
-				else{
-					if( (best == null || (!best.isPreferred()) && bestSize < size.width )){
-						bestSize = size.width;
-						best = layout;
-					}
+				double score = layout.getScore();
+				
+				if( best == null || (bestScore == score && bestSize < size.width ) || (bestScore < score)){
+					bestScore = score;
+					best = layout;
 				}
 			}
 			

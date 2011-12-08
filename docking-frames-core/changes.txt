@@ -667,6 +667,7 @@
 
 [v1.1.1p6b]
  - API: The new interface DockActionImportanceOrder allows to define which actions are the most important actions, if there is not enough space to show all actions the most important actions stay visible a bit longer
+ - API: If tabs and actions are shown, tabs are now hidden before actions are hidden
 
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements

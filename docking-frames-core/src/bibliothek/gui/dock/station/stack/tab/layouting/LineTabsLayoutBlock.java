@@ -111,10 +111,10 @@ public class LineTabsLayoutBlock extends AbstractTabsLayoutBlock{
 			Tab[] selection = new Tab[ i+1 ];
 			System.arraycopy( tabs, 0, selection, 0, i+1 );
 			
-			result[i] = new LineSize( Size.Type.MINIMUM, size, selection, i+1 == tabs.length );
+			result[i] = new LineSize( Size.Type.MINIMUM, size, selection, i+1 == tabs.length, i / (double)tabs.length );
 		}
 		
-		result[tabs.length] = new LineSize( Size.Type.PREFERRED, collector.getPreferredSize(), tabs, true );
+		result[tabs.length] = new LineSize( Size.Type.PREFERRED, collector.getPreferredSize(), tabs, true, 1.0 );
 		return result;
 	}
 		
@@ -311,9 +311,10 @@ public class LineTabsLayoutBlock extends AbstractTabsLayoutBlock{
 		 * @param size the amount of needed pixels
 		 * @param tabs the tabs shown with this size
 		 * @param allTabs whether <code>tabs</code> includes all available tabs
+		 * @param score how well this size is liked
 		 */
-		public LineSize( Type type, Dimension size, Tab[] tabs, boolean allTabs ){
-			super( type, size, tabs );
+		public LineSize( Type type, Dimension size, Tab[] tabs, boolean allTabs, double score ){
+			super( type, size, tabs, score );
 			this.allTabs = allTabs;
 		}
 

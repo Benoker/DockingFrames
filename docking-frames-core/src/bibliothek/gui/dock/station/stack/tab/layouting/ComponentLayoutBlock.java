@@ -64,8 +64,8 @@ public class ComponentLayoutBlock<C extends TabPaneComponent> implements LayoutB
 			return null;
 		
 		return new Size[]{
-				new Size( Size.Type.MINIMUM, component.getMinimumSize() ),
-				new Size( Size.Type.PREFERRED, component.getPreferredSize() )
+				new Size( Size.Type.MINIMUM, component.getMinimumSize(), 0.0 ),
+				new Size( Size.Type.PREFERRED, component.getPreferredSize(), 1.0 )
 		};
 	}
 	

@@ -176,7 +176,7 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 			else
 				type = Type.MINIMUM;
 			
-			result[i] = new CountingSize( type, sizes[i], i );
+			result[i] = new CountingSize( type, sizes[i], i, (i+1) / (double)(sizes.length) );
 		}
 		
 		return result;
@@ -207,9 +207,10 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 		 * @param type what kind of size this represents
 		 * @param size the amount of pixels needed
 		 * @param count the number of actions shown
+		 * @param score how much this size is liked
 		 */
-		public CountingSize( Type type, Dimension size, int count ){
-			super( type, size );
+		public CountingSize( Type type, Dimension size, int count, double score ){
+			super( type, size, score );
 			this.count = count;
 		}
 		

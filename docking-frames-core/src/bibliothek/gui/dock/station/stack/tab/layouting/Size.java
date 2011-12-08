@@ -55,15 +55,26 @@ public class Size {
 	/** vertical amount of pixels */
 	private int height;
 	
+	/** how well this size is liked */
+	private double score;
+	
 	/**
 	 * Creates a new size.
 	 * @param type what kind of size this describes
 	 * @param width horizontal amount of pixels
 	 * @param height vertical amount of pixels
+	 * @param score how much this size is liked, a value of <code>1.0</code> indicates that
+	 * this is the best possible size, while a value of <code>0.0</code> indicates that this
+	 * size is as good as unusable
 	 */
-	public Size( Type type, int width, int height ){
+	public Size( Type type, int width, int height, double score ){
 		if( type == null )
 			throw new IllegalArgumentException( "type must not be null" );
+		if( score < 0.0 || score > 1.0 ){
+			throw new IllegalArgumentException( "score out of bounds: " + score );
+		}
+		
+		this.score = score;
 		this.type = type;
 		this.width = width;
 		this.height = height;
@@ -73,9 +84,12 @@ public class Size {
 	 * Creates a new size
 	 * @param type what kind of size this describes
 	 * @param size the amount of pixels
+	 * @param score how much this size is liked, a value of <code>1.0</code> indicates that
+	 * this is the best possible size, while a value of <code>0.0</code> indicates that this
+	 * size is as good as unusable
 	 */
-	public Size( Type type, Dimension size ){
-		this( type, size.width, size.height );
+	public Size( Type type, Dimension size, double score ){
+		this( type, size.width, size.height, score );
 	}
 	
 	/**
@@ -118,6 +132,16 @@ public class Size {
 	 */
 	public int getHeight(){
 		return height;
+	}
+	
+	/**
+	 * Tells how much this size is liked, a value of <code>1.0</code> indicates that
+	 * this is the best possible size, while a value of <code>0.0</code> indicates that this
+	 * size is as good as unusable
+	 * @return the score, a value between 0.0 and 1.0
+	 */
+	public double getScore(){
+		return score;
 	}
 	
 	/**
