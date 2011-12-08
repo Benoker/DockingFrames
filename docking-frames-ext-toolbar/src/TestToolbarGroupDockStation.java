@@ -1,6 +1,10 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Insets;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -54,8 +58,27 @@ public class TestToolbarGroupDockStation{
 
 		ToolbarGroupDockStation group = new ToolbarGroupDockStation();
 
-		ImageIcon icon = new ImageIcon(
-				TestPersistentLayout.class.getResource("/resources/film.png"));
+//		Icon icon = new ImageIcon(
+//				TestPersistentLayout.class.getResource("/resources/film.png"));
+		
+		Icon icon = new Icon(){
+			@Override
+			public void paintIcon( Component c, Graphics g, int x, int y ){
+				g.setColor( Color.RED );
+				g.fillOval( x, y, 16, 16 );
+			}
+			
+			@Override
+			public int getIconWidth(){
+				return 16;
+			}
+			
+			@Override
+			public int getIconHeight(){
+				return 16;
+			}
+		};
+		
 		group.drop(createToolbar(icon, icon, icon), 0, 0);
 		group.drop(createToolbar(icon, icon, icon), 0, 1);
 		group.drop(createToolbar(icon, icon), 1, 0);
@@ -95,9 +118,9 @@ public class TestToolbarGroupDockStation{
 		return toolbar;
 	}
 
-	private static ToolbarDockStation createToolbar( ImageIcon ... icons ){
+	private static ToolbarDockStation createToolbar( Icon ... icons ){
 		ToolbarDockStation toolbar = new ToolbarDockStation();
-		for (ImageIcon icon : icons){
+		for (Icon icon : icons){
 			toolbar.drop(createDockable(icon));
 		}
 		return toolbar;
@@ -112,7 +135,7 @@ public class TestToolbarGroupDockStation{
 		return dockable;
 	}
 
-	private static ComponentDockable createDockable( ImageIcon icon ){
+	private static ComponentDockable createDockable( Icon icon ){
 		JButton button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
 		ComponentDockable dockable = new ComponentDockable(button);
