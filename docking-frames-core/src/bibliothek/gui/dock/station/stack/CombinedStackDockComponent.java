@@ -227,6 +227,10 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 			public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
 				// ignore
 			}
+			
+			public void controllerChanged( TabPane pane, DockController controller ){
+				// ignore
+			}
 		} );
 	}
 

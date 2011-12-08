@@ -310,6 +310,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
 	    if( bound ){
 	    	background = new Background( tab );
 	    	background.setController( getController() );
+	    	buttons.setController( getController() );
 	    }
 	    setBackground( background );
     }
@@ -325,12 +326,16 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         	background.setController( controller );
         }
         setBackground( background );
+        buttons.setController( controller );
         
-        for( TabColor color : colors )
+        for( TabColor color : colors ){
             color.connect( controller );
-        for( TabFont font : fonts )
+        }
+        for( TabFont font : fonts ){
             font.connect( controller );
+        }
         
+        		
         revalidate();
         bound = true;
     }
@@ -345,6 +350,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         	background = null;
         }
         setBackground( background );
+        buttons.setController( null );
         
         for( TabColor color : colors )
             color.connect( null );

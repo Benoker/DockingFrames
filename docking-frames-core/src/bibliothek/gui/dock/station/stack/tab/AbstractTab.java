@@ -73,8 +73,10 @@ public abstract class AbstractTab extends AbstractTabPaneComponent implements Ta
 			}
 		}
 		
-		public void infoComponentChanged( TabPane pane,
-				LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+		public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+			// ignore
+		}
+		public void controllerChanged( TabPane pane, DockController controller ){
 			// ignore
 		}
 	};

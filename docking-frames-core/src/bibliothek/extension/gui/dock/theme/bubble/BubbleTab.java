@@ -344,6 +344,7 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 		
 		background.setController( controller );
 
+		actions.setController( controller );
 		this.controller = controller;
 		
 		if( controller == null ){

@@ -260,6 +260,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
                 add( itemPanel );
                 
                 if( isBound() ){
+                	itemPanel.setController( getDockable().getController() );
                 	itemPanel.set( getDockable(), getActionSourceFor( getDockable() ) );
                 }
     		}
@@ -884,12 +885,14 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
             throw new IllegalArgumentException( "Do not call bound twice!" );
         bound = true;
         
+        DockController controller = getDockable().getController();
         if( itemPanel != null ){
         	itemPanel.set( dockable, getActionSourceFor( dockable ) );
+        	itemPanel.setController( controller );
         }
         
         dockable.addDockableListener( listener );
-        DockController controller = getDockable().getController();
+        
         if( controller != null ){
             for( AbstractDockColor color : colors )
                 color.connect( controller );
@@ -922,6 +925,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
         
         if( itemPanel != null ){
         	itemPanel.set( null );
+        	itemPanel.setController( null );
         }
         
         for( AbstractDockColor color : colors )
