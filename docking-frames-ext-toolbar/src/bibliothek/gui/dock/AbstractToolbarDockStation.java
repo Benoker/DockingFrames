@@ -345,42 +345,6 @@ public abstract class AbstractToolbarDockStation extends
 	 */
 	protected abstract void drop( StationDropOperation dropInfo );
 
-	/**
-	 * Drops <code>dockable</code> at location <code>index</code>.
-	 * 
-	 * @param dockable
-	 *            the element to add
-	 * @param index
-	 *            the location of <code>dockable</code>
-	 * @return whether the operation was succesfull or not
-	 */
-	// public abstract boolean drop( Dockable dockable, int index );
-
-	// protected abstract boolean drop( Dockable dockable, int index, boolean
-	// force );
-
-	// protected abstract void move( Dockable dockable, int indexWhereInsert );
-
-	// /**
-	// * Insert one dockable at the index. The dockable can be a
-	// * {@link ComponentDockable}, {@link ToolbarDockStation} or a
-	// * {@link ToolbarGroupDockStation} (see method accept()). All the
-	// * ComponentDockable extracted from the element are merged together and
-	// * wrapped in a {@link ToolbarDockStation} before to be inserted at the
-	// * index
-	// *
-	// * @param dockable
-	// * Dockable to add
-	// * @param index
-	// * Index where add dockable
-	// */
-	// protected abstract void add( Dockable dockable, int index );
-
-	// protected abstract void add( Dockable dockable, int index, Path
-	// placeholder );
-
-	// protected abstract void insertAt( StationChildHandle handle, int index );
-
 	@Override
 	public boolean canDrag( Dockable dockable ){
 		if (getExpandedState() == ExpandedState.EXPANDED){
