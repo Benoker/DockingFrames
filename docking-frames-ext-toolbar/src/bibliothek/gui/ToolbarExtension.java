@@ -269,9 +269,6 @@ public class ToolbarExtension implements Extension{
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.createColorBorderFactory( Color.ORANGE, false ) );
 
 				DockTitleManager titles = controller.getDockTitleManager();
-				// titles.registerTheme(ToolbarDockStation.TITLE_ID,
-				// ToolbarDockTitlePoint
-				// .createFactory(new Color(255, 0, 0)));
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitleGrip.createFactory( new Color( 80, 80, 80 ) ) );
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
 				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );

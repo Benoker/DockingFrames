@@ -355,13 +355,9 @@ public class ComponentDockable extends AbstractDockable implements
 	}
 
 	@Override
-	public boolean accept( DockStation station ){
-		// System.out.println(this.toString()
-		// + "## accept(DockStation station) ##");
-		
+	public boolean accept( DockStation station ){	
 		// as this method is called during drag&drop operations a DockController
 		// is available
-		
 		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>(
 				ToolbarStrategy.STRATEGY, getController());
 		ToolbarStrategy strategy = value.getValue();

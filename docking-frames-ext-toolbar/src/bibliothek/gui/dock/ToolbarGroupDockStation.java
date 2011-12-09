@@ -326,8 +326,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		for (int i = 0; i < getDockableCount(); i++){
 			Dockable d = getDockable(i);
 			if (d instanceof OrientedDockStation){
-				OrientedDockStation group = (OrientedDockStation) d;
-				group.setOrientation(this.getOrientation());
+				OrientedDockStation element = (OrientedDockStation) d;
+				element.setOrientation(this.getOrientation());
 			}
 		}
 		mainPanel.updateAlignment();

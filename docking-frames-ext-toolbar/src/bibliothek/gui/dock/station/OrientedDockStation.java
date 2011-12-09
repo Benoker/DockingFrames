@@ -13,14 +13,14 @@ import bibliothek.gui.Orientation;
 public interface OrientedDockStation extends OrientingDockStation{
 
 	/**
-	 * Set the orientation of dockables in this station
+	 * Sets the orientation of dockables in this station.
 	 * 
 	 * @param orientation
 	 */
 	public void setOrientation( Orientation orientation );
 
 	/**
-	 * Get the orientation of dockables in this station.
+	 * Gets the orientation of dockables in this station.
 	 * 
 	 * @return The orientation of dockables in this station
 	 */
