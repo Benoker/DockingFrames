@@ -23,9 +23,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Herve Guillaume
  */
 public class ToolbarDockTitleGrip extends AbstractDockTitle{
-	
-	private Color color;
-	
+
+	private final Color color;
+
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitleGrip}s.
 	 * 
@@ -68,7 +68,7 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 
 	@Override
 	public Dimension getPreferredSize(){
-		Dimension size = super.getPreferredSize();
+		final Dimension size = super.getPreferredSize();
 		return new Dimension(Math.max(5, size.width), Math.max(5, size.height));
 	}
 
@@ -92,13 +92,13 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 	@Override
 	protected void paintComponent( Graphics g ){
 		g.setColor(Color.darkGray);
-		Color shadow = Color.gray;
-		Color clearColor = Color.white;
-		int lineOffset = 5;
-		int headerOffset = 3;
+		final Color shadow = Color.gray;
+		final Color clearColor = Color.white;
+		final int lineOffset = 5;
+		final int headerOffset = 3;
 		if (getOrientation().isHorizontal()){
 			// Draw a horizontal handle.
-			int width = getSize().width;
+			final int width = getSize().width;
 
 			// Draw the light line.
 			g.setColor(clearColor);
@@ -109,28 +109,28 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 
 			// Draw the shadow.
 			g.setColor(shadow);
-			g.drawLine(width - lineOffset + 1, headerOffset, width
-					- lineOffset + 1, headerOffset + 2);
+			g.drawLine((width - lineOffset) + 1, headerOffset,
+					(width - lineOffset) + 1, headerOffset + 2);
 			g.drawLine(lineOffset, headerOffset + 2, width - lineOffset,
 					headerOffset + 2);
 
 		} else{
 			// Draw a vertical handle.
-			int height = getSize().height;
+			final int height = getSize().height;
 
 			// Draw the light line.
 			g.setColor(clearColor);
 			g.drawLine(headerOffset, lineOffset, headerOffset, height
 					- lineOffset);
-			g.drawLine(headerOffset + 1, lineOffset, headerOffset + 1,
-					height - lineOffset);
+			g.drawLine(headerOffset + 1, lineOffset, headerOffset + 1, height
+					- lineOffset);
 
 			// Draw the shadow.
 			g.setColor(shadow);
-			g.drawLine(headerOffset, height - lineOffset + 1,
-					headerOffset + 2, height - lineOffset + 1);
-			g.drawLine(headerOffset + 2, lineOffset, headerOffset + 2,
-					height - lineOffset);
+			g.drawLine(headerOffset, (height - lineOffset) + 1,
+					headerOffset + 2, (height - lineOffset) + 1);
+			g.drawLine(headerOffset + 2, lineOffset, headerOffset + 2, height
+					- lineOffset);
 		}
 	}
 

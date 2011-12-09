@@ -21,17 +21,17 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
  * @param <S>
  *            the kind of station using this {@link ToolbarDropInfo}
  */
-public abstract class ToolbarDropInfo<S extends OrientedDockStation>
-		implements StationDropOperation{
+public abstract class ToolbarDropInfo<S extends OrientedDockStation> implements
+		StationDropOperation{
 	/** The {@link Dockable} which is inserted */
-	private Dockable dragDockable;
+	private final Dockable dragDockable;
 	/**
 	 * The {@link Dockable} which received the dockbale (WARNING: this can be
 	 * different to his original dock parent!)
 	 */
-	private S stationHost;
+	private final S stationHost;
 	/** Location of the mouse */
-	private int mouseX, mouseY;
+	private final int mouseX, mouseY;
 	/** closest dockable beneath the mouse with regards to the mouse coordinates */
 	private Dockable dockableBeneathMouse = null;
 	/**
@@ -80,7 +80,7 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 
 	// enable this ToolbarDropInfo to draw some markings on the stationHost
 	@Override
-	public abstract void draw(); 
+	public abstract void draw();
 
 	@Override
 	public abstract void execute();
@@ -150,21 +150,21 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 	 */
 	private Position computeSideDockableBeneathMouse(){
 		// the dockable the closest of the mouse
-		Dockable dockableBeneathMouse = getDockableBeneathMouse();
+		final Dockable dockableBeneathMouse = getDockableBeneathMouse();
 		if (dockableBeneathMouse == null){
 			return null;
 		}
 		// mouse coordinate
-		Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
+		final Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
 		switch (stationHost.getOrientation()) {
 		case VERTICAL:
 			// The mouse is now in the frame of reference of the area beneath
 			// mouse
 			SwingUtilities.convertPointFromScreen(mouseCoordinate,
 					dockableBeneathMouse.getComponent());
-			double middleY = (dockableBeneathMouse.getComponent().getBounds()
-					.getMinY() + dockableBeneathMouse.getComponent()
-					.getBounds().getMaxY()) / 2.0;
+			final double middleY = (dockableBeneathMouse.getComponent()
+					.getBounds().getMinY() + dockableBeneathMouse
+					.getComponent().getBounds().getMaxY()) / 2.0;
 			if (Math.abs(mouseCoordinate.getY()) <= middleY){
 				return Position.NORTH;
 			} else{
@@ -175,9 +175,9 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 			// mouse
 			SwingUtilities.convertPointFromScreen(mouseCoordinate,
 					dockableBeneathMouse.getComponent());
-			double middleX = (dockableBeneathMouse.getComponent().getBounds()
-					.getMinX() + dockableBeneathMouse.getComponent()
-					.getBounds().getMaxX()) / 2.0;
+			final double middleX = (dockableBeneathMouse.getComponent()
+					.getBounds().getMinX() + dockableBeneathMouse
+					.getComponent().getBounds().getMaxX()) / 2.0;
 			System.out.println(Math.abs(mouseCoordinate.getX()));
 			System.out.println(middleX + " / " + mouseCoordinate.getX());
 
@@ -205,7 +205,7 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 		final Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
 		// variables for loop search
 		double formerDistance;
-		OrientedDockStation orientedStation = stationHost;
+		final OrientedDockStation orientedStation = stationHost;
 		Point middleCoordinate = new Point((int) stationHost.getDockable(0)
 				.getComponent().getBounds().getCenterX(), (int) stationHost
 				.getDockable(0).getComponent().getBounds().getCenterY());
@@ -261,9 +261,10 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 	 * @return the position
 	 */
 	private Position computeItemPositionVSBeneathDockable(){
-		Point coordDockableDragged = getItem().getComponent().getLocation();
+		final Point coordDockableDragged = getItem().getComponent()
+				.getLocation();
 		if (getDockableBeneathMouse() != null){
-			Point coordDockableBeneathMouse = getDockableBeneathMouse()
+			final Point coordDockableBeneathMouse = getDockableBeneathMouse()
 					.getComponent().getLocation();
 			// The dockable is now in the frame of reference of the dockable
 			// beneath mouse
@@ -298,7 +299,7 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 	@Override
 	public String toString(){
 		return this.getClass().getSimpleName() + '@'
-				+ Integer.toHexString(this.hashCode());
+				+ Integer.toHexString(hashCode());
 	}
 
 	/**
@@ -307,7 +308,7 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation>
 	 * @return string describing fields
 	 */
 	public String toSummaryString(){
-		String ln = System.getProperty("line.separator");
+		final String ln = System.getProperty("line.separator");
 		return "	=> Drag dockable: " + getItem() + ln + "	=> Station target: "
 				+ getTarget() + ln + "	=> Dockable beneath mouse:"
 				+ getDockableBeneathMouse() + ln + "	=> Closest side:"

@@ -2,7 +2,6 @@ package bibliothek.gui.dock.station;
 
 import bibliothek.gui.Orientation;
 
-
 /**
  * An oriented dockstation is a station where dockables are oriented either
  * vertically either horizontally. The methods allow to set the orientation and

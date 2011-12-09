@@ -32,9 +32,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Herve Guillaume
  */
 public class ToolbarDockTitlePoint extends AbstractDockTitle{
-	
-	private Color color;
-	
+
+	private final Color color;
+
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitlePoint}s.
 	 * 
@@ -77,7 +77,7 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 
 	@Override
 	public Dimension getPreferredSize(){
-		Dimension size = super.getPreferredSize();
+		final Dimension size = super.getPreferredSize();
 		return new Dimension(Math.max(5, size.width), Math.max(5, size.height));
 	}
 
@@ -103,15 +103,16 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 
 	// this model draw an image ==> so the background is behind and invisible
 	static{
-		ColorModel colorModel = new DirectColorModel(24, 0xff0000, 0x00ff00,
-				0x0000ff);
-		SampleModel sampleModel = colorModel.createCompatibleSampleModel(3, 3);
-		int[] pixels = new int[] { 0xffd6cfc6, 0xffb3b0ab, 0xffefebe7,
+		final ColorModel colorModel = new DirectColorModel(24, 0xff0000,
+				0x00ff00, 0x0000ff);
+		final SampleModel sampleModel = colorModel.createCompatibleSampleModel(
+				3, 3);
+		final int[] pixels = new int[] { 0xffd6cfc6, 0xffb3b0ab, 0xffefebe7,
 				0xffb3b0a3, 0xff8d887a, 0xffffffff, 0xffe7e7e7, 0xffffffff,
 				0xfffbffff, };
 
-		DataBufferInt dataBuffer = new DataBufferInt(pixels, 9);
-		WritableRaster writableRaster = Raster.createWritableRaster(
+		final DataBufferInt dataBuffer = new DataBufferInt(pixels, 9);
+		final WritableRaster writableRaster = Raster.createWritableRaster(
 				sampleModel, dataBuffer, new Point());
 		POINT = new BufferedImage(colorModel, writableRaster, false, null);
 	}
@@ -121,16 +122,16 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 		if (getOrientation().isHorizontal()){
 			// Draw a horizontal handle.
 			int x = 4;
-			int y = 3;
-			while (x < getWidth() - POINT_DISTANCE){
+			final int y = 3;
+			while (x < (getWidth() - POINT_DISTANCE)){
 				g.drawImage(POINT, x, y, this);
 				x += POINT_DISTANCE;
 			}
 		} else{
 			// Draw a vertical handle.
-			int x = 3;
+			final int x = 3;
 			int y = 4;
-			while (y < getHeight() - POINT_DISTANCE){
+			while (y < (getHeight() - POINT_DISTANCE)){
 				g.drawImage(POINT, x, y, this);
 				y += POINT_DISTANCE;
 			}

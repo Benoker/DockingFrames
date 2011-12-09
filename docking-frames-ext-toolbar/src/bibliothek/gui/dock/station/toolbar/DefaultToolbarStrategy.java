@@ -40,71 +40,73 @@ import bibliothek.gui.dock.station.ToolbarTabDockStation;
 public class DefaultToolbarStrategy implements ToolbarStrategy{
 
 	@Override
-	public Dockable ensureToolbarLayer( DockStation station, Dockable dockable ){		
+	public Dockable ensureToolbarLayer( DockStation station, Dockable dockable ){
 		if (station instanceof ToolbarDockStation){
 			return dockable;
 		}
-		
+
 		if (station instanceof ToolbarGroupDockStation){
 			if (dockable instanceof ToolbarDockStation){
 				return dockable;
 			} else{
-				ToolbarDockStation result = new ToolbarDockStation();
+				final ToolbarDockStation result = new ToolbarDockStation();
 				result.setController(station.getController());
 				result.drop(dockable);
 				return result;
 			}
 		}
 
-		if (station instanceof ToolbarContainerDockStation || station instanceof ScreenDockStation){
+		if ((station instanceof ToolbarContainerDockStation)
+				|| (station instanceof ScreenDockStation)){
 			if (dockable instanceof ToolbarGroupDockStation){
 				return dockable;
 			} else{
-				ToolbarGroupDockStation result = new ToolbarGroupDockStation();
+				final ToolbarGroupDockStation result = new ToolbarGroupDockStation();
 				result.setController(station.getController());
 				result.drop(dockable);
 				return result;
 			}
-		}		
+		}
 
 		return null;
 	}
 
 	@Override
-	public boolean isToolbarGroupPartParent( DockStation parent, Dockable child, boolean strong ){
-		if( strong ){
-			if( child instanceof ComponentDockable) {
+	public boolean isToolbarGroupPartParent( DockStation parent,
+			Dockable child, boolean strong ){
+		if (strong){
+			if (child instanceof ComponentDockable){
 				return parent instanceof ToolbarDockStation;
 			}
-			
-			if( child instanceof ToolbarDockStation ){
+
+			if (child instanceof ToolbarDockStation){
 				return parent instanceof ToolbarGroupDockStation;
 			}
-			
-			if( child instanceof ToolbarGroupDockStation ){
-				return parent instanceof ToolbarContainerDockStation || parent instanceof ScreenDockStation;
+
+			if (child instanceof ToolbarGroupDockStation){
+				return (parent instanceof ToolbarContainerDockStation)
+						|| (parent instanceof ScreenDockStation);
 			}
-			
+
 			return false;
-		}
-		else{
+		} else{
 			// floating policy
-			if (parent instanceof ScreenDockStation
-					&& child instanceof ToolbarGroupDockStation) {
+			if ((parent instanceof ScreenDockStation)
+					&& (child instanceof ToolbarGroupDockStation)){
 				return true;
 			}
 			// ?? policy
-			if (child instanceof ComponentDockable
-					&& parent instanceof ToolbarTabDockStation){
+			if ((child instanceof ComponentDockable)
+					&& (parent instanceof ToolbarTabDockStation)){
 				return true;
 			}
 			// docking and merging policy
 			if (parent instanceof ToolbarInterface){
-				if (child instanceof ComponentDockable
-						|| child instanceof ToolbarDockStation){
+				if ((child instanceof ComponentDockable)
+						|| (child instanceof ToolbarDockStation)){
 					return true;
-				} else if (child instanceof ToolbarGroupDockStation
-						&& (parent instanceof ToolbarGroupDockStation || parent instanceof ToolbarContainerDockStation)){
+				} else if ((child instanceof ToolbarGroupDockStation)
+						&& ((parent instanceof ToolbarGroupDockStation) || (parent instanceof ToolbarContainerDockStation))){
 					return true;
 				} else{
 					return false;
@@ -117,13 +119,13 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 
 	@Override
 	public boolean isToolbarGroupPart( Dockable dockable ){
-		return dockable instanceof ComponentDockable
-				|| dockable instanceof ToolbarDockStation;
+		return (dockable instanceof ComponentDockable)
+				|| (dockable instanceof ToolbarDockStation);
 	}
 
 	@Override
 	public boolean isToolbarPart( Dockable dockable ){
-		return dockable instanceof ToolbarGroupDockStation
+		return (dockable instanceof ToolbarGroupDockStation)
 				|| isToolbarGroupPart(dockable);
 	}
 }

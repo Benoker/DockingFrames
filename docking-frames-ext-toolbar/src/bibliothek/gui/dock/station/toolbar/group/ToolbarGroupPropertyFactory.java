@@ -5,12 +5,13 @@ import bibliothek.gui.dock.layout.DockablePropertyFactory;
 
 /**
  * This factory creates new {@link ToolbarGroupProperty}s.
+ * 
  * @author Benjamin Sigg
  */
 public class ToolbarGroupPropertyFactory implements DockablePropertyFactory{
 	/** the unique identifier of this factory */
 	public static final String ID = "ToolbarGroupProperty";
-	
+
 	@Override
 	public String getID(){
 		return ID;

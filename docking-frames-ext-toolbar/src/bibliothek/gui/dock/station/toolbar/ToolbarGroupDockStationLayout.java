@@ -31,35 +31,43 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 /**
  * A layout object describing the contents of a {@link ToolbarGroupDockStation}.
+ * 
  * @author Benjamin Sigg
  */
-public class ToolbarGroupDockStationLayout {
+public class ToolbarGroupDockStationLayout{
 	/** the encoded layout of a {@link ToolbarGroupDockStation} */
-	private PlaceholderMap placeholders;
-	
+	private final PlaceholderMap placeholders;
+
 	/** whether the children are big or small */
-	private ExpandedState state;
-	
+	private final ExpandedState state;
+
 	/**
 	 * Creates a new layout object.
-	 * @param map the encoded layout of a {@link ToolbarGroupDockStation}, not <code>null</code>
-	 * @param state whether the children are big or small
+	 * 
+	 * @param map
+	 *            the encoded layout of a {@link ToolbarGroupDockStation}, not
+	 *            <code>null</code>
+	 * @param state
+	 *            whether the children are big or small
 	 */
-	public ToolbarGroupDockStationLayout( PlaceholderMap map, ExpandedState state ){
-		this.placeholders = map;
+	public ToolbarGroupDockStationLayout( PlaceholderMap map,
+			ExpandedState state ){
+		placeholders = map;
 		this.state = state;
 	}
-	
+
 	/**
 	 * Gets the encoded layout of a {@link ToolbarGroupDockStation}.
+	 * 
 	 * @return the encoded layout
 	 */
 	public PlaceholderMap getPlaceholders(){
 		return placeholders;
 	}
-	
+
 	/**
 	 * Tells whether the children are big or small.
+	 * 
 	 * @return the size of the children
 	 */
 	public ExpandedState getState(){

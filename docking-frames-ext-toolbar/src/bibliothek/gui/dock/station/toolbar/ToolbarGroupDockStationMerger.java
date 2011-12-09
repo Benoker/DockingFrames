@@ -17,31 +17,34 @@ import bibliothek.gui.dock.station.StationDropOperation;
  * @author Herve Guillaume
  * @author Benjamin Sigg
  */
-public class ToolbarGroupDockStationMerger extends AbstractToolbarMerger {
+public class ToolbarGroupDockStationMerger extends AbstractToolbarMerger{
 	@Override
 	protected boolean validType( AbstractToolbarDockStation station ){
 		return station instanceof ToolbarGroupDockStation;
 	}
-	
+
 	@Override
-	public void merge( StationDropOperation operation, DockStation parent, DockStation child ){
-		ToolbarComplexDropInfo opreationToolbar = (ToolbarComplexDropInfo) operation;
-		ToolbarGroupDockStation station = (ToolbarGroupDockStation) parent;
+	public void merge( StationDropOperation operation, DockStation parent,
+			DockStation child ){
+		final ToolbarComplexDropInfo opreationToolbar = (ToolbarComplexDropInfo) operation;
+		final ToolbarGroupDockStation station = (ToolbarGroupDockStation) parent;
 		// WARNING: if I don't do a copy of dockables, problem occurs.
 		// Perhaps due to concurrent access to the dockable (drop in
 		// goal area ==> drag in origin area)?
-		int count = child.getDockableCount();
-		List<Dockable> insertDockables = new ArrayList<Dockable>();
-		for( int i = 0; i < count; i++ ) {
-			insertDockables.add( child.getDockable( i ) );
+		final int count = child.getDockableCount();
+		final List<Dockable> insertDockables = new ArrayList<Dockable>();
+		for (int i = 0; i < count; i++){
+			insertDockables.add(child.getDockable(i));
 		}
 		int increment = 0;
-		if( opreationToolbar.getSideDockableBeneathMouse() == Position.SOUTH || opreationToolbar.getSideDockableBeneathMouse() == Position.EAST ) {
+		if ((opreationToolbar.getSideDockableBeneathMouse() == Position.SOUTH)
+				|| (opreationToolbar.getSideDockableBeneathMouse() == Position.EAST)){
 			increment++;
 		}
-		int dropIndex = station.indexOf( opreationToolbar.getDockableBeneathMouse() ) + increment;
-		for( int i = 0; i < count; i++ ) {
-			station.drop( insertDockables.get( i ), dropIndex++ );
+		int dropIndex = station.indexOf(opreationToolbar
+				.getDockableBeneathMouse()) + increment;
+		for (int i = 0; i < count; i++){
+			station.drop(insertDockables.get(i), dropIndex++);
 		}
 	}
 }

@@ -42,104 +42,125 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 
 /**
- * This {@link Inserter} searches for toolbars using the {@link ToolbarStrategy}, and adds them to
- * {@link ScreenDockStation}s, creating any additional layers that are required for the operation.
+ * This {@link Inserter} searches for toolbars using the {@link ToolbarStrategy}
+ * , and adds them to {@link ScreenDockStation}s, creating any additional layers
+ * that are required for the operation.
+ * 
  * @author Benjamin Sigg
  */
 public class ScreenToolbarInserter implements Inserter{
-	private DockController controller;
-	
+	private final DockController controller;
+
 	/**
 	 * Creates a new inserter
-	 * @param controller the controller in whose realm this inserter will be used
+	 * 
+	 * @param controller
+	 *            the controller in whose realm this inserter will be used
 	 */
 	public ScreenToolbarInserter( DockController controller ){
 		this.controller = controller;
 	}
-	
+
 	@Override
 	public StationDropOperation before( InserterSource source ){
 		return null;
 	}
-	
+
 	/**
 	 * Gets the {@link ToolbarStrategy} that is currently in use.
+	 * 
 	 * @return the current strategy
 	 */
 	protected ToolbarStrategy getStrategy(){
-		return controller.getProperties().get( ToolbarStrategy.STRATEGY );
+		return controller.getProperties().get(ToolbarStrategy.STRATEGY);
 	}
-	
+
 	@Override
 	public StationDropOperation after( InserterSource source ){
-		if( source.getOperation() != null || !(source.getParent() instanceof ScreenDockStation) ){
+		if ((source.getOperation() != null)
+				|| !(source.getParent() instanceof ScreenDockStation)){
 			return null;
 		}
-		ToolbarStrategy strategy = getStrategy();
-		if( !strategy.isToolbarPart( source.getChild() )){
+		final ToolbarStrategy strategy = getStrategy();
+		if (!strategy.isToolbarPart(source.getChild())){
 			return null;
 		}
-		
-		if( source.getParent().accept( source.getChild() ) && source.getChild().accept( source.getParent() )){
-			// if a DockAcceptance does not allow the combination, while the involved elements does, we better
+
+		if (source.getParent().accept(source.getChild())
+				&& source.getChild().accept(source.getParent())){
+			// if a DockAcceptance does not allow the combination, while the
+			// involved elements does, we better
 			// assume the DockAcceptance has a good reason.
 			return null;
 		}
-		
-		return new Operation( source );
+
+		return new Operation(source);
 	}
-	
+
 	/**
-	 * Called if the toolbar item defined by <code>source</code> has to be put onto
-	 * the {@link ScreenDockStation} defined by <code>source</code>.
-	 * @param source all the information about the operation
-	 * @param orientation the preferred orientation of the new window, might be <code>null</code>
+	 * Called if the toolbar item defined by <code>source</code> has to be put
+	 * onto the {@link ScreenDockStation} defined by <code>source</code>.
+	 * 
+	 * @param source
+	 *            all the information about the operation
+	 * @param orientation
+	 *            the preferred orientation of the new window, might be
+	 *            <code>null</code>
 	 */
 	protected void execute( InserterSource source, Orientation orientation ){
-		ToolbarStrategy strategy = getStrategy();
-				
-		Dockable item = strategy.ensureToolbarLayer( source.getParent(), source.getChild() );
-		if( orientation != null && item.asDockStation() instanceof OrientedDockStation ){
-			((OrientedDockStation)item).setOrientation( orientation );
+		final ToolbarStrategy strategy = getStrategy();
+
+		final Dockable item = strategy.ensureToolbarLayer(source.getParent(),
+				source.getChild());
+		if ((orientation != null)
+				&& (item.asDockStation() instanceof OrientedDockStation)){
+			((OrientedDockStation) item).setOrientation(orientation);
 		}
-		
-		ScreenDockStation station = (ScreenDockStation)source.getParent();
-		
+
+		final ScreenDockStation station = (ScreenDockStation) source
+				.getParent();
+
 		item.getComponent().validate();
-		Dimension size = item.getComponent().getPreferredSize();
-		
-		ScreenDockProperty location = new ScreenDockProperty( source.getTitleX(), source.getTitleY(), size.width, size.height );
-		station.drop( item, location, false );
+		final Dimension size = item.getComponent().getPreferredSize();
+
+		final ScreenDockProperty location = new ScreenDockProperty(
+				source.getTitleX(), source.getTitleY(), size.width, size.height);
+		station.drop(item, location, false);
 	}
-	
+
 	/**
-	 * This {@link StationDropOperation} will add a toolbar part to a {@link ScreenDockStation}
-	 * using {@link ToolbarStrategy#ensureToolbarLayer(DockStation, Dockable)}
+	 * This {@link StationDropOperation} will add a toolbar part to a
+	 * {@link ScreenDockStation} using
+	 * {@link ToolbarStrategy#ensureToolbarLayer(DockStation, Dockable)}
+	 * 
 	 * @author Benjamin Sigg
 	 */
 	private class Operation implements StationDropOperation{
-		private InserterSource source;
+		private final InserterSource source;
 		private Orientation orientation;
-		
+
 		/**
 		 * Creates a new operation
-		 * @param source information about the operation that is going to happen
+		 * 
+		 * @param source
+		 *            information about the operation that is going to happen
 		 */
 		public Operation( InserterSource source ){
 			this.source = source;
-			
-			Dockable dockable = source.getChild();
-			DockStation parent = dockable.getDockParent();
-			
+
+			final Dockable dockable = source.getChild();
+			final DockStation parent = dockable.getDockParent();
+
 			orientation = null;
-			if( parent instanceof OrientingDockStation ){
-				orientation = ((OrientingDockStation)parent).getOrientationOf( dockable );
-			}
-			else if( dockable.asDockStation() instanceof OrientedDockStation ){
-				orientation = ((OrientedDockStation)dockable.asDockStation()).getOrientation();
+			if (parent instanceof OrientingDockStation){
+				orientation = ((OrientingDockStation) parent)
+						.getOrientationOf(dockable);
+			} else if (dockable.asDockStation() instanceof OrientedDockStation){
+				orientation = ((OrientedDockStation) dockable.asDockStation())
+						.getOrientation();
 			}
 		}
-		
+
 		@Override
 		public void draw(){
 			// nothing to do
@@ -157,7 +178,7 @@ public class ScreenToolbarInserter implements Inserter{
 
 		@Override
 		public void execute(){
-			ScreenToolbarInserter.this.execute( source, orientation );
+			ScreenToolbarInserter.this.execute(source, orientation);
 		}
 
 		@Override
@@ -179,6 +200,6 @@ public class ScreenToolbarInserter implements Inserter{
 		public DisplayerCombinerTarget getDisplayerCombination(){
 			return null;
 		}
-		
+
 	}
 }

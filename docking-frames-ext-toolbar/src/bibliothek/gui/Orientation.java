@@ -6,7 +6,6 @@ package bibliothek.gui;
  * @author Herve Guillaume
  * 
  */
-public enum Orientation {
+public enum Orientation{
 	VERTICAL, HORIZONTAL
 }
-

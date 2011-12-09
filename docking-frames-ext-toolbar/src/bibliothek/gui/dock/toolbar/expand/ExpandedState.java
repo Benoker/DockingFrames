@@ -3,8 +3,10 @@ package bibliothek.gui.dock.toolbar.expand;
 import bibliothek.gui.Dockable;
 
 /**
- * Describes the state of a {@link Dockable} as seen by the {@link ExpandableToolbarItemStrategyListener}
- * and by {@link ExpandableToolbarItem}.
+ * Describes the state of a {@link Dockable} as seen by the
+ * {@link ExpandableToolbarItemStrategyListener} and by
+ * {@link ExpandableToolbarItem}.
+ * 
  * @author Benjamin Sigg
  */
 public enum ExpandedState{

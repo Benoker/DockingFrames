@@ -41,46 +41,53 @@ import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
 /**
- * A factory for reading and writing {@link ComponentDockable}s. Since there is no way to guess which {@link Component} is
- * actually shown by the {@link ComponentDockable} this factory does never create new {@link ComponentDockable}s nor
- * does it store any information. 
+ * A factory for reading and writing {@link ComponentDockable}s. Since there is
+ * no way to guess which {@link Component} is actually shown by the
+ * {@link ComponentDockable} this factory does never create new
+ * {@link ComponentDockable}s nor does it store any information.
+ * 
  * @author Benjamin Sigg
  */
-public class ToolbarPartDockFactory implements DockFactory<ComponentDockable, PerspectiveElement, Object>{
+public class ToolbarPartDockFactory implements
+		DockFactory<ComponentDockable, PerspectiveElement, Object>{
 	/** unique unmodifiable identifier of this factory */
 	public static final String ID = "ToolbarPartDockFactory";
-	
+
 	/** dummy object used as layout, does not contain any information */
 	private static final Object DUMMY = new Object();
-	
+
 	@Override
 	public String getID(){
 		return ID;
 	}
 
 	@Override
-	public Object getLayout( ComponentDockable element, Map<Dockable, Integer> children ){
+	public Object getLayout( ComponentDockable element,
+			Map<Dockable, Integer> children ){
 		return DUMMY;
 	}
 
 	@Override
-	public Object getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
+	public Object getPerspectiveLayout( PerspectiveElement element,
+			Map<PerspectiveDockable, Integer> children ){
 		return DUMMY;
 	}
 
 	@Override
-	public void setLayout( ComponentDockable element, Object layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+	public void setLayout( ComponentDockable element, Object layout,
+			Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
 		// nothing to do
 	}
 
 	@Override
-	public void setLayout( ComponentDockable element, Object layout, PlaceholderStrategy placeholders ){
+	public void setLayout( ComponentDockable element, Object layout,
+			PlaceholderStrategy placeholders ){
 		// nothing to do
 	}
 
 	@Override
 	public void write( Object layout, DataOutputStream out ) throws IOException{
-		// nothing to do		
+		// nothing to do
 	}
 
 	@Override
@@ -89,7 +96,8 @@ public class ToolbarPartDockFactory implements DockFactory<ComponentDockable, Pe
 	}
 
 	@Override
-	public Object read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
+	public Object read( DataInputStream in, PlaceholderStrategy placeholders )
+			throws IOException{
 		return DUMMY;
 	}
 
@@ -104,22 +112,26 @@ public class ToolbarPartDockFactory implements DockFactory<ComponentDockable, Pe
 	}
 
 	@Override
-	public ComponentDockable layout( Object layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+	public ComponentDockable layout( Object layout,
+			Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
 		return null;
 	}
 
 	@Override
-	public ComponentDockable layout( Object layout, PlaceholderStrategy placeholders ){
+	public ComponentDockable layout( Object layout,
+			PlaceholderStrategy placeholders ){
 		return null;
 	}
 
 	@Override
-	public PerspectiveElement layoutPerspective( Object layout, Map<Integer, PerspectiveDockable> children ){
+	public PerspectiveElement layoutPerspective( Object layout,
+			Map<Integer, PerspectiveDockable> children ){
 		return null;
 	}
 
 	@Override
-	public void layoutPerspective( PerspectiveElement perspective, Object layout, Map<Integer, PerspectiveDockable> children ){
+	public void layoutPerspective( PerspectiveElement perspective,
+			Object layout, Map<Integer, PerspectiveDockable> children ){
 		// nothing to do
 	}
 }

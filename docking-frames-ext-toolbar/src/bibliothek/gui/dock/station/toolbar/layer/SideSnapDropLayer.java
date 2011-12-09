@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.layer.LayerPriority;
@@ -19,7 +20,7 @@ import bibliothek.gui.dock.station.layer.LayerPriority;
  * @author Herve Guillaume
  */
 public class SideSnapDropLayer implements DockStationDropLayer{
-	private ToolbarGroupDockStation station;
+	private final ToolbarGroupDockStation station;
 	private LayerPriority priority = LayerPriority.OUTSIDE_LOW;
 
 	/**
@@ -72,16 +73,16 @@ public class SideSnapDropLayer implements DockStationDropLayer{
 		if (!station.isAllowSideSnap()){
 			return false;
 		}
-		Point point = new Point(x, y);
+		final Point point = new Point(x, y);
 		SwingUtilities.convertPointFromScreen(point, getComponent());
-		Rectangle bounds = getComponent().getBounds();
+		final Rectangle bounds = getComponent().getBounds();
 		if (bounds.contains(point)){
 			// if the mouse in inside component, so it is not inside the snap
 			// extended zone
 			return false;
 		}
-		int size = station.getBorderSideSnapSize();
-		Rectangle extendedBounds = new Rectangle();
+		final int size = station.getBorderSideSnapSize();
+		final Rectangle extendedBounds = new Rectangle();
 		extendedBounds.setBounds(bounds.x - size, bounds.y - size, bounds.width
 				+ (size * 2), bounds.height + (size * 2));
 
