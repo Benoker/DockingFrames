@@ -2,6 +2,7 @@ package bibliothek.gui.dock;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -71,10 +72,10 @@ public abstract class AbstractToolbarDockStation extends
 	protected Orientation orientation = Orientation.HORIZONTAL;
 
 	/** all registered {@link OrientingDockStationListener}s. */
-	private List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
+	private final List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
 
 	/** all registered {@link ExpandableToolbarItemListener}s */
-	private List<ExpandableToolbarItemListener> expandableListeners = new ArrayList<ExpandableToolbarItemListener>();
+	private final List<ExpandableToolbarItemListener> expandableListeners = new ArrayList<ExpandableToolbarItemListener>();
 	/** the current behavior of this station */
 	private ExpandedState state = ExpandedState.SHRUNK;
 
@@ -113,7 +114,7 @@ public abstract class AbstractToolbarDockStation extends
 	@Override
 	public String toString(){
 		return this.getClass().getSimpleName() + '@'
-				+ Integer.toHexString(this.hashCode());
+				+ Integer.toHexString(hashCode());
 	}
 
 	// ########################################################
@@ -166,8 +167,9 @@ public abstract class AbstractToolbarDockStation extends
 	 * Fires an {@link OrientingDockStationEvent}.
 	 */
 	protected void fireOrientingEvent(){
-		OrientingDockStationEvent event = new OrientingDockStationEvent(this);
-		for (OrientingDockStationListener listener : orientingListeners
+		final OrientingDockStationEvent event = new OrientingDockStationEvent(
+				this);
+		for (final OrientingDockStationListener listener : orientingListeners
 				.toArray(new OrientingDockStationListener[orientingListeners
 						.size()])){
 			listener.changed(event);
@@ -207,12 +209,12 @@ public abstract class AbstractToolbarDockStation extends
 	@Override
 	public void setExpandedState( ExpandedState state ){
 		if (this.state != state){
-			DockController controller = getController();
+			final DockController controller = getController();
 			if (controller != null){
 				controller.freezeLayout();
 			}
 			try{
-				ExpandedState oldState = this.state;
+				final ExpandedState oldState = this.state;
 
 				if (this.state != ExpandedState.SHRUNK){
 					shrink();
@@ -224,7 +226,7 @@ public abstract class AbstractToolbarDockStation extends
 				}
 				this.state = state;
 
-				for (ExpandableToolbarItemListener listener : expandableListeners){
+				for (final ExpandableToolbarItemListener listener : expandableListeners){
 					listener.changed(this, oldState, state);
 				}
 			} finally{
@@ -238,13 +240,13 @@ public abstract class AbstractToolbarDockStation extends
 	private void expand(){
 		// state is "shrunk"
 
-		DockController controller = getController();
+		final DockController controller = getController();
 		Dockable focused = null;
 
-		Dockable[] children = new Dockable[getDockableCount()];
+		final Dockable[] children = new Dockable[getDockableCount()];
 		for (int i = 0; i < children.length; i++){
 			children[i] = getDockable(i);
-			if (controller != null && controller.isFocused(children[i])){
+			if ((controller != null) && controller.isFocused(children[i])){
 				focused = children[i];
 			}
 		}
@@ -253,8 +255,8 @@ public abstract class AbstractToolbarDockStation extends
 			remove(getDockable(i));
 		}
 
-		StackDockStation station = new ToolbarTabDockStation();
-		for (Dockable child : children){
+		final StackDockStation station = new ToolbarTabDockStation();
+		for (final Dockable child : children){
 			station.drop(child);
 		}
 
@@ -271,13 +273,13 @@ public abstract class AbstractToolbarDockStation extends
 
 	public void shrink(){
 		if (state == ExpandedState.EXPANDED){
-			DockController controller = getController();
+			final DockController controller = getController();
 
-			DockStation child = getDockable(0).asDockStation();
-			Dockable focused = child.getFrontDockable();
+			final DockStation child = getDockable(0).asDockStation();
+			final Dockable focused = child.getFrontDockable();
 			remove(getDockable(0));
 
-			Dockable[] children = new Dockable[child.getDockableCount()];
+			final Dockable[] children = new Dockable[child.getDockableCount()];
 			for (int i = 0; i < children.length; i++){
 				children[i] = child.getDockable(i);
 			}
@@ -285,10 +287,10 @@ public abstract class AbstractToolbarDockStation extends
 				child.drag(children[i]);
 			}
 
-			for (Dockable next : children){
+			for (final Dockable next : children){
 				drop(next);
 			}
-			if (focused != null && controller != null){
+			if ((focused != null) && (controller != null)){
 				controller.setFocusedDockable(focused, true);
 			}
 		}
@@ -329,9 +331,9 @@ public abstract class AbstractToolbarDockStation extends
 	 * @return the strategy, never <code>null</code>
 	 */
 	public ToolbarStrategy getToolbarStrategy(){
-		SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>(
+		final SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>(
 				ToolbarStrategy.STRATEGY, getController());
-		ToolbarStrategy result = value.getValue();
+		final ToolbarStrategy result = value.getValue();
 		value.setProperties((DockController) null);
 		return result;
 	}
@@ -342,42 +344,6 @@ public abstract class AbstractToolbarDockStation extends
 	 * @param dropInfo
 	 */
 	protected abstract void drop( StationDropOperation dropInfo );
-
-	/**
-	 * Drops <code>dockable</code> at location <code>index</code>.
-	 * 
-	 * @param dockable
-	 *            the element to add
-	 * @param index
-	 *            the location of <code>dockable</code>
-	 * @return whether the operation was succesfull or not
-	 */
-	// public abstract boolean drop( Dockable dockable, int index );
-
-	// protected abstract boolean drop( Dockable dockable, int index, boolean
-	// force );
-
-	// protected abstract void move( Dockable dockable, int indexWhereInsert );
-
-	// /**
-	// * Insert one dockable at the index. The dockable can be a
-	// * {@link ComponentDockable}, {@link ToolbarDockStation} or a
-	// * {@link ToolbarGroupDockStation} (see method accept()). All the
-	// * ComponentDockable extracted from the element are merged together and
-	// * wrapped in a {@link ToolbarDockStation} before to be inserted at the
-	// * index
-	// *
-	// * @param dockable
-	// * Dockable to add
-	// * @param index
-	// * Index where add dockable
-	// */
-	// protected abstract void add( Dockable dockable, int index );
-
-	// protected abstract void add( Dockable dockable, int index, Path
-	// placeholder );
-
-	// protected abstract void insertAt( StationChildHandle handle, int index );
 
 	@Override
 	public boolean canDrag( Dockable dockable ){
@@ -397,7 +363,6 @@ public abstract class AbstractToolbarDockStation extends
 	 *            the child to remove
 	 */
 	protected abstract void remove( Dockable dockable );
-
 
 	@Override
 	public boolean canReplace( Dockable old, Dockable next ){

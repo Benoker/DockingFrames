@@ -48,9 +48,9 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 
 	@Override
 	public DockableProperty copy(){
-		ToolbarContainerProperty copy = new ToolbarContainerProperty(index,
-				placeholder);
-		DockableProperty successor = getSuccessor();
+		final ToolbarContainerProperty copy = new ToolbarContainerProperty(
+				index, placeholder);
+		final DockableProperty successor = getSuccessor();
 		if (successor != null){
 			copy.setSuccessor(successor.copy());
 		}
@@ -94,7 +94,7 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 
 	@Override
 	public void load( DataInputStream in ) throws IOException{
-		Version version = Version.read(in);
+		final Version version = Version.read(in);
 		if (!version.equals(Version.VERSION_1_1_1)){
 			throw new IOException("data from an unknown version: " + version);
 		}
@@ -116,8 +116,8 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 
 	@Override
 	public void load( XElement element ){
-		XElement xindex = element.getElement("index");
-		XElement xplaceholder = element.getElement("placeholder");
+		final XElement xindex = element.getElement("index");
+		final XElement xplaceholder = element.getElement("placeholder");
 
 		if (xindex != null){
 			index = xindex.getInt();

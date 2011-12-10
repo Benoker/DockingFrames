@@ -28,7 +28,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  */
 public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
 
-	private Color color;
+	private final Color color;
 
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitle}s.
@@ -72,7 +72,7 @@ public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
 
 	@Override
 	public Dimension getPreferredSize(){
-		Dimension size = super.getPreferredSize();
+		final Dimension size = super.getPreferredSize();
 		return new Dimension(Math.max(5, size.width), Math.max(5, size.height));
 	}
 
@@ -85,17 +85,17 @@ public class ToolbarDockTitleRoundedBound extends AbstractDockTitle{
 	@Override
 	public void paintBackground( Graphics g, JComponent component ){
 		super.paintComponents(g);
-		Graphics2D g2D = (Graphics2D) g;
+		final Graphics2D g2D = (Graphics2D) g;
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.setColor(color);
 		if (getOrientation().isHorizontal()){
-			RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double(0,
-					0, getWidth(), getHeight() * 2, 8, 8);
+			final RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double(
+					0, 0, getWidth(), getHeight() * 2, 8, 8);
 			g2D.fill(rectangleRounded);
 		} else{
-			RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double(0,
-					0, getWidth() * 2, getHeight(), 8, 8);
+			final RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double(
+					0, 0, getWidth() * 2, getHeight(), 8, 8);
 			g2D.fill(rectangleRounded);
 		}
 	}

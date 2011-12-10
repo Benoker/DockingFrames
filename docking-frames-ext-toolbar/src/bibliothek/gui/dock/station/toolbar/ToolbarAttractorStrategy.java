@@ -32,40 +32,51 @@ import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 
 /**
  * This implementation of an {@link AttractorStrategy} reads the current
- * {@link ToolbarStrategy#STRATEGY} and assumes that two {@link Dockable}s 
- * which both are {@link ToolbarStrategy#isToolbarPart(Dockable) toolbar parts} attract
- * each other.
+ * {@link ToolbarStrategy#STRATEGY} and assumes that two {@link Dockable}s which
+ * both are {@link ToolbarStrategy#isToolbarPart(Dockable) toolbar parts}
+ * attract each other.
+ * 
  * @author Benjamin Sigg
  */
 public class ToolbarAttractorStrategy implements AttractorStrategy{
 	@Override
-	public Attraction attract( ScreenDockStation parent, Dockable moved, Dockable fixed ){
-		return attraction( parent, moved, fixed );
+	public Attraction attract( ScreenDockStation parent, Dockable moved,
+			Dockable fixed ){
+		return attraction(parent, moved, fixed);
 	}
-	
+
 	@Override
-	public Attraction stick( ScreenDockStation parent, Dockable moved, Dockable fixed ){
+	public Attraction stick( ScreenDockStation parent, Dockable moved,
+			Dockable fixed ){
 		return Attraction.NEUTRAL;
 	}
-	
+
 	/**
-	 * Calculates the result of {@link #attract(ScreenDockStation, Dockable, Dockable)}. Subclasses may use
-	 * this method to calculate {@link #stick(ScreenDockStation, Dockable, Dockable)} as well.
-	 * @param parent the parent of <code>moved</code> and <code>fixed</code>
-	 * @param moved the {@link Dockable} that was moved
-	 * @param fixed the {@link Dockable} that was not moved
+	 * Calculates the result of
+	 * {@link #attract(ScreenDockStation, Dockable, Dockable)}. Subclasses may
+	 * use this method to calculate
+	 * {@link #stick(ScreenDockStation, Dockable, Dockable)} as well.
+	 * 
+	 * @param parent
+	 *            the parent of <code>moved</code> and <code>fixed</code>
+	 * @param moved
+	 *            the {@link Dockable} that was moved
+	 * @param fixed
+	 *            the {@link Dockable} that was not moved
 	 * @return whether the two items attract each other
 	 */
-	protected Attraction attraction( ScreenDockStation parent, Dockable moved, Dockable fixed ){
-		DockController controller = parent.getController();
-		if( controller == null ){
+	protected Attraction attraction( ScreenDockStation parent, Dockable moved,
+			Dockable fixed ){
+		final DockController controller = parent.getController();
+		if (controller == null){
 			return Attraction.NEUTRAL;
 		}
-		ToolbarStrategy strategy = controller.getProperties().get( ToolbarStrategy.STRATEGY );
-		if( strategy.isToolbarPart( fixed ) && strategy.isToolbarPart( moved )){
+		final ToolbarStrategy strategy = controller.getProperties().get(
+				ToolbarStrategy.STRATEGY);
+		if (strategy.isToolbarPart(fixed) && strategy.isToolbarPart(moved)){
 			return Attraction.ATTRACTED;
 		}
-		
+
 		return Attraction.NEUTRAL;
 	}
 }

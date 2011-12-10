@@ -7,17 +7,18 @@ import javax.swing.SwingUtilities;
 
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.LayerPriority;
 
 /**
- * This layer slim the drop area of {@link ToolbarGroupDockStation}, as it take into
- * account means an area where no dockable can be droped into the station.
+ * This layer slim the drop area of {@link ToolbarGroupDockStation}, as it take
+ * into account means an area where no dockable can be droped into the station.
  * 
  * @author Herve Guillaume
  */
 public class ToolbarSlimDropLayer extends DefaultDropLayer{
-	private ToolbarDockStation station;
+	private final ToolbarDockStation station;
 
 	/**
 	 * Creates a new layer.
@@ -34,20 +35,20 @@ public class ToolbarSlimDropLayer extends DefaultDropLayer{
 	@Override
 	public boolean contains( int x, int y ){
 		if (super.contains(x, y)){
-			Rectangle stationArea = station.getComponent().getBounds();
-			Point mouseCoord = new Point(x, y);
+			final Rectangle stationArea = station.getComponent().getBounds();
+			final Point mouseCoord = new Point(x, y);
 			SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
-			int size = station.getLateralNodropZoneSize();
+			final int size = station.getLateralNodropZoneSize();
 			if (station.getOrientation() == Orientation.VERTICAL){
-				if (mouseCoord.x > (stationArea.getX() + size)
-						&& mouseCoord.x < (stationArea.getMaxX() - size)){
+				if ((mouseCoord.x > (stationArea.getX() + size))
+						&& (mouseCoord.x < (stationArea.getMaxX() - size))){
 					return true;
 				} else{
 					return false;
 				}
 			} else{
-				if (mouseCoord.y > (stationArea.getY() + size)
-						&& mouseCoord.y < (stationArea.getMaxY() - size)){
+				if ((mouseCoord.y > (stationArea.getY() + size))
+						&& (mouseCoord.y < (stationArea.getMaxY() - size))){
 					return true;
 				} else{
 					return false;

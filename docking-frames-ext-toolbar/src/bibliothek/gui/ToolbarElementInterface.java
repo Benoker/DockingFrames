@@ -6,6 +6,6 @@ package bibliothek.gui;
  * 
  * @author Herve Guillaume
  */
-public interface ToolbarElementInterface {
+public interface ToolbarElementInterface{
 
 }

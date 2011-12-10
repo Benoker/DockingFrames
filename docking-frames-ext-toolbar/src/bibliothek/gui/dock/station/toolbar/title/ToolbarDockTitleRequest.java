@@ -1,4 +1,5 @@
 package bibliothek.gui.dock.station.toolbar.title;
+
 //package bibliothek.gui.dock.station.toolbar;
 //
 //import bibliothek.gui.DockStation;
@@ -68,4 +69,4 @@ package bibliothek.gui.dock.station.toolbar.title;
 //		}
 //	}
 //
-//}
+// }

@@ -1,11 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,31 +27,30 @@ import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DirectWindowProvider;
-import bibliothek.gui.dock.util.Priority;
-import bibliothek.util.xml.XElement;
-import bibliothek.util.xml.XIO;
 
 public class TestPersistentLayout{
 	public static void main( String[] args ){
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JPanel pane = new JPanel(new BorderLayout());
+		final JPanel pane = new JPanel(new BorderLayout());
 		final JToolBar toolBar = new JToolBar();
 		toolBar.setOrientation(SwingConstants.VERTICAL);
 		ImageIcon icon = new ImageIcon(
 				TestPersistentLayout.class.getResource("/resources/film.png"));
-		ComponentDockable button00 = new ComponentDockable(new JButton(icon));
-		JButton button0 = new JButton(icon);
+		final ComponentDockable button00 = new ComponentDockable(new JButton(
+				icon));
+		final JButton button0 = new JButton(icon);
 		toolBar.add(button00.getComponent());
-		JPanel panetemp = new JPanel();
+		final JPanel panetemp = new JPanel();
 		panetemp.add(button0);
 		toolBar.add((panetemp));
 
 		final DockFrontend frontend = new DockFrontend(frame);
 
-		DirectWindowProvider windowProvider = new DirectWindowProvider();
+		final DirectWindowProvider windowProvider = new DirectWindowProvider();
 		windowProvider.setWindow(frame);
-		ScreenDockStation screenStation = new ScreenDockStation(windowProvider);
+		final ScreenDockStation screenStation = new ScreenDockStation(
+				windowProvider);
 		screenStation.setShowing(true);
 		frontend.addRoot("rootScreen", screenStation);
 
@@ -71,36 +66,37 @@ public class TestPersistentLayout{
 							}
 						});
 		// install new station pain to change the color
-		BasicStationPaint paint = new BasicStationPaint();
-		Color color = new Color(16, 138, 230, 150);
+		final BasicStationPaint paint = new BasicStationPaint();
+		final Color color = new Color(16, 138, 230, 150);
 		paint.setColor(color);
-		frontend.getController().getThemeManager().setStationPaint(
-				ThemeManager.STATION_PAINT + ".toolbar", paint);
+		frontend.getController()
+				.getThemeManager()
+				.setStationPaint(ThemeManager.STATION_PAINT + ".toolbar", paint);
 
 		icon = new ImageIcon(
 				TestPersistentLayout.class.getResource("/resources/film.png"));
 		JButton button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		ComponentDockable button1 = new ComponentDockable(button);
+		final ComponentDockable button1 = new ComponentDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		ComponentDockable button2 = new ComponentDockable(button);
+		final ComponentDockable button2 = new ComponentDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		ComponentDockable button3 = new ComponentDockable(button);
+		final ComponentDockable button3 = new ComponentDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		ComponentDockable button4 = new ComponentDockable(button);
+		final ComponentDockable button4 = new ComponentDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		ComponentDockable button5 = new ComponentDockable(button);
+		final ComponentDockable button5 = new ComponentDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		ComponentDockable button6 = new ComponentDockable(button);
-		ToolbarContainerDockStation rootWest = new ToolbarContainerDockStation(
+		final ComponentDockable button6 = new ComponentDockable(button);
+		final ToolbarContainerDockStation rootWest = new ToolbarContainerDockStation(
 				Orientation.VERTICAL);
 		rootWest.setDockablesMaxNumber(1);
-		ToolbarContainerDockStation rootNorth = new ToolbarContainerDockStation(
+		final ToolbarContainerDockStation rootNorth = new ToolbarContainerDockStation(
 				Orientation.HORIZONTAL);
 		rootNorth.setDockablesMaxNumber(1);
 
@@ -167,7 +163,7 @@ public class TestPersistentLayout{
 		pane.add(toolBar, BorderLayout.EAST);
 
 		final File layout = new File("layout.xml");
-		boolean layouted = false;
+		final boolean layouted = false;
 
 		// if (layout.exists()){
 		// try{
@@ -182,14 +178,14 @@ public class TestPersistentLayout{
 		// }
 		//
 		// if (!layouted){
-		ToolbarDockStation group = new ToolbarDockStation();
+		final ToolbarDockStation group = new ToolbarDockStation();
 		group.drop(button1);
 		group.drop(button2);
 		group.drop(button3);
 		group.drop(button4);
 		group.drop(button6);
 
-		ToolbarDockStation toolbar = new ToolbarDockStation();
+		final ToolbarDockStation toolbar = new ToolbarDockStation();
 		toolbar.drop(group);
 
 		rootWest.drop(toolbar);

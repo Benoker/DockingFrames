@@ -6,6 +6,6 @@ package bibliothek.gui;
  * @author Herve Guillaume
  * 
  */
-public enum Position {
+public enum Position{
 	NORTH, EAST, SOUTH, WEST, CENTER
 }

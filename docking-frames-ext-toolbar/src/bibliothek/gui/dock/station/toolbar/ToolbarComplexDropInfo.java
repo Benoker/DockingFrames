@@ -1,11 +1,7 @@
 package bibliothek.gui.dock.station.toolbar;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -32,14 +28,14 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
  */
 public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	/** The {@link Dockable} which is inserted */
-	private Dockable dragDockable;
+	private final Dockable dragDockable;
 	/**
 	 * The {@link Dockable} which received the dockbale (WARNING: this can be
 	 * different to his original dock parent!)
 	 */
-	private ToolbarGroupDockStation stationHost;
+	private final ToolbarGroupDockStation stationHost;
 	/** Location of the mouse */
-	private int mouseX, mouseY;
+	private final int mouseX, mouseY;
 	/** closest dockable beneath the mouse with regards to the mouse coordinates */
 	private Dockable dockableBeneathMouse = null;
 	/**
@@ -69,7 +65,7 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 			ToolbarGroupDockStation stationHost, int mouseX, int mouseY ){
 		// System.out.println(this.toString()
 		// + "## new ToolbarComplexDropInfo ## ");
-		this.dragDockable = dockable;
+		dragDockable = dockable;
 		this.stationHost = stationHost;
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
@@ -205,7 +201,8 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 			fourCorners[3] = new Point((int) currentBounds.getMaxX(),
 					(int) currentBounds.getMaxY());
 			for (int j = 0; j < fourCorners.length; j++){
-				SwingUtilities.convertPointToScreen(fourCorners[j], currentDockable.getComponent());
+				SwingUtilities.convertPointToScreen(fourCorners[j],
+						currentDockable.getComponent());
 				currentDistance = Point2D.distance(fourCorners[j].getX(),
 						fourCorners[j].getY(), mouseX, mouseY);
 				if (currentDistance < generalMinDistance){
@@ -276,18 +273,19 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	private Position computeSideDockableBeneathMouse(){
 		// mouse coordinates in the frame of reference of the component beneath
 		// mouse
-		Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
+		final Point mouseCoordinate = new Point(mouseX, mouseY);
 		SwingUtilities.convertPointFromScreen(mouseCoordinate,
 				dockableBeneathMouse.getComponent());
 		// the dockable the closest of the mouse
-		Dockable dockableBeneathMouse = getDockableBeneathMouse();
+		final Dockable dockableBeneathMouse = getDockableBeneathMouse();
 		if (dockableBeneathMouse == null){
 			return null;
 		}
-		Rectangle bounds = dockableBeneathMouse.getComponent().getBounds();
+		final Rectangle bounds = dockableBeneathMouse.getComponent()
+				.getBounds();
 		// we "draw" a small rectangle with same proportions
-		double ratio = bounds.getHeight() / bounds.getWidth();
-		Rectangle2D.Double rec = new Rectangle2D.Double();
+		final double ratio = bounds.getHeight() / bounds.getWidth();
+		final Rectangle2D.Double rec = new Rectangle2D.Double();
 		rec.setFrameFromCenter(bounds.getCenterX(), bounds.getCenterY(),
 				rec.getCenterX() - 1, rec.getCenterY() - (1 * ratio));
 		// ... and we look if the lin from mouse to the center of the rectangle
@@ -297,13 +295,14 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 		fourCorners[1] = new Point((int) rec.getMaxX(), (int) rec.y);
 		fourCorners[2] = new Point((int) rec.getMaxX(), (int) rec.getMaxY());
 		fourCorners[3] = new Point((int) rec.x, (int) rec.getMaxY());
-		Line2D.Double mouseToCenter = new Line2D.Double(mouseCoordinate.x,
-				mouseCoordinate.y, bounds.getCenterX(), bounds.getCenterY());
-		for (Position pos : Position.values()){
+		final Line2D.Double mouseToCenter = new Line2D.Double(
+				mouseCoordinate.x, mouseCoordinate.y, bounds.getCenterX(),
+				bounds.getCenterY());
+		for (final Position pos : Position.values()){
 			if (pos == Position.CENTER){
 				break;
 			}
-			Line2D.Double line = new Line2D.Double(
+			final Line2D.Double line = new Line2D.Double(
 					fourCorners[pos.ordinal()].x, fourCorners[pos.ordinal()].y,
 					fourCorners[(pos.ordinal() + 1) % 4].x,
 					fourCorners[(pos.ordinal() + 1) % 4].y);
@@ -404,10 +403,11 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	 *         beneath mouse are the same, return {@link Position#CENTER})
 	 */
 	private Position computeItemPositionVSBeneathDockable(){
-		Point coordDockableDragged = getItem().getComponent().getLocation();
-		if (getDockableBeneathMouse() != null
-				&& getSideDockableBeneathMouse() != null){
-			Point coordDockableBeneathMouse = getDockableBeneathMouse()
+		final Point coordDockableDragged = getItem().getComponent()
+				.getLocation();
+		if ((getDockableBeneathMouse() != null)
+				&& (getSideDockableBeneathMouse() != null)){
+			final Point coordDockableBeneathMouse = getDockableBeneathMouse()
 					.getComponent().getLocation();
 			// The dockable is now in the frame of reference of the dockable
 			// beneath mouse
@@ -417,8 +417,8 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 				return Position.CENTER;
 			} else{
 				Orientation axis;
-				if (getSideDockableBeneathMouse() == Position.EAST
-						|| getSideDockableBeneathMouse() == Position.WEST){
+				if ((getSideDockableBeneathMouse() == Position.EAST)
+						|| (getSideDockableBeneathMouse() == Position.WEST)){
 					axis = Orientation.HORIZONTAL;
 				} else{
 					axis = Orientation.VERTICAL;
@@ -449,7 +449,7 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	@Override
 	public String toString(){
 		return this.getClass().getSimpleName() + '@'
-				+ Integer.toHexString(this.hashCode());
+				+ Integer.toHexString(hashCode());
 	}
 
 	/**
@@ -458,12 +458,12 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	 * @return string describing fields
 	 */
 	public String toSummaryString(){
-		String ln = System.getProperty("line.separator");
+		final String ln = System.getProperty("line.separator");
 		return "	=> Drag dockable: " + getItem() + ln + "	=> Station target: "
 				+ getTarget() + ln + "	=> Dockable beneath mouse:"
 				+ getDockableBeneathMouse() + ln + "	=> Closest side:"
-				+ this.getSideDockableBeneathMouse() + ln
+				+ getSideDockableBeneathMouse() + ln
 				+ "	=> Drag dockable VS dockable beneath mouse: "
-				+ this.getItemPositionVSBeneathDockable();
+				+ getItemPositionVSBeneathDockable();
 	}
 }

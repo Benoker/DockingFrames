@@ -33,42 +33,54 @@ import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.util.FrameworkOnly;
 
 /**
- * An interface allowing a {@link ToolbarContainerConverter} to call some internal methods of {@link ToolbarContainerDockStation}.
+ * An interface allowing a {@link ToolbarContainerConverter} to call some
+ * internal methods of {@link ToolbarContainerDockStation}.
+ * 
  * @author Benjamin Sigg
  * @author Herve Guillaume
  */
 @FrameworkOnly
-public interface ToolbarContainerConverterCallback {
+public interface ToolbarContainerConverterCallback{
 	/**
-	 * Creates a new {@link StationChildHandle} for <code>dockable</code>, the new handle
-	 * must not be added to any collection.
-	 * @param dockable the element to wrap
+	 * Creates a new {@link StationChildHandle} for <code>dockable</code>, the
+	 * new handle must not be added to any collection.
+	 * 
+	 * @param dockable
+	 *            the element to wrap
 	 * @return the new {@link StationChildHandle}, must not be <code>null</code>
 	 */
 	public StationChildHandle wrap( Dockable dockable );
-	
+
 	/**
 	 * Called before <code>dockable</code> is added to the list of dockables.
-	 * @param dockable the new element, not <code>null</code>
+	 * 
+	 * @param dockable
+	 *            the new element, not <code>null</code>
 	 */
 	public void adding( StationChildHandle dockable );
 
 	/**
 	 * Called after <code>dockable</code> was added to the list of dockables.
-	 * @param dockable the new element, not <code>null</code>
+	 * 
+	 * @param dockable
+	 *            the new element, not <code>null</code>
 	 */
 	public void added( StationChildHandle dockable );
-	
+
 	/**
 	 * Replaces the list of dockables.
-	 * @param list the new list of dockables, not <code>null</code>
+	 * 
+	 * @param list
+	 *            the new list of dockables, not <code>null</code>
 	 */
 	public void setDockables( DockablePlaceholderList<StationChildHandle> list );
-	
+
 	/**
-	 * Called after {@link #setDockables(DockablePlaceholderList)} and after all children have
-	 * been stored in <code>list</code>.
-	 * @param list the list whose creation was finished
+	 * Called after {@link #setDockables(DockablePlaceholderList)} and after all
+	 * children have been stored in <code>list</code>.
+	 * 
+	 * @param list
+	 *            the list whose creation was finished
 	 */
 	public void finished( DockablePlaceholderList<StationChildHandle> list );
 }

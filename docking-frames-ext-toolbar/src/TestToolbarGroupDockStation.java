@@ -29,21 +29,21 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarGroupDockStation{
 	public static void main( String[] args ){
-		JFrame frame = new JFrame();
-		JPanel pane = new JPanel(new BorderLayout());
+		final JFrame frame = new JFrame();
+		final JPanel pane = new JPanel(new BorderLayout());
 		frame.add(pane);
 
-		DockController controller = new DockController();
-		ScreenDockStation screen = new ScreenDockStation(frame);
+		final DockController controller = new DockController();
+		final ScreenDockStation screen = new ScreenDockStation(frame);
 		controller.add(screen);
 
-		ToolbarContainerDockStation west = new ToolbarContainerDockStation(
+		final ToolbarContainerDockStation west = new ToolbarContainerDockStation(
 				Orientation.VERTICAL);
-		ToolbarContainerDockStation east = new ToolbarContainerDockStation(
+		final ToolbarContainerDockStation east = new ToolbarContainerDockStation(
 				Orientation.VERTICAL);
-		ToolbarContainerDockStation north = new ToolbarContainerDockStation(
+		final ToolbarContainerDockStation north = new ToolbarContainerDockStation(
 				Orientation.HORIZONTAL);
-		ToolbarContainerDockStation south = new ToolbarContainerDockStation(
+		final ToolbarContainerDockStation south = new ToolbarContainerDockStation(
 				Orientation.HORIZONTAL);
 
 		controller.add(west);
@@ -56,7 +56,7 @@ public class TestToolbarGroupDockStation{
 		frame.add(north.getComponent(), BorderLayout.NORTH);
 		frame.add(south.getComponent(), BorderLayout.SOUTH);
 
-		ToolbarGroupDockStation group = new ToolbarGroupDockStation();
+		final ToolbarGroupDockStation group = new ToolbarGroupDockStation();
 
 //		Icon icon = new ImageIcon(
 //				TestPersistentLayout.class.getResource("/resources/film.png"));
@@ -111,13 +111,14 @@ public class TestToolbarGroupDockStation{
 	}
 
 	private static ToolbarDockStation createToolbar( String ... buttons ){
-		ToolbarDockStation toolbar = new ToolbarDockStation();
-		for (String button : buttons){
+		final ToolbarDockStation toolbar = new ToolbarDockStation();
+		for (final String button : buttons){
 			toolbar.drop(createDockable(button.toLowerCase(),
 					button.toUpperCase()));
 		}
 		return toolbar;
 	}
+
 
 	private static ToolbarDockStation createToolbar( Icon ... icons ){
 		ToolbarDockStation toolbar = new ToolbarDockStation();
@@ -128,7 +129,7 @@ public class TestToolbarGroupDockStation{
 	}
 
 	private static ComponentDockable createDockable( String small, String large ){
-		ComponentDockable dockable = new ComponentDockable();
+		final ComponentDockable dockable = new ComponentDockable();
 		dockable.setComponent(new JLabel(small), ExpandedState.SHRUNK);
 		dockable.setComponent(new JButton(large), ExpandedState.STRETCHED);
 		dockable.setComponent(new JScrollPane(new JTextArea(small + "\n\n"
@@ -139,7 +140,7 @@ public class TestToolbarGroupDockStation{
 	private static ComponentDockable createDockable( Icon icon ){
 		JButton button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		ComponentDockable dockable = new ComponentDockable(button);
+		final ComponentDockable dockable = new ComponentDockable(button);
 		return dockable;
 	}
 }

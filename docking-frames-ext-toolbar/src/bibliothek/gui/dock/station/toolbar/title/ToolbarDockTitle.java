@@ -17,14 +17,18 @@ import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
- * A very simplistic implementation of a {@link DockTitle}. This particular implementation
- * shows a line with a width or height of 5 pixels and a custom color. 
+ * A very simplistic implementation of a {@link DockTitle}. This particular
+ * implementation shows a line with a width or height of 5 pixels and a custom
+ * color.
+ * 
  * @author Benjamin Sigg
  */
-public class ToolbarDockTitle extends AbstractDockTitle {
+public class ToolbarDockTitle extends AbstractDockTitle{
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitle}s.
-	 * @param color the color of the title
+	 * 
+	 * @param color
+	 *            the color of the title
 	 * @return the new factory
 	 */
 	public static DockTitleFactory createFactory( final Color color ){
@@ -33,56 +37,58 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 			public void uninstall( DockTitleRequest request ){
 				// ignore
 			}
-			
+
 			@Override
 			public void request( DockTitleRequest request ){
-				request.answer( new ToolbarDockTitle( request.getVersion(), request.getTarget(), color ) );
+				request.answer(new ToolbarDockTitle(request.getVersion(),
+						request.getTarget(), color));
 			}
-			
+
 			@Override
 			public void install( DockTitleRequest request ){
 				// ignore
 			}
 		};
 	}
-	
-	private Color color;
-	
-	public ToolbarDockTitle( DockTitleVersion origin, Dockable dockable, Color color ){
-		super( dockable, origin, true );
+
+	private final Color color;
+
+	public ToolbarDockTitle( DockTitleVersion origin, Dockable dockable,
+			Color color ){
+		super(dockable, origin, true);
 		this.color = color;
 	}
-	
+
 	@Override
-	protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
-		return dockable.getController().getActionViewConverter().createView( 
-				action, ToolbarExtension.TOOLBAR_TITLE, dockable );
+	protected BasicTitleViewItem<JComponent> createItemFor( DockAction action,
+			Dockable dockable ){
+		return dockable.getController().getActionViewConverter()
+				.createView(action, ToolbarExtension.TOOLBAR_TITLE, dockable);
 	}
-		
+
 	@Override
 	public Dimension getPreferredSize(){
-		Dimension size = super.getPreferredSize();
-		return new Dimension( Math.max( 5, size.width ), Math.max( 5, size.height ));
+		final Dimension size = super.getPreferredSize();
+		return new Dimension(Math.max(5, size.width), Math.max(5, size.height));
 	}
-	
+
 	@Override
 	public void setActive( boolean active ){
-		super.setActive( active );
+		super.setActive(active);
 		repaint();
 	}
-	
+
 	@Override
 	public void paintBackground( Graphics g, JComponent component ){
-		g.setColor( color );
-		g.fillRect( 0, 0, getWidth(), getHeight() );
-		
-		if( isActive() ){
-			g.setColor( Color.BLACK );
-			if( getOrientation().isHorizontal() ){
-				g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
-			}
-			else{
-				g.drawLine( getWidth()/2, 1, getWidth()/2, getHeight()-1 );
+		g.setColor(color);
+		g.fillRect(0, 0, getWidth(), getHeight());
+
+		if (isActive()){
+			g.setColor(Color.BLACK);
+			if (getOrientation().isHorizontal()){
+				g.drawLine(1, getHeight() / 2, getWidth() - 1, getHeight() / 2);
+			} else{
+				g.drawLine(getWidth() / 2, 1, getWidth() / 2, getHeight() - 1);
 			}
 		}
 	}

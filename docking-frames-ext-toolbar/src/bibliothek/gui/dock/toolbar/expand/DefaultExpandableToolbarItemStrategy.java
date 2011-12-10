@@ -14,91 +14,101 @@ import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRegisterListener;
 
 /**
- * The default implementation of an {@link ExpandableToolbarItemStrategy} searches for {@link ToolbarDockStation}s.
+ * The default implementation of an {@link ExpandableToolbarItemStrategy}
+ * searches for {@link ToolbarDockStation}s.
+ * 
  * @author Benjamin Sigg
  */
-public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarItemStrategy {
+public class DefaultExpandableToolbarItemStrategy implements
+		ExpandableToolbarItemStrategy{
 	/** All the listeners that are registered */
-	private List<ExpandableToolbarItemStrategyListener> listeners = new ArrayList<ExpandableToolbarItemStrategyListener>();
+	private final List<ExpandableToolbarItemStrategyListener> listeners = new ArrayList<ExpandableToolbarItemStrategyListener>();
 
 	/** the controller in whose realm this strategy is used */
 	private DockController controller;
 
 	/** this listener is used to detect new station that need to be observed */
-	private DockRegisterListener registerListener = new DockRegisterAdapter(){
+	private final DockRegisterListener registerListener = new DockRegisterAdapter(){
 		@Override
-		public void dockStationRegistered( DockController controller, DockStation station ){
-			handleAdd( station );
+		public void dockStationRegistered( DockController controller,
+				DockStation station ){
+			handleAdd(station);
 		}
 
 		@Override
-		public void dockStationUnregistered( DockController controller, DockStation station ){
-			handleRemove( station );
+		public void dockStationUnregistered( DockController controller,
+				DockStation station ){
+			handleRemove(station);
 		}
 	};
 
 	/**
 	 * A listener added to all {@link AbstractToolbarDockStation}s.
 	 */
-	private ExpandableToolbarItemListener expandableListener = new ExpandableToolbarItemListener(){
+	private final ExpandableToolbarItemListener expandableListener = new ExpandableToolbarItemListener(){
 		@Override
-		public void changed( ExpandableToolbarItem item, ExpandedState oldState, ExpandedState newState ){
-			switch( newState ){
-				case EXPANDED:
-					for( ExpandableToolbarItemStrategyListener listener : listeners() ) {
-						listener.expanded( item );
-					}
-					break;
-				case SHRUNK:
-					for( ExpandableToolbarItemStrategyListener listener : listeners() ) {
-						listener.shrunk( item );
-					}
-					break;
-				case STRETCHED:
-					for( ExpandableToolbarItemStrategyListener listener : listeners() ) {
-						listener.stretched( item );
-					}
-					break;
+		public void changed( ExpandableToolbarItem item,
+				ExpandedState oldState, ExpandedState newState ){
+			switch (newState) {
+			case EXPANDED:
+				for (final ExpandableToolbarItemStrategyListener listener : listeners()){
+					listener.expanded(item);
+				}
+				break;
+			case SHRUNK:
+				for (final ExpandableToolbarItemStrategyListener listener : listeners()){
+					listener.shrunk(item);
+				}
+				break;
+			case STRETCHED:
+				for (final ExpandableToolbarItemStrategyListener listener : listeners()){
+					listener.stretched(item);
+				}
+				break;
 			}
 		}
 	};
 
 	protected void handleAdd( DockStation station ){
-		if( station instanceof AbstractToolbarDockStation ) {
-			((AbstractToolbarDockStation) station).addExpandableListener( expandableListener );
+		if (station instanceof AbstractToolbarDockStation){
+			((AbstractToolbarDockStation) station)
+					.addExpandableListener(expandableListener);
 		}
 	}
 
 	protected void handleRemove( DockStation station ){
-		if( station instanceof AbstractToolbarDockStation ) {
-			((AbstractToolbarDockStation) station).addExpandableListener( expandableListener );
+		if (station instanceof AbstractToolbarDockStation){
+			((AbstractToolbarDockStation) station)
+					.addExpandableListener(expandableListener);
 		}
 	}
 
 	@Override
 	public void install( DockController controller ){
-		if( this.controller != null ) {
-			throw new IllegalStateException( "this strategy is already installed" );
+		if (this.controller != null){
+			throw new IllegalStateException(
+					"this strategy is already installed");
 		}
 		this.controller = controller;
-		DockRegister register = controller.getRegister();
+		final DockRegister register = controller.getRegister();
 
-		register.addDockRegisterListener( registerListener );
-		for( int i = 0, n = register.getStationCount(); i < n; i++ ) {
-			handleAdd( register.getStation( i ) );
+		register.addDockRegisterListener(registerListener);
+		for (int i = 0, n = register.getStationCount(); i < n; i++){
+			handleAdd(register.getStation(i));
 		}
 	}
 
 	@Override
 	public void uninstall( DockController controller ){
-		if( this.controller != controller ) {
-			throw new IllegalStateException( "this strategy is not installed at '" + controller + "'" );
+		if (this.controller != controller){
+			throw new IllegalStateException(
+					"this strategy is not installed at '" + controller + "'");
 		}
-		DockRegister register = controller.getRegister();
-		register.removeDockRegisterListener( registerListener );
+		final DockRegister register = controller.getRegister();
+		register.removeDockRegisterListener(registerListener);
 
-		for( int i = 0, n = register.getStationCount(); i < n; i++ ) {
-			handleRemove( register.getStation( i ) );
+		for (int i = 0, n = register.getStationCount(); i < n; i++){
+			handleRemove(register.getStation(i));
 		}
 	}
 
@@ -109,7 +119,7 @@ public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarIt
 
 	@Override
 	public ExpandedState getState( Dockable item ){
-		if( item instanceof ToolbarDockStation ){
+		if (item instanceof ToolbarDockStation){
 			return ((ToolbarDockStation) item).getExpandedState();
 		}
 		return null;
@@ -117,27 +127,33 @@ public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarIt
 
 	@Override
 	public void setState( Dockable item, ExpandedState state ){
-		((ToolbarDockStation) item).setExpandedState( state );
+		((ToolbarDockStation) item).setExpandedState(state);
 	}
 
 	@Override
-	public void addExpandedListener( ExpandableToolbarItemStrategyListener listener ){
-		if( listener == null ) {
-			throw new IllegalArgumentException( "listener must not be null" );
+	public void addExpandedListener(
+			ExpandableToolbarItemStrategyListener listener ){
+		if (listener == null){
+			throw new IllegalArgumentException("listener must not be null");
 		}
-		listeners.add( listener );
+		listeners.add(listener);
 	}
 
 	@Override
-	public void removeExpandedListener( ExpandableToolbarItemStrategyListener listener ){
-		listeners.remove( listener );
+	public void removeExpandedListener(
+			ExpandableToolbarItemStrategyListener listener ){
+		listeners.remove(listener);
 	}
 
 	/**
-	 * Gets all the {@link ExpandableToolbarItemStrategyListener}s that are currently registered.
+	 * Gets all the {@link ExpandableToolbarItemStrategyListener}s that are
+	 * currently registered.
+	 * 
 	 * @return all the listeners
 	 */
 	protected ExpandableToolbarItemStrategyListener[] listeners(){
-		return listeners.toArray( new ExpandableToolbarItemStrategyListener[listeners.size()] );
+		return listeners
+				.toArray(new ExpandableToolbarItemStrategyListener[listeners
+						.size()]);
 	}
 }
