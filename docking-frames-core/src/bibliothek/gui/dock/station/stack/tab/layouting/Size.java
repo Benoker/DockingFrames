@@ -27,10 +27,21 @@ package bibliothek.gui.dock.station.stack.tab.layouting;
 
 import java.awt.Dimension;
 
+import bibliothek.gui.Dockable;
+
 
 /**
  * A {@link Size} is used by a {@link LayoutBlock} to describe the layout
- * that fits to some size. 
+ * that fits to some size.<br>
+ * There are two properties that describe how good a {@link Size} is. They are used in different cases:
+ * <ul>
+ * 	<li>The {@link #getType() type} is a hard restraint, it is used to filter layouts. Layouts with an odd mix of 
+ * preferred and minimum sizes are not legal and will never be applied. An example would: if the menu for overflowing
+ * {@link Dockable}s has a mimimum size, the list of tabs must have a minimum size as well.</li>
+ *  <li> The {@link #getScore()} is a soft restraint, it is used to order different layouts and to find the one layout
+ *  that fits best. </li>
+ * </ul>  
+ * 
  * @author Benjamin Sigg
  */
 public class Size {

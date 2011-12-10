@@ -34,6 +34,7 @@ package bibliothek.gui.dock;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
@@ -1296,23 +1297,19 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						throw new IllegalArgumentException("Dockable not child of this station");
 	
 					fullScreenDockable = leaf.getDockableHandle();
-	
-					for( StationChildHandle handle : dockables ) {
-						handle.getDisplayer().getComponent().setVisible(handle == fullScreenDockable);
-					}
+					asyncUpdateVisibility();
 				}
 				else {
 					fullScreenDockable = null;
-					for( StationChildHandle handle : dockables ) {
-						handle.getDisplayer().getComponent().setVisible(true);
-					}
+					asyncUpdateVisibility();
 				}
 	
 				if( oldFullScreen != null ){
 					access.repositioned.add( oldFullScreen );
 				}
 				
-				doLayout();
+				// doLayout();
+				revalidate();
 				fireFullScreenChanged(oldFullScreen, getFullScreen());
 				visibility.fire();
 			}
@@ -1322,6 +1319,57 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 	}
 
+	/**
+	 * This method calls {@link #updateVisibility()} in the {@link EventQueue} at a later
+	 * time.
+	 */
+	protected void asyncUpdateVisibility(){
+		EventQueue.invokeLater( new Runnable(){
+			public void run() {
+				updateVisibility();
+			}
+		} );
+	}
+	
+	/**
+	 * Calls {@link Component#setVisible(boolean)} on all current children and updates the visibility.
+	 * depending on whether there is a {@link #setFullScreen(Dockable) fullscreen-dockable} or not. <br>
+	 * If this method is not called from within the {@link EventQueue}, {@link #asyncUpdateVisibility()} is executed
+	 * instead.
+	 */
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+			description="Make this method not necessary")
+	/*
+	 * This method prevents a bug, where the component-resized event is not called when a maximized
+	 * StackDockStation is normalized. It it not clear which part of the code actually is buggy, or if the
+	 * bug is within Swing itself. Fact is that the ComponentEvent is generated and pushed into the EventQueue,
+	 * but it does not get fired.
+	 * Once the bug is fixed, it should be possible to call this method directly by setFullscreen.
+	 * 
+	 * Unfortunately EventQueue is not very helpful when it comes to debugging, one could even say
+	 * the code of EventQueue is not very readable. Really mean people would say, that the guys that
+	 * wrote EventQueue were not big fans of object oriented programming.
+	 */
+	protected void updateVisibility(){
+		if( !EventQueue.isDispatchThread()) {
+			asyncUpdateVisibility();
+		}
+		else{
+			StationChildHandle fullscreenHandle = fullScreenDockable;
+			
+			if( fullscreenHandle == null ){
+				for( StationChildHandle handle : dockables ) {
+					handle.getDisplayer().getComponent().setVisible( true );
+				}
+			}
+			else{
+				for( StationChildHandle handle : dockables ) {
+					handle.getDisplayer().getComponent().setVisible( handle == fullscreenHandle );
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Switches the child which is in fullscreen-mode. If there is no child,
 	 * nothing will happen. If there is only one child, it will be set to

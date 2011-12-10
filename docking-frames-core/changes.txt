@@ -668,7 +668,8 @@
 [v1.1.1p6b]
  - API: The new interface DockActionImportanceOrder allows to define which actions are the most important actions, if there is not enough space to show all actions the most important actions stay visible a bit longer
  - API: If tabs and actions are shown, tabs are now hidden before actions are hidden
-
+ - Bugfix: While "workaround" is probably the correct term, normalizing a maximized StackDockStation that is child of a SplitDockStation now should fire component-resized events again. Emphasis is put on "should", as there is no understanding of what caused the bug in the first place.  
+ 
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
 - Drop StackDockStation over Dockable and merge them
