@@ -34,7 +34,7 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
  * 
  * @author Benjamin Sigg
  */
-public class ToolbarGroupDockStationLayout{
+public class ToolbarGroupDockStationLayout {
 	/** the encoded layout of a {@link ToolbarGroupDockStation} */
 	private final PlaceholderMap placeholders;
 
@@ -50,8 +50,7 @@ public class ToolbarGroupDockStationLayout{
 	 * @param state
 	 *            whether the children are big or small
 	 */
-	public ToolbarGroupDockStationLayout( PlaceholderMap map,
-			ExpandedState state ){
+	public ToolbarGroupDockStationLayout( PlaceholderMap map, ExpandedState state ){
 		placeholders = map;
 		this.state = state;
 	}
