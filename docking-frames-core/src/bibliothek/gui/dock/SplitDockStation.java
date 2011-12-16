@@ -3,13 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copy
-import bibliothek.gui.dock.station.split.PutInfo.Put;
-
-import bibliothek.gui.dock.station.split.level.SplitOverrideDropLevel;
-
-import bibliothek.gui.dock.station.level.DefaultDropLevel;
-right (C) 2007 Benjamin Sigg
+ * Copyright (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +28,6 @@ package bibliothek.gui.dock;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
