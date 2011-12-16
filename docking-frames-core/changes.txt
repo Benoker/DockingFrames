@@ -671,7 +671,8 @@
  - Bugfix: When setting the location of a Dockable "d", such that a SplitDockStation with a maximixed child needs to de-maximize its child, and if that child is a StackDockStation containing "d", and all of this is executed by a CSplitDockStationHandle: then remove "d" from its parent before resizing. Because this way the EventQueue is cleaned before AWTEvents regarding "d" are sent, allowing new Component-resize events to be actually delivered.
  - Bugfix: Removing a DockAction from a submenu did not have any effect unless the submenu was rebuilt.
  - Bugfix: A nested DropDownAction could lead to a NPE during "unbind". 
- 
+ - Bugfix/API: merged changes of Thomas. SplitDockStation should clean up wrong mouse cursor now. Improvements in the Glass-Extension.
+  
 [Todo]
 - DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
 - Drop StackDockStation over Dockable and merge them
