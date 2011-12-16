@@ -152,7 +152,7 @@ public class GlassedPane extends JPanel{
      * This panel catches all MouseEvent, and informs the {@link MouseFocusObserver}.
      * @author Benjamin Sigg
      */
-    private class GlassPane extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
+    public class GlassPane extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
         /** the component where a drag-event started */
         private Component dragged;
         /** the component currently under the mouse */

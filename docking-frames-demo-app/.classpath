@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Paint"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]SizeAndColor"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]CommonLayouts"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Glass"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

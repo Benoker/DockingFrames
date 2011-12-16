@@ -390,6 +390,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		content = new Content();
 		content.setBackground( background );
 		setBasePane( content );
+		hierarchyObserver = new DockHierarchyObserver(this);
 
 		placeholderSet = new SplitPlaceholderSet(access);
 		dockableStateListeners = new DockableStateListenerManager( this );
@@ -412,7 +413,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 		dividerStrategy.getValue().install( this, getContentPane() );
 		
-		hierarchyObserver = new DockHierarchyObserver(this);
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();
 		

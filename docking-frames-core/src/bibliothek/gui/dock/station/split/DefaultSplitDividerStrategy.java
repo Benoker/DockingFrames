@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.split;
 
+import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -32,6 +33,8 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -44,6 +47,10 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
+import bibliothek.gui.dock.security.GlassedPane;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * The default implementation of {@link SplitDividerStrategy} 
@@ -85,7 +92,17 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 	 * A {@link Handler} is responsible for handling the needs of one {@link SplitDockStation}.
 	 * @author Benjamin Sigg
 	 */
-	public static class Handler extends MouseAdapter implements MouseListener, MouseMotionListener{
+	public static class Handler extends MouseAdapter implements MouseListener, MouseMotionListener, AWTEventListener,DockHierarchyListener{
+		private PropertyValue<Boolean> restricted = new PropertyValue<Boolean>(DockController.RESTRICTED_ENVIRONMENT) {
+			@Override
+			protected void valueChanged(Boolean oldValue, Boolean newValue) {
+				updateEventListener();
+			}
+		};
+		
+		/** the currently known {@link DockController} */
+		private DockController controller;
+		
 		/** the node of the currently selected divider */
 		private Node current;
 	
@@ -94,6 +111,11 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 	
 		/** the current state of the mouse: pressed or not pressed */
 		private boolean pressed = false;
+		
+		/** Will be set to true when mouse is over divider, and set to false when exited. (see AWTListener method below for more details). */
+		private boolean withinBounds = false;
+		/** Flag indicating if AWTEventListener is registered successfully. */
+		private boolean awtListenerEnabled = false;
 	
 		/** the current bounds of the divider */
 		private Rectangle bounds = new Rectangle();
@@ -139,6 +161,67 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 			this.container = container;
 			container.addMouseListener( this );
 			container.addMouseMotionListener( this );
+			
+			station.addDockHierarchyListener(this);
+			setController( station.getController() );
+		}
+		
+		public void hierarchyChanged( DockHierarchyEvent event ){
+			// nothing
+		}
+		
+		public void controllerChanged( DockHierarchyEvent event ){
+			setController( station.getController() );
+		}
+		
+		private void setController( DockController controller ){
+			if( this.controller != controller ){
+				this.controller = controller;
+				restricted.setProperties( controller );
+				updateEventListener();
+			}
+		}
+		
+		private void updateEventListener(){
+			boolean expected = controller != null && !controller.isRestrictedEnvironment();
+			if( expected != awtListenerEnabled ){
+				awtListenerEnabled = expected;
+				if( expected ){
+					// if this goes wrong, the offending client rightly gets an exception. It's his fault because he did set the "restricted environment" property wrong.
+					Toolkit.getDefaultToolkit().addAWTEventListener( Handler.this, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK );
+				}
+				else{
+					Toolkit.getDefaultToolkit().removeAWTEventListener( Handler.this );
+				}
+			}
+		}
+		
+		/**
+		 * AWT event listener.
+		 * Used to reset the mouse cursor when divider was changed and mouse exited event had not occurred normally.
+		 * @param event
+		 */
+		public void eventDispatched(AWTEvent event) {
+			if (event.getID() == MouseEvent.MOUSE_MOVED || event.getID() == MouseEvent.MOUSE_RELEASED) {
+				MouseEvent mev = (MouseEvent)event;
+				if( mev.getSource() != Handler.this.container && withinBounds ){
+					if( mev.getSource() instanceof GlassedPane.GlassPane ){
+						// on glass pane -> check with traditional method
+
+						// Question by Beni: does this ever happen?
+						checkMousePositionAsync();
+					}
+					else{
+						// mouse is over another component which is not the registered container and the mouse cursor had not been reseted yet -> reset mouse cursor
+						Point p = SwingUtilities.convertPoint(mev.getComponent(), mev.getPoint(), station);
+						if (station.getBounds().contains(p)) {
+							// only if mouse is within our station
+							setCursor(null);
+							withinBounds = false;
+						}
+					}
+				}
+			}
 		}
 		
 		/**
@@ -159,6 +242,15 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 				container.removeMouseListener( this );
 				container.removeMouseMotionListener( this );
 				container = null;
+				
+				try {
+					java.awt.Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+				} catch (Throwable e) {
+					e.printStackTrace();
+				}
+			
+				setController( null );
+				station.removeDockHierarchyListener( this );
 			}
 		}
 		
@@ -188,17 +280,25 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		 */
 		protected void checkMousePositionAsync(){
 			DockController controller = station.getController();
-			if( controller != null && !controller.isRestrictedEnvironment() ){
-				SwingUtilities.invokeLater(new Runnable(){
+			if( controller != null && !awtListenerEnabled ){
+				SwingUtilities.invokeLater( new Runnable(){
 					public void run(){
 						if( container != null ){
 							PointerInfo p = MouseInfo.getPointerInfo();
 							Point e = p.getLocation();
 							SwingUtilities.convertPointFromScreen(e, container);
 							current = station.getRoot().getDividerNode(e.x, e.y);
-			
+								
 							if( current == null ) {
-								setCursor(null);
+								mouseExited( null );
+							} else {
+								// check bounds with one pixel delta -> divider needs to be greater than 2 pixels, because divider bounds will be shrinked by 1 pixel at each side
+								if( bounds.width > 2 && bounds.height > 2 ){
+									if( e.x <= bounds.x || e.x >= bounds.x+bounds.width-1 || e.y <= bounds.y || e.y >= bounds.y+bounds.height-1 ){
+										// mouse is likely to be not on divider anymore
+										mouseExited( null );
+									}
+								}
 							}
 						}
 					}
@@ -250,14 +350,22 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 				}
 				setCursor( null );
 				mouseMoved( e );
-				checkMousePositionAsync();
+				
+				if( controller != null && !controller.isRestrictedEnvironment() && awtListenerEnabled ) {
+					// new solution
+					eventDispatched(e);
+				}
+				else {
+					// old solution with a little tweaking
+					checkMousePositionAsync();
+				}
 			}
 		}
 
 		public void mouseMoved( MouseEvent e ){
 			if( station.isResizingEnabled() ) {
 				current = station.getRoot().getDividerNode( e.getX(), e.getY() );
-	
+				
 				if( current == null )
 					setCursor( null );
 				else if( current.getOrientation() == Orientation.HORIZONTAL )
@@ -269,6 +377,13 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 					bounds = current.getDividerBounds( current.getDivider(), bounds );
 					deltaX = bounds.width / 2 + bounds.x - e.getX();
 					deltaY = bounds.height / 2 + bounds.y - e.getY();
+					
+					// mouse is over divider
+					withinBounds = true;
+				}
+				else {
+					// mouse is not over divider anymore
+					withinBounds = false;
 				}
 			}
 		}
@@ -279,6 +394,9 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 				if( !pressed ) {
 					current = null;
 					setCursor( null );
+					
+					// mouse exited divider normally 
+					withinBounds = false;
 				}
 			}
 		}
