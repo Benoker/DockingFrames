@@ -27,50 +27,45 @@ package bibliothek.gui.dock.util;
 
 import java.awt.LayoutManager;
 
-import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
 
 /**
  * A {@link BackgroundPanel} implementing {@link #configure(Transparency)}. This implementation
- * just changes the {@link #setSolid(boolean) solid} and {@link #setTransparent(boolean) transparent}
- * property according to the current {@link Transparency}. 
+ * just changes the {@link #setTransparency(Transparency) transparency property} property according to the current
+ * {@link Transparency}. 
  * @author Benjamin Sigg
  */
 public class ConfiguredBackgroundPanel extends BackgroundPanel{
-	private boolean defaultSolid;
-	private boolean defaultTransparent;
+	/** The {@link Transparency} to use if {@link #configure(Transparency)} is called with {@link Transparency#DEFAULT} */
+	private Transparency defaultTransparency = Transparency.DEFAULT;
 	
 	/**
 	 * Creates a new panel.
 	 * @param layout the layout manager to use on this panel, can be <code>null</code>
-	 * @param solid the default value of the solid property, whether all pixels on the background should be painted
-	 * @param transparent the default value of the transparency property, whether no pixels on the background should be painted
+	 * @param transparency the default transparency to use if nothing else is set
 	 */
-	public ConfiguredBackgroundPanel( LayoutManager layout, boolean solid, boolean transparent ){
-		super( layout, solid, transparent );
-		defaultSolid = solid;
-		defaultTransparent = transparent;
+	public ConfiguredBackgroundPanel( LayoutManager layout, Transparency transparency ){
+		super( layout, transparency );
+		defaultTransparency = transparency;
 	}
 
-	public ConfiguredBackgroundPanel( boolean solid, boolean transparent ){
-		super( solid, transparent );
-		defaultSolid = solid;
-		defaultTransparent = transparent;
+	/**
+	 * Creates a new panel.
+	 * @param transparency the default transparency to use if nothing else is set
+	 */
+	public ConfiguredBackgroundPanel( Transparency transparency ){
+		super( transparency );
+		defaultTransparency = transparency;
 	}
 	
 	@Override
 	protected void configure( Transparency transparency ){
 		switch( transparency ){
 			case DEFAULT:
-				setTransparent( defaultTransparent );
-				setSolid( defaultSolid );
+				setTransparency( defaultTransparency );
 				break;
 			case SOLID:
-				setTransparent( false );
-				setSolid( true );
-				break;
 			case TRANSPARENT:
-				setTransparent( true );
-				setSolid( false );
+				setTransparency( transparency );
 				break;
 		}
 	}

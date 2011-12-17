@@ -26,6 +26,9 @@
 package bibliothek.util.workarounds;
 
 import java.awt.Component;
+import java.awt.Window;
+
+import bibliothek.util.Workarounds;
 
 /**
  * A {@link Workaround} provides code to workaround an issue that is only present in some versions of the
@@ -38,4 +41,11 @@ public interface Workaround {
 	 * @param component the component that is invisible
 	 */
 	public void markAsGlassPane( Component component );
+	
+	/**
+	 * Makes the window <code>window</code> transparent. See {@link Workarounds#makeTransparent(Window)} for a more
+	 * detailed description.
+	 * @param window the window that should be transparent
+	 */
+	public void makeTransparent( Window window );
 }

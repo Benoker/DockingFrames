@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 
 /**
  * This panel paints the contents of a {@link CombinedStackDockComponent}. It is just a {@link JPanel}. The layout has to be 
@@ -49,7 +50,7 @@ public class CombinedStackDockContentPane extends ConfiguredBackgroundPanel{
 	 * @param parent the owner of this pane, not <code>null</code>
 	 */
 	public CombinedStackDockContentPane( CombinedStackDockComponent<?, ?, ?> parent ){
-		super( null, false, true );
+		super( null, Transparency.TRANSPARENT );
 		if( parent == null )
 			throw new IllegalArgumentException( "parent must not be null" );
 		this.parent = parent;
@@ -63,7 +64,12 @@ public class CombinedStackDockContentPane extends ConfiguredBackgroundPanel{
 	 */
 	public void setPaintBackground( boolean paintBackground ){
 		this.paintBackground = paintBackground;
-		setTransparent( !paintBackground );
+		if( paintBackground ){
+			setTransparency( Transparency.DEFAULT );
+		}
+		else{
+			setTransparency( Transparency.TRANSPARENT );
+		}
 	}
 	
 	/**

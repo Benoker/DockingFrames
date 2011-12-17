@@ -51,6 +51,7 @@ import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.color.DockColor;
@@ -295,13 +296,8 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 					// ignore
 				}
 				
-				
-				public boolean isSolid(){
-					return false;
-				}
-				
-				public boolean isTransparent(){
-					return false;
+				public Transparency getTransparency(){
+					return Transparency.DEFAULT;
 				}
 			};
 			paintable.paint( g2 );

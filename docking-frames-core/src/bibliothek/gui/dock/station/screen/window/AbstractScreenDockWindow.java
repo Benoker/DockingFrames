@@ -63,8 +63,8 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
 import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 
 /**
  * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
@@ -188,7 +188,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         
         this.window = window;
         
-        content = createContent();
+        content = createContent( configuration );
         content.setController( getController() );
         if( configuration.isResizeable() ){
         	contentParent.setLayout( new GridLayout( 1, 1 ) );
@@ -476,15 +476,26 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * Creates the component that will be used as 
      * {@link JDialog#setContentPane(Container) content-pane}.
      * This method is invoked by the constructor.
+     * @param configuration the configuration of this window
      * @return the new content pane
      */
-    protected SecureContainer createContent(){
-    	contentBackground = new BackgroundPanel( true, false ){
-    		@Override
-    		protected void configure( Transparency transparency ){
-    			// does not support transparency as this is a root component
-    		}
-    	};
+    protected SecureContainer createContent( WindowConfiguration configuration ){
+    	if( configuration.isTransparent() ){
+    		contentBackground = new BackgroundPanel( Transparency.TRANSPARENT ){
+    			@Override
+    			protected void configure( Transparency transparency ){
+    				setTransparency( transparency );
+    			}
+    		};
+    	}
+    	else{
+	    	contentBackground = new BackgroundPanel( Transparency.DEFAULT ){
+	    		@Override
+	    		protected void configure( Transparency transparency ){
+	    			// does not support transparency as this is a root component
+	    		}
+	    	};
+    	}
     	contentBackground.setBackground( background );
     	
     	SecureContainer panel = new SecureContainer(){

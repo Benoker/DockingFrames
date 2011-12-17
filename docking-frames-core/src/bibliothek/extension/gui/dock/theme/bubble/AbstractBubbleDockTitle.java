@@ -43,6 +43,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.util.Path;
 
 /**
@@ -142,7 +143,7 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
      * Sets up the animation such that it can be started at any time.
      */
     private void initAnimation(){
-    	setSolid( false );
+    	setTransparency( Transparency.DEFAULT );
     	
         animation = new BubbleColorAnimation();
 

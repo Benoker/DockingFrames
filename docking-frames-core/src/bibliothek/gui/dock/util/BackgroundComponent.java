@@ -42,19 +42,6 @@ public interface BackgroundComponent extends UIValue<BackgroundPaint>{
 	public static final Path KIND = new Path( "dock", "background" );
 	
 	/**
-	 * A description of how a {@link BackgroundComponent} should paint its background.
-	 * @author Benjamin Sigg
-	 */
-	public static enum Transparency{
-		/** The background is not to be painted at all */
-		TRANSPARENT,
-		/** The background needs to cover the entire component */
-		SOLID,
-		/** The component decides on its own how to paint the background, there may be some transparent patches or not. */
-		DEFAULT
-	}
-	
-	/**
 	 * Gets the {@link Component} which is represented by <code>this</code>
 	 * @return the component, may not be <code>null</code>
 	 */

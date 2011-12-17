@@ -33,6 +33,7 @@ import javax.swing.JRootPane;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Workarounds;
 
 /**
  * An implementation of {@link ScreenDockWindow} which uses a {@link JFrame}.
@@ -65,6 +66,10 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
         frame.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
         
         init( frame, frame.getContentPane(), configuration, undecorated );
+        
+        if( configuration.isTransparent() ){
+        	Workarounds.getDefault().makeTransparent( frame );
+        }
     }
 
     /**

@@ -59,6 +59,7 @@ import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -149,7 +150,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      * @param colorPostfix a string that will be added to any key for a color, can be <code>null</code>
      */    
     public BaseTabComponent( EclipseTabPane pane, Dockable dockable, String colorPostfix ){
-    	super( null, false, false );
+    	super( null, Transparency.DEFAULT );
     	
     	if( pane == null )
     		throw new IllegalArgumentException( "pane must not be null" );

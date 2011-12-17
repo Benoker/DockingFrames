@@ -46,6 +46,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.util.Colors;
 
@@ -309,7 +310,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 			}
 		}
 		else{
-			if( !isTransparent() ){
+			if( getTransparency() != Transparency.TRANSPARENT ){
 				GradientPaint gradient = color1.equals( color2 ) ? null : new GradientPaint( x, y, color1, x, y + h, color2 );
 				Paint old = g2d.getPaint();
 				if( gradient != null )
@@ -451,7 +452,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 			right.translate( 0, -1 );
 		}
 		
-		if( !isTransparent() ){
+		if( getTransparency() != Transparency.TRANSPARENT ){
 			g.fillPolygon( left );
 			right.translate( 1, 1 );
 			g.fillPolygon( right );
@@ -473,7 +474,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 				break;
 		}
 		
-		if( !isTransparent() ){
+		if( getTransparency() != Transparency.TRANSPARENT ){
 			Rectangle leftBox = left.getBounds();
 			Rectangle rightBox = right.getBounds();
 			

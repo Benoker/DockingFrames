@@ -28,6 +28,7 @@ package bibliothek.util.workarounds;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -37,11 +38,36 @@ import java.lang.reflect.Method;
  */
 public class Java6Workaround implements Workaround{
 	public void markAsGlassPane( Component component ){
-
 		try{
 			Class<?> clazz = Class.forName( "com.sun.awt.AWTUtilities" );
 			Method method = clazz.getMethod( "setComponentMixingCutoutShape", new Class[]{ Component.class, Shape.class } );
 			method.invoke( null, component, new Rectangle() );
+		}
+		catch( ClassNotFoundException ex ){
+			// ignore
+		}
+		catch( NoSuchMethodException ex ){
+			// ignore
+		}
+		catch( SecurityException ex ){
+			// ignore
+		}
+		catch( InvocationTargetException ex ){
+			// ignore
+		}
+		catch( IllegalArgumentException e ){
+			// ignore
+		}
+		catch( IllegalAccessException e ){
+			// ignore
+		}
+	}
+	
+	public void makeTransparent( Window window ){
+		try{
+			Class<?> awtUtilities = Class.forName( "com.sun.awt.AWTUtilities" );
+			Method setWindowOpaque = awtUtilities.getMethod( "setWindowOpaque", Window.class, boolean.class );
+			setWindowOpaque.invoke( null, window, true );
 		}
 		catch( ClassNotFoundException ex ){
 			// ignore

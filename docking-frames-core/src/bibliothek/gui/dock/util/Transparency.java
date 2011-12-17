@@ -25,17 +25,26 @@
  */
 package bibliothek.gui.dock.util;
 
+import java.awt.Component;
 
 /**
- * A listener that is added to a {@link BackgroundAlgorithm}, the listener gets informed
- * if properties of the algorithm changed. 
+ *  A description of how some {@link Component} (e.g. a {@link BackgroundComponent} or a {@link PaintableComponent})
+ *  handles transparency.
  * @author Benjamin Sigg
  */
-public interface BackgroundAlgorithmListener {
-	/**
-	 * Called when the transparency of <code>algorithm</code> changed to <code>transparency</code>.
-	 * @param algorithm the algorithm whose transparency changed
-	 * @param transparency the new property
+public enum Transparency{
+	/** 
+	 * The background is not to be painted at all. This does not mean that the component is completely
+	 * invisible, as there might still be a foreground that is painted.
 	 */
-	public void transparencyChanged( BackgroundAlgorithm algorithm, Transparency transparency );
+	TRANSPARENT,
+	
+	/** The background is guaranteed to cover the entire component */
+	SOLID,
+	
+	/**
+	 * The component decides on its own how to paint the background, 
+	 * there may be some transparent patches or not.
+	 */
+	DEFAULT
 }

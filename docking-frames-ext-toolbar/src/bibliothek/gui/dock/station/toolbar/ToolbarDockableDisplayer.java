@@ -20,6 +20,7 @@ import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.Transparency;
 
 /**
  * A simple implementation of a {@link DockableDisplayer} that can be used by
@@ -94,8 +95,7 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer{
 	public ToolbarDockableDisplayer( DockStation station, Dockable dockable,
 			DockTitle title, boolean autoOrientation ){
 		super(station, dockable, title);
-		setTransparent(true);
-		setSolid(false);
+		setTransparency( Transparency.TRANSPARENT );
 		if (autoOrientation
 				&& (dockable.asDockStation() instanceof OrientedDockStation)){
 			getComponent().addComponentListener(new ComponentAdapter(){

@@ -31,7 +31,6 @@ import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
-import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
 
 /**
  * This {@link JPanel} implements {@link PaintableComponent} and 
@@ -41,8 +40,8 @@ import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
 public abstract class BackgroundPanel extends JPanel implements PaintableComponent{
 	private BackgroundAlgorithm background;
 	
-	/** whether no pixels of this panel are painted */
-	private boolean transparent;
+	/** whether this panel is transparent, paints some or all pixels */
+	private Transparency transparency;
 	
 	/** added to the {@link BackgroundAlgorithm} that paints this component */
 	private BackgroundAlgorithmListener listener = new BackgroundAlgorithmListener(){
@@ -53,24 +52,20 @@ public abstract class BackgroundPanel extends JPanel implements PaintableCompone
 	
 	/**
 	 * Creates a new panel.
-	 * @param solid whether all pixels of this panel are painted
-	 * @param transparent whether no pixels of this panel are painted
+	 * @param transparency how many pixels are painted
 	 */
-	public BackgroundPanel( boolean solid, boolean transparent ){
-		setSolid( solid );
-		this.transparent = transparent;
+	public BackgroundPanel( Transparency transparency ){
+		setTransparency( transparency );
 	}
 	
 	/**
 	 * Creates a new panel setting a default {@link LayoutManager}.
 	 * @param layout the layout manager, can be <code>null</code>
-	 * @param solid whether all pixels of this panel are painted
-	 * @param transparent whether no pixels of this panel are painted
+	 * @param transparency how many pixels are painted
 	 */
-	public BackgroundPanel( LayoutManager layout, boolean solid, boolean transparent ){
+	public BackgroundPanel( LayoutManager layout, Transparency transparency ){
 		super( layout );
-		setSolid( solid );
-		this.transparent = transparent;
+		setTransparency( transparency );
 	}
 	
 	/**
@@ -119,28 +114,13 @@ public abstract class BackgroundPanel extends JPanel implements PaintableCompone
 		paintForeground( g );
 	}
 
-	/**
-	 * Sets whether this panel paints every pixel or not.
-	 * @param solid <code>true</code> if every pixel is painted
-	 */
-	public void setSolid( boolean solid ){
-		setOpaque( solid );
+	public void setTransparency( Transparency transparency ){
+		this.transparency = transparency;
+		setOpaque( transparency == Transparency.SOLID );
 	}
 	
-	public boolean isSolid(){
-		return isOpaque();
-	}
-	
-	/**
-	 * Sets whether this panel is completely transparent or not.
-	 * @param transparent <code>true</code> if this panel does not paint any pixel
-	 */
-	public void setTransparent( boolean transparent ){
-		this.transparent = transparent;
-	}
-	
-	public boolean isTransparent(){
-		return transparent;
+	public Transparency getTransparency(){
+		return transparency;
 	}
 	
 	public Component getComponent(){
@@ -148,7 +128,7 @@ public abstract class BackgroundPanel extends JPanel implements PaintableCompone
 	}
 	
 	public void paintBackground( Graphics g ){
-		if( !isTransparent() ){
+		if( transparency != Transparency.TRANSPARENT ){
 			super.paintComponent( g );
 		}
 	}

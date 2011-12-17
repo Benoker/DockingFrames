@@ -25,11 +25,14 @@
  */
 package bibliothek.util;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.util.workarounds.Java6Workaround;
+import bibliothek.util.workarounds.Java7Workaround;
 import bibliothek.util.workarounds.Workaround;
 
 /**
@@ -53,7 +56,13 @@ public class Workarounds {
 	}
 	
 	static{
-		getDefault().addWorkaround( new Java6Workaround() );
+		String version = System.getProperty( "java.version" );
+		if( version.startsWith( "1.6" )){
+			getDefault().addWorkaround( new Java6Workaround() );
+		}
+		else{
+			getDefault().addWorkaround( new Java7Workaround() );
+		}
 	}
 	
 	/**
@@ -104,6 +113,17 @@ public class Workarounds {
 	public void markAsGlassPane( Component component ){
 		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
 			listener.markAsGlassPane( component );
+		}
+	}
+	
+	/**
+	 * Makes <code>window</code> transparent, meaning that the opacity of each pixel is defined by the
+	 * alpha value or the {@link Color} that was used to paint over that pixel.
+	 * @param window the window that should be transparent
+	 */
+	public void makeTransparent( Window window ){
+		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
+			listener.makeTransparent( window );
 		}
 	}
 }

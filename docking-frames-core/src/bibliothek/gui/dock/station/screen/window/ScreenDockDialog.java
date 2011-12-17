@@ -34,6 +34,7 @@ import javax.swing.JRootPane;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.util.Workarounds;
 
 /**
  * An implementation of {@link ScreenDockWindow} which uses a {@link JDialog}.
@@ -93,6 +94,10 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
         dialog.setModal( false );
         
         init( dialog, dialog.getContentPane(), configuration, undecorated );
+        
+        if( configuration.isTransparent() ){
+        	Workarounds.getDefault().makeTransparent( dialog );
+        }
     }
     
     public void setPreventFocusStealing( boolean prevent ){

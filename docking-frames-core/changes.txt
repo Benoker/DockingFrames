@@ -678,7 +678,7 @@
 [v1.1.1pToolbar]
  - API: New Inserter can override drop operations before and after they are created
  - API: A lot more configuration options for the ScreenDockStation, these configurations are done by the ScreenDockWindowConfiguration.
-
+ ! API: PaintableComponent uses now a transparency enumeration instead of two booleans 
 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

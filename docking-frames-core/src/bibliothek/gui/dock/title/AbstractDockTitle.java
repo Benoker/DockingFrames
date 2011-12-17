@@ -62,6 +62,7 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorManager;
@@ -189,7 +190,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
      * should be shown, <code>false</code> if they should not be visible
      */
     public AbstractDockTitle( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
-    	super( true, false );
+    	super( Transparency.SOLID );
         init( dockable, origin, showMiniButtons );
     }
     
@@ -199,7 +200,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
      * the title.
      */
     protected AbstractDockTitle(){
-       super( true, false ); 
+       super( Transparency.SOLID ); 
     }
     
     /**
@@ -388,7 +389,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
     
     @Override
     public void paintBackground( Graphics g ){
-    	if( !isTransparent() ){
+    	if( getTransparency() != Transparency.TRANSPARENT ){
     		paintBackground( g, this );
     	}
     }

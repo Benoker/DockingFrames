@@ -144,6 +144,7 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
@@ -2651,7 +2652,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	private class Content extends ConfiguredBackgroundPanel {
 		public Content(){
-			super( true, false );
+			super( Transparency.DEFAULT );
 		}
 		
 		@Override
@@ -2667,9 +2668,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		
 		@Override
-		public void setSolid( boolean solid ){
-			super.setSolid( solid );
-			SplitDockStation.this.setSolid( solid );
+		public void setTransparency( Transparency transparency ){
+			super.setTransparency( transparency );
+			SplitDockStation.this.setSolid( transparency == Transparency.SOLID );
 		}
 	}
 

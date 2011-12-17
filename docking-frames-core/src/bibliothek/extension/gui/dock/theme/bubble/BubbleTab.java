@@ -68,6 +68,7 @@ import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -194,7 +195,7 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	 * @param dockable the element whose title will be shown on this tab
 	 */
 	public BubbleTab( BubbleStackDockComponent parent, Dockable dockable ){
-		super( false, false );
+		super( Transparency.DEFAULT );
 		this.dockable = dockable;
 		this.parent = parent;
 		label.setHorizontal( orientation.isHorizontal() );
@@ -405,7 +406,7 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	
 	@Override
 	public void paintBackground( Graphics g ){
-		if( !isTransparent() ){
+		if( getTransparency() != Transparency.TRANSPARENT ){
 			Graphics2D g2 = (Graphics2D)g.create();
 			g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
 			
