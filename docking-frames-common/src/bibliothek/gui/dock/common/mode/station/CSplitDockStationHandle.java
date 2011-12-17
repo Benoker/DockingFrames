@@ -256,21 +256,25 @@ public class CSplitDockStationHandle{
 		}
 		
 		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
-			Dockable fullscreen = getStation().getFullScreen();
-			if( fullscreen != null ){
-				maximal.setMaximized( fullscreen, false, null, set );
-			}
 			set.add( dockable );
 			
 			if( dockable.getDockParent() == station.getStation() ){
 				if( location != null ){
+					cleanFullscreen( set );
 					getStation().move( dockable, location );
 				}
 			}
 			else{
+				if( dockable.getDockParent() != null ){
+					dockable.getDockParent().drag( dockable );
+				}
+				
+				cleanFullscreen( set );
+				
 				if( location != null ){
-					if( !getStation().drop( dockable, location ))
+					if( !getStation().drop( dockable, location )){
 						location = null;
+					}
 				}
 				if( location == null ){
 					if( !DockUtilities.isAncestor( station.getStation(), dockable )){
@@ -279,6 +283,13 @@ public class CSplitDockStationHandle{
 						}
 					}
 				}
+			}
+		}
+		
+		private void cleanFullscreen( AffectedSet set ){
+			Dockable fullscreen = getStation().getFullScreen();
+			if( fullscreen != null ){
+				maximal.setMaximized( fullscreen, false, null, set );
 			}
 		}
 		

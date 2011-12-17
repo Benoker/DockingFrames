@@ -98,6 +98,7 @@ import bibliothek.gui.dock.common.intern.ControlVetoClosingListener;
 import bibliothek.gui.dock.common.intern.ControlVetoFocusListener;
 import bibliothek.gui.dock.common.intern.EfficientControlFactory;
 import bibliothek.gui.dock.common.intern.MutableCControlRegister;
+import bibliothek.gui.dock.common.intern.action.CActionImportanceOrder;
 import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
@@ -164,6 +165,7 @@ import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeFactory;
+import bibliothek.gui.dock.themes.basic.action.DockActionImportanceOrder;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.AWTComponentCaptureStrategy;
@@ -746,6 +748,7 @@ public class CControl {
         putProperty( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new CPlaceholderStrategy( this ) );
         putProperty( BubbleTheme.ACTION_DISTRIBUTOR, new CDefaultDockActionDistributor() );
         putProperty( FlatTheme.ACTION_DISTRIBUTOR, new CDefaultDockActionDistributor() );
+        putProperty( DockActionImportanceOrder.ORDER, new CActionImportanceOrder() );
     }
     
     /**
@@ -925,6 +928,21 @@ public class CControl {
      */
     public void removeFocusListener( CFocusListener listener ){
         listenerCollection.removeFocusListener( listener );
+    }
+    
+    /**
+     * Gets the currently focused {@link CDockable}. This might be <code>null</code> if some
+     * {@link Dockable} that is not a {@link CommonDockable} has the focus.
+     * @return the currently focused {@link CDockable}, can be <code>null</code>
+     * @see #addFocusListener(CFocusListener)
+     * @see DockController#getFocusedDockable()
+     */
+    public CDockable getFocusedCDockable(){
+    	Dockable focused = getController().getFocusedDockable();
+    	if( focused instanceof CommonDockable ){
+    		return ((CommonDockable)focused).getDockable();
+    	}
+    	return null;
     }
     
     /**

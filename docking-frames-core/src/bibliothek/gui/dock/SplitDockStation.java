@@ -394,6 +394,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		content = new Content();
 		content.setBackground( background );
 		setBasePane( content );
+		hierarchyObserver = new DockHierarchyObserver(this);
 
 		placeholderSet = new SplitPlaceholderSet(access);
 		dockableStateListeners = new DockableStateListenerManager( this );
@@ -416,7 +417,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 		dividerStrategy.getValue().install( this, getContentPane() );
 		
-		hierarchyObserver = new DockHierarchyObserver(this);
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();
 		
@@ -1294,23 +1294,19 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						throw new IllegalArgumentException("Dockable not child of this station");
 	
 					fullScreenDockable = leaf.getDockableHandle();
-	
-					for( StationChildHandle handle : dockables ) {
-						handle.getDisplayer().getComponent().setVisible(handle == fullScreenDockable);
-					}
+					updateVisibility();
 				}
 				else {
 					fullScreenDockable = null;
-					for( StationChildHandle handle : dockables ) {
-						handle.getDisplayer().getComponent().setVisible(true);
-					}
+					updateVisibility();
 				}
 	
 				if( oldFullScreen != null ){
 					access.repositioned.add( oldFullScreen );
 				}
 				
-				doLayout();
+				// doLayout();
+				revalidate();
 				fireFullScreenChanged(oldFullScreen, getFullScreen());
 				visibility.fire();
 			}
@@ -1320,6 +1316,25 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 	}
 
+	/**
+	 * Calls {@link Component#setVisible(boolean)} on all current children and updates the visibility.
+	 * depending on whether there is a {@link #setFullScreen(Dockable) fullscreen-dockable} or not.
+	 */
+	protected void updateVisibility(){
+		StationChildHandle fullscreenHandle = fullScreenDockable;
+			
+		if( fullscreenHandle == null ){
+			for( StationChildHandle handle : dockables ) {
+				handle.getDisplayer().getComponent().setVisible( true );
+			}
+		}
+		else{
+			for( StationChildHandle handle : dockables ) {
+				handle.getDisplayer().getComponent().setVisible( handle == fullscreenHandle );
+			}
+		}
+	}
+	
 	/**
 	 * Switches the child which is in fullscreen-mode. If there is no child,
 	 * nothing will happen. If there is only one child, it will be set to
@@ -1818,9 +1833,12 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 			
 			if( leaf.getDockable() != null ){
-				DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, leaf.getDockable() );
+				Dockable oldDockable = leaf.getDockable();
+				DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, oldDockable );
 				try{
+					dockStationListeners.fireDockableRemoving( oldDockable );
 					leaf.setDockable( null, token );
+					dockStationListeners.fireDockableRemoved( oldDockable );
 				}
 				finally{
 					token.release();

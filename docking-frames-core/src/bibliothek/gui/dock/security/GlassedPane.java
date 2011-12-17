@@ -44,7 +44,7 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
-import bibliothek.util.JavaVersionWorkaround;
+import bibliothek.util.Workarounds;
 
 /**
  * A panel containing two children: a "content pane" and a "glass pane". The
@@ -152,7 +152,7 @@ public class GlassedPane extends JPanel{
      * This panel catches all MouseEvent, and informs the {@link MouseFocusObserver}.
      * @author Benjamin Sigg
      */
-    private class GlassPane extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
+    public class GlassPane extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
         /** the component where a drag-event started */
         private Component dragged;
         /** the component currently under the mouse */
@@ -172,7 +172,7 @@ public class GlassedPane extends JPanel{
             
             setFocusable( false );
             
-            JavaVersionWorkaround.markAsGlassPane( this );
+            Workarounds.getDefault().markAsGlassPane( this );
         }
 
 //        @Override

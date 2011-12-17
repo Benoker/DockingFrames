@@ -37,6 +37,8 @@ import bibliothek.gui.dock.common.DefaultMultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.action.CRadioGroup;
+import bibliothek.gui.dock.common.event.CDockableAdapter;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.paint.model.Picture;
 import bibliothek.paint.model.PictureListener;
 import bibliothek.paint.model.ShapeFactory;
@@ -57,6 +59,9 @@ public class PictureDockable extends DefaultMultipleCDockable {
 	/** the page painting the picture */
     private Page page;
 
+    /** the current picture */
+    private Picture picture;
+    
     /** an action erasing elements of the picture */
     private EraseLastShape eraser;
     
@@ -82,6 +87,25 @@ public class PictureDockable extends DefaultMultipleCDockable {
         setMaximizable( true );
         setExternalizable( false );
         setRemoveOnClose( true );
+        
+        addCDockableStateListener( new CDockableAdapter(){
+        	@Override
+        	public void visibilityChanged( CDockable dockable ){
+        		Picture picture = getPicture();
+        		if( picture != null ){
+	        		if( isVisible() ){
+	        			page.setPicture( picture );
+	        			picture.addListener( listener );
+	        			listener.pictureChanged();
+	        		}
+	        		else{
+	        			page.setPicture( null );
+	        			picture.removeListener( listener );
+	        		}
+        		}
+        	}
+        });
+        
         setTitleIcon( Resources.getIcon( "dockable.picture" ) );
         
         page = new Page();
@@ -120,14 +144,18 @@ public class PictureDockable extends DefaultMultipleCDockable {
      * @param picture the new picture
      */
     public void setPicture( Picture picture ){
-    	if( getPicture() != null )
+    	if( isVisible() && getPicture() != null )
     		getPicture().removeListener( listener );
     	
-        page.setPicture( picture );
+    	this.picture = picture;
+    	
+    	if( isVisible() ){
+    		page.setPicture( picture );
+    	}
         setTitleText( picture == null ? "" : picture.getName() );
         eraser.setEnabled( picture != null && !picture.isEmpty() );
         
-        if( picture != null )
+        if( isVisible() && picture != null )
         	picture.addListener( listener );
     }
     
@@ -136,7 +164,7 @@ public class PictureDockable extends DefaultMultipleCDockable {
      * @return the picture
      */
     public Picture getPicture(){
-        return page.getPicture();
+        return picture;
     }
     
     /**

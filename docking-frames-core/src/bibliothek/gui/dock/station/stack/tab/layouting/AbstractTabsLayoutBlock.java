@@ -516,13 +516,13 @@ public abstract class AbstractTabsLayoutBlock implements TabsLayoutBlock{
 		/** tabs required for this size */
 		private Tab[] tabs;
 		
-		public TabsSize( Type type, int width, int height, Tab[] tabs ){
-			super( type, width, height );
+		public TabsSize( Type type, int width, int height, Tab[] tabs, double score ){
+			super( type, width, height, score );
 			this.tabs = tabs;
 		}
 
-		public TabsSize( Type type, Dimension size, Tab[] tabs ){
-			super( type, size );
+		public TabsSize( Type type, Dimension size, Tab[] tabs, double score ){
+			super( type, size, score );
 			this.tabs = tabs;
 		}
 		

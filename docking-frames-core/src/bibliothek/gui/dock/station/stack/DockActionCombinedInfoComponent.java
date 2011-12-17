@@ -52,6 +52,28 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 	
 	private Dockable dockable;
 	
+	/** a listener that is added to {@link #pane} */
+	private TabPaneListener listener = new TabPaneListener(){
+		public void selectionChanged( TabPane pane ){
+			setSelection( pane.getSelectedDockable() );
+		}
+		
+		public void removed( TabPane pane, Dockable dockable ){
+			// ignore
+		}
+		
+		public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+			// ignore
+		}
+		
+		public void added( TabPane pane, Dockable dockable ){
+			// ignore
+		}
+		public void controllerChanged( TabPane pane, DockController controller ){
+			setController( controller );
+		}
+	};
+	
 	/**
 	 * Creates a new component.
 	 * @param pane the owner of this info
@@ -61,24 +83,16 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 		this.pane = pane;
 		buttons = new ButtonPanel( true );
 		
-		pane.addTabPaneListener( new TabPaneListener(){
-			
-			public void selectionChanged( TabPane pane ){
-				setSelection( pane.getSelectedDockable() );
-			}
-			
-			public void removed( TabPane pane, Dockable dockable ){
-				// ignore
-			}
-			
-			public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
-				// ignore				
-			}
-			
-			public void added( TabPane pane, Dockable dockable ){
-				// ignore	
-			}
-		});
+		pane.addTabPaneListener( listener );
+		setController( pane.getController() );
+	}
+	
+	/**
+	 * Informs this component that it should release any remaining resources.
+	 */
+	public void destroy(){
+		pane.removeTabPaneListener( listener );
+		setController( null );
 	}
 	
 	/**
@@ -88,6 +102,15 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 	public void setSelection( Dockable dockable ){
 		this.dockable = dockable;
 		updateContent();
+	}
+	
+	/**
+	 * Sets the {@link DockController} in whose realm this panel is used. This method is usually called
+	 * automatically by the {@link TabPaneListener} that is added to the owner of this panel.
+	 * @param controller the controller, can be <code>null</code>
+	 */
+	public void setController( DockController controller ){
+		buttons.setController( controller );
 	}
 	
 	/**
@@ -153,7 +176,7 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 			else
 				type = Type.MINIMUM;
 			
-			result[i] = new CountingSize( type, sizes[i], i );
+			result[i] = new CountingSize( type, sizes[i], i, (i+1) / (double)(sizes.length) );
 		}
 		
 		return result;
@@ -184,9 +207,10 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 		 * @param type what kind of size this represents
 		 * @param size the amount of pixels needed
 		 * @param count the number of actions shown
+		 * @param score how much this size is liked
 		 */
-		public CountingSize( Type type, Dimension size, int count ){
-			super( type, size );
+		public CountingSize( Type type, Dimension size, int count, double score ){
+			super( type, size, score );
 			this.count = count;
 		}
 		

@@ -92,7 +92,7 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
         	
         	@Override
         	public void unbound( BasicButtonModel model, DockController controller ){
-        		minimumIconSize.setProperties( (DockController)controller );
+        		minimumIconSize.setProperties( (DockController)null );
         	}
         });
         

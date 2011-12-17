@@ -96,6 +96,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	public void setController( DockController controller ){
 		this.controller = controller;
 		layoutManager.setProperties( controller );
+		fireControllerChanged();
 	}
 	
 	public DockController getController(){
@@ -222,6 +223,15 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
     protected void fireInfoComponentChanged( I oldInfo, I newInfo ){
     	for( TabPaneListener listener : listeners() ){
     		listener.infoComponentChanged( this, oldInfo, newInfo );
+    	}
+    }
+    
+    /**
+     * Informs all {@link TabPaneListener} that the current {@link DockController} changed.
+     */
+    protected void fireControllerChanged(){
+    	for( TabPaneListener listener : listeners() ){
+    		listener.controllerChanged( this, controller );
     	}
     }
 	

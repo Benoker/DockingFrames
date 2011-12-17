@@ -230,8 +230,8 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         DockAction action = actions.remove( index );
         DropDownItemHandle item = items.remove( action );
         if( item != null ){
-            item.unbind();
-            menu.remove( item.getView().getItem() );
+        	menu.remove( item.getView().getItem() );
+        	item.unbind();
         }
     }
     

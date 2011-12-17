@@ -37,13 +37,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.util.PropertyValue;
 
+/**
+ * This default implementation of a {@link GlobalMouseDispatcher} uses an {@link AWTEventListener} is possible, or
+ * just forwards events that are delivered to the {@link #dispatch(MouseEvent)} method.
+ * @author Benjamin Sigg
+ */
 public class DefaultGlobalMouseDispatcher implements GlobalMouseDispatcher {
-	private DockController controller;
-
 	/** The listener to all AWT events*/
 	private AWTEventListener listener;
 

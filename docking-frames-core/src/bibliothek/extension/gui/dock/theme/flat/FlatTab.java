@@ -352,9 +352,8 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     	if( this.controller != null )
             this.controller.removeDockableFocusListener( this );
         this.controller = controller;
-        if( controller != null )
-            controller.addDockableFocusListener( this );
     	
+        actions.setController( controller );
 		if( controller == null ){
 			if( actionsSource != null ){
 				actions.set( null );
