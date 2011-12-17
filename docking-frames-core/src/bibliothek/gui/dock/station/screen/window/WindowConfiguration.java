@@ -27,6 +27,8 @@ package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Component;
 
+import javax.swing.border.Border;
+
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
@@ -49,6 +51,9 @@ public class WindowConfiguration {
 	
 	/** whether the user can change the size of the window */
 	private boolean resizeable = true;
+	
+	/** whether the window itself is transparent */
+	private boolean transparent = false;
 	
 	/**
 	 * Sets whether the window should move if the title is dragged by the mouse.
@@ -119,5 +124,23 @@ public class WindowConfiguration {
 	 */
 	public boolean isResizeable(){
 		return resizeable;
+	}
+	
+	/**
+	 * Tells whether the window is transparent. Whether transparency affects decorations such as a {@link Border}
+	 * depends on the {@link ScreenDockWindow} itself.
+	 * @param transparent whether the window is transparent
+	 */
+	public void setTransparent( boolean transparent ){
+		this.transparent = transparent;
+	}
+	
+	/**
+	 * Tells whether the window is transparent.
+	 * @return whether the window is transparent
+	 * @see #setTransparent(boolean)
+	 */
+	public boolean isTransparent(){
+		return transparent;
 	}
 }
