@@ -67,7 +67,7 @@ public class Java6Workaround implements Workaround{
 		try{
 			Class<?> awtUtilities = Class.forName( "com.sun.awt.AWTUtilities" );
 			Method setWindowOpaque = awtUtilities.getMethod( "setWindowOpaque", Window.class, boolean.class );
-			setWindowOpaque.invoke( null, window, true );
+			setWindowOpaque.invoke( null, window, false );
 		}
 		catch( ClassNotFoundException ex ){
 			// ignore
@@ -79,13 +79,16 @@ public class Java6Workaround implements Workaround{
 			// ignore
 		}
 		catch( InvocationTargetException ex ){
-			// ignore
+			ex.printStackTrace();
 		}
 		catch( IllegalArgumentException e ){
 			// ignore
 		}
 		catch( IllegalAccessException e ){
 			// ignore
+		}
+		catch( Exception e ){
+			e.printStackTrace();
 		}
 	}
 }

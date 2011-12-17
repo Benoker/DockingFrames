@@ -518,6 +518,9 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
             }
         };
         
+        if( configuration.isTransparent() ){
+        	panel.setSolid( false );
+        }
         panel.setContentPane( contentBackground );
         panel.getBasePane().setLayout( new BorderLayout() );
         panel.getBasePane().add( contentBackground, BorderLayout.CENTER );

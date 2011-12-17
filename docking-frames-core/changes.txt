@@ -679,6 +679,7 @@
  - API: New Inserter can override drop operations before and after they are created
  - API: A lot more configuration options for the ScreenDockStation, these configurations are done by the ScreenDockWindowConfiguration.
  ! API: PaintableComponent uses now a transparency enumeration instead of two booleans 
+ - API: ScreenDockWindows can be transparent
 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

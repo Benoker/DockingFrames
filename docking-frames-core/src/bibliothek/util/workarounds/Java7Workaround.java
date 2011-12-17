@@ -43,7 +43,7 @@ public class Java7Workaround extends Java6Workaround{
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			GraphicsDevice gd = ge.getDefaultScreenDevice();
 	
-			Class<?> windowTransulcency = Class.forName( "java.awt.GraphicsDevice.WindowTranslucency" );
+			Class<?> windowTransulcency = Class.forName( "java.awt.GraphicsDevice$WindowTranslucency" );
 			Method isWindowTranslucencySupported = GraphicsDevice.class.getMethod( "isWindowTranslucencySupported", windowTransulcency );
 			boolean pixelTranslucency = (Boolean)isWindowTranslucencySupported.invoke( gd, windowTransulcency.getField( "PERPIXEL_TRANSLUCENT" ).get( null ) );
 			if( pixelTranslucency ){
@@ -51,7 +51,7 @@ public class Java7Workaround extends Java6Workaround{
 			}
 		}
 		catch( Exception e ){
-			// ignore
+			e.printStackTrace();
 		}
 	}
 }

@@ -45,6 +45,7 @@ public class ToolbarWindowConfiguration implements
 			configuration.setAllowDragAndDropOnTitle(true);
 			configuration.setResetOnDropable(false);
 			configuration.setResizeable(false);
+			configuration.setTransparent( true );
 			return configuration;
 		}
 
