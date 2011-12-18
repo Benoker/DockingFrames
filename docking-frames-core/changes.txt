@@ -680,6 +680,7 @@
  - API: A lot more configuration options for the ScreenDockStation, these configurations are done by the ScreenDockWindowConfiguration.
  ! API: PaintableComponent uses now a transparency enumeration instead of two booleans 
  - API: ScreenDockWindows can be transparent
+ - API: AbstractDockTitle has been divided into two classes, there is no need to change code in the subclasses of AbstractDockTitle
 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

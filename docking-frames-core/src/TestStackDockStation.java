@@ -4,7 +4,13 @@ import javax.swing.JFrame;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.StackDockStation;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+	description="delete this class")
 public class TestStackDockStation {
 
 	/**
