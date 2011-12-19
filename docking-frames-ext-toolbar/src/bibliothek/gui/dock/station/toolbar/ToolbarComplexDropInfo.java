@@ -1,5 +1,6 @@
 package bibliothek.gui.dock.station.toolbar;
 
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
@@ -47,7 +48,7 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	 * Position of the drag dockable with regards to the closest component above
 	 * the mouse
 	 */
-	private Position dragDockablePosition;
+	private Position dragDockablePosition = null;
 
 	/**
 	 * Constructs a new info.
@@ -214,57 +215,6 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 		return closestDockable;
 	}
 
-	// /**
-	// * Computes the closest <code>side</code> of the dockable beneath mouse.
-	// *
-	// * @return the closest side, null if there's no dockable beneath mouse
-	// */
-	// private Position computeSideDockableBeneathMouse(){
-	// // the dockable the closest of the mouse
-	// Dockable dockableBeneathMouse = getDockableBeneathMouse();
-	// if (dockableBeneathMouse == null){
-	// return null;
-	// }
-	// Rectangle bounds = dockableBeneathMouse.getComponent().getBounds();
-	//
-	// // mouse coordinates in the frame of reference of the component beneath
-	// // mouse
-	// Point mouseCoordinate = new Point(this.mouseX, this.mouseY);
-	// SwingUtilities.convertPointFromScreen(mouseCoordinate,
-	// dockableBeneathMouse.getComponent());
-	// // 4 corners in this order: upper left corner, upper right corner,
-	// // bottom left corner, bottom right corner
-	// final Point[] fourCorners = new Point[4];
-	// fourCorners[0] = new Point(bounds.x, bounds.y);
-	// fourCorners[1] = new Point((int) bounds.getMaxX(), bounds.y);
-	// fourCorners[2] = new Point(bounds.x, (int) bounds.getMaxY());
-	// fourCorners[3] = new Point((int) bounds.getMaxX(),
-	// (int) bounds.getMaxY());
-	// // looking for the closest side. For each segment of the dockable we
-	// // compute the cumulative distance between the two corners and the
-	// // mouse. The side corresponds to the segment with the smallest
-	// // cumulative distance.
-	// double minDist = Double.MAX_VALUE;
-	// Position sideWin = null;
-	// for (Position pos : Position.values()){
-	// if (pos == Position.CENTER){
-	// break;
-	// }
-	// double currentDist =
-	// (mouseCoordinate.distance(fourCorners[pos.ordinal()]))
-	// + (mouseCoordinate
-	// .distance(fourCorners[(pos.ordinal() + 1) % 4]));
-	// System.out.println(pos);
-	// System.out.println("minDist: " + minDist + " / " + currentDist);
-	// if (currentDist < minDist){
-	// minDist = currentDist;
-	// sideWin = pos;
-	// }
-	// }
-	// System.out.println("WINNER: " + sideWin);
-	// return sideWin;
-	// }
-
 	/**
 	 * Computes the closest <code>side</code> of the dockable beneath mouse.
 	 * 
@@ -274,8 +224,6 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 		// mouse coordinates in the frame of reference of the component beneath
 		// mouse
 		final Point mouseCoordinate = new Point(mouseX, mouseY);
-		SwingUtilities.convertPointFromScreen(mouseCoordinate,
-				dockableBeneathMouse.getComponent());
 		// the dockable the closest of the mouse
 		final Dockable dockableBeneathMouse = getDockableBeneathMouse();
 		if (dockableBeneathMouse == null){
@@ -287,17 +235,22 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 		final double ratio = bounds.getHeight() / bounds.getWidth();
 		final Rectangle2D.Double rec = new Rectangle2D.Double();
 		rec.setFrameFromCenter(bounds.getCenterX(), bounds.getCenterY(),
-				rec.getCenterX() - 1, rec.getCenterY() - (1 * ratio));
-		// ... and we look if the lin from mouse to the center of the rectangle
-		// intersects one of the four side of the rectangle
+				bounds.getCenterX() - 1, bounds.getCenterY() - (1 * ratio));
+		// ... and we look if the line from mouse to the center of the rectangle
+		// intersects one of the four sides of the rectangle
 		final Point[] fourCorners = new Point[4];
 		fourCorners[0] = new Point((int) rec.x, (int) rec.y);
 		fourCorners[1] = new Point((int) rec.getMaxX(), (int) rec.y);
 		fourCorners[2] = new Point((int) rec.getMaxX(), (int) rec.getMaxY());
 		fourCorners[3] = new Point((int) rec.x, (int) rec.getMaxY());
+		for (int i = 0; i < fourCorners.length; i++){
+			SwingUtilities.convertPointToScreen(fourCorners[i], dockableBeneathMouse.getComponent());
+		}
+		Point center = new Point((int) bounds.getCenterX(), (int) bounds.getCenterY());
+		SwingUtilities.convertPointToScreen(center, dockableBeneathMouse.getComponent());
 		final Line2D.Double mouseToCenter = new Line2D.Double(
-				mouseCoordinate.x, mouseCoordinate.y, bounds.getCenterX(),
-				bounds.getCenterY());
+				mouseCoordinate.x, mouseCoordinate.y, center.x,
+				center.y);
 		for (final Position pos : Position.values()){
 			if (pos == Position.CENTER){
 				break;
@@ -312,87 +265,6 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 		}
 		return Position.SOUTH;
 	}
-
-	// // we imagine one circle centered on the center of the bounds
-	// // and with a max radius. The four corner of the bounds define four
-	// arc
-	// // area.
-	// // The closest side is determined accordingly with this area.
-	// // Angle between of the segment defined by the center and the upper
-	// // right corner (The result will be in the range -180 to +180
-	// degrees,
-	// // measured anti-clockwise from East)
-	// double halfEastAngle = Math.toDegrees(Math.atan2(
-	// bounds.getY() - bounds.getCenterY(),
-	// bounds.getMaxX() - bounds.getCenterX()));
-	// System.out.println("Angle: " + halfEastAngle);
-	// // four arcs
-	// Arc2D arc = new Arc2D.Double();
-	// arc.setArcByCenter(bounds.getCenterX(), bounds.getCenterY(),
-	// Double.MAX_VALUE, -halfEastAngle, halfEastAngle, Arc2D.PIE);
-	// if (arc.contains(mouseCoordinate)){
-	// System.out.println(Position.EAST);
-	// return Position.EAST;
-	// }
-	// double northAngle = halfEastAngle + ((90 - halfEastAngle) * 2);
-	// arc.setArcByCenter(bounds.getCenterX(), bounds.getCenterY(),
-	// Double.MAX_VALUE, halfEastAngle, northAngle, Arc2D.PIE);
-	// double westAngle = northAngle + (halfEastAngle);
-	// if (arc.contains(mouseCoordinate)){
-	// System.out.println(Position.NORTH);
-	// return Position.NORTH;
-	// }
-	// arc.setArcByCenter(bounds.getCenterX(), bounds.getCenterY(),
-	// Double.MAX_VALUE, northAngle, westAngle, Arc2D.PIE);
-	// if (arc.contains(mouseCoordinate)){
-	// System.out.println(Position.WEST);
-	// return Position.WEST;
-	// }
-	// System.out.println(Position.SOUTH);
-	// return Position.SOUTH;
-
-	// // Rectangle2D.Double maxRectangle = new Rectangle2D.Double();
-	// // maxRectangle.setFrameFromCenter(bounds.getCenterX(),
-	// // bounds.getCenterY(), bounds.getCenterX() - (Double.MAX_VALUE),
-	// // bounds.getCenterY() - (Double.MAX_VALUE));
-	// // Ellipse2D ellipse = new Ellipse2D.Double();
-	// // ellipse.setFrameFromCenter(bounds.getCenterX(),
-	// bounds.getCenterY(),
-	// // Double.MAX_VALUE, Double.MAX_VALUE,
-	// // );
-	//
-
-	// // 4 corners in this order: upper left corner, upper right corner,
-	// // bottom left corner, bottom right corner
-	// final Point[] fourCorners = new Point[4];
-	// fourCorners[0] = new Point(bounds.x, bounds.y);
-	// fourCorners[1] = new Point((int) bounds.getMaxX(), bounds.y);
-	// fourCorners[2] = new Point(bounds.x, (int) bounds.getMaxY());
-	// fourCorners[3] = new Point((int) bounds.getMaxX(),
-	// (int) bounds.getMaxY());
-	// // looking for the closest side. For each segment of the dockable we
-	// // compute the cumulative distance between the two corners and the
-	// // mouse. The side corresponds to the segment with the smallest
-	// // cumulative distance.
-	// double minDist = Double.MAX_VALUE;
-	// Position sideWin = null;
-	// for (Position pos : Position.values()){
-	// if (pos == Position.CENTER){
-	// break;
-	// }
-	// double currentDist = (mouseCoordinate.distance(fourCorners[pos
-	// .ordinal()]))
-	// + (mouseCoordinate
-	// .distance(fourCorners[(pos.ordinal() + 1) % 4]));
-	// System.out.println(pos);
-	// System.out.println("minDist: " + minDist + " / " + currentDist);
-	// if (currentDist < minDist){
-	// minDist = currentDist;
-	// sideWin = pos;
-	// }
-	// }
-	// System.out.println("WINNER: " + sideWin);
-	// return sideWin;
 
 	/**
 	 * Computes the relative position between: the initial position of the

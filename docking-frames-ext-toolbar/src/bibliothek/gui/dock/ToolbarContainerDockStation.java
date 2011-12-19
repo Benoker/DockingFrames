@@ -83,7 +83,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	public static final Orientation DEFAULT_ORIENTATION = Orientation.VERTICAL;
 
 	/** the orientation of the station */
-	private Orientation orientation = Orientation.VERTICAL;
+	private Orientation orientation = DEFAULT_ORIENTATION;
 
 	private int dockablesMaxNumber = -1;
 
