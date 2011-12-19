@@ -112,7 +112,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 * Size of the border outside this station where a {@link Dockable} will
 	 * still be considered to be dropped onto this station. Measured in pixel.
 	 */
-	private int borderSideSnapSize = 10;
+	private int borderSideSnapSize = 5;
 	/**
 	 * Whether the bounds of this station are slightly bigger than the station
 	 * itself. Used together with {@link #borderSideSnapSize} to grab Dockables

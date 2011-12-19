@@ -93,7 +93,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * Size of the lateral zone where no drop action can be done (Measured in
 	 * pixel).
 	 */
-	private int lateralNodropZoneSize = 1;
+	private int lateralNodropZoneSize = 2;
 
 	/** current {@link PlaceholderStrategy} */
 	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
