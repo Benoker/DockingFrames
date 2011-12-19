@@ -179,6 +179,73 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		return dockables.getLine(dockable);
 	}
 
+	/**
+	 * Gets the number of column of <code>this</code>.
+	 * 
+	 * @return the number of column
+	 */
+	public int columnCount(){
+		return dockables.getColumnCount(); // column(getDockable(getDockableCount()
+											// - 1)) + 1;
+	}
+
+	/**
+	 * Gets the number of lines in <code>column</code>.
+	 * 
+	 * @param column
+	 *            the column
+	 * @return the number of lines in <code>column</code>
+	 */
+	public int lineCount( int column ){
+		return dockables.getLineCount(column);
+	}
+
+	/**
+	 * Gets the dockable at the specified <code>column</code> and
+	 * <code>line</code>.
+	 * 
+	 * @param column
+	 *            the column index
+	 * @param line
+	 *            the line index
+	 * @return the dockable or <code>null</code> if there's no dockable at the
+	 *         specified indexes.
+	 */
+	public Dockable getDockable( int column, int line ){
+		int lineCount = 0;
+		if (dockables.getColumnContent(column) != null){
+			for (Iterator iterator = dockables.getColumnContent(column); iterator
+					.hasNext();){
+				StationChildHandle handle = (StationChildHandle) iterator
+						.next();
+				if (lineCount == line){
+					return handle.asDockable();
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Tells if <code>dockable</code> is the last dockable in its column.
+	 * 
+	 * @param dockable
+	 *            the dockable
+	 * @return true if the dockable it's the last in its column, false if it's
+	 *         not or if it doesn't belong to <code>this</code> dockstation.
+	 */
+	public boolean isLastOfColumn( Dockable dockable ){
+		int index = indexOf(dockable);
+		int column = column(dockable);
+		if (index == (getDockableCount() - 1)){
+			return true;
+		} else if (column(getDockable(index + 1)) != column){
+			return true;
+		} else{
+			return false;
+		}
+	}
+
 	// ########################################################
 	// ############ General DockStation Managing ##############
 	// ########################################################
@@ -354,8 +421,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		return getToolbarStrategy().isToolbarGroupPartParent(station, this,
 				false);
 	}
-	
-	public boolean accept(DockStation base, Dockable neighbor){
+
+	public boolean accept( DockStation base, Dockable neighbor ){
 		return false;
 	}
 
@@ -438,7 +505,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					if (dropInfoGroup.getItemPositionVSBeneathDockable() == Position.NORTH){
 						// index shifted because the drag dockable is above the
 						// dockable beneath mouse
-						topShift = -1; 
+						topShift = -1;
 					}
 					if (dropInfoGroup.getItemPositionVSBeneathDockable() == Position.WEST){
 						// index shifted because the drag dockable is at the
@@ -965,13 +1032,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		}
 
 		/**
-		 * The content Pane of this {@link OverpaintablePanel} (with a
-		 * BoxLayout)
+		 * The content Pane of this {@link OverpaintablePanel}.
 		 */
 		private final JPanel dockablePane = new SizeFixedPanel();
 		/**
-		 * This pane is the base of this OverpaintablePanel and contains both
-		 * title and content panes (with a BoxLayout)
+		 * This pane is the base of this OverpaintablePanel.
 		 */
 		private final JPanel basePane = new SizeFixedPanel(); // {
 
@@ -979,9 +1044,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			// basePane.setBackground( Color.GREEN );
-			// dockablePane.setBackground( Color.RED );
-
 			basePane.setLayout(new BorderLayout());
 			basePane.add(dockablePane, BorderLayout.CENTER);
 			setBasePane(basePane);
@@ -1014,8 +1076,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			final Orientation orientation = getOrientation();
 
 			if (orientation != null){
-				// basePane.setBorder(new EmptyBorder(new Insets(INSETS_SIZE,
-				// INSETS_SIZE, INSETS_SIZE, INSETS_SIZE)));
 				dockablePane
 						.setLayout(new ToolbarGridLayoutManager<StationChildHandle>(
 								orientation, dockables){
@@ -1036,27 +1096,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			final DefaultStationPaintValue paint = getPaint();
 			if (prepareDropDraw){
 				if (indexBeneathMouse != -1){
-					final Component componentBeneathMouse = dockables
-							.get(indexBeneathMouse).getDisplayer()
+					final Dockable dockableBeneathMouse = getDockable(indexBeneathMouse);
+					final Component componentBeneathMouse = dockableBeneathMouse
 							.getComponent();
 					if (componentBeneathMouse != null){
 						final Rectangle rectToolbar = basePane.getBounds();
-						// Point pToolbar = rectToolbar.getLocation();
-						// SwingUtilities.convertPointToScreen(pToolbar,
-						// componentBeneathMouse.getParent());
-						// SwingUtilities.convertPointFromScreen(pToolbar,
-						// this.getBasePane());
-						// Rectangle rectangleToolbarTranslated = new Rectangle(
-						// pToolbar.x, pToolbar.y, rectToolbar.width,
-						// rectToolbar.height);
-						// Color color = new Color(0, 0, 255, 50);
-						// Rectangle2D rect = new Rectangle2D.Double(
-						// rectToolbar.x, rectToolbar.y,
-						// rectToolbar.width, rectToolbar.height);
-						// g2D.setColor(color);
-						// g2D.fill(rect);
-						g2D.setColor(Color.BLUE);
-
 						final Rectangle rectBeneathMouse = componentBeneathMouse
 								.getBounds();
 						final Point pBeneath = rectBeneathMouse.getLocation();
@@ -1076,12 +1120,14 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 								x2 = rectangleBeneathMouseTranslated.x
 										+ rectangleBeneathMouseTranslated.width;
 								y1 = y2 = rectangleBeneathMouseTranslated.y;
-								break;
-							case EAST:
-								x1 = x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								y1 = rectToolbar.y;
-								y2 = rectToolbar.y + rectToolbar.height;
+								// the y value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								if (line(dockableBeneathMouse) == 0){
+									y1 = y2 = y1 + 1;
+								}
 								break;
 							case SOUTH:
 								x1 = rectangleBeneathMouseTranslated.x;
@@ -1089,11 +1135,84 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 										+ rectangleBeneathMouseTranslated.width;
 								y1 = y2 = rectangleBeneathMouseTranslated.y
 										+ rectangleBeneathMouseTranslated.height;
+								// the y value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								if (isLastOfColumn(dockableBeneathMouse)){
+									y1 = y2 = y1 - 2;
+								}
+								break;
+							case EAST:
+								x1 = x2 = rectangleBeneathMouseTranslated.x
+										+ rectangleBeneathMouseTranslated.width;
+								// the x value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								if (column(dockableBeneathMouse) == (columnCount() - 1)){
+									x1 = x2 = x1 - 2;
+								}
+								
+								// we look at the longest column near the
+								// insertion lines to decide what length the
+								// lines should have
+								y1 = rectToolbar.y;
+								int column = column(dockableBeneathMouse);
+								if (column == (columnCount() - 1)){
+									// if column is the last, we take into
+									// account the last dockable
+									Rectangle lastComponentBounds = getDockable(
+											getDockableCount() - 1)
+											.getComponent().getBounds();
+									y2 = (int) lastComponentBounds.getMaxY();	
+								} else{
+									Rectangle lastComponentBoundsLeft = getDockable(column, lineCount(column) - 1).getComponent().getBounds();
+									int yLeft = (int) lastComponentBoundsLeft.getMaxY();
+									Rectangle lastComponentBoundsRight = getDockable(column + 1, lineCount(column + 1) - 1).getComponent().getBounds();
+									int yRight = (int) lastComponentBoundsRight.getMaxY();
+									if (yLeft > yRight) {
+										y2 = yLeft;
+									} else {
+										y2 = yRight;
+									}
+								}
 								break;
 							case WEST:
 								x1 = x2 = rectangleBeneathMouseTranslated.x;
+								// the x value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								if (column(getDockable(indexBeneathMouse)) == 0){
+									x1 = x2 = x1 + 1;
+								}
+								
+								
+								// we look at the longest column near the
+								// insertion lines to decide what length the
+								// lines should have
 								y1 = rectToolbar.y;
-								y2 = rectToolbar.y + rectToolbar.height;
+								column = column(dockableBeneathMouse);
+								if (column == 0){
+									// if column is the first, we take into
+									// account the last dockable of the first column
+									Rectangle lastComponentBounds = getDockable(0, lineCount(0) - 1).getComponent().getBounds();
+									y2 = (int) lastComponentBounds.getMaxY();
+								} else{
+									Rectangle lastComponentBoundsLeft = getDockable(column, lineCount(column) - 1).getComponent().getBounds();
+									int yLeft = (int) lastComponentBoundsLeft.getMaxY();
+									Rectangle lastComponentBoundsRight = getDockable(column + 1, lineCount(column + 1) - 1).getComponent().getBounds();
+									int yRight = (int) lastComponentBoundsRight.getMaxY();
+									if (yLeft > yRight) {
+										y2 = yLeft;
+									} else {
+										y2 = yRight;
+									}
+								}
 								break;
 							default:
 								x1 = x2 = y1 = y2 = 0;
@@ -1132,7 +1251,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 							break;
 						}
 						paint.drawInsertionLine(g, x1, y1, x2, y2);
-						// g2D.drawLine(x1, y1, x2, y2);
 					}
 				}
 			}

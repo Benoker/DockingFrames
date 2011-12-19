@@ -114,8 +114,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 */
 	public ToolbarDockStation(){
 		init();
-		mainPanel.getContentPane().setBackground(Color.GREEN);
-		mainPanel.getBasePane().setBackground(Color.CYAN);
 	}
 
 	@Override
@@ -757,8 +755,9 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			if (getOrientation() != null){
 				switch (getOrientation()) {
 				case HORIZONTAL:
-					basePane.setBorder(new EmptyBorder(new Insets(0,
-							INSETS_SIZE, 0, INSETS_SIZE + 1)));
+					// insets use to draw insertion lines with proper larger
+					// basePane.setBorder(new EmptyBorder(new Insets(0,
+					// INSETS_SIZE, 0, INSETS_SIZE + 1)));
 					dockablePane.setLayout(new BoxLayout(dockablePane,
 							BoxLayout.X_AXIS));
 					basePane.setLayout(new BoxLayout(basePane, BoxLayout.X_AXIS));
@@ -768,8 +767,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 					basePane.setAlignmentX(Component.LEFT_ALIGNMENT);
 					break;
 				case VERTICAL:
-					basePane.setBorder(new EmptyBorder(new Insets(INSETS_SIZE,
-							0, INSETS_SIZE + 1, 0)));
+					// insets use to draw insertion lines with proper larger
+					// basePane.setBorder(new EmptyBorder(new
+					// Insets(INSETS_SIZE,
+					// 0, INSETS_SIZE + 1, 0)));
 					dockablePane.setLayout(new BoxLayout(dockablePane,
 							BoxLayout.Y_AXIS));
 					basePane.setLayout(new BoxLayout(basePane, BoxLayout.Y_AXIS));
@@ -833,12 +834,22 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 								y = rectangleTranslated.y
 										+ rectangleTranslated.height;
 							}
-							// g2D.drawLine(rectangleTranslated.x, y,
-							// rectangleTranslated.x
-							// + rectangleTranslated.width, y);
+							// the y value is slightly modified to allow to draw
+							// the insertion lines with a proper larger
+							// (otherwise, part of the insertion line falls
+							// outside of the overlay pane and can't be drawn)
+							if (indexBeneathMouse == 0
+									&& sideBeneathMouse == Position.NORTH){
+								y = y + 1;
+							} else if (indexBeneathMouse == (ToolbarDockStation.this
+									.getDockableCount() - 1)
+									&& sideBeneathMouse == Position.SOUTH){
+								y = y - 2;
+							}
 							paint.drawInsertionLine(g, rectangleTranslated.x,
 									y, rectangleTranslated.x
 											+ rectangleTranslated.width, y);
+
 							break;
 						case HORIZONTAL:
 							int x;
@@ -848,10 +859,18 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 								x = rectangleTranslated.x
 										+ rectangleTranslated.width;
 							}
-
-							// g2D.drawLine(x, rectangleTranslated.y, x,
-							// rectangleTranslated.y
-							// + rectangleTranslated.height);
+							// the x value is slightly modified to allow to draw
+							// the insertion lines with a proper larger
+							// (otherwise, part of the insertion line falls
+							// outside of the overlay pane and can't be drawn)
+							if ((indexBeneathMouse == 0)
+									&& (sideBeneathMouse == Position.WEST)){
+								x = x + 1;
+							} else if ((indexBeneathMouse == (ToolbarDockStation.this
+									.getDockableCount() - 1))
+									&& (sideBeneathMouse == Position.EAST)){
+								x = x - 2;
+							}
 							paint.drawInsertionLine(g, x,
 									rectangleTranslated.y, x,
 									rectangleTranslated.y
