@@ -14,6 +14,7 @@ import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
@@ -88,7 +89,14 @@ public abstract class AbstractToolbarDockStation extends
 	 * once the constructor has been executed.
 	 */
 	public AbstractToolbarDockStation(){
-		// nothing
+		new OrientationObserver( this ){
+			@Override
+			protected void orientationChanged( Orientation current ){
+				if( current != null ){
+					setOrientation( current );
+				}
+			}
+		};
 	}
 
 	/**

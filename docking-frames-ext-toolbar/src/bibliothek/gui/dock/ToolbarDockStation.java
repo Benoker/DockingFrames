@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -16,10 +15,6 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.ToolBarUI;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -34,7 +29,6 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
-import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -230,17 +224,9 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// it's very important to change position and orientation of inside
 		// dockables first, else doLayout() is done on wrong inside information
 		this.orientation = orientation;
-		for (int i = 0; i < getDockableCount(); i++){
-			final Dockable d = getDockable(i);
-			if (d instanceof OrientedDockStation){
-				final OrientedDockStation element = (OrientedDockStation) d;
-				element.setOrientation(getOrientation());
-			}
-		}
+		fireOrientingEvent();
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
-		fireOrientingEvent();
-
 	}
 
 	// ########################################################
@@ -485,16 +471,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		final Dockable dockable = handle.getDockable();
 
 		dockable.setDockParent(this);
-		if (dockable instanceof OrientedDockStation){
-			if (getOrientation() != null){
-				// it would be possible that this station was not already
-				// oriented. This is the case when this station is
-				// instantiated but not drop in any station which could give it
-				// an orientation
-				((OrientedDockStation) dockable)
-						.setOrientation(getOrientation());
-			}
-		}
+		
 		mainPanel.getContentPane().add(handle.getDisplayer().getComponent(),
 				index);
 		mainPanel.getContentPane().invalidate();

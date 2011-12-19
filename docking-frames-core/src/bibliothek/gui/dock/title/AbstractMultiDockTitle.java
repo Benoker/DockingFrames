@@ -67,8 +67,17 @@ import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
 import bibliothek.util.Condition;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 
+/**
+ * An abstract implementation of {@link DockTitle}. This title can have an icon and some text, but it does not
+ * show buttons for {@link DockAction}s.<br>
+ * Clients should make use of {@link AbstractDockTitle} which is also the super-class for all the {@link DockTitle}s that
+ * are used by the framework.
+ * @author Benjamin Sigg
+ */
+@FrameworkOnly
 public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel implements DockTitle {
     /** Insets of the size 1,2,1,2 */
     private static final Insets DEFAULT_INSETS_HORIZONTAL = new Insets( 0, 1, 0, 1 );

@@ -389,16 +389,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		// it's very important to change position and orientation of inside
 		// dockables first, else doLayout() is done on wrong inside information
 		this.orientation = orientation;
-		for (int i = 0; i < getDockableCount(); i++){
-			final Dockable d = getDockable(i);
-			if (d instanceof OrientedDockStation){
-				final OrientedDockStation element = (OrientedDockStation) d;
-				element.setOrientation(getOrientation());
-			}
-		}
+		fireOrientingEvent();
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
-		fireOrientingEvent();
 	}
 
 	// ########################################################
@@ -699,12 +692,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			// add in the list of dockable
 			final int before = dockables.getColumnCount();
 			dockables.insert(column, line, handle);
-
-			if (dockable instanceof OrientedDockStation){
-				((OrientedDockStation) dockable)
-						.setOrientation(getOrientation());
-			}
-
 			// add in the main panel
 			addComponent(handle);
 			listeners.fireDockableAdded(dockable);
@@ -801,12 +788,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			// add in the list of dockable
 			final int before = dockables.getColumnCount();
 			dockables.insert(column, handle, false);
-
-			if (dockable instanceof OrientedDockStation){
-				((OrientedDockStation) dockable)
-						.setOrientation(getOrientation());
-			}
-
 			// add in the main panel
 			addComponent(handle);
 			listeners.fireDockableAdded(dockable);

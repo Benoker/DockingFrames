@@ -5,8 +5,9 @@ import java.awt.Component;
 import javax.swing.Icon;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.Orientation;
+import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.OrientedDockStation;
-import bibliothek.gui.dock.station.OrientingDockStationListener;
 
 /**
  * This kind of {@link ComponentDockable} is useful for components with an
@@ -17,43 +18,57 @@ import bibliothek.gui.dock.station.OrientingDockStationListener;
  * @author Herve Guillaume
  * 
  */
-public abstract class OrientedComponentDockable extends ComponentDockable implements OrientingDockStationListener {
+public abstract class OrientedComponentDockable extends ComponentDockable {
 
 	public OrientedComponentDockable(){
 		super();
+		init();
 	}
 
 	public OrientedComponentDockable( Component component, Icon icon ){
 		super( component, icon );
+		init();
 	}
 
 	public OrientedComponentDockable( Component component, String title, Icon icon ){
 		super( component, title, icon );
+		init();
 	}
 
 	public OrientedComponentDockable( Component component, String title ){
 		super( component, title );
+		init();
 	}
 
 	public OrientedComponentDockable( Component component ){
 		super( component );
+		init();
 	}
 
 	public OrientedComponentDockable( Icon icon ){
 		super( icon );
+		init();
 	}
 
 	public OrientedComponentDockable( String title ){
 		super( title );
+		init();
 	}
 
-	@Override
-	public void setDockParent( DockStation station ){
-		super.setDockParent( station );
-		if( station instanceof OrientedDockStation ) {
-			final OrientedDockStation orientedStation = (OrientedDockStation) station;
-			orientedStation.addOrientingDockStationListener( this );
-		}
+	private void init(){
+		new OrientationObserver( this ){
+			@Override
+			protected void orientationChanged( Orientation current ){
+				if( current != null ){
+					setOrientation( current );
+				}
+			}
+		};
 	}
-
+	
+	/**
+	 * Sets the new {@link Orientation} of this dockable.
+	 * @param orientation the new orientation, not <code>null</code>
+	 */
+	protected abstract void setOrientation( Orientation orientation );
 }

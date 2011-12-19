@@ -29,6 +29,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
@@ -152,6 +153,15 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 		};
 		displayer.addDockableDisplayerListener(listener);
 		setTitleIcon(null);
+		
+		new OrientationObserver( this ){
+			@Override
+			protected void orientationChanged( Orientation current ){
+				if( current != null ){
+					setOrientation( current );
+				}
+			}
+		};
 	}
 
 	/**
@@ -422,9 +432,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	 * @param dockables
 	 *            the items whose orientation changed
 	 */
-	protected void fireOrientingEvent( Dockable ... dockables ){
-		final OrientingDockStationEvent event = new OrientingDockStationEvent(
-				this, dockables);
+	protected void fireOrientingEvent(){
+		final OrientingDockStationEvent event = new OrientingDockStationEvent( this);
 		for (final OrientingDockStationListener listener : orientingListeners
 				.toArray(new OrientingDockStationListener[orientingListeners
 						.size()])){
@@ -670,7 +679,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	@Override
 	public boolean accept( Dockable child ){
-		if (dockables.dockables().size() == -1){
+		if (dockablesMaxNumber == -1){
 			return true;
 		} else if (dockables.dockables().size() >= dockablesMaxNumber){
 			return false;
@@ -743,15 +752,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 	@Override
 	public void setOrientation( Orientation orientation ){
 		this.orientation = orientation;
-		final ArrayList<Dockable> list = new ArrayList<Dockable>();
-		for (int i = 0; i < dockables.dockables().size(); i++){
-			if (dockables.dockables().get(i).getDockable() instanceof OrientedDockStation){
-				((OrientedDockStation) dockables.dockables().get(i)
-						.getDockable()).setOrientation(this.orientation);
-				list.add((dockables.dockables().get(i).getDockable()));
-			}
-		}
-		fireOrientingEvent(list.toArray(new Dockable[list.size()]));
+		fireOrientingEvent();
 	}
 
 	/**
@@ -835,10 +836,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 				dockable.setDockParent(this);
 				final DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables()
 						.dockables();
-				if (dockable instanceof OrientedDockStation){
-					((OrientedDockStation) dockable)
-							.setOrientation(orientation);
-				}
 				final StationChildHandle handle = new StationChildHandle(this,
 						displayer, dockable, title);
 				dockables.add(index, handle);
@@ -849,7 +846,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 			} finally{
 				token.release();
 			}
-			fireOrientingEvent(dockable);
 			mainPanel.revalidate();
 			mainPanel.repaint();
 			return true;
@@ -859,9 +855,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation
 
 	private void insertAt( StationChildHandle handle, int index ){
 		final Dockable dockable = handle.getDockable();
-		if (dockable instanceof OrientedDockStation){
-			((OrientedDockStation) dockable).setOrientation(orientation);
-		}
 		dockable.setDockParent(this);
 		getContainerPanel().add(handle.getDisplayer().getComponent(), index);
 		mainPanel.getContentPane().revalidate();
