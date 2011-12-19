@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.stack.tab;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 
 /**
@@ -68,6 +69,10 @@ public class AbstractTabLayoutManagerPane implements TabPaneListener{
 	}
 
 	public void selectionChanged( TabPane pane ){
+		// ignore
+	}
+	
+	public void controllerChanged( TabPane pane, DockController controller ){
 		// ignore
 	}
 }

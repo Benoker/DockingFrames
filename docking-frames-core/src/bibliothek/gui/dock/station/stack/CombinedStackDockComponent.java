@@ -58,6 +58,7 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -81,7 +82,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	private BackgroundAlgorithm background;
 
 	/** The panel which displays one of the children of this pane */
-	private BackgroundPanel componentPanel = new ConfiguredBackgroundPanel( null, true, false ){
+	private BackgroundPanel componentPanel = new ConfiguredBackgroundPanel( null, Transparency.DEFAULT ){
 		@Override
 		public void doLayout(){
 			int w = getWidth();
@@ -225,6 +226,10 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 			}
 
 			public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
+				// ignore
+			}
+			
+			public void controllerChanged( TabPane pane, DockController controller ){
 				// ignore
 			}
 		} );

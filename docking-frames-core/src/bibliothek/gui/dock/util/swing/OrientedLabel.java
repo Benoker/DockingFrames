@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.font.FontModifier;
 
 /**
@@ -45,7 +46,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
      * Creates a new label with no text
      */
     public OrientedLabel(){
-    	super( false, false );
+    	super( Transparency.DEFAULT );
         label.setOpaque( false );
         label.setAlignmentX( 0 );
     }

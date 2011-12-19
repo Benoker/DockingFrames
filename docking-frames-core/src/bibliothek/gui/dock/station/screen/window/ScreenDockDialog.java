@@ -30,10 +30,12 @@ import java.awt.Dialog;
 import java.awt.Frame;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.util.Workarounds;
 
 /**
  * An implementation of {@link ScreenDockWindow} which uses a {@link JDialog}.
@@ -42,7 +44,7 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindow;
  * @author Benjamin Sigg
  */
 public class ScreenDockDialog extends AbstractScreenDockWindow {
-    private JDialog dialog;
+	private JDialog dialog;
         
     /**
      * Creates a new dialog. Note that the constructors with
@@ -91,6 +93,15 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
         
         dialog.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
         dialog.setModal( false );
+        
+        if( configuration.isTransparent() ){
+
+    		JPanel panel = new JPanel();
+    		panel.setOpaque( false );
+    		dialog.setContentPane( panel );
+    		
+        	Workarounds.getDefault().makeTransparent( dialog );
+        }
         
         init( dialog, dialog.getContentPane(), configuration, undecorated );
     }

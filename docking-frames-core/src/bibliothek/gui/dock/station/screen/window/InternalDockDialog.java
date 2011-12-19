@@ -64,6 +64,10 @@ public class InternalDockDialog extends AbstractScreenDockWindow{
 		desktop.add( dialog );
 		desktop.setLayer( dialog, JDesktopPane.MODAL_LAYER );
 		
+		if( configuration.isTransparent() ){
+			dialog.setOpaque( false );
+		}
+		
 		init( dialog, dialog, configuration, true );
 	}
 	

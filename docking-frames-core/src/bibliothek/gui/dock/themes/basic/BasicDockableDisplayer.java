@@ -72,6 +72,7 @@ import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.UIValue;
 
 
@@ -162,7 +163,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     
     /** the panel that shows the content of this displayer */
-    private BackgroundPanel content = new ConfiguredBackgroundPanel( null, false, true ){
+    private BackgroundPanel content = new ConfiguredBackgroundPanel( null, Transparency.TRANSPARENT ){
     	@Override
     	public void doLayout(){
 	    	BasicDockableDisplayer.this.doLayout( content );
@@ -208,7 +209,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @param location the location of the title, can be <code>null</code>
      */
     public BasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, Location location ){
-        super( new GridLayout( 1, 1 ), true, false );
+        super( new GridLayout( 1, 1 ), Transparency.DEFAULT );
         init( station, dockable, title, location );
     }
    
@@ -223,7 +224,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * will be called.
      */
     protected BasicDockableDisplayer( DockStation station, boolean initialize ){
-    	super( new GridLayout( 1, 1 ), true, false );
+    	super( new GridLayout( 1, 1 ), Transparency.DEFAULT );
     	if( initialize ){
     		init( station, null, null, Location.TOP );
     	}

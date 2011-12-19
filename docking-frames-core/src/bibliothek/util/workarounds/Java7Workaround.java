@@ -23,19 +23,35 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util;
+package bibliothek.util.workarounds;
 
+import java.awt.Color;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Window;
+import java.lang.reflect.Method;
 
 /**
- * A listener that is added to a {@link BackgroundAlgorithm}, the listener gets informed
- * if properties of the algorithm changed. 
+ * Workarounds necessary for Java 1.7.
  * @author Benjamin Sigg
  */
-public interface BackgroundAlgorithmListener {
-	/**
-	 * Called when the transparency of <code>algorithm</code> changed to <code>transparency</code>.
-	 * @param algorithm the algorithm whose transparency changed
-	 * @param transparency the new property
-	 */
-	public void transparencyChanged( BackgroundAlgorithm algorithm, Transparency transparency );
+public class Java7Workaround extends Java6Workaround{
+
+	@Override
+	public void makeTransparent( Window window ){
+		try{
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice gd = ge.getDefaultScreenDevice();
+	
+			Class<?> windowTransulcency = Class.forName( "java.awt.GraphicsDevice$WindowTranslucency" );
+			Method isWindowTranslucencySupported = GraphicsDevice.class.getMethod( "isWindowTranslucencySupported", windowTransulcency );
+			boolean pixelTranslucency = (Boolean)isWindowTranslucencySupported.invoke( gd, windowTransulcency.getField( "PERPIXEL_TRANSLUCENT" ).get( null ) );
+			if( pixelTranslucency ){
+				window.setBackground( new Color(0,0,0,0) );
+			}
+		}
+		catch( Exception e ){
+			e.printStackTrace();
+		}
+	}
 }

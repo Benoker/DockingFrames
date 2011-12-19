@@ -62,6 +62,7 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorManager;
@@ -189,7 +190,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
      * should be shown, <code>false</code> if they should not be visible
      */
     public AbstractDockTitle( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
-    	super( true, false );
+    	super( Transparency.SOLID );
         init( dockable, origin, showMiniButtons );
     }
     
@@ -199,7 +200,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
      * the title.
      */
     protected AbstractDockTitle(){
-       super( true, false ); 
+       super( Transparency.SOLID ); 
     }
     
     /**
@@ -260,6 +261,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
                 add( itemPanel );
                 
                 if( isBound() ){
+                	itemPanel.setController( getDockable().getController() );
                 	itemPanel.set( getDockable(), getActionSourceFor( getDockable() ) );
                 }
     		}
@@ -387,7 +389,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
     
     @Override
     public void paintBackground( Graphics g ){
-    	if( !isTransparent() ){
+    	if( getTransparency() != Transparency.TRANSPARENT ){
     		paintBackground( g, this );
     	}
     }
@@ -884,12 +886,14 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
             throw new IllegalArgumentException( "Do not call bound twice!" );
         bound = true;
         
+        DockController controller = getDockable().getController();
         if( itemPanel != null ){
         	itemPanel.set( dockable, getActionSourceFor( dockable ) );
+        	itemPanel.setController( controller );
         }
         
         dockable.addDockableListener( listener );
-        DockController controller = getDockable().getController();
+        
         if( controller != null ){
             for( AbstractDockColor color : colors )
                 color.connect( controller );
@@ -922,6 +926,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
         
         if( itemPanel != null ){
         	itemPanel.set( null );
+        	itemPanel.setController( null );
         }
         
         for( AbstractDockColor color : colors )

@@ -16,7 +16,10 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ToolBarUI;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -262,10 +265,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				false);
 	}
 
-	public boolean accept(DockStation base, Dockable neighbor){
+	public boolean accept( DockStation base, Dockable neighbor ){
 		return false;
 	}
-	
+
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, Dockable dockable ){

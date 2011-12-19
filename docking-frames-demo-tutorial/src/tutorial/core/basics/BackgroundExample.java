@@ -29,7 +29,7 @@ import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.PaintableComponent;
-import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
+import bibliothek.gui.dock.util.Transparency;
 
 @Tutorial( id="Background", title="Background" )
 public class BackgroundExample {
@@ -159,7 +159,7 @@ public class BackgroundExample {
 			if( SwingUtilities.isDescendingFrom( background.getComponent(), content )){
 				/* If we are painting an non-transparent component we paint our custom background image, otherwise
 				 * we just let it shine through */
-				if( paintable.isSolid() ){
+				if( paintable.getTransparency() == Transparency.SOLID ){
 					Point point = new Point( 0, 0 );
 					point = SwingUtilities.convertPoint( paintable.getComponent(), point, content );
 					BufferedImage image = getImage();
@@ -198,7 +198,7 @@ public class BackgroundExample {
 		
 			/* We use a BackgroundPanel: it already offers methods to use a replaceable strategy
 			 * for painting. */
-			panel = new BackgroundPanel( true, false ){
+			panel = new BackgroundPanel( Transparency.SOLID ){
 				@Override
 				protected void configure( Transparency transparency ){
 					// we ignore transparency settings. These settings are made by the client and since in this

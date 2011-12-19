@@ -39,6 +39,7 @@ import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 
 /**
  * This panel is used by the {@link FlapDockStation} to display some button-titles.
@@ -303,15 +304,15 @@ public class ButtonPane extends SecureContainer{
          * Creates a new panel
          */
         public Content(){
-        	super( null, true, false );
+        	super( null, Transparency.SOLID );
         }
         
         @Override
-        public void setSolid( boolean solid ){
-        	super.setSolid( solid );
-        	ButtonPane.this.setSolid( solid );
+        public void setTransparency( Transparency transparency ){
+        	super.setTransparency( transparency );
+        	ButtonPane.this.setSolid( transparency == Transparency.SOLID );
         }
-       
+        
         @Override
         public void doLayout() {
             Insets insets = getInsets();

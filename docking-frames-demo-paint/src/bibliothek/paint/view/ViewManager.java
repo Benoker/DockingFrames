@@ -164,7 +164,7 @@ public class ViewManager {
         for( PictureDockable page : pages.toArray( new PictureDockable[ pages.size() ] )){
             if( page.getPicture()  == picture ){
                 page.setVisible( false );
-                control.remove( page );
+                control.removeDockable( page );
             }
         }
     }

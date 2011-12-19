@@ -108,6 +108,7 @@ import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
@@ -1585,11 +1586,11 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	 * Creates a new panel
     	 */
         public Background(){
-        	content = new ConfiguredBackgroundPanel( true, false ){
+        	content = new ConfiguredBackgroundPanel( Transparency.SOLID ){
         		@Override
-        		public void setSolid( boolean solid ){
-        			super.setSolid( solid );
-        			Background.this.setSolid( solid );
+        		public void setTransparency( Transparency transparency ){
+        			super.setTransparency( transparency );
+        			Background.this.setSolid( transparency == Transparency.SOLID );
         		}
         	};
         	content.setBackground( panelBackground );

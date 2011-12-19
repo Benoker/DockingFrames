@@ -40,6 +40,7 @@ import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.Transparency;
 
 /**
  * A {@link MiniButton} that shows a {@link DropDownAction}. The button is
@@ -108,10 +109,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			width += dropIcon.getIconWidth();
 			
 			int height = dropIcon.getIconHeight();
-			if( icon == null )
-				height = Math.max( height, min.height );
-			else
-				height = Math.max( height, icon.height );
+			height = Math.max( height, icon.height );
 			
 			height += insets.top + insets.bottom;
 			return new Dimension( width, height );
@@ -121,10 +119,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			height += dropIcon.getIconHeight();
 			
 			int width = dropIcon.getIconWidth();
-			if( icon == null )
-				width = Math.max( width, min.width );
-			else
-				width = Math.max( width, icon.width );
+			width = Math.max( width, icon.width );
 			
 			width += insets.left + insets.right;			
 			return new Dimension( width, height );
@@ -166,12 +161,8 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 				// ignore
 			}
 			
-			public boolean isSolid(){
-				return false;
-			}
-			
-			public boolean isTransparent(){
-				return false;
+			public Transparency getTransparency(){
+				return Transparency.DEFAULT;
 			}
 		};
 		paintable.paint( g );

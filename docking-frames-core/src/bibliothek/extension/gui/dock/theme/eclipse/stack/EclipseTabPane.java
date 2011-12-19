@@ -165,6 +165,9 @@ public class EclipseTabPane extends CombinedStackDockComponent<EclipseTab, Eclip
 			public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo ){
 				// ignore
 			}
+			public void controllerChanged( TabPane pane, DockController controller ){
+				// ignore
+			}
 		});
 		
 		getComponent().addHierarchyListener(new WindowActiveObserver());

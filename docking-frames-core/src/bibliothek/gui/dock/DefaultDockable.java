@@ -49,6 +49,7 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
@@ -59,7 +60,7 @@ import bibliothek.gui.dock.util.icon.DockIcon;
  */
 public class DefaultDockable extends AbstractDockable {
     /** the content pane */
-    private BackgroundPanel pane = new ConfiguredBackgroundPanel( new BorderLayout(), true, false );
+    private BackgroundPanel pane = new ConfiguredBackgroundPanel( new BorderLayout(), Transparency.SOLID );
     
     /** the id used to identify the factory of this dockable */
     private String factoryId = DefaultDockableFactory.ID;

@@ -5,7 +5,9 @@
  * 
  * Copyright (C) 2009 Benjamin Sigg
  * 
- * This library is free software; you can redistribute it and/or
+ * This library is free 
+import java.util.HashMap;
+software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
@@ -32,7 +34,10 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -52,7 +57,9 @@ import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.basic.action.DockActionImportanceOrder;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * A panel showing some {@link bibliothek.gui.dock.action.DockAction}s. The
@@ -89,6 +96,14 @@ public class ButtonPanel extends JPanel{
     
     /** the number of actions visible as button, might be -1 to indicate the the value is unknown */
     private int visibleActions = -1;
+    
+    /** the currently used order for {@link DockAction}s */
+    private PropertyValue<DockActionImportanceOrder> actionOrder = new PropertyValue<DockActionImportanceOrder>( DockActionImportanceOrder.ORDER ){
+    	@Override
+    	protected void valueChanged( DockActionImportanceOrder oldValue, DockActionImportanceOrder newValue ){
+    		resetVisibleActions();
+    	}
+    };
     
 	/**
 	 * Creates a new panel
@@ -196,14 +211,11 @@ public class ButtonPanel extends JPanel{
     }
     
     /**
-     * Changes the content which is shown.
-     * @param dockable the Dockable for which the actions are shown, can be <code>null</code>
-     * @param source the list of actions, can be <code>null</code>
-     * @throws IllegalArgumentException if <code>dockable</code> or <code>source</code>
-     * is <code>null</code> while the other is not <code>null</code>.
+     * Sets the {@link DockController} in whose realm this panel is used
+     * @param controller the controller, can be <code>null</code>
      */
-    public void set( Dockable dockable, DockActionSource source ){
-    	set( dockable, source, false );
+    public void setController( DockController controller ){
+    	actionOrder.setProperties( controller );
     }
     
     /**
@@ -212,6 +224,18 @@ public class ButtonPanel extends JPanel{
      */
     private void set(){
     	set( dockable, source, true );
+    }
+    
+    /**
+     * Changes the content which is shown.
+     * @param dockable the Dockable for which the actions are shown, can be <code>null</code>
+     * @param source the list of actions, can be <code>null</code>
+     * @param controller the controller in whose realm this panel is used, can be <code>null</code>
+     * @throws IllegalArgumentException if <code>dockable</code> or <code>source</code>
+     * is <code>null</code> while the other is not <code>null</code>.
+     */
+    public void set( Dockable dockable, DockActionSource source ){
+    	set( dockable, source, false );
     }
 
     /**
@@ -357,6 +381,54 @@ public class ButtonPanel extends JPanel{
 	}
 	
 	/**
+	 * Gets all the {@link ActionItem}s ordered by their importance, the most important
+	 * item is at the front.
+	 * @return the items ordered by importance
+	 */
+	private ActionItem[] getItemsOrdered(){
+		DockAction[] actions = new DockAction[ this.actions.size() ];
+		for( int i = 0; i < actions.length; i++ ){
+			actions[i] = this.actions.get( i ).action;
+		}
+		actionOrder.getValue().order( actions );
+		
+		// since the same action may appear twice, much care has to be taken when arranging the items
+		
+		int index = 0;
+		int next = 0;
+		int length = actions.length;
+		ActionItem[] result = new ActionItem[ length ];
+		boolean[] used = new boolean[ length ];
+		
+		loop:for( DockAction action : actions ){
+			for( int i = next; i < length; i++ ){
+				if( !used[ i ]){
+					ActionItem item = this.actions.get( i );
+					if( item.action == action ){
+						used[ i ] = true;
+						result[ index++ ] = item;
+						next = i+1;
+						continue loop;
+					}
+				}
+			}
+			for( int i = 0; i < next; i++ ){
+				if( !used[ i ]){
+					ActionItem item = this.actions.get( i );
+					if( item.action == action ){
+						used[ i ] = true;
+						result[ index++ ] = item;
+						next = i+1;
+						continue loop;
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Computes the preferred sizes of this panel. Dimension <code>result[n]</code> 
 	 * would be the size required if <code>n</code> actions are shown. The number
 	 * <code>n</code> should be used for calling {@link #setVisibleActions(int)}.
@@ -376,9 +448,11 @@ public class ButtonPanel extends JPanel{
 
 		Dimension[] results = new Dimension[ actions.size()+1 ];
 		results[0] = new Dimension( menuPreferred );
-				
-		for( int i = 0, n = actions.size(); i<n; i++ ){
-			BasicTitleViewItem<JComponent> item = actions.get( i ).item;
+
+		ActionItem[] actions = getItemsOrdered();
+		
+		for( int i = 0, n = actions.length; i<n; i++ ){
+			BasicTitleViewItem<JComponent> item = actions[i].item;
 			if( item != null ){
 				Dimension preferred = item.getItem().getPreferredSize();
 				if( orientation.isHorizontal() ){
@@ -509,21 +583,30 @@ public class ButtonPanel extends JPanel{
 	        int max = actions.size();
 	        int length = actions.size();
 
+	        ActionItem[] order = getItemsOrdered();
+	        Set<ActionItem> visibleOrdered = new HashSet<ActionItem>();
+	        
 	        while( set < visibleActions && index < length ){
-	            BasicTitleViewItem<JComponent> item = actions.get( index++ ).item;
-	            if( item == null ){
+	            ActionItem item = order[ index++ ];
+	            if( item.item == null ){
 	                max--;
 	            }
 	            else{
 	                set++;
-	                add( item.getItem() );
+	                visibleOrdered.add( item );
 	            }
 	        }
 
+	        for( ActionItem item : actions ){
+	        	if( visibleOrdered.contains( item )){
+	        		add( item.item.getItem() );
+	        	}
+	        	else{
+	        		menuSource.add( item.action );
+	        	}
+	        }
+	        
 	        if( set < max ){
-	            for( int i = set, n = actions.size(); i<n; i++ ){
-	                menuSource.add( actions.get( i ).action );
-	            }
 	            add( menuItem.getItem() );
 	        }
 	    }

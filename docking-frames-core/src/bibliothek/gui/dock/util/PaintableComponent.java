@@ -28,6 +28,7 @@ package bibliothek.gui.dock.util;
 import java.awt.Component;
 import java.awt.Graphics;
 
+
 /**
  * A wrapper around a {@link Component} whose paint algorithm may be
  * modified by a {@link BackgroundPaint}. The provider of this method may
@@ -50,16 +51,10 @@ public interface PaintableComponent {
 	public Component getComponent();
 	
 	/**
-	 * If a component is transparent, then it does not paint anything (except the border).
-	 * @return whether the component paints at least one pixel
+	 * Tells how much of this component is actually painted.
+	 * @return the transparency effects of this component, not <code>null</code>
 	 */
-	public boolean isTransparent();
-	
-	/**
-	 * If a component is solid, then it paints every pixel with a non-transparent color.
-	 * @return whether every pixel is painted
-	 */
-	public boolean isSolid();
+	public Transparency getTransparency();
 	
 	/**
 	 * Invokes the standard algorithm that paints the background

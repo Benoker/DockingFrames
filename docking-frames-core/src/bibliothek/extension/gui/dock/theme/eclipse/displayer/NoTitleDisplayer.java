@@ -62,6 +62,7 @@ import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 
 /**
  * A {@link DockableDisplayer} which is not able to show the {@link DockTitle} of
@@ -101,7 +102,7 @@ public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements Docka
 	private Background background = new Background();
 	
 	public NoTitleDisplayer( DockStation station, Dockable dockable, TitleBar bar ){
-		super( false, true );
+		super( Transparency.TRANSPARENT );
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
 		setBackground( background );
 		

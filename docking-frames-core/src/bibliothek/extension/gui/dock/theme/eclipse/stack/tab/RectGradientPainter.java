@@ -43,6 +43,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -260,7 +261,7 @@ public class RectGradientPainter extends BaseTabComponent {
 			paintSelected( g2d, tabIndex, old );
 		}
 		else{
-			if( !isTransparent() ){
+			if( getTransparency() != Transparency.TRANSPARENT ){
 				switch( orientation ){
 					case TOP_OF_DOCKABLE:
 						g.fillRect( 0, 0, getWidth(), getHeight()-1 );
@@ -311,7 +312,7 @@ public class RectGradientPainter extends BaseTabComponent {
 		
 		switch( orientation ){
 			case TOP_OF_DOCKABLE:
-				if( !isTransparent() ){
+				if( getTransparency() != Transparency.TRANSPARENT ){
 					g2d.fillRect( 1, 0, width - 2, height );
 				}
 				g2d.drawLine( 0, 1, 0, height );
@@ -326,7 +327,7 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( width - 1, 1, width - 1, height );
 				break;
 			case BOTTOM_OF_DOCKABLE:
-				if( !isTransparent() ){
+				if( getTransparency() != Transparency.TRANSPARENT ){
 					g2d.fillRect( 1, 0, width - 2, height );
 				}
 				g2d.drawLine( 0, height-2, 0, 0 );
@@ -341,7 +342,7 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( width - 1, height-2, width - 1, 0 );
 				break;
 			case LEFT_OF_DOCKABLE:
-				if( !isTransparent() ){
+				if( getTransparency() != Transparency.TRANSPARENT ){
 					g2d.fillRect( 0, 1, width, height-2 );
 				}
 				g2d.drawLine( 1, 0, width, 0 );
@@ -356,7 +357,7 @@ public class RectGradientPainter extends BaseTabComponent {
 				g2d.drawLine( 1, height-1, width, height-1 );
 				break;
 			case RIGHT_OF_DOCKABLE:
-				if( !isTransparent() ){
+				if( getTransparency() != Transparency.TRANSPARENT ){
 					g2d.fillRect( 0, 1, width, height-2 );
 				}
 				g2d.drawLine( 0, 0, width-1, 0 );

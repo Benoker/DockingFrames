@@ -17,7 +17,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
  * 
  * @author Benjamin Sigg
  */
-public class ScreenToolbarDisplayerFactory implements DisplayerFactory{
+public class ScreenToolbarDisplayerFactory implements DisplayerFactory {
 	private final DockController controller;
 
 	/**
@@ -32,20 +32,18 @@ public class ScreenToolbarDisplayerFactory implements DisplayerFactory{
 
 	@Override
 	public void request( DisplayerRequest request ){
-		final ToolbarStrategy strategy = controller.getProperties().get(
-				ToolbarStrategy.STRATEGY);
-		if (strategy.isToolbarPart(request.getTarget())){
-			final DefaultDisplayerFactoryValue value = new DefaultDisplayerFactoryValue(
-					ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen",
-					request.getParent());
-			try{
-				value.setController(request.getController());
+		final ToolbarStrategy strategy = controller.getProperties().get( ToolbarStrategy.STRATEGY );
+		if( strategy.isToolbarPart( request.getTarget() ) ) {
+			final DefaultDisplayerFactoryValue value = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", request.getParent() );
+			try {
+				value.setController( request.getController() );
 				final DisplayerFactory factory = value.get();
-				if (factory != null){
-					factory.request(request);
+				if( factory != null ) {
+					factory.request( request );
 				}
-			} finally{
-				value.setController(null);
+			}
+			finally {
+				value.setController( null );
 			}
 		}
 	}

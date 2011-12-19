@@ -27,7 +27,7 @@ import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.PaintableComponent;
-import bibliothek.gui.dock.util.BackgroundComponent.Transparency;
+import bibliothek.gui.dock.util.Transparency;
 
 @Tutorial( id="Transparency", title="Transparency" )
 public class TransparencyExample {
@@ -148,7 +148,7 @@ public class TransparencyExample {
 		
 			/* We use a ConfiguredBackgroundPanel: it already offers methods to use a replaceable strategy
 			 * for painting and supports transparency. */
-			panel = new ConfiguredBackgroundPanel( true, false );
+			panel = new ConfiguredBackgroundPanel( Transparency.SOLID );
 			panel.setBackground( color );
 			add( panel );
 			

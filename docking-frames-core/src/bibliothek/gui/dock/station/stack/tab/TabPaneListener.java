@@ -1,5 +1,6 @@
 package bibliothek.gui.dock.station.stack.tab;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 
 /**
@@ -36,4 +37,10 @@ public interface TabPaneListener {
 	 * @param newInfo the new info component, may be <code>null</code>
 	 */
 	public void infoComponentChanged( TabPane pane, LonelyTabPaneComponent oldInfo, LonelyTabPaneComponent newInfo );
+	
+	/**
+	 * Called if the {@link DockController} of <code>pane</code> has changed.
+	 * @param controller the new controller, can be <code>null</code>
+	 */
+	public void controllerChanged( TabPane pane, DockController controller );
 }

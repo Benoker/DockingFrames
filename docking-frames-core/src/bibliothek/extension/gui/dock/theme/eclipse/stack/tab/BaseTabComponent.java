@@ -59,6 +59,7 @@ import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -149,7 +150,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      * @param colorPostfix a string that will be added to any key for a color, can be <code>null</code>
      */    
     public BaseTabComponent( EclipseTabPane pane, Dockable dockable, String colorPostfix ){
-    	super( null, false, false );
+    	super( null, Transparency.DEFAULT );
     	
     	if( pane == null )
     		throw new IllegalArgumentException( "pane must not be null" );
@@ -310,6 +311,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
 	    if( bound ){
 	    	background = new Background( tab );
 	    	background.setController( getController() );
+	    	buttons.setController( getController() );
 	    }
 	    setBackground( background );
     }
@@ -325,12 +327,16 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         	background.setController( controller );
         }
         setBackground( background );
+        buttons.setController( controller );
         
-        for( TabColor color : colors )
+        for( TabColor color : colors ){
             color.connect( controller );
-        for( TabFont font : fonts )
+        }
+        for( TabFont font : fonts ){
             font.connect( controller );
+        }
         
+        		
         revalidate();
         bound = true;
     }
@@ -345,6 +351,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         	background = null;
         }
         setBackground( background );
+        buttons.setController( null );
         
         for( TabColor color : colors )
             color.connect( null );

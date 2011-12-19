@@ -432,7 +432,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			// the remove dockable. (Note: It's weird because indeed drag() is
 			// called after move()...)
 			if (dropInfoGroup.isMove()){
-				System.out.println("MOVEMOVEMOVEMOVEMOVEMOVEMOVEMOVEMOVEMOVEMOVE");
 				int column, topShift = 0, lateralShift = 0;
 				if (getOrientation() == Orientation.VERTICAL){
 					column = column(dropInfoGroup.getDockableBeneathMouse());
@@ -449,28 +448,24 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					switch (dropInfoGroup.getSideDockableBeneathMouse()) {
 
 					case NORTH:
-						System.out.println("NORTHNORTHNORTHNORTHNORTHNORTHNORTH");
 						// the drag dockable is put above the dockable beneath
 						// mouse
 						drop(dropInfoGroup.getItem(), column, indexBeneathMouse
 								+ topShift);
 						break;
 					case EAST:
-						System.out.println("EASTEASTEASTEASTEASTEASTEASTEASTEAST");
 						// the drag dockable is put at the right of the dockable
 						// beneath mouse
 						drop(dropInfoGroup.getItem(), indexBeneathMouse + 1
 								+ lateralShift);
 						break;
 					case SOUTH:
-						System.out.println("SOUTHSOUTHSOUTHSOUTHSOUTHSOUTHSOUTH");
 						// the drag dockable is put below the dockable beneath
 						// mouse
 						drop(dropInfoGroup.getItem(), column, indexBeneathMouse
 								+ 1 + topShift);
 						break;
 					case WEST:
-						System.out.println("WESTWESTWESTWESTWESTWESTWESTWESTWEST");
 						// the drag dockable is put at the left of the dockable
 						// beneath mouse
 						drop(dropInfoGroup.getItem(), indexBeneathMouse

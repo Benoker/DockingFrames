@@ -38,6 +38,7 @@ import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
@@ -133,7 +134,7 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
      * @param dockable the Dockable for which this tab is displayed
      */
     public FlatTab( FlatTabPane pane, Dockable dockable ){
-    	super( true, false );
+    	super( Transparency.SOLID );
     	this.pane = pane;
     	this.dockable = dockable;
     	
@@ -352,9 +353,8 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     	if( this.controller != null )
             this.controller.removeDockableFocusListener( this );
         this.controller = controller;
-        if( controller != null )
-            controller.addDockableFocusListener( this );
     	
+        actions.setController( controller );
 		if( controller == null ){
 			if( actionsSource != null ){
 				actions.set( null );
@@ -544,7 +544,7 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     
     @Override
     public void paintBackground( Graphics g ){
-    	if( !isTransparent() ){
+    	if( getTransparency() != Transparency.TRANSPARENT ){
 	    	super.paintBackground( g );
 	    	
 	        Graphics2D g2 = (Graphics2D)g;

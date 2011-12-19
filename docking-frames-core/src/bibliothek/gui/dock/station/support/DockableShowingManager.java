@@ -66,7 +66,7 @@ public class DockableShowingManager extends DockStationAdapter{
         DockStation station = listeners.getStation();
         for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
             Dockable dockable = station.getDockable(i);
-            boolean visible = station.isVisible( dockable );
+            boolean visible = station.isChildShowing( dockable );
             if( !visibility.containsKey( dockable ) || visibility.get( dockable ) != visible ){
                 listeners.fireDockableVisibilitySet( dockable, visible );
                 visibility.put( dockable, visible );
@@ -76,7 +76,7 @@ public class DockableShowingManager extends DockStationAdapter{
     
     @Override
     public void dockableAdded( DockStation station, Dockable dockable ) {
-        boolean visible = station.isVisible( dockable );
+        boolean visible = station.isChildShowing( dockable );
         listeners.fireDockableVisibilitySet( dockable, visible );
         visibility.put( dockable, visible );
     }

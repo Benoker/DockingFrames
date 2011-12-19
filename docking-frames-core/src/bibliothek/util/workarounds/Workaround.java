@@ -23,19 +23,29 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.util;
+package bibliothek.util.workarounds;
 
+import java.awt.Component;
+import java.awt.Window;
+
+import bibliothek.util.Workarounds;
 
 /**
- * A listener that is added to a {@link BackgroundAlgorithm}, the listener gets informed
- * if properties of the algorithm changed. 
+ * A {@link Workaround} provides code to workaround an issue that is only present in some versions of the
+ * JRE or in some libraries.
  * @author Benjamin Sigg
  */
-public interface BackgroundAlgorithmListener {
+public interface Workaround {
 	/**
-	 * Called when the transparency of <code>algorithm</code> changed to <code>transparency</code>.
-	 * @param algorithm the algorithm whose transparency changed
-	 * @param transparency the new property
+	 * Called for any {@link Component} which is used as glass pane (as invisible panel).
+	 * @param component the component that is invisible
 	 */
-	public void transparencyChanged( BackgroundAlgorithm algorithm, Transparency transparency );
+	public void markAsGlassPane( Component component );
+	
+	/**
+	 * Makes the window <code>window</code> transparent. See {@link Workarounds#makeTransparent(Window)} for a more
+	 * detailed description.
+	 * @param window the window that should be transparent
+	 */
+	public void makeTransparent( Window window );
 }

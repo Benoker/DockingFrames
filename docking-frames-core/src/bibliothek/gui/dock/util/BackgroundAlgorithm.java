@@ -216,12 +216,8 @@ public abstract class BackgroundAlgorithm implements BackgroundComponent{
 			}
 		}
 		
-		public boolean isSolid(){
-			return delegate.isSolid();
-		}
-		
-		public boolean isTransparent(){
-			return delegate.isTransparent();
+		public Transparency getTransparency(){
+			return delegate.getTransparency();
 		}
 		
 		/**

@@ -657,12 +657,29 @@
  ! API: During a drag and drop operation a DockStation now appears to consist of many layers instead of only one layer. This allows more complex rules to find the target of a drop operation. The new layers are described by the interface "DockStationDropLevel", the concept of the "override zone" has been completely replaced by this new layer mechanism.
  - Bugfix: SplitDockStation did ignore the DockAcceptance in certain situations
  - Bugfix: VetoableDockRelocatorListener.searched is now actually called
+ - API: Workarounds-API is now public, clients can register custom workarounds (e.g. to resolve issues with JWebBrowser).
+ 
+[v1.1.1p6a]
+ - Bugfix: Memory Leak in FlatTab, listener was added twice
+ - Bugfix: Memory Leaf in RoundRectButton, listener was not removed properly 
+ - Bugfix: SplitDockStation did not fire dockable removing eveng if the method "dropOver" was called
+ - API: CControl offers the new method "getFocusedCDockable", which returns the currently focused CDockable or null 
+ - API: Added DockFrontend.deleteAll, which quickly deletes all settings of the frontend.
+ ! API: DockFrontend.readXml/read now deletes the existing settings, this is how most developers would expect the method to work.
 
+[v1.1.1p6b]
+ - API: The new interface DockActionImportanceOrder allows to define which actions are the most important actions, if there is not enough space to show all actions the most important actions stay visible a bit longer
+ - API: If tabs and actions are shown, tabs are now hidden before actions are hidden
+ - Bugfix: When setting the location of a Dockable "d", such that a SplitDockStation with a maximixed child needs to de-maximize its child, and if that child is a StackDockStation containing "d", and all of this is executed by a CSplitDockStationHandle: then remove "d" from its parent before resizing. Because this way the EventQueue is cleaned before AWTEvents regarding "d" are sent, allowing new Component-resize events to be actually delivered.
+ - Bugfix: Removing a DockAction from a submenu did not have any effect unless the submenu was rebuilt.
+ - Bugfix: A nested DropDownAction could lead to a NPE during "unbind". 
+ - Bugfix/API: merged changes of Thomas. SplitDockStation should clean up wrong mouse cursor now. Improvements in the Glass-Extension.
+  
 [v1.1.1pToolbar]
  - API: New Inserter can override drop operations before and after they are created
+ - API: A lot more configuration options for the ScreenDockStation, these configurations are done by the ScreenDockWindowConfiguration.
+ ! API: PaintableComponent uses now a transparency enumeration instead of two booleans 
+ - API: ScreenDockWindows can be transparent
 
 [Todo]
-- DockActions/Tabs: assign priority to elements; more important elements stay longer on screen if there is not enough space for all elements
 - Drop StackDockStation over Dockable and merge them
-- EclipseTheme: Drop Dockable over Dockable and allow to select which Dockable has which index in the new StackDockStation.
-- SingleParentRemover: Implement bugfix as described in the file

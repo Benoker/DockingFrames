@@ -262,6 +262,8 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
             		item.action.unbind( dockable );
             	}
             }
+            
+            reput();
         }
     }
     

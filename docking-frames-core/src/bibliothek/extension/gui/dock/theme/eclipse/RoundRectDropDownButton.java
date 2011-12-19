@@ -48,6 +48,7 @@ import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.util.Colors;
 
 /**
@@ -207,12 +208,8 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
 				// ignore	
 			}
 			
-			public boolean isSolid(){
-				return false;
-			}
-			
-			public boolean isTransparent(){
-				return false;
+			public Transparency getTransparency(){
+				return Transparency.DEFAULT;
 			}
 		};
 		paintable.paint( g );

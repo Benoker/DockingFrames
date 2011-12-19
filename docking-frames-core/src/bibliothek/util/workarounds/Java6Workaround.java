@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2009 Benjamin Sigg
+ * Copyright (C) 2011 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,27 +23,21 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.util;
+package bibliothek.util.workarounds;
 
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Utility class providing help for bugs or specialities present in some
- * versions of the JRE.
+ * Workarounds necessary for Java 1.6.
  * @author Benjamin Sigg
  */
-public class JavaVersionWorkaround {
-	/**
-	 * This method is necessary since 1.6.14, it marks a component as
-	 * transparent. If not marked then AWT components behind <code>component</code>
-	 * are not visible. 
-	 * @param component the component to mark completely transparent
-	 */
-	public static void markAsGlassPane( Component component ){
+public class Java6Workaround implements Workaround{
+	public void markAsGlassPane( Component component ){
 		try{
 			Class<?> clazz = Class.forName( "com.sun.awt.AWTUtilities" );
 			Method method = clazz.getMethod( "setComponentMixingCutoutShape", new Class[]{ Component.class, Shape.class } );
@@ -66,6 +60,35 @@ public class JavaVersionWorkaround {
 		}
 		catch( IllegalAccessException e ){
 			// ignore
+		}
+	}
+	
+	public void makeTransparent( Window window ){
+		try{
+			Class<?> awtUtilities = Class.forName( "com.sun.awt.AWTUtilities" );
+			Method setWindowOpaque = awtUtilities.getMethod( "setWindowOpaque", Window.class, boolean.class );
+			setWindowOpaque.invoke( null, window, false );
+		}
+		catch( ClassNotFoundException ex ){
+			// ignore
+		}
+		catch( NoSuchMethodException ex ){
+			// ignore
+		}
+		catch( SecurityException ex ){
+			// ignore
+		}
+		catch( InvocationTargetException ex ){
+			ex.printStackTrace();
+		}
+		catch( IllegalArgumentException e ){
+			// ignore
+		}
+		catch( IllegalAccessException e ){
+			// ignore
+		}
+		catch( Exception e ){
+			e.printStackTrace();
 		}
 	}
 }
