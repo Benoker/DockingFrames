@@ -16,7 +16,7 @@ import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.util.PropertyValue;
 
 /**
- * This {@link ActionGuard} is responsible for adding the {@link ExpandAction}
+ * This {@link ActionGuard} is responsible for adding the {@link AbstractGroupedExpandAction}
  * to {@link Dockable}s.
  * 
  * @author Benjamin Sigg

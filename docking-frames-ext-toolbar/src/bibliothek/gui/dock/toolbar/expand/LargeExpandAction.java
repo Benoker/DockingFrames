@@ -5,12 +5,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.actions.GroupKeyGenerator;
 
 /**
- * An {@link ExpandAction} used for items that can switch between all
+ * An {@link AbstractGroupedExpandAction} used for items that can switch between all
  * {@link ExpandedState}s. This action makes items as large as possible.
  * 
  * @author Benjamin Sigg
  */
-public class LargeExpandAction extends ExpandAction{
+public class LargeExpandAction extends AbstractGroupedExpandAction{
 	public LargeExpandAction( DockController controller ){
 		super(controller, Action.LARGER, Action.LARGEST, Action.SMALLER);
 

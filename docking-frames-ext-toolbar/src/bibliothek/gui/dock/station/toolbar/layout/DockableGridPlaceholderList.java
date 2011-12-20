@@ -18,8 +18,7 @@ import bibliothek.util.Path;
  * @param <P>
  *            the kind of object that represents a {@link Dockable}
  */
-public class DockableGridPlaceholderList<P extends PlaceholderListItem<Dockable>>
-		extends GridPlaceholderList<Dockable, DockStation, P>{
+public class DockableGridPlaceholderList<P extends PlaceholderListItem<Dockable>> extends GridPlaceholderList<Dockable, DockStation, P> {
 	@Override
 	protected DockStation itemToStation( Dockable dockable ){
 		return dockable.asDockStation();
@@ -28,8 +27,8 @@ public class DockableGridPlaceholderList<P extends PlaceholderListItem<Dockable>
 	@Override
 	protected Dockable[] getItemChildren( DockStation station ){
 		final Dockable[] result = new Dockable[station.getDockableCount()];
-		for (int i = 0; i < result.length; i++){
-			result[i] = station.getDockable(i);
+		for( int i = 0; i < result.length; i++ ) {
+			result[i] = station.getDockable( i );
 		}
 		return result;
 	}
@@ -37,10 +36,10 @@ public class DockableGridPlaceholderList<P extends PlaceholderListItem<Dockable>
 	@Override
 	protected Path getItemPlaceholder( Dockable dockable ){
 		final PlaceholderStrategy strategy = getStrategy();
-		if (strategy == null){
+		if( strategy == null ) {
 			return null;
 		}
-		return strategy.getPlaceholderFor(dockable);
+		return strategy.getPlaceholderFor( dockable );
 	}
 
 	@Override
@@ -50,6 +49,6 @@ public class DockableGridPlaceholderList<P extends PlaceholderListItem<Dockable>
 
 	@Override
 	protected void setItemPlaceholders( DockStation station, PlaceholderMap map ){
-		station.setPlaceholders(map);
+		station.setPlaceholders( map );
 	}
 }

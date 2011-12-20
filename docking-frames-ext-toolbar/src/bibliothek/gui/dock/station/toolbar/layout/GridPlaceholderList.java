@@ -24,9 +24,7 @@ import bibliothek.util.Path;
  * @param <P>
  *            the type of item which represents a {@link Dockable}
  */
-public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>>
-		extends
-		PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>{
+public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>> extends PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>> {
 	/**
 	 * This {@link PlaceholderListItemConverter} is used to read and write
 	 * {@link Column}s, the default setting just ignores any reference to any
@@ -35,7 +33,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	private PlaceholderListItemConverter<D, P> converter;
 
 	public GridPlaceholderList(){
-		setConverter(null);
+		setConverter( null );
 	}
 
 	/**
@@ -47,10 +45,10 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	 * @return a new, empty column that is yet unknown to this list
 	 */
 	public Column<D, S, P> createColumn( PlaceholderList<D, S, P> content ){
-		if (content == null){
-			throw new IllegalArgumentException("content must not be null");
+		if( content == null ) {
+			throw new IllegalArgumentException( "content must not be null" );
 		}
-		return new ColumnList(content);
+		return new ColumnList( content );
 	}
 
 	/**
@@ -61,11 +59,10 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	 *            the converter to use, can be <code>null</code>
 	 */
 	public void setConverter( PlaceholderListItemConverter<D, P> converter ){
-		if (converter == null){
+		if( converter == null ) {
 			converter = new PlaceholderListItemConverter<D, P>(){
 				@Override
-				public ConvertedPlaceholderListItem convert( int index,
-						P dockable ){
+				public ConvertedPlaceholderListItem convert( int index, P dockable ){
 					return null;
 				}
 
@@ -113,9 +110,8 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	}
 
 	@Override
-	protected void setPlaceholders( ColumnItem<D, S, P> station,
-			PlaceholderMap map ){
-		station.setPlaceholders(map);
+	protected void setPlaceholders( ColumnItem<D, S, P> station, PlaceholderMap map ){
+		station.setPlaceholders( map );
 	}
 
 	@Override
@@ -217,7 +213,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	 * 
 	 * @author Benjamin Sigg
 	 */
-	private class DockableItem implements ColumnItem<D, S, P>{
+	private class DockableItem implements ColumnItem<D, S, P> {
 		private final D item;
 
 		public DockableItem( D item ){
@@ -236,22 +232,21 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 		 */
 		@Override
 		public ColumnItem<D, S, P> asStation(){
-			final S station = itemToStation(item);
-			if (station == null){
+			final S station = itemToStation( item );
+			if( station == null ) {
 				return null;
 			}
-			return new StationItem(station);
+			return new StationItem( station );
 		}
 
 		@Override
 		public Path getPlaceholder(){
-			return getItemPlaceholder(item);
+			return getItemPlaceholder( item );
 		}
 
 		@Override
 		public ColumnItem<D, S, P>[] getChildren(){
-			throw new IllegalStateException("a " + getClass().getSimpleName()
-					+ " must not be asked for its children");
+			throw new IllegalStateException( "a " + getClass().getSimpleName() + " must not be asked for its children" );
 		}
 
 		@Override
@@ -270,7 +265,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	 * 
 	 * @author Benjamin Sigg
 	 */
-	private class StationItem implements ColumnItem<D, S, P>{
+	private class StationItem implements ColumnItem<D, S, P> {
 		private final S item;
 
 		public StationItem( S item ){
@@ -284,29 +279,28 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 
 		@Override
 		public Path getPlaceholder(){
-			throw new IllegalStateException("a " + getClass().getSimpleName()
-					+ " must not be asked for its placeholder");
+			throw new IllegalStateException( "a " + getClass().getSimpleName() + " must not be asked for its placeholder" );
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public ColumnItem<D, S, P>[] getChildren(){
-			final D[] children = getItemChildren(item);
+			final D[] children = getItemChildren( item );
 			final ColumnItem<D, S, P>[] result = new ColumnItem[children.length];
-			for (int i = 0; i < result.length; i++){
-				result[i] = new DockableItem(children[i]);
+			for( int i = 0; i < result.length; i++ ) {
+				result[i] = new DockableItem( children[i] );
 			}
 			return result;
 		}
 
 		@Override
 		public PlaceholderMap getPlaceholders(){
-			return getItemPlaceholders(item);
+			return getItemPlaceholders( item );
 		}
 
 		@Override
 		public void setPlaceholders( PlaceholderMap map ){
-			setItemPlaceholders(item, map);
+			setItemPlaceholders( item, map );
 		}
 	}
 
@@ -324,8 +318,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	 *            the type of item which represents a {@link Dockable}
 	 */
 
-	public interface Column<D, S, P extends PlaceholderListItem<D>> extends
-			ColumnItem<D, S, P>, PlaceholderListItem<ColumnItem<D, S, P>>{
+	public interface Column<D, S, P extends PlaceholderListItem<D>> extends ColumnItem<D, S, P>, PlaceholderListItem<ColumnItem<D, S, P>> {
 		/**
 		 * Gets the list of dockables.
 		 * 
@@ -334,7 +327,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 		public PlaceholderList<D, S, P> getList();
 	}
 
-	private class ColumnList implements Column<D, S, P>{
+	private class ColumnList implements Column<D, S, P> {
 		private final PlaceholderList<D, S, P> list;
 
 		public ColumnList( PlaceholderList<D, S, P> list ){
@@ -354,24 +347,23 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 		@SuppressWarnings("unchecked")
 		@Override
 		public ColumnItem<D, S, P>[] getChildren(){
-			final ColumnItem<D, S, P>[] result = new ColumnItem[list
-					.dockables().size()];
+			final ColumnItem<D, S, P>[] result = new ColumnItem[list.dockables().size()];
 			int index = 0;
-			for (final P item : list.dockables()){
-				result[index++] = new DockableItem(item.asDockable());
+			for( final P item : list.dockables() ) {
+				result[index++] = new DockableItem( item.asDockable() );
 			}
 			return result;
 		}
 
 		@Override
 		public PlaceholderMap getPlaceholders(){
-			return list.toMap(converter);
+			return list.toMap( converter );
 		}
 
 		@Override
 		public void setPlaceholders( PlaceholderMap map ){
 			list.clear();
-			list.read(map, converter);
+			list.read( map, converter );
 		}
 
 		/**

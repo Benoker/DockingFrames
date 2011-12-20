@@ -5,12 +5,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.actions.GroupKeyGenerator;
 
 /**
- * This {@link ExpandAction} is used for items that can switch only between two
+ * This {@link AbstractGroupedExpandAction} is used for items that can switch only between two
  * of the {@link ExpandedState}s.
  * 
  * @author Benjamin Sigg
  */
-public class SwitchExpandAction extends ExpandAction{
+public class SwitchExpandAction extends AbstractGroupedExpandAction{
 	public SwitchExpandAction( DockController controller ){
 		super(controller, Action.SMALLER, Action.SMALLEST, Action.LARGER,
 				Action.LARGEST);
