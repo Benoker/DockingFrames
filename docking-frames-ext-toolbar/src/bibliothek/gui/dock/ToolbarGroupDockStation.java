@@ -214,13 +214,14 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	public Dockable getDockable( int column, int line ){
 		int lineCount = 0;
 		if (dockables.getColumnContent(column) != null){
-			for (Iterator iterator = dockables.getColumnContent(column); iterator
+			for (Iterator<StationChildHandle> iterator = dockables.getColumnContent(column); iterator
 					.hasNext();){
-				StationChildHandle handle = (StationChildHandle) iterator
+				StationChildHandle handle = iterator
 						.next();
 				if (lineCount == line){
 					return handle.asDockable();
 				}
+				lineCount++;
 			}
 		}
 		return null;
