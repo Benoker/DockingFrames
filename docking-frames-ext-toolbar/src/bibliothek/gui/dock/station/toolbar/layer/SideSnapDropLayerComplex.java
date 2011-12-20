@@ -75,7 +75,6 @@ public class SideSnapDropLayerComplex implements DockStationDropLayer {
 			// snap is not allowed
 			return false;
 		}
-
 		if( isComponentContain( x, y ) ) {
 			// if the mouse is in inside component, the snap layer should not
 			// manage the drop action

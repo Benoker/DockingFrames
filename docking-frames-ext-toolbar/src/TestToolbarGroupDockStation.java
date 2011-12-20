@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -11,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.DockController;
@@ -68,32 +71,32 @@ public class TestToolbarGroupDockStation {
 		frame.add( south.getComponent(), BorderLayout.SOUTH );
 
 		final ToolbarGroupDockStation group = new ToolbarGroupDockStation();
-
-		group.getColumnModel().addListener( new ToolbarColumnModelListener(){
-			private ToolbarColumnListener listener = new ToolbarColumnListener(){
-				@Override
-				public void inserted( ToolbarColumn column, Dockable item, int index ){
-					System.out.println( "item inserted: " + column.getColumnIndex() + ", " + index );
-				}
-
-				@Override
-				public void removed( ToolbarColumn column, Dockable item, int index ){
-					System.out.println( "item removed: " + column.getColumnIndex() + ", " + index );
-				}
-			};
-
-			@Override
-			public void removed( ToolbarColumnModel model, ToolbarColumn column, int index ){
-				System.out.println( "column removed: " + index );
-				column.removeListener( listener );
-			}
-
-			@Override
-			public void inserted( ToolbarColumnModel model, ToolbarColumn column, int index ){
-				System.out.println( "column inserted: " + index );
-				column.addListener( listener );
-			}
-		} );
+//
+//		group.getColumnModel().addListener( new ToolbarColumnModelListener(){
+//			private ToolbarColumnListener listener = new ToolbarColumnListener(){
+//				@Override
+//				public void inserted( ToolbarColumn column, Dockable item, int index ){
+//					System.out.println( "item inserted: " + column.getColumnIndex() + ", " + index );
+//				}
+//
+//				@Override
+//				public void removed( ToolbarColumn column, Dockable item, int index ){
+//					System.out.println( "item removed: " + column.getColumnIndex() + ", " + index );
+//				}
+//			};
+//
+//			@Override
+//			public void removed( ToolbarColumnModel model, ToolbarColumn column, int index ){
+//				System.out.println( "column removed: " + index );
+//				column.removeListener( listener );
+//			}
+//
+//			@Override
+//			public void inserted( ToolbarColumnModel model, ToolbarColumn column, int index ){
+//				System.out.println( "column inserted: " + index );
+//				column.addListener( listener );
+//			}
+//		} );
 
 		//		Icon icon = new ImageIcon(
 		//				TestPersistentLayout.class.getResource("/resources/film.png"));
@@ -141,6 +144,23 @@ public class TestToolbarGroupDockStation {
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		frame.setVisible( true );
 		screen.setShowing( true );
+		
+		Timer timer = new Timer( 2500, new ActionListener(){
+			boolean state = true;
+			
+			@Override
+			public void actionPerformed( ActionEvent e ){
+				if( state ){
+					west.setOrientation( Orientation.HORIZONTAL );
+				}
+				else{
+					west.setOrientation( Orientation.VERTICAL );
+				}
+				state = !state;
+			}
+		});
+		timer.setRepeats( true );
+		timer.start();
 	}
 
 	private static ToolbarDockStation createToolbar( String... buttons ){

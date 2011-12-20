@@ -154,7 +154,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * Gets access to a simplified view of the contents of this station.
 	 * @return a model describing all the columns that are shown on this station
 	 */
-	public ToolbarColumnModel getColumnModel(){
+	public ToolbarColumnModel<StationChildHandle> getColumnModel(){
 		return dockables.getModel();
 	}
 
@@ -213,15 +213,29 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 *         specified indexes.
 	 */
 	public Dockable getDockable( int columnIndex, int line ){
-		ToolbarColumnModel model = getColumnModel();
+		StationChildHandle handle = getHandle( columnIndex, line );
+		if( handle == null ){
+			return null;
+		}
+		return handle.asDockable();
+	}
+	
+	/**
+	 * Gets the {@link StationChildHandle} which is used at the given position.
+	 * @param columnIndex the column in which to search
+	 * @param line the line in the column
+	 * @return the item or <code>null</code> if the indices are out of bounds
+	 */
+	public StationChildHandle getHandle( int columnIndex, int line ){
+		ToolbarColumnModel<StationChildHandle> model = getColumnModel();
 		if( columnIndex < 0 || columnIndex >= model.getColumnCount() ){
 			return null;
 		}
-		ToolbarColumn column = model.getColumn( columnIndex );
+		ToolbarColumn<StationChildHandle> column = model.getColumn( columnIndex );
 		if( line < 0 || line >= column.getDockableCount() ){
 			return null;
 		}
-		return column.getDockable( line );
+		return column.getItem( line );
 	}
 
 	/**

@@ -36,6 +36,7 @@ public abstract class OrientationObserver implements OrientingDockStationListene
 	public OrientationObserver( Dockable dockable ){
 		this.dockable = dockable;
 		dockable.addDockHierarchyListener( listener );
+		updateHierarchy();
 	}
 	
 	/**

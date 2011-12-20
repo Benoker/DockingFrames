@@ -155,15 +155,15 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 	 * A facade simplifying access to this {@link DockablePlaceholderToolbarGrid}
 	 * @author Benjamin Sigg
 	 */
-	private class Model implements ToolbarColumnModel {
+	private class Model implements ToolbarColumnModel<P> {
 		/** all the observers of this {@link ToolbarColumnModel} */
-		private List<ToolbarColumnModelListener> modelListeners = new ArrayList<ToolbarColumnModelListener>();
+		private List<ToolbarColumnModelListener<P>> modelListeners = new ArrayList<ToolbarColumnModelListener<P>>();
 
 		/** all the columns that are currently shown in this grid */
 		private List<Column> columns = new ArrayList<Column>();
 
 		@Override
-		public void addListener( ToolbarColumnModelListener listener ){
+		public void addListener( ToolbarColumnModelListener<P> listener ){
 			if( listener == null ) {
 				throw new IllegalArgumentException( "listener must not be null" );
 			}
@@ -171,7 +171,7 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		}
 
 		@Override
-		public void removeListener( ToolbarColumnModelListener listener ){
+		public void removeListener( ToolbarColumnModelListener<P> listener ){
 			modelListeners.remove( listener );
 		}
 
@@ -179,7 +179,8 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		 * Gets all the {@link ToolbarColumnModelListener} that are currently registered at this model.
 		 * @return all the listeners
 		 */
-		protected ToolbarColumnModelListener[] listeners(){
+		@SuppressWarnings("unchecked")
+		protected ToolbarColumnModelListener<P>[] listeners(){
 			return modelListeners.toArray( new ToolbarColumnModelListener[modelListeners.size()] );
 		}
 
@@ -196,14 +197,14 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		public void onInserted( int index ){
 			Column column = new Column();
 			columns.add( index, column );
-			for( ToolbarColumnModelListener listener : listeners() ) {
+			for( ToolbarColumnModelListener<P> listener : listeners() ) {
 				listener.inserted( this, column, index );
 			}
 		}
 
 		public void onRemoved( int index ){
 			Column column = columns.remove( index );
-			for( ToolbarColumnModelListener listener : listeners() ) {
+			for( ToolbarColumnModelListener<P> listener : listeners() ) {
 				listener.removed( this, column, index );
 			}
 		}
@@ -213,20 +214,20 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 	 * A facade simplifying access to the visible columns of this {@link DockablePlaceholderToolbarGrid}.
 	 * @author Benjamin Sigg
 	 */
-	private class Column implements ToolbarColumn {
+	private class Column implements ToolbarColumn<P> {
 		private List<P> items = new ArrayList<P>();
-		private List<ToolbarColumnListener> listeners = new ArrayList<ToolbarColumnListener>();
+		private List<ToolbarColumnListener<P>> listeners = new ArrayList<ToolbarColumnListener<P>>();
 
 		public void onInserted( P item, int index ){
 			items.add( index, item );
-			for( ToolbarColumnListener listener : listeners() ) {
+			for( ToolbarColumnListener<P> listener : listeners() ) {
 				listener.inserted( this, item.asDockable(), index );
 			}
 		}
 
 		public void onRemoved( P item, int index ){
 			items.remove( index );
-			for( ToolbarColumnListener listener : listeners() ) {
+			for( ToolbarColumnListener<P> listener : listeners() ) {
 				listener.removed( this, item.asDockable(), index );
 			}
 		}
@@ -245,13 +246,19 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		public Dockable getDockable( int index ){
 			return items.get( index ).asDockable();
 		}
+		
+		@Override
+		public P getItem( int index ){
+			return items.get( index );
+		}
 
-		private ToolbarColumnListener[] listeners(){
+		@SuppressWarnings("unchecked")
+		private ToolbarColumnListener<P>[] listeners(){
 			return listeners.toArray( new ToolbarColumnListener[listeners.size()] );
 		}
 
 		@Override
-		public void addListener( ToolbarColumnListener listener ){
+		public void addListener( ToolbarColumnListener<P> listener ){
 			if( listener == null ) {
 				throw new IllegalArgumentException( "listener must not be null" );
 			}
@@ -259,7 +266,7 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		}
 
 		@Override
-		public void removeListener( ToolbarColumnListener listener ){
+		public void removeListener( ToolbarColumnListener<P> listener ){
 			listeners.remove( listener );
 		}
 	}

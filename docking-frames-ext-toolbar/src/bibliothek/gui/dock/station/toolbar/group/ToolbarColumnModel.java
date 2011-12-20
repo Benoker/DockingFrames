@@ -1,5 +1,6 @@
 package bibliothek.gui.dock.station.toolbar.group;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.util.FrameworkOnly;
@@ -12,9 +13,10 @@ import bibliothek.util.FrameworkOnly;
  * but it offers an API to register observers and be notified about changes within the columns.<br>
  * Clients should not implement this interface.
  * @author Benjamin Sigg
+ * @param <P> the wrapper used to describe a {@link Dockable}
  */
 @FrameworkOnly
-public interface ToolbarColumnModel {
+public interface ToolbarColumnModel<P> {
 	/**
 	 * Gets the total number of columns that are currently available.
 	 * @return the total number of columns
@@ -27,17 +29,17 @@ public interface ToolbarColumnModel {
 	 * @return the column, not <code>null</code>
 	 * @throws IllegalArgumentException if <code>index</code> is not within the boundaries
 	 */
-	public ToolbarColumn getColumn( int index );
+	public ToolbarColumn<P> getColumn( int index );
 	
 	/**
 	 * Adds the observer <code>listener</code> to this model.
 	 * @param listener the new observer, not <code>null</code>
 	 */
-	public void addListener( ToolbarColumnModelListener listener );
+	public void addListener( ToolbarColumnModelListener<P> listener );
 	
 	/**
 	 * Removes the observer <code>listener</code> from this model.
 	 * @param listener the observer to remove
 	 */
-	public void removeListener( ToolbarColumnModelListener listener );
+	public void removeListener( ToolbarColumnModelListener<P> listener );
 }

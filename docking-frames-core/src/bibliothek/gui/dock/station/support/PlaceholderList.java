@@ -1553,14 +1553,16 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 
 		private Entry getEntry( int index ){
 			if( index < 0 )
-				throw new IndexOutOfBoundsException();
+				throw new IndexOutOfBoundsException("index < 0: " + index);
 
 			Entry entry = head( level );
+			int start = index;
+			
 			while( index > 0 ) {
 				entry = entry.next( level );
 				index--;
 				if( entry == null ) {
-					throw new IndexOutOfBoundsException();
+					throw new IndexOutOfBoundsException( "index=" + start + ", size=" + size() );
 				}
 			}
 
