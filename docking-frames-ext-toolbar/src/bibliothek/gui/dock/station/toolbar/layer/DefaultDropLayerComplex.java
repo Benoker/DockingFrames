@@ -1,8 +1,6 @@
 package bibliothek.gui.dock.station.toolbar.layer;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
@@ -68,8 +66,13 @@ public class DefaultDropLayerComplex implements DockStationDropLayer{
 						firstBoundsDraft.width, firstBoundsDraft.height);
 
 				// the last dockable of the column
-				Component lastComponent = station.getDockable(columnIndex,
-						station.lineCount(columnIndex) - 1).getComponent();
+				Component lastComponent;
+				if (station.columnCount() == 1){
+					lastComponent = firstComponent;
+				} else{
+					lastComponent = station.getDockable(columnIndex,
+							station.lineCount(columnIndex) - 1).getComponent();
+				}
 				Rectangle lastBoundsDraft = lastComponent.getBounds();
 				upperleft = lastBoundsDraft.getLocation();
 				SwingUtilities.convertPointToScreen(upperleft, lastComponent);

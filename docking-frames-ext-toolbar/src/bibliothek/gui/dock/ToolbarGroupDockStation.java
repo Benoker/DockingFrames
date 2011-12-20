@@ -131,8 +131,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 */
 	public ToolbarGroupDockStation(){
 		init();
-		mainPanel.getContentPane().setBackground(Color.YELLOW);
-		mainPanel.getBasePane().setBackground(Color.ORANGE);
 	}
 
 	@Override
