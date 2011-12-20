@@ -25,9 +25,9 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
  * 
  * @author Herve Guillaume
  * @param <S>
- *            the kind of station using this {@link ToolbarDropInfo}
+ *            the kind of station using this {@link ToolbarGroupDropInfo}
  */
-public abstract class ToolbarComplexDropInfo implements StationDropOperation{
+public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	/** The {@link Dockable} which is inserted */
 	private final Dockable dragDockable;
 	/**
@@ -62,7 +62,7 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 	 * @param mouseY
 	 *            the mouse position on Y axis
 	 */
-	public ToolbarComplexDropInfo( Dockable dockable,
+	public ToolbarGroupDropInfo( Dockable dockable,
 			ToolbarGroupDockStation stationHost, int mouseX, int mouseY ){
 		// System.out.println(this.toString()
 		// + "## new ToolbarComplexDropInfo ## ");
@@ -263,7 +263,7 @@ public abstract class ToolbarComplexDropInfo implements StationDropOperation{
 				return pos;
 			}
 		}
-		return Position.SOUTH;
+		return null;
 	}
 
 	/**

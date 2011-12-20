@@ -45,12 +45,14 @@ import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.toolbar.ToolbarComplexDropInfo;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
+import bibliothek.gui.dock.station.toolbar.layer.DefaultDropLayerComplex;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
+import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayerComplex;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.gui.dock.station.toolbar.layout.PlaceholderToolbarGridConverter;
 import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
@@ -112,7 +114,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 * Size of the border outside this station where a {@link Dockable} will
 	 * still be considered to be dropped onto this station. Measured in pixel.
 	 */
-	private int borderSideSnapSize = 5;
+	private int borderSideSnapSize = 10;
 	/**
 	 * Whether the bounds of this station are slightly bigger than the station
 	 * itself. Used together with {@link #borderSideSnapSize} to grab Dockables
@@ -400,8 +402,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[] { new DefaultDropLayer(this),
-				new SideSnapDropLayer(this), };
+		return new DockStationDropLayer[] { new DefaultDropLayerComplex(this),
+				new SideSnapDropLayerComplex(this) };
+		// return new DockStationDropLayer[] { new DefaultDropLayer(this),
+		// new SideSnapDropLayer(this) };
 	}
 
 	@Override
@@ -438,7 +442,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					return null;
 				}
 			}
-			return new ToolbarComplexDropInfo(dockable, this, mouseX, mouseY){
+			return new ToolbarGroupDropInfo(dockable, this, mouseX, mouseY){
 				@Override
 				public void execute(){
 					drop(this);
@@ -481,7 +485,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 */
 	@Override
 	protected void drop( StationDropOperation dropInfo ){
-		final ToolbarComplexDropInfo dropInfoGroup = (ToolbarComplexDropInfo) dropInfo;
+		final ToolbarGroupDropInfo dropInfoGroup = (ToolbarGroupDropInfo) dropInfo;
 		System.out
 				.println("Summarize Info: " + dropInfoGroup.toSummaryString());
 		if (dropInfoGroup.getItemPositionVSBeneathDockable() != Position.CENTER){
@@ -1074,10 +1078,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
 			g2D.setStroke(new BasicStroke(2));
+			final int localIndexBeneathMouse = indexBeneathMouse;
+			final Position localSideBeneathMouse = sideBeneathMouse;
 			final DefaultStationPaintValue paint = getPaint();
 			if (prepareDropDraw){
-				if (indexBeneathMouse != -1){
-					final Dockable dockableBeneathMouse = getDockable(indexBeneathMouse);
+				if (localIndexBeneathMouse != -1){
+					final Dockable dockableBeneathMouse = getDockable(localIndexBeneathMouse);
 					final Component componentBeneathMouse = dockableBeneathMouse
 							.getComponent();
 					if (componentBeneathMouse != null){
@@ -1095,7 +1101,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 						int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 						switch (getOrientation()) {
 						case VERTICAL:
-							switch (sideBeneathMouse) {
+							switch (localSideBeneathMouse) {
 							case NORTH:
 								x1 = rectangleBeneathMouseTranslated.x;
 								x2 = rectangleBeneathMouseTranslated.x
@@ -1133,10 +1139,16 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 								// (otherwise, part of the insertion line falls
 								// outside of the overlay pane and can't be
 								// drawn)
+								System.out
+										.println("EAST: "
+												+ "indexBeneathMouse :"
+												+ localIndexBeneathMouse
+												+ "Column :"
+												+ column(getDockable(localIndexBeneathMouse)));
 								if (column(dockableBeneathMouse) == (columnCount() - 1)){
 									x1 = x2 = x1 - 2;
 								}
-								
+
 								// we look at the longest column near the
 								// insertion lines to decide what length the
 								// lines should have
@@ -1148,15 +1160,22 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 									Rectangle lastComponentBounds = getDockable(
 											getDockableCount() - 1)
 											.getComponent().getBounds();
-									y2 = (int) lastComponentBounds.getMaxY();	
+									y2 = (int) lastComponentBounds.getMaxY();
 								} else{
-									Rectangle lastComponentBoundsLeft = getDockable(column, lineCount(column) - 1).getComponent().getBounds();
-									int yLeft = (int) lastComponentBoundsLeft.getMaxY();
-									Rectangle lastComponentBoundsRight = getDockable(column + 1, lineCount(column + 1) - 1).getComponent().getBounds();
-									int yRight = (int) lastComponentBoundsRight.getMaxY();
-									if (yLeft > yRight) {
+									Rectangle lastComponentBoundsLeft = getDockable(
+											column, lineCount(column) - 1)
+											.getComponent().getBounds();
+									int yLeft = (int) lastComponentBoundsLeft
+											.getMaxY();
+									Rectangle lastComponentBoundsRight = getDockable(
+											column + 1,
+											lineCount(column + 1) - 1)
+											.getComponent().getBounds();
+									int yRight = (int) lastComponentBoundsRight
+											.getMaxY();
+									if (yLeft > yRight){
 										y2 = yLeft;
-									} else {
+									} else{
 										y2 = yRight;
 									}
 								}
@@ -1168,11 +1187,16 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 								// (otherwise, part of the insertion line falls
 								// outside of the overlay pane and can't be
 								// drawn)
-								if (column(getDockable(indexBeneathMouse)) == 0){
-									x1 = x2 = x1 + 1;
+								System.out
+										.println("WEST: "
+												+ "indexBeneathMouse :"
+												+ localIndexBeneathMouse
+												+ "Column :"
+												+ column(getDockable(localIndexBeneathMouse)));
+								if (column(dockableBeneathMouse) == 0){
+									x1 = x2 = x1 + 2;
 								}
-								
-								
+
 								// we look at the longest column near the
 								// insertion lines to decide what length the
 								// lines should have
@@ -1180,55 +1204,185 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 								column = column(dockableBeneathMouse);
 								if (column == 0){
 									// if column is the first, we take into
-									// account the last dockable of the first column
-									Rectangle lastComponentBounds = getDockable(0, lineCount(0) - 1).getComponent().getBounds();
+									// account the last dockable of the first
+									// column
+									Rectangle lastComponentBounds = getDockable(
+											0, lineCount(0) - 1).getComponent()
+											.getBounds();
 									y2 = (int) lastComponentBounds.getMaxY();
 								} else{
-									Rectangle lastComponentBoundsLeft = getDockable(column, lineCount(column) - 1).getComponent().getBounds();
-									int yLeft = (int) lastComponentBoundsLeft.getMaxY();
-									Rectangle lastComponentBoundsRight = getDockable(column + 1, lineCount(column + 1) - 1).getComponent().getBounds();
-									int yRight = (int) lastComponentBoundsRight.getMaxY();
-									if (yLeft > yRight) {
+									Rectangle lastComponentBoundsLeft = getDockable(
+											column, lineCount(column) - 1)
+											.getComponent().getBounds();
+									int yLeft = (int) lastComponentBoundsLeft
+											.getMaxY();
+									Rectangle lastComponentBoundsRight = getDockable(
+											column + 1,
+											lineCount(column + 1) - 1)
+											.getComponent().getBounds();
+									int yRight = (int) lastComponentBoundsRight
+											.getMaxY();
+									if (yLeft > yRight){
 										y2 = yLeft;
-									} else {
+									} else{
 										y2 = yRight;
 									}
 								}
 								break;
 							default:
 								x1 = x2 = y1 = y2 = 0;
+								break;
 							}
 							break;
 						case HORIZONTAL:
-							switch (sideBeneathMouse) {
+							System.out.println("HORIZONTAL");
+							switch (localSideBeneathMouse) {
 							case NORTH:
-								x1 = rectToolbar.x;
-								x2 = rectToolbar.x + rectToolbar.width;
+								System.out.println("NORTH");
 								y1 = y2 = rectangleBeneathMouseTranslated.y;
+								// the y value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								if (column(getDockable(localIndexBeneathMouse)) == 0){
+									y1 = y2 = y1 + 1;
+								}
+
+								// we look at the longest column near the
+								// insertion lines to decide what length the
+								// lines should have
+								x1 = rectToolbar.x;
+								int column = column(dockableBeneathMouse);
+								if (column == 0){
+									// if column is the first, we take into
+									// account the last dockable of the first
+									// column
+									Rectangle lastComponentBounds = getDockable(
+											0, lineCount(0) - 1).getComponent()
+											.getBounds();
+									x2 = (int) lastComponentBounds.getMaxX();
+								} else{
+									// otherwise we take into account the
+									// tallest of the two side columns
+									Rectangle lastComponentBoundsLeft = getDockable(
+											column, lineCount(column) - 1)
+											.getComponent().getBounds();
+									int xLeft = (int) lastComponentBoundsLeft
+											.getMaxX();
+									System.out.println("Column + 1: "
+											+ (column + 1));
+									Rectangle lastComponentBoundsRight = getDockable(
+											column + 1,
+											lineCount(column + 1) - 1)
+											.getComponent().getBounds();
+									int xRight = (int) lastComponentBoundsRight
+											.getMaxX();
+									if (xLeft > xRight){
+										x2 = xLeft;
+									} else{
+										x2 = xRight;
+									}
+								}
 								break;
 							case EAST:
+								System.out.println("EAST");
 								x1 = x2 = rectangleBeneathMouseTranslated.x
 										+ rectangleBeneathMouseTranslated.width;
 								y1 = rectangleBeneathMouseTranslated.y;
 								y2 = rectangleBeneathMouseTranslated.y
 										+ rectangleBeneathMouseTranslated.height;
+								// the x value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								if (isLastOfColumn(dockableBeneathMouse)){
+									x1 = x2 = x1 - 2;
+								}
 								break;
 							case SOUTH:
-								x1 = rectToolbar.x;
-								x2 = rectToolbar.x + rectToolbar.width;
+								System.out.println("SOUTH");
 								y1 = y2 = rectangleBeneathMouseTranslated.y
 										+ rectangleBeneathMouseTranslated.height;
+								// the y value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								if (column(dockableBeneathMouse) == (columnCount() - 1)){
+									y1 = y2 = y1 - 2;
+								}
+
+								// we look at the longest column near the
+								// insertion lines to decide what length the
+								// lines should have
+								x1 = rectToolbar.x;
+								column = column(dockableBeneathMouse);
+								if (column == (columnCount() - 1)){
+									// if column is the last, we take into
+									// account the last dockable
+									Rectangle lastComponentBounds = getDockable(
+											getDockableCount() - 1)
+											.getComponent().getBounds();
+									x2 = (int) lastComponentBounds.getMaxX();
+								} else{
+									// debug
+									System.out.println("Column: " + column);
+									System.out.println("Line count: "
+											+ lineCount(column));
+									Dockable d = getDockable(column,
+											lineCount(column) - 1);
+									Component c = d.getComponent();
+									Rectangle r = c.getBounds();
+									// end debug
+									Rectangle lastComponentBoundsLeft = getDockable(
+											column, lineCount(column) - 1)
+											.getComponent().getBounds();
+									int xLeft = (int) lastComponentBoundsLeft
+											.getMaxX();
+									// debug
+									System.out.println("Column + 1: "
+											+ (column + 1));
+									System.out.println("Line count: "
+											+ lineCount(column + 1));
+									d = getDockable(column + 1,
+											lineCount(column + 1) - 1);
+									c = d.getComponent();
+									r = c.getBounds();
+									// end debug
+									Rectangle lastComponentBoundsRight = getDockable(
+											column + 1,
+											lineCount(column + 1) - 1)
+											.getComponent().getBounds();
+									int xRight = (int) lastComponentBoundsRight
+											.getMaxX();
+									if (xLeft > xRight){
+										x2 = xLeft;
+									} else{
+										x2 = xRight;
+									}
+								}
 								break;
 							case WEST:
+								System.out.println("WEST");
 								x1 = x2 = rectangleBeneathMouseTranslated.x;
 								y1 = rectangleBeneathMouseTranslated.y;
 								y2 = rectangleBeneathMouseTranslated.y
 										+ rectangleBeneathMouseTranslated.height;
+								// the x value is slightly modified to allow to
+								// draw the insertion lines with a proper larger
+								// (otherwise, part of the insertion line falls
+								// outside of the overlay pane and can't be
+								// drawn)
+								// if (line(dockableBeneathMouse) == 0){
+								// x1 = x2 = x1 + 1;
+								// }
 								break;
 							default:
 								x1 = x2 = y1 = y2 = 0;
+								break;
 							}
-
 							break;
 						}
 						paint.drawInsertionLine(g, x1, y1, x2, y2);

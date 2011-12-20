@@ -26,7 +26,7 @@ public class ToolbarGroupDockStationMerger extends AbstractToolbarMerger{
 	@Override
 	public void merge( StationDropOperation operation, DockStation parent,
 			DockStation child ){
-		final ToolbarComplexDropInfo opreationToolbar = (ToolbarComplexDropInfo) operation;
+		final ToolbarGroupDropInfo opreationToolbar = (ToolbarGroupDropInfo) operation;
 		final ToolbarGroupDockStation station = (ToolbarGroupDockStation) parent;
 		// WARNING: if I don't do a copy of dockables, problem occurs.
 		// Perhaps due to concurrent access to the dockable (drop in
