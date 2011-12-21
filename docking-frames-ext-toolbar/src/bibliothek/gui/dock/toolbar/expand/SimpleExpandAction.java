@@ -34,6 +34,8 @@ public class SimpleExpandAction extends SimpleButtonAction {
 	private DockActionText text;
 	private DockActionText tooltip;
 
+	private Action behavior;
+	
 	/**
 	 * Creates a new action.
 	 * @param controller the controller in whose realm this action is used
@@ -41,27 +43,57 @@ public class SimpleExpandAction extends SimpleButtonAction {
 	 */
 	public SimpleExpandAction( DockController controller, Action action ){
 		this.controller = controller;
-		final String name = name( action );
-
-		icon = new DockActionIcon( "toolbar.item." + name, this ){
-			@Override
-			protected void changed( Icon oldValue, Icon newValue ){
-				setIcon( newValue );
+		setBehavior( action );
+	}
+	
+	/**
+	 * Tells how this action looks like.
+	 * @return how this action looks
+	 */
+	public Action getBehavior(){
+		return behavior;
+	}
+	
+	/**
+	 * Sets the look of this action
+	 * @param behavior the new look
+	 */
+	public void setBehavior( Action behavior ){
+		if( behavior == null ){
+			throw new IllegalArgumentException( "behavior must not be null" );
+		}
+		
+		if( this.behavior != behavior ){
+			this.behavior = behavior;
+			final String name = name( behavior );
+			
+			if( icon == null ){
+				icon = new DockActionIcon( "toolbar.item." + name, this ){
+					@Override
+					protected void changed( Icon oldValue, Icon newValue ){
+						setIcon( newValue );
+					}
+				};
+				text = new DockActionText( "toolbar.item." + name, this ){
+					@Override
+					protected void changed( String oldValue, String newValue ){
+						setText( newValue );
+					}
+				};
+		
+				tooltip = new DockActionText( "toolbar.item." + name + ".tooltip", this ){
+					@Override
+					protected void changed( String oldValue, String newValue ){
+						setTooltip( newValue );
+					}
+				};
 			}
-		};
-		text = new DockActionText( "toolbar.item." + name, this ){
-			@Override
-			protected void changed( String oldValue, String newValue ){
-				setText( newValue );
+			else{
+				icon.setId( "toolbar.item." + name );
+				text.setId( "toolbar.item." + name );
+				tooltip.setId( "toolbar.item." + name + ".tooltip" );
 			}
-		};
-
-		tooltip = new DockActionText( "toolbar.item." + name + ".tooltip", this ){
-			@Override
-			protected void changed( String oldValue, String newValue ){
-				setTooltip( newValue );
-			}
-		};
+		}
 	}
 
 	private String name( Action action ){

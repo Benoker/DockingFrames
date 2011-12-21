@@ -39,7 +39,6 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
-import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
@@ -309,17 +308,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
         
         return size;
     }
-
-    /**
-     * Creates a new item for <code>action</code> which will be shown on this title.
-     * @param action The action which will be triggered by the button
-     * @param dockable The {@link Dockable} which will be affected by the action
-     * @return the new graphical representation of the action 
-     */
-    protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
-    	return dockable.getController().getActionViewConverter().createView( 
-    			action, ViewTarget.TITLE, dockable );
-    }
     
     /**
      * Gets a list of all actions which will be shown on this title.
@@ -360,6 +348,7 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
 		return suggestedSource;
 	}
     
+    @Override
     public void bind() {        
         DockController controller = getDockable().getController();
         if( itemPanel != null ){
@@ -371,6 +360,7 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
         super.bind();
     }
 
+    @Override
     public void unbind() {
         if( itemPanel != null ){
         	itemPanel.set( null );

@@ -32,6 +32,13 @@ public interface ToolbarColumnModel<P> {
 	public ToolbarColumn<P> getColumn( int index );
 	
 	/**
+	 * Searches the column which contains <code>dockable</code>.
+	 * @param dockable the item to search
+	 * @return the column containing <code>dockable</code> or <code>null</code> if not found
+	 */
+	public ToolbarColumn<P> getColumn( Dockable dockable );
+	
+	/**
 	 * Adds the observer <code>listener</code> to this model.
 	 * @param listener the new observer, not <code>null</code>
 	 */

@@ -3,8 +3,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -13,24 +11,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
-import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
-import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
-import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnListener;
-import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
-import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModelListener;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
-import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarGroupDockStation {
@@ -129,12 +119,12 @@ public class TestToolbarGroupDockStation {
 		group.drop( createToolbar( icon, icon, icon ), new ToolbarGroupProperty( -1, 5, null ) );
 
 		// Disable the expand state action button
-		controller.getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, new DefaultExpandableToolbarItemStrategy(){
-			@Override
-			public boolean isEnabled( Dockable item, ExpandedState state ){
-				return false;
-			}
-		} );
+//		controller.getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, new DefaultExpandableToolbarItemStrategy(){
+//			@Override
+//			public boolean isEnabled( Dockable item, ExpandedState state ){
+//				return false;
+//			}
+//		} );
 		// group.move( group.getDockable( 0 ), new ToolbarGroupProperty( 2, 1,
 		// null ) );
 
@@ -144,23 +134,6 @@ public class TestToolbarGroupDockStation {
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		frame.setVisible( true );
 		screen.setShowing( true );
-		
-		Timer timer = new Timer( 2500, new ActionListener(){
-			boolean state = true;
-			
-			@Override
-			public void actionPerformed( ActionEvent e ){
-				if( state ){
-					west.setOrientation( Orientation.HORIZONTAL );
-				}
-				else{
-					west.setOrientation( Orientation.VERTICAL );
-				}
-				state = !state;
-			}
-		});
-		timer.setRepeats( true );
-		timer.start();
 	}
 
 	private static ToolbarDockStation createToolbar( String... buttons ){

@@ -14,6 +14,10 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This {@link ActionGuard} is responsible for adding the {@link AbstractGroupedExpandAction}
@@ -21,6 +25,8 @@ import bibliothek.gui.dock.util.PropertyValue;
  * 
  * @author Benjamin Sigg
  */
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
+description="Is this class of any use? Can it be removed safely? Don't forget to remove the classes that are used by this as well.")
 public class ExpandedActionGuard implements ActionGuard{
 	/** all the {@link ExpandSource}s that are currently used */
 	private final Map<Dockable, ExpandSource> sources = new HashMap<Dockable, ExpandSource>();

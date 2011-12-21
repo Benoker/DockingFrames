@@ -48,12 +48,14 @@ import bibliothek.gui.dock.station.toolbar.ToolbarGroupDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupExpander;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.station.toolbar.layer.DefaultDropLayerComplex;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayerComplex;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.gui.dock.station.toolbar.layout.PlaceholderToolbarGridConverter;
 import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
+import bibliothek.gui.dock.station.toolbar.title.ColumnDockActionSource;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -92,6 +94,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	/** A list of all children organized in columns and lines */
 	private final DockablePlaceholderToolbarGrid<StationChildHandle> dockables = new DockablePlaceholderToolbarGrid<StationChildHandle>();
 
+	/** Responsible for managing the {@link ExpandedState} of the children */
+	private ToolbarGroupExpander expander;
+	
 	/** The {@link PlaceholderStrategy} that is used by {@link #dockables} */
 	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
 		@Override
@@ -144,6 +149,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		} );
 
 		setTitleIcon( null );
+		expander = new ToolbarGroupExpander( this );
 	}
 
 	// ########################################################
@@ -376,12 +382,14 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			else {
 				title = registerTitle( controller );
 			}
+			
 			paint.setController( controller );
+			expander.setController( controller );
 			placeholderStrategy.setProperties( controller );
 			displayerFactory.setController( controller );
 			displayers.setController( controller );
 			mainPanel.setController( controller );
-
+			
 			if( getController() != null ) {
 				dockables.bind();
 			}
@@ -913,6 +921,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	// ###################### UI Managing #####################
 	// ########################################################
 
+	/**
+	 * Gets a {@link ColumnDockActionSource} which allows to modify the {@link ExpandedState} of
+	 * the children of this station.
+	 * @return the source, not <code>null</code>
+	 */
+	public ColumnDockActionSource getExpandActionSource(){
+		return expander.getActions();
+	}
+	
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
 		DockUI.updateTheme( this, new ToolbarGroupDockStationFactory() );

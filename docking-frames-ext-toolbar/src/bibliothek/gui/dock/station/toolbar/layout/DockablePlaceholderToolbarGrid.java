@@ -188,6 +188,16 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		public Column getColumn( int index ){
 			return columns.get( index );
 		}
+		
+		@Override
+		public Column getColumn( Dockable dockable ){
+			for( Column column : columns ){
+				if( column.contains( dockable )){
+					return column;
+				}
+			}
+			return null;
+		}
 
 		@Override
 		public int getColumnCount(){
@@ -221,15 +231,29 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		public void onInserted( P item, int index ){
 			items.add( index, item );
 			for( ToolbarColumnListener<P> listener : listeners() ) {
-				listener.inserted( this, item.asDockable(), index );
+				listener.inserted( this, item, item.asDockable(), index );
 			}
 		}
 
 		public void onRemoved( P item, int index ){
 			items.remove( index );
 			for( ToolbarColumnListener<P> listener : listeners() ) {
-				listener.removed( this, item.asDockable(), index );
+				listener.removed( this, item, item.asDockable(), index );
 			}
+		}
+		
+		/**
+		 * Tells whether this column contains <code>dockable</code>.
+		 * @param dockable the item to search
+		 * @return <code>true</code> if <code>dockable</code> was found
+		 */
+		public boolean contains( Dockable dockable ){
+			for( P item : items ){
+				if( item.asDockable() == dockable ){
+					return true;
+				}
+			}
+			return false;
 		}
 
 		@Override
