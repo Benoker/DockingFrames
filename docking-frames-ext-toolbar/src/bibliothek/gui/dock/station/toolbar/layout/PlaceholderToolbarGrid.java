@@ -83,16 +83,62 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return the placeholders
 	 */
 	protected abstract Set<Path> getPlaceholders( D dockable );
-
+	
+	/**
+	 * Called if <code>item</code> was added to the column <code>column</code>.
+	 * @param column a visible column
+	 * @param columnIndex the index of the column
+	 * @param item a new item of <code>column</code>
+	 * @param itemIndex the index of the new item
+	 */
+	protected abstract void onInserted( PlaceholderList<D, S, P> column, int columnIndex, P item, int itemIndex );
+	
+	/**
+	 * Called if <code>item</code> was removed to the column <code>column</code>.
+	 * @param column a visible column
+	 * @param columnIndex the index of the column
+	 * @param item the removed item of <code>column</code>
+	 * @param itemIndex the index the item had before removing
+	 */
+	protected abstract void onRemoved( PlaceholderList<D, S, P> column, int columnIndex, P item, int itemIndex );
+	
+	/**
+	 * Called if a new column <code>column</code> was added to this grid. The column may not contain any elements when
+	 * this method is called.
+	 * @param column the new column
+	 * @param index the index of the new column
+	 */
+	protected abstract void onInserted( PlaceholderList<D, S, P> column, int index );
+	
+	/**
+	 * Called if the column <code>column</code> was removed from this grid. The column may still contain elements when it
+	 * is removed.
+	 * @param column the removed column
+	 * @param index the index the column had before it was removed
+	 */
+	protected abstract void onRemoved( PlaceholderList<D, S, P> column, int index );
+	
+	/**
+	 * Called if all columns were inserted at the same time. This means that the grid
+	 * previously was completely empty.
+	 */
+	protected abstract void onInserted();
+	
+	/**
+	 * Called if all columns were removed from this grid
+	 */
+	protected abstract void onRemoved();
+	
 	/**
 	 * Removes all content from this grid.
 	 */
 	public void clear(){
-		for (final Column<D, S, P> column : columns.dockables()){
+		for( final Column<D, S, P> column : columns.dockables() ) {
 			column.getList().unbind();
-			column.getList().setStrategy(null);
+			column.getList().setStrategy( null );
 		}
 		columns.clear();
+		onRemoved();
 	}
 
 	/**
@@ -112,16 +158,19 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *             if there is no {@link PlaceholderStrategy} set
 	 */
 	public void insert( int column, int line, P item ){
-		if (item == null){
-			throw new IllegalArgumentException("item must not be null");
+		if( item == null ) {
+			throw new IllegalArgumentException( "item must not be null" );
 		}
 
-		final PlaceholderList<D, S, P> list = getColumn(column);
-		if (list == null){
-			insert(column, item, true);
-		} else{
-			list.dockables().add(Math.min(line, list.dockables().size()), item);
-			ensureRemoved(list, item);
+		final PlaceholderList<D, S, P> list = getColumn( column );
+		if( list == null ) {
+			insert( column, item, true );
+		}
+		else {
+			int index = Math.min( line, list.dockables().size() );
+			list.dockables().add( index, item );
+			ensureRemoved( list, item );
+			onInserted( list, column, item, index );
 		}
 	}
 
@@ -138,7 +187,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *            the item to store, not <code>null</code>
 	 */
 	public void insert( int columnIndex, P item ){
-		insert(columnIndex, item, true);
+		insert( columnIndex, item, true );
 	}
 
 	/**
@@ -158,49 +207,51 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 */
 	public void insert( int columnIndex, P item, boolean reuse ){
 		final PlaceholderList<D, S, P> columnList = createColumn();
-		final Column<D, S, P> column = columns.createColumn(columnList);
+		final Column<D, S, P> column = columns.createColumn( columnList );
 		boolean added = false;
-
-		if (reuse){
+		int addedColumnIndex = -1;
+		
+		if( reuse ) {
 			int baseIndex;
-			if (columns.dockables().size() > 0){
-				baseIndex = columns.levelToBase(Math.max(0,
-						Math.min(columns.dockables().size() - 1, columnIndex)),
-						Level.DOCKABLE);
+			if( columns.dockables().size() > 0 ) {
+				baseIndex = columns.levelToBase( Math.max( 0, Math.min( columns.dockables().size() - 1, columnIndex ) ), Level.DOCKABLE );
 				baseIndex--;
-			} else{
+			}
+			else {
 				baseIndex = 0;
 			}
 
-			if ((baseIndex >= 0) && (baseIndex < columns.list().size())){
-				final PlaceholderList<?, ?, Column<D, S, P>>.Item columnItem = columns
-						.list().get(baseIndex);
-				if (columnItem.getDockable() == null){
+			if( (baseIndex >= 0) && (baseIndex < columns.list().size()) ) {
+				final PlaceholderList<?, ?, Column<D, S, P>>.Item columnItem = columns.list().get( baseIndex );
+				if( columnItem.getDockable() == null ) {
 					final PlaceholderMap map = columnItem.getPlaceholderMap();
-					if (map != null){
-						columnList.read(map, columns.getConverter());
+					if( map != null ) {
+						columnList.read( map, columns.getConverter() );
 					}
-					columnItem.setDockable(column);
+					columnItem.setDockable( column );
+					addedColumnIndex = columns.dockables().indexOf( column );
+					onInserted( column.getList(), addedColumnIndex );
 					added = true;
 				}
 			}
 		}
 
-		columnList.dockables().add(item);
-
-		if (!added){
-			columns.dockables().add(
-					Math.max(0,
-							Math.min(columnIndex, columns.dockables().size())),
-					column);
+		columnList.dockables().add( item );
+		if( added ){
+			onInserted( columnList, addedColumnIndex, item, columnList.dockables().size() );
+		}
+		else{
+			int index = Math.max( 0, Math.min( columnIndex, columns.dockables().size() ) );
+			columns.dockables().add( index, column );
+			onInserted( columnList, index );
+			onInserted( columnList, index, item, columnList.dockables().size()-1 );
 		}
 
-		columnList.setStrategy(strategy);
-		if (bound){
-			columnList.setStrategy(strategy);
+		if( bound ) {
+			columnList.setStrategy( strategy );
 		}
 
-		ensureRemoved(columnList, item);
+		ensureRemoved( columnList, item );
 	}
 
 	/**
@@ -224,70 +275,73 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @throws IllegalArgumentException
 	 *             if any index is out of bounds
 	 */
-	public void move( int sourceColumn, int sourceLine, int destinationColumn,
-			int destinationLine, Level destinationLevel ){
-		final Filter<P> sourceList = columns.dockables().get(sourceColumn)
-				.getList().dockables();
-
-		if (destinationColumn == columns.size(destinationLevel)){
-			destinationColumn = columns.size(Level.BASE);
-		} else if (destinationColumn >= 0){
-			destinationColumn = columns.levelToBase(destinationColumn,
-					destinationLevel);
+	public void move( int sourceColumn, int sourceLine, int destinationColumn, int destinationLine, Level destinationLevel ){
+		PlaceholderList<D, S, P> source = columns.dockables().get( sourceColumn ).getList();
+		final Filter<P> sourceList = source.dockables();
+		int destinationColumnIndex = -1;
+		
+		if( destinationColumn == columns.size( destinationLevel ) ) {
+			destinationColumn = columns.size( Level.BASE );
+		}
+		else if( destinationColumn >= 0 ) {
+			destinationColumn = columns.levelToBase( destinationColumn, destinationLevel );
 		}
 
-		if ((sourceLine < 0) || (sourceLine >= sourceList.size())){
-			throw new IllegalArgumentException("sourceLine out of bounds: "
-					+ sourceLine);
+		if( (sourceLine < 0) || (sourceLine >= sourceList.size()) ) {
+			throw new IllegalArgumentException( "sourceLine out of bounds: " + sourceLine );
 		}
 
-		if ((destinationColumn < -1)
-				|| (destinationColumn > columns.list().size())){
-			throw new IllegalArgumentException(
-					"destinationColumn out of bounds: " + destinationColumn);
+		if( (destinationColumn < -1) || (destinationColumn > columns.list().size()) ) {
+			throw new IllegalArgumentException( "destinationColumn out of bounds: " + destinationColumn );
 		}
 
-		final P value = sourceList.get(sourceLine);
+		final P value = sourceList.get( sourceLine );
 
 		PlaceholderList<D, S, P> list;
-		if ((destinationColumn == -1)
-				|| (destinationColumn == columns.list().size())){
+		if( (destinationColumn == -1) || (destinationColumn == columns.list().size()) ) {
 			list = createColumn();
-			if (destinationLine != 0){
-				throw new IllegalArgumentException(
-						"destinationLine is out of bounds: " + destinationLine);
+			if( destinationLine != 0 ) {
+				throw new IllegalArgumentException( "destinationLine is out of bounds: " + destinationLine );
 			}
-			final PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item item = columns.new Item(
-					columns.createColumn(list));
-			if (destinationColumn == -1){
-				columns.list().add(0, item);
-			} else{
-				columns.list().add(item);
+			final PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item item = columns.new Item( columns.createColumn( list ) );
+			if( destinationColumn == -1 ) {
+				columns.list().add( 0, item );
 			}
-		} else{
-			final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns
-					.list().get(destinationColumn);
-			if (item.getDockable() == null){
+			else {
+				columns.list().add( item );
+			}
+			destinationColumnIndex = columns.dockables().indexOf( item.getDockable() );
+			onInserted( list, destinationColumnIndex );
+		}
+		else {
+			final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( destinationColumn );
+			if( item.getDockable() == null ) {
 				list = createColumn();
-				if (destinationLine != 0){
-					throw new IllegalArgumentException(
-							"destinationLine is out of bounds: "
-									+ destinationLine);
+				if( destinationLine != 0 ) {
+					throw new IllegalArgumentException( "destinationLine is out of bounds: " + destinationLine );
 				}
-				item.setDockable(columns.createColumn(list));
-			} else{
-				list = item.getDockable().getList();
-				if ((destinationLine < 0)
-						|| (destinationLine > list.dockables().size())){
-					throw new IllegalArgumentException(
-							"destinationLine out of bounds: " + destinationLine);
-				}
+				item.setDockable( columns.createColumn( list ) );
+				destinationColumnIndex = columns.dockables().indexOf( item.getDockable() );
+				onInserted( list, destinationColumnIndex );
 			}
+			else {
+				list = item.getDockable().getList();
+				if( (destinationLine < 0) || (destinationLine > list.dockables().size()) ) {
+					throw new IllegalArgumentException( "destinationLine out of bounds: " + destinationLine );
+				}
+				destinationColumnIndex = columns.baseToLevel( destinationColumn, Level.DOCKABLE );
+			}
+			
 		}
 
-		list.dockables().move(sourceList, sourceLine, destinationLine);
-
-		ensureRemoved(list, value);
+		P moved = sourceList.get( sourceLine );
+		
+		list.dockables().move( sourceList, sourceLine, destinationLine );
+		ensureRemoved( list, value );
+		
+		onRemoved( source, sourceColumn, moved, sourceLine );
+		onInserted( list, destinationColumnIndex, moved, destinationLine );
+		
 		purge();
 	}
 
@@ -306,31 +360,48 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *         otherwise
 	 */
 	public boolean put( Path placeholder, P item ){
-		final int listIndex = columns.getListIndex(placeholder);
-		if (listIndex == -1){
+		final int listIndex = columns.getListIndex( placeholder );
+		if( listIndex == -1 ) {
 			return false;
 		}
-		final PlaceholderList<?, ?, Column<D, S, P>>.Item listItem = columns
-				.list().get(listIndex);
+		final PlaceholderList<?, ?, Column<D, S, P>>.Item listItem = columns.list().get( listIndex );
 
 		Column<D, S, P> column = listItem.getDockable();
-		if (column != null){
-			return column.getList().put(placeholder, item) != -1;
+		if( column != null ) {
+			int columnIndex = columns.dockables().indexOf( column );
+			
+			int removedIndex = column.getList().getDockableIndex( placeholder );
+			boolean result = column.getList().put( placeholder, item ) != -1;
+			if( result ){
+				if( removedIndex >= 0 ){
+					P removed = column.getList().dockables().get( removedIndex );
+					onRemoved( column.getList(), columnIndex, removed, removedIndex );
+				}
+				onInserted( column.getList(), columnIndex, item, column.getList().dockables().indexOf( item ) );
+			}
+			return result;
 		}
 		final PlaceholderMap map = listItem.getPlaceholderMap();
-		if (map != null){
+		if( map != null ) {
 			final PlaceholderList<D, S, P> list = createColumn();
-			list.read(map, columns.getConverter());
-			column = columns.createColumn(list);
+			list.read( map, columns.getConverter() );
+			column = columns.createColumn( list );
 
-			listItem.setDockable(column);
-
-			if (column.getList().put(placeholder, item) == -1){
-				listItem.setDockable(null);
+			listItem.setDockable( column );
+			int columnIndex = columns.dockables().indexOf( column );
+			
+			onInserted( list, columnIndex );
+			
+			int insertIndex = column.getList().put( placeholder, item );
+			if( insertIndex == -1 ) {
+				listItem.setDockable( null );
+				onRemoved( list, columnIndex );
 				return false;
-			} else{
-				listItem.setPlaceholderMap(null);
-				ensureRemoved(list, placeholder);
+			}
+			else {
+				listItem.setPlaceholderMap( null );
+				ensureRemoved( list, placeholder );
+				onInserted( list, columnIndex, item, insertIndex );
 			}
 			return true;
 		}
@@ -349,10 +420,10 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *            the placeholder to store
 	 */
 	public void insertPlaceholder( int column, int line, Path placeholder ){
-		columns.dockables().addPlaceholder(column, placeholder);
-		final Column<D, S, P> item = columns.dockables().get(column);
-		item.getList().dockables().addPlaceholder(line, placeholder);
-		ensureRemoved(item.getList(), placeholder);
+		columns.dockables().addPlaceholder( column, placeholder );
+		final Column<D, S, P> item = columns.dockables().get( column );
+		item.getList().dockables().addPlaceholder( line, placeholder );
+		ensureRemoved( item.getList(), placeholder );
 	}
 
 	/**
@@ -363,43 +434,44 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *            the item to remove
 	 */
 	public void remove( P item ){
-		for (final Column<D, S, P> column : columns.dockables()){
-			column.getList().remove(item);
+		int columnIndex = -1;
+		for( final Column<D, S, P> column : columns.dockables() ) {
+			columnIndex++;
+			int index = column.getList().dockables().indexOf( item );
+			if( index >= 0 ){
+				column.getList().dockables().remove( index );
+				onRemoved( column.getList(), columnIndex, item, index );
+			}
 		}
 		purge();
 	}
 
 	private void ensureRemoved( PlaceholderList<D, S, P> ignore, P item ){
-		final Set<Path> placeholders = getPlaceholders(item.asDockable());
-		ensureRemoved(ignore, placeholders);
+		final Set<Path> placeholders = getPlaceholders( item.asDockable() );
+		ensureRemoved( ignore, placeholders );
 	}
 
-	private void ensureRemoved( PlaceholderList<D, S, P> ignore,
-			Path placeholder ){
+	private void ensureRemoved( PlaceholderList<D, S, P> ignore, Path placeholder ){
 		final Set<Path> set = new HashSet<Path>();
-		set.add(placeholder);
-		ensureRemoved(ignore, set);
+		set.add( placeholder );
+		ensureRemoved( ignore, set );
 	}
 
-	private void ensureRemoved( PlaceholderList<D, S, P> ignore,
-			Set<Path> placeholders ){
-		final Iterator<PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item> iter = columns
-				.list().iterator();
-		while (iter.hasNext()){
-			final PlaceholderList<?, ?, Column<D, S, P>>.Item item = iter
-					.next();
-			if ((item.getDockable() == null)
-					|| (item.getDockable().getList() != ignore)){
-				item.removeAll(placeholders);
-				if ((item.getPlaceholderSet() == null) && item.isPlaceholder()){
+	private void ensureRemoved( PlaceholderList<D, S, P> ignore, Set<Path> placeholders ){
+		final Iterator<PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item> iter = columns.list().iterator();
+		while( iter.hasNext() ) {
+			final PlaceholderList<?, ?, Column<D, S, P>>.Item item = iter.next();
+			if( (item.getDockable() == null) || (item.getDockable().getList() != ignore) ) {
+				item.removeAll( placeholders );
+				if( (item.getPlaceholderSet() == null) && item.isPlaceholder() ) {
 					iter.remove();
 				}
 			}
 		}
 
-		for (final Column<D, S, P> column : columns.dockables()){
-			if (column.getList() != ignore){
-				column.getList().removeAll(placeholders);
+		for( final Column<D, S, P> column : columns.dockables() ) {
+			if( column.getList() != ignore ) {
+				column.getList().removeAll( placeholders );
 			}
 		}
 
@@ -416,9 +488,9 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	public int getColumn( D dockable ){
 		int index = 0;
 		final Iterator<PlaceholderList<D, S, P>> columns = columns();
-		while (columns.hasNext()){
-			for (final P item : columns.next().dockables()){
-				if (item.asDockable() == dockable){
+		while( columns.hasNext() ) {
+			for( final P item : columns.next().dockables() ) {
+				if( item.asDockable() == dockable ) {
 					return index;
 				}
 			}
@@ -438,9 +510,8 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 */
 	public int getColumn( Path placeholder ){
 		int index = 0;
-		for (final PlaceholderList<?, ?, Column<D, S, P>>.Item item : columns
-				.list()){
-			if (item.hasPlaceholder(placeholder)){
+		for( final PlaceholderList<?, ?, Column<D, S, P>>.Item item : columns.list() ) {
+			if( item.hasPlaceholder( placeholder ) ) {
 				return index;
 			}
 			index++;
@@ -456,11 +527,11 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return the location of <code>dockable</code>
 	 */
 	public int getLine( D dockable ){
-		final int column = getColumn(dockable);
-		if (column == -1){
+		final int column = getColumn( dockable );
+		if( column == -1 ) {
 			return -1;
 		}
-		return getLine(column, dockable);
+		return getLine( column, dockable );
 	}
 
 	/**
@@ -474,10 +545,10 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return the location of <code>dockable</code>
 	 */
 	public int getLine( int column, D dockable ){
-		final PlaceholderList<D, S, P> list = getColumn(column);
+		final PlaceholderList<D, S, P> list = getColumn( column );
 		int index = 0;
-		for (final P item : list.dockables()){
-			if (item.asDockable() == dockable){
+		for( final P item : list.dockables() ) {
+			if( item.asDockable() == dockable ) {
 				return index;
 			}
 			index++;
@@ -494,11 +565,11 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return the line at which <code>placeholder</code> was found
 	 */
 	public int getLine( Path placeholder ){
-		final int column = getColumn(placeholder);
-		if (column == -1){
+		final int column = getColumn( placeholder );
+		if( column == -1 ) {
 			return -1;
 		}
-		return getLine(column, placeholder);
+		return getLine( column, placeholder );
 	}
 
 	/**
@@ -513,16 +584,17 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *         was not found
 	 */
 	public int getLine( int column, Path placeholder ){
-		final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list()
-				.get(column);
-		if (item.getDockable() == null){
-			if (item.hasPlaceholder(placeholder)){
+		final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( column );
+		if( item.getDockable() == null ) {
+			if( item.hasPlaceholder( placeholder ) ) {
 				return 0;
-			} else{
+			}
+			else {
 				return -1;
 			}
-		} else{
-			return item.getDockable().getList().getDockableIndex(placeholder);
+		}
+		else {
+			return item.getDockable().getList().getDockableIndex( placeholder );
 		}
 	}
 
@@ -536,21 +608,20 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return <code>true</code> if <code>placeholder</code> was found
 	 */
 	public boolean hasPlaceholder( Path placeholder ){
-		final int listIndex = columns.getListIndex(placeholder);
-		if (listIndex == -1){
+		final int listIndex = columns.getListIndex( placeholder );
+		if( listIndex == -1 ) {
 			return false;
 		}
-		final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list()
-				.get(listIndex);
+		final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( listIndex );
 
 		final Column<D, S, P> column = item.getDockable();
-		if (column != null){
-			return column.getList().hasPlaceholder(placeholder);
+		if( column != null ) {
+			return column.getList().hasPlaceholder( placeholder );
 		}
 		final PlaceholderMap map = item.getPlaceholderMap();
-		if (map != null){
-			for (final Key key : map.getPlaceholders()){
-				if (key.contains(placeholder)){
+		if( map != null ) {
+			for( final Key key : map.getPlaceholders() ) {
+				if( key.contains( placeholder ) ) {
 					return true;
 				}
 			}
@@ -566,7 +637,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	public int size(){
 		int sum = 0;
 		final Iterator<PlaceholderList<D, S, P>> iter = columns();
-		while (iter.hasNext()){
+		while( iter.hasNext() ) {
 			sum += iter.next().dockables().size();
 		}
 		return sum;
@@ -582,21 +653,22 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *             if <code>index</code> is not valid
 	 */
 	public P get( int index ){
-		if (index < 0){
-			throw new IllegalArgumentException("index must not be < 0");
+		if( index < 0 ) {
+			throw new IllegalArgumentException( "index must not be < 0" );
 		}
 		final Iterator<PlaceholderList<D, S, P>> iter = columns();
-		while (iter.hasNext()){
+		while( iter.hasNext() ) {
 			final Filter<P> dockables = iter.next().dockables();
 			final int size = dockables.size();
-			if (index < size){
-				return dockables.get(index);
-			} else{
+			if( index < size ) {
+				return dockables.get( index );
+			}
+			else {
 				index -= size;
 			}
 		}
 
-		throw new IllegalArgumentException("index must not be >= size");
+		throw new IllegalArgumentException( "index must not be >= size" );
 	}
 
 	/**
@@ -609,9 +681,9 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 */
 	public P get( D dockable ){
 		final Iterator<P> iter = items();
-		while (iter.hasNext()){
+		while( iter.hasNext() ) {
 			final P next = iter.next();
-			if (next.asDockable() == dockable){
+			if( next.asDockable() == dockable ) {
 				return next;
 			}
 		}
@@ -628,18 +700,17 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *         stored
 	 */
 	public P get( Path placeholder ){
-		final int listIndex = columns.getListIndex(placeholder);
-		if (listIndex == -1){
+		final int listIndex = columns.getListIndex( placeholder );
+		if( listIndex == -1 ) {
 			return null;
 		}
-		final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list()
-				.get(listIndex);
+		final PlaceholderList<?, ?, Column<D, S, P>>.Item item = columns.list().get( listIndex );
 
 		final Column<D, S, P> column = item.getDockable();
-		if (column == null){
+		if( column == null ) {
 			return null;
 		}
-		return column.getList().getDockableAt(placeholder);
+		return column.getList().getDockableAt( placeholder );
 	}
 
 	/**
@@ -651,22 +722,34 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 */
 	protected Iterator<PlaceholderList<D, S, P>> allColumns(){
 		return new Iterator<PlaceholderList<D, S, P>>(){
-			private final Iterator<GridPlaceholderList.Column<D, S, P>> items = columns
-					.dockables().iterator();
-
+			private final Iterator<GridPlaceholderList.Column<D, S, P>> items = columns.dockables().iterator();
+			private PlaceholderList<D, S, P> current;
+			private int currentIndex = -1;
+			private boolean requiresPurge = false;
+			
 			@Override
 			public boolean hasNext(){
-				return items.hasNext();
+				boolean result = items.hasNext();
+				if( !result ){
+					if( requiresPurge ){
+						purge();
+						requiresPurge = false;
+					}
+				}
+				return result;
 			};
 
 			@Override
 			public PlaceholderList<D, S, P> next(){
-				return items.next().getList();
+				current = items.next().getList();
+				currentIndex++;
+				return current;
 			}
 
 			@Override
 			public void remove(){
 				items.remove();
+				onRemoved( current, currentIndex-- );
 			}
 		};
 	}
@@ -679,16 +762,14 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 */
 	protected Iterator<PlaceholderList<D, S, P>> columns(){
 		return new Iterator<PlaceholderList<D, S, P>>(){
-			private final Iterator<GridPlaceholderList.Column<D, S, P>> items = columns
-					.dockables().iterator();
+			private final Iterator<GridPlaceholderList.Column<D, S, P>> items = columns.dockables().iterator();
 			private PlaceholderList<D, S, P> next;
 
 			private void forward(){
 				next = null;
-				while ((next == null) && items.hasNext()){
-					final PlaceholderList<D, S, P> column = items.next()
-							.getList();
-					if (column.dockables().size() > 0){
+				while( (next == null) && items.hasNext() ) {
+					final PlaceholderList<D, S, P> column = items.next().getList();
+					if( column.dockables().size() > 0 ) {
 						next = column;
 					}
 				}
@@ -696,7 +777,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 			@Override
 			public boolean hasNext(){
-				if ((next == null) && items.hasNext()){
+				if( (next == null) && items.hasNext() ) {
 					forward();
 				}
 				return next != null;
@@ -725,32 +806,50 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		return new Iterator<P>(){
 			private final Iterator<PlaceholderList<D, S, P>> columns = columns();
 			private Iterator<P> items = null;
-
+			
+			private PlaceholderList<D, S, P> currentList;
+			private int currentListIndex = -1;
+			private P currentItem;
+			private int currentItemIndex = -1;
+			private boolean requiresdPurge = false;
+			
 			private void validate(){
-				while (((items == null) || !items.hasNext())
-						&& columns.hasNext()){
-					items = columns.next().dockables().iterator();
+				while( ((items == null) || !items.hasNext()) && columns.hasNext() ) {
+					currentList = columns.next();
+					currentItemIndex = -1;
+					currentListIndex++;
+					items = currentList.dockables().iterator();
 				}
 			}
 
 			@Override
 			public boolean hasNext(){
 				validate();
-				return (items != null) && items.hasNext();
+				boolean result = (items != null) && items.hasNext();
+				if( !result ){
+					if( requiresdPurge ){
+						purge();
+						requiresdPurge = false;
+					}
+				}
+				return result;
 			}
 
 			@Override
 			public P next(){
 				validate();
-				return items.next();
+				currentItem = items.next();
+				return currentItem;
 			}
 
 			@Override
 			public void remove(){
-				if (items == null){
-					throw new IllegalStateException("no item selected");
+				if( items == null ) {
+					throw new IllegalStateException( "no item selected" );
 				}
 				items.remove();
+				onRemoved( currentList, currentListIndex, currentItem, currentItemIndex-- );
+				requiresdPurge = true;
 			}
 		};
 	}
@@ -774,7 +873,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return the size of the column
 	 */
 	public int getLineCount( int column ){
-		return columns.dockables().get(column).getList().dockables().size();
+		return columns.dockables().get( column ).getList().dockables().size();
 	}
 
 	/**
@@ -794,32 +893,62 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *            the index of the non-empty column
 	 * @return the content of the non-empty column
 	 */
-	public Iterator<P> getColumnContent( int index ){
-		final PlaceholderList<D, S, P> list = getColumn(index);
-		if (list == null){
-			throw new IllegalArgumentException("index is out of bounds");
+	public Iterator<P> getColumnContent( final int index ){
+		final PlaceholderList<D, S, P> list = getColumn( index );
+		if( list == null ) {
+			throw new IllegalArgumentException( "index is out of bounds" );
 		}
-		return list.dockables().iterator();
+		return new Iterator<P>(){
+			private Iterator<P> delegate = list.dockables().iterator();
+			private P current;
+			private int currentIndex = -1;
+			private boolean requiresPurge = false;
+			
+			@Override
+			public boolean hasNext(){
+				boolean result = delegate.hasNext();
+				if( !result ){
+					if( requiresPurge ){
+						purge();
+						requiresPurge = false;
+					}
+				}
+				return result;
+			}
+
+			@Override
+			public P next(){
+				current = delegate.next();
+				currentIndex++;
+				return current;
+			}
+
+			@Override
+			public void remove(){
+				delegate.remove();
+				onRemoved( list, index, current, currentIndex-- );
+			}
+		};
 	}
 
 	/**
-	 * Gets the non-empty column with index <code>index</code>.
+	 * Gets the non-empty column with index <code>index</code>. Subclasses should not modify the returned list.
 	 * 
 	 * @param index
 	 *            the index of the column
 	 * @return the non-empty column or <code>null</code> if no such column
 	 *         exists
 	 */
-	private PlaceholderList<D, S, P> getColumn( int index ){
-		if (index < 0){
+	protected PlaceholderList<D, S, P> getColumn( int index ){
+		if( index < 0 ) {
 			return null;
 		}
 		final Filter<Column<D, S, P>> dockables = columns.dockables();
-		if (index >= dockables.size()){
+		if( index >= dockables.size() ) {
 			return null;
 		}
 
-		return dockables.get(index).getList();
+		return dockables.get( index ).getList();
 	}
 
 	/**
@@ -829,14 +958,14 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	public void bind(){
 		columns.bind();
 		final Iterator<PlaceholderList<D, S, P>> columns = allColumns();
-		while (columns.hasNext()){
+		while( columns.hasNext() ) {
 			columns.next().bind();
 		}
 
-		if (!bound){
+		if( !bound ) {
 			bound = true;
-			if (strategy != null){
-				strategy.addListener(strategyListener);
+			if( strategy != null ) {
+				strategy.addListener( strategyListener );
 				purge();
 			}
 		}
@@ -849,14 +978,14 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	public void unbind(){
 		columns.unbind();
 		final Iterator<PlaceholderList<D, S, P>> columns = allColumns();
-		while (columns.hasNext()){
+		while( columns.hasNext() ) {
 			columns.next().unbind();
 		}
 
-		if (bound){
+		if( bound ) {
 			bound = false;
-			if (strategy != null){
-				strategy.removeListener(strategyListener);
+			if( strategy != null ) {
+				strategy.removeListener( strategyListener );
 			}
 		}
 	}
@@ -868,18 +997,18 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *            the new strategy, can be <code>null</code>
 	 */
 	public void setStrategy( PlaceholderStrategy strategy ){
-		if ((this.strategy != null) && bound){
-			this.strategy.removeListener(strategyListener);
+		if( (this.strategy != null) && bound ) {
+			this.strategy.removeListener( strategyListener );
 		}
 		this.strategy = strategy;
-		columns.setStrategy(strategy);
+		columns.setStrategy( strategy );
 		final Iterator<PlaceholderList<D, S, P>> columns = allColumns();
-		while (columns.hasNext()){
-			columns.next().setStrategy(strategy);
+		while( columns.hasNext() ) {
+			columns.next().setStrategy( strategy );
 		}
 
-		if ((this.strategy != null) && bound){
-			this.strategy.addListener(strategyListener);
+		if( (this.strategy != null) && bound ) {
+			this.strategy.addListener( strategyListener );
 			purge();
 		}
 	}
@@ -897,12 +1026,15 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * Removes any dead element from {@link #columns}.
 	 */
 	private void purge(){
-		for (final PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item item : columns
-				.list()){
+		int index = -1;
+		for( final PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item item : columns.list() ) {
 			final Column<D, S, P> column = item.getDockable();
-			if (column != null){
-				if (column.getList().list().size() == 0){
-					item.setDockable(null);
+			if( column != null ) {
+				index++;
+				PlaceholderList<D, S, P> list = column.getList();
+				if( list.list().size() == 0 ) {
+					item.setDockable( null );
+					onRemoved( list, index-- );
 				}
 			}
 		}
@@ -930,83 +1062,76 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return the map that persistently stores all data of this grid
 	 */
 	public PlaceholderMap toMap( final Map<D, Integer> identifiers ){
-		columns.setConverter(new PlaceholderListItemAdapter<D, P>(){
+		columns.setConverter( new PlaceholderListItemAdapter<D, P>(){
 			@Override
 			public ConvertedPlaceholderListItem convert( int index, P dockable ){
-				final Integer id = identifiers.get(dockable.asDockable());
-				if (id == null){
+				final Integer id = identifiers.get( dockable.asDockable() );
+				if( id == null ) {
 					return null;
 				}
 				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-				item.putInt("index", index);
-				item.putInt("id", id.intValue());
-				fill(dockable.asDockable(), item);
+				item.putInt( "index", index );
+				item.putInt( "id", id.intValue() );
+				fill( dockable.asDockable(), item );
 				return item;
 			}
-		});
+		} );
 
-		try{
-			return columns
-					.toMap(new PlaceholderListItemAdapter<ColumnItem<D, S, P>, Column<D, S, P>>(){
-						@Override
-						public ConvertedPlaceholderListItem convert( int index,
-								Column<D, S, P> dockable ){
-							final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-							item.putInt("index", index);
-							item.setPlaceholderMap(dockable.getPlaceholders());
-							return item;
-						}
-					});
-		} finally{
-			columns.setConverter(null);
+		try {
+			return columns.toMap( new PlaceholderListItemAdapter<ColumnItem<D, S, P>, Column<D, S, P>>(){
+				@Override
+				public ConvertedPlaceholderListItem convert( int index, Column<D, S, P> dockable ){
+					final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+					item.putInt( "index", index );
+					item.setPlaceholderMap( dockable.getPlaceholders() );
+					return item;
+				}
+			} );
+		}
+		finally {
+			columns.setConverter( null );
 		}
 	}
 
-	public void fromMap( PlaceholderMap map, final Map<Integer, D> identifiers,
-			final PlaceholderToolbarGridConverter<D, P> converter ){
-		columns.setConverter(new PlaceholderListItemAdapter<D, P>(){
+	public void fromMap( PlaceholderMap map, final Map<Integer, D> identifiers, final PlaceholderToolbarGridConverter<D, P> converter ){
+		clear();
+		columns.setConverter( new PlaceholderListItemAdapter<D, P>(){
 			@Override
 			public P convert( ConvertedPlaceholderListItem item ){
-				final Integer id = item.getInt("id");
-				final D dockable = identifiers.get(id);
-				if (dockable == null){
+				final Integer id = item.getInt( "id" );
+				final D dockable = identifiers.get( id );
+				if( dockable == null ) {
 					return null;
 				}
-				return converter.convert(dockable, item);
+				return converter.convert( dockable, item );
 			}
+		} );
 
-			// public void added( P dockable ){
-			// ignore
-			// }
-		});
+		try {
+			columns.read( map, new PlaceholderListItemAdapter<GridPlaceholderList.ColumnItem<D, S, P>, GridPlaceholderList.Column<D, S, P>>(){
+				@Override
+				public GridPlaceholderList.Column<D, S, P> convert( ConvertedPlaceholderListItem item ){
+					final PlaceholderList<D, S, P> list = createColumn();
+					final PlaceholderMap map = item.getPlaceholderMap();
+					if( map == null ) {
+						return null;
+					}
 
-		try{
-			columns.read(
-					map,
-					new PlaceholderListItemAdapter<GridPlaceholderList.ColumnItem<D, S, P>, GridPlaceholderList.Column<D, S, P>>(){
-						@Override
-						public GridPlaceholderList.Column<D, S, P> convert(
-								ConvertedPlaceholderListItem item ){
-							final PlaceholderList<D, S, P> list = createColumn();
-							final PlaceholderMap map = item.getPlaceholderMap();
-							if (map == null){
-								return null;
-							}
+					list.read( map, columns.getConverter() );
+					return columns.createColumn( list );
+				}
 
-							list.read(map, columns.getConverter());
-							return columns.createColumn(list);
-						}
-
-						@Override
-						public void added(
-								GridPlaceholderList.Column<D, S, P> dockable ){
-							for (final P item : dockable.getList().dockables()){
-								converter.added(item);
-							}
-						};
-					});
-		} finally{
-			columns.setConverter(null);
+				@Override
+				public void added( GridPlaceholderList.Column<D, S, P> dockable ){
+					for( final P item : dockable.getList().dockables() ) {
+						converter.added( item );
+					}
+				};
+			} );
+		}
+		finally {
+			columns.setConverter( null );
+			onInserted();
 		}
 	}
 
@@ -1017,32 +1142,31 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @return the converted map
 	 */
 	public PlaceholderMap toMap(){
-		columns.setConverter(new PlaceholderListItemAdapter<D, P>(){
+		columns.setConverter( new PlaceholderListItemAdapter<D, P>(){
 			@Override
 			public ConvertedPlaceholderListItem convert( int index, P dockable ){
 				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-				fill(dockable.asDockable(), item);
-				if (item.getPlaceholder() == null){
+				fill( dockable.asDockable(), item );
+				if( item.getPlaceholder() == null ) {
 					return null;
 				}
 				return item;
 			}
-		});
+		} );
 
-		try{
-			return columns
-					.toMap(new PlaceholderListItemAdapter<ColumnItem<D, S, P>, Column<D, S, P>>(){
-						@Override
-						public ConvertedPlaceholderListItem convert( int index,
-								Column<D, S, P> dockable ){
-							final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-							item.putInt("index", index);
-							item.setPlaceholderMap(dockable.getPlaceholders());
-							return item;
-						}
-					});
-		} finally{
-			columns.setConverter(null);
+		try {
+			return columns.toMap( new PlaceholderListItemAdapter<ColumnItem<D, S, P>, Column<D, S, P>>(){
+				@Override
+				public ConvertedPlaceholderListItem convert( int index, Column<D, S, P> dockable ){
+					final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+					item.putInt( "index", index );
+					item.setPlaceholderMap( dockable.getPlaceholders() );
+					return item;
+				}
+			} );
+		}
+		finally {
+			columns.setConverter( null );
 		}
 	}
 
@@ -1054,22 +1178,19 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 *            the map to read, not <code>null</code>
 	 */
 	public void fromMap( PlaceholderMap map ){
-		columns.clear();
-		columns.read(
-				map,
-				new PlaceholderListItemAdapter<ColumnItem<D, S, P>, Column<D, S, P>>(){
-					@Override
-					public Column<D, S, P> convert(
-							ConvertedPlaceholderListItem item ){
-						final PlaceholderMap map = item.getPlaceholderMap();
-						if (map == null){
-							return null;
-						}
+		clear();
+		columns.read( map, new PlaceholderListItemAdapter<ColumnItem<D, S, P>, Column<D, S, P>>(){
+			@Override
+			public Column<D, S, P> convert( ConvertedPlaceholderListItem item ){
+				final PlaceholderMap map = item.getPlaceholderMap();
+				if( map == null ) {
+					return null;
+				}
 
-						final PlaceholderList<D, S, P> content = createColumn();
-						content.read(map, columns.getConverter());
-						return columns.createColumn(content);
-					}
-				});
+				final PlaceholderList<D, S, P> content = createColumn();
+				content.read( map, columns.getConverter() );
+				return columns.createColumn( content );
+			}
+		} );
 	}
 }

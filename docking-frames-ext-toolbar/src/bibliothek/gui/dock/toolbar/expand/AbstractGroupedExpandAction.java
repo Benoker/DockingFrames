@@ -19,8 +19,8 @@ import bibliothek.gui.dock.util.PropertyValue;
  * 
  * @author Benjamin Sigg
  */
-public abstract class ExpandAction extends
-		GroupedButtonDockAction<ExpandAction.Action>{
+public abstract class AbstractGroupedExpandAction extends
+		GroupedButtonDockAction<AbstractGroupedExpandAction.Action>{
 	/** describes the various states this action can have */
 	public enum Action{
 		/** fully expand an item */
@@ -86,16 +86,16 @@ public abstract class ExpandAction extends
 	private final List<DockActionText> texts = new ArrayList<DockActionText>();
 
 	/**
-	 * Creates a new {@link ExpandAction}.
+	 * Creates a new {@link AbstractGroupedExpandAction}.
 	 * 
 	 * @param controller
 	 *            the controller in whose realm this action will be used
 	 * @param actions
 	 *            the actions that are going to be used by this
-	 *            {@link ExpandAction}, only icons and text for these actions
+	 *            {@link AbstractGroupedExpandAction}, only icons and text for these actions
 	 *            will be available.
 	 */
-	public ExpandAction( DockController controller, Action ... actions ){
+	public AbstractGroupedExpandAction( DockController controller, Action ... actions ){
 		super(null);
 
 		this.controller = controller;

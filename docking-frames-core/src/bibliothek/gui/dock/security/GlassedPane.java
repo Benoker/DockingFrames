@@ -44,6 +44,10 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 import bibliothek.util.Workarounds;
 
 /**
@@ -54,6 +58,8 @@ import bibliothek.util.Workarounds;
  * them, and then forward the events to the "content pane".
  * @author Benjamin Sigg
  */
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+	description="In Java 1.7 if a mouse-dragged is followed by a mouse-exit, and the mouse is over another GlassedPane, then this GlassedPane no longer receives events that it received in Java 1.6")
 public class GlassedPane extends JPanel{
     /** An arbitrary component */
     private JComponent contentPane = new JPanel();
