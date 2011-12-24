@@ -56,6 +56,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupPropertyFactory;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupTitle;
 import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleGrip;
 import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleRoundedBound;
 import bibliothek.gui.dock.themes.DockThemeExtension;
@@ -270,8 +271,12 @@ public class ToolbarExtension implements Extension {
 				final DockTitleManager titles = controller.getDockTitleManager();
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitleGrip.createFactory( new Color( 214, 217, 223 ) ) );
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
-				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
-				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
+				
+//				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
+//				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
+				
+				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarGroupTitle.FACTORY );
+				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarGroupTitle.FACTORY );
 			}
 
 			@Override

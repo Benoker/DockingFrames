@@ -12,6 +12,7 @@ import bibliothek.gui.dock.action.AbstractDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemStrategyListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.toolbar.expand.SimpleExpandAction;
@@ -255,6 +256,14 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 		 */
 		private void onAction( int index ){
 			column.performAction( actions[index].getBehavior() );
+		}
+		
+		@Override
+		public void addDockActionSourceListener( DockActionSourceListener listener ){
+			if( !hasListeners() ){
+				findEnabledActions();
+			}
+			super.addDockActionSourceListener( listener );
 		}
 		
 		private void findEnabledActions(){

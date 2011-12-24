@@ -220,7 +220,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 		if( boundaries == null ){
 			return -1;
 		}
-		if( getOrientation() == Orientation.HORIZONTAL ){
+		if( getOrientation() == Orientation.VERTICAL ){
 			return boundaries.x;
 		}
 		else{
@@ -234,7 +234,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 		if( boundaries == null ){
 			return 0;
 		}
-		if( getOrientation() == Orientation.HORIZONTAL ){
+		if( getOrientation() == Orientation.VERTICAL ){
 			return boundaries.width;
 		}
 		else{

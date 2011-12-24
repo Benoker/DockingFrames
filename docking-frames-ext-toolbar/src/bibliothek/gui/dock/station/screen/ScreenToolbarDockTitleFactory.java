@@ -17,7 +17,7 @@ import bibliothek.gui.dock.title.NullTitleFactory;
  * 
  * @author Benjamin Sigg
  */
-public class ScreenToolbarDockTitleFactory implements DockTitleFactory{
+public class ScreenToolbarDockTitleFactory implements DockTitleFactory {
 	/** unique identifier for the {@link DockTitleVersion} used by this factory */
 	public static final String TITLE_ID = "toolbar.screen";
 
@@ -32,8 +32,7 @@ public class ScreenToolbarDockTitleFactory implements DockTitleFactory{
 	 */
 	public ScreenToolbarDockTitleFactory( DockController controller ){
 		this.controller = controller;
-		version = controller.getDockTitleManager().getVersion(TITLE_ID,
-				NullTitleFactory.INSTANCE);
+		version = controller.getDockTitleManager().getVersion( TITLE_ID, NullTitleFactory.INSTANCE );
 	}
 
 	@Override
@@ -48,10 +47,9 @@ public class ScreenToolbarDockTitleFactory implements DockTitleFactory{
 
 	@Override
 	public void request( DockTitleRequest request ){
-		final ToolbarStrategy strategy = controller.getProperties().get(
-				ToolbarStrategy.STRATEGY);
-		if (strategy.isToolbarPart(request.getTarget())){
-			version.request(request);
+		final ToolbarStrategy strategy = controller.getProperties().get( ToolbarStrategy.STRATEGY );
+		if( strategy.isToolbarPart( request.getTarget() ) ) {
+			version.request( request );
 		}
 	}
 }

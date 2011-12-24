@@ -20,43 +20,37 @@ import bibliothek.gui.dock.themes.border.BorderModifier;
  * 
  * @author Benjamin Sigg
  */
-public class ToolbarMiniButton extends BasicMiniButton{
+public class ToolbarMiniButton extends BasicMiniButton {
 	/**
 	 * Identifier for the {@link ThemeManager} of the {@link BorderModifier}
 	 * which is used for the normal state.
 	 */
-	public static final String BORDER_KEY_NORMAL = ThemeManager.BORDER_MODIFIER
-			+ ".action.toolbar.miniButton.normal";
+	public static final String BORDER_KEY_NORMAL = ThemeManager.BORDER_MODIFIER + ".action.toolbar.miniButton.normal";
 	/**
 	 * Identifier for the {@link ThemeManager} of the {@link BorderModifier}
 	 * which is used for the selected state.
 	 */
-	public static final String BORDER_KEY_NORMAL_SELECTED = ThemeManager.BORDER_MODIFIER
-			+ ".action.toolbar.miniButton.normal.selected";
+	public static final String BORDER_KEY_NORMAL_SELECTED = ThemeManager.BORDER_MODIFIER + ".action.toolbar.miniButton.normal.selected";
 	/**
 	 * Identifier for the {@link ThemeManager} of the {@link BorderModifier}
 	 * which is used for the mouse hover state.
 	 */
-	public static final String BORDER_KEY_MOUSE_OVER = ThemeManager.BORDER_MODIFIER
-			+ ".action.toolbar.miniButton.mouseOver";
+	public static final String BORDER_KEY_MOUSE_OVER = ThemeManager.BORDER_MODIFIER + ".action.toolbar.miniButton.mouseOver";
 	/**
 	 * Identifier for the {@link ThemeManager} of the {@link BorderModifier}
 	 * which is used for the selected mouse hover state.
 	 */
-	public static final String BORDER_KEY_MOUSE_OVER_SELECTED = ThemeManager.BORDER_MODIFIER
-			+ ".action.toolbar.miniButton.mouseOver.selected";
+	public static final String BORDER_KEY_MOUSE_OVER_SELECTED = ThemeManager.BORDER_MODIFIER + ".action.toolbar.miniButton.mouseOver.selected";
 	/**
 	 * Identifier for the {@link ThemeManager} of the {@link BorderModifier}
 	 * which is used for the mouse pressed state.
 	 */
-	public static final String BORDER_KEY_MOUSE_PRESSED = ThemeManager.BORDER_MODIFIER
-			+ ".action.toolbar.miniButton.mousePressed";
+	public static final String BORDER_KEY_MOUSE_PRESSED = ThemeManager.BORDER_MODIFIER + ".action.toolbar.miniButton.mousePressed";
 	/**
 	 * Identifier for the {@link ThemeManager} of the {@link BorderModifier}
 	 * which is used for the selected mouse pressed state.
 	 */
-	public static final String BORDER_KEY_MOUSE_PRESSED_SELECTED = ThemeManager.BORDER_MODIFIER
-			+ ".action.toolbar.miniButton.mousePressed.selected";
+	public static final String BORDER_KEY_MOUSE_PRESSED_SELECTED = ThemeManager.BORDER_MODIFIER + ".action.toolbar.miniButton.mousePressed.selected";
 
 	/**
 	 * Creates the new button.
@@ -67,24 +61,22 @@ public class ToolbarMiniButton extends BasicMiniButton{
 	 * @param initializer
 	 *            a strategy to lazily initialize resources
 	 */
-	public ToolbarMiniButton( BasicTrigger trigger,
-			BasicResourceInitializer initializer ){
-		super(trigger, initializer);
-		setBorderKeyNormal(BORDER_KEY_NORMAL);
-		setBorderKeyNormalSelected(BORDER_KEY_NORMAL_SELECTED);
-		setBorderKeyMouseOver(BORDER_KEY_MOUSE_OVER);
-		setBorderKeyMouseOverSelected(BORDER_KEY_MOUSE_OVER_SELECTED);
-		setBorderKeyMousePressed(BORDER_KEY_MOUSE_PRESSED);
-		setBorderKeyMousePressedSelected(BORDER_KEY_MOUSE_PRESSED_SELECTED);
+	public ToolbarMiniButton( BasicTrigger trigger, BasicResourceInitializer initializer ){
+		super( trigger, initializer );
+		setBorderKeyNormal( BORDER_KEY_NORMAL );
+		setBorderKeyNormalSelected( BORDER_KEY_NORMAL_SELECTED );
+		setBorderKeyMouseOver( BORDER_KEY_MOUSE_OVER );
+		setBorderKeyMouseOverSelected( BORDER_KEY_MOUSE_OVER_SELECTED );
+		setBorderKeyMousePressed( BORDER_KEY_MOUSE_PRESSED );
+		setBorderKeyMousePressedSelected( BORDER_KEY_MOUSE_PRESSED_SELECTED );
 
-		setNormalBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+		setNormalBorder( BorderFactory.createEmptyBorder( 1, 1, 1, 1 ) );
 
 		final Border line = new Border(){
 			@Override
-			public void paintBorder( Component c, Graphics g, int x, int y,
-					int width, int height ){
-				g.setColor(c.getForeground());
-				g.drawRect(x, y, width - 1, height - 1);
+			public void paintBorder( Component c, Graphics g, int x, int y, int width, int height ){
+				g.setColor( c.getForeground() );
+				g.drawRect( x, y, width - 1, height - 1 );
 			}
 
 			@Override
@@ -94,16 +86,24 @@ public class ToolbarMiniButton extends BasicMiniButton{
 
 			@Override
 			public Insets getBorderInsets( Component c ){
-				return new Insets(1, 1, 1, 1);
+				return new Insets( 1, 1, 1, 1 );
 			}
 		};
 
-		setMouseOverBorder(line);
-		setMousePressedBorder(line);
+		setMouseOverBorder( line );
+		setMousePressedBorder( line );
 	}
 
 	@Override
 	protected Dimension getMinimumIconSize(){
-		return new Dimension(3, 3);
+		return new Dimension( 3, 3 );
+	}
+	
+	@Override
+	public Dimension getPreferredSize(){
+		Dimension result = super.getPreferredSize();
+		result.width -= 2;
+		result.height -= 2;
+		return result;
 	}
 }
