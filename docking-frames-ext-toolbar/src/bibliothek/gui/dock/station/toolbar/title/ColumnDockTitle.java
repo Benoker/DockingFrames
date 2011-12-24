@@ -1,5 +1,6 @@
 package bibliothek.gui.dock.station.toolbar.title;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -145,8 +146,13 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 
 	private int getOffset( int sourceIndex ){
 		int offset = source.getSourceOffset( sourceIndex );
+
+		Component dockable = getDockable().getComponent();
 		Point point = new Point( offset, offset );
-		point = SwingUtilities.convertPoint( getDockable().getComponent(), point, this );
+
+		if( SwingUtilities.getRoot( this ) == SwingUtilities.getRoot( dockable ) ) {
+			point = SwingUtilities.convertPoint( dockable, point, this );
+		}
 
 		if( source.getOrientation() == bibliothek.gui.Orientation.VERTICAL ) {
 			return point.x;
@@ -188,7 +194,7 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 					}
 				}
 				items.setVisibleActions( size );
-				items.setBounds( start + delta, y, length - delta, height );
+				items.setBounds( start, y, length - delta, height );
 			}
 			else {
 				int size = 0;
@@ -201,7 +207,7 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 					}
 				}
 				items.setVisibleActions( size );
-				items.setBounds( x, start + delta, width, length - delta );
+				items.setBounds( x, start, width, length - delta );
 			}
 		}
 	}

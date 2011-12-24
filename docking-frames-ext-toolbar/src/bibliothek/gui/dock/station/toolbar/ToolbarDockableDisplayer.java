@@ -8,7 +8,6 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.OrientedDockStation;
-import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.Transparency;

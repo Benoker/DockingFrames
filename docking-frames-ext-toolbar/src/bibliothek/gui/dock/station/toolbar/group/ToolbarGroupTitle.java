@@ -15,9 +15,11 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.station.toolbar.title.ColumnDockActionSource;
 import bibliothek.gui.dock.station.toolbar.title.ColumnDockTitle;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.color.TitleColor;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.Transparency;
 
 /**
  * A specialized title that should only be used for {@link ToolbarGroupDockStation}s.
@@ -44,10 +46,11 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 		}
 	};
 
-	protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
-		return dockable.getController().getActionViewConverter().createView( action, ToolbarExtension.TOOLBAR_TITLE, dockable );
-	}
-
+	/**
+	 * The background color of this title.
+	 */
+	private TitleColor color;
+	
 	/**
 	 * Creates a new title.
 	 * @param dockable the element, preferrably a {@link ToolbarGroupDockStation}, which is represented
@@ -56,6 +59,20 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 	 */
 	public ToolbarGroupTitle( Dockable dockable, DockTitleVersion origin ){
 		super( dockable, origin );
+		setTransparency( Transparency.DEFAULT );
+		
+		color = new TitleColor( "extension.toolbar.group.title", this, new Color( 80, 80, 80 ) ){
+			@Override
+			protected void changed( Color oldValue, Color newValue ){
+				repaint();
+			}
+		};
+		
+		addColor( color );
+	}
+
+	protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
+		return dockable.getController().getActionViewConverter().createView( action, ToolbarExtension.TOOLBAR_TITLE, dockable );
 	}
 
 	@Override
@@ -75,9 +92,9 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 	@Override
 	public void paintBackground( Graphics g, JComponent component ){
 		super.paintComponents( g );
-		final Graphics2D g2D = (Graphics2D) g;
+		final Graphics2D g2D = (Graphics2D) g.create();
 		g2D.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-		g2D.setColor( color );
+		g2D.setColor( color.getValue() );
 		if( getOrientation().isHorizontal() ) {
 			final RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double( 0, 0, getWidth(), getHeight() * 2, 8, 8 );
 			g2D.fill( rectangleRounded );
@@ -86,5 +103,6 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 			final RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double( 0, 0, getWidth() * 2, getHeight(), 8, 8 );
 			g2D.fill( rectangleRounded );
 		}
+		g2D.dispose();
 	}
 }
