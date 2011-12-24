@@ -672,6 +672,10 @@
  - Bugfix: Removing a DockAction from a submenu did not have any effect unless the submenu was rebuilt.
  - Bugfix: A nested DropDownAction could lead to a NPE during "unbind". 
  - Bugfix/API: merged changes of Thomas. SplitDockStation should clean up wrong mouse cursor now. Improvements in the Glass-Extension.
+
+[v1.1.1p6c]
+ - Bugfix: Mainfest of "Common Layout" example was wrong.
+ - Bugfix: Moving a Dockable over itself on a SplitDockStation now results in a no-op instead of moving the Dockable to the ScreenDockStation.
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them

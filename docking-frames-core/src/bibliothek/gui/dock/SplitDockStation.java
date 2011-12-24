@@ -83,6 +83,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockStationIcon;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.NoStationDropOperation;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -1384,6 +1385,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		if( move ){
 			putInfo = layoutManager.getValue().prepareMove(this, x, y, titleX, titleY, dockable);
 			if( putInfo != null ){
+				if( putInfo.getNode() == null ){
+					return new NoStationDropOperation( this, dockable );
+				}
+				
 				prepareCombine( putInfo, x, y, move );
 			}
 		}

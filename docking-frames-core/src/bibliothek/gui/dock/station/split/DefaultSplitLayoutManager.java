@@ -100,7 +100,7 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         if( (putInfo != null) &&
             (putInfo.getNode() instanceof Leaf) &&
             (((Leaf)putInfo.getNode())).getDockable() == dockable){
-                putInfo = null;
+                putInfo.setNode( null );
         }
         
         if( putInfo != null ){
@@ -177,6 +177,9 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
         final double MINIMUM_ORIGINAL_SIZE = 0.25;
         
         SplitNode other = putInfo.getNode();
+        if( other == null ){
+        	return;
+        }
         
         Dimension oldSize = origin == null ? 
                 putInfo.getDockable().getComponent().getSize() :
