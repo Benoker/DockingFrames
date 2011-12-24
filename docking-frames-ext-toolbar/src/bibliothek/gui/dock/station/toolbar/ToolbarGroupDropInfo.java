@@ -27,7 +27,7 @@ import bibliothek.gui.dock.station.support.CombinerTarget;
  * @param <S>
  *            the kind of station using this {@link ToolbarGroupDropInfo}
  */
-public abstract class ToolbarGroupDropInfo implements StationDropOperation{
+public abstract class ToolbarGroupDropInfo implements StationDropOperation {
 	/** The {@link Dockable} which is inserted */
 	private final Dockable dragDockable;
 	/**
@@ -62,8 +62,7 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 * @param mouseY
 	 *            the mouse position on Y axis
 	 */
-	public ToolbarGroupDropInfo( Dockable dockable,
-			ToolbarGroupDockStation stationHost, int mouseX, int mouseY ){
+	public ToolbarGroupDropInfo( Dockable dockable, ToolbarGroupDockStation stationHost, int mouseX, int mouseY ){
 		// System.out.println(this.toString()
 		// + "## new ToolbarComplexDropInfo ## ");
 		dragDockable = dockable;
@@ -115,7 +114,7 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 * @return the dockable and <code>null</code> if there's no dockable
 	 */
 	public Dockable getDockableBeneathMouse(){
-		if (dockableBeneathMouse == null){
+		if( dockableBeneathMouse == null ) {
 			dockableBeneathMouse = computeDockableBeneathMouse();
 		}
 		return dockableBeneathMouse;
@@ -129,7 +128,7 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 * @return the closest side
 	 */
 	public Position getSideDockableBeneathMouse(){
-		if (sideDockableBeneathMouse == null){
+		if( sideDockableBeneathMouse == null ) {
 			sideDockableBeneathMouse = computeSideDockableBeneathMouse();
 		}
 		return sideDockableBeneathMouse;
@@ -145,7 +144,7 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 *         beneath mouse are the same, return {@link Position#CENTER})
 	 */
 	public Position getItemPositionVSBeneathDockable(){
-		if (dragDockablePosition == null){
+		if( dragDockablePosition == null ) {
 			dragDockablePosition = computeItemPositionVSBeneathDockable();
 		}
 		return computeItemPositionVSBeneathDockable();
@@ -159,54 +158,47 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	private Dockable computeDockableBeneathMouse(){
 		// Notes: the distance from mouse to the center is not a valid cue to
 		// determine which dockable is the closest. Indeed, imagine a
-		// rectangular dockable with a very big height. The center can be far
-		// and the mouse close of one side at the same side.
+		// rectangular dockable thin ant tall. At the same time, the center can be far
+		// and the mouse close of one side.
 		final int dockableCount = stationHost.getDockableCount();
-		if (dockableCount <= 0){
+		if( dockableCount <= 0 ) {
 			return null;
 		}
 		// distances and closer dockable
 		double currentDistance = Double.MAX_VALUE;
 		double generalMinDistance = Double.MAX_VALUE;
-		Dockable currentDockable = stationHost.getDockable(0), closestDockable = stationHost
-				.getDockable(0);
+
+		// the first dockable
+		Dockable currentDockable = stationHost.getDockable( 0 );
+		Dockable closestDockable = currentDockable;
 		Rectangle currentBounds = currentDockable.getComponent().getBounds();
 		// 4 corners in this order: upper left corner, upper right corner,
 		// bottom left corner, bottom right corner
 		final Point[] fourCorners = new Point[4];
-		fourCorners[0] = new Point(currentBounds.x, currentBounds.y);
-		fourCorners[1] = new Point((int) currentBounds.getMaxX(),
-				currentBounds.y);
-		fourCorners[2] = new Point(currentBounds.x,
-				(int) currentBounds.getMaxY());
-		fourCorners[3] = new Point((int) currentBounds.getMaxX(),
-				(int) currentBounds.getMaxY());
-		for (int i = 0; i < fourCorners.length; i++){
-			SwingUtilities.convertPointToScreen(fourCorners[i], stationHost
-					.getDockable(0).getComponent());
-			currentDistance = Point2D.distance(fourCorners[i].getX(),
-					fourCorners[i].getY(), mouseX, mouseY);
-			if (currentDistance < generalMinDistance){
+		fourCorners[0] = new Point( currentBounds.x, currentBounds.y );
+		fourCorners[1] = new Point( (int) currentBounds.getMaxX(), currentBounds.y );
+		fourCorners[2] = new Point( (int) currentBounds.getMaxX(), (int) currentBounds.getMaxY() );
+		fourCorners[3] = new Point( currentBounds.x, (int) currentBounds.getMaxY() );
+		for( int i = 0; i < fourCorners.length; i++ ) {
+			SwingUtilities.convertPointToScreen( fourCorners[i], stationHost.getDockable( 0 ).getComponent() );
+			currentDistance = Point2D.distance( fourCorners[i].getX(), fourCorners[i].getY(), mouseX, mouseY );
+			if( currentDistance < generalMinDistance ) {
 				generalMinDistance = currentDistance;
 			}
 		}
 
-		for (int i = 1; i < dockableCount; i++){
-			currentDockable = stationHost.getDockable(i);
+		// the next dockables
+		for( int i = 1; i < dockableCount; i++ ) {
+			currentDockable = stationHost.getDockable( i );
 			currentBounds = currentDockable.getComponent().getBounds();
-			fourCorners[0] = new Point(currentBounds.x, currentBounds.y);
-			fourCorners[1] = new Point((int) currentBounds.getMaxX(),
-					currentBounds.y);
-			fourCorners[2] = new Point(currentBounds.x,
-					(int) currentBounds.getMaxY());
-			fourCorners[3] = new Point((int) currentBounds.getMaxX(),
-					(int) currentBounds.getMaxY());
-			for (int j = 0; j < fourCorners.length; j++){
-				SwingUtilities.convertPointToScreen(fourCorners[j],
-						currentDockable.getComponent());
-				currentDistance = Point2D.distance(fourCorners[j].getX(),
-						fourCorners[j].getY(), mouseX, mouseY);
-				if (currentDistance < generalMinDistance){
+			fourCorners[0] = new Point( currentBounds.x, currentBounds.y );
+			fourCorners[1] = new Point( (int) currentBounds.getMaxX(), currentBounds.y );
+			fourCorners[2] = new Point( (int) currentBounds.getMaxX(), (int) currentBounds.getMaxY() );
+			fourCorners[3] = new Point( currentBounds.x, (int) currentBounds.getMaxY() );
+			for( int j = 0; j < fourCorners.length; j++ ) {
+				SwingUtilities.convertPointToScreen( fourCorners[j], currentDockable.getComponent() );
+				currentDistance = Point2D.distance( fourCorners[j].getX(), fourCorners[j].getY(), mouseX, mouseY );
+				if( currentDistance < generalMinDistance ) {
 					generalMinDistance = currentDistance;
 					closestDockable = currentDockable;
 				}
@@ -223,43 +215,37 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	private Position computeSideDockableBeneathMouse(){
 		// mouse coordinates in the frame of reference of the component beneath
 		// mouse
-		final Point mouseCoordinate = new Point(mouseX, mouseY);
+		final Point mouseCoordinate = new Point( mouseX, mouseY );
 		// the dockable the closest of the mouse
 		final Dockable dockableBeneathMouse = getDockableBeneathMouse();
-		if (dockableBeneathMouse == null){
+		if( dockableBeneathMouse == null ) {
 			return null;
 		}
-		final Rectangle bounds = dockableBeneathMouse.getComponent()
-				.getBounds();
+		final Rectangle bounds = dockableBeneathMouse.getComponent().getBounds();
 		// we "draw" a small rectangle with same proportions
 		final double ratio = bounds.getHeight() / bounds.getWidth();
 		final Rectangle2D.Double rec = new Rectangle2D.Double();
-		rec.setFrameFromCenter(bounds.getCenterX(), bounds.getCenterY(),
-				bounds.getCenterX() - 1, bounds.getCenterY() - (1 * ratio));
+		rec.setFrameFromCenter( bounds.getCenterX(), bounds.getCenterY(), bounds.getCenterX() - 1, bounds.getCenterY() - (1 * ratio) );
 		// ... and we look if the line from mouse to the center of the rectangle
 		// intersects one of the four sides of the rectangle
 		final Point[] fourCorners = new Point[4];
-		fourCorners[0] = new Point((int) rec.x, (int) rec.y);
-		fourCorners[1] = new Point((int) rec.getMaxX(), (int) rec.y);
-		fourCorners[2] = new Point((int) rec.getMaxX(), (int) rec.getMaxY());
-		fourCorners[3] = new Point((int) rec.x, (int) rec.getMaxY());
-		for (int i = 0; i < fourCorners.length; i++){
-			SwingUtilities.convertPointToScreen(fourCorners[i], dockableBeneathMouse.getComponent());
+		fourCorners[0] = new Point( (int) rec.x, (int) rec.y );
+		fourCorners[1] = new Point( (int) rec.getMaxX(), (int) rec.y );
+		fourCorners[2] = new Point( (int) rec.getMaxX(), (int) rec.getMaxY() );
+		fourCorners[3] = new Point( (int) rec.x, (int) rec.getMaxY() );
+		for( int i = 0; i < fourCorners.length; i++ ) {
+			SwingUtilities.convertPointToScreen( fourCorners[i], dockableBeneathMouse.getComponent() );
 		}
-		Point center = new Point((int) bounds.getCenterX(), (int) bounds.getCenterY());
-		SwingUtilities.convertPointToScreen(center, dockableBeneathMouse.getComponent());
-		final Line2D.Double mouseToCenter = new Line2D.Double(
-				mouseCoordinate.x, mouseCoordinate.y, center.x,
-				center.y);
-		for (final Position pos : Position.values()){
-			if (pos == Position.CENTER){
+		Point center = new Point( (int) bounds.getCenterX(), (int) bounds.getCenterY() );
+		SwingUtilities.convertPointToScreen( center, dockableBeneathMouse.getComponent() );
+		final Line2D.Double mouseToCenter = new Line2D.Double( mouseCoordinate.x, mouseCoordinate.y, center.x, center.y );
+		for( final Position pos : Position.values() ) {
+			if( pos == Position.CENTER ) {
 				break;
 			}
-			final Line2D.Double line = new Line2D.Double(
-					fourCorners[pos.ordinal()].x, fourCorners[pos.ordinal()].y,
-					fourCorners[(pos.ordinal() + 1) % 4].x,
-					fourCorners[(pos.ordinal() + 1) % 4].y);
-			if (line.intersectsLine(mouseToCenter)){
+			final Line2D.Double line = new Line2D.Double( fourCorners[pos.ordinal()].x, fourCorners[pos.ordinal()].y, fourCorners[(pos.ordinal() + 1) % 4].x,
+					fourCorners[(pos.ordinal() + 1) % 4].y );
+			if( line.intersectsLine( mouseToCenter ) ) {
 				return pos;
 			}
 		}
@@ -275,53 +261,50 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 *         beneath mouse are the same, return {@link Position#CENTER})
 	 */
 	private Position computeItemPositionVSBeneathDockable(){
-		final Point coordDockableDragged = getItem().getComponent()
-				.getLocation();
-		if ((getDockableBeneathMouse() != null)
-				&& (getSideDockableBeneathMouse() != null)){
-			final Point coordDockableBeneathMouse = getDockableBeneathMouse()
-					.getComponent().getLocation();
+		final Point coordDockableDragged = getItem().getComponent().getLocation();
+		if( (getDockableBeneathMouse() != null) && (getSideDockableBeneathMouse() != null) ) {
+			final Point coordDockableBeneathMouse = getDockableBeneathMouse().getComponent().getLocation();
 			// The dockable is now in the frame of reference of the dockable
 			// beneath mouse
-			SwingUtilities.convertPointFromScreen(coordDockableDragged,
-					getDockableBeneathMouse().getComponent());
-			if (getItem() == getDockableBeneathMouse()){
+			SwingUtilities.convertPointFromScreen( coordDockableDragged, getDockableBeneathMouse().getComponent() );
+			if( getItem() == getDockableBeneathMouse() ) {
 				return Position.CENTER;
-			} else{
+			}
+			else {
 				Orientation axis;
-				if ((getSideDockableBeneathMouse() == Position.EAST)
-						|| (getSideDockableBeneathMouse() == Position.WEST)){
+				if( (getSideDockableBeneathMouse() == Position.EAST) || (getSideDockableBeneathMouse() == Position.WEST) ) {
 					axis = Orientation.HORIZONTAL;
-				} else{
+				}
+				else {
 					axis = Orientation.VERTICAL;
 				}
-				switch (axis) {
-				case VERTICAL:
-					if (coordDockableDragged.getY() <= coordDockableBeneathMouse
-							.getY()){
-						return Position.NORTH;
-					} else{
-						return Position.SOUTH;
-					}
-				case HORIZONTAL:
-					if (coordDockableDragged.getX() <= coordDockableBeneathMouse
-							.getX()){
-						return Position.EAST;
-					} else{
-						return Position.WEST;
-					}
+				switch( axis ){
+					case VERTICAL:
+						if( coordDockableDragged.getY() <= coordDockableBeneathMouse.getY() ) {
+							return Position.NORTH;
+						}
+						else {
+							return Position.SOUTH;
+						}
+					case HORIZONTAL:
+						if( coordDockableDragged.getX() <= coordDockableBeneathMouse.getX() ) {
+							return Position.EAST;
+						}
+						else {
+							return Position.WEST;
+						}
 				}
 			}
 			throw new IllegalArgumentException();
-		} else{
+		}
+		else {
 			return null;
 		}
 	}
 
 	@Override
 	public String toString(){
-		return this.getClass().getSimpleName() + '@'
-				+ Integer.toHexString(hashCode());
+		return this.getClass().getSimpleName() + '@' + Integer.toHexString( hashCode() );
 	}
 
 	/**
@@ -330,12 +313,9 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 * @return string describing fields
 	 */
 	public String toSummaryString(){
-		final String ln = System.getProperty("line.separator");
-		return "	=> Drag dockable: " + getItem() + ln + "	=> Station target: "
-				+ getTarget() + ln + "	=> Dockable beneath mouse:"
-				+ getDockableBeneathMouse() + ln + "	=> Closest side:"
-				+ getSideDockableBeneathMouse() + ln
-				+ "	=> Drag dockable VS dockable beneath mouse: "
+		final String ln = System.getProperty( "line.separator" );
+		return "	=> Drag dockable: " + getItem() + ln + "	=> Station target: " + getTarget() + ln + "	=> Dockable beneath mouse:" + getDockableBeneathMouse()
+				+ ln + "	=> Closest side:" + getSideDockableBeneathMouse() + ln + "	=> Drag dockable VS dockable beneath mouse: "
 				+ getItemPositionVSBeneathDockable();
 	}
 }

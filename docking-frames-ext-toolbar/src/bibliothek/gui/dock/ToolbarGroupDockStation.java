@@ -96,7 +96,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	/** Responsible for managing the {@link ExpandedState} of the children */
 	private ToolbarGroupExpander expander;
-	
+
 	/** The {@link PlaceholderStrategy} that is used by {@link #dockables} */
 	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
 		@Override
@@ -158,6 +158,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	/**
 	 * Gets access to a simplified view of the contents of this station.
+	 * 
 	 * @return a model describing all the columns that are shown on this station
 	 */
 	public ToolbarColumnModel<StationChildHandle> getColumnModel(){
@@ -220,25 +221,28 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 */
 	public Dockable getDockable( int columnIndex, int line ){
 		StationChildHandle handle = getHandle( columnIndex, line );
-		if( handle == null ){
+		if( handle == null ) {
 			return null;
 		}
 		return handle.asDockable();
 	}
-	
+
 	/**
 	 * Gets the {@link StationChildHandle} which is used at the given position.
-	 * @param columnIndex the column in which to search
-	 * @param line the line in the column
+	 * 
+	 * @param columnIndex
+	 *            the column in which to search
+	 * @param line
+	 *            the line in the column
 	 * @return the item or <code>null</code> if the indices are out of bounds
 	 */
 	public StationChildHandle getHandle( int columnIndex, int line ){
 		ToolbarColumnModel<StationChildHandle> model = getColumnModel();
-		if( columnIndex < 0 || columnIndex >= model.getColumnCount() ){
+		if( columnIndex < 0 || columnIndex >= model.getColumnCount() ) {
 			return null;
 		}
 		ToolbarColumn<StationChildHandle> column = model.getColumn( columnIndex );
-		if( line < 0 || line >= column.getDockableCount() ){
+		if( line < 0 || line >= column.getDockableCount() ) {
 			return null;
 		}
 		return column.getItem( line );
@@ -382,14 +386,14 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			else {
 				title = registerTitle( controller );
 			}
-			
+
 			paint.setController( controller );
 			expander.setController( controller );
 			placeholderStrategy.setProperties( controller );
 			displayerFactory.setController( controller );
 			displayers.setController( controller );
 			mainPanel.setController( controller );
-			
+
 			if( getController() != null ) {
 				dockables.bind();
 			}
@@ -421,8 +425,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[] { new DefaultDropLayerComplex(this),
-				new SideSnapDropLayerComplex(this) };
+		return new DockStationDropLayer[]{ new DefaultDropLayerComplex( this ), new SideSnapDropLayerComplex( this ) };
 		// return new DockStationDropLayer[] { new DefaultDropLayer(this),
 		// new SideSnapDropLayer(this) };
 	}
@@ -459,7 +462,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 					return null;
 				}
 			}
-			return new ToolbarGroupDropInfo(dockable, this, mouseX, mouseY){
+			return new ToolbarGroupDropInfo( dockable, this, mouseX, mouseY ){
 				@Override
 				public void execute(){
 					drop( this );
@@ -504,9 +507,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	@Override
 	protected void drop( StationDropOperation dropInfo ){
 		final ToolbarGroupDropInfo dropInfoGroup = (ToolbarGroupDropInfo) dropInfo;
-		System.out
-				.println("Summarize Info: " + dropInfoGroup.toSummaryString());
-		if (dropInfoGroup.getItemPositionVSBeneathDockable() != Position.CENTER){
+		System.out.println( "Summarize Info: " + dropInfoGroup.toSummaryString() );
+		if( dropInfoGroup.getItemPositionVSBeneathDockable() != Position.CENTER ) {
 			// Note: Computation of index to insert drag dockable is not the
 			// same between a move() and a drop(), because with a move() it is
 			// as if the drag dockable were remove first then added again in the
@@ -929,7 +931,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public ColumnDockActionSource getExpandActionSource(){
 		return expander.getActions();
 	}
-	
+
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
 		DockUI.updateTheme( this, new ToolbarGroupDockStationFactory() );
@@ -1070,16 +1072,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		@Override
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
-			g2D.setStroke(new BasicStroke(2));
+			g2D.setStroke( new BasicStroke( 2 ) );
 			final int localIndexBeneathMouse = indexBeneathMouse;
 			final Position localSideBeneathMouse = sideBeneathMouse;
 			final DefaultStationPaintValue paint = getPaint();
-			if (prepareDropDraw){
-				if (localIndexBeneathMouse != -1){
-					final Dockable dockableBeneathMouse = getDockable(localIndexBeneathMouse);
-					final Component componentBeneathMouse = dockableBeneathMouse
-							.getComponent();
-					if (componentBeneathMouse != null){
+			if( prepareDropDraw ) {
+				if( localIndexBeneathMouse != -1 ) {
+					final Dockable dockableBeneathMouse = getDockable( localIndexBeneathMouse );
+					final Component componentBeneathMouse = dockableBeneathMouse.getComponent();
+					if( componentBeneathMouse != null ) {
 						final Rectangle rectToolbar = basePane.getBounds();
 						final Rectangle rectBeneathMouse = componentBeneathMouse.getBounds();
 						final Point pBeneath = rectBeneathMouse.getLocation();
@@ -1088,291 +1089,275 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 						final Rectangle rectangleBeneathMouseTranslated = new Rectangle( pBeneath.x, pBeneath.y, rectBeneathMouse.width, rectBeneathMouse.height );
 						int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
-						switch (getOrientation()) {
-						case VERTICAL:
-							switch (localSideBeneathMouse) {
-							case NORTH:
-								x1 = rectangleBeneathMouseTranslated.x;
-								x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								y1 = y2 = rectangleBeneathMouseTranslated.y;
-								// the y value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								if (line(dockableBeneathMouse) == 0){
-									y1 = y2 = y1 + 1;
-								}
-								break;
-							case SOUTH:
-								x1 = rectangleBeneathMouseTranslated.x;
-								x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								y1 = y2 = rectangleBeneathMouseTranslated.y
-										+ rectangleBeneathMouseTranslated.height;
-								// the y value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								if (isLastOfColumn(dockableBeneathMouse)){
-									y1 = y2 = y1 - 2;
-								}
-								break;
-							case EAST:
-								x1 = x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								// the x value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								System.out
-										.println("EAST: "
-												+ "indexBeneathMouse :"
-												+ localIndexBeneathMouse
-												+ "Column :"
-												+ column(getDockable(localIndexBeneathMouse)));
-								if (column(dockableBeneathMouse) == (columnCount() - 1)){
-									x1 = x2 = x1 - 2;
-								}
+						switch( getOrientation() ){
+							case VERTICAL:
+								switch( localSideBeneathMouse ){
+									case NORTH:
+										x1 = rectangleBeneathMouseTranslated.x;
+										x2 = rectangleBeneathMouseTranslated.x + rectangleBeneathMouseTranslated.width;
+										y1 = y2 = rectangleBeneathMouseTranslated.y;
+										// the y value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( line( dockableBeneathMouse ) == 0 ) {
+											y1 = y2 = y1 + 1;
+										}
+										break;
+									case SOUTH:
+										x1 = rectangleBeneathMouseTranslated.x;
+										x2 = rectangleBeneathMouseTranslated.x + rectangleBeneathMouseTranslated.width;
+										y1 = y2 = rectangleBeneathMouseTranslated.y + rectangleBeneathMouseTranslated.height;
+										// the y value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( isLastOfColumn( dockableBeneathMouse ) ) {
+											y1 = y2 = y1 - 2;
+										}
+										break;
+									case EAST:
+										x1 = x2 = rectangleBeneathMouseTranslated.x + rectangleBeneathMouseTranslated.width;
+										// the x value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
 
-								// we look at the longest column near the
-								// insertion lines to decide what length the
-								// lines should have
-								y1 = rectToolbar.y;
-								int column = column(dockableBeneathMouse);
-								if (column == (columnCount() - 1)){
-									// if column is the last, we take into
-									// account the last dockable
-									Rectangle lastComponentBounds = getDockable(
-											getDockableCount() - 1)
-											.getComponent().getBounds();
-									y2 = (int) lastComponentBounds.getMaxY();
-								} else{
-									Rectangle lastComponentBoundsLeft = getDockable(
-											column, lineCount(column) - 1)
-											.getComponent().getBounds();
-									int yLeft = (int) lastComponentBoundsLeft
-											.getMaxY();
-									Rectangle lastComponentBoundsRight = getDockable(
-											column + 1,
-											lineCount(column + 1) - 1)
-											.getComponent().getBounds();
-									int yRight = (int) lastComponentBoundsRight
-											.getMaxY();
-									if (yLeft > yRight){
-										y2 = yLeft;
-									} else{
-										y2 = yRight;
-									}
-								}
-								break;
-							case WEST:
-								x1 = x2 = rectangleBeneathMouseTranslated.x;
-								// the x value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								System.out
-										.println("WEST: "
-												+ "indexBeneathMouse :"
-												+ localIndexBeneathMouse
-												+ "Column :"
-												+ column(getDockable(localIndexBeneathMouse)));
-								if (column(dockableBeneathMouse) == 0){
-									x1 = x2 = x1 + 2;
-								}
+										System.out.println( "EAST: " + "indexBeneathMouse :" + localIndexBeneathMouse + "Column :" + column( getDockable( localIndexBeneathMouse ) ) );
+										if( column( dockableBeneathMouse ) == (columnCount() - 1) ) {
+											x1 = x2 = x1 - 2;
+										}
 
-								// we look at the longest column near the
-								// insertion lines to decide what length the
-								// lines should have
-								y1 = rectToolbar.y;
-								column = column(dockableBeneathMouse);
-								if (column == 0){
-									// if column is the first, we take into
-									// account the last dockable of the first
-									// column
-									Rectangle lastComponentBounds = getDockable(
-											0, lineCount(0) - 1).getComponent()
-											.getBounds();
-									y2 = (int) lastComponentBounds.getMaxY();
-								} else{
-									Rectangle lastComponentBoundsLeft = getDockable(
-											column, lineCount(column) - 1)
-											.getComponent().getBounds();
-									int yLeft = (int) lastComponentBoundsLeft
-											.getMaxY();
-									Rectangle lastComponentBoundsRight = getDockable(
-											column + 1,
-											lineCount(column + 1) - 1)
-											.getComponent().getBounds();
-									int yRight = (int) lastComponentBoundsRight
-											.getMaxY();
-									if (yLeft > yRight){
-										y2 = yLeft;
-									} else{
-										y2 = yRight;
-									}
-								}
-								break;
-							default:
-								x1 = x2 = y1 = y2 = 0;
-								break;
-							}
-							break;
-						case HORIZONTAL:
-							System.out.println("HORIZONTAL");
-							switch (localSideBeneathMouse) {
-							case NORTH:
-								System.out.println("NORTH");
-								y1 = y2 = rectangleBeneathMouseTranslated.y;
-								// the y value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								if (column(getDockable(localIndexBeneathMouse)) == 0){
-									y1 = y2 = y1 + 1;
-								}
+										// we look at the longest column near the
+										// insertion lines to decide what length the
+										// lines should have
+										y1 = rectToolbar.y;
+										int column = column( dockableBeneathMouse );
+										if( column == (columnCount() - 1) ) {
+											// if column is the last, we take into
+											// account the last dockable
+											Component lastComponent = getDockable( getDockableCount() - 1 ).getComponent();
+											Point bottomRightPoint = new Point( (int) lastComponent.getBounds().getMaxX(), (int) lastComponent.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomRightPoint, lastComponent.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomRightPoint, getBasePane() );
+											y2 = bottomRightPoint.y;
+										}
+										else {
+											Component lastComponentLeft = getDockable( column, lineCount( column ) - 1 ).getComponent();
+											Point bottomPointLeft = new Point( (int) lastComponentLeft.getBounds().getMaxX(), (int) lastComponentLeft.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointLeft, lastComponentLeft.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointLeft, getBasePane() );
 
-								// we look at the longest column near the
-								// insertion lines to decide what length the
-								// lines should have
-								x1 = rectToolbar.x;
-								int column = column(dockableBeneathMouse);
-								if (column == 0){
-									// if column is the first, we take into
-									// account the last dockable of the first
-									// column
-									Rectangle lastComponentBounds = getDockable(
-											0, lineCount(0) - 1).getComponent()
-											.getBounds();
-									x2 = (int) lastComponentBounds.getMaxX();
-								} else{
-									// otherwise we take into account the
-									// tallest of the two side columns
-									Rectangle lastComponentBoundsLeft = getDockable(
-											column, lineCount(column) - 1)
-											.getComponent().getBounds();
-									int xLeft = (int) lastComponentBoundsLeft
-											.getMaxX();
-									System.out.println("Column + 1: "
-											+ (column + 1));
-									Rectangle lastComponentBoundsRight = getDockable(
-											column + 1,
-											lineCount(column + 1) - 1)
-											.getComponent().getBounds();
-									int xRight = (int) lastComponentBoundsRight
-											.getMaxX();
-									if (xLeft > xRight){
-										x2 = xLeft;
-									} else{
-										x2 = xRight;
-									}
-								}
-								break;
-							case EAST:
-								System.out.println("EAST");
-								x1 = x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								y1 = rectangleBeneathMouseTranslated.y;
-								y2 = rectangleBeneathMouseTranslated.y
-										+ rectangleBeneathMouseTranslated.height;
-								// the x value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								if (isLastOfColumn(dockableBeneathMouse)){
-									x1 = x2 = x1 - 2;
-								}
-								break;
-							case SOUTH:
-								System.out.println("SOUTH");
-								y1 = y2 = rectangleBeneathMouseTranslated.y
-										+ rectangleBeneathMouseTranslated.height;
-								// the y value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								if (column(dockableBeneathMouse) == (columnCount() - 1)){
-									y1 = y2 = y1 - 2;
-								}
+											Component lastComponentRight = getDockable( column + 1, lineCount( column + 1 ) - 1 ).getComponent();
+											Point bottomPointRight = new Point( (int) lastComponentRight.getBounds().getMaxX(), (int) lastComponentRight.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointRight, lastComponentRight.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointRight, getBasePane() );
 
-								// we look at the longest column near the
-								// insertion lines to decide what length the
-								// lines should have
-								x1 = rectToolbar.x;
-								column = column(dockableBeneathMouse);
-								if (column == (columnCount() - 1)){
-									// if column is the last, we take into
-									// account the last dockable
-									Rectangle lastComponentBounds = getDockable(
-											getDockableCount() - 1)
-											.getComponent().getBounds();
-									x2 = (int) lastComponentBounds.getMaxX();
-								} else{
-									// debug
-									System.out.println("Column: " + column);
-									System.out.println("Line count: "
-											+ lineCount(column));
-									Dockable d = getDockable(column,
-											lineCount(column) - 1);
-									Component c = d.getComponent();
-									Rectangle r = c.getBounds();
-									// end debug
-									Rectangle lastComponentBoundsLeft = getDockable(
-											column, lineCount(column) - 1)
-											.getComponent().getBounds();
-									int xLeft = (int) lastComponentBoundsLeft
-											.getMaxX();
-									// debug
-									System.out.println("Column + 1: "
-											+ (column + 1));
-									System.out.println("Line count: "
-											+ lineCount(column + 1));
-									d = getDockable(column + 1,
-											lineCount(column + 1) - 1);
-									c = d.getComponent();
-									r = c.getBounds();
-									// end debug
-									Rectangle lastComponentBoundsRight = getDockable(
-											column + 1,
-											lineCount(column + 1) - 1)
-											.getComponent().getBounds();
-									int xRight = (int) lastComponentBoundsRight
-											.getMaxX();
-									if (xLeft > xRight){
-										x2 = xLeft;
-									} else{
-										x2 = xRight;
-									}
+											if( bottomPointLeft.y > bottomPointRight.y ) {
+												y2 = bottomPointLeft.y;
+											}
+											else {
+												y2 = bottomPointRight.y;
+											}
+										}
+										break;
+									case WEST:
+										x1 = x2 = rectangleBeneathMouseTranslated.x;
+										// the x value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( column( dockableBeneathMouse ) == 0 ) {
+											x1 = x2 = x1 + 2;
+										}
+
+										System.out.println( "WEST: " + "indexBeneathMouse :" + localIndexBeneathMouse + "Column :" + column( getDockable( localIndexBeneathMouse ) ) );
+
+										// we look at the longest column near the
+										// insertion lines to decide what length the
+										// lines should have
+										y1 = rectToolbar.y;
+										column = column( dockableBeneathMouse );
+										if( column == 0 ) {
+											// if column is the first, we take into
+											// account the last dockable of the first
+											// column
+											Component lastComponent = getDockable( 0, lineCount( 0 ) - 1 ).getComponent();
+											Point bottomRightPoint = new Point( (int) lastComponent.getBounds().getMaxX(), (int) lastComponent.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomRightPoint, lastComponent.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomRightPoint, getBasePane() );
+											y2 = bottomRightPoint.y;
+										}
+										else {
+											Component lastComponentLeft = getDockable( column, lineCount( column ) - 1 ).getComponent();
+											Point bottomPointLeft = new Point( (int) lastComponentLeft.getBounds().getMaxX(), (int) lastComponentLeft.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointLeft, lastComponentLeft.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointLeft, getBasePane() );
+
+											Component lastComponentRight = getDockable( column + 1, lineCount( column + 1 ) - 1 ).getComponent();
+											Point bottomPointRight = new Point( (int) lastComponentRight.getBounds().getMaxX(), (int) lastComponentRight.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointRight, lastComponentRight.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointRight, getBasePane() );
+
+											if( bottomPointLeft.y > bottomPointRight.y ) {
+												y2 = bottomPointLeft.y;
+											}
+											else {
+												y2 = bottomPointRight.y;
+											}
+										}
+										break;
+									default:
+										x1 = x2 = y1 = y2 = 0;
+										break;
 								}
 								break;
-							case WEST:
-								System.out.println("WEST");
-								x1 = x2 = rectangleBeneathMouseTranslated.x;
-								y1 = rectangleBeneathMouseTranslated.y;
-								y2 = rectangleBeneathMouseTranslated.y
-										+ rectangleBeneathMouseTranslated.height;
-								// the x value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								// if (line(dockableBeneathMouse) == 0){
-								// x1 = x2 = x1 + 1;
-								// }
+							case HORIZONTAL:
+								System.out.println( "HORIZONTAL" );
+								switch( localSideBeneathMouse ){
+									case NORTH:
+										System.out.println( "NORTH" );
+										y1 = y2 = rectangleBeneathMouseTranslated.y;
+										// the y value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( column( getDockable( localIndexBeneathMouse ) ) == 0 ) {
+											y1 = y2 = y1 + 1;
+										}
+
+										// we look at the longest column near the
+										// insertion lines to decide what length the
+										// lines should have
+										x1 = rectToolbar.x;
+										int column = column( dockableBeneathMouse );
+										if( column == 0 ) {
+											// if column is the first, we take into
+											// account the last dockable of the first
+											// column
+											Component lastComponent = getDockable( 0, lineCount( 0 ) - 1 ).getComponent();
+											Point bottomRightPoint = new Point( (int) lastComponent.getBounds().getMaxX(), (int) lastComponent.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomRightPoint, lastComponent.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomRightPoint, getBasePane() );
+											x2 = bottomRightPoint.x;
+										}
+										else {
+											// otherwise we take into account the
+											// tallest of the two side columns
+											Component lastComponentLeft = getDockable( column, lineCount( column ) - 1 ).getComponent();
+											Point bottomPointLeft = new Point( (int) lastComponentLeft.getBounds().getMaxX(), (int) lastComponentLeft.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointLeft, lastComponentLeft.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointLeft, getBasePane() );
+
+											Component lastComponentRight = getDockable( column + 1, lineCount( column + 1 ) - 1 ).getComponent();
+											Point bottomPointRight = new Point( (int) lastComponentRight.getBounds().getMaxX(), (int) lastComponentRight.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointRight, lastComponentRight.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointRight, getBasePane() );
+
+											if( bottomPointLeft.x > bottomPointRight.x ) {
+												x2 = bottomPointLeft.x;
+											}
+											else {
+												x2 = bottomPointRight.x;
+											}
+										}
+										break;
+									case EAST:
+										System.out.println( "EAST" );
+										x1 = x2 = rectangleBeneathMouseTranslated.x + rectangleBeneathMouseTranslated.width;
+										y1 = rectangleBeneathMouseTranslated.y;
+										y2 = rectangleBeneathMouseTranslated.y + rectangleBeneathMouseTranslated.height;
+										// the x value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( isLastOfColumn( dockableBeneathMouse ) ) {
+											x1 = x2 = x1 - 2;
+										}
+										break;
+									case SOUTH:
+										System.out.println( "SOUTH" );
+										y1 = y2 = rectangleBeneathMouseTranslated.y + rectangleBeneathMouseTranslated.height;
+										// the y value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( column( dockableBeneathMouse ) == (columnCount() - 1) ) {
+											y1 = y2 = y1 - 2;
+										}
+
+										// we look at the longest column near the
+										// insertion lines to decide what length the
+										// lines should have
+										x1 = rectToolbar.x;
+										column = column( dockableBeneathMouse );
+										if( column == (columnCount() - 1) ) {
+											// if column is the last, we take into
+											// account the last dockable
+											Component lastComponent = getDockable( getDockableCount() - 1 ).getComponent();
+											Point bottomRightPoint = new Point( (int) lastComponent.getBounds().getMaxX(), (int) lastComponent.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomRightPoint, lastComponent.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomRightPoint, getBasePane() );
+											x2 = bottomRightPoint.x;
+										}
+										else {
+											// debug
+											System.out.println( "Column: " + column );
+											System.out.println( "Line count: " + lineCount( column ) );
+											Dockable d = getDockable( column, lineCount( column ) - 1 );
+											Component c = d.getComponent();
+											Rectangle r = c.getBounds();
+											// end debug
+											Component lastComponentLeft = getDockable( column, lineCount( column ) - 1 ).getComponent();
+											Point bottomPointLeft = new Point( (int) lastComponentLeft.getBounds().getMaxX(), (int) lastComponentLeft.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointLeft, lastComponentLeft.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointLeft, getBasePane() );
+											// debug
+											System.out.println( "Column + 1: " + (column + 1) );
+											System.out.println( "Line count: " + lineCount( column + 1 ) );
+											d = getDockable( column + 1, lineCount( column + 1 ) - 1 );
+											c = d.getComponent();
+											r = c.getBounds();
+											// end debug
+											Component lastComponentRight = getDockable( column + 1, lineCount( column + 1 ) - 1 ).getComponent();
+											Point bottomPointRight = new Point( (int) lastComponentRight.getBounds().getMaxX(), (int) lastComponentRight.getBounds().getMaxY() );
+											SwingUtilities.convertPointToScreen( bottomPointRight, lastComponentRight.getParent() );
+											SwingUtilities.convertPointFromScreen( bottomPointRight, getBasePane() );
+
+											if( bottomPointLeft.x > bottomPointRight.x ) {
+												x2 = bottomPointLeft.x;
+											}
+											else {
+												x2 = bottomPointRight.x;
+											}
+										}
+										break;
+									case WEST:
+										System.out.println( "WEST" );
+										x1 = x2 = rectangleBeneathMouseTranslated.x;
+										y1 = rectangleBeneathMouseTranslated.y;
+										y2 = rectangleBeneathMouseTranslated.y + rectangleBeneathMouseTranslated.height;
+										// the x value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										// if (line(dockableBeneathMouse) == 0){
+										// x1 = x2 = x1 + 1;
+										// }
+										break;
+									default:
+										x1 = x2 = y1 = y2 = 0;
+										break;
+								}
 								break;
-							default:
-								x1 = x2 = y1 = y2 = 0;
-								break;
-							}
-							break;
 						}
 						paint.drawInsertionLine( g, x1, y1, x2, y2 );
 					}
