@@ -46,9 +46,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
  *
  * @param <K> the type of key to distinguish between groups of Dockables
  */
-public abstract class GroupedSelectableDockAction<K>
-		extends GroupedDropDownItemAction<K, SimpleSelectableAction> 
-		implements SelectableDockAction{
+public abstract class GroupedSelectableDockAction<K> extends GroupedDropDownItemAction<K, SimpleSelectableAction>  implements SelectableDockAction{
 	/**
 	 * An action intended to use as type {@link ActionType#CHECK}
 	 * @author Benjamin Sigg

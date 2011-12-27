@@ -29,6 +29,7 @@ package bibliothek.gui.dock.action.dropdown;
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 
 /**
  * A connection between an drop-down-item and a view. Clients should use
@@ -50,15 +51,22 @@ public interface DropDownView {
 		
 	/**
 	 * Sets the icon of the button.
+	 * @param modifier the context in which the icon is used, not <code>null</code>
 	 * @param icon the icon
 	 */
-	public void setIcon( Icon icon );
+	public void setIcon( ActionContentModifier modifier, Icon icon );
 	
 	/**
-	 * Sets the disabled icon of the button.
-	 * @param icon the disabled icon
+	 * Gets the {@link ActionContentModifier}s for which {@link #setIcon(ActionContentModifier, Icon)} was called
+	 * with a value other than <code>null</code>.
+	 * @return the icons that were set
 	 */
-	public void setDisabledIcon( Icon icon );	
+	public ActionContentModifier[] getIconContexts();
+	
+	/**
+	 * Clears all {@link Icon}s, any field pointing to an {@link Icon} is set to <code>null</code>
+	 */
+	public void clearIcons();
 	
 	/**
 	 * Sets the enabled-state of the button.

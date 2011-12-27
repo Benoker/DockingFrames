@@ -33,6 +33,7 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.DropDownAction;
@@ -104,8 +105,10 @@ public class DropDownMenuHandler implements MenuViewItem<JComponent>{
 		menuAction.setText( action.getText( dockable ) );
 		menuAction.setTooltip( action.getTooltipText( dockable ) );
 		menuAction.setEnabled( action.isEnabled( dockable ) );
-		menuAction.setDisabledIcon( action.getDisabledIcon( dockable ) );
-		menuAction.setIcon( action.getIcon( dockable ) );
+		
+		for( ActionContentModifier modifier : action.getIconContexts( dockable )){
+			menuAction.setIcon( modifier, action.getIcon( dockable, modifier ) );
+		}
 		
 		handler.bind();
 		handler.addChildrenActionListener( menuListener );
@@ -141,14 +144,17 @@ public class DropDownMenuHandler implements MenuViewItem<JComponent>{
 				menuAction.setEnabled( action.isEnabled( dockable ) );
 		}
 
-		public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-			if( dockables.contains( dockable ))
-				menuAction.setIcon( action.getIcon( dockable ) );
-		}
-		
-		public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-			if( dockables.contains( dockable ))
-				menuAction.setDisabledIcon( action.getDisabledIcon( dockable ) );
+		public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
+			if( dockables.contains( dockable )){	
+				if( modifier == null ){
+					for( ActionContentModifier index : action.getIconContexts( dockable )){
+						menuAction.setIcon( index, action.getIcon( dockable, index ) );	
+					}
+				}
+				else{
+					menuAction.setIcon( modifier, action.getIcon( dockable, modifier ) );
+				}
+			}
 		}
 
 		public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ){

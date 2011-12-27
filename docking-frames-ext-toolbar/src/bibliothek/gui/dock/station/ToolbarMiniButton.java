@@ -70,28 +70,15 @@ public class ToolbarMiniButton extends BasicMiniButton {
 		setBorderKeyMousePressed( BORDER_KEY_MOUSE_PRESSED );
 		setBorderKeyMousePressedSelected( BORDER_KEY_MOUSE_PRESSED_SELECTED );
 
-		setNormalBorder( BorderFactory.createEmptyBorder( 1, 1, 1, 1 ) );
-
-		final Border line = new Border(){
-			@Override
-			public void paintBorder( Component c, Graphics g, int x, int y, int width, int height ){
-				g.setColor( c.getForeground() );
-				g.drawRect( x, y, width - 1, height - 1 );
-			}
-
-			@Override
-			public boolean isBorderOpaque(){
-				return false;
-			}
-
-			@Override
-			public Insets getBorderInsets( Component c ){
-				return new Insets( 1, 1, 1, 1 );
-			}
-		};
-
-		setMouseOverBorder( line );
-		setMousePressedBorder( line );
+		Border border = BorderFactory.createEmptyBorder( 1, 1, 1, 1 );
+		setNormalBorder( border );
+		setMouseOverBorder( border );
+		setMousePressedBorder( border );
+	}
+	
+	@Override
+	protected void paintFocus( Graphics g ){
+		// do not paint the focus indicators
 	}
 
 	@Override

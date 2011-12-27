@@ -4,6 +4,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
@@ -31,6 +32,7 @@ public class SimpleExpandAction extends SimpleButtonAction {
 	private int bound = 0;
 
 	private DockActionIcon icon;
+	private DockActionIcon iconHover;
 	private DockActionText text;
 	private DockActionText tooltip;
 
@@ -74,6 +76,12 @@ public class SimpleExpandAction extends SimpleButtonAction {
 						setIcon( newValue );
 					}
 				};
+				iconHover = new DockActionIcon( "toolbar.item." + name + ".hover", this ){
+					@Override
+					protected void changed( Icon oldValue, Icon newValue ){
+						setIcon( ActionContentModifier.NONE_HOVER, newValue );
+					}
+				};
 				text = new DockActionText( "toolbar.item." + name, this ){
 					@Override
 					protected void changed( String oldValue, String newValue ){
@@ -90,6 +98,7 @@ public class SimpleExpandAction extends SimpleButtonAction {
 			}
 			else{
 				icon.setId( "toolbar.item." + name );
+				iconHover.setId( "toolbar.item." + name + ".hover" );
 				text.setId( "toolbar.item." + name );
 				tooltip.setId( "toolbar.item." + name + ".tooltip" );
 			}
@@ -115,6 +124,7 @@ public class SimpleExpandAction extends SimpleButtonAction {
 	public void bound( Dockable dockable ){
 		if( bound == 0 ) {
 			icon.setController( controller );
+			iconHover.setController( controller );
 			text.setController( controller );
 			tooltip.setController( controller );
 		}
@@ -128,6 +138,7 @@ public class SimpleExpandAction extends SimpleButtonAction {
 		bound--;
 		if( bound == 0 ) {
 			icon.setController( null );
+			iconHover.setController( null );
 			text.setController( null );
 			tooltip.setController( null );
 		}

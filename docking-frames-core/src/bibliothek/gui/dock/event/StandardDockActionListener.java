@@ -29,6 +29,7 @@ package bibliothek.gui.dock.event;
 import java.util.Set;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.StandardDockAction;
 
 /**
@@ -58,20 +59,12 @@ public interface StandardDockActionListener {
     /**
      * Invoked when the icon of a {@link StandardDockAction} has been changed.
      * @param action The action whose icon is changed
+     * @param modifier the context in which the icon is used, can be <code>null</code> to indicate that all icons changed
      * @param dockables The {@link Dockable Dockables} for which the icon
      * was changed
      * @see StandardDockAction#getIcon(Dockable)
      */
-    public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables );
-
-    /**
-     * Invoked when the disabled icon of a {@link StandardDockAction} has been changed.
-     * @param action The action whose icon is changed
-     * @param dockables The {@link Dockable Dockables} for which the icon
-     * was changed
-     * @see StandardDockAction#getIcon(Dockable)
-     */
-    public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables );
+    public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables );
     
     /**
      * Invoked when the enabled-state of a {@link StandardDockAction} has been changed.

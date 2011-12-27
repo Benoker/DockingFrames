@@ -28,6 +28,7 @@ package bibliothek.gui.dock.themes.basic.action;
 import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundPaint;
@@ -40,37 +41,14 @@ import bibliothek.gui.dock.util.BackgroundPaint;
  */
 public interface BasicButtonModelListener {
 	/**
-	 * Called if the icon of <code>model</code> changed.
-	 * @param model the source of the event.
+	 * Called if an icon of <code>model</code> changed.
+	 * @param model the source of the event
+	 * @param modifier the context in which the icon is used
 	 * @param oldIcon the old value
 	 * @param icon the new value
 	 */
-	public void iconChanged( BasicButtonModel model, Icon oldIcon, Icon icon );
-
-	/**
-	 * Called if the selection icon of <code>model</code> changed.
-	 * @param model the source of the event.
-	 * @param oldIcon the old value
-	 * @param icon the new value
-	 */
-	public void selectedIconChanged( BasicButtonModel model, Icon oldIcon, Icon icon );
-
-	/**
-	 * Called if the disabled icon of <code>model</code> changed.
-	 * @param model the source of the event.
-	 * @param oldIcon the old value
-	 * @param icon the new value
-	 */
-	public void disabledIconChanged( BasicButtonModel model, Icon oldIcon, Icon icon );
-
-	/**
-	 * Called if the selected disabled icon of <code>model</code> changed.
-	 * @param model the source of the event.
-	 * @param oldIcon the old value
-	 * @param icon the new value
-	 */
-	public void selectedDisabledIconChanged( BasicButtonModel model, Icon oldIcon, Icon icon );
-
+	public void iconChanged( BasicButtonModel model, ActionContentModifier modifier, Icon oldIcon, Icon icon );
+	
 	/**
 	 * Called if the selection state of <code>model</code> changed.
 	 * @param model the source of the event.

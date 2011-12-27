@@ -681,6 +681,7 @@
  ! API: PaintableComponent uses now a transparency enumeration instead of two booleans 
  - API: ScreenDockWindows can be transparent
  - API: AbstractDockTitle has been divided into two classes, there is no need to change code in the subclasses of AbstractDockTitle
+ ! API: DockActions now support icons that are shown if the mouse hovers of the action, or if the mouse is pressed. Clients just using the DockAction interface should compile without changes, but subclasses of DockAction will require updates.
 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

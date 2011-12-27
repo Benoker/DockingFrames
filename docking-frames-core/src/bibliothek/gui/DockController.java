@@ -1,15 +1,7 @@
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
- * panels 
-import java.awt.event.MouseEvent;
-
-import java.awt.event.MouseEvent;
-
-import bibliothek.gui.dock.control.GlobalMouseDispatcher;
-
-import bibliothek.gui.dock.control.GlobalMouseDispatcher;
-containing any Swing-Component the developer likes to add.
+ * panels containing any Swing-Component the developer likes to add.
  * 
  * Copyright (C) 2007 Benjamin Sigg
  * 

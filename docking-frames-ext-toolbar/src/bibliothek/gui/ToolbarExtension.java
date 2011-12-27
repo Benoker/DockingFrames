@@ -111,9 +111,13 @@ public class ToolbarExtension implements Extension {
 
 		final IconManager icons = controller.getIcons();
 		icons.setIconDefault( "toolbar.item.expand", loadIcon( "expand.png" ) );
+		icons.setIconDefault( "toolbar.item.expand.hover", loadIcon( "expand_hover.png" ) );
 		icons.setIconDefault( "toolbar.item.shrink", loadIcon( "shrink.png" ) );
+		icons.setIconDefault( "toolbar.item.shrink.hover", loadIcon( "shrink_hover.png" ) );
 		icons.setIconDefault( "toolbar.item.larger", loadIcon( "larger.png" ) );
+		icons.setIconDefault( "toolbar.item.larger.hover", loadIcon( "larger_hover.png" ) );
 		icons.setIconDefault( "toolbar.item.smaller", loadIcon( "smaller.png" ) );
+		icons.setIconDefault( "toolbar.item.smaller.hover", loadIcon( "smaller_hover.png" ) );
 
 		//controller.addActionGuard( new ExpandedActionGuard( controller ) );
 		new ExpandManager( controller );

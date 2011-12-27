@@ -35,6 +35,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.DropDownAction;
@@ -293,9 +294,8 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
     protected void reset(){
         getModel().setSelectionEnabled( false );
         if( filter != null ){
-            filter.setDisabledIcon( null );
+        	filter.clearIcons();
             filter.setEnabled( true );
-            filter.setIcon( null );
             filter.setSelected( false );
             filter.setText( null );
             filter.setTooltip( null );
@@ -322,15 +322,19 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
             filter.setEnabled( enabled );
             update();
         }
-
-        public void setIcon( Icon icon ){
-            filter.setIcon( icon );
-            update();
+        
+        public ActionContentModifier[] getIconContexts(){
+        	return filter.getIconContexts();
         }
-
-        public void setDisabledIcon( Icon icon ){
-            filter.setDisabledIcon( icon );
-            update();
+        
+        public void clearIcons(){
+        	filter.clearIcons();
+        	update();
+        }
+        
+        public void setIcon( ActionContentModifier modifier, Icon icon ){
+        	filter.setIcon( modifier, icon );
+        	update();
         }
         
         public void setSelected( boolean selected ){
@@ -359,16 +363,20 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
      * @author Benjamin Sigg
      */
     protected class ButtonView implements DropDownView{
-        public void setDisabledIcon( Icon icon ){
-            getModel().setDisabledIcon( icon );
-        }
+    	public void setIcon( ActionContentModifier modifier, Icon icon ){
+    		getModel().setIcon( modifier, icon );
+    	}
+    	
+    	public ActionContentModifier[] getIconContexts(){
+    		return getModel().getIconContexts();
+    	}
+    	
+    	public void clearIcons(){
+    		getModel().clearIcons();
+    	}
 
         public void setEnabled( boolean enabled ){
         	getModel().setSelectionEnabled( enabled );
-        }
-
-        public void setIcon( Icon icon ){
-        	getModel().setIcon( icon );
         }
 
         public void setSelected( boolean selected ){
@@ -405,17 +413,12 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
 	        if( dockables.contains( getDockable() ))
 	        	update();
         }
-
-        public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-            if( dockables.contains( getDockable() ))
+        
+        public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
+        	if( dockables.contains( getDockable() ))
                 update();
         }
         
-        public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-            if( dockables.contains( getDockable() ))
-                update();
-        }
-
         public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ){
             if( dockables.contains( getDockable() ))
                 update();

@@ -32,6 +32,7 @@ import javax.swing.KeyStroke;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.util.FrameworkOnly;
@@ -115,6 +116,27 @@ public interface SharingStandardDockAction extends StandardDockAction{
      * @see #isEnabled()
      */
     public Icon getDisabledIcon();
+
+    /**
+     * Sets an icon that will be shown when this action is not enabled.
+     * @param disabledIcon The disabled-icon, can be <code>null</code>
+     * @see #setEnabled(boolean)
+     */
+    public void setDisabledIcon( Icon disabledIcon );
+    
+    /**
+     * Gets the icon that is used if the conditions of <code>modifier</code> are met.
+     * @param modifier the key for the icon
+     * @return the icon or <code>null</code>
+     */
+    public Icon getIcon( ActionContentModifier modifier );
+    
+    /**
+     * Sets the icon which is to be used if the conditions of <code>modifier</code> are met.
+     * @param modifier the key of the icon
+     * @param icon the new icon or <code>null</code>
+     */
+    public void setIcon( ActionContentModifier modifier, Icon icon );
     
     /**
      * Sets the {@link Dockable} which is represented by this {@link DockAction}. Some views of
@@ -130,13 +152,6 @@ public interface SharingStandardDockAction extends StandardDockAction{
      * @see #getDockableRepresentation(Dockable)
      */
     public Dockable getDockableRepresentation();
-    
-    /**
-     * Sets an icon that will be shown when this action is not enabled.
-     * @param disabledIcon The disabled-icon, can be <code>null</code>
-     * @see #setEnabled(boolean)
-     */
-    public void setDisabledIcon( Icon disabledIcon );
     
     /**
      * Gets the type of {@link KeyEvent} that must happen to trigger this

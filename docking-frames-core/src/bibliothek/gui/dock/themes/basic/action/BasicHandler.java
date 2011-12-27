@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.action.view.ViewGenerator;
@@ -96,8 +97,10 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
     	StandardDockAction action = getAction();
     	Dockable dockable = getDockable();
     	
-    	model.setIcon( action.getIcon( dockable ) );
-    	model.setDisabledIcon( action.getDisabledIcon( dockable ) );
+    	for( ActionContentModifier modifier : action.getIconContexts( dockable )){
+    		model.setIcon( modifier, action.getIcon( dockable, modifier ) );
+    	}
+    	
     	model.setEnabled( action.isEnabled( dockable ) );
     	model.setDockableRepresentative( action.getDockableRepresentation( dockable ) );
     	
@@ -126,22 +129,27 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
      * @author Benjamin Sigg
      */
     protected class Listener implements StandardDockActionListener{
-        public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ) {
-        	Dockable dockable = getDockable();
-        	if( dockables.contains( dockable ))
-                getModel().setDisabledIcon( action.getDisabledIcon( dockable ) );
-        }
-
         public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables ) {
         	Dockable dockable = getDockable();
             if( dockables.contains( dockable ))
             	getModel().setEnabled( action.isEnabled( dockable ) );
         }
 
-        public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ) {
+        public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
         	Dockable dockable = getDockable();
-            if( dockables.contains( dockable ))
-            	getModel().setIcon( action.getIcon( dockable ));
+            if( dockables.contains( dockable )){
+            	BasicButtonModel model = getModel();
+            	
+            	if( modifier == null ){	
+            		model.clearIcons();
+            		for( ActionContentModifier index : action.getIconContexts( dockable )){
+            			model.setIcon( index, action.getIcon( dockable, index ) );
+            		}
+	        	}
+	        	else{
+	        		model.setIcon( modifier, action.getIcon( dockable, modifier ));	
+	        	}
+            }
         }
 
         public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ) {

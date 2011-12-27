@@ -81,7 +81,9 @@ public final class Colors {
 		
 		int dr, dg, db;
 
-		if ( value > 1 ) value = 1;
+		if ( value > 1 ){
+			value = 1;
+		}
 
 		dr = 255 - c.getRed();
 		dg = 255 - c.getGreen();

@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.swing.JMenuItem;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.action.StandardDropDownItemAction;
 import bibliothek.gui.dock.action.dropdown.DropDownView;
@@ -93,8 +94,9 @@ public abstract class AbstractDropDownHandler<S extends StandardDropDownItemActi
 		if( view != null ){
 			view.setText( action.getText( dockable ) );
 			view.setTooltip( action.getTooltipText( dockable ) );
-			view.setIcon( action.getIcon( dockable ) );
-			view.setDisabledIcon( action.getDisabledIcon( dockable ) );
+			for( ActionContentModifier modifier : action.getIconContexts( dockable )){
+				view.setIcon( modifier, action.getIcon( dockable, modifier ) );
+			}
 			view.setEnabled( action.isEnabled( dockable ) );
 		}
 	}
@@ -107,8 +109,9 @@ public abstract class AbstractDropDownHandler<S extends StandardDropDownItemActi
 		if( view != null ){
 			view.setText( action.getText( dockable ) );
 			view.setTooltip( action.getTooltipText( dockable ) );
-			view.setIcon( action.getIcon( dockable ) );
-			view.setDisabledIcon( action.getDisabledIcon( dockable ) );
+			for( ActionContentModifier modifier : action.getIconContexts( dockable )){
+				view.setIcon( modifier, action.getIcon( dockable, modifier ) );
+			}
 			view.setEnabled( action.isEnabled( dockable ) );
 		}
 	}
@@ -134,15 +137,18 @@ public abstract class AbstractDropDownHandler<S extends StandardDropDownItemActi
 			if( view != null && dockables.contains( dockables ))
 				view.setDockableRepresentation( action.getDockableRepresentation( dockable ) );
 		}
-
-		public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-			if( view != null && dockables.contains( dockable ))
-				view.setIcon( action.getIcon( dockable ) );
-		}
 		
-		public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-			if( view != null && dockables.contains( dockable ))
-				view.setDisabledIcon( action.getDisabledIcon( dockable ) );
+		public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
+			if( view != null && dockables.contains( dockable )){	
+				if( modifier == null ){
+					for( ActionContentModifier index : action.getIconContexts( dockable )){
+						view.setIcon( index, action.getIcon( dockable, index ) );	
+					}
+				}
+				else{
+					view.setIcon( modifier, action.getIcon( dockable, modifier ) );
+				}
+			}
 		}
 
 		public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ){

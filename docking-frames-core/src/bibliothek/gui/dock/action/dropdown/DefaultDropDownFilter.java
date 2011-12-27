@@ -26,7 +26,13 @@
 
 package bibliothek.gui.dock.action.dropdown;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.swing.Icon;
+
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
 
@@ -62,7 +68,6 @@ public class DefaultDropDownFilter extends AbstractDropDownFilter {
 		updateEnabled( selection );
 		updateSelected( selection );
 		updateIcon( selection );
-		updateDisabledIcon( selection );
 		updateText( selection );
 		updateTooltip( selection );
 		updateRepresentative( selection );
@@ -92,26 +97,33 @@ public class DefaultDropDownFilter extends AbstractDropDownFilter {
 		getView().setSelected( selected );
 	}
 
+	public ActionContentModifier[] getIconContexts(){
+		return getView().getIconContexts();
+	}
+	
 	/**
 	 * Updates the icon of the {@link #getView() view}.
 	 * @param selection the selected item, ignored by the default implementation
 	 */
 	protected void updateIcon( DropDownViewItem selection ){
-		if( icon == null )
-			getView().setIcon( getAction().getIcon( getDockable() ) );
-		else
-			getView().setIcon( icon );
-	}
-	
-	/**
-	 * Updates the disabled icon of the {@link #getView() view}.
-	 * @param selection the selected item, ignored by the default implementation
-	 */
-	protected void updateDisabledIcon( DropDownViewItem selection ){
-		if( disabledIcon == null )
-			getView().setDisabledIcon( getAction().getDisabledIcon( getDockable() ) );
-		else
-			getView().setDisabledIcon( disabledIcon );
+		Set<ActionContentModifier> modifiers = new HashSet<ActionContentModifier>();
+		modifiers.addAll( icons.keySet() );
+		for( ActionContentModifier modifier : getView().getIconContexts() ){
+			modifiers.add( modifier );
+		}
+		for( ActionContentModifier modifier : getAction().getIconContexts( getDockable() )){
+			modifiers.add( modifier );
+		}
+		
+		for( ActionContentModifier modifier : modifiers ){
+			Icon icon = icons.get( modifier );
+			if( icon == null ){
+				getView().setIcon( modifier, getAction().getIcon( getDockable(), modifier ) );
+			}
+			else{
+				getView().setIcon( modifier, icon );
+			}
+		}
 	}
 	
 	/**

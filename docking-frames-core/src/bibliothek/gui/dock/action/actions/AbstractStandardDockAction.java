@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.event.StandardDockActionListener;
@@ -158,28 +159,18 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
     
     /**
      * Invokes the 
-     * {@link StandardDockActionListener#actionIconChanged(StandardDockAction, Set) actionIconChanged}-
+     * {@link StandardDockActionListener#actionIconChanged(StandardDockAction, ActionContentModifier, Set) actionIconChanged}-
      * method of all currently registered {@link StandardDockActionListener}
+     * @param modifier the context in which the changed icon was used, can be <code>null</code> to indicate that all
+     * icons changed
      * @param dockables The set of dockables for which the icon has been
      * changed.
      */
-    protected void fireActionIconChanged( Set<Dockable> dockables ){
+    protected void fireActionIconChanged( ActionContentModifier modifier, Set<Dockable> dockables ){
         for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
-            listener.actionIconChanged( this, dockables );
+            listener.actionIconChanged( this, modifier, dockables );
     }
-    
-    /**
-     * Invokes the 
-     * {@link StandardDockActionListener#actionDisabledIconChanged(StandardDockAction, Set) actionIconChanged}-
-     * method of all currently registered {@link StandardDockActionListener}
-     * @param dockables The set of dockables for which the icon has been
-     * changed.
-     */
-    protected void fireActionDisabledIconChanged( Set<Dockable> dockables ){
-        for( StandardDockActionListener listener : listeners.toArray( new StandardDockActionListener[ listeners.size() ] ))
-            listener.actionDisabledIconChanged( this, dockables );
-    }
-     
+         
     /**
      * Invokes the 
      * {@link StandardDockActionListener#actionEnabledChanged(StandardDockAction, Set) actionEnabledChanged}-

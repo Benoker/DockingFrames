@@ -28,6 +28,7 @@ package bibliothek.gui.dock.common.intern.action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.core.CommonDecoratableDockAction;
 
@@ -112,6 +113,38 @@ public class CDecorateableAction<A extends CommonDecoratableDockAction> extends 
     }
     
     /**
+     * Sets the icon which is used if the mouse is hovering over a button that represents this action.
+     * @param icon the icon or <code>null</code>
+     */
+    public void setHoverIcon( Icon icon ){
+    	action.setIcon( ActionContentModifier.NONE_HOVER, icon );
+    }
+    
+    /**
+     * Gets the icon which is used if the mouse is hovering over a button that represents this action.
+     * @return the icon or <code>null</code>
+     */
+    public Icon getHoverIcon(){
+    	return action.getIcon( ActionContentModifier.NONE_HOVER );
+    }
+    
+    /**
+     * Sets the icon which is used if the mouse is pressed over a button that represents this action.
+     * @param icon the icon or <code>null</code>
+     */
+    public void setPressedIcon( Icon icon ){
+    	action.setIcon( ActionContentModifier.NONE_PRESSED, icon );
+    }
+    
+    /**
+     * Gets the icon which is used if the mouse is pressed over a button that represents this action.
+     * @return the icon, can be <code>null</code>
+     */
+    public Icon getPressedIcon(){
+    	return action.getIcon( ActionContentModifier.NONE_PRESSED );
+    }
+    
+    /**
      * Sets the icon of this action. The disabled-icon will only be visible
      * when this action is disabled.
      * @param icon the disabled icon
@@ -129,6 +162,42 @@ public class CDecorateableAction<A extends CommonDecoratableDockAction> extends 
     public Icon getDisabledIcon(){
         return action.getDisabledIcon();
     }
+
+    /**
+     * Sets the icon which is used if the mouse is hovering over a button that represents this action and
+     * if this action is disabled.
+     * @param icon the icon or <code>null</code>
+     */
+    public void setDisabledHoverIcon( Icon icon ){
+    	action.setIcon( ActionContentModifier.DISABLED_HOVER, icon );
+    }
+    
+    /**
+     * Gets the icon which is used if the mouse is hovering over a button that represents this action and
+     * if this action is disabled.
+     * @return the icon or <code>null</code>
+     */
+    public Icon getDisabledHoverIcon(){
+    	return action.getIcon( ActionContentModifier.DISABLED_HOVER );
+    }
+    
+    /**
+     * Sets the icon which is used if the mouse is pressed over a button that represents this action and
+     * if this action is disabled.
+     * @param icon the icon or <code>null</code>
+     */
+    public void setDisabledPressedIcon( Icon icon ){
+    	action.setIcon( ActionContentModifier.DISABLED_PRESSED, icon );
+    }
+    
+    /**
+     * Gets the icon which is used if the mouse is pressed over a button that represents this action and
+     * if this action is disabled.
+     * @return the icon, can be <code>null</code>
+     */
+    public Icon getDisabledPressedIcon(){
+    	return action.getIcon( ActionContentModifier.DISABLED_PRESSED );
+    }    
     
     /**
      * Enables or disables this action, a disabled action can't be triggered

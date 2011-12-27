@@ -27,12 +27,16 @@
 package bibliothek.gui.dock.action.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;
@@ -50,10 +54,10 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
 	private List<SelectableDockActionListener> listeners = new ArrayList<SelectableDockActionListener>();
 	/** whether this action is selected or not */
 	private boolean selected = false;
-	/** the Icon shown if this action is selected and enabled */
-	private Icon selectedIcon;
-	/** the Icon shown if this action is selected but not enabled */
-	private Icon disabledSelectedIcon;
+	
+	/** icons to be used if this action is selected */
+	private Map<ActionContentModifier, Icon> selectIcons = new HashMap<ActionContentModifier, Icon>();
+
 	/** how this action should be visualized */
 	private ActionType<SelectableDockAction> type;
 	
@@ -151,17 +155,16 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
 		if( selected != this.selected ){
 			this.selected = selected;
 			fireSelectedChanged();
-			fireActionIconChanged( getBoundDockables() );
-			fireActionDisabledIconChanged( getBoundDockables() );
+			fireActionIconChanged( null, getBoundDockables() );
 		}
 	}
 	
 	@Override
-	public Icon getIcon( Dockable dockable ){
+	public Icon getIcon( Dockable dockable, ActionContentModifier modifier ){
 		if( isSelected() )
-			return firstNonNull( selectedIcon, super.getIcon( dockable ) );
+			return firstNonNull( selectIcons.get( modifier ), super.getIcon( dockable, modifier ) );
 		else
-			return super.getIcon( dockable );
+			return super.getIcon( dockable, modifier );
 	}
 	
 	/**
@@ -177,29 +180,59 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
         return null;
     }
 	
-    public Icon getSelectedIcon() {
-        return selectedIcon;
-    }
-    
-    public void setSelectedIcon( Icon selectedIcon ) {
-        this.selectedIcon = selectedIcon;
-        fireActionIconChanged( getBoundDockables() );
-    }
-    
-    public Icon getDisabledSelectedIcon() {
-        return disabledSelectedIcon;
-    }
-    
     @Override
-    public Icon getDisabledIcon( Dockable dockable ){
-    	if( selected )
-    		return firstNonNull( disabledSelectedIcon, super.getDisabledIcon( dockable ) );
-    	else
-    		return super.getDisabledIcon( dockable );
+    public ActionContentModifier[] getIconContexts( Dockable dockable ){
+    	Set<ActionContentModifier> result = new HashSet<ActionContentModifier>();
+    	for( ActionContentModifier modifier : super.getIconContexts( dockable )){
+    		result.add( modifier );
+    	}
+    	result.addAll( selectIcons.keySet() );
+    	return result.toArray( new ActionContentModifier[ result.size() ] );
     }
     
-    public void setDisabledSelectedIcon( Icon disabledSelectedIcon ) {
-        this.disabledSelectedIcon = disabledSelectedIcon;
-        fireActionDisabledIconChanged( getBoundDockables() );
+    /**
+     * Sets the icon which is shown if this action is selected
+     * @param icon the icon to show, or <code>null</code>
+     */
+    public void setSelectedIcon( Icon icon ){
+    	setSelectedIcon( ActionContentModifier.NONE, icon );
     }
+    
+    /**
+     * Gets the icon which is shown if this action is selected
+     * @return the icon or <code>null</code>
+     */
+    public Icon getSelectedIcon(){
+    	return getSelectedIcon( ActionContentModifier.NONE );
+    }
+    
+    /**
+     * Sets the icon which is shown if this action is selected but disabled
+     * @param icon the icon to show, or <code>null</code>
+     */
+    public void setDisabledSelectedIcon( Icon icon ){
+    	setSelectedIcon( ActionContentModifier.DISABLED, icon );
+    }
+    
+    /**
+     * Gets the icon which is shown if this action is selected but disabled
+     * @return the icon or <code>null</code>
+     */
+    public Icon getDisabledSelectedIcon(){
+    	return getSelectedIcon( ActionContentModifier.DISABLED );
+    }
+    
+    public Icon getSelectedIcon( ActionContentModifier modifier ){
+    	return selectIcons.get( modifier );
+    }
+    
+    public void setSelectedIcon( ActionContentModifier modifier, Icon selectedIcon ){
+    	if( selectedIcon == null ){
+    		selectIcons.remove( modifier );
+    	}
+    	else{
+    		selectIcons.put( modifier, selectedIcon );
+    	}
+    	fireActionIconChanged( modifier, getBoundDockables() );
+    }    
 }

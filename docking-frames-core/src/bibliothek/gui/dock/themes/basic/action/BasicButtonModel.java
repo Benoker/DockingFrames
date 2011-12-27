@@ -51,6 +51,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -76,19 +77,11 @@ public class BasicButtonModel {
     /** whether this model is selected or not */
     private boolean selected = false;
     
-    /** the icon shown for this model */
-    private Icon icon;
-    /** the icon for this model when the model is selected */
-    private Icon iconSelected;
-    /** the icon for this model if the model is not enabled */
-    private Icon iconDisabled;
-    /** the icon for this model if the model is not enabled, but selected */
-    private Icon iconSelectedDisabled;
+    /** the icons shown for this model */
+    private Map<ActionContentModifier, Icon> icons = new HashMap<ActionContentModifier, Icon>();
     
-    /** automatically created icon used when this model is not enabled */
-    private Icon autoIconDisabled;
-    /** automatically created icon used when this model is not enabled, but selected */
-    private Icon autoIconSelectedDisabled;
+    /** automatically created icons used when this model is not enabled */
+    private Map<ActionContentModifier, Icon> disabledIcons = new HashMap<ActionContentModifier, Icon>();    
     
     /** the element which is represented by the action */
     private DockActionRepresentative representative;
@@ -337,60 +330,39 @@ public class BasicButtonModel {
     }
     
     /**
+     * Removes any icon that was ever set by {@link #setIcon(ActionContentModifier, Icon)} or
+     * {@link #setSelectedIcon(ActionContentModifier, Icon)}
+     */
+    public void clearIcons(){
+    	for( ActionContentModifier key : getIconContexts() ){
+    		setIcon( key, null );
+    	}
+    }
+    
+    /**
+     * Gets all the {@link ActionContentModifier}s for which an icon is set. 
+     * @return all the contexts in which an icon is available
+     */
+    public ActionContentModifier[] getIconContexts(){
+    	return icons.keySet().toArray( new ActionContentModifier[ icons.size() ] );
+    }
+    
+    /**
      * Sets the icon which is normally shown on the view.
+     * @param modifier the context in which to use the icon, not <code>null</code>
      * @param icon the new icon, can be <code>null</code>
      */
-    public void setIcon( Icon icon ){
-    	Icon oldIcon = this.icon;
-        this.icon = icon;
-        autoIconDisabled = null;
+    public void setIcon( ActionContentModifier modifier, Icon icon ){
+    	Icon oldIcon = icons.remove( modifier );
+    	if( icon == null ){
+    		icons.remove( modifier );
+    	}
+    	else{
+    		icons.put( modifier, icon );
+    	}
+        disabledIcons.remove( modifier );
         for( BasicButtonModelListener listener : listeners() ){
-        	listener.iconChanged( this, oldIcon, icon );
-        }
-        changed();
-    }
-    
-    /**
-     * Sets the icon which is shown on the view if this model
-     * is {@link #isSelected() selected}.
-     * @param icon the icon, can be <code>null</code>
-     */
-    public void setSelectedIcon( Icon icon ) {
-    	Icon oldIcon = this.iconSelected;
-        this.iconSelected = icon;
-        autoIconSelectedDisabled = null;
-        for( BasicButtonModelListener listener : listeners() ){
-        	listener.selectedIconChanged( this, oldIcon, icon );
-        }
-        changed();
-    }
-    
-    /**
-     * Sets the icon which is shown on the view if this model
-     * is not {@link #isEnabled() enabled}.
-     * @param icon the icon, can be <code>null</code>
-     */
-    public void setDisabledIcon( Icon icon ) {
-    	Icon oldIcon = this.iconDisabled;
-        this.iconDisabled = icon;
-        autoIconDisabled = null;
-        for( BasicButtonModelListener listener : listeners() ){
-        	listener.disabledIconChanged( this, oldIcon, icon );
-        }
-        changed();
-    }
-    
-    /**
-     * Sets the icon which is shown on the view if this model is
-     * not {@link #isEnabled() enabled}, but {@link #isSelected() selected}.
-     * @param icon the icon, can be <code>null</code>
-     */
-    public void setSelectedDisabledIcon( Icon icon ) {
-    	Icon oldIcon = this.iconSelectedDisabled;
-        this.iconSelectedDisabled = icon;
-        autoIconSelectedDisabled = null;
-        for( BasicButtonModelListener listener : listeners() ){
-        	listener.selectedDisabledIconChanged( this, oldIcon, icon );
+        	listener.iconChanged( this, modifier, oldIcon, icon );
         }
         changed();
     }
@@ -523,24 +495,9 @@ public class BasicButtonModel {
         int w = 0;
         int h = 0;
         
-        if( icon != null ){
+        for( Icon icon : icons.values() ){
             w = Math.max( w, icon.getIconWidth() );
             h = Math.max( h, icon.getIconHeight() );
-        }
-        
-        if( iconSelected != null ){
-            w = Math.max( w, iconSelected.getIconWidth() );
-            h = Math.max( h, iconSelected.getIconHeight() );
-        }
-        
-        if( iconDisabled != null ){
-            w = Math.max( w, iconDisabled.getIconWidth() );
-            h = Math.max( h, iconDisabled.getIconHeight() );
-        }
-        
-        if( iconSelectedDisabled != null ){
-            w = Math.max( w, iconSelectedDisabled.getIconWidth() );
-            h = Math.max( h, iconSelectedDisabled.getIconHeight() );
         }
         
         return new Dimension( w, h );
@@ -561,33 +518,48 @@ public class BasicButtonModel {
      * @return the icon or <code>null</code>
      */
     public Icon getPaintIcon( boolean enabled ){
-        if( enabled ){
-            if( isSelected() && iconSelected != null )
-                return iconSelected;
-            
-            return icon;
-        }
-        
-        if( isSelected() ){
-            if( iconSelectedDisabled != null )
-                return iconSelectedDisabled;
-            
-            if( iconSelected != null )
-                autoIconSelectedDisabled = DockUtilities.disabledIcon( owner, iconSelected );
-            
-            if( autoIconSelectedDisabled != null )
-                return autoIconSelectedDisabled;
-        }
-        
-        if( iconDisabled != null )
-            return iconDisabled;
-        
-        if( icon != null )
-            autoIconDisabled = DockUtilities.disabledIcon( owner, icon );
-        
-        if( autoIconDisabled != null )
-            return autoIconDisabled;
-        
+    	ActionContentModifier modifier;
+    	if( enabled ){
+    		if( mousePressed ){
+    			modifier = ActionContentModifier.NONE_PRESSED;
+    		}
+    		else if( mouseInside ){
+    			modifier = ActionContentModifier.NONE_HOVER;
+    		}
+    		else{
+    			modifier = ActionContentModifier.NONE;
+    		}
+    	}
+    	else{
+    		if( mousePressed ){
+    			modifier = ActionContentModifier.DISABLED_PRESSED;
+    		}
+    		else if( mouseInside ){
+    			modifier = ActionContentModifier.DISABLED_HOVER;
+    		}
+    		else{
+    			modifier = ActionContentModifier.DISABLED;
+    		}
+    	}
+    	
+    	while( modifier != null ){
+    		Icon icon = icons.get( modifier );
+    		if( icon != null ){
+    			if( !enabled && modifier.isEnabled() ){
+    				Icon disabled = disabledIcons.get( modifier );
+    				if( disabled == null && !disabledIcons.containsKey( modifier )){
+    					disabled = DockUtilities.disabledIcon( owner, icon );
+    					disabledIcons.put( modifier, disabled );
+    				}
+    				if( disabled != null ){
+    					icon = disabled;
+    				}
+    			}
+    			return icon;
+    		}
+    		modifier = modifier.getBackup();
+    	}
+    	        
         // no icon to show
         return null;
     }

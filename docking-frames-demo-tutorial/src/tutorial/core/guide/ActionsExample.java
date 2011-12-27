@@ -16,6 +16,7 @@ import bibliothek.extension.gui.dock.theme.SmoothTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.LocationHint;
@@ -27,6 +28,7 @@ import bibliothek.gui.dock.action.actions.SimpleMenuAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
 import bibliothek.gui.dock.themes.NoStackTheme;
+import bibliothek.util.Colors;
 
 @Tutorial(title="Actions", id="Actions")
 public class ActionsExample {
@@ -102,6 +104,8 @@ public class ActionsExample {
 		SimpleButtonAction button = new SimpleButtonAction();
 		button.setText( text );
 		button.setIcon( new OvalIcon( color ) );
+		button.setIcon( ActionContentModifier.NONE_HOVER, new OvalIcon( Colors.darker( color, 0.1 ) ) );
+		button.setIcon( ActionContentModifier.NONE_PRESSED, new OvalIcon( Colors.darker( color, 0.2 ) ) );
 		
 		button.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
@@ -132,8 +136,13 @@ public class ActionsExample {
 		group.addAction( radio );
 		radio.setText( "Radio " + index );
 		radio.setTooltip( "This is radio-button Nr. " + index );
+		
 		radio.setIcon( new OvalIcon( Color.RED ));
+		radio.setIcon( ActionContentModifier.NONE_HOVER, new OvalIcon( new Color( 255, 150, 150 ) ) );
+		radio.setIcon( ActionContentModifier.NONE_PRESSED, new OvalIcon( new Color( 255, 200, 200 ) ) );
 		radio.setSelectedIcon( new OvalIcon( Color.GREEN ));
+		radio.setSelectedIcon( ActionContentModifier.NONE_HOVER, new OvalIcon( new Color( 150, 255, 150 ) ) );
+		radio.setSelectedIcon( ActionContentModifier.NONE_PRESSED, new OvalIcon( new Color( 200, 255, 200 ) ) );
 		
 		radio.addSelectableListener( new SelectableDockActionListener(){
 			/* A DockAction may be used by more than one Dockable. Hence this listener 
@@ -167,7 +176,7 @@ public class ActionsExample {
 		/* A drop-down menu offers methods to add actions directly. */
 		menu.add( setupButtonAction( "Drop Down Button 1", target, Color.RED ) );
 		menu.add( setupButtonAction( "Drop Down Button 2", target, Color.GREEN ) );
-		menu.add( setupButtonAction( "Drop Down Button 3", target, Color.BLUE ) );
+		menu.add( setupButtonAction( "Drop Down Button 3", target, new Color( 100, 100, 255 ) ) );
 		
 		/* The default behavior of SimpleDropDownAction is to replace
 		 * icon and text if one of its actions is called.

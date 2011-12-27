@@ -31,6 +31,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.station.stack.CombinedHandler;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.TabMenuDockIcon;
@@ -65,7 +66,7 @@ public abstract class ButtonCombinedMenu<B extends Component> extends AbstractCo
 			protected void changed( Icon oldValue, Icon newValue ){
 				currentIcon = newValue;
 				if( button != null ){
-					getModel( button ).setIcon( newValue );
+					getModel( button ).setIcon( ActionContentModifier.NONE, newValue );
 				}
 			}
 		};
@@ -99,7 +100,7 @@ public abstract class ButtonCombinedMenu<B extends Component> extends AbstractCo
         
         button = createButton( trigger );
         
-        getModel( button ).setIcon( currentIcon );
+        getModel( button ).setIcon( ActionContentModifier.NONE, currentIcon );
         
         return button;
 	}

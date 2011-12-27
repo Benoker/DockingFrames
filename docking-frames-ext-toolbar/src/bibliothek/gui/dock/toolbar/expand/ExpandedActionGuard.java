@@ -25,9 +25,8 @@ import bibliothek.util.Todo.Version;
  * 
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Version.VERSION_1_1_1,
-description="Is this class of any use? Can it be removed safely? Don't forget to remove the classes that are used by this as well.")
-public class ExpandedActionGuard implements ActionGuard{
+@Todo(compatibility = Compatibility.COMPATIBLE, priority = Priority.MINOR, target = Version.VERSION_1_1_1, description = "Is this class of any use? Can it be removed safely? Don't forget to remove the classes that are used by this as well.")
+public class ExpandedActionGuard implements ActionGuard {
 	/** all the {@link ExpandSource}s that are currently used */
 	private final Map<Dockable, ExpandSource> sources = new HashMap<Dockable, ExpandSource>();
 
@@ -41,8 +40,7 @@ public class ExpandedActionGuard implements ActionGuard{
 	private final DockAction switchAction;
 
 	/** where to show {@link #action} */
-	private final LocationHint locationHint = new LocationHint(
-			LocationHint.ACTION_GUARD, LocationHint.LITTLE_RIGHT);
+	private final LocationHint locationHint = new LocationHint( LocationHint.ACTION_GUARD, LocationHint.LITTLE_RIGHT );
 
 	/** the controller in whose realm this guard is used */
 	private final DockController controller;
@@ -51,21 +49,19 @@ public class ExpandedActionGuard implements ActionGuard{
 	 * the currently used strategy to decide which items are expandable and
 	 * expanded
 	 */
-	private final PropertyValue<ExpandableToolbarItemStrategy> strategy = new PropertyValue<ExpandableToolbarItemStrategy>(
-			ExpandableToolbarItemStrategy.STRATEGY){
+	private final PropertyValue<ExpandableToolbarItemStrategy> strategy = new PropertyValue<ExpandableToolbarItemStrategy>( ExpandableToolbarItemStrategy.STRATEGY ){
 		@Override
-		protected void valueChanged( ExpandableToolbarItemStrategy oldValue,
-				ExpandableToolbarItemStrategy newValue ){
-			if (oldValue != null){
-				for (final ExpandSource source : sources.values()){
-					oldValue.removeExpandedListener(source);
+		protected void valueChanged( ExpandableToolbarItemStrategy oldValue, ExpandableToolbarItemStrategy newValue ){
+			if( oldValue != null ) {
+				for( final ExpandSource source : sources.values() ) {
+					oldValue.removeExpandedListener( source );
 				}
-				oldValue.uninstall(controller);
+				oldValue.uninstall( controller );
 			}
-			if (newValue != null){
-				newValue.install(controller);
-				for (final ExpandSource source : sources.values()){
-					newValue.addExpandedListener(source);
+			if( newValue != null ) {
+				newValue.install( controller );
+				for( final ExpandSource source : sources.values() ) {
+					newValue.addExpandedListener( source );
 					source.update();
 				}
 			}
@@ -80,11 +76,11 @@ public class ExpandedActionGuard implements ActionGuard{
 	 */
 	public ExpandedActionGuard( DockController controller ){
 		this.controller = controller;
-		strategy.setProperties(controller);
+		strategy.setProperties( controller );
 
-		largerAction = new LargeExpandAction(controller);
-		smallerAction = new SmallExpandAction(controller);
-		switchAction = new SwitchExpandAction(controller);
+		largerAction = new LargeExpandAction( controller );
+		smallerAction = new SmallExpandAction( controller );
+		switchAction = new SwitchExpandAction( controller );
 	}
 
 	@Override
@@ -94,7 +90,7 @@ public class ExpandedActionGuard implements ActionGuard{
 
 	@Override
 	public DockActionSource getSource( Dockable dockable ){
-		return new ExpandSource(dockable);
+		return new ExpandSource( dockable );
 	}
 
 	/**
@@ -116,12 +112,13 @@ public class ExpandedActionGuard implements ActionGuard{
 	 *            whether the source is listening
 	 */
 	private void set( ExpandSource source, boolean listening ){
-		if (listening){
-			sources.put(source.dockable, source);
-			getStrategy().addExpandedListener(source);
-		} else{
-			sources.remove(source.dockable);
-			getStrategy().removeExpandedListener(source);
+		if( listening ) {
+			sources.put( source.dockable, source );
+			getStrategy().addExpandedListener( source );
+		}
+		else {
+			sources.remove( source.dockable );
+			getStrategy().removeExpandedListener( source );
 		}
 	}
 
@@ -132,8 +129,7 @@ public class ExpandedActionGuard implements ActionGuard{
 	 * 
 	 * @author Benjamin Sigg
 	 */
-	private class ExpandSource extends AbstractDockActionSource implements
-			ExpandableToolbarItemStrategyListener{
+	private class ExpandSource extends AbstractDockActionSource implements ExpandableToolbarItemStrategyListener {
 		private final Dockable dockable;
 		private int stateCount;
 
@@ -150,17 +146,16 @@ public class ExpandedActionGuard implements ActionGuard{
 		private void calculateStateCount(){
 			stateCount = 0;
 			final ExpandableToolbarItemStrategy strategy = getStrategy();
-			for (final ExpandedState state : ExpandedState.values()){
-				if (strategy.isEnabled(dockable, state)){
+			for( final ExpandedState state : ExpandedState.values() ) {
+				if( strategy.isEnabled( dockable, state ) ) {
 					stateCount++;
 				}
 			}
 		}
 
 		@Override
-		public void enablementChanged( Dockable item, ExpandedState state,
-				boolean enabled ){
-			if (item == dockable){
+		public void enablementChanged( Dockable item, ExpandedState state, boolean enabled ){
+			if( item == dockable ) {
 				update();
 			}
 		}
@@ -169,19 +164,19 @@ public class ExpandedActionGuard implements ActionGuard{
 		 * Updates the actions that are shown on this source.
 		 */
 		public void update(){
-			if (hasListeners()){
+			if( hasListeners() ) {
 				final int oldCount = getDockActionCount();
 				calculateStateCount();
 				final int newCount = getDockActionCount();
 
-				if (oldCount != newCount){
+				if( oldCount != newCount ) {
 					stateCount = 0;
-					if (oldCount > 0){
-						fireRemoved(0, oldCount - 1);
+					if( oldCount > 0 ) {
+						fireRemoved( 0, oldCount - 1 );
 					}
 					calculateStateCount();
-					if (newCount > 0){
-						fireAdded(0, newCount - 1);
+					if( newCount > 0 ) {
+						fireAdded( 0, newCount - 1 );
 					}
 				}
 			}
@@ -199,7 +194,7 @@ public class ExpandedActionGuard implements ActionGuard{
 
 				@Override
 				public DockAction next(){
-					return getDockAction(index++);
+					return getDockAction( index++ );
 				}
 
 				@Override
@@ -211,15 +206,17 @@ public class ExpandedActionGuard implements ActionGuard{
 
 		@Override
 		public DockAction getDockAction( int index ){
-			if ((index < 0) || (index >= getDockActionCount())){
-				throw new IllegalArgumentException("index out of bounds");
+			if( (index < 0) || (index >= getDockActionCount()) ) {
+				throw new IllegalArgumentException( "index out of bounds" );
 			}
-			if (stateCount == 2){
+			if( stateCount == 2 ) {
 				return switchAction;
-			} else{
-				if (index == 0){
+			}
+			else {
+				if( index == 0 ) {
 					return smallerAction;
-				} else{
+				}
+				else {
 					return largerAction;
 				}
 			}
@@ -227,19 +224,19 @@ public class ExpandedActionGuard implements ActionGuard{
 
 		@Override
 		public int getDockActionCount(){
-			if (!hasListeners()){
+			if( !hasListeners() ) {
 				calculateStateCount();
 			}
-			switch (stateCount) {
-			case 0:
-			case 1:
-				return 0;
-			case 2:
-				return 1;
-			case 3:
-				return 2;
-			default:
-				return 0;
+			switch( stateCount ){
+				case 0:
+				case 1:
+					return 0;
+				case 2:
+					return 1;
+				case 3:
+					return 2;
+				default:
+					return 0;
 			}
 		}
 
@@ -249,21 +246,19 @@ public class ExpandedActionGuard implements ActionGuard{
 		}
 
 		@Override
-		public void addDockActionSourceListener(
-				DockActionSourceListener listener ){
-			if (!hasListeners()){
-				set(this, true);
+		public void addDockActionSourceListener( DockActionSourceListener listener ){
+			if( !hasListeners() ) {
+				set( this, true );
 				calculateStateCount();
 			}
-			super.addDockActionSourceListener(listener);
+			super.addDockActionSourceListener( listener );
 		}
 
 		@Override
-		public void removeDockActionSourceListener(
-				DockActionSourceListener listener ){
-			super.removeDockActionSourceListener(listener);
-			if (!hasListeners()){
-				set(this, false);
+		public void removeDockActionSourceListener( DockActionSourceListener listener ){
+			super.removeDockActionSourceListener( listener );
+			if( !hasListeners() ) {
+				set( this, false );
 			}
 		}
 

@@ -37,6 +37,7 @@ import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -48,11 +49,8 @@ import bibliothek.gui.dock.event.KeyboardListener;
  * @author Benjamin Sigg
  */
 public abstract class SimpleDockAction extends AbstractStandardDockAction implements SharingStandardDockAction {
-	/** Icon shown if the action is enabled */
-	private Icon icon;
-	
-	/** Icon shown if the action is not enabled */
-	private Icon disabledIcon;
+	/** the icons that are used by this action */
+	private Map<ActionContentModifier, Icon> icons = new HashMap<ActionContentModifier, Icon>();
     
 	/** Text of the action */
     private String text;
@@ -86,8 +84,8 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
     	forwarder.destroy();
     }
     
-    public Icon getIcon( Dockable dockable ) {
-        return icon;
+    public Icon getIcon( Dockable dockable, ActionContentModifier modifier ){
+        return icons.get( modifier );
     }
 
     public String getText( Dockable dockable ) {
@@ -144,20 +142,47 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
     }
     
     public Icon getIcon(){
-        return icon;
+        return icons.get( ActionContentModifier.NONE );
     }
     
     public void setIcon( Icon icon ) {
-        this.icon = icon;
-        fireActionIconChanged( getBoundDockables() );
+    	setIcon( ActionContentModifier.NONE, icon );
+    }
+    
+    public ActionContentModifier[] getIconContexts( Dockable dockable ){
+    	return icons.keySet().toArray( new ActionContentModifier[ icons.size() ] );
     }
     
     public Icon getDisabledIcon() {
-        return disabledIcon;
+    	return icons.get( ActionContentModifier.DISABLED );
     }
     
-    public Icon getDisabledIcon( Dockable dockable ){
-    	return disabledIcon;
+    public void setDisabledIcon( Icon icon ) {
+		setIcon( ActionContentModifier.DISABLED, icon );	
+    }
+    
+    /**
+     * Gets the icon which is shown if the conditions of <code>modifier</code> are met.
+     * @param modifier the conditions to met
+     * @return the icon to show or <code>null</code> if not set
+     */
+    public Icon getIcon( ActionContentModifier modifier ){
+    	return icons.get( modifier );
+    }
+    
+    /**
+     * Sets the icon that is to be used when the conditions of <code>modifier</code> are met.
+     * @param modifier the conditions to met
+     * @param icon the icon to use or <code>null</code>
+     */
+    public void setIcon( ActionContentModifier modifier, Icon icon ){
+    	if( icon == null ){
+    		icons.remove( modifier );
+    	}
+    	else{
+    		icons.put( modifier, icon );
+    	}
+    	fireActionIconChanged( modifier, getBoundDockables() );
     }
     
     public void setDockableRepresentation( Dockable dockable ){
@@ -173,11 +198,6 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
     
     public Dockable getDockableRepresentation(){
     	return representative;
-    }
-    
-    public void setDisabledIcon( Icon disabledIcon ) {
-		this.disabledIcon = disabledIcon;
-    	fireActionDisabledIconChanged( getBoundDockables() );	
     }
     
     public KeyStroke getAccelerator(){

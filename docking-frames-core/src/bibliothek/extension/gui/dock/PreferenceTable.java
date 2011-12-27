@@ -54,6 +54,7 @@ import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
 import bibliothek.extension.gui.dock.preference.editor.LabelEditor;
 import bibliothek.extension.gui.dock.preference.editor.ModifierMaskEditor;
 import bibliothek.extension.gui.dock.preference.editor.StringEditor;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 import bibliothek.util.Path;
@@ -528,7 +529,7 @@ public class PreferenceTable extends JPanel{
                 
                 view.addListener( this );
                 
-                getModel().setIcon( view.getIcon() );
+                getModel().setIcon( ActionContentModifier.NONE, view.getIcon() );
                 getModel().setToolTipText( view.getDescription() );
    
                 setMouseOverBorder( BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ) );
@@ -542,7 +543,7 @@ public class PreferenceTable extends JPanel{
             }
             
             public void iconChanged( PreferenceOperationView operation, Icon oldIcon, Icon newIcon ){
-            	getModel().setIcon( newIcon );
+            	getModel().setIcon( ActionContentModifier.NONE, newIcon );
             }
             
             public void descriptionChanged( PreferenceOperationView operation, String oldDescription, String newDescription ){

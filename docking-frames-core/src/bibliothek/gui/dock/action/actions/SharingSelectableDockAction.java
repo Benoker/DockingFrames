@@ -28,6 +28,7 @@ package bibliothek.gui.dock.action.actions;
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.util.FrameworkOnly;
 
@@ -55,35 +56,18 @@ public interface SharingSelectableDockAction extends SharingDropDownItemAction, 
 	
 	/**
      * Gets the icon that is shown when this action is selected.
+     * @param modifier tells in which context the icon is used
      * @return The selected-icon, may be <code>null</code>
      * @see #setSelectedIcon(Icon)
      * @see #isSelected()
      */
-    public Icon getSelectedIcon();
+    public Icon getSelectedIcon( ActionContentModifier modifier );
     
     /**
      * Sets the icon that will be shown, when this action is selected.
+     * @param modifier tells in which context <code>icon</code> will be used
      * @param selectedIcon The icon, can be <code>null</code>
      * @see #setSelected(boolean)
      */
-    public void setSelectedIcon( Icon selectedIcon );
-    
-    /**
-     * Gets the icon that is shown, when this action is selected but
-     * not enabled.
-     * @return The icon, may be <code>null</code>
-     * @see #setDisabledSelectedIcon(Icon)
-     * @see #isEnabled()
-     * @see #isSelected()
-     */
-    public Icon getDisabledSelectedIcon();
-    
-    /**
-     * Sets the icon that will be shown when this action is selected
-     * but not enabled.
-     * @param disabledSelectedIcon The icon, <code>null</code> is allowed
-     * @see #setSelected(boolean)
-     * @see #setEnabled(boolean)
-     */
-    public void setDisabledSelectedIcon( Icon disabledSelectedIcon );
+    public void setSelectedIcon( ActionContentModifier modifier, Icon selectedIcon );
 }

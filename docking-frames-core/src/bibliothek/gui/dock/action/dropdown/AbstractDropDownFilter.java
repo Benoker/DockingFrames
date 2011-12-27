@@ -26,9 +26,13 @@
 
 package bibliothek.gui.dock.action.dropdown;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.Icon;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DropDownAction;
 
 /**
@@ -38,11 +42,8 @@ import bibliothek.gui.dock.action.DropDownAction;
  *
  */
 public abstract class AbstractDropDownFilter extends DropDownFilter {
-	/** the icon provided by the selected element */
-	protected Icon icon;
-	
-	/** the disabled icon provided by the selected element */
-	protected Icon disabledIcon;
+	/** the icons provided by the selected element */
+	protected Map<ActionContentModifier, Icon> icons = new HashMap<ActionContentModifier, Icon>();
 	
 	/** whether the selected element is enabled */
 	protected boolean enabled;
@@ -69,18 +70,32 @@ public abstract class AbstractDropDownFilter extends DropDownFilter {
 		super( dockable, action, view );
 	}
 	
-	public void setDisabledIcon( Icon icon ){
-		this.disabledIcon = icon;
+	public void setIcon( ActionContentModifier modifier, Icon icon ){
+		if( icon == null ){	
+			icons.remove( modifier );
+		}
+		else{
+			icons.put( modifier, icon );
+		}
+	}
+	
+	public void clearIcons(){
+		icons.clear();	
+	}
+	
+	/**
+	 * Gets the icon which was stored using {@link #setIcon(ActionContentModifier, Icon)}.
+	 * @param modifier the context in which to use the icon
+	 * @return the icon or <code>null</code>
+	 */
+	protected Icon getIcon( ActionContentModifier modifier ){
+		return icons.get( modifier );
 	}
 	
 	public void setEnabled( boolean enabled ){
 		this.enabled = enabled;
 	}
 	
-	public void setIcon( Icon icon ){
-		this.icon = icon;
-	}
-
 	public void setSelected( boolean selected ){
 		this.selected = selected;
 	}

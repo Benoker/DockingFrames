@@ -32,6 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.event.StandardDockActionListener;
@@ -104,8 +105,8 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
                 action.addDockActionListener( listener );
                 
                 item.setEnabled( action.isEnabled( dockable ));
-                item.setIcon( action.getIcon( dockable ));
-                item.setDisabledIcon( action.getDisabledIcon( dockable ) );
+                item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ));
+                item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
                 item.setText( action.getText( dockable ));
                 item.setToolTipText( action.getTooltipText( dockable ));
             }
@@ -138,13 +139,14 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
         public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables ) {
             item.setEnabled( action.isEnabled( dockable ));
         }
-
-        public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ) {
-            item.setIcon( action.getIcon( dockable ));
-        }
         
-        public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-        	item.setDisabledIcon( action.getDisabledIcon( dockable ));
+        public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
+        	if( modifier == null || modifier == ActionContentModifier.NONE ){
+        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ) );
+        	}
+        	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
+        		item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+        	}
         }
 
         public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ) {

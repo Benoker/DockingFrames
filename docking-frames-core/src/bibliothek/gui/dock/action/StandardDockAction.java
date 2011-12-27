@@ -47,24 +47,24 @@ import bibliothek.gui.dock.event.StandardDockActionListener;
 public interface StandardDockAction extends DockAction {
 	/**
      * Gets the Icon of this DockAction, when this DockAction is shown
-     * together with <code>dockable</code>.
+     * together with <code>dockable</code>. This method must <i>ignore</i> the 
+     * {@link ActionContentModifier#getBackup() backup property} of <code>modifier</code>.
      * @param dockable The {@link Dockable} for which the action-icon
      * should be chosen.
+     * @param modifier how the icon will be used
      * @return The icon to show for this action when the action is associated
      * with <code>dockable</code>, or <code>null</code>.
      */
-    public Icon getIcon( Dockable dockable );
-
-	/**
-     * Gets the Icon of this DockAction, when this DockAction is shown
-     * together with <code>dockable</code> and is not enabled.
-     * @param dockable The {@link Dockable} for which the action-icon
-     * should be chosen.
-     * @return The icon to show for this action when the action is associated
-     * with <code>dockable</code>, or <code>null</code>.
-     */
-    public Icon getDisabledIcon( Dockable dockable );
+    public Icon getIcon( Dockable dockable, ActionContentModifier modifier );
     
+    /**
+     * Gets all the {@link ActionContentModifier}s for which {@link #getIcon(Dockable, ActionContentModifier)} would
+     * return a value other than <code>null</code>.
+     * @param dockable the {@link Dockable} for which the action-icons may be chosen.
+     * @return the contexts in which an icon is present
+     */
+    public ActionContentModifier[] getIconContexts( Dockable dockable );
+
     /**
      * Gets the text of this DockActon, when this DockAction is
      * shown together with <code>dockable</code>.

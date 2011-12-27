@@ -35,6 +35,7 @@ import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
@@ -124,9 +125,14 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         this.removeEmptyGroups = removeEmptyGroups;
     }
     
-    public Icon getIcon( Dockable dockable ) {
-    	return getGroup( dockable ).getIcon( dockable );
+    public Icon getIcon( Dockable dockable, ActionContentModifier modifier ){
+    	return getGroup( dockable ).getIcon( dockable, modifier );
     }
+
+    public ActionContentModifier[] getIconContexts( Dockable dockable ){
+    	return getGroup( dockable ).getIconContexts( dockable );
+    }
+    
     
     public String getText( Dockable dockable ) {
     	return getGroup( dockable ).getText( dockable );
@@ -194,6 +200,32 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         if( action == null )
             throw new IllegalArgumentException( "There is no such group" );
         return action.getIcon();
+    }
+    
+    /**
+     * Sets the <code>icon</code> of the group named <code>key</code>.
+     * If this group does not exist, it will be created.
+     * @param key the name of the group
+     * @param modifier tells in which context the icon is used
+     * @param icon the new icon of the group, may be <code>null</code>
+     */
+    public void setIcon( K key, ActionContentModifier modifier, Icon icon ){
+        ensureGroup( key ).setIcon( modifier, icon );
+    }
+    
+    /**
+     * Gets the icon of the group named <code>key</code>.
+     * @param key The name of the group
+     * @param modifier tells in which context the icon is used
+     * @return The icon of the group, may be <code>null</code>
+     * @throws IllegalArgumentException If the group does not exist
+     * @see #setIcon(Object, Icon)
+     */
+    public Icon getIcon( Object key, ActionContentModifier modifier ){
+        SimpleDockAction action = groups.get( key );
+        if( action == null )
+            throw new IllegalArgumentException( "There is no such group" );
+        return action.getIcon( modifier );
     }
     
     /**
@@ -495,8 +527,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
         Set<Dockable> set = new HashSet<Dockable>();
         set.add( dockable );
         fireActionEnabledChanged( set );
-        fireActionIconChanged( set );
-        fireActionDisabledIconChanged( set );
+        fireActionIconChanged( null, set );
         fireActionTextChanged( set );
         fireActionTooltipTextChanged( set );
         fireActionRepresentativeChanged( set );
@@ -530,14 +561,10 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
             fireActionTextChanged( dockables );
         }
 
-        public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ) {
-            fireActionIconChanged( dockables );
+        public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
+            fireActionIconChanged( modifier, dockables );
         }
         
-        public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
-        	fireActionDisabledIconChanged( dockables );
-        }
-
         public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables ) {
             fireActionEnabledChanged( dockables );
         }
