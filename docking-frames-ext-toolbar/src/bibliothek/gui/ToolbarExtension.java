@@ -1,6 +1,7 @@
 package bibliothek.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,9 @@ import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
 import bibliothek.gui.dock.control.relocator.Inserter;
 import bibliothek.gui.dock.control.relocator.Merger;
+import bibliothek.gui.dock.dockable.DefaultDockableMovingImageFactory;
+import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
+import bibliothek.gui.dock.dockable.ScreencaptureMovingImageFactory;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
@@ -53,6 +57,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
+import bibliothek.gui.dock.station.toolbar.ToolbarMovingImageFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupPropertyFactory;
@@ -196,11 +201,14 @@ public class ToolbarExtension implements Extension {
 		if( extension.getName().equals( DefaultScreenDockWindowConfiguration.CONFIGURATION_EXTENSION ) ) {
 			return (Collection<E>) createWindowConfigurationExtension( controller );
 		}
+		if( extension.getName().equals( DefaultDockableMovingImageFactory.FACTORY_EXTENSION )) {
+			return (Collection<E>) createMovingImageFactory();
+		}
 
 		return null;
 	}
 
-	private Collection<DockablePropertyFactory> createPropertyFactoryExtension(){
+	protected Collection<DockablePropertyFactory> createPropertyFactoryExtension(){
 		final List<DockablePropertyFactory> result = new ArrayList<DockablePropertyFactory>();
 		result.add( new ToolbarPropertyFactory() );
 		result.add( new ToolbarContainerPropertyFactory() );
@@ -208,26 +216,26 @@ public class ToolbarExtension implements Extension {
 		return result;
 	}
 
-	private Collection<Merger> createMergerExtension(){
+	protected Collection<Merger> createMergerExtension(){
 		final List<Merger> result = new ArrayList<Merger>();
 		result.add( new ToolbarDockStationMerger() );
 		result.add( new ToolbarGroupDockStationMerger() );
 		return result;
 	}
 
-	private Collection<Inserter> createInserterExtension( DockController controller ){
+	protected Collection<Inserter> createInserterExtension( DockController controller ){
 		final List<Inserter> result = new ArrayList<Inserter>();
 		result.add( new ScreenToolbarInserter( controller ) );
 		return result;
 	}
 
-	private Collection<AttractorStrategy> createAttractorStrategies(){
+	protected Collection<AttractorStrategy> createAttractorStrategies(){
 		final List<AttractorStrategy> result = new ArrayList<AttractorStrategy>();
 		result.add( new ToolbarAttractorStrategy() );
 		return result;
 	}
 
-	private Collection<DockFactory<?, ?, ?>> createDockFactories(){
+	protected Collection<DockFactory<?, ?, ?>> createDockFactories(){
 		final List<DockFactory<?, ?, ?>> result = new ArrayList<DockFactory<?, ?, ?>>();
 		result.add( new ToolbarPartDockFactory() );
 		result.add( new ToolbarGroupDockStationFactory() );
@@ -237,7 +245,7 @@ public class ToolbarExtension implements Extension {
 		return result;
 	}
 
-	private Collection<DockTitleFactory> createTitleFactories( DockTitleVersion version ){
+	protected Collection<DockTitleFactory> createTitleFactories( DockTitleVersion version ){
 		if( version.getID().equals( ScreenDockStation.TITLE_ID ) ) {
 			final List<DockTitleFactory> result = new ArrayList<DockTitleFactory>();
 			result.add( new ScreenToolbarDockTitleFactory( version.getController() ) );
@@ -246,7 +254,7 @@ public class ToolbarExtension implements Extension {
 		return null;
 	}
 
-	private Collection<DisplayerFactory> createDisplayerFactories( DockController controller, String id ){
+	protected Collection<DisplayerFactory> createDisplayerFactories( DockController controller, String id ){
 		if( id.equals( ScreenDockStation.DISPLAYER_ID ) ) {
 			final List<DisplayerFactory> result = new ArrayList<DisplayerFactory>();
 			result.add( new ScreenToolbarDisplayerFactory( controller ) );
@@ -255,13 +263,13 @@ public class ToolbarExtension implements Extension {
 		return null;
 	}
 
-	private Collection<ResourceBundle> createBundles( Locale language ){
+	protected Collection<ResourceBundle> createBundles( Locale language ){
 		final List<ResourceBundle> result = new ArrayList<ResourceBundle>();
 		result.add( ResourceBundle.getBundle( "data.bibliothek.gui.toolbar.locale.toolbar", language, this.getClass().getClassLoader() ) );
 		return result;
 	}
 
-	private Collection<DockThemeExtension> createDockThemeExtension(){
+	protected Collection<DockThemeExtension> createDockThemeExtension(){
 		final DockThemeExtension extension = new DockThemeExtension(){
 
 			@Override
@@ -275,10 +283,10 @@ public class ToolbarExtension implements Extension {
 				final DockTitleManager titles = controller.getDockTitleManager();
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitleGrip.createFactory( new Color( 214, 217, 223 ) ) );
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
-				
-//				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
-//				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
-				
+
+				//				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
+				//				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarDockTitleRoundedBound.createFactory( new Color( 80, 80, 80 ) ) );
+
 				titles.registerTheme( ToolbarContainerDockStation.TITLE_ID, ToolbarGroupTitle.FACTORY );
 				titles.registerTheme( ScreenToolbarDockTitleFactory.TITLE_ID, ToolbarGroupTitle.FACTORY );
 			}
@@ -297,9 +305,15 @@ public class ToolbarExtension implements Extension {
 		return Collections.singleton( extension );
 	}
 
-	private Collection<ScreenDockWindowConfiguration> createWindowConfigurationExtension( DockController controller ){
+	protected Collection<ScreenDockWindowConfiguration> createWindowConfigurationExtension( DockController controller ){
 		final List<ScreenDockWindowConfiguration> result = new ArrayList<ScreenDockWindowConfiguration>();
 		result.add( new ToolbarWindowConfiguration( controller ) );
+		return result;
+	}
+
+	protected Collection<DockableMovingImageFactory> createMovingImageFactory(){
+		final List<DockableMovingImageFactory> result = new ArrayList<DockableMovingImageFactory>();
+		result.add( new ToolbarMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 200, 200 ))));
 		return result;
 	}
 }

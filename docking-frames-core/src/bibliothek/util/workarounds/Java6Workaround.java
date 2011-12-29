@@ -88,7 +88,7 @@ public class Java6Workaround implements Workaround{
 			// ignore
 		}
 		catch( Exception e ){
-			e.printStackTrace();
+			// ignore
 		}
 	}
 }

@@ -26,6 +26,7 @@
 
 package bibliothek.gui;
 
+import bibliothek.gui.dock.dockable.DefaultDockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.station.Combiner;
@@ -171,7 +172,11 @@ public interface DockTheme {
      * drag and drop operations.
      */
     public static final PropertyKey<DockableMovingImageFactory> DOCKABLE_MOVING_IMAGE_FACTORY = new PropertyKey<DockableMovingImageFactory>( "dock.movingImageFactory", 
-    		new ConstantPropertyFactory<DockableMovingImageFactory>( new ThemeDockableMovingImageFactory() ) , true );
+    		new DynamicPropertyFactory<DockableMovingImageFactory>(){
+		    	public DockableMovingImageFactory getDefault( PropertyKey<DockableMovingImageFactory> key, DockProperties properties ){
+			    	return new DefaultDockableMovingImageFactory( properties.getController() );
+		    	}
+			} , true );
     
     /**
      * Gets a factory for images which are moved around by the user.<br>

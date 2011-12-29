@@ -65,6 +65,7 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.ClientOnly;
 import bibliothek.util.Path;
+import bibliothek.util.Workarounds;
 
 /**
  * Default implementation of a handler that performs the drag & drop operations
@@ -1074,6 +1075,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             catch( SecurityException ex ){
                 // ignore
             }
+            
+            Workarounds.getDefault().makeTransparent( this );
             
             image.bind();
             content.add( image.getComponent() );
