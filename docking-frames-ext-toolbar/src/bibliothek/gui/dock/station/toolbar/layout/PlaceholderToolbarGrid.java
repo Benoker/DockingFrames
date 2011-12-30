@@ -143,7 +143,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 	/**
 	 * Adds the item <code>item</code> to the non-empty column
-	 * <code>column</code> into position <code>index</code>. This method may add
+	 * <code>column</code> into position <code>line</code>. This method may add
 	 * a new column in order to store <code>item</code>.
 	 * 
 	 * @param column

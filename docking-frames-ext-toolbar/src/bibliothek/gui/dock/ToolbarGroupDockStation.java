@@ -1526,11 +1526,23 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 				}
 			}
 		}
+		else{
+			if( column >= 0 && column < columnCount() ){
+				if( line >= 0 && line < lineCount( column )){
+					DockStation child = getDockable( column, line ).asDockStation();
+					if( child != null && child.drop( dockable, property.getSuccessor() )){
+						return true;
+					}
+				}
+			}
+		}
 
 		if( !acceptable( dockable ) ) {
 			return false;
 		}
 
+		line = Math.max( 0, line );
+		//column = Math.max( 0, column );
 		return drop( dockable, column, line );
 	}
 

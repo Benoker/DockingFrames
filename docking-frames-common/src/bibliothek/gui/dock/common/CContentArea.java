@@ -139,6 +139,18 @@ public class CContentArea extends JPanel implements CStationContainer{
 
 		stations = new CStation[]{ north, south, east, west, center };
 	}
+	
+	/**
+	 * Adds additional stations to the {@link #getStations() array} of {@link CStation}. This method
+	 * should only be called by subclasses. 
+	 * @param stations the additional stations to store
+	 */
+	protected void addStations( CStation<?>... stations ){
+		CStation<?>[] temp = new CStation<?>[ this.stations.length + stations.length ];
+		System.arraycopy( this.stations, 0, temp, 0, this.stations.length );
+		System.arraycopy( stations, 0, temp, this.stations.length, stations.length );
+		this.stations = temp;
+	}
 
 	/**
 	 * Gets the unique id of this center.

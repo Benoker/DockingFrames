@@ -178,13 +178,15 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.extension.ExtensionManager;
+import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.gui.dock.util.icon.DefaultIconScheme;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.text.DefaultTextScheme;
 import bibliothek.util.Filter;
+import bibliothek.util.Path;
 import bibliothek.util.Todo;
-import bibliothek.util.Version;
 import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 import bibliothek.util.xml.XIO;
@@ -206,6 +208,16 @@ public class CControl {
 	 * wherever a {@link DockController} but not a {@link CControl} is accessible.
 	 */
 	public static final PropertyKey<CControl> CCONTROL = new PropertyKey<CControl>( "ccontrol" );
+	
+	/** 
+	 * Name of an {@link ExtensionName} that adds extensions to this control. The extensions 
+	 * are of type {@link Object} and are not actually used. Rather this extension informs
+	 * {@link Extension}s that a {@link CControl} has been created.
+	 */
+	public static final Path CCONTROL_EXTENSION = new Path( "dock.ccontrol" );
+	
+	/** name of a parameter of an {@link ExtensionName} that points to <code>this</code> */
+	public static final String EXTENSION_PARAM = "control";
 	
     /**
      * {@link KeyStroke} used to change a {@link CDockable} into maximized-state,
@@ -559,6 +571,8 @@ public class CControl {
         initTexts();
 
         setTheme( ThemeMap.KEY_SMOOTH_THEME );
+        
+        controller.getExtensions().load( new ExtensionName<Object>( CCONTROL_EXTENSION, Object.class, EXTENSION_PARAM, this ) );
     }
 
     /**
@@ -569,7 +583,8 @@ public class CControl {
      */
     protected void initExtensions( DockController controller ){
     	ExtensionManager manager = controller.getExtensions();
-		String[] list = { "glass.eclipse.CGlassExtension" };
+		String[] list = { "glass.eclipse.CGlassExtension",
+				"bibliothek.gui.dock.toolbar.CToolbarExtension" };
 		for( String className : list ){
 			try {
 				Class<?> clazz = Class.forName( className );
