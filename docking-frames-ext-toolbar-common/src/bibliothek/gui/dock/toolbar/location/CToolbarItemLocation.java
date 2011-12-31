@@ -52,4 +52,9 @@ public class CToolbarItemLocation extends CLocation{
 	public CLocation aside(){
 		return new CToolbarItemLocation( parent, index+1 );
 	}
+	
+	@Override
+	public String toString(){
+		return String.valueOf( parent ) + " [index " + index + "]";
+	}
 }

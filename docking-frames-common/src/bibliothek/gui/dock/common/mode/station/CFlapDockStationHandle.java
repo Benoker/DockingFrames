@@ -70,7 +70,7 @@ public class CFlapDockStationHandle extends FlapDockStationHandle implements CMi
 
 	public CLocation getCLocation( Dockable dockable ){
 		DockableProperty property = DockUtilities.getPropertyChain( getStation(), dockable );
-		return location.expandProperty( property );
+		return location.expandProperty( getStation().getController(), property );
 	}
 	
 	public CLocation getCLocation( Dockable dockable, Location location ){
@@ -78,6 +78,6 @@ public class CFlapDockStationHandle extends FlapDockStationHandle implements CMi
 		if( property == null )
 			return this.location;
 		
-		return this.location.expandProperty( property );
+		return this.location.expandProperty( getStation().getController(), property );
 	}
 }

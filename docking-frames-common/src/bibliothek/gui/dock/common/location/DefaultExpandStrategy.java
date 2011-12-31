@@ -1,5 +1,8 @@
 package bibliothek.gui.dock.common.location;
 
+import java.util.List;
+
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.flap.FlapDockProperty;
@@ -9,6 +12,8 @@ import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
+import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 
 /**
  * The default implementation of {@link CLocationExpandStrategy}. This strategy
@@ -17,7 +22,34 @@ import bibliothek.gui.dock.station.stack.StackDockProperty;
  * @author Benjamin Sigg
  */
 public class DefaultExpandStrategy implements CLocationExpandStrategy{
+	/**
+	 * Unique id of an extension of {@link CLocationExpandStrategy}s that are utilizied before this strategy
+	 * is used.
+	 */
+	public static final Path STRATEGY_EXTENSION = new Path( "dock.expandStrategy" );
+	
+	/** Name of a parameter pointing to <code>this</code> in an {@link ExtensionName} */
+	public static final String EXTENSION_PARAM = "strategy";
+
+	/** Extensions that will be asked for providing a {@link CLocation} before <code>this</code> is evaluated */
+	private List<CLocationExpandStrategy> extensions;
+	
+	/**
+	 * Creates a new expand strategy loading extensions if available.
+	 * @param controller the controller in whose realm this strategy is used
+	 */
+	public DefaultExpandStrategy( DockController controller ){
+		extensions = controller.getExtensions().load( new ExtensionName<CLocationExpandStrategy>( STRATEGY_EXTENSION, CLocationExpandStrategy.class, EXTENSION_PARAM, this ) );
+	}
+	
 	public CLocation expand( CLocation location, DockableProperty property ){
+		for( CLocationExpandStrategy extension : extensions ){
+			CLocation result = extension.expand( location, property );
+			if( result != null ){
+				return result;
+			}
+		}
+		
 		if( property instanceof FlapDockProperty ){
 			return expand( location, (FlapDockProperty)property );
 		}

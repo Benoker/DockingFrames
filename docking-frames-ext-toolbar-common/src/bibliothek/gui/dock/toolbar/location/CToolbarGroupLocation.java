@@ -64,4 +64,9 @@ public class CToolbarGroupLocation extends CLocation{
 	public CLocation aside(){
 		return new CToolbarGroupLocation( parent, group+1 );
 	}
+	
+	@Override
+	public String toString(){
+		return String.valueOf( parent ) + " [group " + group + "]";
+	}
 }

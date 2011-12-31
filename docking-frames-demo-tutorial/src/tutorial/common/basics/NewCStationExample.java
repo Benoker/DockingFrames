@@ -206,7 +206,7 @@ public class NewCStationExample {
 
 		public CLocation getCLocation( Dockable dockable ){
 			DockableProperty property = DockUtilities.getPropertyChain( getStation(), dockable );
-			return getStationLocation().expandProperty( property );
+			return getStationLocation().expandProperty( getStation().getController(), property );
 		}
 
 		public CLocation getCLocation( Dockable dockable, Location location ){
@@ -215,7 +215,7 @@ public class NewCStationExample {
 				return getStationLocation();
 			}
 			
-			return getStationLocation().expandProperty( property );
+			return getStationLocation().expandProperty( getStation().getController(), property );
 		}
 
 		public boolean respectWorkingAreas(){

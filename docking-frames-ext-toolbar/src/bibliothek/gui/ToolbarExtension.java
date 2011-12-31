@@ -63,7 +63,6 @@ import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupTitle;
 import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleGrip;
-import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleRoundedBound;
 import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;

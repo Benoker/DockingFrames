@@ -2839,7 +2839,7 @@ public class CControl {
                 			return null;
                 		}
             			
-            			location = station.getStationLocation().expandProperty( property );
+            			location = station.getStationLocation().expandProperty( getController(), property );
             		}
             	}
             	if( location == null ){

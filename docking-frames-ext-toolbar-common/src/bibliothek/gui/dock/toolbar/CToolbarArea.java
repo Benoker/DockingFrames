@@ -33,7 +33,7 @@ public class CToolbarArea extends AbstractCStation<ToolbarContainerDockStation> 
 	 * @param orientation whether the items are aligned horizontally or vertically, not <code>null</code>
 	 */
 	public CToolbarArea( String id, Orientation orientation ){
-		CLocation location = new CToolbarAreaLocation( id );
+		CLocation location = new CToolbarAreaLocation( this );
 		init( new CommonToolbarContainerDockStation( this, orientation ), id, location );
 	}
 	

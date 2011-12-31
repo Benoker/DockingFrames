@@ -175,7 +175,7 @@ public class CScreenDockStationHandle {
 			}
 			
 			if( property.getSuccessor() != null ){
-				return result.expandProperty( property.getSuccessor() );
+				return result.expandProperty( station.getStation().getController(), property.getSuccessor() );
 			}
 			else{
 				return result;

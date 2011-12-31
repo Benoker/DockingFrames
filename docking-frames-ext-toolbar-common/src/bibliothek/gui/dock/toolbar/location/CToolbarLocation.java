@@ -64,4 +64,9 @@ public class CToolbarLocation extends CLocation{
 	public CLocation aside(){
 		return new CToolbarLocation( parent, column, line+1 );
 	}
+	
+	@Override
+	public String toString(){
+		return String.valueOf( parent ) + " [column " + column + ", line " + line + "]";
+	}
 }

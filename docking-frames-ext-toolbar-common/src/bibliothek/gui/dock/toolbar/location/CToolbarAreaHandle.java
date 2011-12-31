@@ -28,7 +28,7 @@ public class CToolbarAreaHandle implements CToolbarModeArea{
 	public CLocation getCLocation( Dockable dockable ){
 		DockableProperty property = DockUtilities.getPropertyChain( getStation(), dockable );
 		CLocation location = station.getStationLocation();
-		return location.expandProperty( property );
+		return location.expandProperty( station.getStation().getController(), property );
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class CToolbarAreaHandle implements CToolbarModeArea{
 		if( property == null )
 			return base;
 		
-		return base.expandProperty( property );
+		return base.expandProperty( station.getStation().getController(), property );
 	}
 	
 	@Override

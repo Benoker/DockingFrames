@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.toolbar.CToolbarContentArea;
 import bibliothek.gui.dock.toolbar.CToolbarItem;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
@@ -22,7 +23,7 @@ public class MostSimpleClient {
 
 		frame.add( area );
 
-		CToolbarAreaLocation location = new CToolbarAreaLocation( area.getEastToolbarIdentifier() );
+		CToolbarAreaLocation location = new CToolbarAreaLocation( area.getEastToolbar() );
 
 		add( control, "A", location.group( 0 ).toolbar( 0, 0 ).item( 0 ) );
 		add( control, "B", location.group( 0 ).toolbar( 0, 0 ).item( 1 ) );
@@ -42,6 +43,9 @@ public class MostSimpleClient {
 		
 		add( control, "L", location.group( -1 ).toolbar( 0, 0 ).item( 0 ) );
 
+		add( control, "M", get( control, "L" ).aside() );
+		add( control, "N", get( control, "M" ).aside() );
+		
 		frame.setBounds( 20, 20, 400, 400 );
 		frame.setVisible( true );
 	}
@@ -52,5 +56,10 @@ public class MostSimpleClient {
 		item.setLocation( location );
 		control.addDockable( item );
 		item.setVisible( true );
+	}
+	
+	private static CLocation get( CControl control, String id ){
+		SingleCDockable dockable = control.getSingleDockable( id );
+		return dockable.getBaseLocation();
 	}
 }

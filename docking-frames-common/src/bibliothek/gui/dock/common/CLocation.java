@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.common;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.location.CBaseLocation;
@@ -229,13 +230,15 @@ public abstract class CLocation {
 	
 	/**
 	 * Tries to create a location that resembles <code>property</code>.
+	 * @param controller the controller in whose realm this method is called, may be used to load 
+	 * extensions
 	 * @param property some location
 	 * @return a location whose {@link #findProperty()} would create 
 	 * <code>property</code> again, or <code>null</code> in case that <code>property</code>
 	 * can't be used
 	 */
-	public final CLocation expandProperty( DockableProperty property ){
-		return expandProperty( property, new DefaultExpandStrategy() );
+	public final CLocation expandProperty( DockController controller, DockableProperty property ){
+		return expandProperty( property, new DefaultExpandStrategy( controller ) );
 	}
 	
 	/**

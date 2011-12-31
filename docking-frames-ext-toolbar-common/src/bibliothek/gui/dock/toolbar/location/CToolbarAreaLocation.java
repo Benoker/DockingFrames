@@ -5,20 +5,19 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.toolbar.CToolbarArea;
-import bibliothek.util.Todo;
 
 /**
  * A {@link CLocation} pointing to a {@link CToolbarArea}.
  * @author Benjamin Sigg
  */
 public class CToolbarAreaLocation extends CLocation{
-	private String root;
+	private CToolbarArea root;
 	
 	/**
 	 * Creates a new location.
-	 * @param root the name of the station to which this location points
+	 * @param root the area to which this location points
 	 */
-	public CToolbarAreaLocation( String root ){
+	public CToolbarAreaLocation( CToolbarArea root ){
 		this.root = root;
 	}
 	
@@ -40,7 +39,7 @@ public class CToolbarAreaLocation extends CLocation{
 
 	@Override
 	public String findRoot(){
-		return root;
+		return root.getUniqueId();
 	}
 
 	@Override
@@ -59,10 +58,12 @@ public class CToolbarAreaLocation extends CLocation{
 	}
 
 	@Override
-	@Todo
 	public CLocation aside(){
-		// TODO implement
 		return this;
 	}
 	
+	@Override
+	public String toString(){
+		return "[toolbar-area " + root.getUniqueId() + "]";
+	}
 }

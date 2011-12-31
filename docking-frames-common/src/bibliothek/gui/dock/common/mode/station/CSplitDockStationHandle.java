@@ -295,7 +295,7 @@ public class CSplitDockStationHandle{
 		
 		public CLocation getCLocation( Dockable dockable ){
 			DockableProperty property = DockUtilities.getPropertyChain( getStation(), dockable );
-			return station.getStationLocation().expandProperty( property );
+			return station.getStationLocation().expandProperty( station.getStation().getController(), property );
 		}
 		
 		
@@ -304,7 +304,7 @@ public class CSplitDockStationHandle{
 			if( property == null )
 				return station.getStationLocation();
 			
-			return station.getStationLocation().expandProperty( property );
+			return station.getStationLocation().expandProperty( station.getStation().getController(), property );
 		}
 		
 		public CLocation getBaseLocation(){
@@ -521,7 +521,7 @@ public class CSplitDockStationHandle{
 			
 			CMaximizedLocation result = new CMaximizedLocation( stationLocation.findRoot() );
 			if( property != null ){
-				return result.expandProperty( property );
+				return result.expandProperty( station.getStation().getController(), property );
 			}
 			else{
 				return result;

@@ -1,10 +1,15 @@
 package bibliothek.gui.dock.toolbar;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.location.CLocationExpandStrategy;
+import bibliothek.gui.dock.common.location.DefaultExpandStrategy;
 import bibliothek.gui.dock.toolbar.location.CToolbarMode;
+import bibliothek.gui.dock.toolbar.location.ToolbarExpandStrategy;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 
@@ -42,6 +47,7 @@ public class CToolbarExtension implements Extension{
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public <E> Collection<E> load( DockController controller, ExtensionName<E> extension ){
 		if( extension.getName().equals( CControl.CCONTROL_EXTENSION )){
@@ -49,8 +55,17 @@ public class CToolbarExtension implements Extension{
 			return null;
 		}
 		
+		if( extension.getName().equals( DefaultExpandStrategy.STRATEGY_EXTENSION )){
+			return (Collection<E>) createExpandStrategy();
+		}
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	protected Collection<CLocationExpandStrategy> createExpandStrategy(){
+		List<CLocationExpandStrategy> result = new ArrayList<CLocationExpandStrategy>();
+		result.add( new ToolbarExpandStrategy() );
+		return result;
+	}
 }
