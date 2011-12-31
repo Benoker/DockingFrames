@@ -676,6 +676,7 @@
 [v1.1.1p6c]
  - Bugfix: Mainfest of "Common Layout" example was wrong.
  - Bugfix: Moving a Dockable over itself on a SplitDockStation now results in a no-op instead of moving the Dockable to the ScreenDockStation.
+ - Bugfix: Using the keyboard to change the expanded-state of a CDockable no longer prints a warning about "subclasses of DockHierarchyListener should not modify hierarchy".
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them
