@@ -31,8 +31,10 @@ public class SimpleExpandAction extends SimpleButtonAction {
 	private final DockController controller;
 	private int bound = 0;
 
-	private DockActionIcon icon;
-	private DockActionIcon iconHover;
+	private DockActionIcon iconHorizontal;
+	private DockActionIcon iconVertical;
+	private DockActionIcon iconHoverHorizontal;
+	private DockActionIcon iconHoverVertical;
 	private DockActionText text;
 	private DockActionText tooltip;
 
@@ -69,17 +71,29 @@ public class SimpleExpandAction extends SimpleButtonAction {
 			this.behavior = behavior;
 			final String name = name( behavior );
 			
-			if( icon == null ){
-				icon = new DockActionIcon( "toolbar.item." + name, this ){
+			if( iconHorizontal == null ){
+				iconHorizontal = new DockActionIcon( "toolbar.item." + name + ".horizontal", this ){
 					@Override
 					protected void changed( Icon oldValue, Icon newValue ){
-						setIcon( newValue );
+						setIcon( ActionContentModifier.NONE_HORIZONTAL, newValue );
 					}
 				};
-				iconHover = new DockActionIcon( "toolbar.item." + name + ".hover", this ){
+				iconVertical = new DockActionIcon( "toolbar.item." + name + ".vertical", this ){
 					@Override
 					protected void changed( Icon oldValue, Icon newValue ){
-						setIcon( ActionContentModifier.NONE_HOVER, newValue );
+						setIcon( ActionContentModifier.NONE_VERTICAL, newValue );
+					}
+				};
+				iconHoverHorizontal = new DockActionIcon( "toolbar.item." + name + ".hover.horizontal", this ){
+					@Override
+					protected void changed( Icon oldValue, Icon newValue ){
+						setIcon( ActionContentModifier.NONE_HOVER_HORIZONTAL, newValue );
+					}
+				};
+				iconHoverVertical = new DockActionIcon( "toolbar.item." + name + ".hover.vertical", this ){
+					@Override
+					protected void changed( Icon oldValue, Icon newValue ){
+						setIcon( ActionContentModifier.NONE_HOVER_VERTICAL, newValue );
 					}
 				};
 				text = new DockActionText( "toolbar.item." + name, this ){
@@ -97,8 +111,10 @@ public class SimpleExpandAction extends SimpleButtonAction {
 				};
 			}
 			else{
-				icon.setId( "toolbar.item." + name );
-				iconHover.setId( "toolbar.item." + name + ".hover" );
+				iconHorizontal.setId( "toolbar.item." + name + ".horizontal" );
+				iconVertical.setId( "toolbar.item." + name + ".vertical" );
+				iconHoverHorizontal.setId( "toolbar.item." + name + ".hover.horizontal" );
+				iconHoverVertical.setId( "toolbar.item." + name + ".hover.vertical" );
 				text.setId( "toolbar.item." + name );
 				tooltip.setId( "toolbar.item." + name + ".tooltip" );
 			}
@@ -123,8 +139,10 @@ public class SimpleExpandAction extends SimpleButtonAction {
 	@Override
 	public void bound( Dockable dockable ){
 		if( bound == 0 ) {
-			icon.setController( controller );
-			iconHover.setController( controller );
+			iconHorizontal.setController( controller );
+			iconVertical.setController( controller );
+			iconHoverHorizontal.setController( controller );
+			iconHoverVertical.setController( controller );
 			text.setController( controller );
 			tooltip.setController( controller );
 		}
@@ -137,8 +155,10 @@ public class SimpleExpandAction extends SimpleButtonAction {
 		super.unbound( dockable );
 		bound--;
 		if( bound == 0 ) {
-			icon.setController( null );
-			iconHover.setController( null );
+			iconHorizontal.setController( null );
+			iconVertical.setController( null );
+			iconHoverHorizontal.setController( null );
+			iconHoverVertical.setController( null );
 			text.setController( null );
 			tooltip.setController( null );
 		}

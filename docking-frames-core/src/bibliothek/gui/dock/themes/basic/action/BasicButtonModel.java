@@ -521,24 +521,54 @@ public class BasicButtonModel {
     	ActionContentModifier modifier;
     	if( enabled ){
     		if( mousePressed ){
-    			modifier = ActionContentModifier.NONE_PRESSED;
+    			if( orientation == null || orientation.isHorizontal() ){
+    				modifier = ActionContentModifier.NONE_PRESSED_HORIZONTAL;
+    			}
+    			else{
+    				modifier = ActionContentModifier.NONE_PRESSED_VERTICAL;
+    			}
     		}
     		else if( mouseInside ){
-    			modifier = ActionContentModifier.NONE_HOVER;
+    			if( orientation == null || orientation.isHorizontal() ){
+    				modifier = ActionContentModifier.NONE_HOVER_HORIZONTAL;
+    			}
+    			else{
+    				modifier = ActionContentModifier.NONE_HOVER_VERTICAL;
+    			}
     		}
     		else{
-    			modifier = ActionContentModifier.NONE;
+    			if( orientation == null || orientation.isHorizontal() ){
+    				modifier = ActionContentModifier.NONE_HORIZONTAL;
+    			}
+    			else{
+    				modifier = ActionContentModifier.NONE_VERTICAL;
+    			}
     		}
     	}
     	else{
     		if( mousePressed ){
-    			modifier = ActionContentModifier.DISABLED_PRESSED;
+    			if( orientation == null || orientation.isHorizontal() ){
+    				modifier = ActionContentModifier.DISABLED_PRESSED_HORIZONTAL;
+    			}
+    			else{
+    				modifier = ActionContentModifier.DISABLED_PRESSED_VERTICAL;
+    			}
     		}
     		else if( mouseInside ){
-    			modifier = ActionContentModifier.DISABLED_HOVER;
+    			if( orientation == null || orientation.isHorizontal() ){
+    				modifier = ActionContentModifier.DISABLED_HOVER_HORIZONTAL;
+    			}
+    			else{
+    				modifier = ActionContentModifier.DISABLED_HOVER_VERTICAL;
+    			}
     		}
     		else{
-    			modifier = ActionContentModifier.DISABLED;
+    			if( orientation == null || orientation.isHorizontal() ){
+    				modifier = ActionContentModifier.DISABLED_HORIZONTAL;
+    			}
+    			else{
+    				modifier = ActionContentModifier.DISABLED_VERTICAL;
+    			}
     		}
     	}
     	

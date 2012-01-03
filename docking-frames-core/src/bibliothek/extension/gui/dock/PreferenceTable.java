@@ -529,7 +529,7 @@ public class PreferenceTable extends JPanel{
                 
                 view.addListener( this );
                 
-                getModel().setIcon( ActionContentModifier.NONE, view.getIcon() );
+                getModel().setIcon( ActionContentModifier.NONE_HORIZONTAL, view.getIcon() );
                 getModel().setToolTipText( view.getDescription() );
    
                 setMouseOverBorder( BorderFactory.createEtchedBorder( EtchedBorder.LOWERED ) );
@@ -543,7 +543,7 @@ public class PreferenceTable extends JPanel{
             }
             
             public void iconChanged( PreferenceOperationView operation, Icon oldIcon, Icon newIcon ){
-            	getModel().setIcon( ActionContentModifier.NONE, newIcon );
+            	getModel().setIcon( ActionContentModifier.NONE_HORIZONTAL, newIcon );
             }
             
             public void descriptionChanged( PreferenceOperationView operation, String oldDescription, String newDescription ){

@@ -66,7 +66,7 @@ public abstract class ButtonCombinedMenu<B extends Component> extends AbstractCo
 			protected void changed( Icon oldValue, Icon newValue ){
 				currentIcon = newValue;
 				if( button != null ){
-					getModel( button ).setIcon( ActionContentModifier.NONE, newValue );
+					getModel( button ).setIcon( ActionContentModifier.NONE_HORIZONTAL, newValue );
 				}
 			}
 		};
@@ -100,7 +100,7 @@ public abstract class ButtonCombinedMenu<B extends Component> extends AbstractCo
         
         button = createButton( trigger );
         
-        getModel( button ).setIcon( ActionContentModifier.NONE, currentIcon );
+        getModel( button ).setIcon( ActionContentModifier.NONE_HORIZONTAL, currentIcon );
         
         return button;
 	}

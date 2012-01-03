@@ -114,14 +114,22 @@ public class ToolbarExtension implements Extension {
 		} );
 
 		final IconManager icons = controller.getIcons();
-		icons.setIconDefault( "toolbar.item.expand", loadIcon( "expand.png" ) );
-		icons.setIconDefault( "toolbar.item.expand.hover", loadIcon( "expand_hover.png" ) );
-		icons.setIconDefault( "toolbar.item.shrink", loadIcon( "shrink.png" ) );
-		icons.setIconDefault( "toolbar.item.shrink.hover", loadIcon( "shrink_hover.png" ) );
-		icons.setIconDefault( "toolbar.item.larger", loadIcon( "larger.png" ) );
-		icons.setIconDefault( "toolbar.item.larger.hover", loadIcon( "larger_hover.png" ) );
-		icons.setIconDefault( "toolbar.item.smaller", loadIcon( "smaller.png" ) );
-		icons.setIconDefault( "toolbar.item.smaller.hover", loadIcon( "smaller_hover.png" ) );
+		icons.setIconDefault( "toolbar.item.expand.horizontal", loadIcon( "expand_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.expand.vertical", loadIcon( "expand_vertical.png" ) );
+		icons.setIconDefault( "toolbar.item.expand.hover.horizontal", loadIcon( "expand_hover_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.expand.hover.vertical", loadIcon( "expand_hover_vertical.png" ) );
+		icons.setIconDefault( "toolbar.item.shrink.horizontal", loadIcon( "shrink_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.shrink.vertical", loadIcon( "shrink_vertical.png" ) );
+		icons.setIconDefault( "toolbar.item.shrink.hover.horizontal", loadIcon( "shrink_hover_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.shrink.hover.vertical", loadIcon( "shrink_hover_vertical.png" ) );
+		icons.setIconDefault( "toolbar.item.larger.horizontal", loadIcon( "larger_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.larger.vertical", loadIcon( "larger_vertical.png" ) );
+		icons.setIconDefault( "toolbar.item.larger.hover.horizontal", loadIcon( "larger_hover_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.larger.hover.vertical", loadIcon( "larger_hover_vertical.png" ) );
+		icons.setIconDefault( "toolbar.item.smaller.horizontal", loadIcon( "smaller_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.smaller.vertical", loadIcon( "smaller_vertical.png" ) );
+		icons.setIconDefault( "toolbar.item.smaller.hover.horizontal", loadIcon( "smaller_hover_horizontal.png" ) );
+		icons.setIconDefault( "toolbar.item.smaller.hover.vertical", loadIcon( "smaller_hover_vertical.png" ) );
 
 		//controller.addActionGuard( new ExpandedActionGuard( controller ) );
 		new ExpandManager( controller );

@@ -105,7 +105,7 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
                 action.addDockActionListener( listener );
                 
                 item.setEnabled( action.isEnabled( dockable ));
-                item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ));
+                item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ));
                 item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
                 item.setText( action.getText( dockable ));
                 item.setToolTipText( action.getTooltipText( dockable ));
@@ -141,7 +141,10 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
         }
         
         public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
-        	if( modifier == null || modifier == ActionContentModifier.NONE ){
+        	if( modifier == null || modifier == ActionContentModifier.NONE_HORIZONTAL ){
+        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ) );
+        	}
+        	else if( modifier == null || modifier == ActionContentModifier.NONE ){
         		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ) );
         	}
         	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
