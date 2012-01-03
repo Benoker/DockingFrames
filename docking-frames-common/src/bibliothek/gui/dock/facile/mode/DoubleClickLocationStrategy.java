@@ -46,7 +46,7 @@ public interface DoubleClickLocationStrategy {
 				return ExtendedMode.NORMALIZED;
 			}
 			else{
-				if( enablement.isAvailable( dockable, ExtendedMode.MAXIMIZED )){
+				if( enablement.isAvailable( dockable, ExtendedMode.MAXIMIZED ).isAvailable()){
 					return ExtendedMode.MAXIMIZED;
 				}
 				return null;

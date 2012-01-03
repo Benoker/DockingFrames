@@ -53,15 +53,15 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 	/** added to any {@link CDockable} */
 	private CDockablePropertyListener listener = new CDockableAdapter(){
 		public void minimizableChanged( CDockable dockable ){ 
-			fire( dockable.intern(), ExtendedMode.MINIMIZED, isAvailable( dockable.intern(), ExtendedMode.MINIMIZED ));
+			fire( dockable.intern(), ExtendedMode.MINIMIZED, isAvailable( dockable.intern(), ExtendedMode.MINIMIZED ).isAvailable() );
 		}
 		
 		public void maximizableChanged( CDockable dockable ){
-			fire( dockable.intern(), ExtendedMode.MAXIMIZED, isAvailable( dockable.intern(), ExtendedMode.MAXIMIZED ));
+			fire( dockable.intern(), ExtendedMode.MAXIMIZED, isAvailable( dockable.intern(), ExtendedMode.MAXIMIZED ).isAvailable() );
 		}
 		
 		public void externalizableChanged( CDockable dockable ){
-			fire( dockable.intern(), ExtendedMode.EXTERNALIZED, isAvailable( dockable.intern(), ExtendedMode.EXTERNALIZED ));
+			fire( dockable.intern(), ExtendedMode.EXTERNALIZED, isAvailable( dockable.intern(), ExtendedMode.EXTERNALIZED ).isAvailable() );
 		}
 	};
 	
@@ -88,35 +88,50 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 		}
 	}
 
-	public boolean isAvailable( Dockable dockable, ExtendedMode mode ){
+	public Availability isAvailable( Dockable dockable, ExtendedMode mode ){
 		if( mode == ExtendedMode.NORMALIZED ){
-			return true;
+			return Availability.WEAK_AVAILABLE;
 		}
 		
 		if( dockable instanceof CommonDockable ){
 			CDockable cdockable = ((CommonDockable)dockable).getDockable();
 			
-			if( mode == ExtendedMode.EXTERNALIZED )
-				return cdockable.isExternalizable();
+			boolean result = false;
+			boolean set = false;
 			
-			if( mode == ExtendedMode.MAXIMIZED )
-				return cdockable.isMaximizable();
+			if( mode == ExtendedMode.EXTERNALIZED ){
+				result = cdockable.isExternalizable();
+				set = true;
+			}
+			else if( mode == ExtendedMode.MAXIMIZED ){
+				result = cdockable.isMaximizable();
+				set = true;
+			}
+			else if( mode == ExtendedMode.MINIMIZED ){
+				result = cdockable.isMinimizable();
+				set = true;
+			}
 			
-			if( mode == ExtendedMode.MINIMIZED )
-				return cdockable.isMinimizable();
+			if( set ){
+				if( result ){
+					return Availability.WEAK_AVAILABLE;
+				}
+				else{
+					return Availability.WEAK_FORBIDDEN;
+				}
+			}
 		}
 		
 		DockStation station = dockable.asDockStation();
 		if( station != null ){
 			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-				boolean result = isAvailable( station.getDockable( i ), mode );
-				if( !result ){
-					return false;
+				Availability result = isAvailable( station.getDockable( i ), mode );
+				if( result != Availability.UNCERTAIN ){
+					return result;
 				}
 			}
-			return true;
 		}
 		
-		return true;
+		return Availability.UNCERTAIN;
 	}
 }

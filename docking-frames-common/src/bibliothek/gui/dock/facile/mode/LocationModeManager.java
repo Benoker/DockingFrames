@@ -146,7 +146,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 			if( dockable != null ){
 				M current = getCurrentMode( dockable );
 				ExtendedMode next = getDoubleClickStrategy().handleDoubleClick( dockable, current == null ? null : current.getExtendedMode(), enablement );
-				if( next != null && enablement.isAvailable( dockable, next )){
+				if( next != null && enablement.isAvailable( dockable, next ).isAvailable()){
 					setMode( dockable, next );
 					ensureValidLocation( dockable );
 					return true;
@@ -374,7 +374,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		if( enablement == null )
 			return false;
 		
-		return enablement.isAvailable( dockable, mode );
+		return enablement.isAvailable( dockable, mode ).isAvailable();
 	}
 	
 	/**

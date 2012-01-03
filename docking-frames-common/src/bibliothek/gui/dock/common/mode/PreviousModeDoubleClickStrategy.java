@@ -58,7 +58,7 @@ public class PreviousModeDoubleClickStrategy implements DoubleClickLocationStrat
 			if( mode == null )
 				return ExtendedMode.NORMALIZED;
 			ExtendedMode next = mode.getExtendedMode();
-			if( !enablement.isAvailable( dockable, next ))
+			if( !enablement.isAvailable( dockable, next ).isAvailable() )
 				return ExtendedMode.NORMALIZED;
 			return next;
 		}

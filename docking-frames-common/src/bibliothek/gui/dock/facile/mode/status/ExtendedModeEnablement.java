@@ -36,13 +36,53 @@ import bibliothek.gui.dock.facile.mode.LocationModeManager;
  */
 public interface ExtendedModeEnablement {
 	/**
+	 * A measurement of how available a certain mode is. Is several {@link Availability}s are present,
+	 * the first one of this list wins:
+	 * <ol>
+	 * 	<li> {@link Availability#STRONG_FORBIDDEN} </li>
+	 *  <li> {@link Availability#STRONG_AVAILABLE} </li>
+	 *  <li> {@link Availability#WEAK_FORBIDDEN} </li>
+	 *  <li> {@link Availability#WEAK_AVAILABLE} </li>
+	 *  <li> {@link Availability#UNCERTAIN} </li>
+	 * </ol>
+	 * @author Benjamin Sigg
+	 */
+	public static enum Availability{
+		/** the mode is most certainly available */
+		STRONG_AVAILABLE( true ),
+		/** the mode is probably available */
+		WEAK_AVAILABLE( true ),
+		/** the strategy cannot decide, some other code will make the decision */
+		UNCERTAIN( true ),
+		/** the mode is probably not available */
+		WEAK_FORBIDDEN( false ),
+		/** the mode is not available */
+		STRONG_FORBIDDEN( false );
+		
+		private boolean available;
+		
+		private Availability( boolean available ){
+			this.available = available;
+		}
+		
+		/**
+		 * Tells whether this {@link Availability} means "available" or "forbidden".
+		 * @return <code>true</code> if <code>this</code> means "available".
+		 */
+		public boolean isAvailable(){
+			return available;
+		}
+	}
+	
+	/**
 	 * Tells whether <code>mode</code> is available for <code>dockable</code>.<br>
 	 * <b>Note:</b> for {@link ExtendedMode#NORMALIZED} the result should always be <code>true</code>.
 	 * @param dockable some element, not <code>null</code>
 	 * @param mode some mode, not <code>null</code>
-	 * @return whether the mode is available, <code>true</code> if <code>mode</code> equals {@link ExtendedMode#NORMALIZED}
+	 * @return whether the mode is available, most strategies should return  {@link Availability#WEAK_AVAILABLE} if <code>mode</code> equals {@link ExtendedMode#NORMALIZED}. 
+	 * Must never be <code>null</code>, but a result of {@link Availability#UNCERTAIN} indicates that this enablement does not know 
 	 */
-	public boolean isAvailable( Dockable dockable, ExtendedMode mode );
+	public Availability isAvailable( Dockable dockable, ExtendedMode mode );
 	
 	/**
 	 * Adds a listener to this enablement, the listener has be informed if the availability state of
