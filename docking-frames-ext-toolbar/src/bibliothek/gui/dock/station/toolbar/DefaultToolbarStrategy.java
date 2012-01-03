@@ -5,6 +5,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SimpleToolbarDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
@@ -41,7 +42,8 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 
 	@Override
 	public Dockable ensureToolbarLayer( DockStation station, Dockable dockable ){
-		if (station instanceof ToolbarDockStation){
+		if (station instanceof ToolbarDockStation
+				|| station instanceof SimpleToolbarDockStation){
 			return dockable;
 		}
 
@@ -76,7 +78,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			Dockable child, boolean strong ){
 		if (strong){
 			if (child instanceof ComponentDockable){
-				return parent instanceof ToolbarDockStation;
+				return (parent instanceof ToolbarDockStation || parent instanceof SimpleToolbarDockStation);
 			}
 
 			if (child instanceof ToolbarDockStation){
@@ -95,6 +97,16 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 					&& (child instanceof ToolbarGroupDockStation)){
 				return true;
 			}
+
+			// simple toolbar policy
+			if (parent instanceof SimpleToolbarDockStation){
+				if (child instanceof ComponentDockable){
+					return true;
+				} else{
+					return false;
+				}
+			}
+
 			// ?? policy
 			if ((child instanceof ComponentDockable)
 					&& (parent instanceof ToolbarTabDockStation)){
