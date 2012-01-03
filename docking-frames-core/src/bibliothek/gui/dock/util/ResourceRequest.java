@@ -74,7 +74,7 @@ public abstract class ResourceRequest<T> {
 	 * Tells whether {@link #answer(Object)} was called since the last {@link #request()}.
 	 * @return <code>true</code> if there is an answer
 	 */
-	protected boolean isAnswered(){
+	public boolean isAnswered(){
 		return answered;
 	}
 	
