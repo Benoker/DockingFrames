@@ -27,18 +27,25 @@ package bibliothek.gui.dock.themes.basic;
 
 import java.awt.Component;
 
+import javax.swing.Icon;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.event.DockableAdapter;
+import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
+import bibliothek.gui.dock.station.stack.TabContent;
+import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
-import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
+import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -83,6 +90,58 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 			}
 		}
 	};
+
+	private PropertyValue<TabContentFilter> filter = new PropertyValue<TabContentFilter>( StackDockStation.TAB_CONTENT_FILTER ){
+		@Override
+		protected void valueChanged( TabContentFilter oldValue, TabContentFilter newValue ){
+			if( oldValue != null ){
+				oldValue.uninstall( component );
+				oldValue.removeListener( filterListener );
+			}
+			if( newValue != null ){
+				newValue.install( component );
+				newValue.addListener( filterListener );
+			}
+			
+			updateTabContent();
+		}
+	};
+	
+	private DockableListener dockableListener = new DockableAdapter() {
+		public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ){			
+			updateTabContent();
+		}
+		
+		public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ){
+			updateTabContent();
+		}
+		
+		public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ){
+			updateTabContent();
+		}
+	};
+	
+	private TabContentFilterListener filterListener = new TabContentFilterListener() {
+		public void contentChanged(){
+			updateTabContent();
+		}
+		
+		public void contentChanged( StackDockComponent component ){
+			if( component == TabDecorator.this.component ){
+				updateTabContent();
+			}
+		}
+		
+		public void contentChanged( StackDockStation station ){
+			// ignore
+		}
+		
+		public void contentChanged( Dockable dockable ){
+			if( dockable == TabDecorator.this.dockable ){
+				updateTabContent();
+			}
+		}
+	};
 	
 	private DockController controller;
 	private Dockable dockable;
@@ -123,14 +182,23 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 	}
 	
 	public void setDockable( Component panel, Dockable dockable ){
+		if( this.dockable != null ){
+			this.dockable.removeDockableListener( dockableListener );
+		}
+		
 		this.dockable = dockable;
 		this.representation = panel;
+		
+		if( this.dockable != null ){
+			this.dockable.addDockableListener( dockableListener );
+		}
 		
 		if( component != null ){
 			component.removeAll();
 			if( dockable != null ){
-				component.addTab( dockable.getTitleText(), dockable.getTitleIcon(), representation, dockable );
+				component.addTab( null, null, representation, dockable );
 				component.setSelectedIndex( 0 );
+				updateTabContent();
 			}
 		}
 		
@@ -139,11 +207,32 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 			actions.setDockable( dockable );
 		}
 	}
+
+	private void updateTabContent(){
+		if( dockable != null && component != null && component.getTabCount() == 1 ){
+			TabContent content = new TabContent( dockable.getTitleIcon(), dockable.getTitleText(), dockable.getTitleToolTip() );
+			TabContentFilter contentFilter = filter.getValue();
+			if( contentFilter != null ){
+				content = contentFilter.filter( content, component, dockable );
+			}
+			if( content == null ){
+				component.setTitleAt( 0, null );
+				component.setIconAt( 0, null );
+				component.setTooltipAt( 0, null );
+			}
+			else{
+				component.setTitleAt( 0, content.getTitle() );
+				component.setIconAt( 0, content.getIcon() );
+				component.setTooltipAt( 0, content.getTooltip() );
+			}
+		}
+	}
 	
 	public void setController( DockController controller ){
 		this.controller = controller;
 		factory.setProperties( controller );
 		tabPlacement.setProperties( controller );
+		filter.setProperties( controller );
 		if( component != null ){
 			component.setController( controller );
 		}

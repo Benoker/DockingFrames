@@ -42,6 +42,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.KeyboardListener;
+import bibliothek.gui.dock.station.LayoutLocked;
 
 /**
  * A simple implementation of {@link DockAction}. This action uses for
@@ -225,8 +226,8 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
     /**
      * Listens to all {@link KeyEvent}s concerning one {@link Dockable}.
      * @author Benjamin Sigg
-     *
      */
+    @LayoutLocked( locked=false )
     private class DockableKeyForwarder implements KeyboardListener, DockHierarchyListener{
     	/** the element which is observed by this listener */
     	private Dockable dockable;
