@@ -43,6 +43,9 @@ public class WindowConfiguration {
 	/** whether the window should move if the title is grabbed */
 	private boolean moveOnTitleGrab = false;
 	
+	/** whether moving is possible by grabing the border */
+	private boolean moveOnBorder = true;
+	
 	/** only required if {@link #moveOnTitleGrab}, starts a drag and drop operation if the mouse is over an area where dropping is possible */
 	private boolean allowDragAndDropOnTitle = true;
 	
@@ -54,6 +57,9 @@ public class WindowConfiguration {
 	
 	/** whether the window itself is transparent */
 	private boolean transparent = false;
+	
+	/** creates new borders */
+	private ScreenDockWindowBorderFactory borderFactory = DefaultScreenDockWindowBorder.FACTORY;
 	
 	/**
 	 * Sets whether the window should move if the title is dragged by the mouse.
@@ -69,6 +75,22 @@ public class WindowConfiguration {
 	 */
 	public boolean isMoveOnTitleGrab(){
 		return moveOnTitleGrab;
+	}
+	
+	/**
+	 * Sets whether moving the window is possible by grabbing the border.
+	 * @param moveOnBorder whether moving the window is possible
+	 */
+	public void setMoveOnBorder( boolean moveOnBorder ){
+		this.moveOnBorder = moveOnBorder;
+	}
+	
+	/**
+	 * Tells whether moving the window is possible by grabbing the border.
+	 * @return whether the border can be grabbed
+	 */
+	public boolean isMoveOnBorder(){
+		return moveOnBorder;
 	}
 	
 	/**
@@ -142,5 +164,23 @@ public class WindowConfiguration {
 	 */
 	public boolean isTransparent(){
 		return transparent;
+	}
+	
+	/**
+	 * Sets a factory which might be used to create a border for the new window. There is no guarantee that the
+	 * border is actually created, most windows will not create a window if {@link #isResizeable()} returns <code>false</code>.
+	 * @param borderFactory the factory or <code>null</code> if no border should be created
+	 */
+	public void setBorderFactory( ScreenDockWindowBorderFactory borderFactory ){
+		this.borderFactory = borderFactory;
+	}
+	
+	/**
+	 * Gets the current factory for creating the border of the window.
+	 * @return the current factory, can be <code>null</code>
+	 * @see #setBorderFactory(ScreenDockWindowBorderFactory)
+	 */
+	public ScreenDockWindowBorderFactory getBorderFactory(){
+		return borderFactory;
 	}
 }
