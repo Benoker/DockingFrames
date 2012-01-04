@@ -242,7 +242,12 @@ public class ToolbarGroupExpander {
 			Rectangle title = null;
 			if( item.getTitle() != null ) {
 				title = getBoundaries( item.getTitle().getComponent() );
-				result = result.union( title );
+				if( result == null ){
+					result = title;
+				}
+				else{
+					result = result.union( title );
+				}
 			}
 			return result;
 		}
