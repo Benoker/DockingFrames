@@ -69,12 +69,21 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIValue;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * This displayer paints a tab instead of a {@link DockTitle} (if the framework sets a title, then this
  * title is ignored). 
  * @author Janni Kovacs
+ * @deprecated this class gets replaced by {@link EclipseDockableDisplayer2}, it is no longer used by the framework
+ * and only remains for backwards compatibility. This class will be removed in a future release.
  */
+@Deprecated
+@Todo( priority=Priority.MINOR, target=Version.VERSION_1_1_2, compatibility=Compatibility.BREAK_MINOR,
+	description="Replace this class with EclipseDockableDisplayer2")
 public class EclipseDockableDisplayer extends EclipseTabPane implements DockableDisplayer {
 	private DockStation station;
 	

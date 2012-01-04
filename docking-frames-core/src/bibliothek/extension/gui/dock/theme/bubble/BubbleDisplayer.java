@@ -182,22 +182,6 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     }
     
     @Override
-    protected void addDockable( Dockable dockable, Component component ) {
-        if( component != null ){
-        	ensureDockable();
-        	this.dockable.add( component );
-        }
-    }
-    
-    @Override
-    protected void removeDockable( Dockable dockable, Component component ) {
-    	if( component != null ){
-    		ensureDockable();
-    		this.dockable.remove( component );
-    	}
-    }
-    
-    @Override
     protected Component getComponent( Dockable dockable ) {
         ensureDockable();
         return this.dockable;
@@ -222,6 +206,11 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     @Override
     public void setDockable( Dockable dockable ) {
         super.setDockable( dockable );
+        ensureDockable();
+        this.dockable.removeAll();
+        if( dockable != null ){
+        	this.dockable.add( dockable.getComponent() );
+        }
         ensureBorder();
     }
     
@@ -231,7 +220,6 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     private void ensureDockable(){
         if( dockable == null ){
             dockable = new JPanel( new GridLayout( 1, 1 ));
-            getContent().add( dockable );
         }
         
         ensureBorder();

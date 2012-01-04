@@ -678,6 +678,10 @@
  - Bugfix: Moving a Dockable over itself on a SplitDockStation now results in a no-op instead of moving the Dockable to the ScreenDockStation.
  - Bugfix: Using the keyboard to change the expanded-state of a CDockable no longer prints a warning about "subclasses of DockHierarchyListener should not modify hierarchy".
  - Bugfix: Drop behavior of SplitDockStation acted rather strangely if the mouse was outside the station. Found by Herve.
+ ! API: Simplified BasicDockableDisplayer by removing a few methods, added the "createContentPane" method.
+ - API: TabDecorator now makes use of TabContentFilter, and updates its content if the Dockable changes its title or icon
+ - API: The EclipseDockableDisplayer2 replaces EclipseDockableDisplayer, it is based on BasicDockableDisplayer - like all the other displayers.
+ - API: BasicDockableDisplayer can now show the title above the decorator
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them
