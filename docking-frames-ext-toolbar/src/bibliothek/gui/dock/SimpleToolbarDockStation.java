@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -645,7 +646,7 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 	 * @return the new factory, must not be <code>null</code>
 	 */
 	protected DefaultDisplayerFactoryValue createDisplayerFactory(){
-		return new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + "toolbar", this );
+		return new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.simple", this );
 	}
 
 	/**
@@ -724,12 +725,12 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 		 * The content Pane of this {@link OverpaintablePanel} (with a
 		 * BoxLayout)
 		 */
-		private final JPanel dockablePane = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		private final JPanel dockablePane = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		/**
 		 * This pane is the base of this OverpaintablePanel and contains both
 		 * title and content panes (with a BoxLayout)
 		 */
-		private final JPanel basePane = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		private final JPanel basePane = new JPanel(new GridLayout( 1, 1 ));
 
 		/**
 		 * Creates a new panel

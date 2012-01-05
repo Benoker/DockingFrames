@@ -93,10 +93,20 @@ public class SideSnapDropLayer implements DockStationDropLayer{
 			return false;
 		}
 		
+		x = point.x;
+		y = point.y;
+		
 		int deltaX = Math.min( Math.abs( x ), Math.abs( x-bounds.width ));
+		if( x > 0 && x < bounds.width ){
+			deltaX = 0;
+		}
+		
 		int deltaY = Math.min( Math.abs( y ), Math.abs( y-bounds.height ));
+		if( y > 0 && y < bounds.height ){
+			deltaY = 0;
+		}
 		
 		int size = station.getBorderSideSnapSize();
-		return deltaX <= size || deltaY <= size;
+		return deltaX <= size && deltaY <= size;
 	}
 }

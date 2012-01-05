@@ -674,6 +674,16 @@
  - Bugfix: Removing a DockAction from a submenu did not have any effect unless the submenu was rebuilt.
  - Bugfix: A nested DropDownAction could lead to a NPE during "unbind". 
  - Bugfix/API: merged changes of Thomas. SplitDockStation should clean up wrong mouse cursor now. Improvements in the Glass-Extension.
+
+[v1.1.1p6c]
+ - Bugfix: Mainfest of "Common Layout" example was wrong.
+ - Bugfix: Moving a Dockable over itself on a SplitDockStation now results in a no-op instead of moving the Dockable to the ScreenDockStation.
+ - Bugfix: Using the keyboard to change the expanded-state of a CDockable no longer prints a warning about "subclasses of DockHierarchyListener should not modify hierarchy".
+ - Bugfix: Drop behavior of SplitDockStation acted rather strangely if the mouse was outside the station. Found by Herve.
+ ! API: Simplified BasicDockableDisplayer by removing a few methods, added the "createContentPane" method.
+ - API: TabDecorator now makes use of TabContentFilter, and updates its content if the Dockable changes its title or icon
+ - API: The EclipseDockableDisplayer2 replaces EclipseDockableDisplayer, it is based on BasicDockableDisplayer - like all the other displayers.
+ - API: BasicDockableDisplayer can now show the title above the decorator
   
 [v1.1.1pToolbar]
  - API: New Inserter can override drop operations before and after they are created
@@ -683,6 +693,7 @@
  - API: AbstractDockTitle has been divided into two classes, there is no need to change code in the subclasses of AbstractDockTitle
  ! API: DockActions now support icons that are shown if the mouse hovers of the action, or if the mouse is pressed. Clients just using the DockAction interface should compile without changes, but subclasses of DockAction will require updates.
  - API: The window that shows up when moving a dockable (DefaultDockRelocator.ImageWindow) is now transparent
+ - API: Can set the border of a ScreenDockWindow
  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

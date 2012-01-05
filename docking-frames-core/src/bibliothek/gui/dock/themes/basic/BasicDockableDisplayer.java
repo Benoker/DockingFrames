@@ -36,7 +36,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
@@ -59,8 +58,8 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
-import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
+import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -68,7 +67,6 @@ import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.title.ActionsDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
-import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -115,6 +113,9 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     /** whether to show the outer border if a single tab is in use */
     private boolean singleTabShowOuterBorder = true;
+    
+    /** whether the tab is shown below the title, if there is a tab and a title */
+    private boolean tabInside = false;
     
     /** all listeners known to this displayer */
     private List<DockableDisplayerListener> listeners = new ArrayList<DockableDisplayerListener>();
@@ -163,24 +164,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     
     /** the panel that shows the content of this displayer */
-    private BackgroundPanel content = new ConfiguredBackgroundPanel( null, Transparency.TRANSPARENT ){
-    	@Override
-    	public void doLayout(){
-	    	BasicDockableDisplayer.this.doLayout( content );
-    	}
-    	@Override
-    	public Dimension getMinimumSize(){
-    		return getContentMinimumSize();
-    	}
-    	@Override
-    	public Dimension getPreferredSize(){
-    		return getContentPreferredSize();
-    	}
-    	@Override
-    	public Dimension getMaximumSize(){
-    		return getContentMaximumSize();
-    	}
-    };
+    private DisplayerContentPane content;
     
     /**
      * Creates a new displayer
@@ -241,6 +225,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      */
     protected void init( DockStation station, Dockable dockable, DockTitle title, Location location ){
 //    	content.setOpaque( false );
+    	content = createContentPane();
     	content.setBackground( background );
     	
     	setDecorator( new MinimalDecorator() );
@@ -259,6 +244,15 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
     
     /**
+     * Creates a new {@link DisplayerContentPane} which will be used to show the contents of this
+     * displayer.
+     * @return the new content pane, not <code>null</code>
+     */
+    protected DisplayerContentPane createContentPane(){
+    	return new DisplayerContentPane();
+    }
+    
+    /**
      * Exchanges the decorator of this displayer.
      * @param decorator the new decorator
      */
@@ -267,19 +261,14 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     		throw new IllegalArgumentException( "decorator must not be null" );
     	
     	if( this.decorator != null ){
-    		Component oldComponent = this.decorator.getComponent();
-    		remove( oldComponent );
     		this.decorator.setDockable( null, null );
     		this.decorator.setController( null );
     	}
     	this.decorator = decorator;
     	
     	decorator.setController( controller );
-    	decorator.setDockable( content, dockable );
-    	Component newComponent = decorator.getComponent();
-    	if( newComponent != null ){
-    		add( newComponent );
-    	}
+    	
+    	resetDecorator();
     	
     	if( title != null ){
     		title.changed( new ActionsDockTitleEvent( dockable, decorator.getActionSuggestion() ) );
@@ -394,25 +383,13 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
     
     public void setController( DockController controller ) {
-    	Component oldComponent = decorator.getComponent();
     	this.controller = controller;
     	decider.setProperties( controller );
     	decorator.setController( controller );
     	background.setController( controller );
     	baseBorder.setController( controller );
     	contentBorder.setController( controller );
-    	
-    	Component newComponent = decorator.getComponent();
-    	
-    	if( oldComponent != newComponent ){
-    		if( oldComponent != null )
-    			remove( oldComponent );
-    		
-    		if( newComponent != null )
-    			add( newComponent );
-    		
-    		revalidate();
-    	}
+    	resetDecorator();
     }
     
     public DockController getController() {
@@ -449,33 +426,57 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
 
     public void setDockable( Dockable dockable ) {
-    	Component oldComponent = decorator.getComponent();
-    	
     	if( this.dockable != null ){
-    		removeDockable( this.dockable, this.dockable.getComponent() );
-            this.dockable.configureDisplayerHints( null );
+    	    this.dockable.configureDisplayerHints( null );
         }
         
     	updateDecorator();
     	
-        decorator.setDockable( content, dockable );
+    	resetDecorator();
+    	
         hints.setShowBorderHint( null );
         this.dockable = dockable;
         
         if( dockable != null ){
             this.dockable.configureDisplayerHints( hints );
-            addDockable( dockable, dockable.getComponent() );
-        }
-        
-        Component newComponent = decorator.getComponent();
-        if( oldComponent != newComponent ){
-        	if( oldComponent != null )
-        		remove( oldComponent );
-        	if( newComponent != null )
-        		add( newComponent );
         }
         
         revalidate();
+    }
+    
+    /**
+     * Resets the decorator, this method removes all {@link Component}s from this displayer, then adds them again
+     * in the order that is necessary according to the current settings
+     */
+    protected void resetDecorator(){
+    	removeAll();
+    	
+    	if( tabInside ){
+    		if( dockable == null ){
+    			content.setDockable( null );
+    			decorator.setDockable( null, null );
+    		}
+    		else{
+	    		content.setDockable( null );
+	    		decorator.setDockable( getComponent( dockable ), dockable );
+	    		content.setDockable( decorator.getComponent() );
+    		}
+    		
+    		add( content );
+    	}
+    	else{
+    		if( dockable == null ){
+    			content.setDockable( null );
+    		}
+    		else{
+    			content.setDockable( getComponent( dockable ) );
+    		}
+    		decorator.setDockable( content, dockable );
+    		Component newComponent = decorator.getComponent();
+        	if( newComponent != null ){
+        		add( newComponent );
+        	}
+    	}
     }
 
     public Location getTitleLocation() {
@@ -487,6 +488,8 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
             location = Location.TOP;
         
         this.location = location;
+        
+        content.setTitleLocation( location );
         
         if( title != null )
             title.setOrientation( orientation( location ));
@@ -516,13 +519,16 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
 
     public void setTitle( DockTitle title ) {
-        if( this.title != null )
-            removeTitle( this.title.getComponent() );
-        
         this.title = title;
+        if( title == null ){
+        	content.setTitle( null );
+        }
+        else{
+        	content.setTitle( getComponent( title ) );
+        }
+        
         if( title != null ){
             title.setOrientation( orientation( location ));
-            addTitle( title.getComponent() );
             
             if( decorator != null ){
             	title.changed( new ActionsDockTitleEvent( dockable, decorator.getActionSuggestion() ) );
@@ -533,32 +539,6 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
     
     /**
-     * Inserts a component representing the current {@link #getDockable() dockable}
-     * into the layout. This method is never called twice unless 
-     * {@link #removeDockable(Dockable, Component)} is called before. Note that
-     * the name "add" is inspired by the method {@link Container#add(Component) add}
-     * of <code>Container</code>.
-     * @param dockable the dockable to add, may be <code>null</code>
-     * @param component the new Component, may be <code>null</code>
-     */
-    protected void addDockable( Dockable dockable, Component component ){
-    	if( component != null ){
-    		content.add( component );
-    	}
-    }
-    
-    /**
-     * Removes the Component which represents the current {@link #getDockable() dockable}.
-     * @param dockable the element to remove, may be <code>null</code>
-     * @param component the component, may be <code>null</code>
-     */
-    protected void removeDockable( Dockable dockable, Component component ){
-    	if( component != null ){
-    		content.remove( component );
-    	}
-    }
-    
-    /**
      * Gets the Component which should be used to layout the current
      * Dockable.
      * @param dockable the current Dockable, never <code>null</code>
@@ -566,35 +546,6 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      */
     protected Component getComponent( Dockable dockable ){
         return dockable.getComponent();
-    }
-    
-    /**
-     * Gets the content pane of this displayer, the content pane is the
-     * parent component of the {@link Dockable} and the {@link DockTitle}.
-     * @return the content pane
-     */
-    public JPanel getContent(){
-		return content;
-	}
-    
-    /**
-     * Inserts a component representing the current {@link #getTitle() title}
-     * into the layout. This method is never called twice unless 
-     * {@link #removeTitle(Component)} is called before. Note that
-     * the name "add" is inspired by the method {@link Container#add(Component) add}
-     * of <code>Container</code>.
-     * @param component the new Component
-     */
-    protected void addTitle( Component component ){
-        content.add( component );
-    }
-    
-    /**
-     * Removes the Component which represents the current {@link #getTitle() title}.
-     * @param component the component
-     */
-    protected void removeTitle( Component component ){
-        content.remove( component );
     }
     
     /**
@@ -622,152 +573,6 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     public Component getComponent(){
     	return this;
-    }
-    
-    public Dimension getContentMinimumSize() {
-    	Dimension base;
-    	
-    	if( title == null && dockable != null )
-    		base = getComponent( dockable ).getMinimumSize();
-    	else if( dockable == null && title != null )
-    		base = getComponent( title ).getMinimumSize();
-    	else if( dockable == null && title == null )
-    		base = new Dimension( 0, 0 );
-    	else if( location == Location.LEFT || location == Location.RIGHT ){
-    		Dimension titleSize = getComponent( title ).getMinimumSize();
-    		base = getComponent( dockable ).getMinimumSize();
-    		base = new Dimension( base.width + titleSize.width, 
-    				Math.max( base.height, titleSize.height ));
-    	}
-    	else{
-    		Dimension titleSize = getComponent( title ).getMinimumSize();
-    		base = getComponent( dockable ).getMinimumSize();
-    		base = new Dimension( Math.max( titleSize.width, base.width ),
-    				titleSize.height + base.height );
-    	}
-    	
-    	Insets insets = getInsets();
-    	if( insets != null ){
-    		base = new Dimension( base.width + insets.left + insets.right,
-    				base.height + insets.top + insets.bottom );
-    	}
-    	return base;
-    }
-    
-    public Dimension getContentPreferredSize() {
-    	Dimension base;
-    	
-    	if( title == null && dockable != null )
-    		base = getComponent( dockable ).getPreferredSize();
-    	else if( dockable == null && title != null )
-    		base = getComponent( title ).getPreferredSize();
-    	else if( dockable == null && title == null )
-    		base = new Dimension( 0, 0 );
-    	else if( location == Location.LEFT || location == Location.RIGHT ){
-    		Dimension titleSize = getComponent( title ).getPreferredSize();
-    		base = getComponent( dockable ).getPreferredSize();
-    		base = new Dimension( base.width + titleSize.width, 
-    				Math.max( base.height, titleSize.height ));
-    	}
-    	else{
-    		Dimension titleSize = getComponent( title ).getPreferredSize();
-    		base = getComponent( dockable ).getPreferredSize();
-    		base = new Dimension( Math.max( titleSize.width, base.width ),
-    				titleSize.height + base.height );
-    	}
-    	
-    	Insets insets = getInsets();
-    	if( insets != null ){
-    		base = new Dimension( base.width + insets.left + insets.right,
-    				base.height + insets.top + insets.bottom );
-    	}
-    	return base;
-    }
-    
-    public Dimension getContentMaximumSize() {
-    	Dimension base;
-    	
-    	if( title == null && dockable != null )
-    		base = getComponent( dockable ).getMaximumSize();
-    	else if( dockable == null && title != null )
-    		base = getComponent( title ).getMaximumSize();
-    	else if( dockable == null && title == null )
-    		base = new Dimension( 0, 0 );
-    	else if( location == Location.LEFT || location == Location.RIGHT ){
-    		Dimension titleSize = getComponent( title ).getMaximumSize();
-    		base = getComponent( dockable ).getMaximumSize();
-    		base = new Dimension( base.width + titleSize.width, 
-    				Math.max( base.height, titleSize.height ));
-    	}
-    	else{
-    		Dimension titleSize = getComponent( title ).getMaximumSize();
-    		base = getComponent( dockable ).getMaximumSize();
-    		base = new Dimension( Math.max( titleSize.width, base.width ),
-    				titleSize.height + base.height );
-    	}
-    	
-    	Insets insets = getInsets();
-    	if( insets != null ){
-    		base = new Dimension( base.width + insets.left + insets.right,
-    				base.height + insets.top + insets.bottom );
-    	}
-    	return base;
-    }
-    
-    protected void doLayout( JPanel content ){
-        Insets insets = content.getInsets();
-        if( insets == null )
-            insets = new Insets(0,0,0,0);
-        
-        int x = insets.left;
-        int y = insets.top;
-        int width = content.getWidth() - insets.left - insets.right;
-        int height = content.getHeight() - insets.top - insets.bottom;
-        
-        if( title == null && dockable == null )
-            return;
-        
-        width = Math.max( 0, width );
-        height = Math.max( 0, height );
-        
-        if( title == null )
-            getComponent( dockable ).setBounds( x, y, width, height );
-
-        else if( dockable == null )
-            getComponent( title ).setBounds( x, y, width, height );
-        
-        else{
-            Dimension preferred = getComponent( title ).getPreferredSize();
-            
-            int preferredWidth = preferred.width;
-            int preferredHeight = preferred.height;
-            
-            if( location == Location.LEFT || location == Location.RIGHT ){
-                preferredWidth = Math.min( preferredWidth, width );
-                preferredHeight = height;
-            }
-            else{
-                preferredWidth = width;
-                preferredHeight = Math.min( preferredHeight, height );
-            }
-            
-            if( location == Location.LEFT ){
-                getComponent( title ).setBounds( x, y, preferredWidth, preferredHeight );
-                getComponent( dockable ).setBounds( x+preferredWidth, y, width - preferredWidth, height );
-            }
-            else if( location == Location.RIGHT ){
-                getComponent( title ).setBounds( x+width-preferredWidth, y, preferredWidth, preferredHeight );
-                getComponent( dockable ).setBounds( x, y, width - preferredWidth, preferredHeight );
-            }
-            else if( location == Location.BOTTOM ){
-                getComponent( title ).setBounds( x, y+height - preferredHeight, preferredWidth, preferredHeight );
-                getComponent( dockable ).setBounds( x, y, preferredWidth, height - preferredHeight );
-            }
-            else{
-                getComponent( title ).setBounds( x, y, preferredWidth, preferredHeight );
-                getComponent( dockable ).setBounds( x, y+preferredHeight, preferredWidth, height - preferredHeight );
-            }
-        }
     }
     
     public Insets getDockableInsets() {
@@ -883,6 +688,23 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      */
     public boolean isSingleTabShowOuterBorder(){
 		return singleTabShowOuterBorder;
+	}
+    
+    /**
+     * Tells whether the tab is shown below the title, if there is a tab and a title.
+     * @return the location of the tab in respect to the title, the default value is <code>false</code>
+     */
+    public boolean isTabInside(){
+		return tabInside;
+	}
+    
+    /**
+     * Sets the location of the tab (if present) in respect to the title (if present).
+     * @param tabInside <code>true</code> if the tab is to be shown nearer to the center than the title
+     */
+    public void setTabInside( boolean tabInside ){
+		this.tabInside = tabInside;
+		resetDecorator();
 	}
     
     @Override

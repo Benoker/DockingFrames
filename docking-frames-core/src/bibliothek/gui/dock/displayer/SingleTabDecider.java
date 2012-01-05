@@ -32,6 +32,10 @@ import bibliothek.gui.dock.event.SingleTabDeciderListener;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * Decides for {@link Dockable}s whether there should be a single tab
@@ -53,7 +57,7 @@ public interface SingleTabDecider {
 	};
 	
 	/** this decider shows a tab, unless the element is a station itself or on a {@link StackDockStation} */
-	public static SingleTabDecider ALLWAYS = new SingleTabDecider(){
+	public static SingleTabDecider ALWAYS = new SingleTabDecider(){
 		public boolean showSingleTab( DockStation station, Dockable dockable ){
 			if( dockable.asDockStation() != null )
 				return false;
@@ -68,6 +72,15 @@ public interface SingleTabDecider {
 			// ignore	
 		}
 	};
+	
+	/**
+	 *  This decider shows a tab, unless the element is a station itself or on a {@link StackDockStation}
+	 *  @deprecated please use {@link #ALWAYS} instead
+	 */
+	@Deprecated
+	@Todo( target=Version.VERSION_1_1_3, priority=Priority.MINOR, compatibility=Compatibility.BREAK_MINOR, 
+		description="remove this constant without replacement" )
+	public static SingleTabDecider ALLWAYS = ALWAYS;
 	
 	/** Key for the {@link DockProperties} */
 	public static final PropertyKey<SingleTabDecider> SINGLE_TAB_DECIDER =

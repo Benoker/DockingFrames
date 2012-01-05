@@ -202,8 +202,8 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         parent.setLayout( new GridLayout( 1, 1 ));
 
         if( configuration.isResizeable() && borderAllowed ){
-            if( parent instanceof JComponent ){
-            	border = new ScreenDockWindowBorder( this, (JComponent)parent );
+            if( parent instanceof JComponent && configuration.getBorderFactory() != null ){
+            	border = configuration.getBorderFactory().create( this, (JComponent)parent );
             	border.setController( getController() );
             	borderModifier = new WindowBorder( (JComponent)parent );
             	borderModifier.setBorder( border );
@@ -579,7 +579,13 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         		}
         		
             	border.setCornerSize( corner() );
-            	border.setMoveSize( getDisplayerParent().getWidth()/3 );
+            	WindowConfiguration configuration = getConfiguration();
+            	if( configuration != null && configuration.isMoveOnBorder() ){
+            		border.setMoveSize( getDisplayerParent().getWidth()/3 );
+            	}
+            	else{
+            		border.setMoveSize( 0 );
+            	}
         	}
         }
         
@@ -746,7 +752,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
                 }
                 else if( top ){
                     int width = component.getWidth();
-                    if( e.getX() > width / 3 && e.getX() < width / 3 * 2 ){
+                    if( getConfiguration().isMoveOnBorder() && e.getX() > width / 3 && e.getX() < width / 3 * 2 ){
                         setCursor( Cursor.getPredefinedCursor( Cursor.MOVE_CURSOR ));
                         position = Position.MOVE;
                     }

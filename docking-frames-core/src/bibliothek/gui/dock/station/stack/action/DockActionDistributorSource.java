@@ -204,9 +204,11 @@ public class DockActionDistributorSource extends AbstractDockActionSource{
 	public void removeDockActionSourceListener( DockActionSourceListener listener ){
 		super.removeDockActionSourceListener( listener );
 		if( !hasListeners() ){
-			dockable.removeDockHierarchyListener( this.listener );
-			distributor.setProperties( (DockProperties)null );
-			setSource( null );
+			if( dockable != null ){
+				dockable.removeDockHierarchyListener( this.listener );
+				distributor.setProperties( (DockProperties)null );
+				setSource( null );
+			}
 		}
 	}
 	

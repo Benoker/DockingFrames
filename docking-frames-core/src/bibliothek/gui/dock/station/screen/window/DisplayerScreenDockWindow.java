@@ -92,6 +92,9 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     /** the configuration that was used to create this window */
     private WindowConfiguration configuration;
     
+    /** whether {@link #configuration} has been applied */
+    private boolean configured = false;
+    
     /**
      * Creates a new window
      * @param station the owner of this window, not <code>null</code>
@@ -234,9 +237,9 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     }
     
     public void setDockable( Dockable dockable ) {
-    	if( dockable != null && configuration != null ){
+    	if( dockable != null && !configured ){
     		init( configuration );
-    		configuration = null;
+    		configured = true;
     	}
     	
     	// remove old displayer
@@ -268,6 +271,14 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         
         showDisplayer( displayer );
     }
+    
+    /**
+     * Gets the configuration which was used to set up this window.
+     * @return the configuration, should not be modified by clients or subclasses
+     */
+    public WindowConfiguration getConfiguration(){
+		return configuration;
+	}
     
     /**
      * Called if the currently shown {@link DockTitle} is about to change to <code>title</code>.

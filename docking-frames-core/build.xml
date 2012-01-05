@@ -237,7 +237,7 @@
 		<jar destfile="${bin}/${name.layouts}.jar">
 			<fileset dir="${temp}/${name.layouts}"/>
 			<manifest>
-				<attribute name="Main-Class" value="bibliothek.commonLayouts.Application"/>
+				<attribute name="Main-Class" value="bibliothek.layouts.Application"/>
 				<attribute name="Class-Path" value="${name.common}.jar ${name.demonstrationInterface}.jar ${name.core}.jar"/>
 			</manifest>
 		</jar>

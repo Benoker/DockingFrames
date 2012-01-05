@@ -33,7 +33,7 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer {
 			request.answer( displayer );
 		}
 	};
-
+	
 	/** Keeps track of the orientation of the current {@link Dockable} and updates the location of the title if necessary */
 	private OrientationObserver observer;
 	
