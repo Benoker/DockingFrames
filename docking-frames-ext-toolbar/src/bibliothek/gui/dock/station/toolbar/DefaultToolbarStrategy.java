@@ -100,7 +100,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 
 			// simple toolbar policy
 			if (parent instanceof SimpleToolbarDockStation){
-				if (child instanceof ComponentDockable){
+				if ((child instanceof ComponentDockable) || (child instanceof SimpleToolbarDockStation)) {
 					return true;
 				} else{
 					return false;
@@ -132,7 +132,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 	@Override
 	public boolean isToolbarGroupPart( Dockable dockable ){
 		return (dockable instanceof ComponentDockable)
-				|| (dockable instanceof ToolbarDockStation);
+				|| (dockable instanceof ToolbarDockStation) || (dockable instanceof SimpleToolbarDockStation);
 	}
 
 	@Override

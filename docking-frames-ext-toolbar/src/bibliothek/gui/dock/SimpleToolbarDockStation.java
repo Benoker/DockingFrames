@@ -1,5 +1,6 @@
 package bibliothek.gui.dock;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -62,7 +63,7 @@ import bibliothek.util.Path;
  * 
  * @author Herve Guillaume
  */
-public class SimpleToolbarDockStation extends AbstractDockableStation implements ToolbarInterface, ExpandableToolbarItem {
+public class SimpleToolbarDockStation extends AbstractDockableStation implements ToolbarInterface, ToolbarElementInterface, ExpandableToolbarItem {
 
 	/** the id of the {@link DockTitleFactory} which is used by this station */
 	public static final String TITLE_ID = "simple.toolbar";
@@ -403,10 +404,11 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
-		// System.out.println(this.toString() + "## prepareDrop(...) ##");
+		System.out.println(this.toString() + "## prepareDrop(...) ##");
 		final DockController controller = getController();
 
 		if( getExpandedState() == ExpandedState.EXPANDED ) {
+			System.out.println("EXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDED");
 			return null;
 		}
 
@@ -733,6 +735,8 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
+			basePane.setBackground(Color.GREEN);
+			dockablePane.setBackground(Color.RED);
 			basePane.add( dockablePane );
 			setBasePane( basePane );
 			setContentPane( dockablePane );

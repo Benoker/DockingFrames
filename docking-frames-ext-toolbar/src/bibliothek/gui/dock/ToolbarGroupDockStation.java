@@ -983,8 +983,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
 
-		private final int INSETS_SIZE = 1;
-
 		/**
 		 * A panel with a fixed size (minimum, maximum and preferred size have
 		 * same values). Computation of the size takes insets into account.
