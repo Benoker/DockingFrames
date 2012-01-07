@@ -35,7 +35,6 @@ import java.awt.Stroke;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
@@ -45,12 +44,11 @@ import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.color.DockColor;
@@ -88,13 +86,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     
     private boolean paintFocusBorder = true;
     
-    /** the expected minimum size of any icon */
-    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
-		@Override
-		protected void valueChanged( Dimension oldValue, Dimension newValue ){
-			revalidate();
-		}
-	};
+    private MiniButtonContent content;
     
     /**
      * Creates a new round button.
@@ -106,6 +98,10 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
      */
 	public RoundButton( BasicTrigger trigger, BasicResourceInitializer initializer, Dockable dockable, DockAction action ){
 		setFocusable( true );
+		
+		content = createButtonContent();
+		setLayout( null );
+		add( content );
 		
 		animation = new BubbleColorAnimation();
 		
@@ -128,6 +124,8 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
         	}
         });
         
+        content.setModel( model );
+        
 		updateColors();
 
 		animation.addTask(new Runnable() {
@@ -144,6 +142,14 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		        repaint();
 		    }
 		});
+	}
+	
+	/**
+	 * Creates the component that shows the contents of this button.
+	 * @return the new component
+	 */
+	protected MiniButtonContent createButtonContent(){
+		return new MiniButtonContent();
 	}
 	
 	protected AbstractDockColor[] createColors( Dockable dockable, DockAction action ){
@@ -214,7 +220,6 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	        color.connect( controller );
 	    
 	    animation.kick();
-	    minimumIconSize.setProperties( controller );
 	}
 	
     public BasicButtonModel getModel() {
@@ -251,15 +256,31 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
         return dist <= w*w/4;
     }
     
+    /**
+     * Gets the content component of this button.
+     * @return the component that paints icon and text
+     */
+    protected MiniButtonContent getContent(){
+		return content;
+	}
+    
 	@Override
 	public Dimension getPreferredSize() {
-	    Dimension icon = model.getMaxIconSize();
-	    Dimension min = minimumIconSize.getValue();
-	    
-        icon.width = Math.max( icon.width, min.width );
-        icon.height = Math.max( icon.height, min.height );
-
-        return new Dimension((int)(icon.width*1.5),(int)(icon.height*1.5));
+        Dimension preferred = content.getPreferredSize();
+        return new Dimension((int)(preferred.width*1.5),(int)(preferred.height*1.5));
+	}
+	
+	@Override
+	public void doLayout(){
+		Dimension size = content.getPreferredSize();
+		
+		int dw = getWidth() - size.width;
+		int dh = getHeight() - size.height;
+		
+		dw = Math.max( 0, dw );
+		dh = Math.max( 0, dh );
+		
+		content.setBounds( dw/2, dh/2, getWidth()-dw, getHeight()-dh );
 	}
 
 	@Override
@@ -327,12 +348,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	protected void doPaintForeground( Graphics g ){
 		Graphics2D g2 = (Graphics2D)g;
 		
-        Icon icon = model.getPaintIcon();
-		if( icon != null ){
-			icon.paintIcon( this, g, 
-					(getWidth() - icon.getIconWidth()) / 2, 
-					(getHeight() - icon.getIconHeight()) / 2 );
-		}
+        paintChildren( g );
 
 		if( paintFocusBorder && hasFocus() && isFocusable() && isEnabled() ){
 		    Stroke stroke = g2.getStroke();

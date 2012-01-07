@@ -40,8 +40,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
-import bibliothek.extension.gui.dock.preference.*;
-import bibliothek.extension.gui.dock.preference.editor.*;
+import bibliothek.extension.gui.dock.preference.PreferenceEditor;
+import bibliothek.extension.gui.dock.preference.PreferenceEditorCallback;
+import bibliothek.extension.gui.dock.preference.PreferenceEditorFactory;
+import bibliothek.extension.gui.dock.preference.PreferenceModel;
+import bibliothek.extension.gui.dock.preference.PreferenceModelListener;
+import bibliothek.extension.gui.dock.preference.PreferenceOperation;
+import bibliothek.extension.gui.dock.preference.PreferenceOperationView;
+import bibliothek.extension.gui.dock.preference.PreferenceOperationViewListener;
+import bibliothek.extension.gui.dock.preference.editor.BooleanEditor;
+import bibliothek.extension.gui.dock.preference.editor.ChoiceEditor;
+import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
+import bibliothek.extension.gui.dock.preference.editor.LabelEditor;
+import bibliothek.extension.gui.dock.preference.editor.ModifierMaskEditor;
+import bibliothek.extension.gui.dock.preference.editor.StringEditor;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 import bibliothek.util.Path;
@@ -508,6 +522,12 @@ public class PreferenceTable extends JPanel{
                             editor.doOperation( operation.getOperation() );
                         else
                             doOperation( operation.getOperation() );
+                    }
+                    public DockAction getAction(){
+                    	return null;
+                    }
+                    public Dockable getDockable(){
+                    	return null;
                     }
                 }, null );
                 

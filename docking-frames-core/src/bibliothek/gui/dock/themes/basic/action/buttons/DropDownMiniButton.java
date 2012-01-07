@@ -97,22 +97,14 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			return super.getPreferredSize();
 		
 		Insets insets = getMaxBorderInsets();
-		Dimension icon = getModel().getMaxIconSize();
-		Dimension min = getMinimumIconSize();
+		Dimension icon = getContent().getPreferredSize();
         
-        icon.width = Math.max( icon.width, min.width );
-        icon.height = Math.max( icon.height, min.height );
-		
 		if( getModel().getOrientation().isHorizontal() ){
 			int width = insets.left + 2*insets.right + icon.width;
 			width += dropIcon.getIconWidth();
 			
 			int height = dropIcon.getIconHeight();
-			if( icon == null )
-				height = Math.max( height, min.height );
-			else
-				height = Math.max( height, icon.height );
-			
+			height = Math.max( height, icon.height );
 			height += insets.top + insets.bottom;
 			return new Dimension( width, height );
 		}
@@ -121,11 +113,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			height += dropIcon.getIconHeight();
 			
 			int width = dropIcon.getIconWidth();
-			if( icon == null )
-				width = Math.max( width, min.width );
-			else
-				width = Math.max( width, icon.width );
-			
+			width = Math.max( width, icon.width );
 			width += insets.left + insets.right;			
 			return new Dimension( width, height );
 		}
@@ -177,9 +165,27 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		paintable.paint( g );
 	}
 	
-	private void doPaintForeground( Graphics g ){
-		Icon icon = getModel().getPaintIcon();
+	
+	@Override
+	public void doLayout(){
+		MiniButtonContent content = getContent();
 		Insets insets = getMaxBorderInsets();
+		
+		if( getModel().getOrientation().isHorizontal() ){
+			int dropWidth = dropIcon.getIconWidth();
+			content.setBounds( insets.left+1, insets.top, getWidth()-insets.left-2*insets.right-1-dropWidth, getHeight()-insets.top-insets.bottom );
+		}
+		else{
+			int dropHeight = dropIcon.getIconHeight();
+			content.setBounds( insets.left, insets.top+1, getWidth()-insets.left-insets.right, getHeight()-insets.top-2*insets.bottom-1-dropHeight );
+		}
+	}
+	
+	private void doPaintForeground( Graphics g ){
+		paintContent( g );
+		
+		Insets insets = getMaxBorderInsets();
+		MiniButtonContent content = getContent();
 		
 		Icon drop = dropIcon;
 		if( !isEnabled() ){
@@ -189,29 +195,29 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		}
 		
 		if( getModel().getOrientation().isHorizontal() ){
-			int iconWidth = icon == null ? 16 : icon.getIconWidth();
+			int iconWidth = content.getWidth();
 			int dropWidth = dropIcon.getIconWidth();
 			
 			double sum = insets.left + iconWidth + insets.right + dropWidth + insets.right;
 			double factor = getWidth() / sum;
 			
-			if( icon != null )
-				icon.paintIcon( this, g, (int)(factor * (insets.left + iconWidth/2) - iconWidth/2), 
-						insets.top+(getHeight()-insets.top-insets.bottom-icon.getIconHeight()) / 2 );
+//			if( icon != null )
+//				icon.paintIcon( this, g, (int)(factor * (insets.left + iconWidth/2) - iconWidth/2), 
+//						insets.top+(getHeight()-insets.top-insets.bottom-icon.getIconHeight()) / 2 );
 			
 			drop.paintIcon( this, g, (int)(factor * (insets.left + insets.right + iconWidth + dropWidth/2) - dropWidth/2 ),
 					insets.top+(getHeight()-insets.top-insets.bottom-dropIcon.getIconHeight()) / 2 );
 		}
 		else{
-			int iconHeight = icon == null ? 16 : icon.getIconHeight();
+			int iconHeight = content.getHeight();
 			int dropHeight = dropIcon.getIconHeight();
 			
 			double sum = insets.top + iconHeight + insets.bottom + dropHeight + insets.bottom;
 			double factor = getHeight() / sum;
 			
-			if( icon != null )
-				icon.paintIcon( this, g, insets.left+(getWidth()-insets.left-insets.right-icon.getIconWidth()) / 2,
-						(int)(factor * (insets.top + iconHeight/2) - iconHeight/2 ));
+//			if( icon != null )
+//				icon.paintIcon( this, g, insets.left+(getWidth()-insets.left-insets.right-icon.getIconWidth()) / 2,
+//						(int)(factor * (insets.top + iconHeight/2) - iconHeight/2 ));
 			
 			drop.paintIcon( this, g, insets.left+(getWidth()-insets.left-insets.right-dropIcon.getIconWidth()) / 2,
 					(int)(factor * (insets.top + insets.bottom + iconHeight + dropHeight/2 ) - dropHeight/2 ) );
@@ -227,10 +233,9 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		
 		if( border != null ){
 			Insets insets = getMaxBorderInsets();
-			Icon icon = getModel().getPaintIcon();
 			
 			if( getModel().getOrientation().isHorizontal() ){
-				int iconWidth = icon == null ? 16 : icon.getIconWidth();
+				int iconWidth = getContent().getWidth();
 				int dropWidth = dropIcon.getIconWidth();
 				
 				double sum = insets.left + iconWidth + insets.right + dropWidth + insets.right;
@@ -243,7 +248,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 				}
 			}
 			else{
-				int iconHeight = icon == null ? 16 : icon.getIconHeight();
+				int iconHeight = getContent().getHeight();
 				int dropHeight = dropIcon.getIconHeight();
 				
 				double sum = insets.top + iconHeight + insets.bottom + dropHeight + insets.bottom;
@@ -267,11 +272,10 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 		if( !contains( x, y ))
 			return false;
 		
-		Dimension icon = getModel().getMaxIconSize();
 		Insets insets = getMaxBorderInsets();
         
 		if( getModel().getOrientation().isHorizontal() ){
-			int iconWidth = icon.width < 16 ? 16 : icon.width;
+			int iconWidth = getContent().getWidth();
 			int dropWidth = dropIcon.getIconWidth();
 			
 			double sum = insets.left + iconWidth + insets.right + dropWidth + insets.right;
@@ -281,7 +285,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			return x > barrier;
 		}
 		else{
-			int iconHeight = icon.height < 16 ? 16 : icon.height;
+			int iconHeight = getContent().getHeight();
 			int dropHeight = dropIcon.getIconHeight();
 			
 			double sum = insets.top + iconHeight + insets.bottom + dropHeight + insets.bottom;

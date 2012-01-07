@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.themes.basic.action;
 
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.DockAction;
+
 
 /**
  * Used as a callback by a {@link BasicButtonModel} to ensure the availability of properties and to inform
@@ -37,4 +40,18 @@ public interface BasicTrigger {
      * by the model, is clicked.
      */
     public void triggered();
+    
+    /**
+     * Gets the {@link DockAction} which will be triggered by this object. This is a completely optional
+     * method, as not every {@link BasicTrigger} is actually connected to a {@link DockAction}.
+     * @return the action, can be <code>null</code>
+     */
+    public DockAction getAction();
+    
+    /**
+     * Gets the {@link Dockable} for which an action will be performed if this object is triggered. This is 
+     * a completely optional method, as not every {@link BasicTrigger} is actually connected to a {@link Dockable}.
+     * @return the associated dockable or <code>null</code>
+     */
+    public Dockable getDockable();
 }

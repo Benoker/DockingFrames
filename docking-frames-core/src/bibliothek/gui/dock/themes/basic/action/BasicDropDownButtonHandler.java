@@ -34,7 +34,10 @@ import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ButtonContentFilter;
+import bibliothek.gui.dock.action.ButtonContentFilterListener;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.DropDownAction;
@@ -48,6 +51,7 @@ import bibliothek.gui.dock.event.StandardDockActionListener;
 import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownIcon;
 import bibliothek.gui.dock.themes.basic.action.dropdown.DropDownViewItem;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * A handler connecting a {@link DropDownAction} with a {@link BasicDropDownButtonModel}
@@ -80,7 +84,35 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
     
     /** the icon that indicates the button for opening the popup menu */
     private DropDownIcon dropDownIcon;
+
+    /** a filter telling whether the text of the action should be forwarded */
+    private PropertyValue<ButtonContentFilter> buttonContentFilter = new PropertyValue<ButtonContentFilter>( DockAction.BUTTON_CONTENT_FILTER ){
+		@Override
+		protected void valueChanged( ButtonContentFilter oldValue, ButtonContentFilter newValue ){
+			if( isBound() ){
+				if( oldValue != null ){
+					oldValue.removeListener( buttonContentFilterListener );
+					oldValue.uninstall( getDockable(), getAction() );
+				}
+				if( newValue != null ){
+					newValue.addListener( buttonContentFilterListener );
+					newValue.install( getDockable(), getAction() );
+				}
+			}
+			
+			buttonView.updateText();
+		}
+	};
     
+	/** this listener is added to the current {@link #buttonContentFilter} */
+	private ButtonContentFilterListener buttonContentFilterListener = new ButtonContentFilterListener(){
+		public void showTextChanged( ButtonContentFilter filter, Dockable dockable, DockAction action ){
+			if( (action == null || action == getAction()) && (dockable == null || dockable == getDockable())){
+				buttonView.updateText();
+			}
+		}
+	};
+	
     /**
      * Creates a new handler.
      * @param action the action to observe
@@ -122,8 +154,11 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         source.addDockActionSourceListener( listener );
         
         getModel().setEnabled( action.isEnabled( dockable ) );
+        buttonContentFilter.setProperties( dockable.getController() );
         
         super.bind();
+        
+        buttonContentFilter.getValue().addListener( buttonContentFilterListener );
     }
     
     public void unbind(){
@@ -156,8 +191,11 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         items.clear();
         actions.clear();
         
+        buttonContentFilter.getValue().removeListener( buttonContentFilterListener );
+        
         super.unbind();
-
+        
+        buttonContentFilter.setProperties( (DockController)null );
         getModel().setDockableRepresentative( null );
     }
 
@@ -359,6 +397,8 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
      * @author Benjamin Sigg
      */
     protected class ButtonView implements DropDownView{
+    	private String text;
+    	
         public void setDisabledIcon( Icon icon ){
             getModel().setDisabledIcon( icon );
         }
@@ -376,7 +416,20 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         }
 
         public void setText( String text ){
-            // ignore
+        	this.text = text;
+        	updateText();
+        }
+        
+        /**
+         * Updates the text that is shown by the button, respects the {@link BasicDropDownButtonHandler#buttonContentFilter}.
+         */
+        public void updateText(){
+        	if( buttonContentFilter.getValue().showText( getDockable(), getAction() )){
+        		getModel().setText( text );
+        	}
+        	else{
+        		getModel().setText( null );
+        	}
         }
 
         public void setTooltip( String tooltip ){

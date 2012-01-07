@@ -122,7 +122,7 @@ public class DefaultDropDownFilter extends AbstractDropDownFilter {
 		if( text == null )
 			getView().setText( getAction().getText( getDockable() ) );
 		else
-			getView().setText( null );
+			getView().setText( text );
 	}
 	
 	/**

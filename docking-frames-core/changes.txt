@@ -684,7 +684,8 @@
  - API: BasicDockableDisplayer can now show the title above the decorator
  ! API: Generics now force CStations to use CommonDockStation as internal representations
  - Bugfix: when maximizing a CDockable, the CMaximizedMode tries to ensure that the dockable remains in the same CStationContainer
- 
+ - Bugfix: not all drop down buttons did support the disabled arrow icon
+ - API: It is now possible to show text on buttons for DockActions. The buttons also support different fonts and colors. Whether text shows up is decided by the ButtonContentFilter. 
  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

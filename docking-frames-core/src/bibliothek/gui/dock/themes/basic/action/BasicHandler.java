@@ -31,12 +31,16 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ButtonContentFilter;
+import bibliothek.gui.dock.action.ButtonContentFilterListener;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.event.StandardDockActionListener;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * A class connecting a {@link DockAction} with a {@link BasicButtonModel}. The
@@ -54,7 +58,34 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
     /** a listener to the action */
     private Listener listener;
     
+    /** a filter telling whether the text of the action should be forwarded */
+    private PropertyValue<ButtonContentFilter> filter = new PropertyValue<ButtonContentFilter>( DockAction.BUTTON_CONTENT_FILTER ){
+		@Override
+		protected void valueChanged( ButtonContentFilter oldValue, ButtonContentFilter newValue ){
+			if( isBound() ){
+				if( oldValue != null ){
+					oldValue.removeListener( filterListener );
+					oldValue.uninstall( getDockable(), getAction() );
+				}
+				if( newValue != null ){
+					newValue.addListener( filterListener );
+					newValue.install( getDockable(), getAction() );
+				}
+			}
+			
+			updateText();
+		}
+	};
     
+	/** this listener is added to the current {@link #filter} */
+	private ButtonContentFilterListener filterListener = new ButtonContentFilterListener(){
+		public void showTextChanged( ButtonContentFilter filter, Dockable dockable, DockAction action ){
+			if( (action == null || action == getAction()) && (dockable == null || dockable == getDockable())){
+				updateText();
+			}
+		}
+	};
+	
     /**
      * Creates a new handler.
      * @param action the action which will be observed.
@@ -90,12 +121,15 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
     	if( listener == null )
     		listener = createListener();
 
-    	listener.updateTooltip();
-
+    	filter.setProperties( getDockable().getController() );
+    	
+    	updateTooltip();
+    	
     	BasicButtonModel model = getModel();
     	StandardDockAction action = getAction();
     	Dockable dockable = getDockable();
     	
+    	updateText();
     	model.setIcon( action.getIcon( dockable ) );
     	model.setDisabledIcon( action.getDisabledIcon( dockable ) );
     	model.setEnabled( action.isEnabled( dockable ) );
@@ -104,10 +138,18 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
     	action.addDockActionListener( listener );
     	
     	super.bind();
+    	
+    	filter.getValue().addListener( filterListener );
+    	filter.getValue().install( getDockable(), getAction() );
     }
     
     public void unbind(){
+    	filter.getValue().removeListener( filterListener );
+    	filter.getValue().uninstall( getDockable(), getAction() );
+    	
     	super.unbind();
+    	
+    	filter.setProperties( (DockController)null );
     	getModel().setDockableRepresentative( null );
     	getAction().removeDockActionListener( listener );
     }
@@ -118,6 +160,33 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
      */
     protected Listener createListener(){
         return new Listener();
+    }
+    
+    /**
+     * Updates the text of the model.
+     */
+    private void updateText(){
+    	Dockable dockable = getDockable();
+    	StandardDockAction action = getAction();
+    	if( filter.getValue().showText( dockable, action )){
+    		getModel().setText( action.getText( dockable ) );
+    	}
+    	else{
+    		getModel().setText( null );
+    	}
+    }
+    
+    /**
+     * Changes the tooltip of the model.
+     */
+    private void updateTooltip(){
+    	Dockable dockable = getDockable();
+    	StandardDockAction action = getAction();
+        String tooltip = action.getTooltipText( dockable );
+        if( tooltip == null || tooltip.length() == 0 )
+            tooltip = action.getText( dockable );
+        
+        getModel().setToolTipText( tooltip );
     }
     
     /**
@@ -146,8 +215,10 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
 
         public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ) {
         	Dockable dockable = getDockable();
-            if( dockables.contains( dockable ))
+            if( dockables.contains( dockable )){
+            	updateText();
                 updateTooltip();
+            }
         }
 
         public void actionTooltipTextChanged( StandardDockAction action, Set<Dockable> dockables ) {
@@ -160,19 +231,6 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
 	        Dockable dockable = getDockable();
 	        if( dockables.contains( dockable ))
 	        	getModel().setDockableRepresentative( action.getDockableRepresentation( dockable ) );
-        }
-        
-        /**
-         * Changes the tooltip of the model.
-         */
-        private void updateTooltip(){
-        	Dockable dockable = getDockable();
-        	StandardDockAction action = getAction();
-            String tooltip = action.getTooltipText( dockable );
-            if( tooltip == null || tooltip.length() == 0 )
-                tooltip = action.getText( dockable );
-            
-            getModel().setToolTipText( tooltip );
         }
     }
 

@@ -167,6 +167,14 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     }
     
     @Override
+    public void setEnabled( boolean enabled ){
+    	super.setEnabled( enabled );
+    	if( label != null ){
+    		label.setEnabled( enabled );
+    	}
+    }
+    
+    @Override
     public void setForeground( Color fg ) {
         super.setForeground(fg);
         if( label != null )
@@ -261,6 +269,12 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     @Override
     public Dimension getPreferredSize() {
     	Dimension size = label.getPreferredSize();
+    	String text = getText();
+
+    	if( (text == null || text.length() == 0) && icon != null ){
+    		return new Dimension( icon.getIconWidth() + 2*iconOffset, icon.getIconHeight()+2*iconOffset );	
+    	}
+    	
         if( isHorizontal() ){
         	if( icon == null )
         		return new Dimension( size.width+5, size.height );
@@ -270,7 +284,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         else{
         	if( icon == null )
         		return new Dimension( size.height, size.width+5 );
-        	
+
         	return new Dimension( Math.max( size.height, icon.getIconWidth()+2*iconOffset ), size.width+5+iconOffset+iconTextDistance+icon.getIconHeight() );
         }
     }
