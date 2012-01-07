@@ -25,8 +25,6 @@
  */
 package bibliothek.gui.dock.common.intern;
 
-import java.util.List;
-
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.CStation;
@@ -39,14 +37,6 @@ import bibliothek.gui.dock.common.SingleCDockable;
  * @author Benjamin Sigg
  */
 public interface MutableCControlRegister extends CControlRegister {
-    /**
-     * Gets an unmodifiable list of all {@link CStationContainer}s known 
-     * to this register. The list might or might not be updated when the contents
-     * of this register change.
-     * @return the unmodifiable list
-     */
-    public List<CStationContainer> getStationContainers();
-    
     /**
      * Adds a new set of {@link CStation}s to this register.
      * @param container the new set of stations, not <code>null</code>

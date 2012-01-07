@@ -36,14 +36,14 @@ import bibliothek.gui.dock.util.WindowProvider;
  * @author Benjamin Sigg
  */
 public class CScreenDockStation extends ScreenDockStation implements CommonDockStation<ScreenDockStation,CScreenDockStation>{
-	private CommonStationDelegate<ScreenDockStation> delegate;
+	private CommonStationDelegate<CScreenDockStation> delegate;
 	
 	/**
 	 * Creates a new station.
 	 * @param owner the window that is the owner of the windows of this station
 	 * @param delegate additional methods required for this station
 	 */
-	public CScreenDockStation( WindowProvider owner, CommonStationDelegate<ScreenDockStation> delegate ){
+	public CScreenDockStation( WindowProvider owner, CommonStationDelegate<CScreenDockStation> delegate ){
 		super( owner );
 		this.delegate = delegate;
 		setExpandOnDoubleClick( false );
@@ -77,7 +77,7 @@ public class CScreenDockStation extends ScreenDockStation implements CommonDockS
 		return null;
 	}
 	
-	public CStation<ScreenDockStation> getStation(){
+	public CStation<CScreenDockStation> getStation(){
 		return delegate.getStation();
 	}
 }

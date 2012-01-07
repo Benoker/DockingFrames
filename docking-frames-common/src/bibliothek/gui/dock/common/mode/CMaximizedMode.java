@@ -29,23 +29,30 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.CStationContainer;
 import bibliothek.gui.dock.common.action.predefined.CMaximizeAction;
 import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
 import bibliothek.gui.dock.common.perspective.mode.CMaximizedModePerspective;
+import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.MaximizedMode;
+import bibliothek.gui.dock.facile.mode.MaximizedModeArea;
 
 /**
  * Manages {@link CMaximizedModeArea}s.
  * @author Benjamin Sigg
  */
 public class CMaximizedMode extends MaximizedMode<CMaximizedModeArea> implements CLocationMode {
+	/** the control in whose realm this mode is working */
+	private CControl control;
+	
 	/**
 	 * Creates a new mode.
 	 * @param control the control in whose realm this mode works.
 	 */
 	public CMaximizedMode( CControl control ){
+		this.control = control;
 		setActionProvider( new KeyedLocationModeActionProvider(
 				CDockable.ACTION_KEY_MAXIMIZE,
 				new CMaximizeAction( control )) );
@@ -82,5 +89,33 @@ public class CMaximizedMode extends MaximizedMode<CMaximizedModeArea> implements
 	
 	public LocationModePerspective createPerspective(){
 		return new CMaximizedModePerspective();
+	}
+	
+	@Override
+	public MaximizedModeArea getMaximizeArea( Dockable dockable, Location history ){
+		MaximizedModeArea area = super.getMaximizeArea( dockable, history );
+		if( area == null ){
+			DockStation parent = dockable.getDockParent();
+			while( parent != null ){
+				CStation<?> station = control.getStation( parent );
+				if( station != null ){
+					CStationContainer container = control.getRegister().getContainer( station );
+					if( container != null ){
+						CStation<? extends DockStation> result = container.getDefaultStation( ExtendedMode.MAXIMIZED );
+						if( result != null ){
+							return getMaximizeArea( result.getStation() );
+						}
+					}
+				}
+				Dockable temp = parent.asDockable();
+				if( temp == null ){
+					parent = null;
+				}
+				else{
+					parent = temp.getDockParent();
+				}
+			}
+		}
+		return area;
 	}
 }

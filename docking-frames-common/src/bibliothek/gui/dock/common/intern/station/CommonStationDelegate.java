@@ -38,7 +38,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @author Benjamin Sigg
  * @param <S> the type of {@link DockStation} this delegate represents
  */
-public interface CommonStationDelegate<S extends DockStation> {
+public interface CommonStationDelegate<S extends CommonDockStation<?, ?>> {
 	/**
 	 * Gets a result for {@link CommonDockable#getDockable()}.
 	 * @return the dockable as it is seen by Common

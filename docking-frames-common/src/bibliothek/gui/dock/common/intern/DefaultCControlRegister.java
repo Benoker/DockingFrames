@@ -136,6 +136,17 @@ public class DefaultCControlRegister implements MutableCControlRegister {
         return Collections.unmodifiableList( containers );
     }
     
+	public CStationContainer getContainer( CStation<?> child ){
+		for( CStationContainer container : getStationContainers() ){
+			for( int i = 0, n = container.getStationCount(); i<n; i++ ){
+				if( container.getStation( i ) == child ){
+					return container;
+				}
+			}
+		}
+		return null;
+	}
+    
     public void addStationContainer( CStationContainer container ){
         if( container == null )
             throw new NullPointerException( "container is null" );

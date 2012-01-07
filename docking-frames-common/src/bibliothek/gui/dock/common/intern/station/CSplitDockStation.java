@@ -42,9 +42,9 @@ import bibliothek.util.FrameworkOnly;
  */
 @FrameworkOnly
 public class CSplitDockStation extends SplitDockStation implements CommonDockStation<SplitDockStation,CSplitDockStation>, CommonDockable{
-	private CommonStationDelegate<SplitDockStation> delegate;
+	private CommonStationDelegate<CSplitDockStation> delegate;
 
-	public CSplitDockStation( CommonStationDelegate<SplitDockStation> delegate ){
+	public CSplitDockStation( CommonStationDelegate<CSplitDockStation> delegate ){
 		this.delegate = delegate;
 
 		getDockable().addCDockablePropertyListener( new CDockableAdapter(){
@@ -68,7 +68,7 @@ public class CSplitDockStation extends SplitDockStation implements CommonDockSta
 		return delegate.getDockable();
 	}
 
-	public CStation<SplitDockStation> getStation(){
+	public CStation<CSplitDockStation> getStation(){
 		return delegate.getStation();
 	}
 	

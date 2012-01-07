@@ -29,13 +29,14 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 
 /**
  * An abstract implementation of {@link CStation} that can be docked like a {@link CDockable}.
  * @author Benjamin Sigg
  * @param <S> the kind of station represented by this wrapper
  */
-public abstract class AbstractDockableCStation<S extends DockStation> extends AbstractCDockable implements CStation<S>{
+public abstract class AbstractDockableCStation<S extends CommonDockStation<?, ?>> extends AbstractCDockable implements CStation<S>{
     private CLocation location;
     private String id;
     private S station;

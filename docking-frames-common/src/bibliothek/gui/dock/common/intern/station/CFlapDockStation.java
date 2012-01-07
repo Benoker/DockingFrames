@@ -53,7 +53,7 @@ import bibliothek.gui.dock.title.DockTitleRequest;
  * @author Benjamin Sigg
  */
 public class CFlapDockStation extends FlapDockStation implements CommonDockStation<FlapDockStation, CFlapDockStation>{
-	private CommonStationDelegate<FlapDockStation> delegate;
+	private CommonStationDelegate<CFlapDockStation> delegate;
 	private Component expansion;
 	private CHoldActionHandler actionHandler = new CHoldActionHandler();
 	
@@ -63,7 +63,7 @@ public class CFlapDockStation extends FlapDockStation implements CommonDockStati
 	 * this station, can be <code>null</code>
 	 * @param delegate offers additional methods required by this station
 	 */
-	public CFlapDockStation( Component expansion, CommonStationDelegate<FlapDockStation> delegate ){
+	public CFlapDockStation( Component expansion, CommonStationDelegate<CFlapDockStation> delegate ){
 		this.expansion = expansion;
 		this.delegate = delegate;
 		
@@ -87,7 +87,7 @@ public class CFlapDockStation extends FlapDockStation implements CommonDockStati
 		return delegate.getSources();
 	}
 
-	public CStation<FlapDockStation> getStation(){
+	public CStation<CFlapDockStation> getStation(){
 		return delegate.getStation();
 	}
 	

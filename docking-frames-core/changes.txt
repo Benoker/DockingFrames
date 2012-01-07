@@ -682,6 +682,9 @@
  - API: TabDecorator now makes use of TabContentFilter, and updates its content if the Dockable changes its title or icon
  - API: The EclipseDockableDisplayer2 replaces EclipseDockableDisplayer, it is based on BasicDockableDisplayer - like all the other displayers.
  - API: BasicDockableDisplayer can now show the title above the decorator
-  
+ ! API: Generics now force CStations to use CommonDockStation as internal representations
+ - Bugfix: when maximizing a CDockable, the CMaximizedMode tries to ensure that the dockable remains in the same CStationContainer
+ 
+ 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

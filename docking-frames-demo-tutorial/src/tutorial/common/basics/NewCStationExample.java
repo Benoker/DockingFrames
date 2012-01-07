@@ -103,7 +103,7 @@ public class NewCStationExample {
 	 * 
 	 * To make our life easier we extend from AbstractCDockableStation which already implements many methods 
 	 * of CDockable and CStation. */
-	private static class CStack extends AbstractDockableCStation<StackDockStation> implements CNormalModeArea{
+	private static class CStack extends AbstractDockableCStation<CStackDockStation> implements CNormalModeArea{
 		public CStack( String id ){
 			CStackDockStation delegate = new CStackDockStation( this );
 
@@ -277,7 +277,7 @@ public class NewCStationExample {
 			return delegate.getSources();
 		}
 
-		public CStation<StackDockStation> getStation(){
+		public CStation<CStackDockStation> getStation(){
 			return delegate;
 		}
 		

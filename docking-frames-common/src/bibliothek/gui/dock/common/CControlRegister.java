@@ -142,6 +142,21 @@ public interface CControlRegister {
     public Set<String> listSingleDockables();
     
     /**
+     * Gets an unmodifiable list of all {@link CStationContainer}s known 
+     * to this register. The list might or might not be updated when the contents
+     * of this register change.
+     * @return the unmodifiable list
+     */
+    public List<CStationContainer> getStationContainers();
+    
+    /**
+     * Searches the {@link CStationContainer} which contains <code>child</code>.
+     * @param child the child whose parent is searched
+     * @return the parent of <code>child</code> or <code>null</code>
+     */
+    public CStationContainer getContainer( CStation<?> child );
+    
+    /**
      * Transforms an identifier to an identifier for a {@link SingleCDockable}.<br>
      * Note that this method must never create an identifier that passes 
      * {@link #isMultiId(String)}.
