@@ -84,8 +84,7 @@ import bibliothek.gui.dock.util.color.DockColor;
     "action.button.text.mouse.enabled",
     "action.button.text.mouse.selected.enabled",
     "action.button.text.pressed.enabled",
-    "action.button.text.pressed.selected.enabled",
-})
+    "action.button.text.pressed.selected.enabled" })
 public class RoundButton extends JComponent implements RoundButtonConnectable{
     private BubbleColorAnimation animation;
 	

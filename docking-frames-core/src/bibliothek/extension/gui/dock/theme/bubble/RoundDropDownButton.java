@@ -94,8 +94,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "action.dropdown.text.mouse.enabled",
     "action.dropdown.text.mouse.selected.enabled",
     "action.dropdown.text.pressed.enabled",
-    "action.dropdown.text.pressed.selected.enabled",
-})
+    "action.dropdown.text.pressed.selected.enabled" })
 public class RoundDropDownButton extends JComponent implements RoundButtonConnectable{
 	/** the animation that changes the colors */
     private BubbleColorAnimation animation;
