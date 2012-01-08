@@ -232,6 +232,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	setBackground( background );
     	
         setTitleLocation( location );
+        setStation( station );
         setDockable( dockable );
         setTitle( title );
         setFocusable( true );
@@ -430,13 +431,12 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	    this.dockable.configureDisplayerHints( null );
         }
         
-    	updateDecorator();
-    	
-    	resetDecorator();
-    	
         hints.setShowBorderHint( null );
         this.dockable = dockable;
         
+        updateDecorator();
+    	resetDecorator();
+    	
         if( dockable != null ){
             this.dockable.configureDisplayerHints( hints );
         }

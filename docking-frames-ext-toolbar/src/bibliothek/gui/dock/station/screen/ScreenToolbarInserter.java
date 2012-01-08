@@ -89,7 +89,7 @@ public class ScreenToolbarInserter implements Inserter{
 		if (source.getParent().accept(source.getChild())
 				&& source.getChild().accept(source.getParent())){
 			// if a DockAcceptance does not allow the combination, while the
-			// involved elements does, we better
+			// involved elements do, we better
 			// assume the DockAcceptance has a good reason.
 			return null;
 		}
