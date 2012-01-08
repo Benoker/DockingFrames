@@ -15,19 +15,15 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
  * 
  * @author Benjamin Sigg
  */
-public interface ExpandableToolbarItemStrategy{
+public interface ExpandableToolbarItemStrategy {
 
 	/** an identifier to exchange the strategy */
-	public static final PropertyKey<ExpandableToolbarItemStrategy> STRATEGY = new PropertyKey<ExpandableToolbarItemStrategy>(
-			"expandable toolbar item strategy",
-			new DynamicPropertyFactory<ExpandableToolbarItemStrategy>(){
-				@Override
-				public ExpandableToolbarItemStrategy getDefault(
-						PropertyKey<ExpandableToolbarItemStrategy> key,
-						DockProperties properties ){
-					return new DefaultExpandableToolbarItemStrategy();
-				}
-			}, true);
+	public static final PropertyKey<ExpandableToolbarItemStrategy> STRATEGY = new PropertyKey<ExpandableToolbarItemStrategy>( "expandable toolbar item strategy", new DynamicPropertyFactory<ExpandableToolbarItemStrategy>(){
+		@Override
+		public ExpandableToolbarItemStrategy getDefault( PropertyKey<ExpandableToolbarItemStrategy> key, DockProperties properties ){
+			return new DefaultExpandableToolbarItemStrategy();
+		}
+	}, true );
 
 	/**
 	 * Called if this strategy is used by <code>controller</code>.
@@ -86,8 +82,7 @@ public interface ExpandableToolbarItemStrategy{
 	 * @param listener
 	 *            the new listener, not <code>null</code>
 	 */
-	public void addExpandedListener(
-			ExpandableToolbarItemStrategyListener listener );
+	public void addExpandedListener( ExpandableToolbarItemStrategyListener listener );
 
 	/**
 	 * Removes a listener from this strategy.
@@ -95,6 +90,5 @@ public interface ExpandableToolbarItemStrategy{
 	 * @param listener
 	 *            the listener to remove
 	 */
-	public void removeExpandedListener(
-			ExpandableToolbarItemStrategyListener listener );
+	public void removeExpandedListener( ExpandableToolbarItemStrategyListener listener );
 }

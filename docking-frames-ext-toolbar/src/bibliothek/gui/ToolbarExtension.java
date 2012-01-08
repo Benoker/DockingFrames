@@ -18,6 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
@@ -74,8 +75,11 @@ import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.NullTitleFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandManager;
+import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockPropertyListener;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.gui.dock.util.Priority;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.TextManager;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.extension.ExtensionName;
@@ -91,7 +95,7 @@ public class ToolbarExtension implements Extension {
 	public static final ViewTarget<BasicTitleViewItem<JComponent>> TOOLBAR_TITLE = new ViewTarget<BasicTitleViewItem<JComponent>>( "target TOOLBAR TITLE" );
 
 	@Override
-	public void install( DockController controller ){
+	public void install( final DockController controller ){
 		final ActionViewConverter converter = controller.getActionViewConverter();
 		converter.putDefault( ActionType.BUTTON, TOOLBAR_TITLE, new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
 			@Override
@@ -151,6 +155,20 @@ public class ToolbarExtension implements Extension {
 				}
 			}
 		} );
+
+		// install expandable strategy
+		controller.getProperties().addListener( ExpandableToolbarItemStrategy.STRATEGY, new DockPropertyListener<ExpandableToolbarItemStrategy>(){
+			@Override
+			public void propertyChanged( DockProperties properties, PropertyKey<ExpandableToolbarItemStrategy> property, ExpandableToolbarItemStrategy oldValue, ExpandableToolbarItemStrategy newValue ){
+				if( oldValue != null ) {
+					oldValue.uninstall( controller );
+				}
+				if( newValue != null ) {
+					newValue.install( controller );
+				}
+			}
+		} );
+		controller.getProperties().get( ExpandableToolbarItemStrategy.STRATEGY ).install( controller );
 	}
 
 	private Icon loadIcon( String name ){
@@ -208,7 +226,7 @@ public class ToolbarExtension implements Extension {
 		if( extension.getName().equals( DefaultScreenDockWindowConfiguration.CONFIGURATION_EXTENSION ) ) {
 			return (Collection<E>) createWindowConfigurationExtension( controller );
 		}
-		if( extension.getName().equals( DefaultDockableMovingImageFactory.FACTORY_EXTENSION )) {
+		if( extension.getName().equals( DefaultDockableMovingImageFactory.FACTORY_EXTENSION ) ) {
 			return (Collection<E>) createMovingImageFactory();
 		}
 
@@ -321,7 +339,7 @@ public class ToolbarExtension implements Extension {
 
 	protected Collection<DockableMovingImageFactory> createMovingImageFactory(){
 		final List<DockableMovingImageFactory> result = new ArrayList<DockableMovingImageFactory>();
-		result.add( new ToolbarMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 200, 200 ))));
+		result.add( new ToolbarMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 200, 200 ) ) ) );
 		return result;
 	}
 }

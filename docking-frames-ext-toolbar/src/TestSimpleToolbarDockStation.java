@@ -4,6 +4,8 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -43,6 +45,7 @@ public class TestSimpleToolbarDockStation{
 		ComponentDockable dockable4 = new ComponentDockable(new JButton("Four"));
 		ComponentDockable dockable5 = new ComponentDockable(new JButton("Five"));
 		ComponentDockable dockable6 = new ComponentDockable(new JButton("Six"));
+		dockable6.setComponent( new JTextField("this is a test text"), ExpandedState.STRETCHED );
 		innerToolbarStation.drop(dockable);
 		innerToolbarStation.drop(dockable2);
 		innerToolbarStation.drop(dockable3);
@@ -69,13 +72,13 @@ public class TestSimpleToolbarDockStation{
 		
 
 		// Disable the expand state action button
-		controller.getProperties().set(ExpandableToolbarItemStrategy.STRATEGY,
-				new DefaultExpandableToolbarItemStrategy(){
-					@Override
-					public boolean isEnabled( Dockable item, ExpandedState state ){
-						return false;
-					}
-				});
+//		controller.getProperties().set(ExpandableToolbarItemStrategy.STRATEGY,
+//				new DefaultExpandableToolbarItemStrategy(){
+//					@Override
+//					public boolean isEnabled( Dockable item, ExpandedState state ){
+//						return false;
+//					}
+//				});
 
 		frame.setBounds(20, 20, 400, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

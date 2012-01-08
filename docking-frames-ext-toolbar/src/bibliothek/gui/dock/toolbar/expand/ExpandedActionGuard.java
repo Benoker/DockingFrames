@@ -56,10 +56,8 @@ public class ExpandedActionGuard implements ActionGuard {
 				for( final ExpandSource source : sources.values() ) {
 					oldValue.removeExpandedListener( source );
 				}
-				oldValue.uninstall( controller );
 			}
 			if( newValue != null ) {
-				newValue.install( controller );
 				for( final ExpandSource source : sources.values() ) {
 					newValue.addExpandedListener( source );
 					source.update();

@@ -8,8 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
@@ -27,10 +25,10 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.ToolbarTabDockStation;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
@@ -40,7 +38,6 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
-import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -48,14 +45,11 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.NullTitleFactory;
-import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
-import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
-import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 
 /**
@@ -64,7 +58,7 @@ import bibliothek.util.Path;
  * 
  * @author Herve Guillaume
  */
-public class SimpleToolbarDockStation extends AbstractDockableStation implements ToolbarInterface, ToolbarElementInterface, ExpandableToolbarItem {
+public class SimpleToolbarDockStation extends AbstractDockableStation implements ToolbarInterface, ToolbarElementInterface {
 
 	/** the id of the {@link DockTitleFactory} which is used by this station */
 	public static final String TITLE_ID = "simple.toolbar";
@@ -90,6 +84,14 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 			dockables.setStrategy( newValue );
 		}
 	};
+	
+	/** Strategy used to shrink the children of this station */
+	private PropertyValue<ExpandableToolbarItemStrategy> expandableStrategy = new PropertyValue<ExpandableToolbarItemStrategy>( ExpandableToolbarItemStrategy.STRATEGY ){
+		@Override
+		protected void valueChanged( ExpandableToolbarItemStrategy oldValue, ExpandableToolbarItemStrategy newValue ){
+			shrinkAll();
+		}
+	};
 
 	/**
 	 * a helper class ensuring that all properties of the
@@ -111,11 +113,6 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 	 * accordingly
 	 */
 	protected boolean prepareDropDraw = false;
-
-	/** all registered {@link ExpandableToolbarItemListener}s */
-	private final List<ExpandableToolbarItemListener> expandableListeners = new ArrayList<ExpandableToolbarItemListener>();
-	/** the current behavior of this station */
-	private ExpandedState state = ExpandedState.SHRUNK;
 
 	// ########################################################
 	// ############ Initialization Managing ###################
@@ -192,6 +189,7 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 			}
 			paint.setController( controller );
 			placeholderStrategy.setProperties( controller );
+			expandableStrategy.setProperties( controller );
 			displayerFactory.setController( controller );
 			displayers.setController( controller );
 			mainPanel.setController( controller );
@@ -245,146 +243,22 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 	// ############ Expanded State Managing ###################
 	// ########################################################
 
-	@Override
-	public ExpandedState getExpandedState(){
-		return state;
-	}
-
-	/**
-	 * Sets the {@link ExpandedState} of this station.
-	 * 
-	 * @param state
-	 *            the new state, not <code>null</code>
-	 * @param action
-	 *            if <code>true</code>, then
-	 *            {@link #setExpandedState(ExpandedState)} is called. Otherwise
-	 *            the property is changed without actually performing any
-	 *            actions. The later option should only be used while loading a
-	 *            layout.
-	 */
-	@FrameworkOnly
-	public void setExpandedState( ExpandedState state, boolean action ){
-		if( action ) {
-			setExpandedState( state );
-		}
-		else {
-			this.state = state;
-		}
-	}
-
-	@Override
-	public void setExpandedState( ExpandedState state ){
-		if( this.state != state ) {
-			final DockController controller = getController();
-			if( controller != null ) {
-				controller.freezeLayout();
+	private void shrink( Dockable dockable ){
+		ExpandableToolbarItemStrategy strategy = expandableStrategy.getValue();
+		if( strategy != null ){
+			if( strategy.isEnabled( dockable, ExpandedState.SHRUNK )){
+				strategy.setState( dockable, ExpandedState.SHRUNK );
 			}
-			try {
-				final ExpandedState oldState = this.state;
-
-				if( this.state != ExpandedState.SHRUNK ) {
-					shrink();
-				}
-				if( state == ExpandedState.EXPANDED ) {
-					expand();
-				}
-				else if( state == ExpandedState.STRETCHED ) {
-					stretch();
-				}
-				this.state = state;
-
-				for( final ExpandableToolbarItemListener listener : expandableListeners ) {
-					listener.changed( this, oldState, state );
-				}
-			}
-			finally {
-				if( controller != null ) {
-					controller.meltLayout();
-				}
+			else if( strategy.isEnabled( dockable, ExpandedState.STRETCHED )){
+				strategy.setState( dockable, ExpandedState.STRETCHED );
 			}
 		}
 	}
-
-	private void expand(){
-		// state is "shrunk"
-
-		final DockController controller = getController();
-		Dockable focused = null;
-
-		final Dockable[] children = new Dockable[getDockableCount()];
-		for( int i = 0; i < children.length; i++ ) {
-			children[i] = getDockable( i );
-			if( (controller != null) && controller.isFocused( children[i] ) ) {
-				focused = children[i];
-			}
+	
+	private void shrinkAll(){
+		for( int i = 0, n = getDockableCount(); i<n; i++ ){
+			shrink( getDockable( i ) );
 		}
-
-		for( int i = children.length - 1; i >= 0; i-- ) {
-			remove( getDockable( i ) );
-		}
-
-		final StackDockStation station = new ToolbarTabDockStation();
-		for( final Dockable child : children ) {
-			station.drop( child );
-		}
-
-		drop( station );
-		if( focused != null ) {
-			station.setFrontDockable( focused );
-			controller.setFocusedDockable( focused, true );
-		}
-	}
-
-	public void stretch(){
-		// state is "shrunk"
-	}
-
-	public void shrink(){
-		if( state == ExpandedState.EXPANDED ) {
-			final DockController controller = getController();
-
-			final DockStation child = getDockable( 0 ).asDockStation();
-			final Dockable focused = child.getFrontDockable();
-			remove( getDockable( 0 ) );
-
-			final Dockable[] children = new Dockable[child.getDockableCount()];
-			for( int i = 0; i < children.length; i++ ) {
-				children[i] = child.getDockable( i );
-			}
-			for( int i = children.length - 1; i >= 0; i-- ) {
-				child.drag( children[i] );
-			}
-
-			for( final Dockable next : children ) {
-				drop( next );
-			}
-			if( (focused != null) && (controller != null) ) {
-				controller.setFocusedDockable( focused, true );
-			}
-		}
-	}
-
-	@Override
-	public void addExpandableListener( ExpandableToolbarItemListener listener ){
-		if( listener == null ) {
-			throw new IllegalArgumentException( "listener must not be null" );
-		}
-		expandableListeners.add( listener );
-	}
-
-	@Override
-	public void removeExpandableListener( ExpandableToolbarItemListener listener ){
-		expandableListeners.remove( listener );
-	}
-
-	/**
-	 * Gets all the {@link ExpandableToolbarItemListener}s that are currently
-	 * registered.
-	 * 
-	 * @return all the listeners
-	 */
-	protected ExpandableToolbarItemListener[] expandableListeners(){
-		return expandableListeners.toArray( new ExpandableToolbarItemListener[expandableListeners.size()] );
 	}
 
 	// ########################################################
@@ -407,11 +281,6 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
 		System.out.println(this.toString() + "## prepareDrop(...) ##");
 		final DockController controller = getController();
-
-		if( getExpandedState() == ExpandedState.EXPANDED ) {
-			System.out.println("EXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDEDEXPANDED");
-			return null;
-		}
 
 		// check if the dockable and the station accept each other
 		if( this.accept( dockable ) & dockable.accept( this ) ) {
@@ -504,6 +373,7 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 		try {
 			listeners.fireDockableAdding( dockable );
+			shrink( dockable );
 			int inserted = -1;
 
 			final StationChildHandle handle = new StationChildHandle( this, displayers, dockable, title );
@@ -577,9 +447,6 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 
 	@Override
 	public boolean canDrag( Dockable dockable ){
-		if( getExpandedState() == ExpandedState.EXPANDED ) {
-			return false;
-		}
 		return true;
 	}
 

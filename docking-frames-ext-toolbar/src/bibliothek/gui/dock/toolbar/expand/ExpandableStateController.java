@@ -18,7 +18,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * 
  * @author Benjamin Sigg
  */
-public class ExpandableStateController{
+public class ExpandableStateController {
 	/** the observed item */
 	private final ExpandableToolbarItem item;
 
@@ -26,16 +26,14 @@ public class ExpandableStateController{
 	private DockController controller;
 
 	/** the current strategy */
-	private final PropertyValue<ExpandableToolbarItemStrategy> strategy = new PropertyValue<ExpandableToolbarItemStrategy>(
-			ExpandableToolbarItemStrategy.STRATEGY){
+	private final PropertyValue<ExpandableToolbarItemStrategy> strategy = new PropertyValue<ExpandableToolbarItemStrategy>( ExpandableToolbarItemStrategy.STRATEGY ){
 		@Override
-		protected void valueChanged( ExpandableToolbarItemStrategy oldValue,
-				ExpandableToolbarItemStrategy newValue ){
-			if (oldValue != null){
-				oldValue.removeExpandedListener(strategyListener);
+		protected void valueChanged( ExpandableToolbarItemStrategy oldValue, ExpandableToolbarItemStrategy newValue ){
+			if( oldValue != null ) {
+				oldValue.removeExpandedListener( strategyListener );
 			}
-			if ((newValue != null) && (controller != null)){
-				newValue.addExpandedListener(strategyListener);
+			if( (newValue != null) && (controller != null) ) {
+				newValue.addExpandedListener( strategyListener );
 			}
 			refresh();
 		}
@@ -44,28 +42,27 @@ public class ExpandableStateController{
 	private final ExpandableToolbarItemStrategyListener strategyListener = new ExpandableToolbarItemStrategyListener(){
 		@Override
 		public void stretched( Dockable item ){
-			if (DockUtilities.isAncestor(item, getItem())){
+			if( DockUtilities.isAncestor( item, getItem() ) ) {
 				refresh();
 			}
 		}
 
 		@Override
 		public void shrunk( Dockable item ){
-			if (DockUtilities.isAncestor(item, getItem())){
+			if( DockUtilities.isAncestor( item, getItem() ) ) {
 				refresh();
 			}
 		}
 
 		@Override
 		public void expanded( Dockable item ){
-			if (DockUtilities.isAncestor(item, getItem())){
+			if( DockUtilities.isAncestor( item, getItem() ) ) {
 				refresh();
 			}
 		}
 
 		@Override
-		public void enablementChanged( Dockable item, ExpandedState state,
-				boolean enabled ){
+		public void enablementChanged( Dockable item, ExpandedState state, boolean enabled ){
 			// ignore
 		}
 	};
@@ -79,7 +76,7 @@ public class ExpandableStateController{
 	public ExpandableStateController( ExpandableToolbarItem item ){
 		this.item = item;
 
-		item.addDockHierarchyListener(new DockHierarchyListener(){
+		item.addDockHierarchyListener( new DockHierarchyListener(){
 			@Override
 			public void hierarchyChanged( DockHierarchyEvent event ){
 				refresh();
@@ -88,10 +85,10 @@ public class ExpandableStateController{
 			@Override
 			public void controllerChanged( DockHierarchyEvent event ){
 				controller = getItem().getController();
-				strategy.setProperties(controller);
+				strategy.setProperties( controller );
 			}
-		});
-		strategy.setProperties(getItem().getController());
+		} );
+		strategy.setProperties( getItem().getController() );
 		refresh();
 	}
 
@@ -111,21 +108,25 @@ public class ExpandableStateController{
 	 * state as its parent.
 	 */
 	public void refresh(){
-		Dockable current = item;
-		final ExpandableToolbarItemStrategy strategy = this.strategy.getValue();
-		if (strategy != null){
-			while (current != null){
-				final ExpandedState state = strategy.getState(current);
-				if (state != null){
-					item.setExpandedState(state);
-					return;
-				}
-
-				final DockStation station = current.getDockParent();
-				if (station != null){
-					current = station.asDockable();
-				} else{
-					current = null;
+		DockStation station = item.getDockParent();
+		if( station != null ){
+			Dockable current = station.asDockable();
+			final ExpandableToolbarItemStrategy strategy = this.strategy.getValue();
+			if( strategy != null ) {
+				while( current != null ) {
+					final ExpandedState state = strategy.getState( current );
+					if( state != null ) {
+						item.setExpandedState( state );
+						return;
+					}
+	
+					station = current.getDockParent();
+					if( station != null ) {
+						current = station.asDockable();
+					}
+					else {
+						current = null;
+					}
 				}
 			}
 		}
