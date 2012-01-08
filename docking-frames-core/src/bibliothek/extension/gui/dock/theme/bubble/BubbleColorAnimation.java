@@ -94,7 +94,7 @@ public class BubbleColorAnimation {
      * to <code>color</code>. If no color is stored, then <code>color</code> is just set
      * without starting an animation.
      * @param key the key of the pair
-     * @param color the destination of the animation
+     * @param color the destination of the animation, can be <code>null</code>
      */
     public void putColor( String key, Color color ){
         Entry entry = colors.get( key );
@@ -217,6 +217,9 @@ public class BubbleColorAnimation {
         private Color source;
         /** The color to which the animation runs */
         private Color destination;
+        /** Whether {@link #destination} was set */
+        private boolean destinationSet = false;
+        
         /** Replacement of {@link #source} for special circumstances */
         private Color intermediate;
         /** The age of the current transition from source to destination */
@@ -235,6 +238,20 @@ public class BubbleColorAnimation {
             
             Color source = intermediate == null ? this.source : intermediate;
             
+            if( source == null ){
+            	if( age >= duration/2 ){
+            		return destination;
+            	}
+            	return null;
+            }
+            
+            if( destination == null ){
+            	if( age <= duration/2 ){
+            		return source;
+            	}
+            	return null;
+            }
+            
             double s = (duration - age) / (double)duration;
             double d = age / (double)duration;
             return new Color(
@@ -250,14 +267,16 @@ public class BubbleColorAnimation {
          * if the animation is finished
          */
         public boolean step( int delta ){
-            if( destination == null )
-                return false;
+            if( !destinationSet ){
+            	return false;
+            }
             
             age += delta;
             if( age >= duration ){
                 age = 0;
                 source = destination;
                 destination = null;
+                destinationSet = false;
                 intermediate = null;
                 return false;
             }
@@ -270,8 +289,9 @@ public class BubbleColorAnimation {
          */
         public void kick(){
             age = 0;
-            if( destination != null ){
+            if( destinationSet ){
                 source = destination;
+                destinationSet = false;
             }
             destination = null;
             intermediate = null;
@@ -283,7 +303,7 @@ public class BubbleColorAnimation {
          * @param destination the new destination
          */
         public void setColors( Color source, Color destination ){
-            if( age == 0 ){
+        	if( age == 0 ){
                 this.source = destination;
             }
             else{
@@ -298,6 +318,7 @@ public class BubbleColorAnimation {
          * @param color the new destination
          */
         public void setDestination( Color color ){
+        	destinationSet = true;
         	if( destination == null || !destination.equals( color )){
         		if( age == 0 ){
 	                destination = color;

@@ -182,10 +182,26 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     }
     
     @Override
+    public Color getForeground(){
+	    if( label == null ){
+	    	return null;
+	    }
+	    return label.getForeground();
+    }
+    
+    @Override
     public void setBackground( Color bg ) {
         super.setBackground(bg);
         if( label != null )
             label.setBackground( bg );
+    }
+    
+    @Override
+    public Color getBackground(){
+    	if( label == null ){
+    		return null;
+    	}
+    	return label.getBackground();
     }
     
     @Override

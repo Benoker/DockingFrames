@@ -85,7 +85,17 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "action.dropdown.line.mouse.enabled",
     "action.dropdown.line.mouse.selected.enabled",
     "action.dropdown.line.pressed.enabled",
-    "action.dropdown.line.pressed.selected.enabled"})
+    "action.dropdown.line.pressed.selected.enabled",
+
+    "action.dropdown.text",
+    "action.dropdown.text.enabled",
+    "action.dropdown.text.selected",
+    "action.dropdown.text.selected.enabled",
+    "action.dropdown.text.mouse.enabled",
+    "action.dropdown.text.mouse.selected.enabled",
+    "action.dropdown.text.pressed.enabled",
+    "action.dropdown.text.pressed.selected.enabled",
+})
 public class RoundDropDownButton extends JComponent implements RoundButtonConnectable{
 	/** the animation that changes the colors */
     private BubbleColorAnimation animation;
@@ -114,7 +124,13 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
      * @param action the action that is shown
      */
     public RoundDropDownButton( BasicDropDownButtonHandler handler, Dockable dockable, DockAction action ){
-        animation = new BubbleColorAnimation();
+		animation = new BubbleColorAnimation(){
+			@Override
+			protected void pulse(){
+				super.pulse();
+				content.setLabelForeground( animation.getColor( "text" ) );
+			}
+		};
         
         colors = new RoundActionColor[]{
                 new RoundActionColor( "action.dropdown", dockable, action, Color.WHITE ),
@@ -143,6 +159,15 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 new RoundActionColor( "action.dropdown.line.mouse.selected.enabled", dockable, action, Color.DARK_GRAY ),
                 new RoundActionColor( "action.dropdown.line.pressed.enabled", dockable, action, Color.DARK_GRAY ),
                 new RoundActionColor( "action.dropdown.line.pressed.selected.enabled", dockable, action, Color.DARK_GRAY ),
+                
+                new RoundActionColor( "action.dropdown.text", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.selected", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.enabled.selected", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.mouse.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.mouse.selected.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.pressed.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.pressed.selected.enabled", dockable, action, null ),
         };
         
         animation.addTask( new Runnable(){
@@ -428,19 +453,23 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         else
             mouse = "dropdown";
         
+        String text = "action.dropdown.text";
         String background;
         
         if( pressed && enabled ){
             background = "action.dropdown.pressed" + postfix;
             mouse = "action." + mouse + ".pressed" + postfix;
+            text += ".pressed" + postfix;
         }
         else if( entered && enabled ){
             background = "action.dropdown.mouse" + postfix;
             mouse = "action." + mouse + ".mouse" + postfix;
+            text += ".mouse" + postfix;
         }
         else{
             background = "action.dropdown" + postfix;
             mouse = "action." + mouse + postfix;
+            text += postfix;
         }
         
         String focus = background + ".focus";
@@ -452,6 +481,8 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 animation.putColor( "mouse", color.value() );
             if( focus.equals( color.getId() ))
                 animation.putColor( "focus", color.value() );
+            if( text.equals( color.getId() ))
+            	animation.putColor( "text", color.value() );
         }
     }
     

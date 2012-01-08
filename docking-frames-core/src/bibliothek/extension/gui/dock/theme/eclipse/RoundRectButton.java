@@ -43,12 +43,17 @@ import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.util.Colors;
 
 /**
  * A button that has a round rect shape.
  * @author Benjamin Sigg
  */
+@ColorCodes({
+	"action.button.text",
+	"action.button.text.disabled"
+})
 public class RoundRectButton extends JComponent implements FocusAwareComponent{
     private BasicButtonModel model;
     private Runnable afterFocusRequest;
@@ -70,6 +75,7 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
         setLayout( null );
         add( content );
         content.setModel( model );
+        content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
         
         model.addListener( new BasicButtonModelAdapter(){
         	@Override

@@ -75,7 +75,16 @@ import bibliothek.gui.dock.util.color.DockColor;
     "action.button.pressed.enabled",
     "action.button.pressed.enabled.focus",
     "action.button.pressed.selected.enabled",
-    "action.button.pressed.selected.enabled.focus"
+    "action.button.pressed.selected.enabled.focus",
+    
+    "action.button.text",
+    "action.button.text.enabled",
+    "action.button.text.selected",
+    "action.button.text.selected.enabled",
+    "action.button.text.mouse.enabled",
+    "action.button.text.mouse.selected.enabled",
+    "action.button.text.pressed.enabled",
+    "action.button.text.pressed.selected.enabled",
 })
 public class RoundButton extends JComponent implements RoundButtonConnectable{
     private BubbleColorAnimation animation;
@@ -103,7 +112,13 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		setLayout( null );
 		add( content );
 		
-		animation = new BubbleColorAnimation();
+		animation = new BubbleColorAnimation(){
+			@Override
+			protected void pulse(){
+				super.pulse();
+				content.setLabelForeground( animation.getColor( "text" ) );
+			}
+		};
 		
 		colors = createColors( dockable, action );
 		
@@ -170,7 +185,17 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		        createColor( "action.button.mouse.enabled.focus", dockable, action, Color.DARK_GRAY ),
 		        createColor( "action.button.mouse.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
 		        createColor( "action.button.pressed.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		        createColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY )};
+		        createColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        
+		        createColor( "action.button.text", dockable, action, null ),
+		        createColor( "action.button.text.enabled", dockable, action, null ),
+		        createColor( "action.button.text.selected", dockable, action, null ),
+		        createColor( "action.button.text.selected.enabled", dockable, action, null ),
+		        createColor( "action.button.text.mouse.enabled", dockable, action, null ),
+		        createColor( "action.button.text.mouse.selected.enabled", dockable, action, null ),
+		        createColor( "action.button.text.pressed.enabled", dockable, action, null ),
+		        createColor( "action.button.text.pressed.selected.enabled", dockable, action, null ),		        
+		};
 	}
 	
 	/**
@@ -382,7 +407,16 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     	if( enabled )
     		postfix += ".enabled";
     	
-    	String key = "action.button" + postfix;
+    	String key = "action.button.text" + postfix;
+    	for( AbstractDockColor color : colors ){
+    	    if( key.equals( color.getId() )){
+System.out.println( key + " " + color.value() );
+    	        animation.putColor( "text", color.value() );
+    	        break;
+    	    }
+    	}
+    	
+    	key = "action.button" + postfix;
     	for( AbstractDockColor color : colors ){
     	    if( key.equals( color.getId() )){
     	        animation.putColor( "button", color.value() );

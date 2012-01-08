@@ -45,6 +45,7 @@ import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * A small {@link Component} used as view of a {@link BasicButtonModel}.
@@ -52,6 +53,10 @@ import bibliothek.gui.dock.util.BackgroundPaint;
  * @param <M> the type of model used to describe the state of this button
  * @author Benjamin Sigg
  */
+@ColorCodes({
+	"action.button.text",
+	"action.button.text.disabled"
+})
 public class MiniButton<M extends BasicButtonModel> extends JComponent {
 	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the normal state. */
 	public static final String BORDER_KEY_NORMAL = ThemeManager.BORDER_MODIFIER + ".action.miniButton.normal";
@@ -145,6 +150,10 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
                 repaint();
             }
         });
+        
+        if( model != null ){
+        	content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
+        }
     }
     
     /**
@@ -175,8 +184,10 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     	content.setModel( model );
         this.model = model;
         
-        if( this.model != null )
+        if( this.model != null ){
         	this.model.addListener( listener );
+        	content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
+        }
         
         updateBorder();
     }

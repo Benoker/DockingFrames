@@ -45,12 +45,17 @@ import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
+import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.util.Colors;
 
 /**
  * A button with a shape of a roundrect, displaying a {@link DropDownAction}.
  * @author Benjamin Sigg
  */
+@ColorCodes({
+	"action.button.text",
+	"action.button.text.disabled"
+})
 public class RoundRectDropDownButton extends JComponent implements FocusAwareComponent {
     /** a model containing all information needed to paint this button */
     private BasicDropDownButtonModel model;
@@ -93,6 +98,7 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         setLayout( null );
         add( content );
         content.setModel( model );
+        content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
         
         dropIcon = handler.getDropDownIcon();
         
