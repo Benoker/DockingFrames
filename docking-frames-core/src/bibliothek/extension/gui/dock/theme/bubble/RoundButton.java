@@ -410,7 +410,6 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     	String key = "action.button.text" + postfix;
     	for( AbstractDockColor color : colors ){
     	    if( key.equals( color.getId() )){
-System.out.println( key + " " + color.value() );
     	        animation.putColor( "text", color.value() );
     	        break;
     	    }
