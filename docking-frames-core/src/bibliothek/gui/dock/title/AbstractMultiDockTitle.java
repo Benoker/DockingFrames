@@ -167,7 +167,7 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
     
     /**
      * Constructor which does not do anything. Subclasses should call
-     * {@link #init(Dockable, DockTitleVersion, boolean)} to initialize
+     * {@link #init(Dockable, DockTitleVersion)} to initialize
      * the title.
      */
     protected AbstractMultiDockTitle(){

@@ -618,21 +618,30 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		Path placeholder = getPlaceholder( dockable.asDockable() );
 
 		if( placeholder == null ) {
-			if( entry.item.hasPlaceholders() ) {
-				entry.item.setDockable( null );
-			}
-			else {
-				entry.remove();
-			}
+			entry.item.setDockable( null );
 		}
 		else {
 			entry.item.add( placeholder );
 			entry.item.setDockable( null );
-			S station = toStation( dockable.asDockable() );
-			if( station != null ) {
-				entry.item.setPlaceholderMap( getPlaceholders( station ) );
+		}
+		
+		S station = toStation( dockable.asDockable() );
+		if( station != null ) {
+			PlaceholderMap map = getPlaceholders( station );
+			entry.item.setPlaceholderMap( map );
+			if( map != null ){
+				for( Key key : map.getPlaceholders() ){
+					for( Path keyPlaceholder : key.getPlaceholders() ){
+						entry.item.add( keyPlaceholder );
+					}
+				}
 			}
 		}
+		
+		if( !entry.item.hasPlaceholders() ){
+			entry.remove();
+		}
+		
 		return placeholder;
 	}
 

@@ -59,6 +59,7 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
+import bibliothek.util.Path;
 
 /**
  * A {@link Dockable} and a {@link DockStation} which stands for a group of
@@ -304,7 +305,20 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
 		final int index = indexOf( child );
-		return new ToolbarContainerProperty( index, null );
+		Path placeholder = null;
+		PlaceholderStrategy strategy = getPlaceholderStrategy();
+		if( strategy != null ){
+			if( target != null ){
+				placeholder = strategy.getPlaceholderFor( target );
+			}
+			else{
+				placeholder = strategy.getPlaceholderFor( child );
+			}
+			if( placeholder != null ){
+				dockables.dockables().addPlaceholder( index, placeholder );
+			}
+		}
+		return new ToolbarContainerProperty( index, placeholder );
 	}
 
 	@Override
@@ -498,13 +512,33 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	public boolean drop( Dockable dockable, DockableProperty property ){
 		if( property instanceof ToolbarContainerProperty ) {
 			final ToolbarContainerProperty toolbar = (ToolbarContainerProperty) property;
-			int index = toolbar.getIndex();
+			
+			Path placeholder = toolbar.getPlaceholder();
+			
+			boolean hasPlaceholder = false;
+			int index = -1;
+			StationChildHandle presetHandle = null;
+			
+			if( placeholder != null ){
+				hasPlaceholder = dockables.hasPlaceholder( placeholder );
+				if( hasPlaceholder ){
+					index = dockables.getDockableIndex( placeholder );
+					presetHandle = dockables.getDockableAt( placeholder );
+				}
+			}
+			
+			if( index == -1 ){
+				index = toolbar.getIndex();
+			}
 
 			if( toolbar.getSuccessor() != null ) {
-				Dockable preset = null;
 				final DockablePlaceholderList<StationChildHandle> list = getDockables();
-
-				if( index >= 0 && index < list.dockables().size() ) {
+				Dockable preset = null;
+				
+				if( presetHandle != null ){
+					preset = presetHandle.asDockable();
+				}
+				else if( !hasPlaceholder && index >= 0 && index < list.dockables().size() ) {
 					preset = list.dockables().get( index ).getDockable();
 				}
 
@@ -774,7 +808,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			listeners.fireDockableRemoving( dockable );
 			dockable.setDockParent( null );
 			final StationChildHandle childHandle = dockables.get( index );
-			dockables.remove( index );
+			getDockables().remove( index );
 			getContainerPanel().remove( childHandle.getDisplayer().getComponent() );
 			childHandle.destroy();
 
@@ -818,6 +852,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				dockable.setDockParent( this );
 				final DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables().dockables();
 				final StationChildHandle handle = new StationChildHandle( this, displayer, dockable, title );
+				
 				dockables.add( index, handle );
 				handle.updateDisplayer();
 				insertAt( handle, index );

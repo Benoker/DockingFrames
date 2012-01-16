@@ -128,4 +128,10 @@ public interface FrontendEntry {
      * @return the information, might be <code>null</code>
      */
     public DockLayoutComposition getLayout();
+    
+    /**
+     * Updates the values of {@link #getRoot() root} and {@link #getLocation() location}
+     * according to the current location of {@link #getDockable() the element}.
+     */
+    public void updateLocation();
 }

@@ -2396,10 +2396,6 @@ public class DockFrontend {
             return key;
         }
         
-        /**
-         * Updates the values of {@link #getRoot() root} and {@link #getLocation() location}
-         * according to the current location of {@link #getDockable() the element}.
-         */
         public void updateLocation(){
             RootInfo info = DockFrontend.this.getRoot( dockable );
             if( info == null )

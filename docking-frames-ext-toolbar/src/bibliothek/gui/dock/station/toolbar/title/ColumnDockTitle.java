@@ -21,12 +21,13 @@ import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
- * This specialized {@link DockTitle} does not show a {@link DockActionSource}, a text or even
- * an {@link Icon}. Instead it shows several {@link DockActionSource}s, all derived from a single {@link ColumnDockActionSource}. 
+ * This specialized {@link DockTitle} does not show a text or even an {@link Icon}. Instead it shows several
+ * {@link DockActionSource}s, all derived from a single {@link ColumnDockActionSource}. 
  * @author Benjamin Sigg
  */
 public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 	private List<ButtonPanel> itemPanels = new ArrayList<ButtonPanel>();
+	private ButtonPanel directPanel;
 	private ColumnDockActionSource source;
 
 	/**
@@ -36,6 +37,14 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 	 */
 	public ColumnDockTitle( Dockable dockable, DockTitleVersion origin ){
 		init( dockable, origin );
+		
+		directPanel = new ButtonPanel( true ){
+			@Override
+			protected BasicTitleViewItem<JComponent> createItemFor( DockAction action, Dockable dockable ){
+				return ColumnDockTitle.this.createItemFor( action, dockable );
+			}
+		};
+		add( directPanel );
 	}
 
 	/**
@@ -101,17 +110,29 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 	 * @return the source for <code>dockable</code> or <code>null</code>
 	 */
 	protected abstract ColumnDockActionSource getSourceFor( Dockable dockable );
+	
+	/**
+	 * Gets the {@link DockActionSource} which should be used for <code>dockable</code>.
+	 * @param dockable the element whose actions are shown
+	 * @return all the actions
+	 */
+	protected DockActionSource getActionSourceFor( Dockable dockable ){
+		return dockable.getGlobalActionOffers();
+	}
 
 	@Override
 	public void bind(){
 		if( !isBound() ) {
-			source = getSourceFor( getDockable() );
+			Dockable dockable = getDockable();
+			source = getSourceFor( dockable );
 			if( source != null ) {
 				for( int i = 0, n = source.getSourceCount(); i < n; i++ ) {
 					createPanel( source.getSource( i ), i );
 				}
 				source.addListener( listener );
 			}
+			
+			directPanel.set( dockable, getActionSourceFor( dockable ) );
 		}
 		super.bind();
 	}
@@ -127,6 +148,7 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 					panel.setController( null );
 					remove( panel );
 				}
+				directPanel.set( null );
 				itemPanels.clear();
 				revalidate();
 				source = null;
@@ -182,7 +204,18 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 			ButtonPanel items = itemPanels.get( i );
 
 			Dimension[] preferred = items.getPreferredSizes();
-
+			Dimension[] directPreferred = null;
+			
+			if( i+1 == n ){
+				directPreferred = directPanel.getPreferredSizes();
+				if( horizontal ){
+					length -= directPreferred[0].width;
+				}
+				else{
+					length -= directPreferred[0].height;
+				}
+			}
+			
 			if( horizontal ) {
 				int size = 0;
 				int delta = 0;
@@ -195,6 +228,21 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 				}
 				items.setVisibleActions( size );
 				items.setBounds( start, y, length - delta, height );
+				
+				if( i+1 == n ){
+					int remaining = width - start - length + delta;
+					size = 0;
+					delta = 0;
+					for( int j = directPreferred.length - 1; j >= 0; j-- ){
+						if( directPreferred[j].width <= remaining ) {
+							size = j;
+							delta = remaining - directPreferred[j].width;
+							break;
+						}
+					}
+					directPanel.setVisibleActions( size );
+					directPanel.setBounds( x + width - remaining + delta, y, remaining - delta, height );
+				}
 			}
 			else {
 				int size = 0;
@@ -208,6 +256,21 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 				}
 				items.setVisibleActions( size );
 				items.setBounds( x, start, width, length - delta );
+				
+				if( i+1 == n ){
+					int remaining = height - start - length + delta;
+					size = 0;
+					delta = 0;
+					for( int j = directPreferred.length - 1; j >= 0; j-- ){
+						if( directPreferred[j].height <= remaining ){
+							size = j;
+							delta = remaining - directPreferred[j].height;
+							break;
+						}
+					}
+					directPanel.setVisibleActions( size );
+					directPanel.setBounds( x, y + height - remaining + delta, width, remaining - delta );
+				}
 			}
 		}
 	}
