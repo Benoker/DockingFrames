@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.title;
 
 import java.awt.Component;
+import java.awt.Point;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.dockable.MovingImage;
@@ -56,6 +57,10 @@ public class TitleMovingImage implements MovingImage {
         
         this.dockable = dockable;
         this.title = title;
+    }
+    
+    public Point getOffset( Point pressPoint ){
+    	return null;
     }
     
     public void bind() {

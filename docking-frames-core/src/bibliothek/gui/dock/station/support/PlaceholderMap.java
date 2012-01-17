@@ -1009,6 +1009,11 @@ public class PlaceholderMap {
 		return map.get( key );
 	}
 	
+	@Override
+	public String toString(){
+		return data.toString();
+	}
+	
 	/**
 	 * A key is a set of {@link Path}s, it is used to identify
 	 * entries in a {@link PlaceholderMap}.

@@ -27,6 +27,7 @@ package bibliothek.gui.dock.title;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Point;
 
 import javax.swing.JPanel;
 
@@ -74,6 +75,10 @@ public class UpdatingTitleMovingImage implements MovingImage {
         content.setOpaque( false );
         this.version = version;
         this.orientation = orientation;
+    }
+    
+    public Point getOffset( Point pressPoint ){
+    	return null;
     }
     
     public void bind() {

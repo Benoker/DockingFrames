@@ -2,7 +2,6 @@ package bibliothek.gui.dock;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -672,9 +671,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public boolean drop( Dockable dockable, int column, int line, boolean force ){
 		if( force || this.accept( dockable ) ) {
 			if( !force ) {
-				dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
-				if( dockable == null ) {
+				Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+				if( replacement == null ) {
 					return false;
+				}
+				if( replacement != dockable ){
+					replacement.asDockStation().drop( dockable );
+					dockable = replacement;
 				}
 			}
 			add( dockable, column, line );
@@ -686,7 +689,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	private void add( Dockable dockable, int column, int line ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
-		dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+		Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+		if( replacement != dockable ){
+			replacement.asDockStation().drop( dockable );
+			dockable = replacement;
+		}
+		
 		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 		try {
 			listeners.fireDockableAdding( dockable );
@@ -766,9 +774,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public boolean drop( Dockable dockable, int column, boolean force ){
 		if( force || this.accept( dockable ) ) {
 			if( !force ) {
-				dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
-				if( dockable == null ) {
+				Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+				if( replacement == null ) {
 					return false;
+				}
+				if( replacement != dockable ){
+					replacement.asDockStation().drop( dockable );
+					dockable = replacement;
 				}
 			}
 			add( dockable, column );
@@ -780,7 +792,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	private void add( Dockable dockable, int column ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
-		dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+		Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+		if( replacement != dockable ){
+			replacement.asDockStation().drop( dockable );
+			dockable = replacement;
+		}
 		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 		try {
 			listeners.fireDockableAdding( dockable );
@@ -1378,7 +1394,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public PlaceholderMap getPlaceholders(){
-		return dockables.toMap();
+		PlaceholderMap map = dockables.toMap();
+		writeLayoutArguments( map );
+		return map;
 	}
 
 	/**
@@ -1391,12 +1409,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return <code>this</code> as map
 	 */
 	public PlaceholderMap getPlaceholders( Map<Dockable, Integer> identifiers ){
-		return dockables.toMap( identifiers );
+		PlaceholderMap map = dockables.toMap( identifiers );
+		writeLayoutArguments( map );
+		return map;
 	}
 
 	@Override
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		dockables.fromMap( placeholders );
+		readLayoutArguments( placeholders );
 	}
 
 	public void setPlaceholders( PlaceholderMap placeholders, Map<Integer, Dockable> children ){
@@ -1406,7 +1427,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 
 		final DockController controller = getController();
-
+		readLayoutArguments( placeholders );
+		
 		try {
 			if( controller != null ) {
 				controller.freezeLayout();
@@ -1442,6 +1464,29 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			if( controller != null ) {
 				controller.meltLayout();
 			}
+		}
+	}
+	
+	private void writeLayoutArguments( PlaceholderMap map ){
+		PlaceholderMap.Key key = map.newKey( "group" );
+		switch( getOrientation() ){
+			case HORIZONTAL:
+				map.putString( key, "orientation", "horizontal" );
+				break;
+			case VERTICAL:
+				map.putString( key, "orientation", "vertical" );
+				break;
+		}
+	}
+	
+	private void readLayoutArguments( PlaceholderMap map ){
+		PlaceholderMap.Key key = map.newKey( "group" );
+		String orientation = map.getString( key, "orientation" );
+		if( "horizontal".equals( orientation )){
+			setOrientation( Orientation.HORIZONTAL );
+		}
+		else if( "vertical".equals( orientation )){
+			setOrientation( Orientation.VERTICAL );
 		}
 	}
 
@@ -1495,24 +1540,35 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 				final StationChildHandle child = dockables.get( placeholder );
 				if( child == null ) {
 					if( acceptable( dockable ) ) {
-						DockUtilities.checkLayoutLocked();
-						final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
-						try {
-							DockUtilities.ensureTreeValidity( this, dockable );
-							listeners.fireDockableAdding( dockable );
-							final int before = dockables.getColumnCount();
-
-							dockable.setDockParent( this );
-							final StationChildHandle handle = createHandle( dockable );
-							dockables.put( placeholder, handle );
-							addComponent( handle );
-
-							listeners.fireDockableAdded( dockable );
-							fireDockablesRepositioned( dockable, before != dockables.getColumnCount() );
+						Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+						if( replacement == null ){
+							return false;
 						}
-						finally {
-							token.release();
+						
+						DockController controller = getController();
+						if( controller != null ){
+							controller.freezeLayout();
 						}
+						try{
+							dropAt( replacement, placeholder );
+
+							if( replacement != dockable ){
+								if( property.getSuccessor() != null ){
+									if( !replacement.asDockStation().drop( dockable, property.getSuccessor() ) ){
+										replacement.asDockStation().drop( dockable );
+									}
+								}
+								else{
+									replacement.asDockStation().drop( dockable );
+								}
+							}
+						}
+						finally{
+							if( controller != null ){
+								controller.meltLayout();
+							}
+						}
+						
 						return true;
 					}
 				}
@@ -1544,6 +1600,34 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		line = Math.max( 0, line );
 		//column = Math.max( 0, column );
 		return drop( dockable, column, line );
+	}
+	
+	/**
+	 * Drops <code>dockable</code> at the location described by <code>placeholder</code>. This method must only
+	 * be called if <code>placeholder</code> points to a valid location.
+	 * @param dockable the dockable to drop
+	 * @param placeholder the location of <code>dockable</code>, must be valid
+	 */
+	private void dropAt( Dockable dockable, Path placeholder ){
+
+		DockUtilities.checkLayoutLocked();
+		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+		try {
+			DockUtilities.ensureTreeValidity( this, dockable );
+			listeners.fireDockableAdding( dockable );
+			final int before = dockables.getColumnCount();
+
+			dockable.setDockParent( this );
+			final StationChildHandle handle = createHandle( dockable );
+			dockables.put( placeholder, handle );
+			addComponent( handle );
+
+			listeners.fireDockableAdded( dockable );
+			fireDockablesRepositioned( dockable, before != dockables.getColumnCount() );
+		}
+		finally {
+			token.release();
+		}
 	}
 
 	@SuppressWarnings("static-method")

@@ -371,15 +371,28 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			int columnIndex = columns.dockables().indexOf( column );
 			
 			int removedIndex = column.getList().getDockableIndex( placeholder );
-			boolean result = column.getList().put( placeholder, item ) != -1;
-			if( result ){
-				if( removedIndex >= 0 ){
-					P removed = column.getList().dockables().get( removedIndex );
-					onRemoved( column.getList(), columnIndex, removed, removedIndex );
+			if( removedIndex >= 0 ){
+				P removed = null;
+				int size = column.getList().dockables().size();
+				if( removedIndex < size ){
+					removed = column.getList().dockables().get( removedIndex );
 				}
-				onInserted( column.getList(), columnIndex, item, column.getList().dockables().indexOf( item ) );
+				column.getList().put( placeholder, item );
+				if( removed != null ){
+					onRemoved( column.getList(), columnIndex, removed, removedIndex );
+					if( size == 0 && item == null ){
+						onRemoved( column.getList(), columnIndex );
+					}
+				}
+				
+				if( item != null ){
+					if( size == 0 ){
+						onInserted( column.getList(), columnIndex );
+					}
+					onInserted( column.getList(), columnIndex, item, column.getList().dockables().indexOf( item ) );
+				}
+				return true;
 			}
-			return result;
 		}
 		final PlaceholderMap map = listItem.getPlaceholderMap();
 		if( map != null ) {
@@ -1146,8 +1159,10 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			@Override
 			public ConvertedPlaceholderListItem convert( int index, P dockable ){
 				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+				
 				fill( dockable.asDockable(), item );
-				if( item.getPlaceholder() == null ) {
+				
+				if( item.getPlaceholder() == null && item.getPlaceholderMap() == null ) {
 					return null;
 				}
 				return item;

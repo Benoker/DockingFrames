@@ -1,8 +1,12 @@
 package test;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -14,14 +18,15 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.SingleCDockable;
-import bibliothek.gui.dock.facile.action.CloseAction;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.toolbar.CToolbarContentArea;
 import bibliothek.gui.dock.toolbar.CToolbarItem;
@@ -84,12 +89,44 @@ public class CloseButtonInCommon {
 		item.setVisible( true );
 	}
 
-	public static class ToolbarGroupClosing extends CloseAction implements ActionGuard {
+	public static class CloseIcon implements Icon{
+		private Color color;
+		
+		public CloseIcon( Color color ){
+			this.color = color;
+		}
+		
+		public int getIconWidth(){
+			return 8;
+		}
+		
+		public int getIconHeight(){
+			return 8;
+		}
+		
+		@Override
+		public void paintIcon( Component c, Graphics g, int x, int y ){
+			g.setColor( color );
+			g.drawLine( x+2, y+2, x+7, y+7 );
+			g.drawLine( x+3, y+2, x+7, y+6 );
+			g.drawLine( x+2, y+3, x+6, y+7 );
+			
+			g.drawLine( x+2, y+7, x+7, y+2 );
+			g.drawLine( x+3, y+7, x+6, y+2 );
+			g.drawLine( x+2, y+6, x+7, y+3 );
+		}
+	}
+	
+	public static class ToolbarGroupClosing extends SimpleButtonAction implements ActionGuard {
 		private CControl control;
 
 		public ToolbarGroupClosing( CControl control ){
-			super( control.getController() );
 			this.control = control;
+			
+			setText( "Close" );
+			setTooltip( "Close this toolbar" );
+			setIcon( ActionContentModifier.NONE_HOVER, new CloseIcon( Color.RED ) );
+			setIcon( new CloseIcon( Color.WHITE ) );
 		}
 
 		@Override

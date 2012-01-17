@@ -24,7 +24,8 @@ public interface ToolbarStrategy{
 	 * As toolbars have constraints on which {@link Dockable} can be a child of
 	 * which {@link DockStation} often additional layers between a specific
 	 * {@link DockStation} and a {@link Dockable} are required. This method
-	 * defines what these layers are.
+	 * defines what these layers are.<br>
+	 * This method must not add <code>child</code> to any {@link DockStation}.
 	 * 
 	 * @param parent
 	 *            some {@link DockStation} which is going to become a direct or
@@ -34,7 +35,7 @@ public interface ToolbarStrategy{
 	 *            child of <code>parent</code>
 	 * @return the element that is actually added to <code>parent</code> as
 	 *         direct child. This can either be <code>child</code>, or a new
-	 *         dockable {@link DockStation} containing <code>child</code>. A
+	 *         empty dockable {@link DockStation}. A
 	 *         value of <code>null</code> indicates that <code>child</code> can
 	 *         never be any kind of child of <code>parent</code>. The other
 	 *         methods of this {@link ToolbarStrategy} should however be

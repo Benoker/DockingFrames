@@ -1,5 +1,8 @@
 package bibliothek.gui.dock.station.toolbar;
 
+import java.awt.Component;
+import java.awt.Point;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
@@ -26,19 +29,58 @@ public class ToolbarMovingImageFactory implements DockableMovingImageFactory{
 	@Override
 	public MovingImage create( DockController controller, DockTitle snatched ){
 		ToolbarStrategy strategy = controller.getProperties().get( ToolbarStrategy.STRATEGY );
+		MovingImage image = null;
 		if( strategy.isToolbarPart( snatched.getDockable() )){
-			return delegate.create( controller, snatched );
+			image = delegate.create( controller, snatched );
 		}
-		return null;
+		if( image == null ){
+			return null;
+		}
+		return new OffsetWrapper( image );
 	}
 
 	@Override
 	public MovingImage create( DockController controller, Dockable dockable ){
 		ToolbarStrategy strategy = controller.getProperties().get( ToolbarStrategy.STRATEGY );
+		MovingImage image = null;
 		if( strategy.isToolbarPart( dockable )){
-			return delegate.create( controller, dockable );
+			image = delegate.create( controller, dockable );
 		}
-		return null;
+		if( image == null ){
+			return null;
+		}
+		return new OffsetWrapper( image );
 	}
 
+	/**
+	 * Wrapps around a {@link MovingImage} and changes the offset of the image.
+	 * @author Benjamin Sigg
+	 */
+	private class OffsetWrapper implements MovingImage{
+		private MovingImage image;
+		
+		public OffsetWrapper( MovingImage image ){
+			this.image = image;
+		}
+		
+		@Override
+		public Point getOffset( Point pressPoint ){
+			return new Point( -pressPoint.x, -pressPoint.y );
+		}
+		
+		@Override
+		public void bind(){
+			image.bind();
+		}
+		
+		@Override
+		public void unbind(){
+			image.unbind();
+		}
+		
+		@Override
+		public Component getComponent(){
+			return image.getComponent();
+		}
+	}
 }

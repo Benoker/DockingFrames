@@ -100,6 +100,10 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 				item.setPlaceholder( placeholder );
 			}
 		}
+		DockStation station = dockable.asDockStation();
+		if( station != null ){
+			item.setPlaceholderMap( station.getPlaceholders() );
+		}
 	}
 
 	@Override
@@ -141,10 +145,10 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 	@Override
 	protected void onRemoved(){
 		for( int i = model.getColumnCount() - 1; i >= 0; i++ ) {
-			PlaceholderList<?, ?, P> column = getColumn( i );
+			Column column = model.getColumn( i );
 
-			for( int j = column.dockables().size() - 1; j >= 0; j-- ) {
-				model.getColumn( i ).onRemoved( column.dockables().get( j ), j );
+			for( int j = column.getDockableCount() - 1; j >= 0; j-- ) {
+				model.getColumn( i ).onRemoved( column.getItem( j ), j );
 			}
 
 			model.onRemoved( i );

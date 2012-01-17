@@ -548,7 +548,31 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			}
 
 			final int max = getDockables().dockables().size();
-			return drop( dockable, Math.max( 0, Math.min( max, index )) );
+			if( hasPlaceholder && presetHandle == null && toolbar.getSuccessor() != null ){
+				Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+				
+				DockController controller = getController();
+				if( controller != null ){
+					controller.freezeLayout();
+				}
+				try{
+					add( replacement, -1, placeholder );
+					if( replacement != dockable ){
+						if( !replacement.asDockStation().drop( dockable, toolbar.getSuccessor() ) ){
+							replacement.asDockStation().drop( dockable );
+						}
+					}
+					return true;
+				}
+				finally{
+					if( controller != null ){
+						controller.meltLayout();
+					}
+				}
+			}
+			else{
+				return drop( dockable, Math.max( 0, Math.min( max, index )) );
+			}
 
 		}
 		return false;
@@ -838,13 +862,21 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * @return <code>true</code> if dropping was successfull
 	 */
 	protected boolean add( Dockable dockable, int index ){
+		return add( dockable, index, null );
+	}
+	
+	protected boolean add( Dockable dockable, int index, Path placeholder ){
 		// System.out.println(this.toString()
 		// + "## add( Dockable dockable, int index ) ##");
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
 		final ToolbarStrategy strategy = getToolbarStrategy();
 		if( strategy.isToolbarPart( dockable ) ) {
-			dockable = strategy.ensureToolbarLayer( this, dockable );
+			Dockable replacement = strategy.ensureToolbarLayer( this, dockable );
+			if( replacement != dockable ){
+				replacement.asDockStation().drop( dockable );
+				dockable = replacement;
+			}
 
 			final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 			try {
@@ -852,8 +884,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				dockable.setDockParent( this );
 				final DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables().dockables();
 				final StationChildHandle handle = new StationChildHandle( this, displayer, dockable, title );
-				
-				dockables.add( index, handle );
+				if( placeholder != null ){
+					getDockables().put( placeholder, handle );
+				}
+				else{
+					dockables.add( index, handle );
+				}
 				handle.updateDisplayer();
 				insertAt( handle, index );
 				listeners.fireDockableAdded( dockable );

@@ -48,7 +48,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
  * 
  * @author Benjamin Sigg
  */
-public class ScreenToolbarInserter implements Inserter{
+public class ScreenToolbarInserter implements Inserter {
 	private final DockController controller;
 
 	/**
@@ -72,29 +72,27 @@ public class ScreenToolbarInserter implements Inserter{
 	 * @return the current strategy
 	 */
 	protected ToolbarStrategy getStrategy(){
-		return controller.getProperties().get(ToolbarStrategy.STRATEGY);
+		return controller.getProperties().get( ToolbarStrategy.STRATEGY );
 	}
 
 	@Override
 	public StationDropOperation after( InserterSource source ){
-		if ((source.getOperation() != null)
-				|| !(source.getParent() instanceof ScreenDockStation)){
+		if( (source.getOperation() != null) || !(source.getParent() instanceof ScreenDockStation) ) {
 			return null;
 		}
 		final ToolbarStrategy strategy = getStrategy();
-		if (!strategy.isToolbarPart(source.getChild())){
+		if( !strategy.isToolbarPart( source.getChild() ) ) {
 			return null;
 		}
 
-		if (source.getParent().accept(source.getChild())
-				&& source.getChild().accept(source.getParent())){
+		if( source.getParent().accept( source.getChild() ) && source.getChild().accept( source.getParent() ) ) {
 			// if a DockAcceptance does not allow the combination, while the
 			// involved elements do, we better
 			// assume the DockAcceptance has a good reason.
 			return null;
 		}
 
-		return new Operation(source);
+		return new Operation( source );
 	}
 
 	/**
@@ -110,22 +108,22 @@ public class ScreenToolbarInserter implements Inserter{
 	protected void execute( InserterSource source, Orientation orientation ){
 		final ToolbarStrategy strategy = getStrategy();
 
-		final Dockable item = strategy.ensureToolbarLayer(source.getParent(),
-				source.getChild());
-		if ((orientation != null)
-				&& (item.asDockStation() instanceof OrientedDockStation)){
-			((OrientedDockStation) item).setOrientation(orientation);
+		final Dockable item = strategy.ensureToolbarLayer( source.getParent(), source.getChild() );
+		if( item != source.getChild() ){
+			item.asDockStation().drop( source.getChild() );
+		}
+		
+		if( (orientation != null) && (item.asDockStation() instanceof OrientedDockStation) ) {
+			((OrientedDockStation) item).setOrientation( orientation );
 		}
 
-		final ScreenDockStation station = (ScreenDockStation) source
-				.getParent();
+		final ScreenDockStation station = (ScreenDockStation) source.getParent();
 
 		item.getComponent().validate();
 		final Dimension size = item.getComponent().getPreferredSize();
 
-		final ScreenDockProperty location = new ScreenDockProperty(
-				source.getTitleX(), source.getTitleY(), size.width, size.height);
-		station.drop(item, location, false);
+		final ScreenDockProperty location = new ScreenDockProperty( source.getTitleX(), source.getTitleY(), size.width, size.height );
+		station.drop( item, location, false );
 	}
 
 	/**
@@ -135,7 +133,7 @@ public class ScreenToolbarInserter implements Inserter{
 	 * 
 	 * @author Benjamin Sigg
 	 */
-	private class Operation implements StationDropOperation{
+	private class Operation implements StationDropOperation {
 		private final InserterSource source;
 		private Orientation orientation;
 
@@ -152,12 +150,11 @@ public class ScreenToolbarInserter implements Inserter{
 			final DockStation parent = dockable.getDockParent();
 
 			orientation = null;
-			if (parent instanceof OrientingDockStation){
-				orientation = ((OrientingDockStation) parent)
-						.getOrientationOf(dockable);
-			} else if (dockable.asDockStation() instanceof OrientedDockStation){
-				orientation = ((OrientedDockStation) dockable.asDockStation())
-						.getOrientation();
+			if( parent instanceof OrientingDockStation ) {
+				orientation = ((OrientingDockStation) parent).getOrientationOf( dockable );
+			}
+			else if( dockable.asDockStation() instanceof OrientedDockStation ) {
+				orientation = ((OrientedDockStation) dockable.asDockStation()).getOrientation();
 			}
 		}
 
@@ -178,7 +175,7 @@ public class ScreenToolbarInserter implements Inserter{
 
 		@Override
 		public void execute(){
-			ScreenToolbarInserter.this.execute(source, orientation);
+			ScreenToolbarInserter.this.execute( source, orientation );
 		}
 
 		@Override

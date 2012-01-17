@@ -37,8 +37,7 @@ public class ToolbarWindowConfiguration implements
 	}
 
 	@Override
-	public WindowConfiguration getConfiguration( ScreenDockStation station,
-			Dockable dockable ){
+	public WindowConfiguration getConfiguration( ScreenDockStation station, Dockable dockable ){
 		if (getStrategy().isToolbarPart(dockable)){
 			final WindowConfiguration configuration = new WindowConfiguration();
 			configuration.setMoveOnTitleGrab(true);

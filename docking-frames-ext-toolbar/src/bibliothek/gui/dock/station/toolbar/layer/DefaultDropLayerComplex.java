@@ -57,8 +57,8 @@ public class DefaultDropLayerComplex implements DockStationDropLayer{
 			// we take into account each column station
 			for (int columnIndex = 0; columnIndex < station.columnCount(); columnIndex++){
 				// the first dockable of the column
-				Component firstComponent = station.getDockable(columnIndex, 0)
-						.getComponent();
+				
+				Component firstComponent = station.getDockable(columnIndex, 0).getComponent();
 				Rectangle firstBoundsDraft = firstComponent.getBounds();
 				Point upperleft = firstBoundsDraft.getLocation();
 				SwingUtilities.convertPointToScreen(upperleft, firstComponent);

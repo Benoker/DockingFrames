@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -60,6 +61,10 @@ public class TrueMovingImage extends JPanel implements MovingImage{
             setPreferredSize( new Dimension( image.getWidth(), image.getHeight() ) );
         }
         repaint();
+    }
+    
+    public Point getOffset( Point pressPoint ){
+    	return null;
     }
     
     public void bind() {

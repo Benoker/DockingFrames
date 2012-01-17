@@ -79,7 +79,7 @@ public class Java6Workaround implements Workaround{
 			// ignore
 		}
 		catch( InvocationTargetException ex ){
-			// ignore
+			ex.printStackTrace();
 		}
 		catch( IllegalArgumentException e ){
 			// ignore

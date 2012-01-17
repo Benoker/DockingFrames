@@ -3,9 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copy
-import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
-right (C) 2007 Benjamin Sigg
+ * Copyright (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,6 +70,7 @@ import bibliothek.gui.dock.station.screen.FullscreenActionSource;
 import bibliothek.gui.dock.station.screen.ScreenDockFullscreenFilter;
 import bibliothek.gui.dock.station.screen.ScreenDockFullscreenStrategy;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
+import bibliothek.gui.dock.station.screen.ScreenDockStationExtension;
 import bibliothek.gui.dock.station.screen.ScreenDockStationFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockStationListener;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
@@ -146,6 +145,12 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** Path of an {@link ExtensionName} for creating additional {@link AttractorStrategy} */
     public static final Path ATTRACTOR_STRATEGY_EXTENSION = new Path( "dock.AttractorStrategy" );
+    
+    /** Path of an {@link ExtensionName} for creating {@link ScreenDockStationExtension}s */
+    public static final Path STATION_EXTENSION = new Path( "dock.ScreenDockStation" );
+    
+    /** Name of a parameter of an {@link ExtensionName} pointing to <code>this</code>. */
+    public static final String EXTENSION_PARAM = "station";
     
     /** a key for a property telling which boundaries a {@link ScreenDockWindow} can have */
     public static final PropertyKey<BoundaryRestriction> BOUNDARY_RESTRICTION = 
@@ -230,6 +235,9 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** The version of titles that are used */
     private DockTitleVersion version;
+    
+    /** Extensions to this station, these extensions are loaded with {@link #STATION_EXTENSION} */
+    private ScreenDockStationExtension[] extensions;
     
     /** Combiner to merge some {@link Dockable Dockables} */
     private StationCombinerValue combiner;
@@ -603,6 +611,12 @@ public class ScreenDockStation extends AbstractDockStation {
             	controller.getDoubleClickController().addListener( doubleClickListener );
             }
             dockables.bind();
+            
+            List<ScreenDockStationExtension> list = controller.getExtensions().load( new ExtensionName<ScreenDockStationExtension>( STATION_EXTENSION, ScreenDockStationExtension.class,  EXTENSION_PARAM, this ) );
+            extensions = list.toArray( new ScreenDockStationExtension[ list.size() ] );
+        }
+        else{
+        	extensions = null;
         }
         
         stationPaint.setController( controller );
@@ -1288,18 +1302,50 @@ public class ScreenDockStation extends AbstractDockStation {
      * otherwise.
      */
     public boolean drop( Dockable dockable, ScreenDockProperty property, boolean boundsIncludeWindow ){
-    	DockUtilities.checkLayoutLocked();
-        DockUtilities.ensureTreeValidity( this, dockable );
-        ScreenDockWindow best = null;
+    	ScreenDockStationExtension.DropArguments args = new ScreenDockStationExtension.DropArguments();
+		args.setDockable( dockable );
+		args.setProperty( property );
+		args.setBoundsIncludeWindow( boundsIncludeWindow );
+		
+		windowAt( args );
+		
+    	if( extensions != null ){
+    		DockController controller = getController();
+    		if( controller != null ){
+    			controller.freezeLayout();
+    		}
+    		
+    		try{
+	    		for( ScreenDockStationExtension extension : extensions ){
+	    			extension.drop( this, args );
+	    		}
+	    		boolean result = executeDrop( args );
+	    		for( ScreenDockStationExtension extension : extensions ){
+	    			extension.dropped( this, args, result );
+	    		}
+	    		return result;
+    		}
+    		finally{
+    			if( controller != null ){
+    				controller.meltLayout();
+    			}
+    		}
+    	}
+    	else{
+    		return executeDrop( args );
+    	}
+    }
+    
+    private void windowAt( ScreenDockStationExtension.DropArguments args ){
+    	ScreenDockWindow best = null;
         double bestRatio = 0.0;
+        
+        ScreenDockProperty property = args.getProperty();
         
         int x = property.getX();
         int y = property.getY();
         int width = property.getWidth();
         int height = property.getHeight();
-        
-        DockController controller = getController();
-        DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
         
         Path placeholder = property.getPlaceholder();
         if( placeholder != null ){
@@ -1323,7 +1369,10 @@ public class ScreenDockStation extends AbstractDockStation {
         			if( meta.contains( "height" ) ){
         				height = meta.getInt( "height" );
         			}
-        			boundsIncludeWindow = true;
+        			ScreenDockProperty replacement = new ScreenDockProperty( x, y, width, height, placeholder, property.isFullscreen() );
+        			replacement.setSuccessor( property.getSuccessor() );
+        			args.setProperty( replacement );
+        			args.setBoundsIncludeWindow( true );
         		}
         		else{
         			placeholder = null;
@@ -1354,9 +1403,26 @@ public class ScreenDockStation extends AbstractDockStation {
 	        }
         }
         
-        boolean done = false;
-        
         if( bestRatio >= dropOverRatio ){
+        	args.setWindow( best );
+        }
+    }
+    
+    private boolean executeDrop( ScreenDockStationExtension.DropArguments args ){
+    	DockUtilities.checkLayoutLocked();
+        DockUtilities.ensureTreeValidity( this, args.getDockable() );
+        
+        
+        DockController controller = getController();
+        DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
+        
+        ScreenDockWindow best = args.getWindow();
+        
+        boolean done = false;
+        Dockable dockable = args.getDockable();
+        ScreenDockProperty property = args.getProperty();
+        
+        if( best != null ){
             DockableProperty successor = property.getSuccessor();
             Dockable dock = best.getDockable();
             if( successor != null ){
@@ -1377,7 +1443,7 @@ public class ScreenDockStation extends AbstractDockStation {
         if( !done ){
         	boolean accept = accept( dockable ) && dockable.accept( this ) && (acceptance == null || acceptance.accept( this, dockable ));
             if( accept ){
-                addDockable( dockable, new Rectangle( x, y, width, height ), placeholder, boundsIncludeWindow );
+                addDockable( dockable, new Rectangle( property.getX(), property.getY(), property.getWidth(), property.getHeight() ), property.getPlaceholder(), args.isBoundsIncludeWindow() );
                 done = true;
             }
         }
@@ -1629,8 +1695,8 @@ public class ScreenDockStation extends AbstractDockStation {
 	        listeners.fireDockableRemoving( dockable );
 	        
 	        window.setVisible( false );
-	        handle.setDockable( null );
 	        deregister( dockable, window );
+	        handle.setDockable( null );
 	        
 	        dockable.setDockParent( null );
 	        listeners.fireDockableRemoved( dockable );

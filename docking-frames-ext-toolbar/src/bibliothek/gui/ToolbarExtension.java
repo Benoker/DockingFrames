@@ -1,7 +1,6 @@
 package bibliothek.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,15 +25,17 @@ import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.MenuDockAction;
+import bibliothek.gui.dock.action.ToolbarSeparator;
+import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewGenerator;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
 import bibliothek.gui.dock.control.relocator.Inserter;
 import bibliothek.gui.dock.control.relocator.Merger;
+import bibliothek.gui.dock.dockable.AncestorMovingImageFactory;
 import bibliothek.gui.dock.dockable.DefaultDockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
-import bibliothek.gui.dock.dockable.ScreencaptureMovingImageFactory;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
@@ -42,10 +43,12 @@ import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.ToolbarMiniButton;
 import bibliothek.gui.dock.station.ToolbarTabDockStationFactory;
+import bibliothek.gui.dock.station.screen.ScreenDockStationExtension;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowConfiguration;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDisplayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarDockTitleFactory;
 import bibliothek.gui.dock.station.screen.ScreenToolbarInserter;
+import bibliothek.gui.dock.station.screen.ToolbarScreenDockStationExtension;
 import bibliothek.gui.dock.station.screen.ToolbarWindowConfiguration;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfiguration;
@@ -114,6 +117,16 @@ public class ToolbarExtension implements Extension {
 				final ToolbarMiniButton button = new ToolbarMiniButton( handler, handler );
 				handler.setModel( button.getModel() );
 				return handler;
+			}
+		} );
+
+		converter.putDefault( ActionType.SEPARATOR, TOOLBAR_TITLE, new ViewGenerator<SeparatorAction, BasicTitleViewItem<JComponent>>(){
+			@Override
+			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SeparatorAction action, Dockable dockable ){
+				if( action.shouldDisplay( ViewTarget.TITLE ) )
+					return new ToolbarSeparator( action );
+
+				return null;
 			}
 		} );
 
@@ -229,6 +242,9 @@ public class ToolbarExtension implements Extension {
 		if( extension.getName().equals( DefaultDockableMovingImageFactory.FACTORY_EXTENSION ) ) {
 			return (Collection<E>) createMovingImageFactory();
 		}
+		if( extension.getName().equals( ScreenDockStation.STATION_EXTENSION ) ) {
+			return (Collection<E>) createScreenDockStationExtension( controller );
+		}
 
 		return null;
 	}
@@ -339,7 +355,14 @@ public class ToolbarExtension implements Extension {
 
 	protected Collection<DockableMovingImageFactory> createMovingImageFactory(){
 		final List<DockableMovingImageFactory> result = new ArrayList<DockableMovingImageFactory>();
-		result.add( new ToolbarMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 200, 200 ) ) ) );
+		// result.add( new ToolbarMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 200, 200 ) ) ) );
+		result.add( new ToolbarMovingImageFactory( new AncestorMovingImageFactory( null ) ) );
+		return result;
+	}
+
+	protected Collection<ScreenDockStationExtension> createScreenDockStationExtension( DockController controller ){
+		List<ScreenDockStationExtension> result = new ArrayList<ScreenDockStationExtension>();
+		result.add( new ToolbarScreenDockStationExtension( controller ) );
 		return result;
 	}
 }

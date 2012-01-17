@@ -351,9 +351,13 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 	protected boolean drop( Dockable dockable, int index, boolean force ){
 		if( force || this.accept( dockable ) ) {
 			if( !force ) {
-				dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+				Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
 				if( dockable == null ) {
 					return false;
+				}
+				if( replacement != dockable ){
+					replacement.asDockStation().drop( dockable );
+					dockable = replacement;
 				}
 			}
 			add( dockable, index );
@@ -369,7 +373,13 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 	protected void add( Dockable dockable, int index, Path placeholder ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
-		dockable = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+		Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+		if( replacement != dockable ){
+			if( replacement != null ){
+				replacement.asDockStation().drop( dockable );
+			}
+			dockable = replacement;
+		}
 		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 		try {
 			listeners.fireDockableAdding( dockable );

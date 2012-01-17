@@ -48,7 +48,8 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
 
     /**
      * Creates a new factory.
-     * @param max the maximal size of the images created by this factory
+     * @param max the maximal size of the images created by this factory, or <code>null</code>
+     * for not having a maximum size
      */
     public ScreencaptureMovingImageFactory( Dimension max ){
         this.max = max;
@@ -58,6 +59,14 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
         return create( controller, snatched.getDockable() );
     }
 
+    public MovingImage create( DockController controller, Dockable dockable ) {
+        BufferedImage image = createImageFrom( controller, dockable );
+
+        TrueMovingImage moving = new TrueMovingImage();
+        moving.setImage( image );
+        return moving;
+    }
+    
     /**
      * This method creates a new image that contains the contents of <code>dockable</code>.
      * @param controller the controller for which the image is made
@@ -69,7 +78,34 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
      */
     public BufferedImage createImageFrom( DockController controller, Dockable dockable ){
         Component c = dockable.getComponent();
+        BufferedImage image = createImageFrom( controller, c );
+        
+        if( image == null ){
+            Icon icon = dockable.getTitleIcon();
+            if( icon == null || icon.getIconHeight() < 1 || icon.getIconWidth() < 1 )
+                return null;
 
+            image = new BufferedImage( icon.getIconWidth()+2, icon.getIconHeight()+2, BufferedImage.TYPE_INT_ARGB );
+            Graphics2D g = image.createGraphics();
+            g.setColor( c.getBackground() );
+            g.fillRect( 0, 0, image.getWidth(), image.getHeight() );
+            icon.paintIcon( c, g, 1, 1 );
+            g.dispose();
+        }
+        
+        return image;
+    }
+    
+    /**
+     * This method creates a new image that contains the contents of <code>c</code>.
+     * @param controller the controller for which the image is made
+     * @param c the {@link Component} whose image should be taken
+     * @return an image of <code>c</code> which is not larger than the
+     * maximum {@link Dimension} that was given to this factory in the 
+     * constructor.
+     * @see AWTComponentCaptureStrategy
+     */
+    public BufferedImage createImageFrom( DockController controller, Component c ){
         Dimension size = new Dimension( 
                 Math.max( 1, c.getWidth() ),
                 Math.max( 1, c.getHeight() ));
@@ -88,9 +124,12 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
             }
             
             if( image != null ){
-                double factor = Math.min( 
+                double factor = 1.0;
+                if( max != null ){
+                	factor = Math.min( 
                         max.getWidth() / size.getWidth(), 
                         max.getHeight() / size.getHeight() );
+                }
 
                 if( factor < 1.0 ){
                     int w = (int)( factor * size.getWidth() );
@@ -111,27 +150,7 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
                 }
             }
         }
-        if( image == null ){
-            Icon icon = dockable.getTitleIcon();
-            if( icon == null || icon.getIconHeight() < 1 || icon.getIconWidth() < 1 )
-                return null;
-
-            image = new BufferedImage( icon.getIconWidth()+2, icon.getIconHeight()+2, BufferedImage.TYPE_INT_ARGB );
-            Graphics2D g = image.createGraphics();
-            g.setColor( c.getBackground() );
-            g.fillRect( 0, 0, image.getWidth(), image.getHeight() );
-            icon.paintIcon( c, g, 1, 1 );
-            g.dispose();
-        }
         
         return image;
-    }
-
-    public MovingImage create( DockController controller, Dockable dockable ) {
-        BufferedImage image = createImageFrom( controller, dockable );
-
-        TrueMovingImage moving = new TrueMovingImage();
-        moving.setImage( image );
-        return moving;
     }
 }

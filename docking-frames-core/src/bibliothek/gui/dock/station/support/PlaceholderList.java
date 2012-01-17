@@ -350,6 +350,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			if( placeholderSet == null ) {
 				placeholderSet = Collections.emptySet();
 			}
+			placeholderSet = new HashSet<Path>( placeholderSet );
 			PlaceholderMap placeholderMap = entry.getPlaceholderMap();
 
 			Path additional = null;
@@ -360,8 +361,9 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 				converted = converter.convert( dockableIndex, dockable );
 				if( converted != null ) {
 					additional = converted.getPlaceholder();
-					if( placeholderMap == null ) {
-						placeholderMap = converted.getPlaceholderMap();
+					PlaceholderMap convertedMap = converted.getPlaceholderMap();
+					if( convertedMap != null ){
+						placeholderMap = convertedMap;
 					}
 				}
 			}
@@ -370,17 +372,18 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 				dockableIndex++;
 			}
 			if( additional != null ) {
-				if( placeholderSet.contains( additional ) ) {
-					additional = null;
+				placeholderSet.add( additional );
+			}
+			if( placeholderMap != null ){
+				for( PlaceholderMap.Key key : placeholderMap.getPlaceholders() ){
+					for( Path mapPlaceholder : key.getPlaceholders() ){
+						placeholderSet.add( mapPlaceholder );
+					}
 				}
 			}
 
-			Path[] placeholders = new Path[placeholderSet.size() + (additional == null ? 0 : 1)];
-			placeholderSet.toArray( placeholders );
-			if( additional != null ) {
-				placeholders[placeholders.length - 1] = additional;
-			}
-
+			Path[] placeholders = placeholderSet.toArray( new Path[ placeholderSet.size() ] );
+			
 			if( placeholders.length > 0 || converted != null ) {
 				Key key = map.newUniqueKey( placeholders );
 				map.add( key );
@@ -877,6 +880,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		head = null;
 		headDockable = null;
 		headPlaceholder = null;
+		invalidate();
 	}
 
 	private Entry head( Level level ){
@@ -1656,7 +1660,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			entry.set( wrap( object ) );
 			return result;
 		}
-
+		
 		public int size(){
 			if( size == -1 ) {
 				size = 0;

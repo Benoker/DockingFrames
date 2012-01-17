@@ -649,15 +649,26 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @param mouse the location of the mouse
      */
     private void updateTitleWindowPosition( Point mouse ){
-        int width = Math.min( 25, movingImageWindow.getWidth());
-        int height = Math.min( 25, movingImageWindow.getHeight());
-        
-        int delta = Math.min( width, height ) + 1;
-        
-        int dx = Math.min( width, pressPointLocal.x );
-        int dy = Math.min( height, pressPointLocal.y );
-        
-        movingImageWindow.setLocation( mouse.x - dx + delta, mouse.y - dy + delta );
+    	MovingImage image = movingImageWindow.getImage();
+    	Point offset = null;
+    	if( image != null ){
+    		offset = image.getOffset( new Point( pressPointLocal ) );
+    	}
+    	
+    	if( offset == null ){
+	    	int width = Math.min( 25, movingImageWindow.getWidth());
+	        int height = Math.min( 25, movingImageWindow.getHeight());
+	        
+	        int delta = Math.min( width, height ) + 1;
+	        
+	        int dx = Math.min( width, pressPointLocal.x );
+	        int dy = Math.min( height, pressPointLocal.y );
+	        
+	        movingImageWindow.setLocation( mouse.x - dx + delta, mouse.y - dy + delta );
+    	}
+    	else{
+    		movingImageWindow.setLocation( mouse.x + offset.x, mouse.y + offset.y );
+    	}
     }
     
     /**
@@ -1082,6 +1093,14 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             content.add( image.getComponent() );
             this.image = image;
         }
+        
+        /**
+         * Gets the image that is shown on this window.
+         * @return the image, may be <code>null</code>
+         */
+        public MovingImage getImage(){
+			return image;
+		}
         
         /**
          * Closes this window and ensures that the title has the same

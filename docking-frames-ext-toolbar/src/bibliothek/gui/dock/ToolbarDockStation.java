@@ -388,10 +388,13 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// + "## drop(Dockable dockable, int index)##");
 		if (force || this.accept(dockable)){
 			if (!force){
-				dockable = getToolbarStrategy().ensureToolbarLayer(this,
-						dockable);
-				if (dockable == null){
+				Dockable replacement = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+				if (replacement == null){
 					return false;
+				}
+				if( replacement != dockable ){
+					replacement.asDockStation().drop( dockable );
+					dockable = replacement;
 				}
 			}
 			add(dockable, index);
@@ -435,7 +438,11 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// the "ToolbarDockStationMerger"
 		// Case where dockable is instance of ToolbarGroupDockStation is handled
 		// by the "ToolbarStrategy.ensureToolbarLayer" method
-		dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+		Dockable replacement = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+		if( replacement != dockable ){
+			replacement.asDockStation().drop( dockable );
+			dockable = replacement;
+		}
 		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(
 				this, dockable);
 		try{

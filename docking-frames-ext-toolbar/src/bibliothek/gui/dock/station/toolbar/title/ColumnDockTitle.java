@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.action.LineDockActionSource;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.title.AbstractMultiDockTitle;
@@ -99,6 +100,7 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 			for( ButtonPanel panel : itemPanels ) {
 				panel.setOrientation( orientation );
 			}
+			directPanel.setOrientation( orientation );
 			revalidate();
 		}
 	}
@@ -117,7 +119,7 @@ public abstract class ColumnDockTitle extends AbstractMultiDockTitle {
 	 * @return all the actions
 	 */
 	protected DockActionSource getActionSourceFor( Dockable dockable ){
-		return dockable.getGlobalActionOffers();
+		return new LineDockActionSource( dockable.getGlobalActionOffers() );
 	}
 
 	@Override

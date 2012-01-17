@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockFrontend;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
@@ -27,10 +28,13 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.frontend.FrontendEntry;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.DockUtilities.DockVisitor;
+import bibliothek.util.Path;
 
 public class CloseButtonInCore {
 	public static void main( String[] args ){
@@ -62,10 +66,64 @@ public class CloseButtonInCore {
 		pane.add( toolbarStationWest.getComponent(), BorderLayout.WEST );
 		pane.add( toolbarStationNorth.getComponent(), BorderLayout.NORTH );
 
-		ComponentDockable dockable1 = createDockable( "1", "One" );
-		ComponentDockable dockable2 = createDockable( "2", "Two" );
-		ComponentDockable dockable3 = createDockable( "3", "Three" );
-		ComponentDockable dockable4 = createDockable( "4", "Four" );
+		final ComponentDockable dockable1 = createDockable( "1", "One" );
+		final ComponentDockable dockable2 = createDockable( "2", "Two" );
+		final ComponentDockable dockable3 = createDockable( "3", "Three" );
+		final ComponentDockable dockable4 = createDockable( "4", "Four" );
+		
+		/*
+		 * This is how a PlaceholderStrategy would look like. It just needs a method that takes a Dockable,
+		 * and tells what placeholder this dockable has.
+		 * You could store the placeholder directly in the ComponentDockable and make a cast...
+		 */
+		frontend.getDockProperties().set( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new PlaceholderStrategy(){
+			@Override
+			public void uninstall( DockStation station ){
+				// ignore
+			}
+			
+			@Override
+			public void removeListener( PlaceholderStrategyListener listener ){
+				// ignore	
+			}
+			
+			@Override
+			public boolean isValidPlaceholder( Path placeholder ){
+				return true;
+			}
+			
+			@Override
+			public void install( DockStation station ){
+				// ignore
+			}
+			
+			@Override
+			public Path getPlaceholderFor( Dockable dockable ){
+				String postfix = null;
+				if( dockable == dockable1 ){
+					postfix = "dock1";
+				}
+				else if( dockable == dockable2 ){
+					postfix = "dock2";
+				}
+				else if( dockable == dockable3 ){
+					postfix = "dock3";
+				}
+				else if( dockable == dockable4 ){
+					postfix = "dock4";
+				}
+				else{
+					return null;
+				}
+				
+				return new Path( "custom", postfix );
+			}
+			
+			@Override
+			public void addListener( PlaceholderStrategyListener listener ){
+				// ignore	
+			}
+		} );
 
 		frontend.setDefaultHideable( false );
 		
@@ -109,11 +167,11 @@ public class CloseButtonInCore {
 		}
 		
 		public int getIconWidth(){
-			return 10;
+			return 8;
 		}
 		
 		public int getIconHeight(){
-			return 10;
+			return 8;
 		}
 		
 		@Override

@@ -51,10 +51,11 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			if (dockable instanceof ToolbarDockStation){
 				return dockable;
 			} else{
-				final ToolbarDockStation result = new ToolbarDockStation();
-				result.setController(station.getController());
-				result.drop(dockable);
-				return result;
+				return new ToolbarDockStation();
+//				final ToolbarDockStation result = new ToolbarDockStation();
+//				result.setController(station.getController());
+//				result.drop(dockable);
+//				return result;
 			}
 		}
 
@@ -63,10 +64,11 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			if (dockable instanceof ToolbarGroupDockStation){
 				return dockable;
 			} else{
-				final ToolbarGroupDockStation result = new ToolbarGroupDockStation();
-				result.setController(station.getController());
-				result.drop(dockable);
-				return result;
+				return new ToolbarGroupDockStation();
+//				final ToolbarGroupDockStation result = new ToolbarGroupDockStation();
+//				result.setController(station.getController());
+//				result.drop(dockable);
+//				return result;
 			}
 		}
 
