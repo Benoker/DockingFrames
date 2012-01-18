@@ -63,7 +63,7 @@ public class TitleMovingImage implements MovingImage {
     	return null;
     }
     
-    public void bind() {
+    public void bind( boolean transparency ) {
         dockable.bind( title );
     }
 

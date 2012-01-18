@@ -120,10 +120,15 @@ public class Workarounds {
 	 * Makes <code>window</code> transparent, meaning that the opacity of each pixel is defined by the
 	 * alpha value or the {@link Color} that was used to paint over that pixel.
 	 * @param window the window that should be transparent
+	 * @return <code>true</code> if the winodw is now transparent
 	 */
-	public void makeTransparent( Window window ){
+	public boolean makeTransparent( Window window ){
+		boolean result = false;
+		
 		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
-			listener.makeTransparent( window );
+			result = listener.makeTransparent( window ) || result;
 		}
+		
+		return result;
 	}
 }

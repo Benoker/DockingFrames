@@ -49,12 +49,8 @@ public class TrueMovingImage extends JPanel implements MovingImage{
     /** the transparency with which to paint the image */
     private float alpha = 1.0f;
     
-    /**
-     * Creates a new image
-     */
-    public TrueMovingImage(){
-    	setOpaque( false );
-    }
+    /** whether transparency is supported */
+    private boolean transparent = true;
     
     /**
      * Sets the transparency, 0 means the image is invisible, 1 means the image is opaque.
@@ -79,7 +75,7 @@ public class TrueMovingImage extends JPanel implements MovingImage{
     @Override
     protected void paintComponent( Graphics g ) {
     	if( image != null ){
-        	if( alpha == 1.0f ){
+        	if( alpha == 1.0f || !transparent ){
         		g.drawImage( image, 0, 0, this );
         	}
         	else{
@@ -108,8 +104,9 @@ public class TrueMovingImage extends JPanel implements MovingImage{
     	return null;
     }
     
-    public void bind() {
-        // ignore
+    public void bind( boolean transparency ) {
+    	this.transparent = transparency;
+    	setOpaque( !transparency );
     }
     
     public void unbind() {

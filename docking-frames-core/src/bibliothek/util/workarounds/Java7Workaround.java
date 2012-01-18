@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 public class Java7Workaround extends Java6Workaround{
 
 	@Override
-	public void makeTransparent( Window window ){
+	public boolean makeTransparent( Window window ){
 		try{
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -48,10 +48,12 @@ public class Java7Workaround extends Java6Workaround{
 			boolean pixelTranslucency = (Boolean)isWindowTranslucencySupported.invoke( gd, windowTransulcency.getField( "PERPIXEL_TRANSLUCENT" ).get( null ) );
 			if( pixelTranslucency ){
 				window.setBackground( new Color(0,0,0,0) );
+				return true;
 			}
 		}
 		catch( Exception e ){
 			e.printStackTrace();
 		}
+		return false;
 	}
 }

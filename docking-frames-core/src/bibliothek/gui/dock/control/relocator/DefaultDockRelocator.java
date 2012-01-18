@@ -1087,9 +1087,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 // ignore
             }
             
-            Workarounds.getDefault().makeTransparent( this );
+            boolean transparency = Workarounds.getDefault().makeTransparent( this );
             
-            image.bind();
+            image.bind( transparency );
             content.add( image.getComponent() );
             this.image = image;
         }
