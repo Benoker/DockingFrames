@@ -356,7 +356,7 @@ public class ToolbarExtension implements Extension {
 	protected Collection<DockableMovingImageFactory> createMovingImageFactory(){
 		final List<DockableMovingImageFactory> result = new ArrayList<DockableMovingImageFactory>();
 		// result.add( new ToolbarMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 200, 200 ) ) ) );
-		result.add( new ToolbarMovingImageFactory( new AncestorMovingImageFactory( null ) ) );
+		result.add( new ToolbarMovingImageFactory( new AncestorMovingImageFactory( null, 0.5f ) ) );
 		return result;
 	}
 

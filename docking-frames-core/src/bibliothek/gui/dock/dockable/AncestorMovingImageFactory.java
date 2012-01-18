@@ -47,9 +47,10 @@ public class AncestorMovingImageFactory extends ScreencaptureMovingImageFactory{
      * Creates a new factory.
      * @param max the maximal size of the images created by this factory, or <code>null</code>
      * for not having a maximum size
+     * @param alpha the transparency, where 0 means completely transparent and 1 means completely opaque
      */
-	public AncestorMovingImageFactory( Dimension max ){
-		super( max );
+	public AncestorMovingImageFactory( Dimension max, float alpha ){
+		super( max, alpha );
 	}
 
 	@Override
@@ -81,6 +82,7 @@ public class AncestorMovingImageFactory extends ScreencaptureMovingImageFactory{
 			BufferedImage image = createImageFrom( controller, best );
 			
 			TrueMovingImage moving = new TrueMovingImage();
+			moving.setAlpha( getAlpha() );
 	        moving.setImage( image );
 	        return moving;
 		}

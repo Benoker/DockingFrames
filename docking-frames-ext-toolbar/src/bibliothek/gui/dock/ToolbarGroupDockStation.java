@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.xml.crypto.KeySelector.Purpose;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;

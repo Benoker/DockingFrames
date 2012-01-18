@@ -25,9 +25,12 @@
  */
 package bibliothek.gui.dock.dockable;
 
+import java.awt.AlphaComposite;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -43,11 +46,49 @@ public class TrueMovingImage extends JPanel implements MovingImage{
     /** the content of this component */
     private BufferedImage image;
     
+    /** the transparency with which to paint the image */
+    private float alpha = 1.0f;
+    
+    /**
+     * Creates a new image
+     */
+    public TrueMovingImage(){
+    	setOpaque( false );
+    }
+    
+    /**
+     * Sets the transparency, 0 means the image is invisible, 1 means the image is opaque.
+     * @param alpha the new transparency
+     */
+    public void setAlpha( float alpha ){
+    	if( alpha < 0 || alpha > 1 || Float.isNaN( alpha )){
+    		throw new IllegalArgumentException( "alpha must be between 0 and 1" );
+    	}
+    	
+		this.alpha = alpha;
+	}
+    
+    /**
+     * Gets the transparency with which the image is painted.
+     * @return the transparency
+     */
+    public float getAlpha(){
+		return alpha;
+	}
+    
     @Override
     protected void paintComponent( Graphics g ) {
-        super.paintComponent( g );
-        if( image != null ){
-            g.drawImage( image, 0, 0, this );
+    	if( image != null ){
+        	if( alpha == 1.0f ){
+        		g.drawImage( image, 0, 0, this );
+        	}
+        	else{
+        		Graphics2D g2 = (Graphics2D)g;
+        		Composite old = g2.getComposite();
+        		g2.setComposite( AlphaComposite.getInstance( AlphaComposite.DST_ATOP, alpha ) );
+        		g.drawImage( image, 0, 0, this );
+        		g2.setComposite( old );
+        	}
         }
     }
     
