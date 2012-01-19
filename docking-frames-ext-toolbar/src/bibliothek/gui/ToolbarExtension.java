@@ -124,7 +124,7 @@ public class ToolbarExtension implements Extension {
 			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SeparatorAction action, Dockable dockable ){
 				if( action.shouldDisplay( ViewTarget.TITLE ) )
-					return new ToolbarSeparator( action );
+					return new ToolbarSeparator( action, Color.LIGHT_GRAY );
 
 				return null;
 			}
