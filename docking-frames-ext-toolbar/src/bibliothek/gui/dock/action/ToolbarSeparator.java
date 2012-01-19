@@ -16,10 +16,12 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  */
 public class ToolbarSeparator extends JComponent implements BasicTitleViewItem<JComponent> {
 	private SeparatorAction action;
+	private Color color;
 	private Orientation orientation = Orientation.NORTH_SIDED;
 
-	public ToolbarSeparator( SeparatorAction action ){
+	public ToolbarSeparator( SeparatorAction action, Color color ){
 		this.action = action;
+		this.color = color;
 		setOpaque( false );
 		setFocusable( false );
 	}
@@ -63,7 +65,7 @@ public class ToolbarSeparator extends JComponent implements BasicTitleViewItem<J
 
 	@Override
 	protected void paintComponent( Graphics g ){
-		g.setColor( Color.WHITE );
+		g.setColor( color );
 		if( orientation.isHorizontal() ) {
 			g.drawLine( 0, 3, 0, getHeight() - 4 );
 		}

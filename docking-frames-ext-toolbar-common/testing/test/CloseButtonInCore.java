@@ -196,7 +196,7 @@ public class CloseButtonInCore {
 			setText( "Close" );
 			setTooltip( "Close this toolbar" );
 			setIcon( ActionContentModifier.NONE_HOVER, new CloseIcon( Color.RED ) );
-			setIcon( new CloseIcon( Color.WHITE ) );
+			setIcon( new CloseIcon( Color.LIGHT_GRAY ) );
 		}
 		
 		@Override
