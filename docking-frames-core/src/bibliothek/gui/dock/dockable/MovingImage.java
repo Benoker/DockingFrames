@@ -55,8 +55,11 @@ public interface MovingImage {
      * Called before this image is displayed. The method should connect the
      * image with other objects, like the object it represents.<br>
      * This method is never called twice in a row.
+     * @param transparency if <code>true</code>, then the window showing this
+     * {@link Component} is transparent. If <code>false</code> then the window
+     * is not transparent.
      */
-    public void bind();
+    public void bind( boolean transparency );
     
     /**
      * The reverse of {@link #bind()}. The image should remove any connections

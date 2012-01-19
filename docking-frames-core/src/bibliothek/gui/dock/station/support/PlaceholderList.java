@@ -374,13 +374,6 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			if( additional != null ) {
 				placeholderSet.add( additional );
 			}
-			if( placeholderMap != null ){
-				for( PlaceholderMap.Key key : placeholderMap.getPlaceholders() ){
-					for( Path mapPlaceholder : key.getPlaceholders() ){
-						placeholderSet.add( mapPlaceholder );
-					}
-				}
-			}
 
 			Path[] placeholders = placeholderSet.toArray( new Path[ placeholderSet.size() ] );
 			

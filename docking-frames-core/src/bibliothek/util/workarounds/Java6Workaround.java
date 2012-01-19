@@ -37,6 +37,8 @@ import java.lang.reflect.Method;
  * @author Benjamin Sigg
  */
 public class Java6Workaround implements Workaround{
+	private boolean invocationTargetException = false;
+	
 	public void markAsGlassPane( Component component ){
 		try{
 			Class<?> clazz = Class.forName( "com.sun.awt.AWTUtilities" );
@@ -63,11 +65,12 @@ public class Java6Workaround implements Workaround{
 		}
 	}
 	
-	public void makeTransparent( Window window ){
+	public boolean makeTransparent( Window window ){
 		try{
 			Class<?> awtUtilities = Class.forName( "com.sun.awt.AWTUtilities" );
 			Method setWindowOpaque = awtUtilities.getMethod( "setWindowOpaque", Window.class, boolean.class );
 			setWindowOpaque.invoke( null, window, false );
+			return true;
 		}
 		catch( ClassNotFoundException ex ){
 			// ignore
@@ -79,7 +82,10 @@ public class Java6Workaround implements Workaround{
 			// ignore
 		}
 		catch( InvocationTargetException ex ){
-			ex.printStackTrace();
+			if( !invocationTargetException ){
+				invocationTargetException = true;
+				ex.printStackTrace();
+			}
 		}
 		catch( IllegalArgumentException e ){
 			// ignore
@@ -90,5 +96,6 @@ public class Java6Workaround implements Workaround{
 		catch( Exception e ){
 			e.printStackTrace();
 		}
+		return false;
 	}
 }

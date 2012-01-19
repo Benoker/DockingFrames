@@ -25,7 +25,11 @@
  */
 package bibliothek.gui.dock.dockable;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
@@ -45,6 +49,9 @@ import bibliothek.gui.dock.util.DockSwingUtilities;
 public class ScreencaptureMovingImageFactory implements DockableMovingImageFactory {
     /** the maximal size of the images created by this factory */
     private Dimension max;
+    
+    /** the transparency */
+    private float alpha;
 
     /**
      * Creates a new factory.
@@ -52,8 +59,40 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
      * for not having a maximum size
      */
     public ScreencaptureMovingImageFactory( Dimension max ){
-        this.max = max;
+    	this( max, 1.0f );
     }
+    
+    /**
+     * Creates a new factory.
+     * @param max the maximal size of the images created by this factory, or <code>null</code>
+     * for not having a maximum size
+     * @param alpha the transparency of this image, where 0 means completely transparent and 1 means completely
+     * opaque
+     */
+    public ScreencaptureMovingImageFactory( Dimension max, float alpha ){
+    	this.max = max;
+        setAlpha( alpha );
+    }
+    
+    /**
+     * Set the transparency of this image, where 0 means completely transparent and 1 means completely
+     * opaque
+     * @param alpha the strength of the image
+     */
+    public void setAlpha( float alpha ){
+    	if( alpha < 0 || alpha > 1 || Float.isNaN( alpha )){
+    		throw new IllegalArgumentException( "alpha must be between 0 and 1" );
+    	}
+		this.alpha = alpha;
+	}
+    
+    /**
+     * Gets the transparency.
+     * @return the transparency, a value between 0 and 1
+     */
+    public float getAlpha(){
+		return alpha;
+	}
 
     public MovingImage create( DockController controller, DockTitle snatched ) {
         return create( controller, snatched.getDockable() );
@@ -63,6 +102,7 @@ public class ScreencaptureMovingImageFactory implements DockableMovingImageFacto
         BufferedImage image = createImageFrom( controller, dockable );
 
         TrueMovingImage moving = new TrueMovingImage();
+        moving.setAlpha( alpha );
         moving.setImage( image );
         return moving;
     }

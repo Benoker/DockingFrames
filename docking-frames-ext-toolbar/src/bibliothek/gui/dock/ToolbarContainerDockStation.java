@@ -885,7 +885,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				final DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables().dockables();
 				final StationChildHandle handle = new StationChildHandle( this, displayer, dockable, title );
 				if( placeholder != null ){
-					getDockables().put( placeholder, handle );
+					index = getDockables().put( placeholder, handle );
 				}
 				else{
 					dockables.add( index, handle );

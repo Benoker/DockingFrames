@@ -382,6 +382,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 					onRemoved( column.getList(), columnIndex, removed, removedIndex );
 					if( size == 0 && item == null ){
 						onRemoved( column.getList(), columnIndex );
+						listItem.setDockable( null );
 					}
 				}
 				
@@ -1035,19 +1036,30 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		return strategy;
 	}
 
+
 	/**
 	 * Removes any dead element from {@link #columns}.
 	 */
 	private void purge(){
+		purge( false );
+	}
+	
+	/**
+	 * Removes any dead element from {@link #columns}.
+	 * @param silent if <code>true</code> then no events are fired when a column is removed
+	 */
+	private void purge( boolean silent ){
 		int index = -1;
 		for( final PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item item : columns.list() ) {
 			final Column<D, S, P> column = item.getDockable();
 			if( column != null ) {
 				index++;
 				PlaceholderList<D, S, P> list = column.getList();
-				if( list.list().size() == 0 ) {
+				if( list.dockables().size() == 0 ) {
 					item.setDockable( null );
-					onRemoved( list, index-- );
+					if( !silent ){
+						onRemoved( list, index-- );
+					}
 				}
 			}
 		}
@@ -1141,6 +1153,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 					}
 				};
 			} );
+			purge(true);
 		}
 		finally {
 			columns.setConverter( null );
@@ -1207,5 +1220,6 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 				return columns.createColumn( content );
 			}
 		} );
+		purge(true);
 	}
 }

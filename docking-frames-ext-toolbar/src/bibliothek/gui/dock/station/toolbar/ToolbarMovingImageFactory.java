@@ -69,8 +69,8 @@ public class ToolbarMovingImageFactory implements DockableMovingImageFactory{
 		}
 		
 		@Override
-		public void bind(){
-			image.bind();
+		public void bind( boolean transparency ){
+			image.bind( transparency );
 		}
 		
 		@Override

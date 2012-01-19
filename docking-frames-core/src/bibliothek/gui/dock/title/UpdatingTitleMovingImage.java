@@ -81,7 +81,7 @@ public class UpdatingTitleMovingImage implements MovingImage {
     	return null;
     }
     
-    public void bind() {
+    public void bind( boolean transparency ) {
         request = new DockTitleRequest( null, dockable, version ) {
 			@Override
 			protected void answer( DockTitle previous, DockTitle title ){

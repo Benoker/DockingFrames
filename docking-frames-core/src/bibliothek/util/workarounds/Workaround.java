@@ -46,6 +46,7 @@ public interface Workaround {
 	 * Makes the window <code>window</code> transparent. See {@link Workarounds#makeTransparent(Window)} for a more
 	 * detailed description.
 	 * @param window the window that should be transparent
+	 * @return whether the window is now transparent or not
 	 */
-	public void makeTransparent( Window window );
+	public boolean makeTransparent( Window window );
 }
