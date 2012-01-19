@@ -808,7 +808,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
         
         /**
          * Gets the hint that tells whether the border should be shown or not.
-         * @return whether the border should be shown or <code>null</code>
+         * @return whether the border should be shown
          */
         public boolean getShowBorderHint() {
             if( border != null )

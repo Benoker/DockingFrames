@@ -63,6 +63,10 @@ import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link DockableDisplayer} which is not able to show the {@link DockTitle} of
@@ -70,7 +74,10 @@ import bibliothek.gui.dock.util.Transparency;
  * using the global {@link TabPainter} delivered through the {@link DockProperties}
  * and the key {@link EclipseTheme#TAB_PAINTER}.
  * @author Janni Kovacs
+ * @deprecated this displayer is no longer used by the framework, instead {@link NoTitleBarDisplayer} is used.
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2, description="remove this class")
 public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements DockableDisplayer, InvisibleTabPane, BorderedComponent {
 	private Dockable dockable;
 	private DockController controller;

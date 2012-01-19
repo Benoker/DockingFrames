@@ -694,6 +694,8 @@
  ! API: DockActions now support icons that are shown if the mouse hovers of the action, or if the mouse is pressed. Clients just using the DockAction interface should compile without changes, but subclasses of DockAction will require updates.
  - API: The window that shows up when moving a dockable (DefaultDockRelocator.ImageWindow) is now transparent
  - API: Can set the border of a ScreenDockWindow
+ ! API: MovingImage now can set an offset and is informed if the underlying window is transparent
+ ! API: NoTitleDisplayer gets replaced by NoTitleBarDisplayer. The new displayer extends BasicDockableDisplayer (now all displayer are derived from this class) and is able to show a DockTitle if asked to do so. 
  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

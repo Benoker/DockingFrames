@@ -85,7 +85,7 @@ public class EclipseDisplayerFactory implements DisplayerFactory {
 		    case NONE_BORDERED:
 		    case NONE_HINTED:
 		    case NONE_HINTED_BORDERED:
-		        return new NoTitleDisplayer( station, dockable, bar );
+		        return new NoTitleBarDisplayer( station, dockable, title, bar );
 		    case ECLIPSE:
 		        return new EclipseDockableDisplayer2( theme, station, dockable, title );
 		    case BASIC_BORDERED:
