@@ -8,6 +8,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
@@ -23,6 +25,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.ToolbarInterface;
+import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -35,6 +38,7 @@ import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
@@ -98,6 +102,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			dockables.setStrategy(newValue);
 		}
 	};
+	
+	/** a manager to inform listeners about changes in the visibility state */
+	private DockableShowingManager visibility;
+	
+	/** added to the current parent of this dockable */
+	private VisibleListener visibleListener;
 
 	// ########################################################
 	// ############ Initialization Managing ###################
@@ -128,6 +138,21 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				});
 
 		setTitleIcon(null);
+		
+		visibility = new DockableShowingManager( listeners );
+		visibleListener = new VisibleListener();
+		
+		getComponent().addHierarchyListener( new HierarchyListener(){
+			public void hierarchyChanged( HierarchyEvent e ){
+				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
+					if( getDockParent() == null ){
+						getDockableStateListeners().checkShowing();
+					}
+					
+					visibility.fire();
+				}
+			}
+		});
 	}
 
 	// ########################################################
@@ -182,6 +207,20 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	}
 
 	@Override
+	public void setDockParent( DockStation station ){
+        DockStation old = getDockParent();
+        if( old != null )
+            old.removeDockStationListener( visibleListener );
+        
+        super.setDockParent(station);
+        
+        if( station != null )
+            station.addDockStationListener( visibleListener );
+        
+        visibility.fire();
+	}
+	
+	@Override
 	public void setController( DockController controller ){
 		if (getController() != controller){
 			if (getController() != null){
@@ -212,6 +251,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			for (final StationChildHandle handle : dockables.dockables()){
 				handle.setTitleRequest(title, true);
 			}
+			
+			visibility.fire();
 		}
 	}
 
@@ -1202,4 +1243,17 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// TODO pending
 	}
 
+	/**
+	 * This listener is added to the parent of this station and will forward an event to
+	 * {@link ToolbarContainerDockStation#visibility} if the visibility of the station changes.
+	 * @author Benjamin Sigg
+	 */
+    private class VisibleListener extends DockStationAdapter{
+        @Override
+        public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
+        	if( dockable == ToolbarDockStation.this ){
+        		visibility.fire();
+            }
+        }
+    }
 }

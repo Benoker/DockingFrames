@@ -190,7 +190,7 @@ public class DockableStateEvent {
 			}
 			builder.append( "SELECTION" );
 		}
-		if( didVisibilityChange() ){
+		if( didShowingChange() ){
 			if( comma ){
 				builder.append( ", " );
 			}

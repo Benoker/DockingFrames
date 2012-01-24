@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
+import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -39,6 +42,7 @@ import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.DefaultToolbarContainerConverter;
@@ -127,6 +131,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			dockables.setStrategy( newValue );
 		}
 	};
+	
+	/** a manager to inform listeners about changes in the visibility state */
+	private DockableShowingManager visibility;
+	
+	/** added to the current parent of this dockable */
+	private VisibleListener visibleListener;
 
 	/**
 	 * Constructs a new ContainerLineStation
@@ -157,6 +167,21 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				}
 			}
 		};
+		
+		visibility = new DockableShowingManager( listeners );
+		visibleListener = new VisibleListener();
+		
+		getComponent().addHierarchyListener( new HierarchyListener(){
+			public void hierarchyChanged( HierarchyEvent e ){
+				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
+					if( getDockParent() == null ){
+						getDockableStateListeners().checkShowing();
+					}
+					
+					visibility.fire();
+				}
+			}
+		});
 	}
 
 	/**
@@ -1025,6 +1050,20 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	}
 
 	@Override
+	public void setDockParent( DockStation station ){
+        DockStation old = getDockParent();
+        if( old != null )
+            old.removeDockStationListener( visibleListener );
+        
+        super.setDockParent(station);
+        
+        if( station != null )
+            station.addDockStationListener( visibleListener );
+        
+        visibility.fire();
+	}
+	
+	@Override
 	public void setController( DockController controller ){
 		if( getController() != controller ) {
 			if( getController() != null ) {
@@ -1056,6 +1095,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			if( controller != null ) {
 				bind( dockables, title );
 			}
+			
+			visibility.fire();
 		}
 	}
 
@@ -1072,4 +1113,18 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			handle.setTitleRequest( title, true );
 		}
 	}
+	
+	/**
+	 * This listener is added to the parent of this station and will forward an event to
+	 * {@link ToolbarContainerDockStation#visibility} if the visibility of the station changes.
+	 * @author Benjamin Sigg
+	 */
+    private class VisibleListener extends DockStationAdapter{
+        @Override
+        public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
+        	if( dockable == ToolbarContainerDockStation.this ){
+        		visibility.fire();
+            }
+        }
+    }
 }

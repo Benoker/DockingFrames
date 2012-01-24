@@ -2023,7 +2023,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /**
      * This listener is added to the direct parent of the enclosing
-     * {@link FlapDockListener}. The listener fires events if the visibility
+     * {@link FlapDockStation}. The listener fires events if the visibility
      * changes, and the listener can remove the popup-window if the station
      * looses its visibility. 
      * @author Benjamin Sigg
