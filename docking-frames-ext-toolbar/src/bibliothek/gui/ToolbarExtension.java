@@ -64,6 +64,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
 import bibliothek.gui.dock.station.toolbar.ToolbarMovingImageFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarStationPaint;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupTitle;
 import bibliothek.gui.dock.station.toolbar.title.ToolbarDockTitleGrip;
@@ -182,6 +183,8 @@ public class ToolbarExtension implements Extension {
 			}
 		} );
 		controller.getProperties().get( ExpandableToolbarItemStrategy.STRATEGY ).install( controller );
+		
+		controller.getThemeManager().put( Priority.THEME, ThemeManager.STATION_PAINT + ".toolbar", ThemeManager.STATION_PAINT_TYPE, new ToolbarStationPaint() );
 	}
 
 	private Icon loadIcon( String name ){

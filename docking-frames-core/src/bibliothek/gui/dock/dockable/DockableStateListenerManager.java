@@ -118,7 +118,7 @@ public class DockableStateListenerManager {
 		}
 
 		public void controllerChanged( DockHierarchyEvent event ){
-			// ignore
+			checkShowing();
 		}
 	};
 
