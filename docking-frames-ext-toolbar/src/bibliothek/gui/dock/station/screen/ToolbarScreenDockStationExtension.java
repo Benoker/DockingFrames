@@ -14,6 +14,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
  */
 public class ToolbarScreenDockStationExtension implements ScreenDockStationExtension {
 	private DockController controller;
+	
 	private Dockable pending;
 	
 	public ToolbarScreenDockStationExtension( DockController controller ){
@@ -28,15 +29,7 @@ public class ToolbarScreenDockStationExtension implements ScreenDockStationExten
 			
 			if( strategy.isToolbarPart( dockable ) ){
 				Dockable replacement = strategy.ensureToolbarLayer( station, dockable );
-				if( replacement != dockable ){
-					ScreenDockProperty property = arguments.getProperty();
-					DockableProperty successor = null;
-					if( property != null ){
-						successor = property.getSuccessor();
-					}
-					if( successor == null || !replacement.asDockStation().drop( dockable, successor )){
-						replacement.asDockStation().drop( dockable );
-					}
+				if( replacement != dockable ){					
 					pending = dockable;
 				}
 				else{

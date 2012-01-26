@@ -133,6 +133,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * Removes all content from this grid.
 	 */
 	public void clear(){
+		purge();
 		for( final Column<D, S, P> column : columns.dockables() ) {
 			column.getList().unbind();
 			column.getList().setStrategy( null );
