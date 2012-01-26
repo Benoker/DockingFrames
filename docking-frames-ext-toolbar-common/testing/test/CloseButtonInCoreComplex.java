@@ -139,10 +139,10 @@ public class CloseButtonInCoreComplex {
 
 		frontend.setDefaultHideable( false );
 
-		frontend.addDockable( "d1", dockable1 );
-		frontend.addDockable( "d2", dockable2 );
-		frontend.addDockable( "d3", dockable3 );
-		frontend.addDockable( "d4", dockable4 );
+//		frontend.addDockable( "d1", dockable1 );
+//		frontend.addDockable( "d2", dockable2 );
+//		frontend.addDockable( "d3", dockable3 );
+//		frontend.addDockable( "d4", dockable4 );
 		frontend.addDockable( "d5", dockable5 );
 		
 		centerStation.drop( dockable5 );

@@ -24,16 +24,26 @@ public class ToolbarScreenDockStationExtension implements ScreenDockStationExten
 	public void drop( ScreenDockStation station, DropArguments arguments ){
 		if( arguments.getWindow() == null ){
 			ToolbarStrategy strategy = controller.getProperties().get( ToolbarStrategy.STRATEGY );
-			
 			Dockable dockable = arguments.getDockable();
-			Dockable replacement = strategy.ensureToolbarLayer( station, dockable );
-			if( replacement != dockable ){
-				pending = dockable;
+			
+			if( strategy.isToolbarPart( dockable ) ){
+				Dockable replacement = strategy.ensureToolbarLayer( station, dockable );
+				if( replacement != dockable ){
+					ScreenDockProperty property = arguments.getProperty();
+					DockableProperty successor = null;
+					if( property != null ){
+						successor = property.getSuccessor();
+					}
+					if( successor == null || !replacement.asDockStation().drop( dockable, successor )){
+						replacement.asDockStation().drop( dockable );
+					}
+					pending = dockable;
+				}
+				else{
+					pending = null;
+				}
+				arguments.setDockable( replacement );
 			}
-			else{
-				pending = null;
-			}
-			arguments.setDockable( replacement );
 		}
 		else{
 			pending = null;
