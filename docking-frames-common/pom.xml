@@ -23,5 +23,27 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
+        <build>
+            <resources>
+                <resource>
+                    <directory>
+                        src/
+                    </directory>
+                    <includes>
+                        <include>
+                            **/*.properties
+                        </include>
+                        <include>
+                            **/*.png
+                        </include>
+                        <include>
+                            **/*.ini
+                        </include>
+                        <include>
+                            **/*.svg
+                        </include>
+                    </includes>
+                </resource>
+            </resources>
+        </build>
 </project>
