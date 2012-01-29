@@ -217,7 +217,7 @@ public class CloseButtonInCore {
 	
 	private static ComponentDockable createDockable( final String small, String large ){
 		final ComponentDockable dockable = new ComponentDockable();
-		dockable.setComponent( new JButton( small ), ExpandedState.SHRUNK );
+		dockable.setComponent( new JButton( new ButtonIcon() ), ExpandedState.SHRUNK );
 		dockable.setComponent( new JButton( large ), ExpandedState.STRETCHED );
 
 		dockable.addDockableStateListener( new DockableStateListener(){
@@ -231,6 +231,28 @@ public class CloseButtonInCore {
 		return dockable;
 	}
 
+	public static class ButtonIcon implements Icon{
+		private Color color;
+
+		public ButtonIcon(){
+			this.color = new Color( (int)(Math.random() * (1 << 24)) );
+		}
+
+		public int getIconWidth(){
+			return 16;
+		}
+
+		public int getIconHeight(){
+			return 16;
+		}
+
+		@Override
+		public void paintIcon( Component c, Graphics g, int x, int y ){
+			g.setColor( color );
+			g.fillOval( x, y, 16, 16 );
+		}
+	}
+	
 	public static class CloseIcon implements Icon {
 		private Color color;
 
