@@ -9,7 +9,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import bibliothek.gui.DockFrontend;
@@ -31,6 +35,8 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.dockable.DockableStateEvent;
 import bibliothek.gui.dock.dockable.DockableStateListener;
+import bibliothek.gui.dock.event.DockHierarchyEvent;
+import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.frontend.FrontendEntry;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
@@ -143,6 +149,12 @@ public class CloseButtonInCore {
 		dockable1.getDockParent().drop( dockable2 );
 		dockable1.getDockParent().drop( dockable3 );
 		dockable1.getDockParent().drop( dockable4 );
+		
+		JMenu menu = new JMenu( "Panels" );
+		menu.add( createItem( "1", dockable1, frontend ) );
+		menu.add( createItem( "2", dockable2, frontend ) );
+		menu.add( createItem( "3",dockable3, frontend ) );
+		menu.add( createItem( "4",dockable4, frontend ) );
 
 		DefaultDockable dockable = new DefaultDockable( "Center" );
 		dockable.addDockableStateListener( new DockableStateListener(){
@@ -164,10 +176,45 @@ public class CloseButtonInCore {
 			}
 		} );
 
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.add( menu );
+		frame.setJMenuBar( menuBar );
+		
 		screen.setShowing( true );
 		frame.setVisible( true );
 	}
 
+	private static JMenuItem createItem( String title, final Dockable dockable, final DockFrontend frontend ){
+		final JCheckBoxMenuItem item = new JCheckBoxMenuItem( title );
+		item.setSelected( true );
+		dockable.addDockHierarchyListener( new DockHierarchyListener(){
+			
+			@Override
+			public void hierarchyChanged( DockHierarchyEvent event ){
+				item.setSelected( dockable.getController() != null );
+			}
+			
+			@Override
+			public void controllerChanged( DockHierarchyEvent event ){
+				item.setSelected( dockable.getController() != null );
+			}
+		} );
+		
+		item.addActionListener( new ActionListener(){
+			@Override
+			public void actionPerformed( ActionEvent e ){
+				if( item.isSelected() ){
+					frontend.show( dockable );
+				}
+				else{
+					frontend.hide( dockable );
+				}
+			}
+		} );
+		
+		return item;
+	}
+	
 	private static ComponentDockable createDockable( final String small, String large ){
 		final ComponentDockable dockable = new ComponentDockable();
 		dockable.setComponent( new JButton( small ), ExpandedState.SHRUNK );

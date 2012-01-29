@@ -239,7 +239,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 		columnList.dockables().add( item );
 		if( added ){
-			onInserted( columnList, addedColumnIndex, item, columnList.dockables().size() );
+			onInserted( columnList, addedColumnIndex, item, columnList.dockables().size()-1 );
 		}
 		else{
 			int index = Math.max( 0, Math.min( columnIndex, columns.dockables().size() ) );
@@ -454,7 +454,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			columnIndex++;
 			int index = column.getList().dockables().indexOf( item );
 			if( index >= 0 ){
-				column.getList().dockables().remove( index );
+				column.getList().remove( item );
 				onRemoved( column.getList(), columnIndex, item, index );
 			}
 		}
@@ -1057,6 +1057,12 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 				index++;
 				PlaceholderList<D, S, P> list = column.getList();
 				if( list.dockables().size() == 0 ) {
+					item.setPlaceholderMap( list.toMap( new PlaceholderListItemAdapter<D, PlaceholderListItem<D>>(){
+						@Override
+						public ConvertedPlaceholderListItem convert( int index, PlaceholderListItem<D> dockable ){
+							throw new IllegalStateException( "the list is supposed to have no children, so this conversion method must never be called" );
+						}
+					} ) );
 					item.setDockable( null );
 					if( !silent ){
 						onRemoved( list, index-- );
