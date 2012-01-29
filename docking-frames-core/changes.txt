@@ -686,6 +686,9 @@
  - Bugfix: when maximizing a CDockable, the CMaximizedMode tries to ensure that the dockable remains in the same CStationContainer
  - Bugfix: not all drop down buttons did support the disabled arrow icon
  - API: It is now possible to show text on buttons for DockActions. The buttons also support different fonts and colors. Whether text shows up is decided by the ButtonContentFilter. 
+
+[v1.1.1p6d]
+ - API: If GlassedPane creates a tooltip it calls the "createTooltip" method of the JComponent where the mouse hovers over
  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

@@ -39,6 +39,7 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
@@ -281,9 +282,11 @@ public class GlassedPane extends JPanel{
             	downCount = 0;
             	dragged = null;
             }
-
+            boolean overNewComponent = false;
+            
             if( moved || entered || exited ){
                 if( over != component ){
+                	overNewComponent = true;
                     if( over != null ){
                         over.dispatchEvent( new MouseEvent( 
                                 over, MouseEvent.MOUSE_EXITED, e.getWhen(), e.getModifiers(), 
@@ -324,12 +327,12 @@ public class GlassedPane extends JPanel{
                     setCursor( cursor );
 
                 if( component instanceof JComponent ){
-                    JComponent jcomp = (JComponent)component;
+                	JComponent jcomp = (JComponent)component;
                     String tooltip = jcomp.getToolTipText( forward );
                     String thistip = getToolTipText();
 
-                    if( tooltip != thistip ){
-                        if( tooltip == null || thistip == null || !tooltip.equals( thistip ))
+                    if( tooltip != thistip || overNewComponent ){
+                        if( tooltip == null || thistip == null || !tooltip.equals( thistip ) || overNewComponent )
                             setToolTipText( tooltip );
                     }
                 }
@@ -338,6 +341,16 @@ public class GlassedPane extends JPanel{
             }
         }
 
+        @Override
+        public JToolTip createToolTip(){
+        	if( over instanceof JComponent ){
+        		return ((JComponent)over).createToolTip();
+        	}
+        	else{
+        		return super.createToolTip();
+        	}
+        }
+        
         /**
          * Dispatches the event <code>e</code> to the ContentPane or one
          * of the children of ContentPane. Also informs the focusController about
