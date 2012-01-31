@@ -965,7 +965,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 		return dockables.get( index ).getList();
 	}
-
+	
 	/**
 	 * Informs this grid that it is actually used and that it should is allowed
 	 * to add observers to various resources.
