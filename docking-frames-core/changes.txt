@@ -688,7 +688,8 @@
  - API: It is now possible to show text on buttons for DockActions. The buttons also support different fonts and colors. Whether text shows up is decided by the ButtonContentFilter. 
 
 [v1.1.1p6d]
- - API: If GlassedPane creates a tooltip it calls the "createTooltip" method of the JComponent where the mouse hovers over
+ - API: If GlassedPane creates a tooltip it calls the "createTooltip" method of the JComponent where the mouse hovers over. Clients can set a custom strategy called "ToolbarStrategy" to manage tooltips.
+ - Bugfix: When changing the layout (setting of a DockFrontend), protected root stations were unregistered. They should have been unaffected by the change.
  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

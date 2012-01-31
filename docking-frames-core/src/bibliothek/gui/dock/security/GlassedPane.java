@@ -45,6 +45,9 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Workarounds;
 
 /**
@@ -56,12 +59,29 @@ import bibliothek.util.Workarounds;
  * @author Benjamin Sigg
  */
 public class GlassedPane extends JPanel{
+	/** the strategy used by a {@link GlassedPane} to manage its tooltips */
+	public static final PropertyKey<TooltipStrategy> TOOLTIP_STRATEGY = new PropertyKey<TooltipStrategy>( "tooltip strategy", 
+			new ConstantPropertyFactory<TooltipStrategy>( new DefaultTooltipStrategy() ), true );
+	
     /** An arbitrary component */
     private JComponent contentPane = new JPanel();
     /** A component lying over all other components. Catches every MouseEvent */
     private JComponent glassPane = new GlassPane();
     /** A controller which will be informed about every click of the mouse */
     private DockController controller;
+    
+    /** the strategy used to manage tooltips */
+    private PropertyValue<TooltipStrategy> tooltips = new PropertyValue<TooltipStrategy>( TOOLTIP_STRATEGY ){
+		@Override
+		protected void valueChanged( TooltipStrategy oldValue, TooltipStrategy newValue ){
+			if( oldValue != null ){
+				oldValue.uninstall( GlassedPane.this );
+			}
+			if( newValue != null ){
+				newValue.install( GlassedPane.this );
+			}
+		}
+	};
     
     /**
      * Creates a new pane
@@ -82,6 +102,7 @@ public class GlassedPane extends JPanel{
      */
     public void setController( DockController controller ){
 		this.controller = controller;
+		tooltips.setProperties( controller );
 	}
 
     @Override
@@ -161,6 +182,25 @@ public class GlassedPane extends JPanel{
         /** the number of pressed buttons */
         private int downCount = 0;
 
+        /** callback forwarded to the current {@link TooltipStrategy} of {@link GlassedPane#tooltips} */
+        private TooltipStrategyCallback callback = new TooltipStrategyCallback(){
+			public void setToolTipText( String text ){
+				GlassPane.this.setToolTipText( text );
+			}
+			
+			public String getToolTipText(){
+				return GlassPane.this.getToolTipText();
+			}
+			
+			public GlassedPane getGlassedPane(){
+				return GlassedPane.this;
+			}
+			
+			public JToolTip createToolTip(){
+				return superCreateToolTip();
+			}
+		};
+        
         /**
          * Creates a new GlassPane.
          */
@@ -326,29 +366,17 @@ public class GlassedPane extends JPanel{
                 if( getCursor() != cursor )
                     setCursor( cursor );
 
-                if( component instanceof JComponent ){
-                	JComponent jcomp = (JComponent)component;
-                    String tooltip = jcomp.getToolTipText( forward );
-                    String thistip = getToolTipText();
-
-                    if( tooltip != thistip || overNewComponent ){
-                        if( tooltip == null || thistip == null || !tooltip.equals( thistip ) || overNewComponent )
-                            setToolTipText( tooltip );
-                    }
-                }
-                else
-                    setToolTipText( null );
+                tooltips.getValue().setTooltipText( over, forward, overNewComponent, callback );
             }
         }
 
         @Override
         public JToolTip createToolTip(){
-        	if( over instanceof JComponent ){
-        		return ((JComponent)over).createToolTip();
-        	}
-        	else{
-        		return super.createToolTip();
-        	}
+        	return tooltips.getValue().createTooltip( over, callback );
+        }
+
+        private JToolTip superCreateToolTip(){
+        	return super.createToolTip();
         }
         
         /**
