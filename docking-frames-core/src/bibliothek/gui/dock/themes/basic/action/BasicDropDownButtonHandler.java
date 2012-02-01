@@ -256,7 +256,9 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
             DropDownItemHandle entry = new DropDownItemHandle( action, item, dockable, getAction() );
             entry.bind();
             items.put( action, entry );
-            menu.add( item.getItem() );
+            if( item.getItem() != null ){
+            	menu.add( item.getItem() );
+            }
         }
     }
     
@@ -268,7 +270,9 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
         DockAction action = actions.remove( index );
         DropDownItemHandle item = items.remove( action );
         if( item != null ){
-        	menu.remove( item.getView().getItem() );
+        	if( item.getView().getItem() != null ){
+        		menu.remove( item.getView().getItem() );
+        	}
         	item.unbind();
         }
     }

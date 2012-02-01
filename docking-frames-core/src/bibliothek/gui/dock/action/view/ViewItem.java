@@ -47,7 +47,7 @@ public interface ViewItem<A> {
 	
 	/**
 	 * Gets this item as component.
-	 * @return this item
+	 * @return this item, depending on the subclass this may or may not be <code>null</code>
 	 */
 	public A getItem();
 	

@@ -691,5 +691,8 @@
  - API: If GlassedPane creates a tooltip it calls the "createTooltip" method of the JComponent where the mouse hovers over. Clients can set a custom strategy called "ToolbarStrategy" to manage tooltips.
  - Bugfix: When changing the layout (setting of a DockFrontend), protected root stations were unregistered. They should have been unaffected by the change.
  
+[v1.1.1p6e]
+ - API: ButtonDropDownHandler and related classes can now handle a "null" component as view. This allows an action to show up on a drop down button even if it does not show up in its menu.
+ 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

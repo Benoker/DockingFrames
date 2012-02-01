@@ -73,7 +73,9 @@ public abstract class AbstractDropDownHandler<S extends StandardDropDownItemActi
 	}
 
 	public void addActionListener( ActionListener listener ){
-		item.addActionListener( listener );
+		if( item != null ){
+			item.addActionListener( listener );
+		}
 	}
 
 	public boolean isSelectable(){
@@ -85,7 +87,9 @@ public abstract class AbstractDropDownHandler<S extends StandardDropDownItemActi
 	}
 
 	public void removeActionListener( ActionListener listener ){
-		item.removeActionListener( listener );
+		if( item != null ){
+			item.removeActionListener( listener );
+		}
 	}
 
 	public void setView( DropDownView view ){
