@@ -23,7 +23,10 @@ import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnListener;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModelListener;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList;
 import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList.Column;
@@ -50,10 +53,113 @@ public class ToolbarGridTest {
 		story.insert( 0, 0, null );
 		story.insert( 0, 1, null );
 		story.insert( 0, 2, "a" );
-		
+
 		story.assertCell( 0, 0, null );
 		story.assertCell( 0, 1, null );
 		story.assertCell( 0, 2, "a" );
+	}
+
+	@Test
+	public void testOneColumnAddRemove(){
+		story.insert( 0, 0, null );
+		story.insert( 0, 1, null );
+		story.insert( 0, 2, "a" );
+		story.remove( 0, 1 );
+
+		story.assertCell( 0, 0, null );
+		story.assertCell( 0, 1, "a" );
+	}
+
+	@Test
+	public void testOneColumnAddRemovePlaceholder(){
+		story.insert( 0, 0, null );
+		story.insert( 0, 1, "a" );
+		story.insert( 0, 2, null );
+
+		story.remove( 0, 1 );
+		story.insert( "a" );
+
+		story.assertCell( 0, 0, null );
+		story.assertCell( 0, 1, "a" );
+		story.assertCell( 0, 2, null );
+	}
+
+	@Test
+	public void testMultiColumn(){
+		story.insert( 0, 0, null );
+		story.insert( 0, 1, null );
+		story.insert( 0, 2, null );
+
+		story.insert( 1, 0, null );
+		story.insert( 1, 1, null );
+
+		story.assertCell( 0, 0, null );
+		story.assertCell( 0, 1, null );
+		story.assertCell( 0, 2, null );
+
+		story.assertCell( 1, 0, null );
+		story.assertCell( 1, 1, null );
+	}
+
+	@Test
+	public void testColumnAddRemovePlaceholder(){
+		story.insert( 0, 0, null );
+		story.insert( 0, 1, null );
+		story.insert( 0, 2, null );
+
+		story.insert( 1, 0, "a" );
+		story.insert( 1, 1, "b" );
+
+		story.insert( 2, 0, null );
+		story.insert( 2, 1, null );
+
+		story.remove( 1, 0 );
+		story.remove( 1, 0 );
+
+		story.insert( "b" );
+		story.insert( "a" );
+
+		story.assertCell( 0, 0, null );
+		story.assertCell( 0, 1, null );
+		story.assertCell( 0, 2, null );
+
+		story.assertCell( 1, 0, "a" );
+		story.assertCell( 1, 1, "b" );
+
+		story.assertCell( 2, 0, null );
+		story.assertCell( 2, 1, null );
+	}
+
+	@Test
+	public void testNewPosition(){
+		story.insert( 0, 0, "a" );
+		story.insert( 0, 1, "b" );
+		story.insert( 0, 2, "c" );
+
+		story.insert( 1, 0, "d" );
+		story.insert( 1, 1, "e" );
+		story.insert( 1, 2, "f" );
+
+		story.insert( 2, 0, "g" );
+		story.insert( 2, 1, "h" );
+		story.insert( 2, 2, "i" );
+
+		story.remove( 1, 1 );
+		story.insert( 2, 1, "e" );
+		story.remove( 2, 1 );
+		story.insert( "e" );
+
+		story.assertCell( 0, 0, "a" );
+		story.assertCell( 0, 1, "b" );
+		story.assertCell( 0, 2, "c" );
+
+		story.assertCell( 1, 0, "d" );
+		story.assertCell( 1, 1, "f" );
+
+		story.assertCell( 2, 0, "g" );
+		story.assertCell( 2, 1, "e" );
+		story.assertCell( 2, 2, "h" );
+		story.assertCell( 2, 3, "i" );
 	}
 
 	private TestGrid copyByReadWrite( TestGrid grid, Collection<Dockable> dockables ){
@@ -134,19 +240,61 @@ public class ToolbarGridTest {
 		assertEquals( itemsA.hasNext(), itemsB.hasNext() );
 	}
 
-	private class TestStory {
+	private class TestStory implements ToolbarColumnModelListener<TestItem>, ToolbarColumnListener<TestItem> {
 		private TestGrid grid = new TestGrid();
 		private List<Dockable> dockables = new ArrayList<Dockable>();
 
+		private List<ToolbarColumn<TestItem>> columns = new ArrayList<ToolbarColumn<TestItem>>();
+		private List<List<TestItem>> items = new ArrayList<List<TestItem>>();
+
 		public TestStory(){
 			grid.setStrategy( new TestPlaceholderStrategy() );
+			ToolbarColumnModel<TestItem> model = grid.getModel();
+			model.addListener( this );
+		}
+
+		@Override
+		public void inserted( ToolbarColumnModel<TestItem> model, ToolbarColumn<TestItem> column, int index ){
+			column.addListener( this );
+			columns.add( index, column );
+			items.add( index, new ArrayList<TestItem>() );
+		}
+
+		@Override
+		public void removed( ToolbarColumnModel<TestItem> model, ToolbarColumn<TestItem> column, int index ){
+			column.removeListener( this );
+			columns.remove( index );
+			List<TestItem> list = items.remove( index );
+			assertEquals( 0, list.size() );
+		}
+
+		@Override
+		public void inserted( ToolbarColumn<TestItem> column, TestItem item, Dockable dockable, int index ){
+			int columnIndex = columns.indexOf( column );
+			assertTrue( columnIndex >= 0 );
+			items.get( columnIndex ).add( index, item );
+		}
+
+		@Override
+		public void removed( ToolbarColumn<TestItem> column, TestItem item, Dockable dockable, int index ){
+			int columnIndex = columns.indexOf( column );
+			assertTrue( columnIndex >= 0 );
+			assertSame( item, items.get( columnIndex ).remove( index ) );
 		}
 
 		public void insert( int column, int row, String placeholder ){
 			TestItem item = new TestItem( placeholder );
 			grid.insert( column, row, item );
+			if( placeholder != null ) {
+				grid.insertPlaceholder( column, row, new Path( "test", placeholder ) );
+			}
 			dockables.add( item.asDockable() );
 			check();
+		}
+
+		public void insert( String placeholder ){
+			TestItem item = new TestItem( placeholder );
+			grid.put( new Path( "test", placeholder ), item );
 		}
 
 		public void remove( int column, int row ){
@@ -158,6 +306,21 @@ public class ToolbarGridTest {
 
 		private void check(){
 			assertEqualsGrid( grid, copyByReadWrite( grid, dockables ) );
+			assertModel();
+		}
+
+		private void assertModel(){
+			ToolbarColumnModel<TestItem> model = grid.getModel();
+			assertEquals( model.getColumnCount(), items.size() );
+			for( int i = 0, n = model.getColumnCount(); i < n; i++ ) {
+				ToolbarColumn<TestItem> column = model.getColumn( i );
+				List<TestItem> list = items.get( i );
+
+				assertEquals( list.size(), column.getDockableCount() );
+				for( int j = 0, m = column.getDockableCount(); j < m; j++ ) {
+					assertSame( column.getItem( j ), list.get( j ) );
+				}
+			}
 		}
 
 		public void assertCell( int column, int row, String placeholder ){
@@ -169,7 +332,7 @@ public class ToolbarGridTest {
 				assertNull( dockable.getId() );
 			}
 			else {
-				assertEquals( placeholder, new Path( "test", dockable.getId() ) );
+				assertEquals( placeholder, dockable.getId() );
 			}
 		}
 	}

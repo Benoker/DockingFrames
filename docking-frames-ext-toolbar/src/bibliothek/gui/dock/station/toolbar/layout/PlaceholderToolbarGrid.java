@@ -371,14 +371,12 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		if( column != null ) {
 			int columnIndex = columns.dockables().indexOf( column );
 			
-			int removedIndex = column.getList().getDockableIndex( placeholder );
-			if( removedIndex >= 0 ){
-				P removed = null;
+			// int removedIndex = column.getList().getDockableIndex( placeholder );
+			int replacingListIndex = column.getList().getListIndex( placeholder );
+			if( replacingListIndex >= 0 ){
+				P removed = column.getList().list().get( replacingListIndex ).getDockable();
 				int size = column.getList().dockables().size();
-				if( removedIndex < size ){
-					removed = column.getList().dockables().get( removedIndex );
-				}
-				column.getList().put( placeholder, item );
+				int removedIndex = column.getList().put( placeholder, item );
 				if( removed != null ){
 					onRemoved( column.getList(), columnIndex, removed, removedIndex );
 					if( size == 0 && item == null ){

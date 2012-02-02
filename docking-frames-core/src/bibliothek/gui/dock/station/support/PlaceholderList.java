@@ -706,7 +706,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 
 	/**
 	 * Searches the first occurance of <code>placeholder</code> in a placeholder-set and returns
-	 * return the index of that entry on the {@link Level#BASE BASE level}.
+	 * the index of that entry on the {@link Level#BASE BASE level}.
 	 * @param placeholder the placeholder to search
 	 * @return its location or -1 if not found
 	 */
