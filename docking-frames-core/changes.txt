@@ -697,6 +697,7 @@
  ! API: MovingImage now can set an offset and is informed if the underlying window is transparent
  ! API: NoTitleDisplayer gets replaced by NoTitleBarDisplayer. The new displayer extends BasicDockableDisplayer (now all displayer are derived from this class) and is able to show a DockTitle if asked to do so. 
  - Bugfix: The "showing" property is now checked for correctness when the DockController of a Dockable changes.
+ - Bugfix: Resizing a ScreenDockWindow to a size smaller than its acceptable minimum will no longer move the window.
  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

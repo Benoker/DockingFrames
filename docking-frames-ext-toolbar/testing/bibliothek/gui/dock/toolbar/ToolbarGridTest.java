@@ -35,6 +35,15 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.util.Path;
 
+/**
+ * This test checks {@link DockablePlaceholderToolbarGrid}. To be exact, the test checks these attributes:
+ * <ul>
+ *  <li>Inserting and removing items with and without placeholders result in the expected layout.</li>
+ * 	<li>Writing and reading the grid does not change the grid.</li>
+ *  <li>The model of the grid always remains correct, the events fired by the model match the actual changes.</li>
+ * </ul>
+ * @author Benjamin Sigg
+ */
 public class ToolbarGridTest {
 	private TestStory story;
 
