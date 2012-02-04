@@ -34,6 +34,7 @@ import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.intern.DefaultCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
+import bibliothek.gui.dock.dockable.IconHandling;
 import bibliothek.util.ClientOnly;
 
 /**
@@ -59,7 +60,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, CAction... actions ){
-        this( factory, null, null, null, null, actions );
+        this( factory, null, IconHandling.REPLACE_NULL_ICON, null, null, null, actions );
     }
     
     /**
@@ -72,7 +73,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Component content, CAction... actions ){
-        this( factory, null, null, content, null, actions );
+        this( factory, null, IconHandling.REPLACE_NULL_ICON, null, content, null, actions );
     }
     
     /**
@@ -86,7 +87,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, String title, Component content, CAction... actions ){
-        this( factory, null, title, content, null, actions );
+        this( factory, null, IconHandling.REPLACE_NULL_ICON, title, content, null, actions );
     }
     
     /**
@@ -100,7 +101,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Icon icon, Component content, CAction... actions ){
-        this( factory, icon, null, content, null, actions );
+        this( factory, icon, IconHandling.KEEP_NULL_ICON, null, content, null, actions );
     }
     
     /**
@@ -115,7 +116,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Icon icon, String title, Component content, CAction... actions ){
-        this( factory, icon, title, content, null, actions );
+        this( factory, icon, IconHandling.KEEP_NULL_ICON, title, content, null, actions );
     }
     
     /**
@@ -127,7 +128,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, String title, CAction... actions ){
-        this( factory, null, title, null, null, actions );
+        this( factory, null, IconHandling.REPLACE_NULL_ICON, title, null, null, actions );
     }
     
     /**
@@ -139,7 +140,7 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Icon icon, CAction... actions ){
-        this( factory, icon, null, null, null, actions );
+        this( factory, icon, IconHandling.KEEP_NULL_ICON, null, null, null, actions );
     }
     
     /**
@@ -152,9 +153,9 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Icon icon, String title, CAction... actions ){
-        this( factory, icon, title, null, null, actions );
+        this( factory, icon, IconHandling.KEEP_NULL_ICON, title, null, null, actions );
     }
-    
+
     /**
      * Creates a new dockable.
      * @param factory the factory which created or could create this
@@ -169,15 +170,32 @@ public class DefaultMultipleCDockable extends DefaultCDockable implements Multip
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
     public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Icon icon, String title, Component content, Permissions permissions, CAction... actions ){
+    	this( factory, icon, IconHandling.KEEP_NULL_ICON, title, content, permissions, actions );
+    }
+    
+    /**
+     * Creates a new dockable.
+     * @param factory the factory which created or could create this
+     * kind of dockable. A value of <code>null</code> will default ot the {@link NullMultipleCDockableFactory}.
+     * @param icon the icon shown in the title, can be <code>null</code>
+     * @param iconHandling what to do if <code>icon</code> is <code>null</code>
+     * @param title the text shown in the title, can be <code>null</code>
+     * @param content a <code>Component</code> which will be shown in the middle
+     * of this dockable, can be <code>null</code>.
+     * @param permissions what actions the user is allowed to do, <code>null</code> will be
+     * replaced by {@link DefaultCDockable.Permissions#DEFAULT}.
+     * @param actions the actions shown in the title, can be <code>null</code>.
+     * A separator is inserted for every entry that is <code>null</code> of this array.
+     */
+    public DefaultMultipleCDockable( MultipleCDockableFactory<?,?> factory, Icon icon, IconHandling iconHandling, String title, Component content, Permissions permissions, CAction... actions ){
         super( permissions == null ? Permissions.DEFAULT : permissions );
         if( factory == null ){
         	factory = NullMultipleCDockableFactory.NULL;
         }
         this.factory = factory;
         
-        if( icon != null ){
-            setTitleIcon( icon );
-        }
+        setTitleIconHandling( iconHandling );
+        setTitleIcon( icon );
         if( title != null ){
             setTitleText( title );
         }

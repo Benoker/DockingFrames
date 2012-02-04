@@ -44,6 +44,7 @@ import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.dockable.DockableBackgroundComponent;
 import bibliothek.gui.dock.dockable.DockableIcon;
+import bibliothek.gui.dock.dockable.IconHandling;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
@@ -74,7 +75,7 @@ public class DefaultDockable extends AbstractDockable {
      * Constructs a new DefaultDockable
      */
     public DefaultDockable(){
-        this(  null, null, null );
+        this(  null, null, null, IconHandling.REPLACE_NULL_ICON );
     }
 
     /**
@@ -82,7 +83,7 @@ public class DefaultDockable extends AbstractDockable {
      * @param icon the icon, to be shown at various places
      */
     public DefaultDockable( Icon icon ){
-        this( null, null, icon );
+        this( null, null, icon, IconHandling.KEEP_NULL_ICON );
     }
     
     /**
@@ -90,7 +91,7 @@ public class DefaultDockable extends AbstractDockable {
      * @param title the title, to be shown at various places
      */
     public DefaultDockable( String title ){
-        this( null, title, null );
+        this( null, title, null, IconHandling.REPLACE_NULL_ICON );
     }
     
     /**
@@ -99,7 +100,7 @@ public class DefaultDockable extends AbstractDockable {
      * @param component the only child of the content pane 
      */
     public DefaultDockable( Component component ){
-        this( component, null, null );
+        this( component, null, null, IconHandling.REPLACE_NULL_ICON );
     }
 
     /**
@@ -109,7 +110,7 @@ public class DefaultDockable extends AbstractDockable {
      * @param icon the icon, to be shown at various places
      */
     public DefaultDockable( Component component, Icon icon ){
-        this( component, null, icon );
+        this( component, null, icon, IconHandling.KEEP_NULL_ICON );
     }
     
     /**
@@ -119,9 +120,9 @@ public class DefaultDockable extends AbstractDockable {
      * @param title the title, to be shown at various places
      */
     public DefaultDockable( Component component, String title ){
-        this( component, title, null );
+        this( component, title, null, IconHandling.REPLACE_NULL_ICON );
     }
-    
+
     /**
      * Constructs a new DefaultDockable, sets the icon and the title, and
      * places a component.
@@ -130,6 +131,18 @@ public class DefaultDockable extends AbstractDockable {
      * @param icon the icon, to be shown at various places
      */
     public DefaultDockable( Component component, String title, Icon icon ){
+    	this( component, title, icon, IconHandling.KEEP_NULL_ICON );
+    }
+    
+    /**
+     * Constructs a new DefaultDockable, sets the icon and the title, and
+     * places a component.
+     * @param component the only child of the content pane
+     * @param title the title, to be shown at various places
+     * @param icon the icon, to be shown at various places
+     * @param handling how to understand the <code>icon</code> parameter
+     */
+    public DefaultDockable( Component component, String title, Icon icon, IconHandling handling ){
     	super( PropertyKey.DOCKABLE_TITLE, PropertyKey.DOCKABLE_TOOLTIP );
     	
     	pane.setFocusable( false );
@@ -143,9 +156,8 @@ public class DefaultDockable extends AbstractDockable {
             getContentPane().add( component );
         }
         
-        if( icon != null ){
-        	setTitleIcon( icon );
-        }
+        setTitleIconHandling( handling );
+        setTitleIcon( icon );
         setTitleText( title );
     }
     

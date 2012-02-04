@@ -95,6 +95,8 @@ public abstract class AbstractDockable implements Dockable {
     private DockIcon titleIcon;
     /** the current value of {@link #titleIcon} */
     private Icon currentTitleIcon;
+    /** how to react if a <code>null</code> {@link Icon} is set as title icon */
+    private IconHandling titleIconHandling = IconHandling.KEEP_NULL_ICON;
     
     /** the tooltip of this dockable */
     private PropertyValue<String> titleToolTip;
@@ -408,12 +410,48 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     /**
+     * Sets the behavior of how the title icon is handled, whether it is replaced by the default
+     * icon if <code>null</code> or simply not shown.<br>
+     * Calling this method does not have any effect, rather the behavior of {@link #setTitleIcon(Icon)}
+     * is changed.
+     * @param titleIconHandling the new bheavior, not <code>null</code>
+     */
+    public void setTitleIconHandling( IconHandling titleIconHandling ){
+    	if( titleIconHandling == null ){
+    		throw new IllegalArgumentException( "titleIconHandling must not be null" );
+    	}
+		this.titleIconHandling = titleIconHandling;
+	}
+    
+    /**
+     * Tells how a <code>null</code> title icon is handled.
+     * @return the behavior
+     * @see #setTitleIconHandling(IconHandling)
+     */
+    public IconHandling getTitleIconHandling(){
+		return titleIconHandling;
+	}
+    
+    /**
      * Sets the icon of this dockable. All dockableListeners are informed about 
-     * the change.
+     * the change.<br>
+     * If <code>titleIcon</code> is <code>null</code>, then the exact behavior of this method
+     * depends on the result of {@link #getTitleIconHandling()}. The method may either replace
+     * the <code>null</code> {@link Icon} by the default icon, or simply not show any icon.
      * @param titleIcon the new icon, may be <code>null</code>
      */
     public void setTitleIcon( Icon titleIcon ) {
-        titleIcon().setValue( titleIcon, true );
+    	switch( getTitleIconHandling() ){
+    		case KEEP_NULL_ICON:
+    			titleIcon().setValue( titleIcon, true );
+    			break;
+    		case REPLACE_NULL_ICON:
+    			titleIcon().setValue( titleIcon, false );
+    			break;
+    		default:
+    			throw new IllegalStateException( "unknown behavior: " + titleIconHandling );
+    	}
+        
     }
     
     /**
