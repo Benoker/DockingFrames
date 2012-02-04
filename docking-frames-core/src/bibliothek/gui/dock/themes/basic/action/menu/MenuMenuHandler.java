@@ -166,7 +166,9 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
             	item.bind();
             	item.action.bind( dockable );
 	            handler.bind();
-	            menu.add( handler.getItem() );
+	            if( handler.getItem() != null ){
+	            	menu.add( handler.getItem() );
+	            }
             }
         }
     }
@@ -230,8 +232,9 @@ public class MenuMenuHandler extends AbstractMenuHandler<JMenu, MenuDockAction> 
         private void reput(){
             menu.removeAll();
             for( ActionItem item : actions ){
-            	if( item.handler != null )
+            	if( item.handler != null && item.handler.getItem() != null ){
             		menu.add( item.handler.getItem() );
+            	}
             }
         }
         
