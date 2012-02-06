@@ -239,7 +239,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 		columnList.dockables().add( item );
 		if( added ){
-			onInserted( columnList, addedColumnIndex, item, columnList.dockables().size() );
+			onInserted( columnList, addedColumnIndex, item, columnList.dockables().size()-1 );
 		}
 		else{
 			int index = Math.max( 0, Math.min( columnIndex, columns.dockables().size() ) );
@@ -371,14 +371,12 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		if( column != null ) {
 			int columnIndex = columns.dockables().indexOf( column );
 			
-			int removedIndex = column.getList().getDockableIndex( placeholder );
-			if( removedIndex >= 0 ){
-				P removed = null;
+			// int removedIndex = column.getList().getDockableIndex( placeholder );
+			int replacingListIndex = column.getList().getListIndex( placeholder );
+			if( replacingListIndex >= 0 ){
+				P removed = column.getList().list().get( replacingListIndex ).getDockable();
 				int size = column.getList().dockables().size();
-				if( removedIndex < size ){
-					removed = column.getList().dockables().get( removedIndex );
-				}
-				column.getList().put( placeholder, item );
+				int removedIndex = column.getList().put( placeholder, item );
 				if( removed != null ){
 					onRemoved( column.getList(), columnIndex, removed, removedIndex );
 					if( size == 0 && item == null ){
@@ -454,7 +452,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			columnIndex++;
 			int index = column.getList().dockables().indexOf( item );
 			if( index >= 0 ){
-				column.getList().dockables().remove( index );
+				column.getList().remove( item );
 				onRemoved( column.getList(), columnIndex, item, index );
 			}
 		}
@@ -965,7 +963,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 
 		return dockables.get( index ).getList();
 	}
-
+	
 	/**
 	 * Informs this grid that it is actually used and that it should is allowed
 	 * to add observers to various resources.
@@ -1057,6 +1055,12 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 				index++;
 				PlaceholderList<D, S, P> list = column.getList();
 				if( list.dockables().size() == 0 ) {
+					item.setPlaceholderMap( list.toMap( new PlaceholderListItemAdapter<D, PlaceholderListItem<D>>(){
+						@Override
+						public ConvertedPlaceholderListItem convert( int index, PlaceholderListItem<D> dockable ){
+							throw new IllegalStateException( "the list is supposed to have no children, so this conversion method must never be called" );
+						}
+					} ) );
 					item.setDockable( null );
 					if( !silent ){
 						onRemoved( list, index-- );

@@ -166,6 +166,7 @@ public class TestToolbarGroupDockStation {
 		JButton button = new JButton( icon );
 		button.setBorder( new EmptyBorder( new Insets( 4, 4, 4, 4 ) ) );
 		final ComponentDockable dockable = new ComponentDockable( button );
+		dockable.setComponent( new JButton( "some text" ), ExpandedState.STRETCHED );
 		return dockable;
 	}
 }

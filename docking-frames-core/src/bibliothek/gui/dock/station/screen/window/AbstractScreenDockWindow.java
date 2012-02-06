@@ -389,6 +389,52 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 	    return window.isVisible();
     }
     
+    /**
+     * Sets the boundaries of this window. If the boundaries are not valid, then this method tries to ensure that
+     * the edge or side <i>opposite</i> to <code>position</code> gets at the intended position. This is a convenient
+     * method for resizing the window when the mouse is draggint the edge or side at <code>position</code>.
+     * @param bounds the new bounds
+     * @param position the <i>opposite</i> of the edge or side that is fixed
+     */
+    public void setWindowBounds( Rectangle bounds, Position position ){
+    	Rectangle valid = getStation().getBoundaryRestriction().check( this, bounds );
+    	if( valid == null ){
+    		setWindowBounds( bounds, true );
+    	}
+    	else{
+    		switch( position ){
+    			case E:
+    				bounds = new Rectangle( bounds.x, valid.y, valid.width, valid.height );
+    				break;
+    			case N:
+    				bounds = new Rectangle( valid.x, bounds.y + bounds.height - valid.height, valid.width, valid.height );
+    				break;
+    			case S:
+    				bounds = new Rectangle( valid.x, bounds.y, valid.width, valid.height );
+    				break;
+    			case W:
+    				bounds = new Rectangle( bounds.x + bounds.width - valid.width, bounds.y, valid.width, valid.height );
+    				break;
+    			case NE:
+    				bounds = new Rectangle( bounds.x, bounds.y + bounds.height - valid.height, valid.width, valid.height );
+    				break;
+    			case NW:
+    				bounds = new Rectangle( bounds.x + bounds.width - valid.width, bounds.y + bounds.height - valid.height, valid.width, valid.height );
+    				break;
+    			case SE:
+    				bounds = new Rectangle( bounds.x, bounds.y, valid.width, valid.height );
+    				break;
+    			case SW:
+    				bounds = new Rectangle( bounds.x + bounds.width - valid.width, bounds.y, valid.width, valid.height );
+    				break;
+    			default:
+    				bounds = valid;
+    				break;
+    		}
+    		setWindowBounds( bounds, true );
+    	}
+    }
+    
     public void setWindowBounds( Rectangle bounds, boolean screenCoordinates ){
         Rectangle valid = getStation().getBoundaryRestriction().check( this, bounds );
 
@@ -669,7 +715,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 
                 Rectangle bounds = new Rectangle( this.bounds );
 
-                int min = 25;
+                int min = 10;
 
                 if( position == Position.N || position == Position.NE || position == Position.NW ){
                     bounds.height -= dy;
@@ -706,7 +752,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 
                 bounds = attraction.attract( bounds );
                 
-                setWindowBounds( bounds, false );
+                setWindowBounds( bounds, position );
                 updateBorder();
                 invalidate();
                 validate();
