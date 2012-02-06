@@ -36,7 +36,7 @@ import bibliothek.gui.dock.themes.basic.BasicStationPaint;
  * @author Benjamin Sigg
  */
 public class ToolbarStationPaint extends BasicStationPaint{
-	public ToolbarStationPaint(){
-		setColor( Color.RED );
+	public ToolbarStationPaint(Color color){
+		setColor( color );
 	}
 }

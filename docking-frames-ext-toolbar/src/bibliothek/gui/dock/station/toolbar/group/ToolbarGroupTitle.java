@@ -49,7 +49,7 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 	/**
 	 * The background color of this title.
 	 */
-	private TitleColor color;
+	protected TitleColor color;
 	
 	/**
 	 * Creates a new title.

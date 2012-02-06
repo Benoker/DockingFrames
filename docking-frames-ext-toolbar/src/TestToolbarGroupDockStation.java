@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
@@ -39,6 +40,7 @@ public class TestToolbarGroupDockStation {
 		frame.add( pane );
 
 		final DockController controller = new DockController();
+		//controller.setTheme( new EclipseTheme() );
 
 		controller.setRestrictedEnvironment( true );
 
@@ -95,17 +97,17 @@ public class TestToolbarGroupDockStation {
 			@Override
 			public void paintIcon( Component c, Graphics g, int x, int y ){
 				g.setColor( Color.RED );
-				g.fillOval( x, y, 16, 16 );
+				g.fillOval( x, y, 40, 40 );
 			}
 
 			@Override
 			public int getIconWidth(){
-				return 16;
+				return 40;
 			}
 
 			@Override
 			public int getIconHeight(){
-				return 16;
+				return 40;
 			}
 		};
 
