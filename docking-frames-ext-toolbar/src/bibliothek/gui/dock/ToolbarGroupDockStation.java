@@ -2,12 +2,14 @@ package bibliothek.gui.dock;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -124,6 +126,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 */
 	private boolean allowSideSnap = true;
 
+	/**
+	 * The {@link LayoutManager} that is currently used to set the location and size of all children. Can be
+	 * <code>null</code> if no {@link #setOrientation(Orientation) orientation} is set.
+	 */
+	private ToolbarGridLayoutManager<StationChildHandle> layoutManager;
+	
 	// ########################################################
 	// ############ Initialization Managing ###################
 	// ########################################################
@@ -1076,12 +1084,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			final Orientation orientation = getOrientation();
 
 			if( orientation != null ) {
-				dockablePane.setLayout( new ToolbarGridLayoutManager<StationChildHandle>( orientation, dockables ){
+				layoutManager = new ToolbarGridLayoutManager<StationChildHandle>( dockablePane, orientation, dockables ){
 					@Override
 					protected Component toComponent( StationChildHandle item ){
 						return item.getDisplayer().getComponent();
 					}
-				} );
+				};
+				dockablePane.setLayout( layoutManager );
 			}
 			mainPanel.revalidate();
 		}
