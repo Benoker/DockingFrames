@@ -1,3 +1,4 @@
+package bibliothek.gui.dock.toolbar;
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;

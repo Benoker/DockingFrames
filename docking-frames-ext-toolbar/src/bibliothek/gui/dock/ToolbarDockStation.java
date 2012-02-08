@@ -102,10 +102,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			dockables.setStrategy(newValue);
 		}
 	};
-	
+
 	/** a manager to inform listeners about changes in the visibility state */
 	private DockableShowingManager visibility;
-	
+
 	/** added to the current parent of this dockable */
 	private VisibleListener visibleListener;
 
@@ -138,17 +138,17 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				});
 
 		setTitleIcon(null);
-		
-		visibility = new DockableShowingManager( listeners );
+
+		visibility = new DockableShowingManager(listeners);
 		visibleListener = new VisibleListener();
-		
-		getComponent().addHierarchyListener( new HierarchyListener(){
+
+		getComponent().addHierarchyListener(new HierarchyListener(){
 			public void hierarchyChanged( HierarchyEvent e ){
-				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
-					if( getDockParent() == null ){
+				if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0){
+					if (getDockParent() == null){
 						getDockableStateListeners().checkShowing();
 					}
-					
+
 					visibility.fire();
 				}
 			}
@@ -208,18 +208,18 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public void setDockParent( DockStation station ){
-        DockStation old = getDockParent();
-        if( old != null )
-            old.removeDockStationListener( visibleListener );
-        
-        super.setDockParent(station);
-        
-        if( station != null )
-            station.addDockStationListener( visibleListener );
-        
-        visibility.fire();
+		DockStation old = getDockParent();
+		if (old != null)
+			old.removeDockStationListener(visibleListener);
+
+		super.setDockParent(station);
+
+		if (station != null)
+			station.addDockStationListener(visibleListener);
+
+		visibility.fire();
 	}
-	
+
 	@Override
 	public void setController( DockController controller ){
 		if (getController() != controller){
@@ -251,7 +251,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			for (final StationChildHandle handle : dockables.dockables()){
 				handle.setTitleRequest(title, true);
 			}
-			
+
 			visibility.fire();
 		}
 	}
@@ -429,12 +429,13 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// + "## drop(Dockable dockable, int index)##");
 		if (force || this.accept(dockable)){
 			if (!force){
-				Dockable replacement = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+				Dockable replacement = getToolbarStrategy().ensureToolbarLayer(
+						this, dockable);
 				if (replacement == null){
 					return false;
 				}
-				if( replacement != dockable ){
-					replacement.asDockStation().drop( dockable );
+				if (replacement != dockable){
+					replacement.asDockStation().drop(dockable);
 					dockable = replacement;
 				}
 			}
@@ -479,9 +480,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// the "ToolbarDockStationMerger"
 		// Case where dockable is instance of ToolbarGroupDockStation is handled
 		// by the "ToolbarStrategy.ensureToolbarLayer" method
-		Dockable replacement = getToolbarStrategy().ensureToolbarLayer(this, dockable);
-		if( replacement != dockable ){
-			replacement.asDockStation().drop( dockable );
+		Dockable replacement = getToolbarStrategy().ensureToolbarLayer(this,
+				dockable);
+		if (replacement != dockable){
+			replacement.asDockStation().drop(dockable);
 			dockable = replacement;
 		}
 		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(
@@ -519,7 +521,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		final Dockable dockable = handle.getDockable();
 
 		dockable.setDockParent(this);
-		
+
 		mainPanel.getContentPane().add(handle.getDisplayer().getComponent(),
 				index);
 		mainPanel.getContentPane().invalidate();
@@ -813,29 +815,20 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		@Override
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
-			// DefaultStationPaintValue paint = getPaint();
 			if (prepareDropDraw){
 				if (indexBeneathMouse != -1){
 					final Component componentBeneathMouse = getDockables()
 							.get(indexBeneathMouse).getDisplayer()
 							.getComponent();
+
 					if (componentBeneathMouse != null){
-						final Rectangle rectToolbar = basePane.getBounds();
-						// Color color =
-						// this.getController().getColors().get("paint.line");
-						final Color color = new Color(16, 138, 230, 50);
-						final Rectangle2D rect = new Rectangle2D.Double(
-								rectToolbar.x, rectToolbar.y,
-								rectToolbar.width, rectToolbar.height);
-						g2D.setColor(color);
-						g2D.setStroke(new BasicStroke(2));
-						g2D.fill(rect);
-						g2D.setColor(Color.RED);
+						// highlights the whole toolbar
+						paint.drawDivider(g2D, this.getVisibleRect());
 
 						// WARNING:
 						// 1. This rectangle stands for the component beneath
 						// mouse. His coordinates are in the frame of reference
-						// his direct parent.
+						// its direct parent.
 						// 2. g is in the frame of reference of the overlayPanel
 						// 3. So we need to translate this rectangle in the
 						// frame of reference of the overlay panel, which is the
@@ -1244,16 +1237,19 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	}
 
 	/**
-	 * This listener is added to the parent of this station and will forward an event to
-	 * {@link ToolbarContainerDockStation#visibility} if the visibility of the station changes.
+	 * This listener is added to the parent of this station and will forward an
+	 * event to {@link ToolbarContainerDockStation#visibility} if the visibility
+	 * of the station changes.
+	 * 
 	 * @author Benjamin Sigg
 	 */
-    private class VisibleListener extends DockStationAdapter{
-        @Override
-        public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
-        	if( dockable == ToolbarDockStation.this ){
-        		visibility.fire();
-            }
-        }
-    }
+	private class VisibleListener extends DockStationAdapter{
+		@Override
+		public void dockableShowingChanged( DockStation station,
+				Dockable dockable, boolean visible ){
+			if (dockable == ToolbarDockStation.this){
+				visibility.fire();
+			}
+		}
+	}
 }

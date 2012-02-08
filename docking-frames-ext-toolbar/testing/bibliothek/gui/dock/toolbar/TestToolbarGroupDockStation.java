@@ -1,3 +1,4 @@
+package bibliothek.gui.dock.toolbar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -111,14 +112,14 @@ public class TestToolbarGroupDockStation {
 			}
 		};
 
-		group.drop( createToolbar( icon, icon, icon ), 0, 0 );
-		group.drop( createToolbar( icon, icon, icon ), 0, 1 );
-		group.drop( createToolbar( icon, icon ), 1, 0 );
-		group.drop( createToolbar( icon, icon ), 1, 1 );
+		group.drop( createToolbar( true, icon, icon, icon ), 0, 0 );
+		group.drop( createToolbar( true, icon, icon, icon ), 0, 1 );
+		group.drop( createToolbar( false, icon, icon ), 1, 0 );
+		group.drop( createToolbar( true, icon, icon ), 1, 1 );
 
-		group.drop( createToolbar( icon, icon ), new ToolbarGroupProperty( 1, 0, null ) );
-		group.drop( createToolbar( icon, icon, icon ), new ToolbarGroupProperty( 3, 2, null ) );
-		group.drop( createToolbar( icon, icon, icon ), new ToolbarGroupProperty( -1, 5, null ) );
+		group.drop( createToolbar( false, icon, icon ), new ToolbarGroupProperty( 1, 0, null ) );
+		group.drop( createToolbar( false, icon, icon, icon ), new ToolbarGroupProperty( 3, 2, null ) );
+		group.drop( createToolbar( true, icon, icon, icon ), new ToolbarGroupProperty( -1, 5, null ) );
 
 		// Disable the expand state action button
 //		controller.getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, new DefaultExpandableToolbarItemStrategy(){
@@ -146,10 +147,10 @@ public class TestToolbarGroupDockStation {
 		return toolbar;
 	}
 
-	private static ToolbarDockStation createToolbar( Icon... icons ){
+	private static ToolbarDockStation createToolbar( boolean largeText, Icon... icons){
 		ToolbarDockStation toolbar = new ToolbarDockStation();
 		for( Icon icon : icons ) {
-			toolbar.drop( createDockable( icon ) );
+			toolbar.drop( createDockable( icon, largeText ) );
 		}
 		return toolbar;
 	}
@@ -162,11 +163,15 @@ public class TestToolbarGroupDockStation {
 		return dockable;
 	}
 
-	private static ComponentDockable createDockable( Icon icon ){
+	private static ComponentDockable createDockable( Icon icon, boolean largeText ){
 		JButton button = new JButton( icon );
 		button.setBorder( new EmptyBorder( new Insets( 4, 4, 4, 4 ) ) );
 		final ComponentDockable dockable = new ComponentDockable( button );
-		dockable.setComponent( new JButton( "some text" ), ExpandedState.STRETCHED );
+		if (largeText) {
+			dockable.setComponent( new JButton( "a lot of text is written!!" ), ExpandedState.STRETCHED );
+		} else {
+			dockable.setComponent( new JButton( "short text" ), ExpandedState.STRETCHED );
+		}
 		return dockable;
 	}
 }

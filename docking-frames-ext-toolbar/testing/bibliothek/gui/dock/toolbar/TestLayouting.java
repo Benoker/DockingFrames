@@ -1,3 +1,4 @@
+package bibliothek.gui.dock.toolbar;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 

@@ -241,7 +241,7 @@ public class ToolbarExtension implements Extension{
 		controller.getThemeManager().put(Priority.THEME,
 				ThemeManager.STATION_PAINT + ".toolbar",
 				ThemeManager.STATION_PAINT_TYPE,
-				new ToolbarStationPaint(new Color(118, 181, 231, 175)));
+				new ToolbarStationPaint(new Color(255, 0, 0, 125)));
 	}
 
 	private Icon loadIcon( String name ){
