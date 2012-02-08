@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -1120,23 +1121,20 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		 */
 		public void updateAlignment(){
 			final Orientation orientation = getOrientation();
-
-			if( orientation != null ) {
-				dockablePane.setLayout( new ToolbarGridLayoutManager<StationChildHandle>( orientation, dockables ){
-				dockablePane
-						.setLayout(new ToolbarGridLayoutManager<StationChildHandle>(
-								orientation, dockables){
-				layoutManager = new ToolbarGridLayoutManager<StationChildHandle>( dockablePane, orientation, dockables ){
+			if (orientation != null){
+				layoutManager = new ToolbarGridLayoutManager<StationChildHandle>(
+						dockablePane, orientation, dockables){
 					@Override
-							protected Component toComponent(
-									StationChildHandle item ){
+					protected Component toComponent( StationChildHandle item ){
 						return item.getDisplayer().getComponent();
 					}
 				};
-				dockablePane.setLayout( layoutManager );
+				dockablePane.setLayout(layoutManager);
 			}
 			mainPanel.revalidate();
 		}
+
+
 
 		@Override
 		protected void paintOverlay( Graphics g ){
