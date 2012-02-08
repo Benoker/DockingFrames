@@ -695,6 +695,7 @@
  - API: ButtonDropDownHandler and related classes can now handle a "null" component as view. This allows an action to show up on a drop down button even if it does not show up in its menu.
  - API: New enum "IconHandling". If a client sets a null icon at a DefaultDockable, DefaultSingleCDockable or DefaultMultipleCDockable the icon is not shown. If the client does not set an icon, the default icon is shown. The IconHandling allows clients to specify exactly whether "null" means "no icon" or "default icon".  
  - Bugfix: MenuMenuHandler now also supports a "null" component as view, keeping the behavior consistent with ButtonDropDownHandler. 
+ - Bugfix: CFlapLayoutManager confused "width" and "height" 
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them
