@@ -1,17 +1,11 @@
 package glass.eclipse.theme;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-
-import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.color.StationPaintColor;
-import bibliothek.gui.dock.util.color.ColorCodes;
+import java.awt.*;
+import bibliothek.gui.*;
+import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.station.*;
+import bibliothek.gui.dock.themes.color.*;
+import bibliothek.gui.dock.util.color.*;
 
 
 @ColorCodes( {"glass.paint.divider", "glass.paint.insertion", "glass.paint.line"})

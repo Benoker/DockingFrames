@@ -99,7 +99,8 @@ public class CTestPanel extends JPanel {
     * 	
     * @return javax.swing.JScrollPane	
     */
-   private JScrollPane getJScrollPane () {
+   @SuppressWarnings("unused")
+private JScrollPane getJScrollPane () {
       if (jScrollPane == null) {
          jScrollPane = new JScrollPane();
          jScrollPane.setViewportView(getJTable());

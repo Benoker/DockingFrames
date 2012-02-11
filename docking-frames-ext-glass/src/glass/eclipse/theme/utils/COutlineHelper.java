@@ -17,16 +17,19 @@ public class COutlineHelper {
    public static AffineTransform tRot90CCW;
    public static AffineTransform atRot90SclX;
    public static AffineTransform tSclY;
+   public static AffineTransform tSclX;
 
    static {
       tRot90CW = AffineTransform.getRotateInstance(Math.PI / 2);
       tRot90CCW = AffineTransform.getRotateInstance(-Math.PI / 2);
       tSclY = AffineTransform.getScaleInstance(1, -1);
+      tSclX = AffineTransform.getScaleInstance(-1, 1);
       atRot90SclX = AffineTransform.getScaleInstance(-1, 1);
       atRot90SclX.concatenate(tRot90CW);
    }
 
    /**
+    * <pre>
     * Creates the selected tab shape with round edge at left and curve at right side.
     *
     *     _____________________________
@@ -35,7 +38,7 @@ public class COutlineHelper {
     *  |                                     -_
     *  |                                       -_
     *  |                                          --__
-    * 
+    * </pre>
     * @param cornerRadius
     * @param w
     * @param h
@@ -68,6 +71,7 @@ public class COutlineHelper {
    }
 
    /**
+    * <pre>
     * Creates the shape of an unselected tab for clipping and for border painting.
     * If the tab is left of the selected, it will have a rounded edge left. Otherwise
     * right.
@@ -91,7 +95,7 @@ public class COutlineHelper {
     *                                             |
     *                                             |
     *                                             |
-    * 
+    * </pre>
     * @param w
     * @param h
     * @param firstTab
