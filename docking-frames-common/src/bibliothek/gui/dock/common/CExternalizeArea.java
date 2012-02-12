@@ -30,6 +30,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.intern.AbstractCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.station.CScreenDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.ScreenResizeRequestHandler;
@@ -50,7 +51,7 @@ import bibliothek.util.Path;
  * {@link ExtendedMode#EXTERNALIZED}.
  * @author Benjamin Sigg
  */
-public class CExternalizeArea extends AbstractCStation<ScreenDockStation> {
+public class CExternalizeArea extends AbstractCStation<CScreenDockStation> {
 	/** The result of {@link #getTypeId()} */
 	public static final Path TYPE_ID = new Path( "dock", "CExternalizeArea" );
 	
@@ -72,12 +73,12 @@ public class CExternalizeArea extends AbstractCStation<ScreenDockStation> {
     
     
     private void init( CControl control, String id ){
-    	CommonDockStation<ScreenDockStation,?> station = control.getFactory().createScreenDockStation( control.getRootWindow(), new CommonStationDelegate<ScreenDockStation>(){
+    	CommonDockStation<ScreenDockStation,CScreenDockStation> station = control.getFactory().createScreenDockStation( control.getRootWindow(), new CommonStationDelegate<CScreenDockStation>(){
 			public boolean isTitleDisplayed( DockTitleVersion title ){
 				return false;
 			}
 			
-			public CStation<ScreenDockStation> getStation(){
+			public CStation<CScreenDockStation> getStation(){
 				return CExternalizeArea.this;
 			}
 			
@@ -90,7 +91,7 @@ public class CExternalizeArea extends AbstractCStation<ScreenDockStation> {
 			}
 		});
     	
-    	init( station.getDockStation(), id, CExternalizedLocation.STATION );
+    	init( station.asDockStation(), id, CExternalizedLocation.STATION );
     	
     	handler = new ScreenResizeRequestHandler( getStation() );
     	visibility = new WindowProviderVisibility( getStation() );

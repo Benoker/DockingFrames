@@ -91,6 +91,9 @@ public class BasicButtonModel {
     /** whether the first button of the mouse is currently pressed or not */
     private boolean mousePressed = false;
     
+    /** the text of the action */
+    private String text;
+    
     /** the graphical representation of this model */
     private JComponent owner;
     
@@ -296,6 +299,30 @@ public class BasicButtonModel {
 	}
     
     /**
+     * Gets the {@link DockAction} which is handled by this model. This method may return <code>null</code>
+     * because not every button actually is connected to a {@link DockAction}.
+     * @return the action or <code>null</code>
+     */
+    public DockAction getAction(){
+    	if( trigger == null ){
+    		return null;
+    	}
+    	return trigger.getAction();
+    }
+    
+    /**
+     * Gets the {@link Dockable} for which the button is shown. This method may return <code>null</code>
+     * because not every button is connected to a {@link Dockable}.
+     * @return the dockable or <code>null</code>
+     */
+    public Dockable getDockable(){
+    	if( trigger == null ){
+    		return null;
+    	}
+    	return trigger.getDockable();
+    }
+    
+    /**
      * Sets the border for some state of the component that displays this model. Which identifiers
      * for <code>key</code> are actually used depends on that component.
      * @param key the key of the border
@@ -346,6 +373,27 @@ public class BasicButtonModel {
     public ActionContentModifier[] getIconContexts(){
     	return icons.keySet().toArray( new ActionContentModifier[ icons.size() ] );
     }
+
+    /**
+     * Sets the text of this button, some button implementations may ignore the text.
+     * @param text the new text, can be <code>null</code>
+     */
+    public void setText( String text ){
+		String oldText = this.text;
+		this.text = text;
+		for( BasicButtonModelListener listener : listeners() ){
+			listener.textChanged( this, oldText, text );
+		}
+		changed();
+	}
+    
+    /**
+     * Gets the text of this button.
+     * @return the text, which may be <code>null</code>
+     */
+    public String getText(){
+		return text;
+	}
     
     /**
      * Sets the icon which is normally shown on the view.

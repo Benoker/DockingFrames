@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.common.intern.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
@@ -40,6 +43,12 @@ import bibliothek.gui.dock.common.action.core.CommonDecoratableDockAction;
 public class CDecorateableAction<A extends CommonDecoratableDockAction> extends CAction {
     /** the internal representation */
     private A action;
+    
+    /** whether the text of this action should be shown on buttons */
+    private boolean showTextOnButtons = false;
+    
+    /** all the listener added to this action */
+    private List<CDecorateableActionListener> listeners = new ArrayList<CDecorateableActionListener>();
     
     /**
      * Creates a new action.
@@ -62,6 +71,24 @@ public class CDecorateableAction<A extends CommonDecoratableDockAction> extends 
     }
     
     /**
+     * Adds the observer <code>listener</code> to this action. The observer will be informed
+     * when properties of this {@link CDecorateableAction} changed. 
+     * @param listener the new observer
+     */
+    public void addDecorateableActionListener( CDecorateableActionListener listener ){
+    	listeners.add( listener );
+    }
+    
+    /**
+     * Removes the observer <code>listener</code> from this action.
+     * @param listener the listener to remove
+     * @see #addDecorateableActionListener(CDecorateableActionListener)
+     */
+    public void removeDecorateableActionListener( CDecorateableActionListener listener ){
+    	listeners.remove( listener );
+    }
+    
+    /**
      * Sets the text of this action, the text will be visible when this
      * action is shown in a menu. The text is a small description telling the
      * user, for what this action is good for.
@@ -78,6 +105,28 @@ public class CDecorateableAction<A extends CommonDecoratableDockAction> extends 
     public String getText(){
         return action.getText();
     }
+    
+    /**
+     * Sets whether the text of this action should be shown if this action is shown as a button.
+     * @param showTextOnButtons <code>true</code> if the text should be shown, <code>false</code> otherwise
+     */
+    public void setShowTextOnButtons( boolean showTextOnButtons ){
+    	if( this.showTextOnButtons != showTextOnButtons ){
+    		this.showTextOnButtons = showTextOnButtons;
+    		for( CDecorateableActionListener listener : listeners.toArray( new CDecorateableActionListener[ listeners.size() ] )){
+    			listener.showTextOnButtonsChanged( this );
+    		}
+    	}
+	}
+    
+    /**
+     * Tells whether the text of this action is shown on buttons.
+     * @return <code>true</code> if the text is shown, <code>false</code> otherwise
+     * @see #setShowTextOnButtons(boolean)
+     */
+    public boolean isShowTextOnButtons(){
+		return showTextOnButtons;
+	}
     
     /**
      * Sets a tooltip for this action. The tooltip is a long description of

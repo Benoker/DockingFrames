@@ -100,8 +100,10 @@ import bibliothek.gui.dock.common.intern.EfficientControlFactory;
 import bibliothek.gui.dock.common.intern.MutableCControlRegister;
 import bibliothek.gui.dock.common.intern.action.CActionImportanceOrder;
 import bibliothek.gui.dock.common.intern.action.CActionOffer;
+import bibliothek.gui.dock.common.intern.action.CButtonContentFilter;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
 import bibliothek.gui.dock.common.intern.ui.CommonSingleTabDecider;
@@ -764,6 +766,7 @@ public class CControl {
         putProperty( BubbleTheme.ACTION_DISTRIBUTOR, new CDefaultDockActionDistributor() );
         putProperty( FlatTheme.ACTION_DISTRIBUTOR, new CDefaultDockActionDistributor() );
         putProperty( DockActionImportanceOrder.ORDER, new CActionImportanceOrder() );
+        putProperty( DockAction.BUTTON_CONTENT_FILTER, new CButtonContentFilter() );
     }
     
     /**
@@ -1674,10 +1677,9 @@ public class CControl {
      * @return the station or <code>null</code>
      */
     public CStation<?> getStation( DockStation intern ){
-        for( CStation<?> station : register.getStations() ){
-            if( station.getStation() == intern )
-                return station;
-        }
+    	if( intern instanceof CommonDockStation<?,?>){
+    		return ((CommonDockStation<?, ?>)intern).getStation();
+    	}
         return null;
     }
     

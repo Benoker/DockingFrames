@@ -36,6 +36,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.station.CScreenDockStation;
 import bibliothek.gui.dock.common.location.CExternalizedLocation;
 import bibliothek.gui.dock.common.location.CMaximalExternalizedLocation;
 import bibliothek.gui.dock.common.mode.CExternalizedModeArea;
@@ -64,7 +65,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  */
 public class CScreenDockStationHandle {
 	/** the station handled by this handle */
-	private CStation<ScreenDockStation> station;
+	private CStation<CScreenDockStation> station;
 	
 	/** Representation of this as {@link CExternalizedModeArea} */
 	private External external = new External();
@@ -86,7 +87,7 @@ public class CScreenDockStationHandle {
 	 * @param station the station which is handled by this handle, not <code>null</code>
 	 * @param manager the manager handling all modes, not <code>null</code>
 	 */
-	public CScreenDockStationHandle( CStation<ScreenDockStation> station, CLocationModeManager manager ){
+	public CScreenDockStationHandle( CStation<CScreenDockStation> station, CLocationModeManager manager ){
 		this.station = station;
 		this.manager = manager;
 		

@@ -684,6 +684,20 @@
  - API: TabDecorator now makes use of TabContentFilter, and updates its content if the Dockable changes its title or icon
  - API: The EclipseDockableDisplayer2 replaces EclipseDockableDisplayer, it is based on BasicDockableDisplayer - like all the other displayers.
  - API: BasicDockableDisplayer can now show the title above the decorator
+ ! API: Generics now force CStations to use CommonDockStation as internal representations
+ - Bugfix: when maximizing a CDockable, the CMaximizedMode tries to ensure that the dockable remains in the same CStationContainer
+ - Bugfix: not all drop down buttons did support the disabled arrow icon
+ - API: It is now possible to show text on buttons for DockActions. The buttons also support different fonts and colors. Whether text shows up is decided by the ButtonContentFilter. 
+
+[v1.1.1p6d]
+ - API: If GlassedPane creates a tooltip it calls the "createTooltip" method of the JComponent where the mouse hovers over. Clients can set a custom strategy called "ToolbarStrategy" to manage tooltips.
+ - Bugfix: When changing the layout (setting of a DockFrontend), protected root stations were unregistered. They should have been unaffected by the change.
+ 
+[v1.1.1p6e]
+ - API: ButtonDropDownHandler and related classes can now handle a "null" component as view. This allows an action to show up on a drop down button even if it does not show up in its menu.
+ - API: New enum "IconHandling". If a client sets a null icon at a DefaultDockable, DefaultSingleCDockable or DefaultMultipleCDockable the icon is not shown. If the client does not set an icon, the default icon is shown. The IconHandling allows clients to specify exactly whether "null" means "no icon" or "default icon".  
+ - Bugfix: MenuMenuHandler now also supports a "null" component as view, keeping the behavior consistent with ButtonDropDownHandler. 
+ - Bugfix: CFlapLayoutManager confused "width" and "height" 
   
 [v1.1.1pToolbar]
  - API: New Inserter can override drop operations before and after they are created

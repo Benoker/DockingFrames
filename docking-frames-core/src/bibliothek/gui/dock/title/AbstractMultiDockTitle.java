@@ -342,6 +342,15 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
      * @param component the {@link Component} which represents this title
      */
     protected void paintForeground( Graphics g, JComponent component ){
+    	paintIcon( g, component );
+    }
+    
+    /**
+     * Paints the icon of this title.
+     * @param g the graphics context to use
+     * @param component the {@link Component} which represents this title
+     */
+    protected void paintIcon( Graphics g, JComponent component ){
         if( icon != null ){
             Insets insets = titleInsets();
             if( orientation.isVertical() ){

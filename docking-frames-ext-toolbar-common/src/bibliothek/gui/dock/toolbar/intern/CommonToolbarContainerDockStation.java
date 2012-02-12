@@ -36,7 +36,7 @@ public class CommonToolbarContainerDockStation extends ToolbarContainerDockStati
 	}
 
 	@Override
-	public CStation<ToolbarContainerDockStation> getStation(){
+	public CStation<CommonToolbarContainerDockStation> getStation(){
 		return container;
 	}
 

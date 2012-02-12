@@ -35,26 +35,28 @@ import java.awt.event.FocusListener;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.control.focus.FocusAwareComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
+import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.util.Colors;
 
 /**
  * A button with a shape of a roundrect, displaying a {@link DropDownAction}.
  * @author Benjamin Sigg
  */
+@ColorCodes({
+	"action.button.text",
+	"action.button.text.disabled"
+})
 public class RoundRectDropDownButton extends JComponent implements FocusAwareComponent {
     /** a model containing all information needed to paint this button */
     private BasicDropDownButtonModel model;
@@ -70,14 +72,9 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
     /** a piece of code that will be executed after this component requests focus */
     private Runnable afterFocusRequest;
     
-    /** the expected minimum size of icons */
-    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
-    	@Override
-    	protected void valueChanged( Dimension oldValue, Dimension newValue ){
-    		revalidate();
-    	}
-	};
-	
+    /** Component painting icon and text */
+    private MiniButtonContent content;
+    
     /**
      * Creates a new button
      * @param handler a handler used to announce that this button is clicked
@@ -98,6 +95,12 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         
         setOpaque( false );
         
+        content = createButtonContent();
+        setLayout( null );
+        add( content );
+        content.setModel( model );
+        content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
+        
         dropIcon = handler.getDropDownIcon();
         
         model.addListener( new BasicButtonModelAdapter(){
@@ -107,15 +110,6 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         			requestFocusInWindow();
         			invokeAfterFocusRequest();
         		}
-        	}
-        	@Override
-        	public void bound( BasicButtonModel model, DockController controller ){
-	        	minimumIconSize.setProperties( controller );
-        	}
-        	
-        	@Override
-        	public void unbound( BasicButtonModel model, DockController controller ){
-        		minimumIconSize.setProperties( (DockController)controller );
         	}
         });
         
@@ -127,6 +121,14 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
                 repaint();
             }
         });
+    }
+    
+    /**
+     * Creates a new component that paints icon and text
+     * @return the new component
+     */
+    protected MiniButtonContent createButtonContent(){
+    	return new MiniButtonContent();
     }
     
     public void maybeRequestFocus(){
@@ -169,16 +171,22 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         if( isPreferredSizeSet() )
             return super.getPreferredSize();
         
-        Dimension icon = model.getMaxIconSize();
-        Dimension min = minimumIconSize.getValue();
-        
-        int w = Math.max( icon.width+4, min.width );
-        int h = Math.max( icon.height+4, min.height );
+        Dimension size = content.getPreferredSize();
         
         if( model.getOrientation().isHorizontal() )
-            return new Dimension( w + 6 + dropIcon.getIconWidth(), h );
+            return new Dimension( size.width + 6 + dropIcon.getIconWidth(), size.height+2 );
         else
-            return new Dimension( w, h + 6 + dropIcon.getIconHeight() );    
+            return new Dimension( size.width+2, size.height + 6 + dropIcon.getIconHeight() );    
+    }
+    
+    @Override
+    public void doLayout(){
+        if( model.getOrientation().isHorizontal() ){
+        	content.setBounds( 1, 1, getWidth()-5-dropIcon.getIconWidth(), getHeight()-2 );
+        }
+        else{
+        	content.setBounds( 1, 1, getWidth()-2, getHeight()-5-dropIcon.getIconHeight() );
+        }
     }
     
     @Override
@@ -241,7 +249,7 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
         Icon drop = dropIcon;
         if( !isEnabled() ){
             if( disabledDropIcon == null )
-                disabledDropIcon = DockUtilities.disabledIcon( this, dropIcon );
+                disabledDropIcon = handler.getDisabledDropDownIcon();
             drop = disabledDropIcon;
         }
         
@@ -275,17 +283,7 @@ public class RoundRectDropDownButton extends JComponent implements FocusAwareCom
                 }
             }
         }
-        
-        Icon icon = model.getPaintIcon();
-        if( icon != null ){
-            if( model.getOrientation().isHorizontal() ){
-                icon.paintIcon( this, g, (w -3 - drop.getIconWidth() +1 - icon.getIconWidth())/2, (h +1 - icon.getIconHeight())/2 );
-            }
-            else{
-                icon.paintIcon( this, g, (w +1 - icon.getIconWidth())/2, (h -3 -drop.getIconHeight() +1 - icon.getIconHeight())/2 );
-            }
-        }
-        
+
         if( model.getOrientation().isHorizontal() ){
             drop.paintIcon( this, g, w - drop.getIconWidth() - 2, (h - drop.getIconHeight())/2 );
         }

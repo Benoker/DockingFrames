@@ -35,6 +35,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.station.CFlapDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.FlapResizeRequestHandler;
@@ -53,11 +54,11 @@ import bibliothek.util.Path;
  * depend on this {@link JPanel}.
  * @author Benjamin Sigg
  */
-public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
+public class CMinimizeArea extends JPanel implements CStation<CFlapDockStation>{
 	/** The result of {@link #getTypeId()} */
 	public static final Path TYPE_ID = new Path( "dock", "CMinimizeArea" );
 	
-    private CommonDockStation<FlapDockStation,?> station;
+    private CommonDockStation<FlapDockStation,CFlapDockStation> station;
     private ResizeRequestListener request;
     private CControlAccess access;
     private String uniqueId;
@@ -90,12 +91,12 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
         
         setLayout( new BorderLayout() );
         
-        station = control.getFactory().createFlapDockStation( this, new CommonStationDelegate<FlapDockStation>(){
+        station = control.getFactory().createFlapDockStation( this, new CommonStationDelegate<CFlapDockStation>(){
 			public boolean isTitleDisplayed( DockTitleVersion title ){
 				return true;
 			}
 			
-			public CStation<FlapDockStation> getStation(){
+			public CStation<CFlapDockStation> getStation(){
 				return CMinimizeArea.this;
 			}
 			
@@ -143,8 +144,8 @@ public class CMinimizeArea extends JPanel implements CStation<FlapDockStation>{
 		return TYPE_ID;
 	}
 	
-    public FlapDockStation getStation(){
-        return station.getDockStation();
+    public CFlapDockStation getStation(){
+        return station.asDockStation();
     }
     
     public CStationPerspective createPerspective(){

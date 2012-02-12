@@ -34,6 +34,7 @@ import javax.swing.Icon;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.action.CSeparator;
+import bibliothek.gui.dock.dockable.IconHandling;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -288,7 +289,25 @@ public class DefaultCDockable extends AbstractCDockable{
     }
     
     /**
-     * Sets the icon that is shown in the title of this <code>CDockable</code>.
+     * Sets the behavior of {@link #setTitleIcon(Icon)} in case of a <code>null</code> argument. Either
+     * the icon is replaced by the default icon, or just not shown.
+     * @param handling the new behavior, not <code>null</code>
+     */
+    public void setTitleIconHandling( IconHandling handling ){
+    	intern().setTitleIconHandling( handling );
+    }
+    
+    /**
+     * Gets the behavior of {@link #setTitleIcon(Icon)}.
+     * @return the behavior, not <code>null</code>
+     */
+    public IconHandling getTitleIconHandling(){
+    	return intern().getTitleIconHandling();
+    }
+    
+    /**
+     * Sets the icon that is shown in the title of this <code>CDockable</code>. The exact behavior
+     * of this method depends on the {@link IconHandling} that was set by {@link #setTitleIconHandling(IconHandling)}.
      * @param icon the title-icon
      */
     public void setTitleIcon( Icon icon ){

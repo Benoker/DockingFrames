@@ -45,27 +45,27 @@ import bibliothek.gui.dock.util.WindowProvider;
  * @author Benjamin Sigg
  */
 public class EfficientControlFactory implements CControlFactory {
-	public DockController createController( CControl owner ) {
+	public DockController createController( CControl owner ){
 		return new CDockController( owner );
 	}
 
-	public CDockFrontend createFrontend( CControlAccess owner, DockController controller ) {
+	public CDockFrontend createFrontend( CControlAccess owner, DockController controller ){
 		return new CDockFrontend( owner, controller );
 	}
 
-	public MutableCControlRegister createRegister( CControl owner ) {
+	public MutableCControlRegister createRegister( CControl owner ){
 		return new DefaultCControlRegister( owner );
 	}
 
-	public CommonDockStation<FlapDockStation,?> createFlapDockStation( Component expansion, CommonStationDelegate<FlapDockStation> delegate ){
+	public CommonDockStation<FlapDockStation, CFlapDockStation> createFlapDockStation( Component expansion, CommonStationDelegate<CFlapDockStation> delegate ){
 		return new CFlapDockStation( expansion, delegate );
 	}
 
-	public CommonDockStation<ScreenDockStation,?> createScreenDockStation( WindowProvider owner, CommonStationDelegate<ScreenDockStation> delegate ){
+	public CommonDockStation<ScreenDockStation, CScreenDockStation> createScreenDockStation( WindowProvider owner, CommonStationDelegate<CScreenDockStation> delegate ){
 		return new CScreenDockStation( owner, delegate );
 	}
-	
-	public CommonDockStation<SplitDockStation,?> createSplitDockStation( CommonStationDelegate<SplitDockStation> delegate ){
+
+	public CommonDockStation<SplitDockStation, CSplitDockStation> createSplitDockStation( CommonStationDelegate<CSplitDockStation> delegate ){
 		return new CSplitDockStation( delegate );
 	}
 }

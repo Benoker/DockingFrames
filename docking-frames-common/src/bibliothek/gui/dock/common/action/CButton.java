@@ -49,11 +49,18 @@ public class CButton extends CDropDownItem<CommonSimpleButtonAction> {
     public CButton(){
         super( null );
         init( new CommonSimpleButtonAction( this ));
-        intern().addActionListener( new ActionListener(){
-            public void actionPerformed( ActionEvent e ) {
-                action();
-            }
-        });
+    }
+    
+    /**
+     * Creates and initializes this button. 
+     * @param action the action that represents this action, can be <code>null</code> but then 
+     * subclasses have to call {@link #init(CommonSimpleButtonAction)}
+     */
+    protected CButton( CommonSimpleButtonAction action ){
+    	super( null );
+    	if( action != null ){
+    		init( action );
+    	}
     }
     
     /**
@@ -65,6 +72,16 @@ public class CButton extends CDropDownItem<CommonSimpleButtonAction> {
         this();
         setText( text );
         setIcon( icon );
+    }
+    
+    @Override
+    protected void init( CommonSimpleButtonAction action ){
+    	super.init( action );
+        action.addActionListener( new ActionListener(){
+            public void actionPerformed( ActionEvent e ) {
+                action();
+            }
+        });
     }
     
     /**

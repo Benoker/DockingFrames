@@ -33,6 +33,9 @@ import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.intern.station.CFlapDockStation;
+import bibliothek.gui.dock.common.intern.station.CScreenDockStation;
+import bibliothek.gui.dock.common.intern.station.CSplitDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.util.WindowProvider;
@@ -74,7 +77,7 @@ public interface CControlFactory {
      * @param delegate some methods that can be used by the created station
      * @return the new station
      */
-    public CommonDockStation<FlapDockStation,?> createFlapDockStation( Component expansion, CommonStationDelegate<FlapDockStation> delegate );
+    public CommonDockStation<FlapDockStation,CFlapDockStation> createFlapDockStation( Component expansion, CommonStationDelegate<CFlapDockStation> delegate );
     
     /**
      * Creates a new {@link ScreenDockStation}.
@@ -82,7 +85,7 @@ public interface CControlFactory {
      * @param delegate some methods that can be used by the created station
      * @return the new station
      */
-    public CommonDockStation<ScreenDockStation,?> createScreenDockStation( WindowProvider owner, CommonStationDelegate<ScreenDockStation> delegate );
+    public CommonDockStation<ScreenDockStation,CScreenDockStation> createScreenDockStation( WindowProvider owner, CommonStationDelegate<CScreenDockStation> delegate );
     
     /**
      * Creates a new {@link SplitDockStation} that implements {@link CommonDockable}
@@ -90,5 +93,5 @@ public interface CControlFactory {
      * @param delegate some methods that can be used by the created station
      * @return the new station
      */
-    public CommonDockStation<SplitDockStation,?> createSplitDockStation( CommonStationDelegate<SplitDockStation> delegate );
+    public CommonDockStation<SplitDockStation,CSplitDockStation> createSplitDockStation( CommonStationDelegate<CSplitDockStation> delegate );
 }

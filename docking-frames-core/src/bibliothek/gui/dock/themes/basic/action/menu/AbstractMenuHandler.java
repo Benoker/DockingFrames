@@ -103,12 +103,14 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
                 
                 listener = new Listener();
                 action.addDockActionListener( listener );
-                
-                item.setEnabled( action.isEnabled( dockable ));
-                item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ));
-                item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
-                item.setText( action.getText( dockable ));
-                item.setToolTipText( action.getTooltipText( dockable ));
+
+                if( item != null ){
+                	item.setEnabled( action.isEnabled( dockable ));
+                    item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ));
+                    item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+                    item.setText( action.getText( dockable ));
+                    item.setToolTipText( action.getTooltipText( dockable ));
+                }
             }
             else
                 throw new IllegalStateException( "Handler is already bound" );
@@ -137,27 +139,35 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
      */
     private class Listener implements StandardDockActionListener{
         public void actionEnabledChanged( StandardDockAction action, Set<Dockable> dockables ) {
-            item.setEnabled( action.isEnabled( dockable ));
+        	if( item != null ){
+        		item.setEnabled( action.isEnabled( dockable ));
+        	}
         }
-        
+
         public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
-        	if( modifier == null || modifier == ActionContentModifier.NONE_HORIZONTAL ){
-        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ) );
-        	}
-        	else if( modifier == null || modifier == ActionContentModifier.NONE ){
-        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ) );
-        	}
-        	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
-        		item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+        	if( item != null ){
+	        	if( modifier == null || modifier == ActionContentModifier.NONE_HORIZONTAL ){
+	        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ) );
+	        	}
+	        	else if( modifier == null || modifier == ActionContentModifier.NONE ){
+	        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ) );
+	        	}
+	        	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
+	        		item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+	        	}
         	}
         }
 
         public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ) {
-            item.setText( action.getText( dockable ));
+        	if( item != null ){
+        		item.setText( action.getText( dockable ));
+        	}
         }
 
         public void actionTooltipTextChanged( StandardDockAction action, Set<Dockable> dockables ) {
-            item.setToolTipText( action.getTooltipText( dockable ));
+        	if( item != null ){
+        		item.setToolTipText( action.getTooltipText( dockable ));
+        	}
         }
         
         public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){

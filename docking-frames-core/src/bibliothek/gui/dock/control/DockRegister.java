@@ -562,21 +562,31 @@ public class DockRegister {
         public void dockableAdding( DockStation station, Dockable dockable ) {
             if( stalled > 0 ){
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+                	private DockStation protectedAncestor;
+                	
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                    	Status current = changeMap.get( dockable );
-                    	if( current == null ){
-                    		changeMap.put( dockable, Status.ADDED );
-                    		changeQueue.add( dockable );
-                    	}
-                    	else{
-                    		switch( current ){
-                    			case REMOVED:
-                    				changeMap.put( dockable, Status.REMOVED_AND_ADDED );
-                    				break;
-                    			case ADDED_AND_REMOVED:
-                    				changeMap.put( dockable, Status.ADDED );
-                    				break;
+                    	if( protectedAncestor == null || !DockUtilities.isAncestor( protectedAncestor, dockable )){
+                    		DockStation station = dockable.asDockStation();
+                    		if( station != null && isProtected( station )){
+                    			protectedAncestor = station;
+                    		}
+                    		else{
+		                    	Status current = changeMap.get( dockable );
+		                    	if( current == null ){
+		                    		changeMap.put( dockable, Status.ADDED );
+		                    		changeQueue.add( dockable );
+		                    	}
+		                    	else{
+		                    		switch( current ){
+		                    			case REMOVED:
+		                    				changeMap.put( dockable, Status.REMOVED_AND_ADDED );
+		                    				break;
+		                    			case ADDED_AND_REMOVED:
+		                    				changeMap.put( dockable, Status.ADDED );
+		                    				break;
+		                    		}
+		                    	}
                     		}
                     	}
                     }
@@ -614,21 +624,31 @@ public class DockRegister {
         public void dockableRemoving( DockStation station, Dockable dockable ) {
             if( stalled > 0 ){
                 DockUtilities.visit( dockable, new DockUtilities.DockVisitor(){
+                	private DockStation protectedAncestor;
+                	
                     @Override
                     public void handleDockable( Dockable dockable ) {
-                    	Status current = changeMap.get( dockable );
-                    	if( current == null ){
-                    		changeMap.put( dockable, Status.REMOVED );
-                    		changeQueue.add( dockable );
-                    	}
-                    	else{
-                    		switch( current ){
-                    			case ADDED:
-                    				changeMap.put( dockable, Status.ADDED_AND_REMOVED );
-                    				break;
-                    			case REMOVED_AND_ADDED:
-                    				changeMap.put( dockable, Status.REMOVED );
-                    				break;
+                    	if( protectedAncestor == null || !DockUtilities.isAncestor( protectedAncestor, dockable )){
+                    		DockStation station = dockable.asDockStation();
+                    		if( station != null && isProtected( station )){
+                    			protectedAncestor = station;
+                    		}
+                    		else{
+                    			Status current = changeMap.get( dockable );
+                            	if( current == null ){
+                            		changeMap.put( dockable, Status.REMOVED );
+                            		changeQueue.add( dockable );
+                            	}
+                            	else{
+                            		switch( current ){
+                            			case ADDED:
+                            				changeMap.put( dockable, Status.ADDED_AND_REMOVED );
+                            				break;
+                            			case REMOVED_AND_ADDED:
+                            				changeMap.put( dockable, Status.REMOVED );
+                            				break;
+                            		}
+                            	}		
                     		}
                     	}
                     }
@@ -662,7 +682,9 @@ public class DockRegister {
             DockStation asStation = dockable.asDockStation();
             
             if( asStation != null ){
-                remove( asStation );
+            	if( !isProtected( asStation )){
+            		remove( asStation );
+            	}
             }
             else{
                 unregister( dockable );

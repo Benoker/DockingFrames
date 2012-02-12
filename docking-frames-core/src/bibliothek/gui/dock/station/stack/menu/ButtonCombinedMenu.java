@@ -32,6 +32,7 @@ import javax.swing.Icon;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionContentModifier;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.station.stack.CombinedHandler;
 import bibliothek.gui.dock.station.stack.CombinedMenu;
 import bibliothek.gui.dock.station.stack.tab.TabMenuDockIcon;
@@ -95,6 +96,12 @@ public abstract class ButtonCombinedMenu<B extends Component> extends AbstractCo
 		BasicTrigger trigger = new BasicTrigger(){
         	public void triggered(){
         		open();
+        	}
+        	public DockAction getAction(){
+        		return null;
+        	}
+        	public Dockable getDockable(){
+        		return null;
         	}
         };
         

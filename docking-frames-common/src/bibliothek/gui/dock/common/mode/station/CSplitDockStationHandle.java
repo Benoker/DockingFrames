@@ -13,6 +13,7 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.group.CGroupMovement;
+import bibliothek.gui.dock.common.intern.station.CSplitDockStation;
 import bibliothek.gui.dock.common.location.CMaximizedLocation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -46,7 +47,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  */
 public class CSplitDockStationHandle{
 	/** the station which is handled by this handle */
-	private CStation<SplitDockStation> station;
+	private CStation<CSplitDockStation> station;
 	
 	/** normal-mode */
 	private Normal normal = new Normal();
@@ -104,7 +105,7 @@ public class CSplitDockStationHandle{
 	 * @param station the station to handle
 	 * @param manager the manager in whose realm this handle is used
 	 */
-	public CSplitDockStationHandle( CStation<SplitDockStation> station, CLocationModeManager manager ){
+	public CSplitDockStationHandle( CStation<CSplitDockStation> station, CLocationModeManager manager ){
 		this.station = station;
 		this.manager = manager;
 	}

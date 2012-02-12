@@ -54,7 +54,9 @@ import bibliothek.extension.gui.dock.preference.editor.KeyStrokeEditor;
 import bibliothek.extension.gui.dock.preference.editor.LabelEditor;
 import bibliothek.extension.gui.dock.preference.editor.ModifierMaskEditor;
 import bibliothek.extension.gui.dock.preference.editor.StringEditor;
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionContentModifier;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
 import bibliothek.util.Path;
@@ -521,6 +523,12 @@ public class PreferenceTable extends JPanel{
                             editor.doOperation( operation.getOperation() );
                         else
                             doOperation( operation.getOperation() );
+                    }
+                    public DockAction getAction(){
+                    	return null;
+                    }
+                    public Dockable getDockable(){
+                    	return null;
                     }
                 }, null );
                 

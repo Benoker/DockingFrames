@@ -32,39 +32,35 @@ import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.FocusAwareComponent;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
+import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.util.Colors;
 
 /**
  * A button that has a round rect shape.
  * @author Benjamin Sigg
  */
+@ColorCodes({
+	"action.button.text",
+	"action.button.text.disabled"
+})
 public class RoundRectButton extends JComponent implements FocusAwareComponent{
     private BasicButtonModel model;
     private Runnable afterFocusRequest;
     
-    /** the expected minimum size of icons */
-    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
-    	@Override
-    	protected void valueChanged( Dimension oldValue, Dimension newValue ){
-    		revalidate();
-    	}
-	};
-	
+    private MiniButtonContent content;
+    
     /**
      * Creates a new roundrect button.
      * @param trigger a trigger which gets informed when the user clicks the
@@ -74,8 +70,13 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
     public RoundRectButton( BasicTrigger trigger, BasicResourceInitializer initializer ){
         model = new BasicButtonModel( this, trigger, initializer, true );
         setOpaque( false );
-        
         setFocusable( true );
+        
+        content = createButtonContent();
+        setLayout( null );
+        add( content );
+        content.setModel( model );
+        content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
         
         model.addListener( new BasicButtonModelAdapter(){
         	@Override
@@ -84,16 +85,6 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
         			requestFocusInWindow();
         			invokeAfterFocusRequest();
         		}
-        	}
-        	
-        	@Override
-        	public void bound( BasicButtonModel model, DockController controller ){
-	        	minimumIconSize.setProperties( controller );
-        	}
-        	
-        	@Override
-        	public void unbound( BasicButtonModel model, DockController controller ){
-        		minimumIconSize.setProperties( (DockController)null );
         	}
         });
         
@@ -105,6 +96,14 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
                 repaint();
             }
         });
+    }
+    
+    /**
+     * Creates a new component showing icon and text of this button.
+     * @return the new component
+     */
+    protected MiniButtonContent createButtonContent(){
+    	return new MiniButtonContent();
     }
     
     public void maybeRequestFocus(){
@@ -155,12 +154,13 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
         if( isPreferredSizeSet() )
             return super.getPreferredSize();
         
-        Dimension size = model.getMaxIconSize();
-        Dimension min = minimumIconSize.getValue();
-        
-        size.width = Math.max( min.width, size.width + 4 );
-        size.height = Math.max( min.height, size.height + 4 );
-        return size;
+        Dimension size = content.getPreferredSize();
+        return new Dimension( size.width+4, size.height+4 );
+    }
+    
+    @Override
+    public void doLayout(){
+    	content.setBounds( 2, 2, getWidth()-4, getHeight()-4 );
     }
     
     @Override
@@ -239,10 +239,7 @@ public class RoundRectButton extends JComponent implements FocusAwareComponent{
         int w = getWidth()-1;
         int h = getHeight()-1;
         
-        Icon icon = model.getPaintIcon();
-        if( icon != null ){
-            icon.paintIcon( this, g, (w +1 - icon.getIconWidth())/2, (h +1 - icon.getIconHeight())/2 );
-        }
+        paintChildren( g );
         
         if( hasFocus() && isFocusable() && isEnabled() ){
             g.setColor( Colors.diffMirror( background, 0.4 ) );

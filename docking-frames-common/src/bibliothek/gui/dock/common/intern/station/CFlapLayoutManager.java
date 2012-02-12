@@ -135,9 +135,9 @@ public class CFlapLayoutManager extends AbstractFlapLayoutManager implements Fla
             CDockable cdock = ((CommonDockable)dockable).getDockable();
             Dimension size = cdock.getMinimizedSize();
             if( horizontal )
-                return size.width;
-            else
                 return size.height;
+            else
+                return size.width;
         }
         if( dockable instanceof StackDockStation ){
             StackDockStation station = (StackDockStation)dockable;
@@ -156,10 +156,12 @@ public class CFlapLayoutManager extends AbstractFlapLayoutManager implements Fla
             boolean horizontal = direction == Direction.NORTH || direction == Direction.SOUTH;
             CDockable cdock = ((CommonDockable)dockable).getDockable();
             Dimension dimension = cdock.getMinimizedSize();
-            if( horizontal )
-                cdock.setMinimizedSize( new Dimension( size, dimension.height ) );
-            else
-                cdock.setMinimizedSize( new Dimension( dimension.width, size ) );
+            if( horizontal ){
+            	cdock.setMinimizedSize( new Dimension( dimension.width, size ) );
+            }
+            else{
+            	cdock.setMinimizedSize( new Dimension( size, dimension.height ) );
+            }
         }
         else{
             sizes.put( dockable, size );
@@ -168,7 +170,7 @@ public class CFlapLayoutManager extends AbstractFlapLayoutManager implements Fla
 
     public boolean isHold( FlapDockStation station, Dockable dockable ) {
         if( dockable instanceof CommonDockable ){
-            return ((CommonDockable)dockable).getDockable().isMinimizedHold();
+            return ((CommonDockable)dockable).getDockable().isSticky();
         }
         else{
             return Boolean.TRUE.equals( holds.get( dockable ));
@@ -177,7 +179,7 @@ public class CFlapLayoutManager extends AbstractFlapLayoutManager implements Fla
 
     public void setHold( FlapDockStation station, Dockable dockable, boolean hold ) {
         if( dockable instanceof CommonDockable ){
-            ((CommonDockable)dockable).getDockable().setMinimizedHold( hold );
+            ((CommonDockable)dockable).getDockable().setSticky( hold );
         }
         else{
             holds.put( dockable, hold );
@@ -186,7 +188,7 @@ public class CFlapLayoutManager extends AbstractFlapLayoutManager implements Fla
     
     public boolean isHoldSwitchable( FlapDockStation station, Dockable dockable ){
     	if( dockable instanceof CommonDockable ){
-    		return ((CommonDockable)dockable).getDockable().isMinimizedHoldSwitchable();
+    		return ((CommonDockable)dockable).getDockable().isStickySwitchable();
     	}
     	else{
     		return true;

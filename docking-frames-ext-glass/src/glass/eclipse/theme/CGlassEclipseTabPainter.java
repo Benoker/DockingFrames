@@ -25,47 +25,25 @@
  */
 package glass.eclipse.theme;
 
-import glass.eclipse.theme.factory.IGlassParameterFactory;
-import glass.eclipse.theme.utils.CGraphicUtils;
-import glass.eclipse.theme.utils.COutlineHelper;
-
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Transparency;
-import java.awt.Window;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
-import javax.swing.BorderFactory;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
-import kux.glass.CGlassFactory;
-import kux.glass.CGlassFactoryGenerator;
-import kux.glass.IGlassFactory;
-import kux.utils.CColor;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.BaseTabComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.BorderedComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.DefaultInvisibleTab;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.InvisibleTab;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.InvisibleTabPane;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPainter;
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabPanePainter;
-import bibliothek.gui.DockController;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
-import bibliothek.gui.dock.themes.color.TabColor;
-import bibliothek.gui.dock.util.color.ColorCodes;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.image.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.*;
+import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.*;
+import bibliothek.gui.*;
+import bibliothek.gui.dock.*;
+import bibliothek.gui.dock.station.stack.tab.layouting.*;
+import bibliothek.gui.dock.themes.color.*;
+import bibliothek.gui.dock.util.*;
+import bibliothek.gui.dock.util.color.*;
+import kux.glass.*;
+import kux.utils.*;
+import glass.eclipse.*;
+import glass.eclipse.theme.factory.*;
+import glass.eclipse.theme.utils.*;
 
 
 /**
@@ -75,7 +53,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * 
  * @author Thomas Hilbert
  */
-@ColorCodes( {"glass.selected.light", "glass.selected.boundary", "glass.selected.center", "glass.unselected.light", "glass.unselected.boundary", "glass.unselected.center", "glass.focused.light", "glass.focused.boundary", "glass.focused.center", "stack.tab.border.glass", "stack.tab.border.selected.glass", "stack.tab.border.selected.focused.glass", "stack.tab.border.selected.focuslost.glass", "stack.tab.top.glass", "stack.tab.top.selected.glass", "stack.tab.top.selected.focused.glass", "stack.tab.top.selected.focuslost.glass", "stack.tab.bottom.glass", "stack.tab.bottom.selected.glass", "stack.tab.bottom.selected.focused.glass", "stack.tab.bottom.selected.focuslost.glass", "stack.tab.text.glass", "stack.tab.text.selected.glass", "stack.tab.text.selected.focused.glass", "stack.tab.text.selected.focuslost.glass", "stack.border.glass"})
+@ColorCodes({"glass.selected.light", "glass.selected.boundary", "glass.selected.center", "glass.unselected.light", "glass.unselected.boundary", "glass.unselected.center", "glass.focused.light", "glass.focused.boundary", "glass.focused.center", "stack.tab.border.glass", "stack.tab.border.selected.glass", "stack.tab.border.selected.focused.glass", "stack.tab.border.selected.focuslost.glass", "stack.tab.top.glass", "stack.tab.top.selected.glass", "stack.tab.top.selected.focused.glass", "stack.tab.top.selected.focuslost.glass", "stack.tab.bottom.glass", "stack.tab.bottom.selected.glass", "stack.tab.bottom.selected.focused.glass", "stack.tab.bottom.selected.focuslost.glass", "stack.tab.text.glass", "stack.tab.text.selected.glass", "stack.tab.text.selected.focused.glass", "stack.tab.text.selected.focuslost.glass", "stack.border.glass"})
 public class CGlassEclipseTabPainter extends BaseTabComponent {
    /***/
    private static final long serialVersionUID = -3944491545940520488L;
@@ -103,6 +81,20 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    /** number of pixels at the left side that are empty and under the selected predecessor of this tab */
    private final int TAB_OVERLAP = 24;
 
+   PropertyValue<Boolean> propValueSmall = new PropertyValue<Boolean>(CGlassExtension.SMALL_TAB_SIZE) {
+      @Override
+      protected void valueChanged (Boolean oldVal, Boolean newVal) {
+         CGlassEclipseTabPainter.this.setSmallTabs(newVal);
+      }
+   };
+
+   PropertyValue<IGlassParameterFactory> propValueFactory = new PropertyValue<IGlassParameterFactory>(EclipseThemeExtension.GLASS_FACTORY) {
+      @Override
+      protected void valueChanged (IGlassParameterFactory paramA1, IGlassParameterFactory paramA2) {
+         CGlassEclipseTabPainter.this.update();
+      }
+   };
+
    private boolean bSmallerTabs = false;
 
    /**
@@ -110,10 +102,8 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
     * @param pane the owner of this painter
     * @param dockable the dockable which this painter represents
     */
-   public CGlassEclipseTabPainter (EclipseTabPane pane, Dockable dockable, boolean bSmallerTabs) {
+   public CGlassEclipseTabPainter (EclipseTabPane pane, Dockable dockable) {
       super(pane, dockable, ".glass");
-
-      this.bSmallerTabs = bSmallerTabs;
 
       setLayout(null);
       setOpaque(false);
@@ -123,13 +113,32 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       update();
       updateFont();
       updateBorder();
+
+      if (getController() != null) {
+         propValueSmall.setProperties(getController());
+         propValueFactory.setProperties(getController());
+      }
+
+      bSmallerTabs = propValueSmall.getValue();
    }
 
-   protected IGlassParameterFactory getGlassParameterFactory() {
-      IGlassParameterFactory f = getController().getProperties().get(EclipseThemeExtension.GLASS_FACTORY);
-      return (f);
+   public void setSmallTabs (boolean smallTabs) {
+      bSmallerTabs = smallTabs;
+      update();
    }
-   
+
+   @Override
+   public void unbind () {
+      super.unbind();
+      // unregister listener
+      propValueSmall.setProperties((DockController)null);
+      propValueFactory.setProperties((DockController)null);
+   }
+
+   protected IGlassParameterFactory getGlassParameterFactory () {
+      return (propValueFactory.getValue());
+   }
+
    /**
     * Inits additional colors for painting the glass effect.
     */
@@ -137,11 +146,11 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       colGlassCenterSelected = new CGlassColor("glass.selected.center", getStation(), getDockable(), new Color(222, 222, 222));
       colGlassBoundarySelected = new CGlassColor("glass.selected.boundary", getStation(), getDockable(), new Color(0, 40, 255));
       colGlassLightSelected = new CGlassColor("glass.selected.light", getStation(), getDockable(), new Color(222, 222, 222));
-      
+
       colGlassCenterUnSelected = new CGlassColor("glass.unselected.center", getStation(), getDockable(), new Color(222, 222, 222));
       colGlassBoundaryUnSelected = new CGlassColor("glass.unselected.boundary", getStation(), getDockable(), new Color(0, 40, 255));
       colGlassLightUnSelected = new CGlassColor("glass.unselected.light", getStation(), getDockable(), new Color(222, 222, 222));
-      
+
       colGlassCenterFocused = new CGlassColor("glass.focused.center", getStation(), getDockable(), new Color(0, 0, 150));
       colGlassBoundaryFocused = new CGlassColor("glass.focused.boundary", getStation(), getDockable(), new Color(0, 40, 80));
       colGlassLightFocused = new CGlassColor("glass.focused.light", getStation(), getDockable(), new Color(100, 200, 255));
@@ -211,16 +220,16 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
 
       return super.getPreferredSize();
    }
-   
-   @Override
-	public Dimension getMinimumSize(){
-	      boolean previousSelected = isPreviousTabSelected();
-	      if (wasPreviousSelected != previousSelected) {
-	         update();
-	      }
 
-	      return super.getMinimumSize();	
-	}
+   @Override
+   public Dimension getMinimumSize () {
+      boolean previousSelected = isPreviousTabSelected();
+      if (wasPreviousSelected != previousSelected) {
+         update();
+      }
+
+      return super.getMinimumSize();
+   }
 
    @Override
    public void updateFocus () {
@@ -250,8 +259,8 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
     * Updates the layout information of this painter.
     */
    protected void update () {
-	  wasPreviousSelected = isPreviousTabSelected();
-	   
+      wasPreviousSelected = isPreviousTabSelected();
+
       Insets labelInsets = null;
       Insets buttonInsets = null;
 
@@ -315,9 +324,9 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       IGlassParameterFactory f = getGlassParameterFactory();
       glassFocused = f.getFocusedGlassParameters();
       if (glassFocused != null) {
-	      glassFocused.colorCenter = c1;
-	      glassFocused.colorSuperLight = c2;
-	      glassFocused.colorBoundary = c3;
+         glassFocused.colorCenter = c1;
+         glassFocused.colorSuperLight = c2;
+         glassFocused.colorBoundary = c3;
       }
 
       c1 = colGlassCenterSelected.value();
@@ -329,12 +338,11 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
 
       glassSelected = f.getSelectedGlassParameters();
       if (glassSelected != null) {
-	      glassSelected.colorCenter = c1;
-	      glassSelected.colorSuperLight = c2;
-	      glassSelected.colorBoundary = c3;
+         glassSelected.colorCenter = c1;
+         glassSelected.colorSuperLight = c2;
+         glassSelected.colorBoundary = c3;
       }
 
-      
       c1 = colGlassCenterUnSelected.value();
       c2 = colGlassLightUnSelected.value();
       c3 = colGlassBoundaryUnSelected.value();
@@ -344,29 +352,29 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
 
       glassUnSelected = f.getUnSelectedGlassParameters();
       if (glassUnSelected != null) {
-	      glassUnSelected.colorCenter = c1;
-	      glassUnSelected.colorSuperLight = c2;
-	      glassUnSelected.colorBoundary = c3;
+         glassUnSelected.colorCenter = c1;
+         glassUnSelected.colorSuperLight = c2;
+         glassUnSelected.colorBoundary = c3;
       }
 
       try {
-		if (getButtons() != null) {
-			  if (isSelected() && isFocused()) {
-			      c2 = colGlassLightFocused.value();
-			      c2 = c2 == null ? CColor.BrighterColor(colorStackTabTopSelectedFocused.value()) : c2;
-				  getButtons().setBackground(CColor.GradientColor(Color.BLACK, c2, 0.55));
-			  }
-			  else if (isSelected()) {
-				  c2 = colGlassLightSelected.value();
-			      c2 = c2 == null ? CColor.BrighterColor(colorStackTabTopSelected.value()) : c2;
-				  getButtons().setBackground(CColor.GradientColor(Color.LIGHT_GRAY, c2, 0.55));
-			  }
-			  else {
-				  getButtons().setBackground(Color.LIGHT_GRAY);
-			  }
-		  }
-		} catch (Exception e) {
-		}
+         if (getButtons() != null) {
+            if (isSelected() && isFocused()) {
+               c2 = colGlassLightFocused.value();
+               c2 = c2 == null ? CColor.BrighterColor(colorStackTabTopSelectedFocused.value()) : c2;
+               getButtons().setBackground(CColor.GradientColor(Color.BLACK, c2, 0.55));
+            }
+            else if (isSelected()) {
+               c2 = colGlassLightSelected.value();
+               c2 = c2 == null ? CColor.BrighterColor(colorStackTabTopSelected.value()) : c2;
+               getButtons().setBackground(CColor.GradientColor(Color.LIGHT_GRAY, c2, 0.55));
+            }
+            else {
+               getButtons().setBackground(Color.LIGHT_GRAY);
+            }
+         }
+      }
+      catch (Exception e) {}
    }
 
    private Color getTextColor () {
@@ -408,8 +416,9 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    }
 
    @Override
-   public void paintBackground( Graphics g ){
-	  if (getWidth() != 0 && getHeight() != 0) {
+   public void paintBackground (Graphics g) {
+      if (getWidth() != 0 && getHeight() != 0) {
+    	  updateGlass();
          Graphics2D g2d = (Graphics2D)g.create();
 
          int iState = 0;
@@ -461,34 +470,39 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
          Graphics2D g2d = (Graphics2D)g.create();
          g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-         Shape defaultClip = g2d.getClip();
-
-         Shape sTab = createUnSelectedTabShape(isHorizontal() ? w + 1 : w, isHorizontal() ? h : h + 1, false, true);
-         Shape clip = CGraphicUtils.MergeClipShapes(sTab, defaultClip);
-         g2d.setClip(clip);
+         Shape sTab = createUnSelectedTabShape(isHorizontal() ? w : w, isHorizontal() ? h : h, false, true);
 
          BufferedImage img;
          dImg = new Dimension(isHorizontal() ? w + CORNER_RADIUS : h + CORNER_RADIUS, isHorizontal() ? h : w);
          if (glassUnSelected != null) {
-	         try {
-	            img = glass.RenderBufferedImage(glassUnSelected, dImg, true);
-	         }
-	         catch (Exception e) {
-	            img = glass.RenderBufferedImage(CGlassFactory.VALUE_RED, dImg, true);
-	         }
-	
-	         if ( !isHorizontal()) {
-	            AffineTransform atTrans = AffineTransform.getTranslateInstance(x/* + w*/, y + h);
-	            atTrans.concatenate(COutlineHelper.tRot90CCW);
-	
-	            g2d.drawImage(img, atTrans, null);
-	         }
-	         else {
-	            g2d.drawImage(img, 0, 0, null);
-	         }
+            img = new BufferedImage(dImg.width, dImg.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D gg = img.createGraphics();
+
+            gg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            gg.setColor(Color.WHITE);
+            gg.fill(sTab);
+
+            gg.setComposite(AlphaComposite.SrcIn);
+            try {
+               glass.Render2Graphics(dImg, gg, glassUnSelected, true);
+            }
+            catch (Exception e) {
+               glass.Render2Graphics(dImg, gg, CGlassFactory.VALUE_STEEL, true);
+            }
+
+            gg.dispose();
+
+            if ( !isHorizontal()) {
+               AffineTransform atTrans = AffineTransform.getTranslateInstance(x/* + w*/, y + h);
+               atTrans.concatenate(COutlineHelper.tRot90CCW);
+
+               g2d.drawImage(img, atTrans, null);
+            }
+            else {
+               g2d.drawImage(img, 0, 0, null);
+            }
          }
          // restore default clipping 
-         g2d.setClip(defaultClip);
          sTab = createUnSelectedTabShape(w, h, getTabIndex() == 0, false);
 
          // draw Border
@@ -544,53 +558,54 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
          BufferedImage bimg = null;
          dImg = new Dimension(isHorizontal() ? w : h, isHorizontal() ? h : w);
          if (bActive) {
-        	 if (glassFocused != null) {
-	            try {
-	               bimg = glass.RenderBufferedImage(glassFocused, dImg, true);
-	            }
-	            catch (Exception e) {
-	               bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_STEEL, dImg, true);
-	            }
-        	 }
+            if (glassFocused != null) {
+               try {
+                  bimg = glass.RenderBufferedImage(glassFocused, dImg, true);
+               }
+               catch (Exception e) {
+                  bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_STEEL, dImg, true);
+               }
+            }
          }
          else {
-        	 if (glassSelected != null) {
-	            try {
-	               bimg = glass.RenderBufferedImage(glassSelected, dImg, true);
-	            }
-	            catch (Exception e) {
-	               bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_DARKENED_PLAIN, dImg, true);
-	            }
-        	 }
+            if (glassSelected != null) {
+               try {
+                  bimg = glass.RenderBufferedImage(glassSelected, dImg, true);
+               }
+               catch (Exception e) {
+                  bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_DARKENED_PLAIN, dImg, true);
+               }
+            }
          }
 
          if (bimg != null) {
-	         // glass is translucent, so we could see the sharp edge of an unselected tab behind
-	         // So, we paint the glass image onto a other image were only the glass part is visible (white)
-	         BufferedImage b = new BufferedImage(w, h, Transparency.TRANSLUCENT);
-	         Graphics2D gg2d = b.createGraphics();
-	
-	         gg2d.setColor(Color.white);
-	         gg2d.fill(sTab);
-	
-	         gg2d.setClip(sTab);
-	         gg2d.setComposite(AlphaComposite.SrcAtop);
-	         if ( !isHorizontal()) {
-	            AffineTransform atTrans = AffineTransform.getTranslateInstance(0/*w*/, h);
-	            atTrans.concatenate(COutlineHelper.tRot90CCW);
-	
-	            gg2d.drawImage(bimg, atTrans, null);
-	         }
-	         else {
-	
-	            gg2d.drawImage(bimg, 0, 0, null);
-	         }
-	
-	         gg2d.dispose();
-	
-	         g2d.drawImage(b, x, y, null);
+            // glass is translucent, so we could see the sharp edge of an unselected tab behind
+            // So, we paint the glass image onto a other image were only the glass part is visible (white)
+            BufferedImage b = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D gg2d = b.createGraphics();
+            gg2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            gg2d.setColor(Color.WHITE);
+            gg2d.fill(sTab);
+
+            gg2d.setClip(sTab);
+            gg2d.setComposite(AlphaComposite.SrcAtop);
+            if ( !isHorizontal()) {
+               AffineTransform atTrans = AffineTransform.getTranslateInstance(0/*w*/, h);
+               atTrans.concatenate(COutlineHelper.tRot90CCW);
+
+               gg2d.drawImage(bimg, atTrans, null);
+            }
+            else {
+
+               gg2d.drawImage(bimg, 0, 0, null);
+            }
+
+            gg2d.dispose();
+
+            g2d.drawImage(b, x, y, null);
          }
-         
+
          // draw Border
          g2d.setColor(lineColor);
 
@@ -630,26 +645,26 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
 
       BufferedImage bimg = null;
       dImg = new Dimension(isHorizontal() ? r.width + CORNER_RADIUS : getHeight() + CORNER_RADIUS, isHorizontal() ? getHeight() : r.width);
-      
-      if( dImg.width > 0 && dImg.height > 0 ){
-    	  if (glassUnSelected != null) {
-	    	  try {
-		         bimg = glass.RenderBufferedImage(glassUnSelected, dImg, true);
-		      }
-		      catch (Exception e) {
-		         bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_RED, dImg, true);
-		      }
-		
-		      if ( !isHorizontal()) {
-		         AffineTransform atTrans = AffineTransform.getTranslateInstance(/*r.width*/0, CORNER_RADIUS/*-getHeight()*/);
-		         atTrans.concatenate(COutlineHelper.tRot90CCW);
-		
-		         g2d.drawImage(bimg, atTrans, null);
-		      }
-		      else {
-		         g2d.drawImage(bimg, -r.width, 0, null);
-		      }
-    	  }
+
+      if (dImg.width > 0 && dImg.height > 0) {
+         if (glassUnSelected != null) {
+            try {
+               bimg = glass.RenderBufferedImage(glassUnSelected, dImg, true);
+            }
+            catch (Exception e) {
+               bimg = glass.RenderBufferedImage(CGlassFactory.VALUE_RED, dImg, true);
+            }
+
+            if ( !isHorizontal()) {
+               AffineTransform atTrans = AffineTransform.getTranslateInstance(/*r.width*/0, CORNER_RADIUS/*-getHeight()*/);
+               atTrans.concatenate(COutlineHelper.tRot90CCW);
+
+               g2d.drawImage(bimg, atTrans, null);
+            }
+            else {
+               g2d.drawImage(bimg, -r.width, 0, null);
+            }
+         }
       }
    }
 
@@ -670,14 +685,27 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
             x = -1;
             y = bBeforeSelected ? 0 : -1;
             sTab = COutlineHelper.CreateUnselectedTabShape(CORNER_RADIUS, h + 1, w + 1, bFirst, forClip, bBeforeSelected);
-            sTab = COutlineHelper.Modify4LeftSide(sTab);
+            if ( !forClip) {
+               sTab = COutlineHelper.Modify4LeftSide(sTab);
+            }
+            else {
+               sTab = COutlineHelper.tSclX.createTransformedShape(sTab);
+               sTab = COutlineHelper.TranslateShapeTo(h + 1, 0, sTab);
+            }
             sTab = COutlineHelper.TranslateShapeTo(x, y, sTab);
             break;
          case RIGHT_OF_DOCKABLE:
             x = 0;
             y = bBeforeSelected ? 0 : -1;
             sTab = COutlineHelper.CreateUnselectedTabShape(CORNER_RADIUS, h + 1, w + 1, bFirst, forClip, bBeforeSelected);
-            sTab = COutlineHelper.Modify4RightSide(sTab);
+            if ( !forClip) {
+               sTab = COutlineHelper.Modify4RightSide(sTab);
+            }
+            else {
+               sTab = COutlineHelper.tSclX.createTransformedShape(sTab);
+               sTab = COutlineHelper.tSclY.createTransformedShape(sTab);
+               sTab = COutlineHelper.TranslateShapeTo(h, w, sTab);
+            }
             sTab = COutlineHelper.TranslateShapeTo(x, y, sTab);
             break;
          case BOTTOM_OF_DOCKABLE:
@@ -759,14 +787,36 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    }
 
    protected static class CTabPainter implements TabPainter {
-      boolean bSmallTabs = false;
+      CBorderListener placementListener;
 
-      public CTabPainter (boolean smallTabs) {
-         bSmallTabs = smallTabs;
+      /**
+       * Listens to changes of the TabPlacement property and updates all used CEclipseBorder's.
+       * The borders are stored in a WeakHashMap so there will be no strong reference and unused borders
+       * are removed automatically by the garbage collector.
+       * @author Thomas Hilbert
+       *
+       */
+      protected class CBorderListener implements DockPropertyListener<TabPlacement> {
+         protected WeakHashMap<CEclipseBorder, Void> wmap = new WeakHashMap<CEclipseBorder, Void>();
+
+         public void addBorder (CEclipseBorder border) {
+            wmap.put(border, null);
+         }
+
+         public void propertyChanged (DockProperties properties, PropertyKey<TabPlacement> property, TabPlacement oldValue, TabPlacement newValue) {
+            for (CEclipseBorder b : wmap.keySet()) {
+               b.update4Placement(newValue);
+            }
+         }
+
+      }
+
+      public CTabPainter () {
+         placementListener = new CBorderListener();
       }
 
       public TabComponent createTabComponent (EclipseTabPane pane, Dockable dockable) {
-         return new CGlassEclipseTabPainter(pane, dockable, bSmallTabs);
+         return new CGlassEclipseTabPainter(pane, dockable);
       }
 
       public TabPanePainter createDecorationPainter (EclipseTabPane pane) {
@@ -778,7 +828,18 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       }
 
       public Border getFullBorder (BorderedComponent owner, DockController controller, Dockable dockable) {
-         return new CEclipseBorder(controller, CORNER_RADIUS, owner);
+
+         controller.getProperties().removeListener(StackDockStation.TAB_PLACEMENT, placementListener);
+         controller.getProperties().addListener(StackDockStation.TAB_PLACEMENT, placementListener);
+
+         CEclipseBorder border = new CEclipseBorder(controller, CORNER_RADIUS, owner, CEclipseBorder.TOP_LEFT | CEclipseBorder.BOTTOM_RIGHT);
+
+         if (controller != null) {
+            border.update4Placement(controller.getProperties().get(StackDockStation.TAB_PLACEMENT));
+         }
+
+         placementListener.addBorder(border);
+         return (border);
       }
    }
 
@@ -786,11 +847,5 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
     * This factory creates instances of {@link CGlassEclipseTabPainter}.
     * Normal tab size.
     */
-   public static final CTabPainter FACTORY = new CTabPainter(false);
-
-   /**
-    * This factory creates instances of {@link CGlassEclipseTabPainter}.
-    * Smaller tab size.
-    */
-   public static final CTabPainter FACTORY_SMALL = new CTabPainter(true);
+   public static final CTabPainter FACTORY = new CTabPainter();
 }

@@ -44,13 +44,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonModel;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
@@ -88,7 +86,16 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "action.dropdown.line.mouse.enabled",
     "action.dropdown.line.mouse.selected.enabled",
     "action.dropdown.line.pressed.enabled",
-    "action.dropdown.line.pressed.selected.enabled"})
+    "action.dropdown.line.pressed.selected.enabled",
+
+    "action.dropdown.text",
+    "action.dropdown.text.enabled",
+    "action.dropdown.text.selected",
+    "action.dropdown.text.selected.enabled",
+    "action.dropdown.text.mouse.enabled",
+    "action.dropdown.text.mouse.selected.enabled",
+    "action.dropdown.text.pressed.enabled",
+    "action.dropdown.text.pressed.selected.enabled" })
 public class RoundDropDownButton extends JComponent implements RoundButtonConnectable{
 	/** the animation that changes the colors */
     private BubbleColorAnimation animation;
@@ -107,13 +114,8 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
     /** the colors used on this button */
     private RoundActionColor[] colors;
     
-    /** the expected minimum size of any icon */
-    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
-		@Override
-		protected void valueChanged( Dimension oldValue, Dimension newValue ){
-			revalidate();
-		}
-	};
+    /** a component painting icon and text */
+    private MiniButtonContent content;
     
     /**
      * Creates a new button
@@ -122,7 +124,13 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
      * @param action the action that is shown
      */
     public RoundDropDownButton( BasicDropDownButtonHandler handler, Dockable dockable, DockAction action ){
-        animation = new BubbleColorAnimation();
+		animation = new BubbleColorAnimation(){
+			@Override
+			protected void pulse(){
+				super.pulse();
+				content.setLabelForeground( animation.getColor( "text" ) );
+			}
+		};
         
         colors = new RoundActionColor[]{
                 new RoundActionColor( "action.dropdown", dockable, action, Color.WHITE ),
@@ -151,6 +159,15 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 new RoundActionColor( "action.dropdown.line.mouse.selected.enabled", dockable, action, Color.DARK_GRAY ),
                 new RoundActionColor( "action.dropdown.line.pressed.enabled", dockable, action, Color.DARK_GRAY ),
                 new RoundActionColor( "action.dropdown.line.pressed.selected.enabled", dockable, action, Color.DARK_GRAY ),
+                
+                new RoundActionColor( "action.dropdown.text", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.selected", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.enabled.selected", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.mouse.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.mouse.selected.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.pressed.enabled", dockable, action, null ),
+                new RoundActionColor( "action.dropdown.text.pressed.selected.enabled", dockable, action, null ),
         };
         
         animation.addTask( new Runnable(){
@@ -161,6 +178,10 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         
         this.handler = handler;
         dropIcon = handler.getDropDownIcon();
+        
+        content = createButtonContent();
+        setLayout( null );
+        add( content );
         
         model = new BasicDropDownButtonModel( this, handler, handler ){
             @Override
@@ -176,6 +197,8 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
             }
         };
         
+        content.setModel( model );
+        
         addFocusListener( new FocusListener(){
             public void focusGained( FocusEvent e ) {
                 repaint();
@@ -188,13 +211,20 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         updateColors();
     }
     
+    /**
+     * Creates the component painting the content of this button.
+     * @return the new component
+     */
+    protected MiniButtonContent createButtonContent(){
+    	return new MiniButtonContent();
+    }
+    
     public void setController( DockController controller ) {
         for( RoundActionColor color : colors ){
             color.connect( controller );
         }
         
         animation.kick();
-        minimumIconSize.setProperties( controller );
     }
     
     public BasicDropDownButtonModel getModel() {
@@ -216,16 +246,22 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         if( isPreferredSizeSet() )
             return super.getPreferredSize();
         
-        Dimension icon = model.getMaxIconSize();
-        Dimension min = minimumIconSize.getValue();
-        
-        int w = Math.max( icon.width, min.width );
-        int h = Math.max( icon.height, min.height );
+        Dimension contentSize = content.getPreferredSize();
         
         if( model.getOrientation().isHorizontal() )
-            return new Dimension( (int)(1.5 * w + 1 + 1.5*dropIcon.getIconWidth()), (int)(1.5 * h));
+            return new Dimension( (int)(0.5 * contentSize.height + contentSize.width + 1 + 1.5*dropIcon.getIconWidth()), (int)(1.5 * contentSize.height));
         else
-            return new Dimension( (int)(1.5 * w), (int)(1.5 * h + 1 + 1.5 * dropIcon.getIconHeight()) );
+            return new Dimension( (int)(1.5 * contentSize.width), (int)(0.5 * contentSize.width + contentSize.height + 1 + 1.5 * dropIcon.getIconHeight()) );
+    }
+    
+    @Override
+    public void doLayout(){
+    	if( model.getOrientation().isHorizontal() ){
+    		content.setBounds( getHeight() / 3, getHeight() / 6, (int)(getWidth() - 1 - 1.5*dropIcon.getIconWidth()), (int)(getHeight() / 1.5));
+    	}
+    	else{
+    		content.setBounds( getWidth() / 3, getWidth() / 6, (int)(getWidth() / 1.5), (int)(getHeight() - 1 - 1.5*dropIcon.getIconHeight()));
+    	}
     }
     
     @Override
@@ -307,35 +343,27 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         Icon drop = dropIcon;
         if( !isEnabled() ){
             if( disabledDropIcon == null )
-                disabledDropIcon = DockUtilities.disabledIcon( this, dropIcon );
+                disabledDropIcon = handler.getDisabledDropDownIcon();
             drop = disabledDropIcon;
         }
         
         Graphics2D g2 = (Graphics2D)g;
+        paintChildren( g );
         
         int x = 0;
         int y = 0;
         int w = getWidth();
         int h = getHeight();
         
-        Dimension size = model.getMaxIconSize();
-        Icon icon = model.getPaintIcon();
-        
-        int iconWidth = size.width < 10 ? 10 : size.width;
-        int iconHeight = size.height < 10 ? 10 : size.height;
-        
         int dropIconWidth = drop == null ? 5 : drop.getIconWidth();
         int dropIconHeight = drop == null ? 5 : drop.getIconHeight();
         
         if( model.getOrientation().isHorizontal() ){
             g2.setColor( animation.getColor( "mouse" ) );
-            int mx = x + (int)( 0.5 * 1.25 * iconWidth + 0.5 * (w - 1.25 * dropIconWidth) );
+            // int mx = x + (int)( 0.5 * 1.25 * iconWidth + 0.5 * (w - 1.25 * dropIconWidth) );
+            int mx = x + w - (int)(1.5 * dropIconWidth) - 1;
             g2.drawLine( mx, y+1, mx, y+h-2 );
             
-            
-            if( icon != null ){
-                icon.paintIcon( this, g, (int)(x + 0.25 * iconWidth ), y+(h-iconHeight)/2 );
-            }
             if( drop != null )
             	drop.paintIcon( this, g, (int)(x + w - 1.25 * dropIconWidth), y+(h-dropIconHeight)/2 );
             
@@ -349,13 +377,10 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         }
         else{
             g2.setColor( animation.getColor( "mouse" ) );
-            int my = y + (int)( 0.5 * 1.25 * iconHeight + 0.5 * (h - 1.25 * dropIconHeight) );
+            // int my = y + (int)( 0.5 * 1.25 * iconHeight + 0.5 * (h - 1.25 * dropIconHeight) );
+            int my = y + h - (int)(1.5 * dropIconHeight) - 1;
             g2.drawLine( x+1, my, x+w-2, my );
             
-            
-            if( icon != null ){
-                icon.paintIcon( this, g, x+(w-iconWidth)/2, (int)(y + 0.25*iconHeight));
-            }
             if( drop != null )
             	drop.paintIcon( this, g, x + ( w - dropIconWidth ) / 2, (int)(y+h-1.25*dropIconHeight) );
             
@@ -385,21 +410,17 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         int rw = getWidth();
         int rh = getHeight();
         
-        Dimension icon = model.getMaxIconSize();
-        Dimension min = minimumIconSize.getValue();
-        
-        int iconWidth = icon.width < min.width ? min.width : icon.width;
-        int iconHeight = icon.height < min.height ? min.height : icon.height;
-        
-        int dropIconWidth = dropIcon == null ? (min.width/2) : dropIcon.getIconWidth();
-        int dropIconHeight = dropIcon == null ? (min.height/2) : dropIcon.getIconHeight();
+        int dropIconWidth = dropIcon == null ? 0 : dropIcon.getIconWidth();
+        int dropIconHeight = dropIcon == null ? 0 : dropIcon.getIconHeight();
         
         if( model.getOrientation().isHorizontal() ){
-        	int mx = rx + (int)( 0.5 * 1.25 * iconWidth + 0.5 * (rw - 1.25 * dropIconWidth) );
+        	// int mx = rx + (int)( 0.5 * 1.25 * iconWidth + 0.5 * (rw - 1.25 * dropIconWidth) );
+        	int mx = rx + rw - (int)(1.5 * dropIconWidth) - 1;
         	return x >= mx;
         }
         else{
-        	int my = ry + (int)( 0.5 * 1.25 * iconHeight + 0.5 * (rh - 1.25 * dropIconHeight) );
+        	// int my = ry + (int)( 0.5 * 1.25 * iconHeight + 0.5 * (rh - 1.25 * dropIconHeight) );
+        	int my = ry + rh - (int)(1.5 * dropIconHeight) - 1;
         	return y >= my;
         }
     }
@@ -428,19 +449,23 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
         else
             mouse = "dropdown";
         
+        String text = "action.dropdown.text";
         String background;
         
         if( pressed && enabled ){
             background = "action.dropdown.pressed" + postfix;
             mouse = "action." + mouse + ".pressed" + postfix;
+            text += ".pressed" + postfix;
         }
         else if( entered && enabled ){
             background = "action.dropdown.mouse" + postfix;
             mouse = "action." + mouse + ".mouse" + postfix;
+            text += ".mouse" + postfix;
         }
         else{
             background = "action.dropdown" + postfix;
             mouse = "action." + mouse + postfix;
+            text += postfix;
         }
         
         String focus = background + ".focus";
@@ -452,6 +477,8 @@ public class RoundDropDownButton extends JComponent implements RoundButtonConnec
                 animation.putColor( "mouse", color.value() );
             if( focus.equals( color.getId() ))
                 animation.putColor( "focus", color.value() );
+            if( text.equals( color.getId() ))
+            	animation.putColor( "text", color.value() );
         }
     }
     

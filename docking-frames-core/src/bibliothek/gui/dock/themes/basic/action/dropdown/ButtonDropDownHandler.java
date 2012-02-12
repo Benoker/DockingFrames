@@ -46,7 +46,7 @@ public class ButtonDropDownHandler extends AbstractDropDownHandler<ButtonDockAct
 	 * Creates a new handler.
 	 * @param action the action to observe
 	 * @param dockable the Dockable for which the action is shown
-	 * @param item the item that represents the action
+	 * @param item the item that represents the action, can be <code>null</code>
 	 */
 	public ButtonDropDownHandler( ButtonDockAction action, Dockable dockable, JMenuItem item ){
 		super( action, dockable, item );
@@ -59,12 +59,16 @@ public class ButtonDropDownHandler extends AbstractDropDownHandler<ButtonDockAct
 	@Override
 	public void bind(){
 		super.bind();
-		item.addActionListener( listener );
+		if( item != null ){
+			item.addActionListener( listener );
+		}
 	}
 	
 	@Override
 	public void unbind(){
-		item.removeActionListener( listener );
+		if( item != null ){
+			item.removeActionListener( listener );
+		}
 		super.unbind();
 	}
 	

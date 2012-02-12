@@ -315,6 +315,8 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "action.button.pressed.enabled.focus",           undiffMirror( diffMirror( enabled, factorStrong ), factorWeak ));
         setColor( "action.button.pressed.selected.enabled",        undiffMirror( selected, factorStrong ) );
         setColor( "action.button.pressed.selected.enabled.focus",  undiffMirror( diffMirror( selected, factorStrong ), factorWeak ));
+        
+        setNullColor( "action.button.text" );
 
         // Round drop down button
         setColor( "action.dropdown",                                 disabled );
@@ -343,6 +345,8 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "action.dropdown.line.mouse.selected.enabled",     undiffMirror( diffMirror( selected, factor ), factorWeak ));
         setColor( "action.dropdown.line.pressed.enabled",            undiffMirror( diffMirror( enabled, factorStrong ), factorWeak ));
         setColor( "action.dropdown.line.pressed.selected.enabled",   undiffMirror( diffMirror( selected, factorStrong ), factorWeak ));
+        
+        setNullColor( "action.dropdown.text" );
         
         // Paint
         setColor( "paint.divider",                            disabled );

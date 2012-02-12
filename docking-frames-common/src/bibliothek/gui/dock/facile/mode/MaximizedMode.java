@@ -144,8 +144,8 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	}
 
 	public void runApply( Dockable dockable, Location history, AffectedSet set ){
-		MaximizedModeArea area = getMaximizeArea( dockable );
-
+		MaximizedModeArea area = getMaximizeArea( dockable, history );
+		
 		if( area == null )
 			area = getDefaultArea();
 		
@@ -382,6 +382,17 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 				}	
 			}
 		});
+	}
+	
+	/**
+	 * Gets the area to which <code>dockable</code> should be maximized. This can be 
+	 * {@link #getMaximizeArea(Dockable)}, or some other station.
+	 * @param dockable the element that is maximized
+	 * @param history the history of the last place where <code>dockable</code> was maximized, might be <code>null</code>
+	 * @return the preferred area to maximize <code>dockable</code>
+	 */
+	public MaximizedModeArea getMaximizeArea( Dockable dockable, Location history ){
+		return getMaximizeArea( dockable );
 	}
 
 	/**

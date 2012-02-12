@@ -29,6 +29,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 
 /**
  * A simple implementation of {@link CStation}. This class adds a 
@@ -38,7 +39,7 @@ import bibliothek.gui.dock.common.CStation;
  * @author Benjamin Sigg
  * @param <S> the kind of station this {@link CStation} is built upon
  */
-public abstract class AbstractCStation<S extends DockStation> implements CStation<S>{
+public abstract class AbstractCStation<S extends CommonDockStation<?, ?>> implements CStation<S>{
     private CLocation location;
     private String id;
     private S station;

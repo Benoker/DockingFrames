@@ -35,7 +35,6 @@ import java.awt.Stroke;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
@@ -45,12 +44,11 @@ import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
 import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.themes.color.ActionColor;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -78,8 +76,16 @@ import bibliothek.gui.dock.util.color.DockColor;
     "action.button.pressed.enabled",
     "action.button.pressed.enabled.focus",
     "action.button.pressed.selected.enabled",
-    "action.button.pressed.selected.enabled.focus"
-})
+    "action.button.pressed.selected.enabled.focus",
+    
+    "action.button.text",
+    "action.button.text.enabled",
+    "action.button.text.selected",
+    "action.button.text.selected.enabled",
+    "action.button.text.mouse.enabled",
+    "action.button.text.mouse.selected.enabled",
+    "action.button.text.pressed.enabled",
+    "action.button.text.pressed.selected.enabled" })
 public class RoundButton extends JComponent implements RoundButtonConnectable{
     private BubbleColorAnimation animation;
 	
@@ -89,13 +95,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     
     private boolean paintFocusBorder = true;
     
-    /** the expected minimum size of any icon */
-    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
-		@Override
-		protected void valueChanged( Dimension oldValue, Dimension newValue ){
-			revalidate();
-		}
-	};
+    private MiniButtonContent content;
     
     /**
      * Creates a new round button.
@@ -108,7 +108,17 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	public RoundButton( BasicTrigger trigger, BasicResourceInitializer initializer, Dockable dockable, DockAction action ){
 		setFocusable( true );
 		
-		animation = new BubbleColorAnimation();
+		content = createButtonContent();
+		setLayout( null );
+		add( content );
+		
+		animation = new BubbleColorAnimation(){
+			@Override
+			protected void pulse(){
+				super.pulse();
+				content.setLabelForeground( animation.getColor( "text" ) );
+			}
+		};
 		
 		colors = createColors( dockable, action );
 		
@@ -129,6 +139,8 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
         	}
         });
         
+        content.setModel( model );
+        
 		updateColors();
 
 		animation.addTask(new Runnable() {
@@ -145,6 +157,14 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		        repaint();
 		    }
 		});
+	}
+	
+	/**
+	 * Creates the component that shows the contents of this button.
+	 * @return the new component
+	 */
+	protected MiniButtonContent createButtonContent(){
+		return new MiniButtonContent();
 	}
 	
 	protected AbstractDockColor[] createColors( Dockable dockable, DockAction action ){
@@ -165,7 +185,17 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 		        createColor( "action.button.mouse.enabled.focus", dockable, action, Color.DARK_GRAY ),
 		        createColor( "action.button.mouse.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
 		        createColor( "action.button.pressed.enabled.focus", dockable, action, Color.DARK_GRAY ),
-		        createColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY )};
+		        createColor( "action.button.pressed.selected.enabled.focus", dockable, action, Color.DARK_GRAY ),
+		        
+		        createColor( "action.button.text", dockable, action, null ),
+		        createColor( "action.button.text.enabled", dockable, action, null ),
+		        createColor( "action.button.text.selected", dockable, action, null ),
+		        createColor( "action.button.text.selected.enabled", dockable, action, null ),
+		        createColor( "action.button.text.mouse.enabled", dockable, action, null ),
+		        createColor( "action.button.text.mouse.selected.enabled", dockable, action, null ),
+		        createColor( "action.button.text.pressed.enabled", dockable, action, null ),
+		        createColor( "action.button.text.pressed.selected.enabled", dockable, action, null ),		        
+		};
 	}
 	
 	/**
@@ -215,7 +245,6 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	        color.connect( controller );
 	    
 	    animation.kick();
-	    minimumIconSize.setProperties( controller );
 	}
 	
     public BasicButtonModel getModel() {
@@ -252,15 +281,31 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
         return dist <= w*w/4;
     }
     
+    /**
+     * Gets the content component of this button.
+     * @return the component that paints icon and text
+     */
+    protected MiniButtonContent getContent(){
+		return content;
+	}
+    
 	@Override
 	public Dimension getPreferredSize() {
-	    Dimension icon = model.getMaxIconSize();
-	    Dimension min = minimumIconSize.getValue();
-	    
-        icon.width = Math.max( icon.width, min.width );
-        icon.height = Math.max( icon.height, min.height );
-
-        return new Dimension((int)(icon.width*1.5),(int)(icon.height*1.5));
+        Dimension preferred = content.getPreferredSize();
+        return new Dimension((int)(preferred.width*1.5),(int)(preferred.height*1.5));
+	}
+	
+	@Override
+	public void doLayout(){
+		Dimension size = content.getPreferredSize();
+		
+		int dw = getWidth() - size.width;
+		int dh = getHeight() - size.height;
+		
+		dw = Math.max( 0, dw );
+		dh = Math.max( 0, dh );
+		
+		content.setBounds( dw/2, dh/2, getWidth()-dw, getHeight()-dh );
 	}
 
 	@Override
@@ -323,12 +368,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	protected void doPaintForeground( Graphics g ){
 		Graphics2D g2 = (Graphics2D)g;
 		
-        Icon icon = model.getPaintIcon();
-		if( icon != null ){
-			icon.paintIcon( this, g, 
-					(getWidth() - icon.getIconWidth()) / 2, 
-					(getHeight() - icon.getIconHeight()) / 2 );
-		}
+        paintChildren( g );
 
 		if( paintFocusBorder && hasFocus() && isFocusable() && isEnabled() ){
 		    Stroke stroke = g2.getStroke();
@@ -362,7 +402,15 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
     	if( enabled )
     		postfix += ".enabled";
     	
-    	String key = "action.button" + postfix;
+    	String key = "action.button.text" + postfix;
+    	for( AbstractDockColor color : colors ){
+    	    if( key.equals( color.getId() )){
+    	        animation.putColor( "text", color.value() );
+    	        break;
+    	    }
+    	}
+    	
+    	key = "action.button" + postfix;
     	for( AbstractDockColor color : colors ){
     	    if( key.equals( color.getId() )){
     	        animation.putColor( "button", color.value() );

@@ -81,7 +81,7 @@ import static bibliothek.gui.dock.station.flap.button.ButtonContent.*;
 })
 public class BasicButtonDockTitle extends AbstractDockTitle {
 	/** amount of space required to paint the knob */
-	private final int KNOB_SIZE = 10;
+	protected final int KNOB_SIZE = 10;
 	
 	/** whether the mouse is currently pressed or not */
 	private boolean mousePressed = false;
@@ -90,7 +90,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 	private boolean selected = false;
 	
 	/** tells what items to paint */
-	private ButtonContentValue behavior;
+	protected ButtonContentValue behavior;
 	
 	/** tells what items to filter */
 	private PropertyValue<ButtonContentFilter> connector = new PropertyValue<ButtonContentFilter>( FlapDockStation.BUTTON_CONTENT_FILTER ) {
@@ -336,7 +336,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     @Override
     protected void paintForeground( Graphics g, JComponent component ){
     	// paint icon (if there is any)
-    	super.paintForeground( g, component );
+    	paintIcon( g, component );
     	
     	// paint knob (if there is any)
     	if( behavior.isShowKnob() ){

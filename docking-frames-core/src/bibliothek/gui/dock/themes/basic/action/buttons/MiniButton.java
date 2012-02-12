@@ -34,12 +34,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
-import bibliothek.gui.DockController;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModelAdapter;
@@ -47,9 +45,8 @@ import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.util.AbstractPaintableComponent;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
-import bibliothek.gui.dock.util.IconManager;
-import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
+import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
  * A small {@link Component} used as view of a {@link BasicButtonModel}.
@@ -57,6 +54,10 @@ import bibliothek.gui.dock.util.Transparency;
  * @param <M> the type of model used to describe the state of this button
  * @author Benjamin Sigg
  */
+@ColorCodes({
+	"action.button.text",
+	"action.button.text.disabled"
+})
 public class MiniButton<M extends BasicButtonModel> extends JComponent {
 	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the normal state. */
 	public static final String BORDER_KEY_NORMAL = ThemeManager.BORDER_MODIFIER + ".action.miniButton.normal";
@@ -70,6 +71,9 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
 	public static final String BORDER_KEY_MOUSE_PRESSED = ThemeManager.BORDER_MODIFIER + ".action.miniButton.mousePressed";
 	/** Identifier for the {@link ThemeManager} of the {@link BorderModifier} which is used for the selected mouse pressed state. */
 	public static final String BORDER_KEY_MOUSE_PRESSED_SELECTED = ThemeManager.BORDER_MODIFIER + ".action.miniButton.mousePressed.selected";
+	
+	/** the icon and text on this button */
+	private MiniButtonContent content;
 	
     /** the standard-border of this button */
     private Border normalBorder;
@@ -101,14 +105,6 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     /** the model storing the properties for this button */
     private M model;
     
-    /** the expected minimum size of icons */
-    private PropertyValue<Dimension> minimumIconSize = new PropertyValue<Dimension>( IconManager.MINIMUM_ICON_SIZE ){
-    	@Override
-    	protected void valueChanged( Dimension oldValue, Dimension newValue ){
-    		revalidate();
-    	}
-	};
-    
     /** a listener to {@link #model} */
     private BasicButtonModelAdapter listener = new BasicButtonModelAdapter(){
     	@Override
@@ -135,16 +131,6 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     	public void borderChanged( BasicButtonModel model, String key, BorderModifier oldBorder, BorderModifier newBorder ){
     		updateBorder();
     	}
-    	
-    	@Override
-    	public void bound( BasicButtonModel model, DockController controller ){
-    		minimumIconSize.setProperties( controller );
-    	}
-    	
-    	@Override
-    	public void unbound( BasicButtonModel model, DockController controller ){
-    		minimumIconSize.setProperties( (DockController)null );
-    	}
     };
     
     /**
@@ -153,6 +139,11 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
      */
     public MiniButton( M model ){
         this.model = model;
+        content = createButtonContent();
+        content.setModel( model );
+        
+        setLayout( null );
+        add( content );
         
         mousePressedBorder = BorderFactory.createBevelBorder( BevelBorder.LOWERED );
         mouseOverBorder = BorderFactory.createBevelBorder( BevelBorder.RAISED );
@@ -173,7 +164,27 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
                 repaint();
             }
         });
+        
+        if( model != null ){
+        	content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
+        }
     }
+    
+    /**
+     * Creates the content component of this button.
+     * @return the component
+     */
+    protected MiniButtonContent createButtonContent(){
+    	return new MiniButtonContent();
+    }
+    
+    /**
+     * Gets access to the content component.
+     * @return the content component showing icon and text
+     */
+    protected MiniButtonContent getContent(){
+		return content;
+	}
     
     /**
      * Sets the model of this button. The model contains all properties which
@@ -184,10 +195,13 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     	if( this.model != null )
     		this.model.removeListener( listener );
     	
+    	content.setModel( model );
         this.model = model;
         
-        if( this.model != null )
+        if( this.model != null ){
         	this.model.addListener( listener );
+        	content.setForegroundColorId( "action.button.text", "action.button.text.disabled" );
+        }
         
         updateBorder();
     }
@@ -470,10 +484,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     
     private void doPaintForeground( Graphics g ){
     	// icon
-        Icon icon = model.getPaintIcon();
-        if( icon != null ){
-            paintIcon( icon, g );
-        }
+        paintContent( g );
         
         // focus
         if( isFocusOwner() && isFocusable() && isEnabled() ){
@@ -481,24 +492,19 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         }
     }
     
+    /**
+     * Paints the {@link #getContent() content component}.
+     * @param g the graphics context that should be used to paint the content
+     */
+    protected void paintContent( Graphics g ){
+    	paintChildren( g );
+    }
+    
     private void doPaintBorder( Graphics g ){
     	// border
         Border border = getBorder();
         if( border != null )
             border.paintBorder( this, g, 0, 0, getWidth(), getHeight() );	
-    }
-    
-    /**
-     * Paints the <code>icon</code> in the center of this button.
-     * @param icon the icon to paint
-     * @param g the graphics context
-     */
-    protected void paintIcon( Icon icon, Graphics g ){
-    	Insets max = getMaxBorderInsets();
-    	
-    	icon.paintIcon( this, g, 
-                max.left + (getWidth()-max.left-max.right-icon.getIconWidth())/2, 
-                max.top + (getHeight()-max.top-max.bottom-icon.getIconHeight())/2 );
     }
     
     /**
@@ -533,30 +539,24 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
         g.drawLine( x, y+h-1, x+1, y+h-1 );
         g.drawLine( x, y+h-2, x,   y+h-2 );
     }
-    
-    /**
-     * Gets the expected minimum size of any icon.
-     * @return the expected minimum size of any icon
-     */
-    protected Dimension getMinimumIconSize(){
-    	return minimumIconSize.getValue();
-    }
-    
+
     @Override
     public Dimension getPreferredSize() {
     	if( isPreferredSizeSet() )
     		return super.getPreferredSize();
     	
     	Insets max = getMaxBorderInsets();
-    	Dimension size = model.getMaxIconSize();
-    	Dimension min = getMinimumIconSize();
-        
-        size.width = Math.max( size.width, min.width );
-        size.height = Math.max( size.height, min.height );
-        
+    	Dimension size = content.getPreferredSize();
+    	
         size.width += max.left + max.right + 2;
         size.height += max.top + max.bottom + 2;
         return size;
+    }
+    
+    @Override
+    public void doLayout(){
+	    Insets insets = getMaxBorderInsets();
+	    content.setBounds( insets.left, insets.top, getWidth()-insets.right-insets.left, getHeight()-insets.top-insets.bottom );
     }
     
     /**

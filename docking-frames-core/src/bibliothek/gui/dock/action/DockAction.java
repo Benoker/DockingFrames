@@ -30,6 +30,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * A DockAction is an object that represents an action which can be triggered by the user. Every
@@ -43,7 +45,12 @@ import bibliothek.gui.dock.title.DockTitle;
  * 
  * @author Benjamin Sigg
  */
-public interface DockAction {    
+public interface DockAction {
+	/**
+	 * The {@link ButtonContentFilter} decides whether text is shown on buttons that represent {@link DockAction}s.
+	 */
+	public static final PropertyKey<ButtonContentFilter> BUTTON_CONTENT_FILTER = new PropertyKey<ButtonContentFilter>( "dock.buttonContentFilter", new ConstantPropertyFactory<ButtonContentFilter>( ButtonContentFilter.NEVER ), true );
+	
     /**
      * Creates a view for this action, for the platform <code>target</code> and
      * with help of <code>converter</code>. Clients might use their own

@@ -55,7 +55,7 @@ public interface CommonDockStation<S extends DockStation, C extends CommonDockSt
 	 * Gets the model of this station.
 	 * @return the model, may not be <code>null</code>
 	 */
-	public CStation<S> getStation();
+	public CStation<C> getStation();
 	
 	/**
 	 * Gets the unique identifier of the {@link DockFactory} that stores and loads the layout of this

@@ -166,14 +166,7 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 	 * @return the parent of <code>child</code> or <code>null</code>
 	 */
 	protected CStationContainer getContainer( CStation<?> child ){
-		for( CStationContainer container : control.getStationContainers() ){
-			for( int i = 0, n = container.getStationCount(); i<n; i++ ){
-				if( container.getStation( i ) == child ){
-					return container;
-				}
-			}
-		}
-		return null;
+		return control.getRegister().getContainer( child );
 	}
 	
 	public Location rewrite( Dockable dockable, CLocationMode mode, Location history ){
@@ -184,7 +177,6 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 		}
 		
 		if( replacement == null ){
-			
 			replacement = getMatchingStation( dockable, mode.getExtendedMode() );
 		}
 		

@@ -20,7 +20,7 @@ import bibliothek.util.Path;
  * The {@link CToolbarArea} acts as root {@link CStation} for toolbars. 
  * @author Benjamin Sigg
  */
-public class CToolbarArea extends AbstractCStation<ToolbarContainerDockStation> {
+public class CToolbarArea extends AbstractCStation<CommonToolbarContainerDockStation> {
 	/** The result of {@link #getTypeId()} */
 	public static final Path TYPE_ID = new Path( "dock", "CToolbarArea" );
 	

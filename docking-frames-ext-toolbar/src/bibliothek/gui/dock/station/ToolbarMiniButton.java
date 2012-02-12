@@ -1,9 +1,7 @@
 package bibliothek.gui.dock.station;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
@@ -12,6 +10,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicResourceInitializer;
 import bibliothek.gui.dock.themes.basic.action.BasicTrigger;
 import bibliothek.gui.dock.themes.basic.action.buttons.BasicMiniButton;
+import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 
 /**
@@ -77,15 +76,20 @@ public class ToolbarMiniButton extends BasicMiniButton {
 	}
 	
 	@Override
+	protected MiniButtonContent createButtonContent(){
+		return new MiniButtonContent(){
+			@Override
+			protected Dimension getMinimumIconSize(){
+				return new Dimension( 3, 3 );		
+			}
+		};
+	}
+	
+	@Override
 	protected void paintFocus( Graphics g ){
 		// do not paint the focus indicators
 	}
 
-	@Override
-	protected Dimension getMinimumIconSize(){
-		return new Dimension( 3, 3 );
-	}
-	
 	@Override
 	public Dimension getPreferredSize(){
 		Dimension result = super.getPreferredSize();

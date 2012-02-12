@@ -41,6 +41,14 @@ import bibliothek.gui.dock.util.BackgroundPaint;
  */
 public interface BasicButtonModelListener {
 	/**
+	 * Called if the text of <code>model</code> changed.
+	 * @param model the source of the event
+	 * @param oldText the old value, can be <code>null</code>
+	 * @param text the new value, can be <code>null</code>
+	 */
+	public void textChanged( BasicButtonModel model, String oldText, String text );
+	
+	/**
 	 * Called if an icon of <code>model</code> changed.
 	 * @param model the source of the event
 	 * @param modifier the context in which the icon is used

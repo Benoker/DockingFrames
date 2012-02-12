@@ -25,10 +25,10 @@
  */
 package bibliothek.gui.dock.common;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
@@ -45,7 +45,7 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  * @param <S> what kind of internal implementation this station uses
  */
-public interface CStation<S extends DockStation> {
+public interface CStation<S extends CommonDockStation<?, ?>> {
     /**
      * Gets the internal representation of this {@link CStation}.
      * @return the internal representation

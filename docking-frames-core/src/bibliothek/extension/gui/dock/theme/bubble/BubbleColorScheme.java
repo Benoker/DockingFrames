@@ -205,6 +205,8 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "action.button.pressed.enabled.focus",             color( distribution, 200, 200, 0 ));
         setColor( "action.button.pressed.selected.enabled.focus",    color( distribution, 0, 0, 200 ));
         
+        setNullColor( "action.button.text" );
+        
         // Round drop down button
         setColor( "action.dropdown",                                 color( distribution, 255, 255, 255 ));
         setColor( "action.dropdown.enabled",                         color( distribution, 215, 215, 215 ));
@@ -232,6 +234,8 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "action.dropdown.line.mouse.selected.enabled",     color( distribution, 50, 50, 150 ));
         setColor( "action.dropdown.line.pressed.enabled",            color( distribution, 200, 200, 0 ));
         setColor( "action.dropdown.line.pressed.selected.enabled",   color( distribution, 0, 0, 200 ));
+        
+        setNullColor( "action.dropdown.text" );
         
         // Paint
         setColor( "paint.divider",                            color( distribution, 0, 0, 0 ));

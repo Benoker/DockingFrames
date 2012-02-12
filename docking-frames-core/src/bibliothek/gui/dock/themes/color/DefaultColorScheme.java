@@ -107,6 +107,7 @@ public class DefaultColorScheme extends AbstractColorScheme{
      * Sets the value of some color.
      * @param id the identifier of the color
      * @param color the color or <code>null</code>
+     * @see #setNullColor(String)
      */
     public void setColor( final String id, Color color ){
     	synchronized( colors ){
@@ -117,7 +118,23 @@ public class DefaultColorScheme extends AbstractColorScheme{
 	            colors.put( id, color );
 	        }
     	}
-        
+    	fire( id );
+    }
+    
+    /**
+     * Sets the value of some color explicitely to <code>null</code>, this is not the same as calling 
+     * {@link #setColor(String, Color)}: <code>setColor</code> removes the entry, this method keeps the entry
+     * but sets it to <code>null</code>.
+     * @param id the identifier of the color to set explicitely to <code>null</code>
+     */
+    public void setNullColor( String id ){
+    	synchronized( colors ){
+    		colors.put( id, null );
+    	}
+    	fire( id );
+    }
+    
+    private void fire( final String id ){
         UISchemeEvent<Color, DockColor, ColorBridge> event = new UISchemeEvent<Color, DockColor, ColorBridge>(){
 			public UIScheme<Color, DockColor, ColorBridge> getScheme(){
 				return DefaultColorScheme.this;
@@ -159,7 +176,7 @@ public class DefaultColorScheme extends AbstractColorScheme{
     	Color color;
     	synchronized( colors ){
 	        color = colors.get( id );
-	        if( color != null )
+	        if( color != null || colors.containsKey( id ) )
 	            return color;
 	        
 	        int best = -1;

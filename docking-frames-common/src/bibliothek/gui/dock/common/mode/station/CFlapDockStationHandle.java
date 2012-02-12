@@ -29,6 +29,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.station.CFlapDockStation;
 import bibliothek.gui.dock.common.mode.CMinimizedModeArea;
 import bibliothek.gui.dock.common.mode.CModeArea;
 import bibliothek.gui.dock.facile.mode.Location;
@@ -48,7 +49,7 @@ public class CFlapDockStationHandle extends FlapDockStationHandle implements CMi
 	 * Creates a new handle
 	 * @param station the station which is handled by this handle
 	 */
-	public CFlapDockStationHandle( CStation<FlapDockStation> station ){
+	public CFlapDockStationHandle( CStation<CFlapDockStation> station ){
 		this( station.getUniqueId(), station.getStation(), station.getStationLocation() );
 	}
 	
@@ -58,7 +59,7 @@ public class CFlapDockStationHandle extends FlapDockStationHandle implements CMi
 	 * @param station the station to handle
 	 * @param location the location which represents <code>station</code>
 	 */
-	public CFlapDockStationHandle( String id, FlapDockStation station, CLocation location ){
+	public CFlapDockStationHandle( String id, CFlapDockStation station, CLocation location ){
 		super( id, station );
 		if( location == null ){
 			throw new IllegalArgumentException( "location must not be null" );

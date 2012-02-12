@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.util.font;
 
 import bibliothek.gui.dock.FlapDockStation;
+import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
 
@@ -60,4 +61,7 @@ public interface DockFont extends UIValue<FontModifier> {
     
     /** default id for an inactive button of a {@link FlapDockStation} */
     public static final String ID_TAB_UNSELECTED = "tab.unselected";
+    
+    /** default id for a button that shows a {@link DockAction} */
+    public static final String ID_BUTTON = "button";
 }

@@ -25,12 +25,11 @@
  */
 package glass.eclipse.theme;
 
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.theme.color.CColorBridge;
-import bibliothek.gui.dock.common.theme.color.CColorBridgeExtension;
-import bibliothek.gui.dock.themes.color.TabColor;
-import bibliothek.gui.dock.util.color.ColorManager;
-import bibliothek.util.Path;
+import bibliothek.gui.dock.common.*;
+import bibliothek.gui.dock.common.theme.color.*;
+import bibliothek.gui.dock.themes.color.*;
+import bibliothek.gui.dock.util.color.*;
+import bibliothek.util.*;
 
 public class GlassEclipseTabTransmitterFactory implements CColorBridgeExtension{
 

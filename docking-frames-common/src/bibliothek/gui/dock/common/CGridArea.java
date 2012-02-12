@@ -38,6 +38,7 @@ import bibliothek.gui.dock.common.intern.AbstractDockableCStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.station.CSplitDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
@@ -56,14 +57,14 @@ import bibliothek.util.Path;
  * represents this area.
  * @author Benjamin Sigg
  */
-public class CGridArea extends AbstractDockableCStation<SplitDockStation> implements SingleCDockable {
+public class CGridArea extends AbstractDockableCStation<CSplitDockStation> implements SingleCDockable {
 	/** The result of {@link #getTypeId()} */
 	public static final Path TYPE_ID = new Path( "dock", "CGridArea" );
 	
 	/** the unique identifier of this area */
 	private String uniqueId;
 	/** the station representing this area */
-	private SplitDockStation station;
+	private CSplitDockStation station;
 	/** a handler used to update the bounds of children of this station */
 	private SplitResizeRequestHandler resizeRequestHandler;
 
@@ -100,9 +101,9 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 			throw new NullPointerException( "id must not be null" );
 		
 		this.uniqueId = uniqueId;
-		CommonDockStation<SplitDockStation,?> station = control.getFactory().createSplitDockStation( new Delegate() );
+		CommonDockStation<SplitDockStation,CSplitDockStation> station = control.getFactory().createSplitDockStation( new Delegate() );
 		
-		this.station = station.getDockStation();
+		this.station = station.asDockStation();
 		init( station.asDockable() );
 		
 		setTitleShown( false );
@@ -127,7 +128,7 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 		station.dropTree( grid.toTree() );
 	}
 
-	public SplitDockStation getStation() {
+	public CSplitDockStation getStation() {
 		return station;
 	}
 
@@ -293,7 +294,7 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 	  * of this area.
 	  * @author Benjamin Sigg
 	  */
-	 private class Delegate implements CommonStationDelegate<SplitDockStation>{
+	 private class Delegate implements CommonStationDelegate<CSplitDockStation>{
 		public CDockable getDockable(){
 			return CGridArea.this;
 		}
@@ -302,7 +303,7 @@ public class CGridArea extends AbstractDockableCStation<SplitDockStation> implem
 			return new DockActionSource[]{ getClose() };
 		}
 
-		public CStation<SplitDockStation> getStation(){
+		public CStation<CSplitDockStation> getStation(){
 			return CGridArea.this;
 		}
 

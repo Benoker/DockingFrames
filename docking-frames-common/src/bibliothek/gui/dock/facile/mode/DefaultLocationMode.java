@@ -64,8 +64,14 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 		if( area == null )
 			area = getDefaultArea();
 		
-		if( area == null )
-			throw new IllegalStateException( "unable to find valid target '" + history.getRoot() + "'" );
+		if( area == null ){
+			if( history == null ){
+				throw new IllegalStateException( "unable to find valid target, no history available" );	
+			}
+			else{
+				throw new IllegalStateException( "unable to find valid target '" + history.getRoot() + "'" );
+			}
+		}
 		
 		DockableProperty location = history == null ? null : history.getLocation();
 		area.setLocation( dockable, location, set );
