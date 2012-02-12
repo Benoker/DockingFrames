@@ -421,9 +421,9 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
     }
     
     /**
-     * Paints the icon.
-     * @param g
-     * @param component
+     * Paints the icon (if there is any)
+     * @param g the graphics context to use
+     * @param component the {@link Component} which represents this title
      */
     protected void paintIcon(Graphics g, JComponent component) {
     	if( icon != null ){
@@ -434,8 +434,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
             }
             else{
                 int height = getHeight() - insets.top - insets.bottom;
-                icon.paintIcon( this, g, insets.left,
-                        insets.top + (height - icon.getIconHeight()) / 2 );
+                icon.paintIcon( this, g, insets.left, insets.top + (height - icon.getIconHeight()) / 2 );
             }
         }
     }
