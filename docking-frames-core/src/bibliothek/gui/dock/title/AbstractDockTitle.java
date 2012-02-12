@@ -53,8 +53,10 @@ import bibliothek.gui.dock.action.view.ViewTarget;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
+import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter.Behavior;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonContentValue;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.themes.font.TitleFont;
@@ -415,7 +417,16 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
      * @param component the {@link Component} which represents this title
      */
     protected void paintForeground( Graphics g, JComponent component ){
-        if( icon != null ){
+       paintIcon(g, component);
+    }
+    
+    /**
+     * Paints the icon.
+     * @param g
+     * @param component
+     */
+    protected void paintIcon(Graphics g, JComponent component) {
+    	if( icon != null ){
             Insets insets = titleInsets();
             if( orientation.isVertical() ){
                 int width = getWidth() - insets.left - insets.right;

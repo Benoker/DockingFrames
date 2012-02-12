@@ -11,7 +11,7 @@ public class CDockColorMap {
    public Color colSelectedGlassCenter;
    public Color colSelectedGlassBoundary;
    public Color colSelectedGlassLight;
-   
+
    public Color colUnSelectedGlassCenter;
    public Color colUnSelectedGlassBoundary;
    public Color colUnSelectedGlassLight;
@@ -57,9 +57,9 @@ public class CDockColorMap {
       colFocusedGlassCenter = new Color(0, 80, 150);
       colFocusedGlassLight = new Color(150, 222, 252);
       colFocusedGlassBoundary = new Color(0, 40, 80);
-      
-      colUnSelectedGlassCenter = new Color(222, 222, 222,64);
-      colUnSelectedGlassLight = new Color(222, 222, 222,64);
-      colUnSelectedGlassBoundary = new Color(128,128,128,64);
+
+      colUnSelectedGlassCenter = new Color(222, 222, 222, 64);
+      colUnSelectedGlassLight = new Color(222, 222, 222, 64);
+      colUnSelectedGlassBoundary = new Color(128, 128, 128, 64);
    }
 }

@@ -1,16 +1,13 @@
 package glass.eclipse.theme;
 
-import glass.eclipse.theme.utils.*;
-
 import java.awt.*;
 import java.awt.image.*;
-
 import javax.swing.*;
-
 import bibliothek.gui.*;
 import bibliothek.gui.dock.dockable.*;
 import bibliothek.gui.dock.title.*;
 import bibliothek.gui.dock.util.*;
+import glass.eclipse.theme.utils.*;
 
 
 /**

@@ -5,7 +5,6 @@ import glass.eclipse.theme.CGlassEclipseTabPainter;
 import glass.eclipse.theme.CGlassStationPaint;
 import glass.eclipse.theme.CMiniPreviewMovingImageFactory;
 import glass.eclipse.theme.EclipseThemeExtension;
-import glass.eclipse.theme.factory.IGlassParameterFactory;
 
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -13,9 +12,6 @@ import java.awt.GridLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
-
-import kux.glass.IGlassFactory.SGlassParameter;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.dock.StackDockStation;
@@ -41,7 +37,7 @@ public class CTestMain {
       //
       //         public void run () {
       // TODO Auto-generated method stub
-	   UIManager.put("Panel.background", Color.BLACK); 
+//	   UIManager.put("Panel.background", Color.BLACK);  
 
       JFrame frame = new JFrame();
 
@@ -59,7 +55,7 @@ public class CTestMain {
       SingleCDockable red = create("Red", Color.RED);
       SingleCDockable green = create("Green", Color.GREEN);
       SingleCDockable blue = create("Blue ", Color.BLUE);
-      SingleCDockable blue2 = create("Blue2 ", Color.BLUE);
+      SingleCDockable blue2 = create2("Blue2 ", Color.BLUE,control);
 
       control.addDockable(red);
       control.addDockable(green);
@@ -68,8 +64,8 @@ public class CTestMain {
       updateTheme(control);
 
       CGrid grid = new CGrid(control);
-      grid.add(0, 0, 100, 100, red);
-      grid.add(50, 0, 50, 100, blue2);
+      grid.add(0, 0, 100, 100, red,blue2);
+      grid.add(50, 0, 50, 100, blue);
       control.getContentArea().deploy(grid);
 
       //      red.setLocation(CLocation.base().normal());
@@ -78,18 +74,17 @@ public class CTestMain {
       green.setLocation(CLocation.base().minimalNorth());
       green.setVisible(true);
 
-      blue.setLocation(CLocation.base().minimalNorth());
-      blue.setVisible(true);
+//      blue.setLocation(CLocation.base().minimalNorth());
+//      blue.setVisible(true);
 
       //         }
       //      });
    }
 
-   public static SingleCDockable create (String title, Color color) {
+   public static SingleCDockable create (final String title, Color color) {
       JPanel background = new JPanel();
       background.setOpaque(true);
       background.setBackground(color);
-      CTestPanel panel = new CTestPanel();
 
       DefaultSingleCDockable d = new DefaultSingleCDockable(title, title, background);
       d.setMaximizable(true);
@@ -98,6 +93,12 @@ public class CTestMain {
       return d;
    }
 
+   public static SingleCDockable create2 (final String title, Color color,CControl cControl) {
+	      DefaultSingleCDockable d = new DefaultSingleCDockable(title, title,new CGlassConfig(cControl));
+	      d.setMaximizable(true);
+	      return d;
+	   }   
+   
    /**
     * Sets icons, colors and tab painter.
     */
@@ -113,11 +114,12 @@ public class CTestMain {
       im.setIconClient("flap.free", createIcon("images/unpin_active.png"));
       im.setIconClient("overflow.menu", createIcon("images/overflow_menu.png"));
 
-      cControl.putProperty(StackDockStation.TAB_PLACEMENT, TabPlacement.RIGHT_OF_DOCKABLE);
+      cControl.putProperty(StackDockStation.TAB_PLACEMENT, TabPlacement.TOP_OF_DOCKABLE);
       cControl.putProperty(EclipseTheme.TAB_PAINTER, CGlassEclipseTabPainter.FACTORY);
       cControl.putProperty(EclipseTheme.ECLIPSE_COLOR_SCHEME, new CGlassEclipseColorSchemeExtension());
       cControl.putProperty(EclipseTheme.PAINT_ICONS_WHEN_DESELECTED, true);
-      cControl.putProperty(EclipseThemeExtension.GLASS_FACTORY, null);
+//      cControl.putProperty(EclipseThemeExtension.GLASS_FACTORY, CDefaultGlassFactory.getInstance());
+      cControl.putProperty(EclipseThemeExtension.GLASS_FACTORY, CGlassConfig.FACTORY);
 
       cControl.setTheme(ThemeMap.KEY_ECLIPSE_THEME);
       ((CEclipseTheme)cControl.intern().getController().getTheme()).intern().setMovingImageFactory(new CMiniPreviewMovingImageFactory(128), Priority.CLIENT);

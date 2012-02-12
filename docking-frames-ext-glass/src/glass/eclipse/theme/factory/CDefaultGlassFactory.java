@@ -1,8 +1,8 @@
 package glass.eclipse.theme.factory;
 
-import java.awt.Color;
-
+import java.awt.*;
 import kux.glass.IGlassFactory.SGlassParameter;
+
 
 /**
  * Default glass parameter factory.
@@ -12,20 +12,25 @@ import kux.glass.IGlassFactory.SGlassParameter;
  *
  */
 public class CDefaultGlassFactory implements IGlassParameterFactory {
-	public SGlassParameter getSelectedGlassParameters() {
-		return (new SGlassParameter(0.0D, 0.0D, 0.4D, 0.63D, 0.0D, 0.0D, null, null, null, 0.27D, 0.85D, 0.85D, 0.49D));
-	}
+   static CDefaultGlassFactory INSTANCE = new CDefaultGlassFactory();
 
-	public SGlassParameter getUnSelectedGlassParameters() {
-		return (new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.75D, 0.49D));
-	}
+   public static CDefaultGlassFactory getInstance () {
+      return (INSTANCE);
+   }
 
-	public SGlassParameter getFocusedGlassParameters() {
-		return (new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.85D, 1.0D));
-	}
-	
-	public SGlassParameter getStripBGGlassParameters() {
-		return (new SGlassParameter(0.25, 0.0, 0.5, 0.0, 0.0, 0.21, new Color(0, 0, 0), new Color(0, 0, 0), new Color(0, 0, 0), 0.0, 1.0, 0.7, 0.2));
-	}
+   public SGlassParameter getSelectedGlassParameters () {
+      return (new SGlassParameter(0.0D, 0.0D, 0.4D, 0.63D, 0.0D, 0.0D, null, null, null, 0.27D, 0.85D, 0.85D, 0.49D));
+   }
 
+   public SGlassParameter getUnSelectedGlassParameters () {
+      return (new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.75D, 0.25D));
+   }
+
+   public SGlassParameter getFocusedGlassParameters () { 
+      return (new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.85D, 1.0D));
+   }
+
+   public SGlassParameter getStripBGGlassParameters () {
+      return (new SGlassParameter(0.25, 0.0, 0.5, 0.0, 0.0, 0.21, new Color(0, 0, 0), new Color(0, 0, 0), new Color(0, 0, 0), 0.0, 1.0, 0.7, 0.2));
+   }
 }
