@@ -487,7 +487,9 @@ public abstract class SplitNode{
     
     /**
      * Updates the bounds of this node. If the node represents a {@link Component}, then 
-     * the bounds of the component have to be updated as well.
+     * the bounds of the component have to be updated as well.<br>
+     * This method is recursive, it will call {@link #updateBounds(double, double, double, double, double, double, boolean) updateBounds} on
+     * the children of this node.
      * @param x the relative x-coordinate
      * @param y the relative y-coordinate
      * @param width the relative width of the node
@@ -501,8 +503,32 @@ public abstract class SplitNode{
      * the tree and the graphical user interface is not changed. That can be useful
      * if more than one round of updates is necessary. If in doubt, set this parameter
      * to <code>true</code>.
+     * @see #setBounds(double, double, double, double, double, double, boolean)
      */
     public void updateBounds( double x, double y, double width,  double height, double factorW, double factorH, boolean updateComponentBounds ){
+        setBounds( x, y, width, height, factorW, factorH, updateComponentBounds );
+    }
+    
+    /**
+     * Updates the bounds of this node. If the node represents a {@link Component}, then 
+     * the bounds of the component have to be updated as well. This method is <b>not</b> recursive, it does not
+     * call {@link #setBounds(double, double, double, double, double, double, boolean) getBounds} on the children of this node.
+     * @param x the relative x-coordinate
+     * @param y the relative y-coordinate
+     * @param width the relative width of the node
+     * @param height the relative height of the node
+     * @param factorW a factor to be multiplied with <code>x</code> and <code>width</code> 
+     * to get the size of the node in pixel
+     * @param factorH a factor to be multiplied with <code>y</code> and <code>height</code>
+     * to get the size of the node in pixel 
+     * @param updateComponentBounds whether to update the bounds of {@link Component}s
+     * that are in the tree. If set to <code>false</code>, then all updates stay within
+     * the tree and the graphical user interface is not changed. That can be useful
+     * if more than one round of updates is necessary. If in doubt, set this parameter
+     * to <code>true</code>.
+     * @see #updateBounds(double, double, double, double, double, double, boolean)
+     */
+    public void setBounds( double x, double y, double width,  double height, double factorW, double factorH, boolean updateComponentBounds ){
         this.x = x;
         this.y = y;
         this.width = width;
