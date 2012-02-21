@@ -36,6 +36,7 @@ import java.awt.Point;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
@@ -168,13 +169,8 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
 			}
 		};
     	
-        if( origin != null ){
-            behavior.setProperties( origin.getController() );
-        }
-        
         init( dockable, origin, false );
         allActionsSource.setSeparateSources( true );
-        behavior.setDockable( dockable );
         updateContent();
     }
     
@@ -254,6 +250,24 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
                 return !isActive();
             }
         }, null );
+    }
+
+    @Override
+    public void bind(){
+    	DockTitleVersion origin = getOrigin();
+    	if( origin != null ){
+        	behavior.setProperties( origin.getController() );
+        }
+    	behavior.setDockable( getDockable() );
+        
+    	super.bind();
+    }
+    
+    @Override
+    public void unbind(){
+    	behavior.setProperties( (DockController)null );
+    	behavior.setDockable( null );
+    	super.unbind();
     }
     
     @Override
