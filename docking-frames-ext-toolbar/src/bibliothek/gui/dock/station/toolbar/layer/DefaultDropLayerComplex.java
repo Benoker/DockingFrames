@@ -1,6 +1,7 @@
 package bibliothek.gui.dock.station.toolbar.layer;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
@@ -10,8 +11,12 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.layer.LayerPriority;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
+import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
 
 /**
  * This layer is used to define the non rectangular surface of a
@@ -46,58 +51,41 @@ public class DefaultDropLayerComplex implements DockStationDropLayer{
 
 	@Override
 	public boolean contains( int x, int y ){
-		System.out.print("ToolbarGroup Complex :");
-		final Component component = getComponent();
-//		if (component == null){
-//			System.out.println("true");
-//			return true;
-//		} else if (station.columnCount() == 0){
-//			// if there's no dockable inside the station, the shape of the snap
-//			// layer is computed with regards to the station component
-//			final Point mouseCoord = new Point(x, y);
-//			SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
-//			System.out.println(getComponent().contains(mouseCoord));
-//			return getComponent().contains(mouseCoord);
-//		} else{
-			// if there are dockables inside the station, we compute the shape with
-			// regards to the inside dockables
-			final Point mouseCoord = new Point(x, y);
-			final Area zone = new Area();
-			// we take into account each column station
+		final Point mouseCoord = new Point(x, y);
+		@SuppressWarnings("unchecked")
+		final ToolbarGridLayoutManager<StationChildHandle> layout = station
+				.getLayoutManager();
+		if (station.columnCount() == 0){
+			// if there's no dockable inside the station, the shape of the layer
+			// is computed with regards to the station component
+			SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
+			// System.out.println("MOUSE: " + mouseCoord);
+			// System.out.println("Component: " + getComponent().getBounds());
+			// System.out.println("DefaultDropLayerComplex: "
+			// + getComponent().contains(mouseCoord));
+			return getComponent().contains(mouseCoord);
+		} else{
+			// System.out.println("MOUSE: " + mouseCoord);
+			// System.out.println("Columns number: " + station.columnCount());
 			for (int columnIndex = 0; columnIndex < station.columnCount(); columnIndex++){
-				// the first dockable of the column
+				Rectangle columnBounds = layout.getBounds(columnIndex);
+				Point a = new Point(columnBounds.x, columnBounds.y);
+				SwingUtilities.convertPointToScreen(a, getComponent());
+				Rectangle columnBoundsTranslate = new Rectangle(a.x, a.y,
+						columnBounds.width, columnBounds.height);
 
-				final Component firstComponent = station.getDockable(
-						columnIndex, 0).getComponent();
-				final Rectangle firstBoundsDraft = firstComponent.getBounds();
-				Point upperleft = firstBoundsDraft.getLocation();
-				SwingUtilities.convertPointToScreen(upperleft, firstComponent);
-				final Rectangle firstBounds = new Rectangle(upperleft.x,
-						upperleft.y, firstBoundsDraft.width,
-						firstBoundsDraft.height);
-
-				// the last dockable of the column
-				final Component lastComponent = station.getDockable(
-						columnIndex, station.lineCount(columnIndex) - 1)
-						.getComponent();
-				final Rectangle lastBoundsDraft = lastComponent.getBounds();
-				upperleft = lastBoundsDraft.getLocation();
-				SwingUtilities.convertPointToScreen(upperleft, lastComponent);
-				final Rectangle lastBounds = new Rectangle(upperleft.x,
-						upperleft.y, lastBoundsDraft.width,
-						lastBoundsDraft.height);
-
-				// the bounds of the column
-				final Rectangle deducted = new Rectangle(firstBounds.x,
-						firstBounds.y,
-						((int) lastBounds.getMaxX() - firstBounds.x),
-						((int) lastBounds.getMaxY() - firstBounds.y));
-
-				zone.add(new Area(deducted));
+//				System.out.println("Column" + columnIndex + ": "
+//						+ columnBoundsTranslate);
+				if (columnBoundsTranslate.contains(mouseCoord)){
+//					System.out.println("DefaultDropLayerComplex: TRUE");
+					return true;
+				} else{
+//					System.out.println("DefaultDropLayerComplex: FALSE");
+				}
 			}
-			System.out.println(zone.contains(mouseCoord));
-			return zone.contains(mouseCoord);
-//		}
+		}
+//		System.out.println("DefaultDropLayerComplex: FALSE");
+		return false;
 	}
 
 	@Override

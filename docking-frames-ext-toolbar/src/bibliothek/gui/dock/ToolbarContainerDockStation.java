@@ -90,7 +90,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/** the orientation of the station */
 	private Orientation orientation = DEFAULT_ORIENTATION;
 
-	private int dockablesMaxNumber = -1;
+	/** the number of dockables <code>this</code> station will accept */
+	private int dockablesMaxNumber = 1;
 
 	/** The containerPane */
 	private JPanel containerPanel;

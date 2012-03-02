@@ -11,8 +11,10 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.layer.LayerPriority;
+import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
 
 /**
  * Describes the area around a {@link ToolbarGroupDockStation} where the user
@@ -71,16 +73,15 @@ public class SideSnapDropLayerComplex implements DockStationDropLayer{
 
 	@Override
 	public boolean contains( int x, int y ){
-		System.out.print("ToolbarGroup Snap :");
+		// System.out.print("ToolbarGroup Snap :");
 		if (!station.isAllowSideSnap()){
 			// snap is not allowed
-			System.out.println("false");
 			return false;
 		}
 		if (isComponentContain(x, y)){
 			// if the mouse is in inside component, the snap layer should not
 			// manage the drop action
-			System.out.println("isComponentContain false");
+//			System.out.println("isComponentContain false");
 			return false;
 		}
 
@@ -94,45 +95,33 @@ public class SideSnapDropLayerComplex implements DockStationDropLayer{
 			Rectangle rec = getComponent().getBounds();
 			Rectangle recSnap = new Rectangle(rec.x - size, rec.y - size,
 					rec.width + (size * 2), rec.height + (size * 2));
-			System.out.println(recSnap.contains(mouseCoord));
+//			System.out.println("No docables inside: is contain? "
+//					+ recSnap.contains(mouseCoord));
 			return recSnap.contains(mouseCoord);
 
 		} else{
+			final ToolbarGridLayoutManager<StationChildHandle> layout = station
+					.getLayoutManager();
 			// if there's dockable inside the station, we compute the shape with
 			// regards to the inside dockables
 			Point mouseCoord = new Point(x, y);
 			Area zone = new Area();
 			// we take into account each column station
 			for (int columnIndex = 0; columnIndex < station.columnCount(); columnIndex++){
-				// the first dockable of the column
-				Component firstComponent = station.getDockable(columnIndex, 0)
-						.getComponent();
-				Rectangle firstBoundsDraft = firstComponent.getBounds();
-				Point upperleft = firstBoundsDraft.getLocation();
-				SwingUtilities.convertPointToScreen(upperleft, firstComponent);
-				Rectangle firstBounds = new Rectangle(upperleft.x, upperleft.y,
-						firstBoundsDraft.width, firstBoundsDraft.height);
-
-				// the last dockable of the column
-				Component lastComponent = station.getDockable(columnIndex,
-						station.lineCount(columnIndex) - 1).getComponent();
-				Rectangle lastBoundsDraft = lastComponent.getBounds();
-				upperleft = lastBoundsDraft.getLocation();
-				SwingUtilities.convertPointToScreen(upperleft, lastComponent);
-				Rectangle lastBounds = new Rectangle(upperleft.x, upperleft.y,
-						lastBoundsDraft.width, lastBoundsDraft.height);
-
+				Rectangle columnBounds = layout.getBounds(columnIndex);
+				Point a = new Point(columnBounds.x, columnBounds.y);
+				SwingUtilities.convertPointToScreen(a, getComponent());
+				Rectangle columnBoundsTranslate = new Rectangle(a.x, a.y,
+						columnBounds.width, columnBounds.height);
 				// the bounds of the column increased with the snap size
-				Rectangle deducted = new Rectangle(firstBounds.x - size,
-						firstBounds.y - size,
-						((int) lastBounds.getMaxX() - firstBounds.x)
-								+ (size * 2),
-						((int) lastBounds.getMaxY() - firstBounds.y)
-								+ (size * 2));
+				Rectangle deducted = new Rectangle(columnBoundsTranslate.x
+						- size, columnBoundsTranslate.y - size,
+						columnBoundsTranslate.width + (size * 2),
+						columnBoundsTranslate.height + (size * 2));
 
 				zone.add(new Area(deducted));
 			}
-			System.out.println(zone.contains(mouseCoord));
+//			System.out.println("Snap contains? " + zone.contains(mouseCoord));
 			return zone.contains(mouseCoord);
 		}
 	}
@@ -147,47 +136,73 @@ public class SideSnapDropLayerComplex implements DockStationDropLayer{
 	 * @return true if the mouse is inside the station
 	 */
 	private boolean isComponentContain( int x, int y ){
+		final Point mouseCoord = new Point(x, y);
+		@SuppressWarnings("unchecked")
+		final ToolbarGridLayoutManager<StationChildHandle> layout = station
+				.getLayoutManager();
 		if (station.columnCount() == 0){
-			// if there's no dockable inside the station, the shape of the snap
-			// layer is computed with regards to the station component
-			Point mouseCoord = new Point(x, y);
+			// if there's no dockable inside the station, the shape of the layer
+			// is computed with regards to the station component
 			SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
 			return getComponent().contains(mouseCoord);
 		} else{
-			// if there's dockable inside the station, we compute the shape with
-			// regards to the inside dockables
-			Point mouseCoord = new Point(x, y);
-			Area zone = new Area();
-			// we take into account each column station
 			for (int columnIndex = 0; columnIndex < station.columnCount(); columnIndex++){
-				// the first dockable of the column
-				Component firstComponent = station.getDockable(columnIndex, 0)
-						.getComponent();
-				Rectangle firstBoundsDraft = firstComponent.getBounds();
-				Point upperleft = firstBoundsDraft.getLocation();
-				SwingUtilities.convertPointToScreen(upperleft, firstComponent);
-				Rectangle firstBounds = new Rectangle(upperleft.x, upperleft.y,
-						firstBoundsDraft.width, firstBoundsDraft.height);
-
-				// the last dockable of the column
-				Component lastComponent = station.getDockable(columnIndex,
-						station.lineCount(columnIndex) - 1).getComponent();
-				Rectangle lastBoundsDraft = lastComponent.getBounds();
-				upperleft = lastBoundsDraft.getLocation();
-				SwingUtilities.convertPointToScreen(upperleft, lastComponent);
-				Rectangle lastBounds = new Rectangle(upperleft.x, upperleft.y,
-						lastBoundsDraft.width, lastBoundsDraft.height);
-
-				// the bounds of the column
-				Rectangle deducted = new Rectangle(firstBounds.x,
-						firstBounds.y,
-						((int) lastBounds.getMaxX() - firstBounds.x),
-						((int) lastBounds.getMaxY() - firstBounds.y));
-
-				zone.add(new Area(deducted));
+				Rectangle columnBounds = layout.getBounds(columnIndex);
+				Point a = new Point(columnBounds.x, columnBounds.y);
+				SwingUtilities.convertPointToScreen(a, getComponent());
+				Rectangle columnBoundsTranslate = new Rectangle(a.x, a.y,
+						columnBounds.width, columnBounds.height);
+				if (columnBoundsTranslate.contains(mouseCoord)){
+					return true;
+				}
 			}
-			return zone.contains(mouseCoord);
 		}
+		return false;
 	}
+
+	// private boolean isComponentContain( int x, int y ){
+	// if (station.columnCount() == 0){
+	// // if there's no dockable inside the station, the shape of the snap
+	// // layer is computed with regards to the station component
+	// Point mouseCoord = new Point(x, y);
+	// SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
+	// return getComponent().contains(mouseCoord);
+	// } else{
+	// // if there's dockable inside the station, we compute the shape with
+	// // regards to the inside dockables
+	// Point mouseCoord = new Point(x, y);
+	// Area zone = new Area();
+	// // we take into account each column station
+	// for (int columnIndex = 0; columnIndex < station.columnCount();
+	// columnIndex++){
+	// // the first dockable of the column
+	// Component firstComponent = station.getDockable(columnIndex, 0)
+	// .getComponent();
+	// Rectangle firstBoundsDraft = firstComponent.getBounds();
+	// Point upperleft = firstBoundsDraft.getLocation();
+	// SwingUtilities.convertPointToScreen(upperleft, firstComponent);
+	// Rectangle firstBounds = new Rectangle(upperleft.x, upperleft.y,
+	// firstBoundsDraft.width, firstBoundsDraft.height);
+	//
+	// // the last dockable of the column
+	// Component lastComponent = station.getDockable(columnIndex,
+	// station.lineCount(columnIndex) - 1).getComponent();
+	// Rectangle lastBoundsDraft = lastComponent.getBounds();
+	// upperleft = lastBoundsDraft.getLocation();
+	// SwingUtilities.convertPointToScreen(upperleft, lastComponent);
+	// Rectangle lastBounds = new Rectangle(upperleft.x, upperleft.y,
+	// lastBoundsDraft.width, lastBoundsDraft.height);
+	//
+	// // the bounds of the column
+	// Rectangle deducted = new Rectangle(firstBounds.x,
+	// firstBounds.y,
+	// ((int) lastBounds.getMaxX() - firstBounds.x),
+	// ((int) lastBounds.getMaxY() - firstBounds.y));
+	//
+	// zone.add(new Area(deducted));
+	// }
+	// return zone.contains(mouseCoord);
+	// }
+	// }
 
 }

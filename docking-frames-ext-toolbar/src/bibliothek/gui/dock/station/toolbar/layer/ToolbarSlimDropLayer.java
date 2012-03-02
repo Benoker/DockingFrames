@@ -34,7 +34,7 @@ public class ToolbarSlimDropLayer extends DefaultDropLayer{
 
 	@Override
 	public boolean contains( int x, int y ){
-		System.out.print("Toolbar: ");
+//		System.out.print("Toolbar Slim: ");
 		if (super.contains(x, y)){
 			// The goal it to reduce the default layer so, only if the default
 			// layer (parent of this layer) contains this coordinates we have to
@@ -46,24 +46,24 @@ public class ToolbarSlimDropLayer extends DefaultDropLayer{
 			if (station.getOrientation() == Orientation.VERTICAL){
 				if ((mouseCoord.x > (stationArea.getX() + size))
 						&& (mouseCoord.x < (stationArea.getMaxX() - size))){
-					System.out.println("true");
+//					System.out.println("true");
 					return true;
 				} else{
-					System.out.println("false");
+//					System.out.println("false");
 					return false;
 				}
 			} else{
 				if ((mouseCoord.y > (stationArea.getY() + size))
 						&& (mouseCoord.y < (stationArea.getMaxY() - size))){
-					System.out.println("true");
+//					System.out.println("true");
 					return true;
 				} else{
-					System.out.println("false");
+//					System.out.println("false");
 					return false;
 				}
 			}
 		} else{
-			System.out.println("false");
+//			System.out.println("false");
 			return false;
 		}
 	}

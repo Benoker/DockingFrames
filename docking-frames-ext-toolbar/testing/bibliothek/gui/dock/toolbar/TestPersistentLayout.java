@@ -163,9 +163,6 @@ public class TestPersistentLayout{
 		pane.add(rootNorth.getComponent(), BorderLayout.NORTH);
 		pane.add(toolBar, BorderLayout.EAST);
 
-		final File layout = new File("layout.xml");
-		final boolean layouted = false;
-
 		// if (layout.exists()){
 		// try{
 		// FileInputStream in = new FileInputStream(layout);

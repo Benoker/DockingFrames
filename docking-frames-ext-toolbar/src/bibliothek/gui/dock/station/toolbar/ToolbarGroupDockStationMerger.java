@@ -10,6 +10,7 @@ import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDropInfo;
 
 /**
  * A {@link Merger} for merging two {@link ToolbarGroupDockStation}s.
