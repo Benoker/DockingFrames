@@ -58,6 +58,7 @@ import bibliothek.util.Condition;
  */
 @ColorCodes({"stack.tab.top.selected.focused", "stack.tab.bottom.selected.focused", 
     "stack.tab.text", "stack.tab.top.selected", "stack.tab.bottom.selected",
+    "stack.tab.top.disabled", "stack.tab.bottom.disabled", 
     "stack.tab.text", "stack.border"})
 public class BasicTabDockTitle extends BasicDockTitle {
     /**
@@ -112,6 +113,9 @@ public class BasicTabDockTitle extends BasicDockTitle {
         setInactiveLeftColorId( "stack.tab.top.selected" );
         setInactiveRightColorId( "stack.tab.bottom.selected" );
         setInactiveTextColorId( "stack.tab.text" );
+        
+        setDisabledLeftColorId( "stack.tab.top.disabled" );
+        setDisabledRightColorId( "stack.tab.bottom.disabled" );
         
         borderColor = new TitleColor( "stack.border", this, Color.BLACK ){
             @Override

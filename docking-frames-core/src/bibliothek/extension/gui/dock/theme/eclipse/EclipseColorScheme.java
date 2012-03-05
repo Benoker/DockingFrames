@@ -55,11 +55,13 @@ public class EclipseColorScheme extends BasicColorScheme {
         setColor( "stack.tab.border.selected.focuslost",RexSystemColor.getInactiveColor() );
         
         setColor( "stack.tab.top",                      DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
+        setColor( "stack.tab.top.disabled",             DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         setColor( "stack.tab.top.selected",             RexSystemColor.getInactiveColor() );
         setColor( "stack.tab.top.selected.focused",     RexSystemColor.getActiveColor() );
         setColor( "stack.tab.top.selected.focuslost",   RexSystemColor.getInactiveColor() );
         
         setColor( "stack.tab.bottom",                   DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
+        setColor( "stack.tab.bottom.disabled",          DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         setColor( "stack.tab.bottom.selected",          RexSystemColor.getInactiveColorGradient() );
         setColor( "stack.tab.bottom.selected.focused",  RexSystemColor.getActiveColorGradient() );
         setColor( "stack.tab.bottom.selected.focuslost",RexSystemColor.getInactiveColor() );

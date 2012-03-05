@@ -50,8 +50,8 @@ import bibliothek.util.Condition;
  * shows an icon, a text, some small buttons and a gradient as background.
  * @author Benjamin Sigg
  */
-@ColorCodes({ "title.active.left", "title.inactive.left", 
-    "title.active.right", "title.inactive.right", 
+@ColorCodes({ "title.active.left", "title.inactive.left", "title.disabled.left", 
+    "title.active.right", "title.inactive.right", "title.disabled.right", 
     "title.active.text", "title.inactive.text" })
 public class BasicDockTitle extends AbstractDockTitle {
     /**
@@ -75,11 +75,15 @@ public class BasicDockTitle extends AbstractDockTitle {
     private TitleColor activeLeftColor = new BasicTitleColor( "title.active.left", Color.BLACK );
     /** The left color of the gradient if the title is not active */
     private TitleColor inactiveLeftColor = new BasicTitleColor( "title.inactive.left", Color.DARK_GRAY );
+    /** The left color of the gradient if the title is disabled */
+    private TitleColor disabledLeftColor = new BasicTitleColor( "title.disabled.left", Color.LIGHT_GRAY );
     
     /** The right color of the gradient if the title is active */
     private TitleColor activeRightColor = new BasicTitleColor( "title.active.right", Color.DARK_GRAY );
     /** The right color of the gradient if the title is not active */
     private TitleColor inactiveRightColor = new BasicTitleColor( "title.inactive.right", Color.LIGHT_GRAY );
+    /** The right color of the gradient if the title is disabled */
+    private TitleColor disabledRightColor = new BasicTitleColor( "title.disabled.right", Color.LIGHT_GRAY );
     
     /** The color of the text if the title is active */
     private TitleColor activeTextColor = new BasicTitleColor( "title.active.text", Color.WHITE );
@@ -112,8 +116,10 @@ public class BasicDockTitle extends AbstractDockTitle {
         
         addColor( activeLeftColor );
         addColor( inactiveLeftColor );
+        addColor( disabledLeftColor );
         addColor( activeRightColor );
         addColor( inactiveRightColor );
+        addColor( disabledRightColor );
         addColor( activeTextColor );
         addColor( inactiveTextColor );
         
@@ -156,7 +162,10 @@ public class BasicDockTitle extends AbstractDockTitle {
         Graphics2D g2 = (Graphics2D)g;
 
         if( gradient == null ){
-            if ( isActive() ){
+        	if( isDisabled() ){
+        		gradient = getGradient( disabledLeftColor.value(), disabledRightColor.value(), component );
+        	}
+        	else if ( isActive() ){
                 gradient = getGradient( activeLeftColor.value(), activeRightColor.value(), component );
             }
             else{
@@ -232,7 +241,7 @@ public class BasicDockTitle extends AbstractDockTitle {
     public void setActiveLeftColorId( String id ){ 
         activeLeftColor.setId( id );
     }
-    
+        
     /**
      * Gets the color that is used on the right side in the
      * gradient of this title. This method does the same
@@ -302,6 +311,82 @@ public class BasicDockTitle extends AbstractDockTitle {
      */
     public void setActiveTextColorId( String id ){ 
         activeTextColor.setId( id );
+    }
+    
+    /**
+     * Gets the color that is used on the left side if this title is disabled. This method
+     * does the same as <code>getDisabledLeftTitleColor().color();</code>.
+     * @return the color
+     * @see #setDisabledLeftColor(Color)
+     * @see #getDisabledLeftTitleColor()
+     */
+    public Color getDisabledLeftColor(){
+    	return disabledLeftColor.value();
+    }
+    
+    /**
+     * Gets the handle for the left disabled color.
+     * @return the handle, can be used to change the color of this title
+     */
+    public TitleColor getDisabledLeftTitleColor(){
+    	return disabledLeftColor;
+    }
+
+    /**
+     * Sets the color that is used on the left side if this
+     * title is disabled. This method does the same as
+     * <code>getDisabledLeftTitleColor().setValue( activeLeftColor );</code>.
+     * @param disabledLeftColor the color
+     * @see #getDisabledLeftTitleColor()
+     */
+    public void setDisabledLeftColor( Color disabledLeftColor ){
+		this.disabledLeftColor.setValue( disabledLeftColor );
+	}
+    
+    /**
+     * Changes the identifier that is used for the disabled left color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setDisabledLeftColorId( String id ){
+    	disabledLeftColor.setId( id );
+    }
+    
+    /**
+     * Gets the color that is used on the right side if this title is disabled. This method
+     * does the same as <code>getDisabledRightTitleColor().color();</code>.
+     * @return the color
+     * @see #setDisabledRightColor(Color)
+     * @see #getDisabledRightTitleColor()
+     */
+    public Color getDisabledRightColor(){
+    	return disabledRightColor.value();
+    }
+    
+    /**
+     * Gets the handle for the right disabled color.
+     * @return the handle, can be used to change the color of this title
+     */
+    public TitleColor getDisabledRightTitleColor(){
+    	return disabledRightColor;
+    }
+
+    /**
+     * Sets the color that is used on the right side if this
+     * title is disabled. This method does the same as
+     * <code>getDisabledRightTitleColor().setValue( activeLeftColor );</code>.
+     * @param disabledRightColor the color
+     * @see #getDisabledRightTitleColor()
+     */
+    public void setDisabledRightColor( Color disabledLeftColor ){
+		this.disabledRightColor.setValue( disabledLeftColor );
+	}
+    
+    /**
+     * Changes the identifier that is used for the disabled right color.
+     * @param id the new identifier, not <code>null</code>
+     */
+    public void setDisabledRightColorId( String id ){
+    	disabledRightColor.setId( id );
     }
 
     /**
@@ -416,6 +501,13 @@ public class BasicDockTitle extends AbstractDockTitle {
         super.setActive( active );
         updateColors();
         updateFonts();
+    }
+    
+    @Override
+    protected void setDisabled( boolean disabled ){
+    	super.setDisabled( disabled );
+    	updateColors();
+    	updateFonts();
     }
     
     /**

@@ -202,7 +202,7 @@ public abstract class ActionDisablingStrategyObserver {
 		private Set<Dockable> dockables = new HashSet<Dockable>();
 		
 		public ControllerObserver( DockController controller ){
-			super( DisablingStrategy.STRATEGY, controller );
+			super( DisablingStrategy.STRATEGY );
 			setProperties( controller );
 		}
 		

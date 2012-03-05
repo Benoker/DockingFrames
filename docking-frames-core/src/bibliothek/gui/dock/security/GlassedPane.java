@@ -290,6 +290,9 @@ public class GlassedPane extends JPanel{
 
             Point mouse = e.getPoint();
             Component component = SwingUtilities.getDeepestComponentAt( contentPane, mouse.x, mouse.y );
+            if( component != null && !component.isEnabled() ){
+            	component = null;
+            }
 
             boolean drag = id == MouseEvent.MOUSE_DRAGGED;
             boolean press = id == MouseEvent.MOUSE_PRESSED;

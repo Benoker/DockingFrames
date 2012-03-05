@@ -35,6 +35,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,19 +51,20 @@ import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.disable.DisablingStrategy;
+import bibliothek.gui.dock.disable.DisablingStrategyListener;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
-import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter.Behavior;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
-import bibliothek.gui.dock.themes.basic.action.buttons.ButtonContentValue;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
@@ -131,6 +133,8 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
     private Orientation orientation = Orientation.FREE_HORIZONTAL;
     /** The icon which is shown on this title */
     private Icon icon;
+    /** The disabled version of {@link #icon} */
+    private Icon disabledIcon;
     /** number of pixels to paint between icon and text */
     private int iconTextGap = 0;
     
@@ -146,6 +150,12 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
     
     /** the current border, can be <code>null</code> */
     private TitleBorder border;
+    
+    /** whether this title should react to user input */
+    private boolean disabled = false;
+    
+    /** all the listeners that were added to this title */
+    private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
     
     /** tells how to paint the text on this title */
     private PropertyValue<OrientationToRotationStrategy> orientationConverter = new PropertyValue<OrientationToRotationStrategy>( DockTitle.ORIENTATION_STRATEGY ){
@@ -171,6 +181,30 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
 					updateLabelRotation();
 				}
 			}
+		}
+	};
+	
+	/** tells whether this title has to be disabled */
+	private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>( DisablingStrategy.STRATEGY ){
+		@Override
+		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
+			if( oldValue != null ){
+				oldValue.removeItemDisablerListener( disablingStrategyListener );
+			}
+			if( newValue != null ){
+				newValue.addItemDisablerListener( disablingStrategyListener );
+				setDisabled( newValue.isDisabled( getDockable(), AbstractDockTitle.this ));
+			}
+			else{
+				setDisabled( false );
+			}
+		}
+	};
+	
+	/** a listener added to the current {@link DisablingStrategy} */
+	private DisablingStrategyListener disablingStrategyListener = new DisablingStrategyListener(){
+		public void changed( DockElement item ){
+			setDisabled( disablingStrategy.getValue().isDisabled( getDockable(), AbstractDockTitle.this ));
 		}
 	};
     
@@ -388,6 +422,41 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
         }
     }
     
+    /**
+     * Tells this title whether it should be disabled or not. This method is called when the {@link DisablingStrategy}
+     * changes. A disabled title should react to any {@link InputEvent}, and should be painted differently than an
+     * enabled title.
+     * @param disabled whether this title is disabled
+     * @see #isDisabled()
+     */
+    protected void setDisabled( boolean disabled ){
+    	if( this.disabled != disabled ){
+	    	this.disabled = disabled;
+	    	label.setEnabled( !disabled );
+	    	setEnabled( !disabled );
+	    	
+	    	if( disabled ){
+	    		for( MouseInputListener listener : mouseInputListeners ){
+	    			doRemoveMouseInputListener( listener );
+	    		}
+	    	}
+	    	else{
+	    		for( MouseInputListener listener : mouseInputListeners ){
+	    			doAddMouseInputListener( listener );
+	    		}
+	    	}
+    	}
+    }
+    
+    /**
+     * Tells whether this title is disabled, a disabled title does not react to any user input.
+     * @return whether the title is disabled
+     * @set {@link #setDisabled(boolean)}
+     */
+    protected boolean isDisabled(){
+    	return disabled;
+    }
+    
     @Override
     public void paintBackground( Graphics g ){
     	if( !isTransparent() ){
@@ -426,16 +495,25 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
      * @param component the {@link Component} which represents this title
      */
     protected void paintIcon(Graphics g, JComponent component) {
+    	Icon icon = this.icon;
     	if( icon != null ){
-            Insets insets = titleInsets();
-            if( orientation.isVertical() ){
-                int width = getWidth() - insets.left - insets.right;
-                icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
-            }
-            else{
-                int height = getHeight() - insets.top - insets.bottom;
-                icon.paintIcon( this, g, insets.left, insets.top + (height - icon.getIconHeight()) / 2 );
-            }
+    		if( isDisabled() ){
+    			if( disabledIcon == null ){
+    				disabledIcon = DockUtilities.disabledIcon( component, icon );
+    			}
+    			icon = disabledIcon;
+    		}
+    		if( icon != null ){
+	    		Insets insets = titleInsets();
+	            if( orientation.isVertical() ){
+	                int width = getWidth() - insets.left - insets.right;
+	                icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
+	            }
+	            else{
+	                int height = getHeight() - insets.top - insets.bottom;
+	                icon.paintIcon( this, g, insets.left, insets.top + (height - icon.getIconHeight()) / 2 );
+	            }
+    		}
         }
     }
     
@@ -446,6 +524,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
      */
     protected void setIcon( Icon icon ){
         this.icon = icon;
+        disabledIcon = null;
         revalidate();
         repaint();
     }
@@ -688,14 +767,28 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
     }
 
     public void addMouseInputListener( MouseInputListener listener ) {
-        addMouseListener( listener );
+    	mouseInputListeners.add( listener );
+    	if( !isDisabled() ){
+	        doAddMouseInputListener( listener );
+    	}
+    }
+
+    private void doAddMouseInputListener( MouseInputListener listener ){
+    	addMouseListener( listener );
         addMouseMotionListener( listener );
         label.addMouseListener( listener );
         label.addMouseMotionListener( listener );
     }
-
+    
     public void removeMouseInputListener( MouseInputListener listener ) {
-        removeMouseListener( listener );
+    	mouseInputListeners.remove( listener );
+    	if( !isDisabled() ){
+	        doRemoveMouseInputListener( listener );
+    	}
+    }
+    
+    private void doRemoveMouseInputListener( MouseInputListener listener ){
+    	removeMouseListener( listener );
         removeMouseMotionListener( listener );
         label.removeMouseListener( listener );
         label.removeMouseMotionListener( listener );
@@ -911,6 +1004,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
                 font.connect( controller );
             
             orientationConverter.setProperties( controller );
+            disablingStrategy.setProperties( controller );
         }
         
         background.setController( controller );
@@ -945,6 +1039,7 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
             font.connect( null );
         
         orientationConverter.setProperties( (DockProperties)null );
+        disablingStrategy.setProperties( (DockProperties)null );
         if( border != null ){
         	border.setController( null );
         }

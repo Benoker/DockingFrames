@@ -115,7 +115,7 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
      * @return <code>true</code> if the mouse is within the borders of this title
      */
     public boolean isMouseOver(){
-        return mouseover == null ? false : mouseover.isMouseOver();
+        return !isDisabled() && mouseover == null ? false : mouseover.isMouseOver();
     }
 
     /**
@@ -162,6 +162,14 @@ public abstract class AbstractBubbleDockTitle extends AbstractDockTitle{
             super.setActive( active );
             updateAnimation();
         }
+    }
+    
+    @Override
+    protected void setDisabled( boolean disabled ){
+    	if( isDisabled() != disabled ){
+    		super.setDisabled( disabled );
+    		updateAnimation();
+    	}
     }
 
     /**

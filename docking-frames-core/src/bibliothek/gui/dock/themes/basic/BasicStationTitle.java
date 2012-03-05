@@ -52,7 +52,8 @@ import bibliothek.util.Colors;
  *
  */
 @ColorCodes( {"title.station.active", "title.station.active.text",
-    "title.station.inactive", "title.station.inactive.text" })
+    "title.station.inactive", "title.station.inactive.text",
+    "title.station.disabled" })
 public class BasicStationTitle extends AbstractDockTitle {
     /** The minimal preferred width and height of this title */
     private int preferredDimension = 20;
@@ -66,6 +67,9 @@ public class BasicStationTitle extends AbstractDockTitle {
     private TitleColor inactiveColor = new BasicStationTitleColor( "title.station.inactive", Color.WHITE );
     /** The foreground if the title is not selected */
     private TitleColor inactiveTextColor = new BasicStationTitleColor( "title.station.inactive.text", Color.DARK_GRAY );
+    
+    /** The background if the title disabled */
+    private TitleColor disabledColor = new BasicStationTitleColor( "title.station.disabled", Color.WHITE );
     
     /**
      * Creates a new instance
@@ -81,6 +85,7 @@ public class BasicStationTitle extends AbstractDockTitle {
         addColor( activeTextColor );
         addColor( inactiveColor );
         addColor( inactiveTextColor );
+        addColor( disabledColor );
     }
     
     @Override
@@ -153,6 +158,12 @@ public class BasicStationTitle extends AbstractDockTitle {
         super.setActive(active);
         updateColors();
     }
+    
+    @Override
+    protected void setDisabled( boolean disabled ){
+    	super.setDisabled( disabled );
+    	updateColors();
+    }
 
     /**
      * Changes the background and the foreground color of this title. If the
@@ -163,7 +174,13 @@ public class BasicStationTitle extends AbstractDockTitle {
      * the background is {@link #getInactiveColor() inacticeColor}. 
      */
     protected void updateColors(){
-        if( isActive() ){
+    	if( isDisabled() ){
+    		if( inactiveTextColor != null && disabledColor != null ){
+    			setBackground( disabledColor.color() );
+    			setForeground( inactiveTextColor.color() );
+    		}
+    	}
+    	else if( isActive() ){
             if( activeTextColor != null && activeColor != null ){
                 setBackground( activeColor.color() );
                 setForeground( activeTextColor.color() );
@@ -192,6 +209,14 @@ public class BasicStationTitle extends AbstractDockTitle {
      */
     public Color getInactiveColor() {
         return inactiveColor.value();
+    }
+    
+    /**
+     * Gets the background-color which is used if this title is disabled.
+     * @return the background
+     */
+    public Color getDisabledColor(){
+    	return disabledColor.value();
     }
     
     /**
@@ -236,6 +261,15 @@ public class BasicStationTitle extends AbstractDockTitle {
         this.inactiveColor.setValue( inactiveColor );
         updateColors();
     }
+
+    /**
+     * Sets the background-color which is used if this title is disabled. 
+     * @param disabledColor the background
+     */
+    public void setDisabledColor( Color disabledColor ){
+    	this.disabledColor.setValue( disabledColor );
+    	updateColors();
+    }
     
     /**
      * Sets the foreground-color which is used if this title is not selected.
@@ -252,6 +286,14 @@ public class BasicStationTitle extends AbstractDockTitle {
      */
     public TitleColor getActiveTitleColor(){
         return activeColor;
+    }
+    
+    /**
+     * Gets the {@link TitleColor} which represents the background of a disabled title.
+     * @return the disabled background
+     */
+    public TitleColor getDisabledTitleColor(){
+    	return disabledColor;
     }
     
     /**

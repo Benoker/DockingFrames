@@ -48,8 +48,10 @@ public class BasicColorScheme extends DefaultColorScheme{
     protected void updateUI(){
         setColor( "title.active.left", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ) );
         setColor( "title.inactive.left", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ));
+        setColor( "title.disabled.left", DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ));
         setColor( "title.active.right", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ));
         setColor( "title.inactive.right", DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ));
+        setColor( "title.disabled.right", DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ));
         setColor( "title.active.text", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ));
         setColor( "title.inactive.text", DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ));
         
@@ -57,6 +59,7 @@ public class BasicColorScheme extends DefaultColorScheme{
         setColor( "title.station.active.text",  DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ));
         setColor( "title.station.inactive",  DockUI.getColor( LookAndFeelColors.TITLE_BACKGROUND ));
         setColor( "title.station.inactive.text",  DockUI.getColor( LookAndFeelColors.TITLE_FOREGROUND ));
+        setColor( "title.station.disabled", DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ));
         
         setColor( "title.flap.active", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_BACKGROUND ) );
         setColor( "title.flap.active.text", DockUI.getColor( LookAndFeelColors.TITLE_SELECTION_FOREGROUND ) );

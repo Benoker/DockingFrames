@@ -260,10 +260,12 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "title.background.top.active.mouse",         brighter( active, factor ));
         setColor( "title.background.top.inactive",             brighter( inactive, factorWeak ));
         setColor( "title.background.top.inactive.mouse",       brighter( inactive, factor ));
+        setColor( "title.background.top.disabled",             disabled );
         setColor( "title.background.bottom.active",            darker( active, factorWeak ) );
         setColor( "title.background.bottom.active.mouse",      darker( active, factor ) );
         setColor( "title.background.bottom.inactive",          darker( inactive, factorWeak ) );
         setColor( "title.background.bottom.inactive.mouse",    darker( inactive, factor ) );
+        setColor( "title.background.bottom.disabled",     	   disabled );
         setColor( "title.foreground.active",              activeText );
         setColor( "title.foreground.active.mouse",        activeText );
         setColor( "title.foreground.inactive",            inactiveText );
@@ -274,12 +276,14 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "title.background.top.inactive.flap",             brighter( inactive, factorWeak ));
         setColor( "title.background.top.inactive.mouse.flap",       brighter( inactive, factor ));
         setColor( "title.background.top.selected.flap",             brighter( inactive, factorWeak ));
+        setColor( "title.background.top.disabled.flap",             disabled );
         setColor( "title.background.top.selected.mouse.flap",       brighter( inactive, factor ));
         setColor( "title.background.bottom.active.flap",            darker( active, factorWeak ) );
         setColor( "title.background.bottom.active.mouse.flap",      darker( active, factor ) );
         setColor( "title.background.bottom.inactive.flap",          darker( inactive, factorWeak ) );
         setColor( "title.background.bottom.inactive.mouse.flap",    darker( inactive, factor ) );
         setColor( "title.background.bottom.selected.flap",          darker( inactive, factorWeak ) );
+        setColor( "title.background.bottom.disabled.flap",          disabled );
         setColor( "title.background.bottom.selected.mouse.flap",    darker( inactive, factor ) );
         setColor( "title.foreground.active.flap",              activeText );
         setColor( "title.foreground.active.mouse.flap",        activeText );
@@ -288,6 +292,21 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "title.foreground.selected.flap",            inactiveText );
         setColor( "title.foreground.selected.mouse.flap",      inactiveText );
         
+    	setColor( "title.flap.active.knob.highlight", 			brighter( active, factor ));
+    	setColor( "title.flap.active.knob.shadow", 				active );
+    	setColor( "title.flap.active.mouse.knob.highlight", 	brighter( active, factorStrong ));
+    	setColor( "title.flap.active.mouse.knob.shadow", 		brighter( active, factorWeak ));
+    	setColor( "title.flap.inactive.knob.highlight", 		brighter( inactive, factor ));
+    	setColor( "title.flap.inactive.knob.shadow", 			inactive );
+    	setColor( "title.flap.inactive.mouse.knob.highlight",	brighter( inactive, factorStrong )); 
+    	setColor( "title.flap.inactive.mouse.knob.shadow",		brighter( inactive, factorWeak ));	 
+    	setColor( "title.flap.selected.knob.highlight", 		brighter( active, factor ));
+    	setColor( "title.flap.selected.knob.shadow", 			active );
+    	setColor( "title.flap.selected.mouse.knob.highlight", 	brighter( active, factorStrong ));
+    	setColor( "title.flap.selected.mouse.knob.shadow", 		brighter( active, factorWeak ));
+    	setColor( "title.flap.disabled.knob.highlight",			brighter( disabled, factor ));
+    	setColor( "title.flap.disabled.knob.shadow", 			brighter( disabled, factorWeak ));
+    	
         // display border
         setColor( "displayer.border.high.active",           brighter( active, factorWeak ));
         setColor( "displayer.border.high.active.mouse",     brighter( active, factor ));
