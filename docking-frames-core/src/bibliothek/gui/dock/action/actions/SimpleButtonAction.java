@@ -36,6 +36,7 @@ import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.ButtonDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 
 /**
  * A {@link ButtonDockAction} that has the same properties for all 
@@ -49,6 +50,21 @@ public class SimpleButtonAction extends SimpleDropDownItemAction implements Butt
 	
 	/** A command delivered in each ActionEvent created by this action */
 	private String command;
+	
+	/**
+	 * Creates a new action
+	 */
+	public SimpleButtonAction(){
+		this( true );
+	}
+	
+	/**
+	 * Creates a new action
+	 * @param monitorDisabling whether to monitor the current {@link DisablingStrategy}
+	 */
+	public SimpleButtonAction( boolean monitorDisabling ){
+		super( monitorDisabling );
+	}
 	
 	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
 		return converter.createView( ActionType.BUTTON, this, target, dockable );

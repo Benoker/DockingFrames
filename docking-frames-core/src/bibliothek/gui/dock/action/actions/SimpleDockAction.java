@@ -38,6 +38,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.KeyboardListener;
@@ -70,8 +71,15 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
     /** the {@link Dockable} which is represented by this action and for which drag and drop support may be enabled */
     private Dockable representative;
     
-    private Map<Dockable, DockableKeyForwarder> forwarders =
-    	new HashMap<Dockable, DockableKeyForwarder>();
+    private Map<Dockable, DockableKeyForwarder> forwarders = new HashMap<Dockable, DockableKeyForwarder>();
+    
+    /**
+     * Creates a new action
+     * @param monitorDisabling whether the current {@link DisablingStrategy} should be monitored
+     */
+    public SimpleDockAction( boolean monitorDisabling ){
+    	super( monitorDisabling );
+    }
     
     @Override
     protected void bound( Dockable dockable ){
@@ -129,8 +137,9 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
         fireActionTooltipTextChanged( getBoundDockables() );
     }
     
+    @Override
     public boolean isEnabled( Dockable dockable ) {
-        return enabled;
+        return enabled && super.isEnabled( dockable );
     }
     
     public boolean isEnabled() {

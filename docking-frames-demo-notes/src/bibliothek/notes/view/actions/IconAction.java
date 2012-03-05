@@ -38,6 +38,7 @@ public class IconAction extends SimpleDockAction {
 	 * @param note the <code>Note</code> whose {@link Icon} might be changed.
 	 */
 	public IconAction( Note note ){
+		super( true );
 		this.note = note;
 		
 		setIcon( ResourceSet.APPLICATION_ICONS.get( "icon" ) );

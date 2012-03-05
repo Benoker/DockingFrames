@@ -46,9 +46,7 @@ import bibliothek.gui.dock.event.SelectableDockActionListener;
  *
  * @param <K> the type of key to distinguish between groups of Dockables
  */
-public abstract class GroupedSelectableDockAction<K>
-		extends GroupedDropDownItemAction<K, SimpleSelectableAction> 
-		implements SelectableDockAction{
+public abstract class GroupedSelectableDockAction<K> extends GroupedDropDownItemAction<K, SimpleSelectableAction> implements SelectableDockAction{
 	/**
 	 * An action intended to use as type {@link ActionType#CHECK}
 	 * @author Benjamin Sigg
@@ -66,7 +64,7 @@ public abstract class GroupedSelectableDockAction<K>
 		
 		@Override
 		protected SimpleSelectableAction createGroup( SelectableDockActionListener listener ){
-			SimpleSelectableAction action = new SimpleSelectableAction.Check();
+			SimpleSelectableAction action = new SimpleSelectableAction.Check( false );
 			action.addSelectableListener( listener );
 			return action;
 		}
@@ -89,7 +87,7 @@ public abstract class GroupedSelectableDockAction<K>
 		
 		@Override
         protected SimpleSelectableAction createGroup( SelectableDockActionListener listener ){
-			SimpleSelectableAction action = new SimpleSelectableAction.Radio();
+			SimpleSelectableAction action = new SimpleSelectableAction.Radio( false );
 			action.addSelectableListener( listener );
 			return action;
 		}

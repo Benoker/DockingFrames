@@ -132,6 +132,7 @@ import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
 import bibliothek.gui.dock.control.focus.FocusStrategyRequest;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
@@ -1520,6 +1521,7 @@ public class CControl {
      *  <tr><td>{@link SingleTabDecider#SINGLE_TAB_DECIDER} </td><td>Tells which {@link Dockable}s should be presented with a single tab - even if there is no reason to show a tab.</td></tr>
      *  <tr><td>{@link DockTheme#STATION_PAINT} </td><td>The default value of {@link StationPaint}.</td></tr>
      *  <tr><td>{@link AWTComponentCaptureStrategy#STRATEGY} </td><td>How to make an image of an AWT component.</td></tr>
+     *  <tr><td>{@link DisablingStrategy#STRATEGY}</td><td>Which element to disable.</td></tr>
      *  <tr><td>{@link StackDockStation#TAB_CONTENT_FILTER} </td><td>A filter deciding what content to show on a tab of a {@link StackDockStation}.</td></tr>
      *  <tr><td>{@link EclipseTheme#TAB_PAINTER} </td><td>The look of tabs if using the {@link EclipseTheme}.</td></tr>
      *  <tr><td>{@link StackDockStation#TAB_PLACEMENT} </td><td>The location of the tabs on a {@link StackDockStation}.</td></tr>

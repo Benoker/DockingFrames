@@ -39,6 +39,7 @@ import bibliothek.gui.dock.action.dropdown.DefaultDropDownFilter;
 import bibliothek.gui.dock.action.dropdown.DropDownFilterFactory;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.DropDownActionListener;
 
 /**
@@ -56,6 +57,14 @@ public abstract class AbstractSimpleDropDownAction extends SimpleDockAction impl
 	
 	/** the factory used to create new filter */
 	private DropDownFilterFactory filter = DefaultDropDownFilter.FACTORY;
+	
+	/**
+	 * Creates a new action
+	 * @param monitorDisabling whether the current {@link DisablingStrategy} should be monitored
+	 */
+	public AbstractSimpleDropDownAction( boolean monitorDisabling ){
+		super( monitorDisabling );
+	}
 	
 	public <V> V createView( ViewTarget<V> target, ActionViewConverter converter, Dockable dockable ){
 		return converter.createView( ActionType.DROP_DOWN, this, target, dockable );

@@ -37,9 +37,7 @@ import bibliothek.gui.dock.action.StandardDropDownItemAction;
  * @param <K> the type of the keys used for groups
  * @param <D> the type of model used as group
  */
-public abstract class GroupedDropDownItemAction<K, D extends SimpleDropDownItemAction> 
-		extends GroupedDockAction<K, D> 
-		implements StandardDropDownItemAction{
+public abstract class GroupedDropDownItemAction<K, D extends SimpleDropDownItemAction> extends GroupedDockAction<K, D> implements StandardDropDownItemAction{
     
     /**
      * Creates a new action.

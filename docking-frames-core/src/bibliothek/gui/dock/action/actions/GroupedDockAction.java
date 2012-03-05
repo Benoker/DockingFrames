@@ -81,6 +81,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
      * and set later through the method {@link #setGenerator(GroupKeyGenerator)}
      */
     public GroupedDockAction( GroupKeyGenerator<? extends K> generator ){
+    	super( true );
     	this.generator = generator;
     }
     
@@ -136,8 +137,9 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     	return getGroup( dockable ).getTooltipText( dockable );
     }
 
+    @Override
     public boolean isEnabled( Dockable dockable ) {
-    	return getGroup( dockable ).isEnabled( dockable );
+    	return getGroup( dockable ).isEnabled( dockable ) && super.isEnabled( dockable );
     }
     
     @Override
