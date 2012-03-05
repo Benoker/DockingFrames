@@ -262,13 +262,13 @@ public class Leaf extends VisibleSplitNode{
     }
     
     @Override
-    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
-        super.updateBounds( x, y, width, height, factorW, factorH, components );
+    public void setBounds( double x, double y, double width, double height, double factorW, double factorH, boolean updateComponentBounds ){
+        super.setBounds( x, y, width, height, factorW, factorH, updateComponentBounds );
         DockableDisplayer displayer = getDisplayer();
         
         StationChildHandle fullscreen = getAccess().getFullScreenDockable();
         
-        if( components && displayer != null && (fullscreen == null || displayer != fullscreen.getDisplayer() ))
+        if( updateComponentBounds && displayer != null && (fullscreen == null || displayer != fullscreen.getDisplayer() ))
             displayer.getComponent().setBounds( getBounds() );
     }
         

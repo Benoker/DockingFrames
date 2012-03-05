@@ -372,12 +372,6 @@ public class Node extends VisibleSplitNode{
         		if( right != null )
         			right.updateBounds( x + dividerLocation + dividerWidth/2, y, 
         					width - dividerLocation - dividerWidth/2, height, factorW, factorH, components );
-
-        		dividerBounds.setBounds(
-        				(int)(( x+dividerLocation-dividerWidth/2 )*factorW + 0.5 ),
-        				(int)( y*factorH + 0.5 ),
-        				dividerSize,
-        				(int)( height*factorH + 0.5 ));
         	}
         	else{
         		double dividerHeight = factorH > 0 ? Math.max( 0, dividerSize / factorH ) : 0.0;
@@ -389,6 +383,35 @@ public class Node extends VisibleSplitNode{
         		if( right != null)
         			right.updateBounds( x, y + dividerLocation + dividerHeight / 2,
         					width, height - dividerLocation - dividerHeight/2, factorW, factorH, components );
+        	}
+        }
+    }
+    
+    @Override
+    public void setBounds( double x, double y, double width, double height, double factorW, double factorH, boolean updateComponentBounds ){
+    	super.setBounds( x, y, width, height, factorW, factorH, updateComponentBounds );
+    	
+        boolean leftVisible = left == null || left.isVisible();
+        boolean rightVisible = right == null || right.isVisible();
+        
+        if( leftVisible && rightVisible ){
+        	divider = getAccess().validateDivider( divider, this );
+        	int dividerSize = getAccess().getOwner().getDividerSize();
+
+        	if( orientation == Orientation.HORIZONTAL ){
+        		// Components are left and right
+        		double dividerWidth = factorW > 0 ? Math.max( 0, dividerSize / factorW) : 0.0;
+        		double dividerLocation = width * divider;
+
+        		dividerBounds.setBounds(
+        				(int)(( x+dividerLocation-dividerWidth/2 )*factorW + 0.5 ),
+        				(int)( y*factorH + 0.5 ),
+        				dividerSize,
+        				(int)( height*factorH + 0.5 ));
+        	}
+        	else{
+        		double dividerHeight = factorH > 0 ? Math.max( 0, dividerSize / factorH ) : 0.0;
+        		double dividerLocation = height * divider;
 
         		dividerBounds.setBounds(
         				(int)(x*factorW + 0.5),

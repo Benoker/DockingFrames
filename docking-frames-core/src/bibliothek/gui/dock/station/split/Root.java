@@ -319,6 +319,12 @@ public class Root extends VisibleSplitNode{
     }
 
     @Override
+    public void setBounds( double x, double y, double width, double height, double factorW, double factorH, boolean updateComponentBounds ){
+    	super.setBounds( x, y, width, height, factorW, factorH, updateComponentBounds );
+    	treeChanged = false;
+    }
+    
+    @Override
     public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ) {
         if( !getBounds().contains( x, y ))
             return null;
