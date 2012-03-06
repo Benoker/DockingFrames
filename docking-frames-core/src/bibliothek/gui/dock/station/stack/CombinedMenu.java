@@ -75,6 +75,13 @@ public interface CombinedMenu extends TabMenu{
 	public void setTooltip( int index, String tooltip );
 	
 	/**
+	 * Enables or disables a menu entry. A disabled menu entry cannot be selected.
+	 * @param index the index of the item that should be enabled or disabled
+	 * @param enabled whether the item is active
+	 */
+	public void setEnabled( int index, boolean enabled );
+	
+	/**
 	 * Inserts a new item at <code>index</code> in this menu.
 	 * @param index the location of the new item
 	 * @param dockable the new item

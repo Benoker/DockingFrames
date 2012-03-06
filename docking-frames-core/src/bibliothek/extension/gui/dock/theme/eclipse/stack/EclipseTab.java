@@ -29,6 +29,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
@@ -53,6 +55,10 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 	private TabComponent component;
 	
 	private EclipseTabPane parent;
+	
+	private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
+	
+	private boolean enabled = true;
 	
 	/**
 	 * Creates a new tab.
@@ -117,10 +123,6 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		component.setOrientation( orientation );
 	}
 
-	public void addMouseInputListener( MouseInputListener listener ){
-		component.addMouseInputListener( listener );
-	}
-
 	public Dimension getMinimumSize( Tab[] tabs ){
 		return component.getMinimumSize( extract( tabs ) );
 	}
@@ -164,10 +166,38 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		return true;
 	}
 
+	public void setEnabled( boolean enabled ){
+		if( enabled != this.enabled ){
+			this.enabled = enabled;
+			component.setEnabled( enabled );
+			
+			if( enabled ){
+				for( MouseInputListener listener : mouseInputListeners ){
+					component.addMouseInputListener( listener );
+				}
+			}
+			else{
+				for( MouseInputListener listener : mouseInputListeners ){
+					component.removeMouseInputListener( listener );
+				}
+			}
+		}
+	}
+	
 	public void removeMouseInputListener( MouseInputListener listener ){
-		component.removeMouseInputListener( listener );
+		mouseInputListeners.remove( listener );
+		if( enabled ){
+			component.removeMouseInputListener( listener );
+		}
 	}
 
+	public void addMouseInputListener( MouseInputListener listener ){
+		mouseInputListeners.add( listener );
+		if( enabled ){
+			component.addMouseInputListener( listener );
+		}
+	}
+	
 	/**
 	 * Adds observers to parent and {@link DockController} to keep the 
 	 * user interface up to date.

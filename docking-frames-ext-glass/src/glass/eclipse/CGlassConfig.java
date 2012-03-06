@@ -31,7 +31,11 @@ public class CGlassConfig extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	public static enum NGlass {
-		UNSELECTED(new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.75D, 0.25D)), SELECTED(new SGlassParameter(0.0D, 0.0D, 0.2D, 0.63D, 0.0D, 0.0D, null, null, null, 0.27D, 0.85D, 0.85D, 0.29D)), FOCUSED(new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.85D, 1.0D)), STRIP(new SGlassParameter(0.25, 0.0, 0.5, 0.0, 0.0, 0.21, new Color(0, 0, 0), new Color(0, 0, 0), new Color(0, 0, 0), 0.0, 1.0, 0.7, 0.2));
+		UNSELECTED(new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.75D, 0.25D)), 
+		SELECTED(new SGlassParameter(0.0D, 0.0D, 0.2D, 0.63D, 0.0D, 0.0D, null, null, null, 0.27D, 0.85D, 0.85D, 0.29D)), 
+		FOCUSED(new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.85D, 1.0D)), 
+		STRIP(new SGlassParameter(0.25, 0.0, 0.5, 0.0, 0.0, 0.21, new Color(0, 0, 0), new Color(0, 0, 0), new Color(0, 0, 0), 0.0, 1.0, 0.7, 0.2)),
+		DISABLED(new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.75D, 0.25D)),;
 		 
 		SGlassParameter p;
 
@@ -65,6 +69,10 @@ public class CGlassConfig extends JPanel {
 		
 		public SGlassParameter getFocusedGlassParameters() {
 			return NGlass.FOCUSED.get();
+		}
+		
+		public SGlassParameter getDisabledGlassParameters(){
+			return NGlass.DISABLED.get();
 		}
 	};
 	

@@ -39,8 +39,9 @@ import bibliothek.gui.dock.title.DockTitle.Orientation;
  * method {@link DockTitle#changed(bibliothek.gui.dock.title.DockTitleEvent)}
  * is called for that purpose.
  * @author Benjamin Sigg
- *
+ * @deprecated Using a custom {@link TabPainter} is the preferred way to modify the tabs 
  */
+@Deprecated
 public class DockTitleTab implements TabComponent{
     /**
      * A {@link TabPainter} that uses the id {@link EclipseTheme#TAB_DOCK_TITLE}
@@ -252,6 +253,14 @@ public class DockTitleTab implements TabComponent{
     
     public boolean shouldFocus(){
     	return true;
+    }
+    
+    /**
+     * Calling this method has no effect, as this tab shows a {@link DockTitle} which has its own
+     * mechanism to disable itself.
+     */
+    public void setEnabled( boolean enabled ){
+    	// ignore
     }
     
     public Point getPopupLocation( Point click, boolean popupTrigger ) {

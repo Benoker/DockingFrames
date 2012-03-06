@@ -63,6 +63,10 @@ public class CGlassEclipseColorSchemeExtension extends DefaultColorScheme {
       setColor("glass.unselected.light", colMap.colUnSelectedGlassLight);
       setColor("glass.unselected.boundary", colMap.colUnSelectedGlassBoundary);
 
+      setColor("glass.disabled.center", colMap.colDisabledGlassCenter);
+      setColor("glass.disabled.light", colMap.colDisabledGlassLight);
+      setColor("glass.disabled.boundary", colMap.colDisabledGlassBoundary);
+      
       setColor("stack.border.glass", new Color(96, 96, 96));
 
       setColor("selection.border.glass", RexSystemColor.getBorderColor());

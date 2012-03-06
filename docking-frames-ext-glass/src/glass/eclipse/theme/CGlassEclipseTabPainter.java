@@ -53,7 +53,41 @@ import glass.eclipse.theme.utils.*;
  * 
  * @author Thomas Hilbert
  */
-@ColorCodes({"glass.selected.light", "glass.selected.boundary", "glass.selected.center", "glass.unselected.light", "glass.unselected.boundary", "glass.unselected.center", "glass.focused.light", "glass.focused.boundary", "glass.focused.center", "stack.tab.border.glass", "stack.tab.border.selected.glass", "stack.tab.border.selected.focused.glass", "stack.tab.border.selected.focuslost.glass", "stack.tab.top.glass", "stack.tab.top.selected.glass", "stack.tab.top.selected.focused.glass", "stack.tab.top.selected.focuslost.glass", "stack.tab.bottom.glass", "stack.tab.bottom.selected.glass", "stack.tab.bottom.selected.focused.glass", "stack.tab.bottom.selected.focuslost.glass", "stack.tab.text.glass", "stack.tab.text.selected.glass", "stack.tab.text.selected.focused.glass", "stack.tab.text.selected.focuslost.glass", "stack.border.glass"})
+@ColorCodes({
+	"glass.selected.light", 
+	"glass.selected.boundary", 
+	"glass.selected.center", 
+	"glass.unselected.light", 
+	"glass.unselected.boundary", 
+	"glass.unselected.center", 
+	"glass.focused.light", 
+	"glass.focused.boundary", 
+	"glass.focused.center",
+	"glass.disabled.light", 
+	"glass.disabled.boundary", 
+	"glass.disabled.center", 
+	
+	"stack.tab.border.glass", 
+	"stack.tab.border.selected.glass", 
+	"stack.tab.border.selected.focused.glass", 
+	"stack.tab.border.selected.focuslost.glass",
+	"stack.tab.border.disabled.glass", 
+	"stack.tab.top.glass", 
+	"stack.tab.top.selected.glass", 
+	"stack.tab.top.selected.focused.glass", 
+	"stack.tab.top.selected.focuslost.glass",
+	"stack.tab.top.disabled.glass", 
+	"stack.tab.bottom.glass", 
+	"stack.tab.bottom.selected.glass", 
+	"stack.tab.bottom.selected.focused.glass", 
+	"stack.tab.bottom.selected.focuslost.glass",
+	"stack.tab.bottom.disabled.glass", 
+	"stack.tab.text.glass", 
+	"stack.tab.text.selected.glass", 
+	"stack.tab.text.selected.focused.glass",
+	"stack.tab.text.selected.focuslost.glass",
+	"stack.tab.text.disabled.glass", 
+	"stack.border.glass"})
 public class CGlassEclipseTabPainter extends BaseTabComponent {
    /***/
    private static final long serialVersionUID = -3944491545940520488L;
@@ -61,22 +95,30 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    /**
     * Glass parameters for inactive tabs and tab strip background.
     */
-   public IGlassFactory.SGlassParameter glassUnSelected;
+   private IGlassFactory.SGlassParameter glassUnSelected;
    /**
     * Glass parameter for selected tab background.
     */
-   public IGlassFactory.SGlassParameter glassSelected;
+   private IGlassFactory.SGlassParameter glassSelected;
    /**
     * Glass parameter for focused tab background.
     */
-   public IGlassFactory.SGlassParameter glassFocused;
+   private IGlassFactory.SGlassParameter glassFocused;
+   
+   /**
+    * Glass parameter for disabled tab background.
+    */
+   private IGlassFactory.SGlassParameter glassDisabled;
 
    private boolean wasPreviousSelected = false;
    private final IGlassFactory glass = CGlassFactoryGenerator.Create();
 
    public static final int CORNER_RADIUS = 6;
 
-   protected TabColor colGlassCenterFocused, colGlassBoundaryFocused, colGlassLightFocused, colGlassCenterSelected, colGlassBoundarySelected, colGlassLightSelected, colGlassCenterUnSelected, colGlassBoundaryUnSelected, colGlassLightUnSelected;
+   protected TabColor colGlassCenterFocused, colGlassBoundaryFocused, colGlassLightFocused;
+   protected TabColor colGlassCenterSelected, colGlassBoundarySelected, colGlassLightSelected;
+   protected TabColor colGlassCenterUnSelected, colGlassBoundaryUnSelected, colGlassLightUnSelected;
+   protected TabColor colGlassCenterDisabled, colGlassBoundaryDisabled, colGlassLightDisabled;
 
    /** number of pixels at the left side that are empty and under the selected predecessor of this tab */
    private final int TAB_OVERLAP = 24;
@@ -154,8 +196,12 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       colGlassCenterFocused = new CGlassColor("glass.focused.center", getStation(), getDockable(), new Color(0, 0, 150));
       colGlassBoundaryFocused = new CGlassColor("glass.focused.boundary", getStation(), getDockable(), new Color(0, 40, 80));
       colGlassLightFocused = new CGlassColor("glass.focused.light", getStation(), getDockable(), new Color(100, 200, 255));
+      
+      colGlassCenterDisabled = new CGlassColor("glass.disabled.center", getStation(), getDockable(), new Color(150, 150, 150));
+      colGlassBoundaryDisabled = new CGlassColor("glass.disabled.boundary", getStation(), getDockable(), new Color(0, 40, 80));
+      colGlassLightDisabled = new CGlassColor("glass.disabled.light", getStation(), getDockable(), new Color(150, 150, 150));
 
-      addAdditionalColors(colGlassBoundaryFocused, colGlassBoundarySelected, colGlassCenterFocused, colGlassCenterSelected, colGlassLightFocused, colGlassLightSelected, colGlassLightUnSelected, colGlassCenterUnSelected, colGlassBoundaryUnSelected);
+      addAdditionalColors(colGlassBoundaryFocused, colGlassBoundarySelected, colGlassCenterFocused, colGlassCenterSelected, colGlassLightFocused, colGlassLightSelected, colGlassLightUnSelected, colGlassCenterUnSelected, colGlassBoundaryUnSelected, colGlassCenterDisabled, colGlassBoundaryDisabled, colGlassLightDisabled );
    }
 
    @Override
@@ -173,7 +219,10 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
             focusTemporarilyLost = !window.isActive();
          }
 
-         if (isSelected()) {
+         if( !isEnabled() ){
+        	 color2 = colorStackTabBorderDisabled.value();
+         }
+         else if (isSelected()) {
             if (isFocused()) {
                if (focusTemporarilyLost) {
                   color2 = colorStackTabBorderSelectedFocusLost.value();
@@ -254,6 +303,12 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    protected void updateColors () {
       update();
    }
+   
+   @Override
+	protected void updateEnabled(){
+	   updateBorder();
+	   update();
+	}
 
    /**
     * Updates the layout information of this painter.
@@ -357,6 +412,20 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
          glassUnSelected.colorBoundary = c3;
       }
 
+      c1 = colGlassCenterDisabled.value();
+      c2 = colGlassLightDisabled.value();
+      c3 = colGlassBoundaryDisabled.value();
+      c1 = c1 == null ? colorStackTabTopDisabled.value() : c1;
+      c2 = c2 == null ? CColor.BrighterColor(colorStackTabTopDisabled.value()) : c2;
+      c3 = c3 == null ? colorStackTabBottomDisabled.value() : c3;
+      
+      glassDisabled = f.getDisabledGlassParameters();
+      if (glassUnSelected != null) {
+          glassUnSelected.colorCenter = c1;
+          glassUnSelected.colorSuperLight = c2;
+          glassUnSelected.colorBoundary = c3;
+       }
+      
       try {
          if (getButtons() != null) {
             if (isSelected() && isFocused()) {
@@ -381,7 +450,10 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
       boolean focusTemporarilyLost = isFocusTemporarilyLost();
       Color c;
 
-      if (isFocused() && !focusTemporarilyLost) {
+      if( !isEnabled() ){
+    	  c = colorStackTabTextDisabled.value();
+      }
+      else if (isFocused() && !focusTemporarilyLost) {
          c = colorStackTabTextSelectedFocused.value();
       }
       else if (isFocused() && focusTemporarilyLost) {
@@ -557,7 +629,17 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
          // first render to image because glass is transparent and we would see the inactive tab in background
          BufferedImage bimg = null;
          dImg = new Dimension(isHorizontal() ? w : h, isHorizontal() ? h : w);
-         if (bActive) {
+         if( !isEnabled() ){
+        	 if(glassDisabled != null){
+        		 try {
+                     bimg = glass.RenderBufferedImage(glassDisabled, dImg, true);
+				 }
+				 catch( Exception e ) {
+					 bimg = glass.RenderBufferedImage( CGlassFactory.VALUE_GRAY, dImg, true );
+				 } 
+        	 }
+         }
+         else if (bActive) {
             if (glassFocused != null) {
                try {
                   bimg = glass.RenderBufferedImage(glassFocused, dImg, true);

@@ -102,24 +102,28 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.border.focused",                   color( distribution, 200, 0, 0 ) );
         setColor( "stack.tab.border.focused.mouse",             color( distribution, 255, 150, 150 ) );
         setColor( "stack.tab.border",                           color( distribution, 100, 100, 100 ) );
+        setColor( "stack.tab.border.disabled",                  color( distribution, 150, 150, 150 ) );
         setColor( "stack.tab.border.mouse",                     color( distribution, 100, 175, 100 ) );
         setColor( "stack.tab.background.top.selected",          color( distribution, 160, 150, 150 ) );
         setColor( "stack.tab.background.top.selected.mouse",    color( distribution, 255, 100, 100 ) );
         setColor( "stack.tab.background.top.focused",           color( distribution, 200, 100, 100 ) );
         setColor( "stack.tab.background.top.focused.mouse",     color( distribution, 255, 200, 200 ) );
         setColor( "stack.tab.background.top",                   color( distribution, 150, 150, 150 ) );
+        setColor( "stack.tab.background.top.disabled",          color( distribution, 200, 200, 200 ) );
         setColor( "stack.tab.background.top.mouse",             color( distribution, 150, 255, 150 ) );
         setColor( "stack.tab.background.bottom.selected",       color( distribution, 210, 200, 200 ) );
         setColor( "stack.tab.background.bottom.selected.mouse", color( distribution, 255, 200, 200 ) );
         setColor( "stack.tab.background.bottom.focused",        color( distribution, 255, 200, 200 ) );
         setColor( "stack.tab.background.bottom.focused.mouse",  color( distribution, 255, 255, 255 ) );
         setColor( "stack.tab.background.bottom",                color( distribution, 200, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.disabled",       color( distribution, 200, 200, 200 ) );
         setColor( "stack.tab.background.bottom.mouse",          color( distribution, 220, 255, 220 ) );
         setColor( "stack.tab.foreground.selected",              color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground.selected.mouse",        color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground.focused",               color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground.focused.mouse",         color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground",                       color( distribution, 100, 100, 100 ));
+        setColor( "stack.tab.foreground.disabled",              color( distribution, 150, 150, 150 ));
         setColor( "stack.tab.foreground.mouse",                 color( distribution, 25, 25, 25 ));
         
         // stack menu

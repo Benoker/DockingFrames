@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.font.FontModifier;
 
 /**
@@ -25,6 +26,9 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     
     /** icon painted on this label */
     private Icon icon;
+    
+    /** icon painted when this label is disabled */
+    private Icon disabledIcon;
     
     /** distance between icon and border */
     private int iconOffset = 2;
@@ -56,6 +60,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
      */
     public void setIcon( Icon icon ){
 		this.icon = icon;
+		disabledIcon = null;
 		revalidate();
 		repaint();
 	}
@@ -317,6 +322,14 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         		label.paint( g );
         	}
         	else{
+        		Icon icon = this.icon;
+        		if( !isEnabled() ){
+        			if( disabledIcon == null ){
+        				disabledIcon = DockUtilities.disabledIcon( this, icon );
+        			}
+        			icon = disabledIcon;
+        		}
+        		
         		int width = getWidth();
         		int height = getHeight();
         		

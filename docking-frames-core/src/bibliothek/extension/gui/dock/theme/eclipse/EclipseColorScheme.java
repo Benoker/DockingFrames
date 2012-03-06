@@ -53,23 +53,27 @@ public class EclipseColorScheme extends BasicColorScheme {
         setColor( "stack.tab.border.selected",          RexSystemColor.getInactiveColorGradient() );
         setColor( "stack.tab.border.selected.focused",  RexSystemColor.getActiveColorGradient() );
         setColor( "stack.tab.border.selected.focuslost",RexSystemColor.getInactiveColor() );
+        setColor( "stack.tab.border.disabled",          Colors.brighter( DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) ));
         
         setColor( "stack.tab.top",                      DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         setColor( "stack.tab.top.disabled",             DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         setColor( "stack.tab.top.selected",             RexSystemColor.getInactiveColor() );
         setColor( "stack.tab.top.selected.focused",     RexSystemColor.getActiveColor() );
         setColor( "stack.tab.top.selected.focuslost",   RexSystemColor.getInactiveColor() );
+        setColor( "stack.tab.top.disabled",             Colors.brighter( DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) ));
         
         setColor( "stack.tab.bottom",                   DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         setColor( "stack.tab.bottom.disabled",          DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );
         setColor( "stack.tab.bottom.selected",          RexSystemColor.getInactiveColorGradient() );
         setColor( "stack.tab.bottom.selected.focused",  RexSystemColor.getActiveColorGradient() );
         setColor( "stack.tab.bottom.selected.focuslost",RexSystemColor.getInactiveColor() );
+        setColor( "stack.tab.bottom.disabled",          Colors.brighter( DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) ));
         
         setColor( "stack.tab.text",                     DockUI.getColor( LookAndFeelColors.PANEL_FOREGROUND ) );
         setColor( "stack.tab.text.selected",            RexSystemColor.getInactiveTextColor() );
         setColor( "stack.tab.text.selected.focused",    RexSystemColor.getActiveTextColor() );
         setColor( "stack.tab.text.selected.focuslost",  RexSystemColor.getInactiveTextColor() );
+        setColor( "stack.tab.text.disabled",            DockUI.getColor( LookAndFeelColors.PANEL_FOREGROUND ) );
         
         setColor( "stack.border",                       RexSystemColor.getBorderColor() );
         setColor( "stack.border.edges", 				DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ) );

@@ -701,8 +701,10 @@
  - Bugfix: Memory leak in FlapDockStation/ButtonContent, found by Q_LeSoc
 
 [v1.1.1p7]
- - API: The DisablingStrategy allows to globaly disable actions, titles, tabs or entire DockStations.
+ - API: The DisablingStrategy allows to globally disable items like actions or titles
+ - API: All DockActions can now be disabled by the DisablingStrategy
  ! API: AbstractDockTitle has a new method "setDisabled", it is used to support the DisablingStrategy
+ ! API: All tabs can now be disabled by the DisablingStrategy
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

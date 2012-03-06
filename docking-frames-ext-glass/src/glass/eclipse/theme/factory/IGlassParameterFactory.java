@@ -33,5 +33,10 @@ public interface IGlassParameterFactory {
 	 * @return
 	 */
 	SGlassParameter getStripBGGlassParameters();
-
+	
+	/**
+	 * Creates the glass parameters for a disabled tab.
+	 * @return the new parameter
+	 */
+	SGlassParameter getDisabledGlassParameters();
 }

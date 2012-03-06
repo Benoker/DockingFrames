@@ -227,6 +227,11 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.border",                             diffMirror( inactive, factorWeak ));
         setColor( "stack.tab.foreground",                         diffMirror( inactive, 1.0 ));
         
+        setColor( "stack.tab.background.top.disabled",            brighter( disabled, factorWeak ));
+        setColor( "stack.tab.background.bottom.disabled",         darker( disabled, factorWeak ) );
+        setColor( "stack.tab.border.disabled",                    diffMirror( disabled, factorWeak ));
+        setColor( "stack.tab.foreground.disabled",                diffMirror( disabled, 0.8 ));
+        
         setColor( "stack.tab.background.top.selected.mouse",      brighter( inactive, factor ));
         setColor( "stack.tab.background.bottom.selected.mouse",   darker( inactive, factor ) );
         setColor( "stack.tab.border.selected.mouse",              diffMirror( inactive, factor ));

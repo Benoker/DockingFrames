@@ -138,6 +138,7 @@ public class PopupCombinedMenuContent implements CombinedMenuContent{
 			putValue( NAME, content.getText() );
 			putValue( SHORT_DESCRIPTION, content.getToolTip() );
 			putValue( SMALL_ICON, content.getIcon() );
+			setEnabled( content.isEnabled() );
 		}
 		
 		public void actionPerformed( ActionEvent e ){

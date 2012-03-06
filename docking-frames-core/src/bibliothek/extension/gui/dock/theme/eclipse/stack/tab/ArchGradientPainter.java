@@ -54,11 +54,32 @@ import bibliothek.util.Colors;
  * This {@link TabComponent} uses an {@link Arch} to paint the right end of a tab.
  * @author Janni Kovacs
  */
-@ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
-	"stack.tab.top", "stack.tab.top.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
-	"stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
-	"stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
-"stack.border" })
+@ColorCodes({
+	"stack.tab.border", 
+	"stack.tab.border.selected", 
+	"stack.tab.border.selected.focused", 
+	"stack.tab.border.selected.focuslost",
+	"stack.tab.border.disabled",
+	
+    "stack.tab.top", 
+    "stack.tab.top.selected", 
+    "stack.tab.top.selected.focused",
+    "stack.tab.top.selected.focuslost",
+    "stack.tab.top.disabled", 
+    
+    "stack.tab.bottom", 
+    "stack.tab.bottom.selected", 
+    "stack.tab.bottom.selected.focused", 
+    "stack.tab.bottom.selected.focuslost",
+    "stack.tab.bottom.disabled",
+    
+    "stack.tab.text", 
+    "stack.tab.text.selected", 
+    "stack.tab.text.selected.focused", 
+    "stack.tab.text.selected.focuslost",
+    "stack.tab.text.disabled", 
+    
+    "stack.border" })
 public class ArchGradientPainter extends BaseTabComponent {
 	private final int[] TOP_LEFT_CORNER_X = { 0, 1, 1, 2, 3, 4, 5, 6 };
 	private final int[] TOP_LEFT_CORNER_Y = { 6, 5, 4, 3, 2, 1, 1, 0 };
@@ -121,7 +142,10 @@ public class ArchGradientPainter extends BaseTabComponent {
 				focusTemporarilyLost = !window.isActive();
 			}
 
-			if( isSelected() ){
+			if( !isEnabled() ){
+				color2 = colorStackTabBorderDisabled.value();
+			}
+			else if( isSelected() ){
 				if( isFocused() ){
 					if( focusTemporarilyLost )
 						color2 = colorStackTabBorderSelectedFocusLost.value();
@@ -197,6 +221,12 @@ public class ArchGradientPainter extends BaseTabComponent {
 		update();	
 	}
 	
+	@Override
+	protected void updateEnabled(){
+		updateBorder();
+		update();
+	}
+	
 	/**
 	 * Updates the layout information of this painter.
 	 */
@@ -251,7 +281,10 @@ public class ArchGradientPainter extends BaseTabComponent {
 	private Color getTextColor(){
 		boolean focusTemporarilyLost = isFocusTemporarilyLost();
 		
-		if( isFocused() && !focusTemporarilyLost ){
+		if( !isEnabled() ){
+			return colorStackTabTextDisabled.value();
+		}
+		else if( isFocused() && !focusTemporarilyLost ){
 			return colorStackTabTextSelectedFocused.value();
 		}
 		else if (isFocused() && focusTemporarilyLost) {
@@ -278,7 +311,11 @@ public class ArchGradientPainter extends BaseTabComponent {
 
 		boolean focusTemporarilyLost = isFocusTemporarilyLost();
 
-		if( isFocused() && !focusTemporarilyLost ){
+		if( !isEnabled() ){
+			color1 = colorStackTabTopDisabled.value();
+			color2 = colorStackTabBottomDisabled.value();
+		}
+		else if( isFocused() && !focusTemporarilyLost ){
 			color1 = colorStackTabTopSelectedFocused.value();
 			color2 = colorStackTabBottomSelectedFocused.value();
 		}
