@@ -61,8 +61,9 @@ public interface DisablingStrategy {
 	public void removeItemDisablerListener( DisablingStrategyListener listener );
 	
 	/**
-	 * Tells whether the item <code>DockElement</code> is disabled in general. This method is to be called if no
-	 * other method fits.
+	 * Tells whether the item <code>DockElement</code> is disabled in general. The exact effects of being disabled are
+	 * not defined, but when using the default implementation developers can expect that <code>item</code> will not
+	 * participate in any kind of drag and drop operation.
 	 * @param item the item which may be disabled
 	 * @return whether <code>item</code> is disabled
 	 */

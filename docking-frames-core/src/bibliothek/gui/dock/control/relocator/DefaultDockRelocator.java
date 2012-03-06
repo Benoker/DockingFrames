@@ -52,6 +52,7 @@ import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DirectRemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
@@ -291,19 +292,24 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @return a list of stations
      */
     protected List<DockStation> listStationsOrdered( int x, int y, Dockable moved ){
+    	DockController controller = getController();
+    	DisablingStrategy disabling = controller.getProperties().get( DisablingStrategy.STRATEGY );
     	OrderedLayerCollection collection = new OrderedLayerCollection();
-        DockStation movedStation = moved.asDockStation();
-        DockController controller = getController();
-        
-        if( !isCancelLocation( x, y, moved )){
-        	for( DockStation station : controller.getRegister().listDockStations() ){
-        		if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
-        			if( station.isStationShowing() && isStationValid( station ) ){
-        				collection.add( station );
-	                }
-	            }
+    	
+    	if( disabling == null || !disabling.isDisabled( moved )){
+	        DockStation movedStation = moved.asDockStation();
+	        if( !isCancelLocation( x, y, moved )){
+	        	for( DockStation station : controller.getRegister().listDockStations() ){
+	        		if( disabling == null || !disabling.isDisabled( station )){
+		        		if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
+		        			if( station.isStationShowing() && isStationValid( station ) ){
+		        				collection.add( station );
+			                }
+			            }
+	        		}
+		        }
 	        }
-        }
+    	}
 	    return collection.sort( x, y );
     }
     
