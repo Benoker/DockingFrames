@@ -3,13 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copy
-import bibliothek.gui.dock.station.flap.level.WindowDropLevel;
-
-import bibliothek.gui.dock.station.flap.level.FlapOverrideDropLevel;
-
-import bibliothek.gui.dock.station.level.DefaultDropLevel;
-right (C) 2007 Benjamin Sigg
+ * Copyright (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,6 +58,8 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
+import bibliothek.gui.dock.disable.DisablingStrategy;
+import bibliothek.gui.dock.disable.DisablingStrategyListener;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableAdapter;
@@ -268,6 +264,33 @@ public class FlapDockStation extends AbstractDockableStation {
 			}
 
 			updateWindow( getFrontDockable(), true );
+		}
+	};
+	
+	/** Access to the current {@link DisablingStrategy} */
+	private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>( DisablingStrategy.STRATEGY ){
+		@Override
+		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
+			if( oldValue != null ){	
+				oldValue.removeDisablingStrategyListener( disablingStrategyListener );
+			}
+			if( newValue != null ){
+				newValue.addDisablingStrategyListener( disablingStrategyListener );
+				if( newValue.isDisabled( FlapDockStation.this )){
+					setFrontDockable( null );
+				}
+			}
+		}
+	};
+	
+	/** observes the {@link #disablingStrategy} and closes the front dockable if necessary */
+	private DisablingStrategyListener disablingStrategyListener = new DisablingStrategyListener(){
+		public void changed( DockElement item ){
+			if( item == FlapDockStation.this ){
+				if( disablingStrategy.getValue().isDisabled( item )){
+					setFrontDockable( null );
+				}
+			}
 		}
 	};
     
@@ -494,6 +517,7 @@ public class FlapDockStation extends AbstractDockableStation {
             if( window != null ){
             	window.setController( controller );
             }
+            disablingStrategy.setProperties( controller );
             buttonPane.setController( controller );
             FlapLayoutManager oldLayoutManager = layoutManager.getValue();
             layoutManager.setProperties( controller );
@@ -2307,8 +2331,10 @@ public class FlapDockStation extends AbstractDockableStation {
         public void mouseReleased( MouseEvent e ){
         	if( dockable.getDockParent() == FlapDockStation.this ){
         		final int MASK = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
+        		DisablingStrategy strategy = disablingStrategy.getValue();
+        		boolean enabled = strategy == null || (!strategy.isDisabled( dockable ) && !strategy.isDisabled( FlapDockStation.this ));
         		
-        		if( e.getButton() == MouseEvent.BUTTON1 && (e.getModifiersEx() & MASK ) == 0 ){
+        		if( enabled && e.getButton() == MouseEvent.BUTTON1 && (e.getModifiersEx() & MASK ) == 0 ){
         			int index = indexOf( dockable );
         			if( index < 0 )
         				return;

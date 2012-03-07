@@ -189,10 +189,10 @@ public class AbstractDockTitle extends ConfiguredBackgroundPanel implements Dock
 		@Override
 		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
 			if( oldValue != null ){
-				oldValue.removeItemDisablerListener( disablingStrategyListener );
+				oldValue.removeDisablingStrategyListener( disablingStrategyListener );
 			}
 			if( newValue != null ){
-				newValue.addItemDisablerListener( disablingStrategyListener );
+				newValue.addDisablingStrategyListener( disablingStrategyListener );
 				setDisabled( newValue.isDisabled( getDockable(), AbstractDockTitle.this ));
 			}
 			else{

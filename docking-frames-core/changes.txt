@@ -705,6 +705,8 @@
  - API: All DockActions can now be disabled by the DisablingStrategy
  ! API: AbstractDockTitle has a new method "setDisabled", it is used to support the DisablingStrategy
  ! API: All tabs can now be disabled by the DisablingStrategy
+ - API: SplitDockStation and FlapDockStation will react on the DisablingStrategy as well
+ - API: CDockable has a new method "setEnabled" with which parts of the Dockable can be stopped
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

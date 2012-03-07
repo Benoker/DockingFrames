@@ -317,10 +317,12 @@ public class SimpleBubbleColorScheme extends DefaultColorScheme {
         setColor( "displayer.border.high.active.mouse",     brighter( active, factor ));
         setColor( "displayer.border.high.inactive",         brighter( inactive, factorWeak ));
         setColor( "displayer.border.high.inactive.mouse",   brighter( inactive, factor ));
+        setColor( "displayer.border.high.disabled",         brighter( disabled, factorWeak ));
         setColor( "displayer.border.low.active",            darker( active, factorWeak ));
         setColor( "displayer.border.low.active.mouse",      darker( active, factor ));
         setColor( "displayer.border.low.inactive",          darker( inactive, factorWeak ));
         setColor( "displayer.border.low.inactive.mouse",    darker( inactive, factor ));
+        setColor( "displayer.border.low.disabled",          darker( disabled, factorWeak ));
         
         // RoundButton
         setColor( "action.button",                                 disabled );

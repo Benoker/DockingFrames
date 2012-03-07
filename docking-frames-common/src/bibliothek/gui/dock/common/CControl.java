@@ -105,6 +105,7 @@ import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
+import bibliothek.gui.dock.common.intern.ui.CDisablingStrategy;
 import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
 import bibliothek.gui.dock.common.intern.ui.CommonSingleTabDecider;
 import bibliothek.gui.dock.common.intern.ui.ExtendedModeAcceptance;
@@ -753,6 +754,7 @@ public class CControl {
         putProperty( FlatTheme.ACTION_DISTRIBUTOR, new CDefaultDockActionDistributor() );
         putProperty( DockActionImportanceOrder.ORDER, new CActionImportanceOrder() );
         putProperty( DockAction.BUTTON_CONTENT_FILTER, new CButtonContentFilter() );
+        putProperty( DisablingStrategy.STRATEGY, new CDisablingStrategy( this ) );
     }
     
     /**

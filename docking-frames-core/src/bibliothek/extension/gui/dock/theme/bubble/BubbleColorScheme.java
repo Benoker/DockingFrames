@@ -191,10 +191,12 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "displayer.border.high.active.mouse",     color( distribution, 255, 200, 200 ));
         setColor( "displayer.border.high.inactive",         color( distribution, 200, 200, 200 ));
         setColor( "displayer.border.high.inactive.mouse",   color( distribution, 220, 255, 220 ));
+        setColor( "displayer.border.high.disabled",         color( distribution, 220, 200, 200 ));
         setColor( "displayer.border.low.active",            color( distribution, 200, 100, 100 ));
         setColor( "displayer.border.low.active.mouse",      color( distribution, 255, 150, 150 ));
         setColor( "displayer.border.low.inactive",          color( distribution, 100, 100, 100 ));
         setColor( "displayer.border.low.inactive.mouse",    color( distribution, 120, 150, 120 ));
+        setColor( "displayer.border.low.disabled",          color( distribution, 180, 200, 200 ));
         
         // RoundButton
         setColor( "action.button",                                 color( distribution, 255, 255, 255 ));

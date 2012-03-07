@@ -209,10 +209,10 @@ public abstract class ActionDisablingStrategyObserver {
 		@Override
 		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
 			if( oldValue != null ){
-				oldValue.removeItemDisablerListener( this );
+				oldValue.removeDisablingStrategyListener( this );
 			}
 			if( newValue != null ){
-				newValue.addItemDisablerListener( this );
+				newValue.addDisablingStrategyListener( this );
 				
 				Set<Dockable> enabled = new HashSet<Dockable>();
 				Set<Dockable> disabled = new HashSet<Dockable>();

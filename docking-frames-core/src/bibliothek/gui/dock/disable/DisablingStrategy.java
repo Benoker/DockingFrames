@@ -52,13 +52,13 @@ public interface DisablingStrategy {
 	 * {@link DisablingStrategy} changes.
 	 * @param listener the listener to add, not <code>null</code>
 	 */
-	public void addItemDisablerListener( DisablingStrategyListener listener );
+	public void addDisablingStrategyListener( DisablingStrategyListener listener );
 	
 	/**
 	 * Removes <code>listener</code> from this object.
 	 * @param listener the listener to remove
 	 */
-	public void removeItemDisablerListener( DisablingStrategyListener listener );
+	public void removeDisablingStrategyListener( DisablingStrategyListener listener );
 	
 	/**
 	 * Tells whether the item <code>DockElement</code> is disabled in general. The exact effects of being disabled are

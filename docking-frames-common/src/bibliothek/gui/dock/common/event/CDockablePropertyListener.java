@@ -110,4 +110,11 @@ public interface CDockablePropertyListener {
      * @param newAction the new action, can be <code>null</code>
      */
     public void actionChanged( CDockable dockable, String key, CAction oldAction, CAction newAction );
+    
+    /**
+     * Called if the result of {@link CDockable#isEnabled(bibliothek.gui.dock.common.EnableableItem)} changed
+     * for any argument.
+     * @param dockable the source of the event
+     */
+    public void enabledChanged( CDockable dockable );
 }

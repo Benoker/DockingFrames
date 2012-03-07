@@ -40,6 +40,9 @@ import bibliothek.extension.gui.dock.theme.BubbleTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.disable.DisablingStrategy;
+import bibliothek.gui.dock.disable.DisablingStrategyListener;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -48,6 +51,7 @@ import bibliothek.gui.dock.themes.basic.BasicDockableDisplayerDecorator;
 import bibliothek.gui.dock.themes.basic.TabDecorator;
 import bibliothek.gui.dock.themes.color.DisplayerColor;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.color.ColorCodes;
 
 /**
@@ -60,10 +64,12 @@ import bibliothek.gui.dock.util.color.ColorCodes;
     "displayer.border.high.active.mouse",
     "displayer.border.high.inactive",
     "displayer.border.high.inactive.mouse",
+    "displayer.border.high.disabled",
     "displayer.border.low.active",
     "displayer.border.low.active.mouse",
     "displayer.border.low.inactive",
-    "displayer.border.low.inactive.mouse"})
+    "displayer.border.low.inactive.mouse",
+    "displayer.border.low.disabled" })
 public class BubbleDisplayer extends BasicDockableDisplayer {
 	/** the size of the border in pixel */
     private int borderSize = 2;
@@ -76,13 +82,18 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     private DisplayerColor borderHighActiveMouse = new BubbleDisplayerColor( "displayer.border.high.active.mouse", Color.WHITE );
     private DisplayerColor borderHighInactive = new BubbleDisplayerColor( "displayer.border.high.inactive", Color.DARK_GRAY );
     private DisplayerColor borderHighInactiveMouse = new BubbleDisplayerColor( "displayer.border.high.inactive.mouse", Color.DARK_GRAY );
+    private DisplayerColor borderHighDisabled = new BubbleDisplayerColor( "displayer.border.high.disabled", Color.WHITE );
     private DisplayerColor borderLowActive = new BubbleDisplayerColor( "displayer.border.low.active", Color.LIGHT_GRAY );
     private DisplayerColor borderLowActiveMouse = new BubbleDisplayerColor( "displayer.border.low.active.mouse", Color.LIGHT_GRAY );
     private DisplayerColor borderLowInactive = new BubbleDisplayerColor( "displayer.border.low.inactive", Color.BLACK );
     private DisplayerColor borderLowInactiveMouse = new BubbleDisplayerColor( "displayer.border.low.inactive.mouse", Color.BLACK );
+    private DisplayerColor borderLowDisabled = new BubbleDisplayerColor( "displayer.border.low.disabled", Color.LIGHT_GRAY );
     
     /** <code>true</code> if the mouse is over the title of this displayer */
     private boolean mouse = false;
+    
+    /** whether the {@link Dockable} of this displayer is disabled */
+    private boolean disabled = false;
     
     /** 
      * a listener to the controller informing this displayer when the focused
@@ -92,6 +103,32 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     
     /** The border of this displayer */
     private DisplayerBorder openBorder;
+    
+    /** the current {@link DisablingStrategy} */
+    private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>( DisablingStrategy.STRATEGY ){
+    	@Override
+    	protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
+    		if( oldValue != null ){
+    			oldValue.removeDisablingStrategyListener( disablingStrategyListener );
+    		}
+    		if( newValue != null ){
+    			newValue.addDisablingStrategyListener( disablingStrategyListener );
+    			setDisabled( newValue.isDisabled( getDockable() ));
+    		}
+    		else{
+    			setDisabled( false );
+    		}
+    	}
+    };   
+    
+    /** a listener to {@link #disablingStrategy} */
+    private DisablingStrategyListener disablingStrategyListener = new DisablingStrategyListener(){
+    	public void changed( DockElement item ){
+    		if( getDockable() == item ){
+    			setDisabled( disablingStrategy.getValue().isDisabled( item ));
+    		}
+    	}
+    };
     
     /**
      * Creates a new displayer
@@ -120,12 +157,36 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
     }
     
     /**
+     * Called when the {@link DisablingStrategy} changes the disabled state.
+     * @param disabled the new state of the {@link Dockable}
+     */
+    protected void setDisabled( boolean disabled ){
+		if( this.disabled != disabled ){
+			this.disabled = disabled;
+			updateAnimation();
+		}
+	}
+    
+    /**
+     * Whether the {@link Dockable} is currently enabled or not
+     * @return the disabled state
+     */
+    public boolean isDisabled(){
+		return disabled;
+	}
+    
+    /**
      * Sets the colors to which the animation should run.
      */
     protected void updateAnimation(){
         if( animation != null ){
             DockController controller = getController();
-            if( controller != null && controller.getFocusedDockable() == getDockable() ){
+            
+            if( isDisabled() ){
+            	animation.putColor( "high", borderHighDisabled.value() );
+                animation.putColor( "low", borderLowDisabled.value() );
+            } 
+            else if( controller != null && controller.getFocusedDockable() == getDockable() ){
                 if( mouse ){
                     animation.putColor( "high", borderHighActiveMouse.value() );
                     animation.putColor( "low", borderLowActiveMouse.value() );
@@ -169,15 +230,19 @@ public class BubbleDisplayer extends BasicDockableDisplayer {
             super.setController( controller );
         }
         
+        disablingStrategy.setProperties( controller );
+        
         openBorder.setController( controller );
         borderHighActive.connect( controller );
         borderHighActiveMouse.connect( controller );
         borderHighInactive.connect( controller );
         borderHighInactiveMouse.connect( controller );
+        borderHighDisabled.connect( controller );
         borderLowActive.connect( controller );
         borderLowActiveMouse.connect( controller );
         borderLowInactive.connect( controller );
         borderLowInactiveMouse.connect( controller );
+        borderLowDisabled.connect( controller );
         animation.kick();
     }
     
