@@ -102,7 +102,7 @@ import bibliothek.util.Path;
 	"title.flap.selected.mouse.knob.highlight",
 	"title.flap.selected.mouse.knob.shadow",
 	"title.flap.disabled.knob.highlight",
-	"title.flap.disabled.knob.shadow",
+	"title.flap.disabled.knob.shadow"
 })
 public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     /**
