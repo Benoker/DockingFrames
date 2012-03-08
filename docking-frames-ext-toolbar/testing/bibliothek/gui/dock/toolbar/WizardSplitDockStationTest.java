@@ -1,6 +1,7 @@
 package bibliothek.gui.dock.toolbar;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,9 +26,12 @@ public class WizardSplitDockStationTest {
 		controller.setRootWindow( frame );
 
 		WizardSplitDockStation station = new WizardSplitDockStation( Side.RIGHT );
+		WizardSplitDockStation stationLeft = new WizardSplitDockStation( Side.LEFT );
 		
 		controller.add( station );
+		controller.add( stationLeft );
 		borderPanel.add( station.getComponent(), BorderLayout.EAST);
+		borderPanel.add( stationLeft.getComponent(), BorderLayout.SOUTH);
 
 		ScreenDockStation screen = new ScreenDockStation( frame );
 		controller.add( screen );
@@ -36,14 +40,23 @@ public class WizardSplitDockStationTest {
 		screen.drop( create( "B" ), new ScreenDockProperty( 420, 20, 400, 400 ) );
 		screen.drop( create( "C" ), new ScreenDockProperty( 420, 20, 400, 400 ) );
 		screen.drop( create( "D" ), new ScreenDockProperty( 420, 20, 400, 400 ) );
-		screen.drop( create( "E" ), new ScreenDockProperty( 420, 20, 400, 400 ) );
-		screen.drop( create( "F" ), new ScreenDockProperty( 420, 20, 400, 400 ) );
+		screen.drop( createPanel( "300, 300",  300, 350), new ScreenDockProperty( 420, 20, 400, 400 ) );
+		screen.drop( createPanel( "400, 600 ", 400, 600 ), new ScreenDockProperty( 420, 20, 400, 400 ) );
 		screen.drop( create( "G" ), new ScreenDockProperty( 420, 20, 400, 400 ) );
 		screen.drop( create( "Very long long long long button" ), new ScreenDockProperty( 420, 20, 400, 400 ) );
 
 		frame.setBounds( 20, 20, 400, 400 );
 		screen.setShowing( true );
 		frame.setVisible( true );
+	}
+	
+	private static Dockable createPanel( String title, int width, int height){
+		DefaultDockable dockable = new DefaultDockable( title );
+		dockable.setLayout( new BorderLayout() );
+		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(width, height));
+		dockable.add( panel );
+		return dockable;
 	}
 
 	private static Dockable create( String title ){
