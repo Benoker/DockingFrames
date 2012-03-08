@@ -49,6 +49,11 @@ public class Placeholder extends SplitNode {
 	public Dimension getMinimumSize(){
 		return null;
 	}
+	
+	@Override
+	public Dimension getPreferredSize(){
+		return null;
+	}
 
 	@Override
 	public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ){

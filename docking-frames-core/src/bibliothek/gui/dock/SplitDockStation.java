@@ -503,6 +503,16 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		return base;
 	}
+	
+	@Override
+	public Dimension getPreferredSize(){
+		Insets insets = getInsets();
+		Dimension base = getRoot().getPreferredSize();
+		if( insets != null ) {
+			base = new Dimension(base.width + insets.left + insets.right, base.height + insets.top + insets.bottom);
+		}
+		return base;
+	}
 
 	public DockTheme getTheme(){
 		return theme;
@@ -884,6 +894,22 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	public int getDividerSize(){
 		return dividerSize;
+	}
+	
+	/**
+	 * Gets the {@link SplitDividerStrategy} that is used to handle the divider of this station.
+	 * @return the current strategy
+	 */
+	public SplitDividerStrategy getDividerStrategy(){
+		return dividerStrategy.getValue();
+	}
+	
+	/**
+	 * Sets the {@link SplitDividerStrategy} that should be used to handle the divider of this station.
+	 * @param strategy the new strategy or <code>null</code> to revert to the default value
+	 */
+	public void setDividerStrategy( SplitDividerStrategy strategy ){
+		dividerStrategy.setValue( strategy );
 	}
 
 	/**

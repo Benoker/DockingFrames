@@ -170,6 +170,14 @@ public class Root extends VisibleSplitNode{
     		return new Dimension( 0, 0 );
     	return result;
     }
+    
+    @Override
+    public Dimension getPreferredSize(){
+    	Dimension result = child == null ? null : child.getPreferredSize();
+    	if( result == null )
+    		return new Dimension( 0, 0 );
+    	return result;
+    }
         
     /**
      * Gets the factor which has to be multiplied with relative x coordinates

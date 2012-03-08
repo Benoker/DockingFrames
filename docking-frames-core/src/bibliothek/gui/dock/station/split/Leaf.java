@@ -90,6 +90,17 @@ public class Leaf extends VisibleSplitNode{
     }
     
     @Override
+    public Dimension getPreferredSize(){
+    	if( handle == null )
+    		return new Dimension( 0, 0 );
+    	
+    	DockableDisplayer displayer = handle.getDisplayer();
+    	if( displayer == null )
+    		return new Dimension( 0, 0 );
+    	return displayer.getComponent().getPreferredSize();
+    }
+    
+    @Override
     public int getChildLocation( SplitNode child ) {
         return -1;
     }
