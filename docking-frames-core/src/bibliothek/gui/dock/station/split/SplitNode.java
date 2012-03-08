@@ -486,6 +486,12 @@ public abstract class SplitNode{
     public abstract Dimension getMinimumSize();
     
     /**
+     * Gets the preferred size of this node.
+     * @return the preferred size in pixel
+     */
+    public abstract Dimension getPreferredSize();
+    
+    /**
      * Updates the bounds of this node. If the node represents a {@link Component}, then 
      * the bounds of the component have to be updated as well.<br>
      * This method is recursive, it will call {@link #updateBounds(double, double, double, double, double, double, boolean) updateBounds} on

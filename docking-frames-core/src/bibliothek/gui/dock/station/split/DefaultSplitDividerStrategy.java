@@ -273,6 +273,16 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		protected void repaint( int x, int y, int width, int height ){
 			container.repaint( x, y, width, height );
 		}
+		
+		/**
+		 * Gets the node whose dividier contains <code>x, y</code>.
+		 * @param x the x coordinate
+		 * @param y the y coordinate
+		 * @return the node containing <code>x, y</code>
+		 */
+		protected Node getDividerNode( int x, int y ){
+			 return station.getRoot().getDividerNode( x, y );
+		}
 	
 		/**
 		 * Asynchronously checks the current position of the mouse and updates the cursor
@@ -287,7 +297,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 							PointerInfo p = MouseInfo.getPointerInfo();
 							Point e = p.getLocation();
 							SwingUtilities.convertPointFromScreen(e, container);
-							current = station.getRoot().getDividerNode(e.x, e.y);
+							current = getDividerNode( e.x, e.y );
 								
 							if( current == null ) {
 								mouseExited( null );
@@ -332,7 +342,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 					repaint( bounds.x, bounds.y, bounds.width, bounds.height );
 	
 					if( station.isContinousDisplay() && current != null ) {
-						current.setDivider( divider );
+						setDivider( current, divider );
 						station.updateBounds();
 					}
 				}
@@ -344,7 +354,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 			if( pressed ) {
 				pressed = false;
 				if( current != null ) {
-					current.setDivider( divider );
+					setDivider( current, divider );
 					repaint( bounds.x, bounds.y, bounds.width, bounds.height );
 					station.updateBounds();
 				}
@@ -361,10 +371,19 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 				}
 			}
 		}
+		
+		/**
+		 * Called if the dividier of <code>node</code> needs to be changed.
+		 * @param node the node whose divider changes
+		 * @param dividier the new divider
+		 */
+		protected void setDivider( Node node, double dividier ){
+			node.setDivider( dividier );
+		}
 
 		public void mouseMoved( MouseEvent e ){
 			if( station.isResizingEnabled() ) {
-				current = station.getRoot().getDividerNode( e.getX(), e.getY() );
+				current = getDividerNode( e.getX(), e.getY() );
 				
 				if( current == null )
 					setCursor( null );

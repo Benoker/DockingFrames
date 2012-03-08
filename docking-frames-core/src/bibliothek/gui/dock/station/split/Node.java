@@ -258,25 +258,50 @@ public class Node extends VisibleSplitNode{
     public Dimension getMinimumSize() {
     	boolean leftVisible = left == null || left.isVisible();
     	boolean rightVisible = right == null || right.isVisible();
-    	if( leftVisible && rightVisible ){
-	    	Dimension minLeft = left == null ? new Dimension() : left.getMinimumSize();
-	    	Dimension minRight = right == null ? new Dimension() : right.getMinimumSize();
+    	
+	    Dimension minLeft = leftVisible ? left.getMinimumSize() : null;
+	    Dimension minRight = rightVisible ? right.getMinimumSize() : null;
+	    
+	    return getSize( minLeft, minRight );
+    }
+    
+    @Override
+    public Dimension getPreferredSize(){
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	
+	    Dimension minLeft = leftVisible ? left.getPreferredSize() : null;
+	    Dimension minRight = rightVisible ? right.getPreferredSize() : null;
+	    
+	    return getSize( minLeft, minRight );
+    }
+    
+    private Dimension getSize( Dimension left, Dimension right ){
+    	if( left != null && right != null ){
 	    	int divider = getAccess().getOwner().getDividerSize();
 	    	
 	    	if( orientation == Orientation.HORIZONTAL ){
-	    		return new Dimension( minLeft.width + divider + minRight.width,
-	    				Math.max( minLeft.height, minRight.height ));
+	    		int onLeft = (int)( (left.width - divider/2) / getDivider()) + divider;
+	    		int onRight = (int)( (right.width - divider/2) / (1.0 - getDivider())) + divider;
+	    		
+	    		return new Dimension( 
+	    				Math.max( onLeft, onRight ),
+	    				Math.max( left.height, right.height ));
 	    	}
 	    	else{
-	    		return new Dimension( Math.max( minLeft.width, minRight.width),
-	    				minLeft.height + divider + minRight.height );
+	    		int onTop = (int)( (left.height - divider/2) / getDivider()) + divider;
+	    		int onBottom = (int)( (right.height - divider/2) / (1.0 - getDivider())) + divider;
+	    		
+	    		return new Dimension( 
+	    				Math.max( left.width, right.width),
+	    				Math.max( onTop, onBottom ) );
 	    	}
     	}
-    	else if( leftVisible ){
-    		return left.getMinimumSize();
+    	else if( left != null ){
+    		return left;
     	}
-    	else if( rightVisible ){
-    		return right.getMinimumSize();
+    	else if( right != null ){
+    		return right;
     	}
     	else{
     		return new Dimension();
