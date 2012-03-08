@@ -3,11 +3,9 @@ package bibliothek.gui.dock.wizard;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
-import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
@@ -194,13 +192,6 @@ public class WizardSplitDockStation extends SplitDockStation{
 			model.setDivider( node, divider );
 			revalidate();
 		}
-		
-		public boolean isDividerMoveable( Node node ){
-			if( node == null ){
-				return false;
-			}
-			return model.isHeaderLevel( node, false );
-		}
 	}
 	
 	private class WizardDividerStrategy extends DefaultSplitDividerStrategy{
@@ -213,16 +204,7 @@ public class WizardSplitDockStation extends SplitDockStation{
 			public CustomHandler( SplitDockStation station ){
 				super( station );
 			}
-			
-			@Override
-			protected Node getDividerNode( int x, int y ){
-				Node node = super.getDividerNode( x, y );
-				if( layoutManager.isDividerMoveable( node )){
-					return node;
-				}
-				return null;
-			}
-			
+						
 			@Override
 			protected void setDivider( Node node, double dividier ){
 				layoutManager.setDivider( node, dividier );
