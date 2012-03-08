@@ -41,7 +41,7 @@ import bibliothek.util.Path;
  * a "divider", whose position can be changed.
  * @author Benjamin Sigg
  */
-public class Node extends VisibleSplitNode{
+public class Node extends VisibleSplitNode implements Divideable{
     /** The area of the left child is either at the left or at the top of the area of this node. */
     private SplitNode left;
     /** The area of the right child is either at the right or at the bottom of the area of this node. */
@@ -233,12 +233,6 @@ public class Node extends VisibleSplitNode{
     	}
     }
     
-    /**
-     * Gets the orientation of this node. The orientation tells how to layout
-     * the children. If the orientation is {@link Orientation#VERTICAL}, one child
-     * will be at the top and the other at the bottom.
-     * @return the orientation
-     */
     public Orientation getOrientation() {
         return orientation;
     }
@@ -308,11 +302,6 @@ public class Node extends VisibleSplitNode{
     	}
     }
     
-    /**
-     * Sets the location of the divider. The area of the left child is the area
-     * of the whole node multiplied with <code>divider</code>. 
-     * @param divider the divider
-     */
     public void setDivider( double divider ){
         this.divider = divider;
         getAccess().getOwner().revalidate();
@@ -320,13 +309,12 @@ public class Node extends VisibleSplitNode{
         getAccess().repositioned( this );
     }
     
-    /**
-     * Gets the location of the divider.
-     * @return the divider
-     * @see #setDivider(double)
-     */
     public double getDivider() {
         return divider;
+    }
+    
+    public double validateDivider( double divider ){
+    	return getStation().getCurrentSplitLayoutManager().validateDivider( getStation(), divider, this );
     }
     
     @Override
@@ -447,14 +435,6 @@ public class Node extends VisibleSplitNode{
         }
     }
     
-    /**
-     * Calculates the location and the size of the area which represents the divider.
-     * The user can grab this area with the mouse and drag it around.
-     * @param divider The location of the divider, should be between 0 and 1.
-     * @param bounds A rectangle in which the result will be stored. It can be <code>null</code>
-     * @return Either <code>bounds</code> or a new {@link Rectangle} if <code>bounds</code>
-     * was <code>null</code>
-     */
     public Rectangle getDividerBounds( double divider, Rectangle bounds ){
         if( bounds == null )
             bounds = new Rectangle();
@@ -489,14 +469,6 @@ public class Node extends VisibleSplitNode{
         return bounds;
     }
     
-    /**
-     * Calculates the value which the divider must have on condition that
-     * the point <code>x/y</code> lies inside the {@link #getDividerBounds(double, Rectangle) divider bounds}.
-     * @param x x-coordinate of the point in pixel
-     * @param y y-coordinate of the point in pixel
-     * @return The value that the divider should have. This value might not
-     * be valid if the coordinates of the point are too extreme.
-     */
     public double getDividerAt( int x, int y ){
         Root root = getRoot();
         if( orientation == Orientation.HORIZONTAL ){

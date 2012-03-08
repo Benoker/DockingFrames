@@ -6,12 +6,14 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
+import javax.swing.text.GapContent;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
+import bibliothek.gui.dock.station.split.Divideable;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
@@ -61,6 +63,14 @@ public class WizardSplitDockStation extends SplitDockStation{
 		setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
 	}
 
+	/**
+	 * Gets the side to which this station leans.
+	 * @return the side which does not change its position ever
+	 */
+	public Side getSide(){
+		return side;
+	}
+	
 	@Override
 	public Dimension getPreferredSize(){
 		if( layoutManager == null ){
@@ -188,7 +198,7 @@ public class WizardSplitDockStation extends SplitDockStation{
 			return model.getPreferredSize();
 		}
 		
-		public void setDivider( Node node, double divider ){
+		public void setDivider( Divideable node, double divider ){
 			model.setDivider( node, divider );
 			revalidate();
 		}
@@ -206,8 +216,29 @@ public class WizardSplitDockStation extends SplitDockStation{
 			}
 						
 			@Override
-			protected void setDivider( Node node, double dividier ){
+			protected void setDivider( Divideable node, double dividier ){
 				layoutManager.setDivider( node, dividier );
+			}
+			
+			@Override
+			protected Divideable getDividerNode( int x, int y ){
+				Divideable node = super.getDividerNode( x, y );
+				if( node == null ){
+					int gap = getDividerSize();
+					if( side == Side.RIGHT && x < gap ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+					else if( side == Side.LEFT && x >= getWidth() - gap - 1 ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+					else if( side == Side.TOP && y >= getHeight() - gap - 1 ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+					else if( side == Side.BOTTOM && y <= gap ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+				}
+				return node;
 			}
 		}
 	}

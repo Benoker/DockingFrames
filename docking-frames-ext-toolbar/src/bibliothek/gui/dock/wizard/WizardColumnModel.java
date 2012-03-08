@@ -12,6 +12,7 @@ import java.util.Set;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.station.split.Divideable;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
@@ -162,46 +163,60 @@ public class WizardColumnModel {
 	 * @param node the node whose dividier changed
 	 * @param divider the new dividier
 	 */
-	public void setDivider( Node node, double divider ){
-		Table table = new Table();
-		Column column;
-		if( side == Side.RIGHT || side == Side.BOTTOM ){
-			column = table.getHeadColumn( node.getRight() );
-		}
-		else{
-			column = table.getHeadColumn( node.getLeft() );
-		}
-		if( column != null ){
-			PersistentColumn persistent = column.getPersistentColumn();
-			double dividerDelta = node.getDivider() - divider;
-			int deltaPixel;
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
-				deltaPixel = (int)(dividerDelta * node.getSize().width);
+	public void setDivider( Divideable divideable, double divider ){
+		if( divideable instanceof Node ){
+			Node node = (Node)divideable;
+			Table table = new Table();
+			Column column;
+			if( side == Side.RIGHT || side == Side.BOTTOM ){
+				column = table.getHeadColumn( node.getRight() );
 			}
 			else{
-				deltaPixel = (int)(dividerDelta * node.getSize().height);
+				column = table.getHeadColumn( node.getLeft() );
 			}
-			persistent.size += deltaPixel;
-			table.applyPersistentSizes();
-		}
-		else{
-			PersistentCell cell = table.getHeadCell( node.getLeft() );
-			if( cell != null ){
-				double dividerDelta = divider - node.getDivider();
-				int deltaPixel;
-				if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
-					deltaPixel = (int)(dividerDelta * node.getSize().height);
+			if( column != null ){
+				setDivider( table, column, node.getDivider(), divider, node.getSize() );
+			}
+			else{
+				PersistentCell cell = table.getHeadCell( node.getLeft() );
+				if( cell != null ){
+					double dividerDelta = divider - node.getDivider();
+					int deltaPixel;
+					if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+						deltaPixel = (int)(dividerDelta * node.getSize().height);
+					}
+					else{
+						deltaPixel = (int)(dividerDelta * node.getSize().width);
+					}
+					cell.size += deltaPixel;
+					table.applyPersistentSizes();
 				}
 				else{
-					deltaPixel = (int)(dividerDelta * node.getSize().width);
+					node.setDivider( divider );
 				}
-				cell.size += deltaPixel;
-				table.applyPersistentSizes();
-			}
-			else{
-				node.setDivider( divider );
 			}
 		}
+		else if( divideable instanceof ColumnDividier ){
+			Table table = new Table();
+			Column column = table.getHeadColumn( station.getRoot() );
+			if( column != null ){
+				setDivider( table, column, divideable.getDivider(), divider, station.getSize() );
+			}
+		}
+	}
+	
+	private void setDivider( Table table, Column column, double oldDividier, double newDividier, Dimension size ){
+		PersistentColumn persistent = column.getPersistentColumn();
+		double dividerDelta = oldDividier - newDividier;
+		int deltaPixel;
+		if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+			deltaPixel = (int)(dividerDelta * size.width);
+		}
+		else{
+			deltaPixel = (int)(dividerDelta * size.height);
+		}
+		persistent.size += deltaPixel;
+		table.applyPersistentSizes();
 	}
 	
 	/**
@@ -484,6 +499,9 @@ public class WizardColumnModel {
 					else{
 						node = ((Node)node).getRight();
 					}
+				}
+				else if( node instanceof Root ){
+					node = ((Root)node).getChild();
 				}
 				else{
 					node = null;
