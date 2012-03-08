@@ -104,7 +104,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		private DockController controller;
 		
 		/** the node of the currently selected divider */
-		private Node current;
+		private Divideable current;
 	
 		/** the current location of the divider */
 		private double divider;
@@ -280,7 +280,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		 * @param y the y coordinate
 		 * @return the node containing <code>x, y</code>
 		 */
-		protected Node getDividerNode( int x, int y ){
+		protected Divideable getDividerNode( int x, int y ){
 			 return station.getRoot().getDividerNode( x, y );
 		}
 	
@@ -336,7 +336,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 			if( station.isResizingEnabled() ) {
 				if( pressed && current != null ) {
 					divider = current.getDividerAt( e.getX() + deltaX, e.getY() + deltaY );
-					divider = station.getCurrentSplitLayoutManager().validateDivider( station, divider, current );
+					divider = current.validateDivider( divider );
 					repaint( bounds.x, bounds.y, bounds.width, bounds.height );
 					bounds = current.getDividerBounds( divider, bounds );
 					repaint( bounds.x, bounds.y, bounds.width, bounds.height );
@@ -377,7 +377,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		 * @param node the node whose divider changes
 		 * @param dividier the new divider
 		 */
-		protected void setDivider( Node node, double dividier ){
+		protected void setDivider( Divideable node, double dividier ){
 			node.setDivider( dividier );
 		}
 

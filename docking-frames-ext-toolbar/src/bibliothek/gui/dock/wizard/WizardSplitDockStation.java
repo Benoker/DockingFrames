@@ -3,17 +3,17 @@ package bibliothek.gui.dock.wizard;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
-import javax.swing.border.EmptyBorder;
+import javax.swing.text.GapContent;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
+import bibliothek.gui.dock.station.split.Divideable;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
@@ -63,6 +63,14 @@ public class WizardSplitDockStation extends SplitDockStation{
 		setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
 	}
 
+	/**
+	 * Gets the side to which this station leans.
+	 * @return the side which does not change its position ever
+	 */
+	public Side getSide(){
+		return side;
+	}
+	
 	@Override
 	public Dimension getPreferredSize(){
 		if( layoutManager == null ){
@@ -190,16 +198,9 @@ public class WizardSplitDockStation extends SplitDockStation{
 			return model.getPreferredSize();
 		}
 		
-		public void setDivider( Node node, double divider ){
+		public void setDivider( Divideable node, double divider ){
 			model.setDivider( node, divider );
 			revalidate();
-		}
-		
-		public boolean isDividerMoveable( Node node ){
-			if( node == null ){
-				return false;
-			}
-			return model.isHeaderLevel( node, false );
 		}
 	}
 	
@@ -213,19 +214,31 @@ public class WizardSplitDockStation extends SplitDockStation{
 			public CustomHandler( SplitDockStation station ){
 				super( station );
 			}
-			
+						
 			@Override
-			protected Node getDividerNode( int x, int y ){
-				Node node = super.getDividerNode( x, y );
-				if( layoutManager.isDividerMoveable( node )){
-					return node;
-				}
-				return null;
+			protected void setDivider( Divideable node, double dividier ){
+				layoutManager.setDivider( node, dividier );
 			}
 			
 			@Override
-			protected void setDivider( Node node, double dividier ){
-				layoutManager.setDivider( node, dividier );
+			protected Divideable getDividerNode( int x, int y ){
+				Divideable node = super.getDividerNode( x, y );
+				if( node == null ){
+					int gap = getDividerSize();
+					if( side == Side.RIGHT && x < gap ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+					else if( side == Side.LEFT && x >= getWidth() - gap - 1 ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+					else if( side == Side.TOP && y >= getHeight() - gap - 1 ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+					else if( side == Side.BOTTOM && y <= gap ){
+						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+				}
+				return node;
 			}
 		}
 	}
