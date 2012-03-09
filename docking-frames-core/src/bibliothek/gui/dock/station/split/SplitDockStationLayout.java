@@ -49,12 +49,13 @@ public class SplitDockStationLayout {
      * Creates a new layout
      * @param root the root of the tree, can be <code>null</code>
      * @param fullscreen the id of the element which is in fullscreen-mode
+     * @deprecated please use {@link #SplitDockStationLayout(Entry, int, boolean)} instead
      */
+    @Deprecated
     public SplitDockStationLayout( Entry root, int fullscreen ){
     	this( root, fullscreen, true );
     }
     
-
     /**
      * Creates a new layout
      * @param root the root of the tree, can be <code>null</code>

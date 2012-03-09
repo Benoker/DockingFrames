@@ -83,7 +83,7 @@ public class ColumnDividier implements Divideable{
 
 	@Override
 	public void setDivider( double dividier ){
-		
+		// ignored
 	}
 
 	@Override

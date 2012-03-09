@@ -1,19 +1,27 @@
 package bibliothek.gui.dock.wizard;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
-import javax.swing.text.GapContent;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.Divideable;
+import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
@@ -28,12 +36,12 @@ import bibliothek.gui.dock.themes.DefaultStationPaintValue;
  * <ul>
  * 	<li>The {@link Dockable}s are ordered in columns.</li>
  *  <li>The station does not use up empty space if not needed.</li>
- *  <li>Moving a divider changes the preferred size of the station. The parent of the station should allow the size
- *  of the station to change (e.g. by using a {@link BorderLayout}).</li>
+ *  <li>Moving a divider changes the preferred size of the station.</li>
+ *  <li>This station should be wrapped into a {@link JScrollPane}, it even implements {@link Scrollable} to fully support the {@link JScrollPane}.</li>
  * </ul>
  * @author Benjamin Sigg
  */
-public class WizardSplitDockStation extends SplitDockStation{
+public class WizardSplitDockStation extends SplitDockStation implements Scrollable{
 	/** the side where dockables are pushed to */
 	public static enum Side{
 		TOP, LEFT, RIGHT, BOTTOM;
@@ -61,14 +69,122 @@ public class WizardSplitDockStation extends SplitDockStation{
 		setSplitLayoutManager( layoutManager );
 		setDividerStrategy( new WizardDividerStrategy() );
 		setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
+		
+		addDockStationListener( new DockStationListener(){
+			@Override
+			public void dockablesRepositioned( DockStation station, Dockable[] dockables ){
+				revalidateLater();
+			}
+			
+			@Override
+			public void dockableShowingChanged( DockStation station, Dockable dockable, boolean showing ){
+				revalidateLater();
+			}
+			
+			@Override
+			public void dockableSelected( DockStation station, Dockable oldSelection, Dockable newSelection ){
+				// ignore
+			}
+			
+			@Override
+			public void dockableRemoving( DockStation station, Dockable dockable ){
+				// ignore
+			}
+			
+			@Override
+			public void dockableRemoved( DockStation station, Dockable dockable ){
+				revalidateLater();
+			}
+			
+			@Override
+			public void dockableAdding( DockStation station, Dockable dockable ){
+				// ignore
+			}
+			
+			@Override
+			public void dockableAdded( DockStation station, Dockable dockable ){
+				revalidateLater();
+			}
+		} );
 	}
 
+	private void revalidateLater(){
+		EventQueue.invokeLater( new Runnable(){
+			@Override
+			public void run(){
+				if( getParent() instanceof JViewport ){
+					Container parent = getParent();
+					while( parent != null && !(parent instanceof JScrollPane)){
+						parent = parent.getParent();
+					}
+					if( parent != null ){
+						parent = parent.getParent();
+						if( parent != null && parent instanceof JComponent ){
+							((JComponent)parent).revalidate();
+						}
+					}
+				}
+			}
+		} );
+	}
+	
+	@Override
+	public String getFactoryID(){
+		return WizardSplitDockStationFactory.ID;
+	}
+	
 	/**
 	 * Gets the side to which this station leans.
 	 * @return the side which does not change its position ever
 	 */
 	public Side getSide(){
 		return side;
+	}
+	
+	@Override
+	public Dimension getMinimumSize(){
+		return getPreferredSize();
+	}
+	
+	@Override
+	public int getScrollableUnitIncrement( Rectangle visibleRect, int orientation, int direction ){
+		return 10;
+	}
+	
+	@Override
+	public int getScrollableBlockIncrement( Rectangle visibleRect, int orientation, int direction ){
+		return 20;
+	}
+	
+	@Override
+	public Dimension getPreferredScrollableViewportSize(){
+		return getPreferredSize();
+	}
+	
+	@Override
+	public boolean getScrollableTracksViewportWidth(){
+		if( side == Side.LEFT || side == Side.RIGHT ){
+			return true;
+		}
+		if( getParent() instanceof JViewport ){
+			if( getParent().getWidth() > getPreferredSize().width ){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean getScrollableTracksViewportHeight(){
+		if( side == Side.TOP || side == Side.BOTTOM ){
+			return true;
+		}
+		if( getParent() instanceof JViewport ){
+			if( getParent().getHeight() > getPreferredSize().height ){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override
@@ -88,7 +204,8 @@ public class WizardSplitDockStation extends SplitDockStation{
 		if( putInfo != null ) {
 			DefaultStationPaintValue paint = getPaint();
 			if( putInfo.getNode() == null ) {
-				Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
+				Insets insets = getInsets();
+				Rectangle bounds = new Rectangle( insets.left, insets.top, getWidth()-insets.left-insets.right, getHeight()-insets.top-insets.bottom );
 				paint.drawInsertion(g, bounds, bounds);
 			}
 			else {
@@ -134,6 +251,41 @@ public class WizardSplitDockStation extends SplitDockStation{
 		getDividerStrategy().paint( this, g );
 	}
 	
+	private Leaf resizeableLeafAt( int x, int y ){
+		Leaf[] leafs = layoutManager.getLastLeafOfColumns();
+		int gap = getDividerSize();
+		
+		if( side == Side.RIGHT || side == Side.LEFT ){
+			for( Leaf leaf : leafs ){
+				Rectangle bounds = leaf.getBounds();
+				if( bounds.x <= x && bounds.x + bounds.width >= x ){
+					if( bounds.y + bounds.height <= y && bounds.y + bounds.height + gap >= y ){
+						return leaf;
+					}
+				}
+			}
+		}
+		else if( side == Side.BOTTOM || side == Side.TOP ){
+			for( Leaf leaf : leafs ){
+				Rectangle bounds = leaf.getBounds();
+				if( bounds.y <= y && bounds.y + bounds.height >= y ){
+					if( bounds.x + bounds.width <= x && bounds.x + bounds.width + gap >= x ){
+						return leaf;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public WizardColumnModel.PersistentColumn[] getPersistentColumns(){
+		return layoutManager.model.getPersistentColumns();
+	}
+	
+	public void setPersistentColumns( Dockable[][] columnsAndCells, int[][] cellSizes, int[] columnSizes ){
+		layoutManager.model.setPersistentColumns( columnsAndCells, cellSizes, columnSizes );
+	}
+	
 	/**
 	 * This {@link SplitLayoutManager} adds restrictions on how a drag and drop operation
 	 * can be performed, and what the boundaries of the children are:
@@ -154,6 +306,10 @@ public class WizardSplitDockStation extends SplitDockStation{
 		public PutInfo validatePutInfo( SplitDockStation station, PutInfo putInfo ){
 			putInfo = ensureDropLocation( putInfo );
 			return super.validatePutInfo( station, putInfo );
+		}
+		
+		public Leaf[] getLastLeafOfColumns(){
+			return model.getLastLeafOfColumns();
 		}
 
 		/**
@@ -236,6 +392,10 @@ public class WizardSplitDockStation extends SplitDockStation{
 					}
 					else if( side == Side.BOTTOM && y <= gap ){
 						return new ColumnDividier( WizardSplitDockStation.this );
+					}
+					Leaf leaf = resizeableLeafAt( x, y );
+					if( leaf != null ){
+						return new CellDivider( WizardSplitDockStation.this, leaf );
 					}
 				}
 				return node;

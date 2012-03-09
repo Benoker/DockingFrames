@@ -172,7 +172,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     
     public SplitDockStationLayout getPerspectiveLayout( SplitDockPerspective element, Map<PerspectiveDockable, Integer> children ){
     	if( children == null ){
-    		return new SplitDockStationLayout( null, -1, element.hasFullscreenAction() );
+    		return createLayout( null, -1, element.hasFullscreenAction() );
     	}
     	Entry root = convert( element.getRoot(), children );
          

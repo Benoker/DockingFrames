@@ -6,14 +6,19 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.wizard.WizardSplitDockStation;
 import bibliothek.gui.dock.wizard.WizardSplitDockStation.Side;
+import bibliothek.util.Path;
 
 public class WizardSplitDockStationTest {
 	public static void main( String[] args ){
@@ -25,13 +30,48 @@ public class WizardSplitDockStationTest {
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
 
+		controller.getProperties().set( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new PlaceholderStrategy(){
+			@Override
+			public void uninstall( DockStation station ){
+				// ignore
+			}
+			
+			@Override
+			public void removeListener( PlaceholderStrategyListener listener ){
+				// ignore				
+			}
+			
+			@Override
+			public boolean isValidPlaceholder( Path placeholder ){
+				return true;
+			}
+			
+			@Override
+			public void install( DockStation station ){
+				// ignore
+			}
+			
+			@Override
+			public Path getPlaceholderFor( Dockable dockable ){
+				if( dockable instanceof DefaultDockable ){
+					return new Path( "test", dockable.getTitleText() );
+				}
+				return null;
+			}
+			
+			@Override
+			public void addListener( PlaceholderStrategyListener listener ){
+				// ignore	
+			}
+		} );
+		
 		WizardSplitDockStation station = new WizardSplitDockStation( Side.RIGHT );
-		WizardSplitDockStation stationLeft = new WizardSplitDockStation( Side.LEFT );
+		WizardSplitDockStation stationBottom = new WizardSplitDockStation( Side.BOTTOM );
 		
 		controller.add( station );
-		controller.add( stationLeft );
-		borderPanel.add( station.getComponent(), BorderLayout.EAST);
-		borderPanel.add( stationLeft.getComponent(), BorderLayout.SOUTH);
+		controller.add( stationBottom );
+		borderPanel.add( new JScrollPane( station.getComponent() ), BorderLayout.EAST);
+		borderPanel.add( stationBottom.getComponent(), BorderLayout.SOUTH);
 
 		ScreenDockStation screen = new ScreenDockStation( frame );
 		controller.add( screen );
@@ -55,6 +95,7 @@ public class WizardSplitDockStationTest {
 		dockable.setLayout( new BorderLayout() );
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, height));
+		panel.setMinimumSize( new Dimension(width, height));
 		dockable.add( panel );
 		return dockable;
 	}

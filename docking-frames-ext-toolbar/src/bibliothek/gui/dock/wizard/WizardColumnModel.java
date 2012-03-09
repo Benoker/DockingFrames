@@ -134,8 +134,18 @@ public class WizardColumnModel {
 		PersistentColumn[] columns = table.getPersistentColumns();
 		
 		int size = 0;
+		int cellMax = 20;
 		for( PersistentColumn column : columns ){
 			size += column.size;
+			
+			int cellSize = 0;
+			int count = 0;
+			for( PersistentCell cell : column.cells.values() ){
+				cellSize += cell.size;
+				count++;
+			}
+			cellSize += (count-1) * gap();
+			cellMax = Math.max( cellMax, cellSize );
 		}
 		size += (columns.length-1) * gap();
 		
@@ -144,10 +154,10 @@ public class WizardColumnModel {
 		Dimension result;
 		
 		if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
-			result = new Dimension( size, 10 );
+			result = new Dimension( size, cellMax );
 		}
 		else{
-			result = new Dimension( 10, size );
+			result = new Dimension( cellMax, size );
 		}
 		
 		Insets insets = station.getInsets();
@@ -156,6 +166,48 @@ public class WizardColumnModel {
 			result.height += insets.top + insets.bottom;
 		}
 		return result;
+	}
+	
+	public Leaf[] getLastLeafOfColumns(){
+		List<Leaf> result = new ArrayList<Leaf>();
+		Table table = new Table();
+		for( Column column : table.columns.values() ){
+			Leaf last = column.getLastLeafOfColumn();
+			if( last != null ){
+				result.add( last );
+			}
+		}
+		return result.toArray( new Leaf[ result.size() ] );
+	}
+	
+	public PersistentColumn[] getPersistentColumns(){
+		Table table = new Table();
+		return table.getPersistentColumns();
+	}
+	
+	public void setPersistentColumns( Dockable[][] columnsAndCells, int[][] cellSizes, int[] columnSizes ){
+		Table table = new Table();
+		PersistentColumn[] persistentColumns = table.getPersistentColumns();
+		
+		for( int i = 0; i < columnsAndCells.length; i++ ){
+			loop:for( int j = 0; j < columnsAndCells[i].length; j++ ){
+				Dockable key = columnsAndCells[i][j];
+				if( key != null ){
+					for( PersistentColumn column : persistentColumns ){
+						PersistentCell cell = column.cells.get( key );
+						if( cell != null ){
+							
+							cell.size = cellSizes[i][j];
+							column.size = columnSizes[i];
+							
+							continue loop;
+						}
+					}
+				}
+			}
+		}
+		
+		table.applyPersistentSizes();
 	}
 	
 	/**
@@ -201,6 +253,16 @@ public class WizardColumnModel {
 			Column column = table.getHeadColumn( station.getRoot() );
 			if( column != null ){
 				setDivider( table, column, divideable.getDivider(), divider, station.getSize() );
+			}
+		}
+		else if( divideable instanceof CellDivider ){
+			Table table = new Table();
+			PersistentCell cell = table.getHeadCell( ((CellDivider)divideable).getLeaf() );
+			if( cell != null ){
+				double dividierDelta = divider - divideable.getDivider();
+				int deltaPixel = (int)(dividierDelta * cell.size);
+				cell.size += deltaPixel;
+				table.applyPersistentSizes();
 			}
 		}
 	}
@@ -267,7 +329,7 @@ public class WizardColumnModel {
 		return newColumns;
 	}
 	
-	private class PersistentColumn{
+	public class PersistentColumn{
 		private int size;
 		private int preferred;
 		private Map<Dockable, PersistentCell> cells;
@@ -280,9 +342,17 @@ public class WizardColumnModel {
 			}
 			this.cells = cells;
 		}
+		
+		public int getSize(){
+			return size;
+		}
+		
+		public Map<Dockable, PersistentCell> getCells(){
+			return cells;
+		}
 	}
 	
-	private class PersistentCell{
+	public class PersistentCell{
 		private int size;
 		private int preferred;
 		
@@ -292,6 +362,10 @@ public class WizardColumnModel {
 			if( size <= 0 ){
 				this.size = preferred;
 			}
+		}
+		
+		public int getSize(){
+			return size;
 		}
 	}
 
@@ -361,16 +435,18 @@ public class WizardColumnModel {
 		}
 
 		public PersistentColumn[] getPersistentColumns(){
-			PersistentColumn[] result = new PersistentColumn[ columns.size() ];
-			int index = 0;
+			List<PersistentColumn> result = new ArrayList<PersistentColumn>( columns.size() );
 			for( Column column : columns.values() ){
-				result[ index++ ] = column.toPersistentColumn();
+				PersistentColumn next = column.toPersistentColumn();
+				if( next != null ){
+					result.add( next );
+				}
 			}
 			if( persistentColumns == null ){
-				persistentColumns = result;
+				persistentColumns = result.toArray( new PersistentColumn[ result.size() ] );
 			}
 			else {
-				persistentColumns = adapt( persistentColumns, result );
+				persistentColumns = adapt( persistentColumns, result.toArray( new PersistentColumn[ result.size() ] ) );
 			}
 			return persistentColumns;
 		}
@@ -467,7 +543,11 @@ public class WizardColumnModel {
 			Column column = columns.get( node );
 			if( column != null ){
 				column.applyPersistentSizes();
-				return column.getPersistentColumn().size;
+				PersistentColumn persistent = column.getPersistentColumn();
+				if( persistent == null ){
+					return 0;
+				}
+				return persistent.size;
 			}
 			
 			if( node instanceof Root ){
@@ -598,6 +678,11 @@ public class WizardColumnModel {
 		public PersistentColumn toPersistentColumn(){
 			int size;
 			int preferred;
+			Map<Dockable, PersistentCell> leafs = getLeafs();
+			if( leafs.size() == 0 ){
+				return null;
+			}
+			
 			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
 				size = root.getSize().width;
 				preferred = getPreferredSize().width;
@@ -606,7 +691,7 @@ public class WizardColumnModel {
 				size = root.getSize().height;
 				preferred = getPreferredSize().height;
 			}
-			return new PersistentColumn( size, preferred, getLeafs() );
+			return new PersistentColumn( size, preferred, leafs );
 		}
 		
 		public PersistentColumn getPersistentColumn(){
@@ -747,6 +832,25 @@ public class WizardColumnModel {
 			return Math.max( minDivider, divider );
 		}
 
+		public Leaf getLastLeafOfColumn(){
+			SplitNode node = root;
+			while( node != null ){
+				if( node instanceof Root ){
+					node = ((Root)node).getChild();
+				}
+				else if( node instanceof Node ){
+					node = ((Node)node).getRight();
+				}
+				else if( node instanceof Leaf ){
+					return (Leaf)node;
+				}
+				else {
+					node = null;
+				}
+			}
+			return null;
+		}
+		
 		public Dimension getPreferredSize( SplitNode node ){
 			return cells.get( node ).getPreferredSize();
 		}
