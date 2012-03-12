@@ -64,13 +64,35 @@ public class WizardColumnModel {
 
 	/**
 	 * Calculates the valid value of <code>divider</code> for <code>node</code>.
-	 * @param divider the location of the divider, value between 0 and 1
+	 * @param divider the location of the divider
 	 * @param node the node whose divider is changed
 	 * @return the valid divider
 	 */
 	public double validateDivider( double divider, Node node ){
 		Table table = new Table();
 		return table.validateDivider( divider, node );
+	}
+	
+	/**
+	 * Calculates the valid value of <code>divider</code> for <code>leaf</code>.
+	 * @param divider the location of the divider
+	 * @param node the node whose divider is changed
+	 * @return the valid divider
+	 */
+	public double validateDivider( double divider, Leaf leaf ){
+		Table table = new Table();
+		return table.validateDivider( divider, leaf );
+	}
+
+	/**
+	 * Calculates the valid value of <code>divider</code> for the outermost column
+	 * @param divider the location of the divider
+	 * @param node the node whose divider is changed
+	 * @return the valid divider
+	 */
+	public double validateColumnDivider( double divider ){
+		Table table = new Table();
+		return table.validateColumnDivider( divider );
 	}
 
 	private int gap(){
@@ -485,6 +507,51 @@ public class WizardColumnModel {
 				return column.validateDivider( divider, node );
 			}
 		}
+		
+		public double validateDivider( double divider, Leaf leaf ){
+			Column column = getColumn( leaf );
+			if( column != null ) {
+				return column.validateDivider( divider, leaf );
+			}
+			return divider;
+		}
+		
+		public double validateColumnDivider( double divider ){
+			Column outer = getOutermostColumn();
+			if( outer == null ){
+				return divider;
+			}
+			int min = 0;
+			int gap = gap();
+			
+			int available;
+			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+				for( Column column : columns.values() ){
+					min += column.root.getSize().width + gap;
+				}
+				min -= outer.root.getSize().width + gap;
+				min += outer.getMinimumSize().width;
+				available = station.getWidth() - gap;
+			}
+			else{
+				for( Column column : columns.values() ){
+					min += column.root.getSize().height + gap;
+				}
+				
+				min -= outer.root.getSize().height + gap;
+				min += outer.getMinimumSize().height;
+				available = station.getHeight() - gap;
+			}
+			
+			if( side == Side.RIGHT || side == Side.BOTTOM ){
+				double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
+				return Math.min( maxDividier, divider );
+			}
+			else{
+				double minDividier = (min + gap()/2) / (double)(available + gap());
+				return Math.max( minDividier, divider );
+			}
+		}
 
 		private double validateHeadNode( double divider, Node node ){
 			if( side == Side.RIGHT || side == Side.BOTTOM ){
@@ -500,46 +567,78 @@ public class WizardColumnModel {
 				}
 			}
 			
-			Column[] left = getColumns( node.getLeft() );
-			Column[] right = getColumns( node.getRight() );
-
-			int needLeft = 0;
-			int needRight = 0;
-
-			int available;
+			Column head;
 			
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ) {
-				for( Column c : left ) {
-					needLeft += c.getMinimumSize().width;
-				}
-				for( Column c : right ) {
-					needRight += c.getMinimumSize().width;
-				}
-				available = node.getSize().width;
-			}
-			else {
-				for( Column c : left ) {
-					needLeft += c.getMinimumSize().height;
-				}
-				for( Column c : right ) {
-					needRight += c.getMinimumSize().height;
-				}
-				available = node.getSize().height;
-			}
-
-			needLeft += (left.length - 1) * gap();
-			needRight += (right.length - 1) * gap();
-
-			int required = needLeft + gap() + needRight;
-			if( available <= required ){
-				return (needLeft + gap() / 2) / (double)required;
+			if( side == Side.RIGHT || side == Side.BOTTOM ){
+				head = getHeadColumn( node.getRight() );
 			}
 			else{
-				double minDivider = (needLeft + gap() / 2) / (double)available;
-				double maxDivider = (available - needRight - gap()/2 ) / (double)available;
-				
-				return Math.min( maxDivider, Math.max( minDivider, divider ) );
+				head = getHeadColumn( node.getLeft() );
 			}
+			if( head == null ){
+				return divider;
+			}
+			
+			int min;
+			int available;
+			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+				min = head.getMinimumSize().width + gap();
+				available = node.getSize().width;
+			}
+			else{
+				min = head.getMinimumSize().height + gap();
+				available = node.getSize().height;
+			}
+			
+			if( side == Side.RIGHT || side == Side.BOTTOM ){
+				double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
+				return Math.min( maxDividier, divider );
+			}
+			else{
+				double minDividier = (min + gap()/2) / (double)(available + gap());
+				return Math.max( minDividier, divider );	
+			}
+//			
+//			Column[] left = getColumns( node.getLeft() );
+//			Column[] right = getColumns( node.getRight() );
+//
+//			int needLeft = 0;
+//			int needRight = 0;
+//
+//			int available;
+//			
+//			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ) {
+//				for( Column c : left ) {
+//					needLeft += c.getMinimumSize().width;
+//				}
+//				for( Column c : right ) {
+//					needRight += c.getMinimumSize().width;
+//				}
+//				available = node.getSize().width;
+//			}
+//			else {
+//				for( Column c : left ) {
+//					needLeft += c.getMinimumSize().height;
+//				}
+//				for( Column c : right ) {
+//					needRight += c.getMinimumSize().height;
+//				}
+//				available = node.getSize().height;
+//			}
+//
+//			needLeft += (left.length - 1) * gap();
+//			needRight += (right.length - 1) * gap();
+//
+//			int required = needLeft + gap() + needRight;
+//			if( available <= required ){
+//				return (needLeft + gap() / 2) / (double)required;
+//			}
+//			else{
+//				double minDivider = (needLeft + gap() / 2) / (double)available;
+//				double maxDivider = (available - needRight - gap()/2 ) / (double)available;
+//				
+//				return Math.min( maxDivider, Math.max( minDivider, divider ) );
+//			}
 		}
 		
 		public void applyPersistentSizes(){
@@ -571,6 +670,10 @@ public class WizardColumnModel {
 			else{
 				return 0;
 			}
+		}
+		
+		public Column getOutermostColumn(){
+			return getHeadColumn( station.getRoot() );
 		}
 		
 		public Column getHeadColumn( SplitNode node ){
@@ -805,38 +908,57 @@ public class WizardColumnModel {
 				return divider;
 			}
 			
-			Cell[] left = getCells( node.getLeft() );
-			Cell[] right = getCells( node.getRight() );
+			Cell head = getRightmostCell( node.getLeft() );
+			if( head == null ){
+				return divider;
+			}
 			
-			int needLeft = 0;
-			int needRight = 0;
+			int min;
 			int available;
-			
 			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
-				for( Cell cell : left ){
-					needLeft += cell.getMinimumSize().height;
-				}
-				for( Cell cell : right ){
-					needRight += cell.getMinimumSize().height;
-				}
-				available = node.getSize().height ;
+				min = node.getLeft().getSize().height - head.node.getSize().height + head.getMinimumSize().height;
+				available = node.getSize().height;
 			}
 			else{
-				for( Cell cell : left ){
-					needLeft += cell.getMinimumSize().width;
-				}
-				for( Cell cell : right ){
-					needRight += cell.getMinimumSize().width;
-				}
+				min = node.getLeft().getSize().width - head.node.getSize().width + head.getMinimumSize().width;
 				available = node.getSize().width;
 			}
 			
-			int gap = gap();
-			needLeft += (left.length-1) * gap;
-			needRight += (right.length-1) * gap;
+			double minDividier = (min + gap()/2) / (double)(available + gap());
+			return Math.max( minDividier, divider );
+		}
+		
+		public double validateDivider( double divider, Leaf leaf ){
+			Cell head = getRightmostCell( leaf );
+			if( head == null ){
+				return divider;
+			}
 			
-			double minDivider = (needLeft + gap/2) / (double)(available);
-			return Math.max( minDivider, divider );
+			int min;
+			int available;
+			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+				min = head.getMinimumSize().height + gap();
+				available = leaf.getSize().height;
+			}
+			else{
+				min = head.getMinimumSize().width + gap();
+				available = leaf.getSize().width;
+			}
+			
+			double minDividier = (min + gap()/2) / (double)(available + gap());
+			return Math.max( minDividier, divider );
+		}
+		
+		public Cell getRightmostCell( SplitNode node ){
+			while( node != null ){
+				if( node instanceof Node ){
+					node = ((Node)node).getRight();
+				}
+				else{
+					return cells.get( node );
+				}
+			}
+			return null;
 		}
 
 		public Leaf getLastLeafOfColumn(){
@@ -892,26 +1014,6 @@ public class WizardColumnModel {
 
 		public int getGaps(){
 			return getGaps( root );
-		}
-
-		public Cell[] getCells( SplitNode node ){
-			List<Cell> result = new ArrayList<Cell>();
-			searchCells( node, result );
-			return result.toArray( new Cell[result.size()] );
-		}
-
-		private void searchCells( SplitNode node, List<Cell> result ){
-			if( node != null ){
-				Cell cell = cells.get( node );
-				if( cell != null ){
-					result.add( cell );
-				}
-				else{
-					for( int i = 0, n = node.getMaxChildrenCount(); i<n; i++ ){
-						searchCells( node.getChild( i ), result );
-					}
-				}
-			}
 		}
 	}
 

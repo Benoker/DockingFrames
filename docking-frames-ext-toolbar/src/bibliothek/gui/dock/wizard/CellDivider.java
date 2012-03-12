@@ -95,7 +95,7 @@ public class CellDivider implements Divideable{
 
 	@Override
 	public double validateDivider( double divider ){
-		return divider;
+		return station.getWizardSplitLayoutManager().validateDivider( divider, leaf );
 	}
 
 }

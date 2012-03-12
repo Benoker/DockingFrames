@@ -26,9 +26,9 @@ import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
-import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.Root;
+import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -152,6 +152,10 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	@Override
 	public String getFactoryID(){
 		return WizardSplitDockStationFactory.ID;
+	}
+	
+	public WizardLayoutManager getWizardSplitLayoutManager(){
+		return layoutManager;
 	}
 	
 	/**
@@ -377,7 +381,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	 * </ul> 
 	 * @author Benjamin Sigg
 	 */
-	private class WizardLayoutManager extends DefaultSplitLayoutManager {
+	public class WizardLayoutManager extends DefaultSplitLayoutManager {
 		private WizardColumnModel model;
 		
 		public WizardLayoutManager(){
@@ -430,6 +434,14 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		@Override
 		public double validateDivider( SplitDockStation station, double divider, Node node ){
 			return model.validateDivider( divider, node );
+		}
+		
+		public double validateDivider( double divider, Leaf leaf ){
+			return model.validateDivider( divider, leaf );
+		}
+		
+		public double validateColumnDivider( double divider ){
+			return model.validateColumnDivider( divider );
 		}
 		
 		public Dimension getPreferredSize(){

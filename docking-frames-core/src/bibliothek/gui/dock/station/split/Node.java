@@ -408,7 +408,6 @@ public class Node extends VisibleSplitNode implements Divideable{
         boolean rightVisible = right == null || right.isVisible();
         
         if( leftVisible && rightVisible ){
-        	divider = getAccess().validateDivider( divider, this );
         	int dividerSize = getAccess().getOwner().getDividerSize();
 
         	if( orientation == Orientation.HORIZONTAL ){
@@ -417,8 +416,8 @@ public class Node extends VisibleSplitNode implements Divideable{
         		double dividerLocation = width * divider;
 
         		dividerBounds.setBounds(
-        				(int)(( x+dividerLocation-dividerWidth/2 )*factorW + 0.5 ),
-        				(int)( y*factorH + 0.5 ),
+        				(int)(( x+dividerLocation-dividerWidth/2 )*factorW ),
+        				(int)( y*factorH ),
         				dividerSize,
         				(int)( height*factorH + 0.5 ));
         	}
@@ -427,8 +426,8 @@ public class Node extends VisibleSplitNode implements Divideable{
         		double dividerLocation = height * divider;
 
         		dividerBounds.setBounds(
-        				(int)(x*factorW + 0.5),
-        				(int)((y+dividerLocation-dividerHeight/2)*factorH + 0.5),
+        				(int)(x*factorW),
+        				(int)((y+dividerLocation-dividerHeight/2)*factorH ),
         				(int)(width*factorW + 0.5),
         				dividerSize );
         	}
