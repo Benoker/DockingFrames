@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
@@ -23,7 +24,9 @@ import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.Divideable;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
+import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
+import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
@@ -58,11 +61,29 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 					throw new IllegalStateException( "unknown: " + this );
 			}
 		}
+		
+		public Orientation getColumnOrientation(){
+			switch( this ){
+				case LEFT:
+				case RIGHT:
+					return Orientation.VERTICAL;
+				case TOP:
+				case BOTTOM:
+					return Orientation.HORIZONTAL;
+				default:
+					throw new IllegalStateException( "unknown: " + this );
+			}			
+		}
 	}
 	
 	private WizardLayoutManager layoutManager;
 	private Side side;
 	
+	/**
+	 * Creates a new station.
+	 * @param side the side at which this station is presented, e.g. if this station is at the left side
+	 * of a {@link JFrame}, the parameter should be {@link Side#LEFT}
+	 */
 	public WizardSplitDockStation( Side side ){
 		this.side = side;
 		layoutManager = new WizardLayoutManager();
@@ -284,6 +305,67 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	
 	public void setPersistentColumns( Dockable[][] columnsAndCells, int[][] cellSizes, int[] columnSizes ){
 		layoutManager.model.setPersistentColumns( columnsAndCells, cellSizes, columnSizes );
+	}
+	
+	/**
+	 * Ensures that the dropped {@link Dockable} does not come to rest at a location that would destroy the columns.
+	 */
+	@Override
+	public boolean drop( Dockable dockable, SplitDockPlaceholderProperty property ){
+		SplitNode node = getRoot().getPlaceholderNode( property.getPlaceholder() );
+		if( node != null && !(node instanceof Leaf) && !(node instanceof Root)){
+			if( node instanceof Placeholder || ((Node)node).getOrientation() == side.getHeaderOrientation() ){
+				pushIntoHeader( node );
+			}
+		}
+		return super.drop( dockable, property );
+	}
+	
+	private void pushIntoHeader( SplitNode node ){
+		while( true ){
+			SplitNode parent = node.getParent();
+			if( parent == null || layoutManager.model.isHeaderLevel( parent, false )){
+				return;
+			}
+			if( parent instanceof Node ){
+				Node n = (Node)parent;
+				SplitNode superParent = parent.getParent();
+				if( superParent instanceof Root ){
+					n.setOrientation( side.getHeaderOrientation() );
+					return;
+				}
+				else if( superParent instanceof Node ){
+					Node s = (Node)superParent;
+					if( n.getLeft() == node ){
+						if( s.getLeft() == n ){
+							s.setLeft( node );
+							SplitNode old = s.getRight();
+							s.setRight( n );
+							n.setLeft( old );
+						}
+						else{
+							n.setLeft( s.getLeft() );
+							s.setLeft( node );
+						}
+					}
+					else{
+						if( s.getRight() == n ){
+							s.setRight( node );
+							SplitNode old = s.getLeft();
+							s.setLeft( n );
+							n.setRight( old );
+						}
+						else{
+							n.setRight( s.getRight() );
+							s.setRight( node );
+						}
+					}
+					n.setOrientation( side.getColumnOrientation() );
+					s.setOrientation( side.getHeaderOrientation() );
+				}
+				node = node.getParent();
+			}
+		}
 	}
 	
 	/**

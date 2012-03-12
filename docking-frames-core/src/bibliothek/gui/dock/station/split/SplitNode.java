@@ -676,6 +676,28 @@ public abstract class SplitNode{
     public abstract boolean insert( SplitDockPlaceholderProperty property, Dockable dockable );
     
     /**
+     * Searches and returns the first {@link SplitNode} which contains <code>placeholder</code>.
+     * @param placeholder the placeholder to search
+     * @return the node containing <code>placeholder</code> or <code>null</code>
+     */
+    public SplitNode getPlaceholderNode( Path placeholder ){
+    	if( hasPlaceholder( placeholder )){
+    		return this;
+    	}
+    	
+    	for( int i = 0, n = getMaxChildrenCount(); i<n; i++ ){
+    		SplitNode child = getChild( i );
+    		if( child != null ){
+    			SplitNode result = child.getPlaceholderNode( placeholder );
+    			if( result != null ){
+    				return result;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
      * Writes the contents of this node into a new tree create by <code>factory</code>.
      * @param <N> the type of element the <code>factory</code> will create
      * @param factory the factory transforming the elements of the tree into a

@@ -92,7 +92,14 @@ public class WizardColumnModel {
 			return true;
 		}
 		else if( node instanceof Node ) {
-			if( ((Node) node).getOrientation() == side.getHeaderOrientation() ) {
+			Node n = (Node)node;
+			if( n.getLeft() == null || n.getRight() == null ){
+				return false;
+			}
+			else if( !n.getLeft().isVisible() || !n.getRight().isVisible() ){
+				return isHeaderLevel( node.getParent(), recursive );
+			}
+			else if( n.getOrientation() == side.getHeaderOrientation() ) {
 				return true;
 			}
 			else if( recursive ) {
@@ -377,7 +384,7 @@ public class WizardColumnModel {
 				}
 				else if( node instanceof Node ) {
 					Node n = (Node) node;
-					if( n.getLeft().isVisible() && n.getRight().isVisible() ) {
+					if( n.getLeft() != null && n.getLeft().isVisible() && n.getRight() != null && n.getRight().isVisible() ) {
 						if( n.getOrientation() == Orientation.HORIZONTAL ) {
 							double dividerWidth = factorW > 0 ? Math.max( 0, gap() / factorW ) : 0.0;
 							double dividerLocation = width * n.getDivider();
@@ -852,11 +859,19 @@ public class WizardColumnModel {
 		}
 		
 		public Dimension getPreferredSize( SplitNode node ){
-			return cells.get( node ).getPreferredSize();
+			Cell cell = cells.get( node );
+			if( cell == null ){
+				return null;
+			}
+			return cell.getPreferredSize();
 		}
 		
 		public Dimension getMinimumSize( SplitNode node ){
-			return cells.get( node ).getMinimumSize();
+			Cell cell = cells.get( node );
+			if( cell == null ){
+				return null;
+			}
+			return cell.getMinimumSize();
 		}
 
 		public Dimension getPreferredSize(){
@@ -868,7 +883,11 @@ public class WizardColumnModel {
 		}
 
 		public int getGaps( SplitNode node ){
-			return cells.get( node ).getGaps();
+			Cell cell = cells.get( node );
+			if( cell == null ){
+				return 0;
+			}
+			return cell.getGaps();
 		}
 
 		public int getGaps(){
