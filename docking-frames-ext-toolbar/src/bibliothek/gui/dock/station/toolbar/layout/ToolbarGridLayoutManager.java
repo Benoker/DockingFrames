@@ -25,8 +25,7 @@ import bibliothek.gui.dock.station.support.PlaceholderListItem;
  * 
  * @author Benjamin Sigg
  */
-public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Dockable>>
-		implements LayoutManager2{
+public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Dockable>> implements LayoutManager2 {
 	/** the list defining the layout of the components */
 	private final DockablePlaceholderToolbarGrid<P> grid;
 
@@ -36,19 +35,19 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	/** the {@link Container} which is using this {@link LayoutManager} */
 	private Container parent;
 
-	private enum Size{
+	private enum Size {
 		MAXIMUM, MINIMUM, PREFERRED;
 
 		public Dimension get( Component component ){
-			switch (this) {
-			case MAXIMUM:
-				return component.getMaximumSize();
-			case MINIMUM:
-				return component.getMinimumSize();
-			case PREFERRED:
-				return component.getPreferredSize();
-			default:
-				throw new IllegalStateException();
+			switch( this ){
+				case MAXIMUM:
+					return component.getMaximumSize();
+				case MINIMUM:
+					return component.getMinimumSize();
+				case PREFERRED:
+					return component.getPreferredSize();
+				default:
+					throw new IllegalStateException();
 			}
 		}
 	}
@@ -64,16 +63,15 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 * @param grid
 	 *            the list of items to lay out, must not be <code>null</code>
 	 */
-	public ToolbarGridLayoutManager( Container parent, Orientation orientation,
-			DockablePlaceholderToolbarGrid<P> grid ){
-		if (orientation == null){
-			throw new IllegalArgumentException("orientation must not be null");
+	public ToolbarGridLayoutManager( Container parent, Orientation orientation, DockablePlaceholderToolbarGrid<P> grid ){
+		if( orientation == null ) {
+			throw new IllegalArgumentException( "orientation must not be null" );
 		}
-		if (grid == null){
-			throw new IllegalArgumentException("grid must not be null");
+		if( grid == null ) {
+			throw new IllegalArgumentException( "grid must not be null" );
 		}
-		if (parent == null){
-			throw new IllegalArgumentException("parent must not be null");
+		if( parent == null ) {
+			throw new IllegalArgumentException( "parent must not be null" );
 		}
 
 		this.orientation = orientation;
@@ -100,16 +98,14 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 */
 	@SuppressWarnings("unchecked")
 	protected Wrapper[][] layout(){
-		final Wrapper[][] components = new ToolbarGridLayoutManager.Wrapper[grid
-				.getColumnCount()][];
-		for (int i = 0; i < components.length; i++){
+		final Wrapper[][] components = new ToolbarGridLayoutManager.Wrapper[grid.getColumnCount()][];
+		for( int i = 0; i < components.length; i++ ) {
 			final List<Wrapper> list = new ArrayList<Wrapper>();
-			final Iterator<P> iter = grid.getColumnContent(i);
-			while (iter.hasNext()){
-				list.add(new Wrapper(toComponent(iter.next())));
+			final Iterator<P> iter = grid.getColumnContent( i );
+			while( iter.hasNext() ) {
+				list.add( new Wrapper( toComponent( iter.next() ) ) );
 			}
-			components[i] = list
-					.toArray(new ToolbarGridLayoutManager.Wrapper[list.size()]);
+			components[i] = list.toArray( new ToolbarGridLayoutManager.Wrapper[list.size()] );
 		}
 		return components;
 	}
@@ -131,41 +127,41 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 	@Override
 	public Dimension maximumLayoutSize( Container parent ){
-		return layoutSize(parent, layout(), Size.MAXIMUM);
+		return layoutSize( parent, layout(), Size.MAXIMUM );
 	}
 
 	@Override
 	public Dimension preferredLayoutSize( Container parent ){
-		return layoutSize(parent, layout(), Size.PREFERRED);
+		return layoutSize( parent, layout(), Size.PREFERRED );
 	}
 
 	@Override
 	public Dimension minimumLayoutSize( Container parent ){
-		return layoutSize(parent, layout(), Size.MINIMUM);
+		return layoutSize( parent, layout(), Size.MINIMUM );
 	}
 
-	private Dimension layoutSize( Container parent, Wrapper[][] content,
-			Size size ){
+	private Dimension layoutSize( Container parent, Wrapper[][] content, Size size ){
 		int width = 0;
 		int height = 0;
 
-		if (orientation == Orientation.HORIZONTAL){
-			for (final Wrapper[] column : content){
-				final Dimension dim = layoutSize(column, size);
-				width = Math.max(width, dim.width);
+		if( orientation == Orientation.HORIZONTAL ) {
+			for( final Wrapper[] column : content ) {
+				final Dimension dim = layoutSize( column, size );
+				width = Math.max( width, dim.width );
 				height += dim.height;
 			}
-		} else{
-			for (final Wrapper[] column : content){
-				final Dimension dim = layoutSize(column, size);
-				height = Math.max(height, dim.height);
+		}
+		else {
+			for( final Wrapper[] column : content ) {
+				final Dimension dim = layoutSize( column, size );
+				height = Math.max( height, dim.height );
 				width += dim.width;
 			}
 		}
 
 		Insets insets = parent.getInsets();
-		Dimension result = new Dimension(width, height);
-		if (insets != null){
+		Dimension result = new Dimension( width, height );
+		if( insets != null ) {
 			result.width += insets.left + insets.right;
 			result.height += insets.top + insets.bottom;
 		}
@@ -176,38 +172,36 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		int width = 0;
 		int height = 0;
 
-		if (orientation == Orientation.HORIZONTAL){
-			for (final Wrapper item : column){
-				item.reset(size);
+		if( orientation == Orientation.HORIZONTAL ) {
+			for( final Wrapper item : column ) {
+				item.reset( size );
 				final Dimension dim = item.required;
 				width += dim.width;
-				height = Math.max(dim.height, height);
+				height = Math.max( dim.height, height );
 			}
-		} else{
-			for (final Wrapper item : column){
-				item.reset(size);
+		}
+		else {
+			for( final Wrapper item : column ) {
+				item.reset( size );
 				final Dimension dim = item.required;
 				height += dim.height;
-				width = Math.max(dim.width, width);
+				width = Math.max( dim.width, width );
 			}
 		}
 
-		return new Dimension(width, height);
+		return new Dimension( width, height );
 	}
 
 	@Override
 	public void layoutContainer( Container parent ){
 		final Wrapper[][] components = layout();
 		final Dimension available = parent.getSize();
-		final Dimension preferred = layoutSize(parent, components,
-				Size.PREFERRED);
-		if ((preferred.width <= available.width)
-				&& (preferred.height <= available.height)){
-			layout(parent, components, preferred, available, Size.PREFERRED);
-		} else{
-			layout(parent, components,
-					layoutSize(parent, components, Size.MINIMUM), available,
-					Size.MINIMUM);
+		final Dimension preferred = layoutSize( parent, components, Size.PREFERRED );
+		if( (preferred.width <= available.width) && (preferred.height <= available.height) ) {
+			layout( parent, components, preferred, available, Size.PREFERRED );
+		}
+		else {
+			layout( parent, components, layoutSize( parent, components, Size.MINIMUM ), available, Size.MINIMUM );
 		}
 	}
 
@@ -226,43 +220,42 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 * @param size
 	 *            which {@link Dimension} to get for layouting the components
 	 */
-	protected void layout( Container parent, Wrapper[][] components,
-			Dimension required, Dimension available, Size size ){
-		if (components.length == 0 || available.width < 1
-				|| available.height < 1){
+	protected void layout( Container parent, Wrapper[][] components, Dimension required, Dimension available, Size size ){
+		if( components.length == 0 || available.width < 1 || available.height < 1 ) {
 			return;
 		}
 
 		final Dimension[] columns = new Dimension[components.length];
-		for (int i = 0; i < columns.length; i++){
-			columns[i] = layoutSize(components[i], size);
+		for( int i = 0; i < columns.length; i++ ) {
+			columns[i] = layoutSize( components[i], size );
 		}
 
 		Insets insets = parent.getInsets();
 
-		if (orientation == Orientation.HORIZONTAL){
-			if (required.height > available.height){
+		if( orientation == Orientation.HORIZONTAL ) {
+			if( required.height > available.height ) {
 				double factor = available.height / (double) required.height;
 				int sum = 0;
-				for (int i = 0, n = columns.length - 1; i < n; i++){
+				for( int i = 0, n = columns.length - 1; i < n; i++ ) {
 					columns[i].height = (int) (factor * columns[i].height);
 					sum += columns[i].height;
 				}
 				columns[columns.length - 1].height = available.height - sum;
 			}
 			int y = 0;
-			if (insets != null){
+			if( insets != null ) {
 				y = insets.top;
 			}
-			for (int i = 0; i < columns.length; i++){
-				layout(components[i], columns[i], available, y, size);
+			for( int i = 0; i < columns.length; i++ ) {
+				layout( components[i], columns[i], available, y, size );
 				y += columns[i].height;
 			}
-		} else{
-			if (required.width > available.width){
+		}
+		else {
+			if( required.width > available.width ) {
 				final double factor = available.width / (double) required.width;
 				int sum = 0;
-				for (int i = 0, n = columns.length - 1; i < n; i++){
+				for( int i = 0, n = columns.length - 1; i < n; i++ ) {
 					columns[i].width = (int) (factor * columns[i].width);
 					sum += columns[i].width;
 				}
@@ -270,59 +263,54 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			}
 
 			int x = 0;
-			if (insets != null){
+			if( insets != null ) {
 				x = insets.left;
 			}
-			for (int i = 0; i < columns.length; i++){
-				layout(components[i], columns[i], available, x, size);
+			for( int i = 0; i < columns.length; i++ ) {
+				layout( components[i], columns[i], available, x, size );
 				x += columns[i].width;
 			}
 		}
 	}
 
-	private void layout( Wrapper[] column, Dimension required,
-			Dimension available, int startPoint, Size size ){
-		if (orientation == Orientation.HORIZONTAL){
-			if (required.width > available.width){
+	private void layout( Wrapper[] column, Dimension required, Dimension available, int startPoint, Size size ){
+		if( orientation == Orientation.HORIZONTAL ) {
+			if( required.width > available.width ) {
 				final double factor = available.width / (double) required.width;
 				int sum = 0;
-				for (int i = 0, n = column.length - 1; i < n; i++){
+				for( int i = 0, n = column.length - 1; i < n; i++ ) {
 					final Dimension dim = column[i].required;
 					dim.width = (int) (dim.width * factor);
 					sum += dim.width;
 				}
-				column[column.length - 1].required.width = available.width
-						- sum;
+				column[column.length - 1].required.width = available.width - sum;
 			}
 
 			int x = 0;
 			final int y = startPoint;
 
-			for (int i = 0; i < column.length; i++){
-				column[i].component.setBounds(x, y, column[i].required.width,
-						required.height);
+			for( int i = 0; i < column.length; i++ ) {
+				column[i].component.setBounds( x, y, column[i].required.width, required.height );
 				x += column[i].required.width;
 			}
-		} else{
-			if (required.height > available.height){
-				final double factor = available.height
-						/ (double) required.height;
+		}
+		else {
+			if( required.height > available.height ) {
+				final double factor = available.height / (double) required.height;
 				int sum = 0;
-				for (int i = 0, n = column.length - 1; i < n; i++){
+				for( int i = 0, n = column.length - 1; i < n; i++ ) {
 					final Dimension dim = column[i].required;
 					dim.height = (int) (dim.height * factor);
 					sum += dim.height;
 				}
-				column[column.length - 1].required.height = available.height
-						- sum;
+				column[column.length - 1].required.height = available.height - sum;
 			}
 
 			final int x = startPoint;
 			int y = 0;
 
-			for (int i = 0; i < column.length; i++){
-				column[i].component.setBounds(x, y, required.width,
-						column[i].required.height);
+			for( int i = 0; i < column.length; i++ ) {
+				column[i].component.setBounds( x, y, required.width, column[i].required.height );
 				y += column[i].required.height;
 			}
 		}
@@ -357,24 +345,22 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 */
 	public Rectangle getBounds( int column, int line ){
 		Wrapper[][] cells = layout();
-		if (column < 0 || column >= cells.length){
-			throw new IllegalArgumentException("column out of bounds: "
-					+ column);
+		if( column < 0 || column >= cells.length ) {
+			throw new IllegalArgumentException( "column out of bounds: " + column );
 		}
-		if (line < 0 || line >= cells[column].length){
-			throw new IllegalArgumentException("line out of bounds: " + line);
+		if( line < 0 || line >= cells[column].length ) {
+			throw new IllegalArgumentException( "line out of bounds: " + line );
 		}
 		return cells[column][line].getBounds();
 	}
-	
+
 	public Rectangle getScreenBounds( int column, int line ){
 		Wrapper[][] cells = layout();
-		if (column < 0 || column >= cells.length){
-			throw new IllegalArgumentException("column out of bounds: "
-					+ column);
+		if( column < 0 || column >= cells.length ) {
+			throw new IllegalArgumentException( "column out of bounds: " + column );
 		}
-		if (line < 0 || line >= cells[column].length){
-			throw new IllegalArgumentException("line out of bounds: " + line);
+		if( line < 0 || line >= cells[column].length ) {
+			throw new IllegalArgumentException( "line out of bounds: " + line );
 		}
 		return cells[column][line].getScreenBounds();
 	}
@@ -397,43 +383,43 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 */
 	public Rectangle getBounds( int column ){
 		Wrapper[][] cells = layout();
-		return getBounds(column, cells);
+		return getBounds( column, cells );
 	}
-	
+
 	public Rectangle getScreenBounds( int column ){
 		Wrapper[][] cells = layout();
-		return getScreenBounds(column, cells);
+		return getScreenBounds( column, cells );
 	}
 
 	private Rectangle getBounds( int column, Wrapper[][] cells ){
-		if (column < 0 || column >= cells.length){
-			throw new IllegalArgumentException("column out of bounds: "
-					+ column);
+		if( column < 0 || column >= cells.length ) {
+			throw new IllegalArgumentException( "column out of bounds: " + column );
 		}
 
 		Rectangle result = null;
-		for (Wrapper cell : cells[column]){
-			if (result == null){
+		for( Wrapper cell : cells[column] ) {
+			if( result == null ) {
 				result = cell.getBounds();
-			} else{
-				result = result.union(cell.getBounds());
+			}
+			else {
+				result = result.union( cell.getBounds() );
 			}
 		}
 		return result;
 	}
-	
+
 	private Rectangle getScreenBounds( int column, Wrapper[][] cells ){
-		if (column < 0 || column >= cells.length){
-			throw new IllegalArgumentException("column out of bounds: "
-					+ column);
+		if( column < 0 || column >= cells.length ) {
+			throw new IllegalArgumentException( "column out of bounds: " + column );
 		}
 
 		Rectangle result = null;
-		for (Wrapper cell : cells[column]){
-			if (result == null){
+		for( Wrapper cell : cells[column] ) {
+			if( result == null ) {
 				result = cell.getScreenBounds();
-			} else{
-				result = result.union(cell.getScreenBounds());
+			}
+			else {
+				result = result.union( cell.getScreenBounds() );
 			}
 		}
 		return result;
@@ -465,42 +451,44 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		Rectangle left;
 		Insets insets = parent.getInsets();
 
-		if (column == 0){
-			left = new Rectangle(insets.left, insets.right, 0, 0);
-		} else{
-			left = getBounds(column - 1, cells);
+		if( column == 0 ) {
+			left = new Rectangle( insets.left, insets.right, 0, 0 );
+		}
+		else {
+			left = getBounds( column - 1, cells );
 		}
 
 		Rectangle right = null;
-		if (column == cells.length){
-			right = new Rectangle(insets.left, insets.right, 0, 0);
-			if (orientation == Orientation.HORIZONTAL){
+		if( column == cells.length ) {
+			right = new Rectangle( insets.left, insets.right, 0, 0 );
+			if( orientation == Orientation.HORIZONTAL ) {
 				right.y = parent.getHeight() - insets.bottom;
-			} else{
+			}
+			else {
 				right.x = parent.getWidth() - insets.right;
 			}
-		} else{
-			right = getBounds(column, cells);
+		}
+		else {
+			right = getBounds( column, cells );
 		}
 
-		if (left == null || right == null){
+		if( left == null || right == null ) {
 			return null;
 		}
 
-		if (orientation == Orientation.HORIZONTAL){
-			int x = Math.min(left.x, right.x);
+		if( orientation == Orientation.HORIZONTAL ) {
+			int x = Math.min( left.x, right.x );
 			int y = left.y + left.height;
-			int width = Math.max(left.x + left.width, right.x + right.width)
-					- x;
+			int width = Math.max( left.x + left.width, right.x + right.width ) - x;
 			int height = right.y - y;
-			return new Rectangle(x, y, width, height);
-		} else{
+			return new Rectangle( x, y, width, height );
+		}
+		else {
 			int x = left.x + left.width;
-			int y = Math.min(left.y, right.y);
+			int y = Math.min( left.y, right.y );
 			int width = right.x - x;
-			int height = Math.max(left.y + left.height, right.y + right.height)
-					- y;
-			return new Rectangle(x, y, width, height);
+			int height = Math.max( left.y + left.height, right.y + right.height ) - y;
+			return new Rectangle( x, y, width, height );
 		}
 	}
 
@@ -510,7 +498,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 * 
 	 * @author Benjamin Sigg
 	 */
-	protected class Wrapper{
+	protected class Wrapper {
 		public Component component;
 		public Dimension required;
 		private Size size;
@@ -526,9 +514,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		 *            the kind of size that should be used as constraint
 		 */
 		public void reset( Size size ){
-			if (this.size != size){
+			if( this.size != size ) {
 				this.size = size;
-				required = new Dimension(size.get(component));
+				required = new Dimension( size.get( component ) );
 			}
 		}
 
@@ -549,9 +537,8 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		public Rectangle getScreenBounds(){
 			Rectangle bounds = component.getBounds();
 			Point origin = bounds.getLocation();
-			SwingUtilities.convertPointToScreen(origin, component);
-			Rectangle screenBounds = new Rectangle(origin, new Dimension(
-					bounds.width, bounds.height));
+			SwingUtilities.convertPointToScreen( origin, component );
+			Rectangle screenBounds = new Rectangle( origin, new Dimension( bounds.width, bounds.height ) );
 			return screenBounds;
 		}
 	}

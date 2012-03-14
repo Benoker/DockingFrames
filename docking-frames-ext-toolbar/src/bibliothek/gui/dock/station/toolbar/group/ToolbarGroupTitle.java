@@ -3,6 +3,7 @@ package bibliothek.gui.dock.station.toolbar.group;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 
@@ -75,6 +76,11 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 		return dockable.getController().getActionViewConverter().createView( action, ToolbarExtension.TOOLBAR_TITLE, dockable );
 	}
 
+	@Override
+	protected Insets getInnerInsets(){
+		return new Insets( 0, 0, 0, 0 );
+	}
+	
 	@Override
 	protected ColumnDockActionSource getSourceFor( Dockable dockable ){
 		if( dockable instanceof ToolbarGroupDockStation ) {

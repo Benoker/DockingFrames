@@ -1,7 +1,6 @@
 package bibliothek.gui.dock;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -19,7 +18,6 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.xml.crypto.KeySelector.Purpose;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
