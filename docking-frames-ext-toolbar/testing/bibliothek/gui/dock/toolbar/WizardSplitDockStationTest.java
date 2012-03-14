@@ -14,6 +14,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
+import bibliothek.gui.dock.station.screen.ScreenDropSizeStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
 import bibliothek.gui.dock.wizard.WizardSplitDockStation;
@@ -29,6 +30,8 @@ public class WizardSplitDockStationTest {
 
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
+		
+		controller.getProperties().set( ScreenDockStation.DROP_SIZE_STRATEGY, ScreenDropSizeStrategy.PREFERRED_SIZE );
 
 		controller.getProperties().set( PlaceholderStrategy.PLACEHOLDER_STRATEGY, new PlaceholderStrategy(){
 			@Override

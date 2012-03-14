@@ -77,6 +77,7 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowConfiguration;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
+import bibliothek.gui.dock.station.screen.ScreenDropSizeStrategy;
 import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
 import bibliothek.gui.dock.station.screen.layer.ScreenLayer;
 import bibliothek.gui.dock.station.screen.layer.ScreenWindowLayer;
@@ -223,6 +224,10 @@ public class ScreenDockStation extends AbstractDockStation {
     			}
     		}, true );
     
+
+    /** key for the {@link ScreenDropSizeStrategy} that is used when dropping a {@link Dockable} onto this station */
+    public static final PropertyKey<ScreenDropSizeStrategy> DROP_SIZE_STRATEGY = 
+    		new PropertyKey<ScreenDropSizeStrategy>( "ScreendockStation.drop_size_strategy", new ConstantPropertyFactory<ScreenDropSizeStrategy>( ScreenDropSizeStrategy.CURRENT_SIZE ), true  );
     
     /** The visibility state of the windows */
     private boolean showing = false;
@@ -382,6 +387,19 @@ public class ScreenDockStation extends AbstractDockStation {
 			}
 			
 			return false;
+		}
+	};
+	
+	/** this strategy tells how to drop a {@link Dockable} onto this station */
+	private PropertyValue<ScreenDropSizeStrategy> dropSizeStrategy = new PropertyValue<ScreenDropSizeStrategy>( DROP_SIZE_STRATEGY ){
+		@Override
+		protected void valueChanged( ScreenDropSizeStrategy oldValue, ScreenDropSizeStrategy newValue ){
+			if( oldValue != null ){
+				oldValue.uninstall( ScreenDockStation.this );
+			}
+			if( newValue != null ){
+				newValue.install( ScreenDockStation.this );
+			}
 		}
 	};
     
@@ -629,6 +647,7 @@ public class ScreenDockStation extends AbstractDockStation {
         fullscreenStrategy.setProperties( controller );
         placeholderStrategy.setProperties( controller );
         magnet.setController( controller );
+        dropSizeStrategy.setProperties( controller );
         
         if( fullscreenAction != null ){
         	fullscreenAction.setController( controller );
@@ -983,7 +1002,7 @@ public class ScreenDockStation extends AbstractDockStation {
             y += owner.getY();
         }
         
-        Dimension preferred = dockable.getComponent().getPreferredSize();
+        Dimension preferred = dropSizeStrategy.getValue().getAddSize( this, dockable );
         Rectangle rect = new Rectangle( x, y, Math.max( preferred.width, 100 ), Math.max( preferred.height, 100 ));
         addDockable( dockable, rect );
     }
@@ -2250,8 +2269,8 @@ public class ScreenDockStation extends AbstractDockStation {
 	            combine( dropInfo, combiner, null );
 	        }
 	        else{
-	            Component component = dockable.getComponent();
-	            Rectangle bounds = new Rectangle( titleX, titleY, component.getWidth(), component.getHeight() );
+	            Dimension size = dropSizeStrategy.getValue().getDropSize( ScreenDockStation.this, dockable );
+	            Rectangle bounds = new Rectangle( titleX, titleY, size.width, size.height );
 	            addDockable( dockable, bounds, false );
 	        }
 	    }
