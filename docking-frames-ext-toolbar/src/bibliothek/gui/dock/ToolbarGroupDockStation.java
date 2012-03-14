@@ -1089,22 +1089,14 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		 * The content Pane of this {@link OverpaintablePanel}.
 		 */
 		private final JPanel dockablePane = new SizeFixedPanel();
-		/**
-		 * This pane is the base of this OverpaintablePanel.
-		 */
-		private final JPanel basePane = new SizeFixedPanel(); // {
 
 		/**
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			basePane.setLayout(new BorderLayout());
-			basePane.add(dockablePane, BorderLayout.CENTER);
-			setBasePane(basePane);
-			setContentPane(dockablePane);
+			setBasePane(dockablePane);
 			setSolid(false);
 			dockablePane.setOpaque(false);
-			basePane.setOpaque(false);
 		}
 
 		@Override
@@ -1154,7 +1146,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					final Component componentBeneathMouse = dockableBeneathMouse
 							.getComponent();
 					if (componentBeneathMouse != null){
-						final Rectangle rectToolbar = basePane.getBounds();
+						final Rectangle rectToolbar = dockablePane.getBounds();
 						final Rectangle rectBeneathMouse = componentBeneathMouse
 								.getBounds();
 						final Point pBeneath = rectBeneathMouse.getLocation();
