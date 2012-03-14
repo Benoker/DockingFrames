@@ -43,7 +43,7 @@ public class TestToolbarGroupDockStation {
 		final DockController controller = new DockController();
 		//controller.setTheme( new EclipseTheme() );
 
-		controller.setRestrictedEnvironment( true );
+		// controller.setRestrictedEnvironment( true );
 
 		final ScreenDockStation screen = new ScreenDockStation( frame );
 		controller.add( screen );

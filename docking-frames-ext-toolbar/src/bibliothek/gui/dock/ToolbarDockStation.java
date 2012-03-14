@@ -1,7 +1,5 @@
 package bibliothek.gui.dock;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,7 +8,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
 
@@ -741,22 +738,14 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 * BoxLayout)
 		 */
 		private final JPanel dockablePane = new SizeFixedPanel();
-		/**
-		 * This pane is the base of this OverpaintablePanel and contains both
-		 * title and content panes (with a BoxLayout)
-		 */
-		private final JPanel basePane = new SizeFixedPanel(); // {
 
 		/**
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			basePane.add(dockablePane);
-			setBasePane(basePane);
-			setContentPane(dockablePane);
+			setBasePane(dockablePane);
 			setSolid(false);
 			dockablePane.setOpaque(false);
-			basePane.setOpaque(false);
 		}
 
 		@Override
@@ -787,11 +776,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 					// INSETS_SIZE, 0, INSETS_SIZE + 1)));
 					dockablePane.setLayout(new BoxLayout(dockablePane,
 							BoxLayout.X_AXIS));
-					basePane.setLayout(new BoxLayout(basePane, BoxLayout.X_AXIS));
 					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
-					basePane.setAlignmentY(Component.CENTER_ALIGNMENT);
 					dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-					basePane.setAlignmentX(Component.LEFT_ALIGNMENT);
 					break;
 				case VERTICAL:
 					// insets use to draw insertion lines with proper larger
@@ -800,11 +786,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 					// 0, INSETS_SIZE + 1, 0)));
 					dockablePane.setLayout(new BoxLayout(dockablePane,
 							BoxLayout.Y_AXIS));
-					basePane.setLayout(new BoxLayout(basePane, BoxLayout.Y_AXIS));
 					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
-					basePane.setAlignmentY(Component.TOP_ALIGNMENT);
 					dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
-					basePane.setAlignmentX(Component.CENTER_ALIGNMENT);
 					break;
 				default:
 					throw new IllegalArgumentException();
