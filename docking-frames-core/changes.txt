@@ -707,6 +707,9 @@
  ! API: All tabs can now be disabled by the DisablingStrategy
  - API: SplitDockStation and FlapDockStation will react on the DisablingStrategy as well
  - API: CDockable has a new method "setEnabled" with which parts of the Dockable can be stopped
+
+[v1.1.1p7a]
+ - Bugfix: OverpaintablePanel now correctly implements getMinimum/Preferred/MaximumSize.
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

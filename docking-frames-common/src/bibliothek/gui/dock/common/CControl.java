@@ -2560,7 +2560,7 @@ public class CControl {
      * are un-maximized after a layout change. The default value of this property is <code>true</code>.<br>
      * The reasons behind forcing basic modes are:
      * <ul>
-     * 	</td><td></td></tr>If the user changes the layout, he/she most likely would like to see the effects. A maximized {@link Dockable} would
+     * 	<li>If the user changes the layout, he/she most likely would like to see the effects. A maximized {@link Dockable} would
      *  hide the effects.</li>
      *  <li>For the user re-maximizing an element requires no more than one click with the mouse. It's a cheap operation.</li>
      *  <li>It is an additional layer of security preventing {@link Dockable}s from being in the wrong position if the client

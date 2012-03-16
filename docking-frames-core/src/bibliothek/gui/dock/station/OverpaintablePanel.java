@@ -27,6 +27,7 @@ package bibliothek.gui.dock.station;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 
@@ -159,6 +160,92 @@ public class OverpaintablePanel extends JLayeredPane {
      */
     protected void paintOverlay( Graphics g ){
         // do nothing
+    }
+    
+    @Override
+    public Dimension getMinimumSize(){
+    	if( isMinimumSizeSet() ){
+    		return super.getMinimumSize();
+    	}
+    	Dimension sizeBase = null;
+    	if( base != null ){
+    		sizeBase = base.getMinimumSize();
+    	}
+    	Dimension sizeOverlay = null;
+    	if( overlay != null ){
+    		sizeOverlay = overlay.getMinimumSize();
+    	}
+    	
+    	if( sizeBase == null && sizeOverlay == null ){
+    		return super.getMinimumSize();
+    	}
+    	else{
+    		return max( sizeBase, sizeOverlay );
+    	}
+    }
+    
+    @Override
+    public Dimension getPreferredSize(){
+    	if( isPreferredSizeSet() ){
+    		return super.getPreferredSize();
+    	}
+    	Dimension sizeBase = null;
+    	if( base != null ){
+    		sizeBase = base.getPreferredSize();
+    	}
+    	Dimension sizeOverlay = null;
+    	if( overlay != null ){
+    		sizeOverlay = overlay.getPreferredSize();
+    	}
+    	
+    	if( sizeBase == null && sizeOverlay == null ){
+    		return super.getPreferredSize();
+    	}
+    	else{
+    		return max( sizeBase, sizeOverlay );
+    	}
+    }
+    
+    @Override
+    public Dimension getMaximumSize(){
+    	if( isMaximumSizeSet() ){
+    		return super.getMaximumSize();
+    	}
+    	Dimension sizeBase = null;
+    	if( base != null ){
+    		sizeBase = base.getMaximumSize();
+    	}
+    	Dimension sizeOverlay = null;
+    	if( overlay != null ){
+    		sizeOverlay = overlay.getMaximumSize();
+    	}
+    	
+    	if( sizeBase == null && sizeOverlay == null ){
+    		return super.getMaximumSize();
+    	}
+    	else{
+    		return min( sizeBase, sizeOverlay );
+    	}
+    }
+    
+    private Dimension min( Dimension a, Dimension b ){
+    	if( a == null ){
+    		return b;
+    	}
+    	if( b == null ){
+    		return a;
+    	}
+    	return new Dimension( Math.min( a.width, b.width ), Math.min( a.height, b.height ));
+    }
+    
+    private Dimension max( Dimension a, Dimension b ){
+    	if( a == null ){
+    		return b;
+    	}
+    	if( b == null ){
+    		return a;
+    	}
+    	return new Dimension( Math.max( a.width, b.width ), Math.max( a.height, b.height ));
     }
     
     @Override

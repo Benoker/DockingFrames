@@ -1571,12 +1571,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	};
         	content.setBackground( panelBackground );
         	
-        	setContentPane( content );
+        	setBasePane( content );
         	
             content.setLayout( new GridLayout( 1, 1 ));
-            getBasePane().removeAll();
-            getBasePane().setLayout( new BorderLayout() );
-            getBasePane().add( content, BorderLayout.CENTER );
         }
         
         @Override
