@@ -710,6 +710,7 @@
 
 [v1.1.1p7a]
  - Bugfix: OverpaintablePanel now correctly implements getMinimum/Preferred/MaximumSize.
+ - Bugfix: RootMenuPiece unbinds itself now with some delay, allowing the attached ActionListeners to complete their work
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them
