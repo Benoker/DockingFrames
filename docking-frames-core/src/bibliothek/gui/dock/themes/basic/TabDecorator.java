@@ -26,8 +26,12 @@
 package bibliothek.gui.dock.themes.basic;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
 
 import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -248,5 +252,19 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 	
 	public DockActionSource getActionSuggestion(){
 		return actions;
+	}
+	
+	public Insets getDockableInsets(){
+		if( representation == null ){
+			return new Insets( 0, 0, 0, 0 );
+		}
+		
+		Point location = new Point( 0, 0 );
+		SwingUtilities.convertPoint( representation, location, getComponent() );
+		
+		Dimension size = getComponent().getSize();
+		Dimension used = representation.getSize();
+		
+		return new Insets( location.y, location.x, size.height - used.height - location.y, size.width - used.width - location.x ); 
 	}
 }

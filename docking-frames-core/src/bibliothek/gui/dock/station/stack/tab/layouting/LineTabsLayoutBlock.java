@@ -1,4 +1,3 @@
-package bibliothek.gui.dock.station.stack.tab.layouting;
 /*
  * Bibliothek - DockingFrames
  * Library built on Java/Swing, allows the user to "drag and drop"
@@ -24,6 +23,8 @@ package bibliothek.gui.dock.station.stack.tab.layouting;
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.station.stack.tab.layouting;
+
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -114,7 +115,8 @@ public class LineTabsLayoutBlock extends AbstractTabsLayoutBlock{
 			result[i] = new LineSize( Size.Type.MINIMUM, size, selection, i+1 == tabs.length, i / (double)tabs.length );
 		}
 		
-		result[tabs.length] = new LineSize( Size.Type.PREFERRED, collector.getPreferredSize(), tabs, true, 1.0 );
+		Dimension preferred = collector.getPreferredSize();
+		result[tabs.length] = new LineSize( Size.Type.PREFERRED, preferred, tabs, true, 1.0 );
 		return result;
 	}
 		

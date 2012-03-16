@@ -201,6 +201,36 @@ public class TabComponentLayoutManager implements LayoutManager{
 		return result;
 	}
 	
+	public Dimension minimumLayoutSize( Container parent ){
+		Dimension size = label.getMinimumSize();
+		Dimension result;
+		
+		if( orientation.isHorizontal() ){
+			result = new Dimension( 
+					size.width+2*freeSpaceToSideBorder,
+					size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder );
+			
+			if( actions.hasActions() ){
+				result.width += freeSpaceBetweenLabelAndActions;
+				size = actions.getMinimumSize();
+				result.width += size.width;
+				result.height = Math.max( result.height, size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder );
+			}
+		}
+		else{
+			result = new Dimension( 
+					size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder,
+					size.height+2*freeSpaceToSideBorder );
+			if( actions.hasActions() ){
+				result.height += freeSpaceBetweenLabelAndActions;
+				size = actions.getMinimumSize();
+				result.height += size.height;
+				result.width = Math.max( result.width, size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder );
+			}
+		}
+		return result;
+	}
+	
 	public void layoutContainer( Container parent ){
 		int width = parent.getWidth();
 		int height = parent.getHeight();
@@ -287,12 +317,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 			break;
 		}
 	}
-	
-	public Dimension minimumLayoutSize( Container parent ){
-		return preferredLayoutSize( parent );
-	}
-	
-	
+		
 	public void removeLayoutComponent( Component comp ){
 		throw new IllegalArgumentException( "must not remove any components" );
 	}
