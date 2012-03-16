@@ -145,12 +145,20 @@ public class WizardColumnModel {
 			return false;
 		}
 		else if( node instanceof Node ) {
-			if( ((Node) node).getOrientation() == side.getHeaderOrientation() ) {
+			Node n = (Node)node;
+			
+			if( n.getOrientation() == side.getHeaderOrientation() ) {
 				return false;
 			}
-			else {
-				return isHeaderLevel( node );
+			if( n.getLeft() == null || !n.getLeft().isVisible() ){
+				return false;
 			}
+			if( n.getRight() == null || !n.getRight().isVisible() ){
+				return false;
+			}
+			
+			return isHeaderLevel( node );
+			
 		}
 		else if( node instanceof Leaf ) {
 			return isHeaderLevel( node, false );
@@ -822,10 +830,19 @@ public class WizardColumnModel {
 				return applyPersistentSizes( ((Root)node).getChild(), column );
 			}
 			else if( node instanceof Node ){
-				int left = applyPersistentSizes( ((Node)node).getLeft(), column );
-				int right = applyPersistentSizes( ((Node)node).getRight(), column );
-				int gap = gap();
+				Node n = (Node)node;
 				
+				int left = applyPersistentSizes( n.getLeft(), column );
+				int right = applyPersistentSizes( n.getRight(), column );
+				
+				if( n.getLeft() == null || !n.getLeft().isVisible() ){
+					return right;
+				}
+				if( n.getRight() == null || !n.getRight().isVisible() ){
+					return left;
+				}
+				
+				int gap = gap();
 				((Node)node).setDivider( (left + gap/2) / (double)(left + right + gap));
 				return left + gap + right;
 			}
