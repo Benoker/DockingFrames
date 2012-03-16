@@ -26,6 +26,7 @@ import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
+import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
@@ -94,12 +95,12 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		addDockStationListener( new DockStationListener(){
 			@Override
 			public void dockablesRepositioned( DockStation station, Dockable[] dockables ){
-				revalidateLater();
+				revalidateOutside();
 			}
 			
 			@Override
 			public void dockableShowingChanged( DockStation station, Dockable dockable, boolean showing ){
-				revalidateLater();
+				revalidateOutside();
 			}
 			
 			@Override
@@ -114,7 +115,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 			
 			@Override
 			public void dockableRemoved( DockStation station, Dockable dockable ){
-				revalidateLater();
+				revalidateOutside();
 			}
 			
 			@Override
@@ -124,12 +125,15 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 			
 			@Override
 			public void dockableAdded( DockStation station, Dockable dockable ){
-				revalidateLater();
+				revalidateOutside();
 			}
 		} );
 	}
 
-	private void revalidateLater(){
+	/**
+	 * Calls {@link #revalidate()} on the first {@link JComponent} that is outside of the current {@link JScrollPane}. 
+	 */
+	public void revalidateOutside(){
 		EventQueue.invokeLater( new Runnable(){
 			@Override
 			public void run(){
@@ -164,6 +168,52 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	 */
 	public Side getSide(){
 		return side;
+	}
+	
+	/**
+	 * Sets the side to which this station leans. If the current side and the new side do not have the same orientation,
+	 * then the "columns" of this station are rotated by 90 degrees.
+	 * @param side the new side, not <code>null</code>
+	 */
+	public void setSide( Side side ){
+		if( side == null ){
+			throw new IllegalArgumentException( "side must not be null" );
+		}
+		if( this.side != side ){
+			boolean rotate = this.side.getHeaderOrientation() != side.getHeaderOrientation();
+			this.side = side;
+			if( rotate ){
+				root().visit( new SplitNodeVisitor(){
+					@Override
+					public void handleRoot( Root root ){
+						// ignore
+					}
+					
+					@Override
+					public void handlePlaceholder( Placeholder placeholder ){
+						// ignore						
+					}
+					
+					@Override
+					public void handleNode( Node node ){
+						switch( node.getOrientation() ){
+							case HORIZONTAL:
+								node.setOrientation( Orientation.VERTICAL );
+								break;
+							case VERTICAL:
+								node.setOrientation( Orientation.HORIZONTAL );
+								break;
+						}
+					}
+					
+					@Override
+					public void handleLeaf( Leaf leaf ){
+						// ignore
+					}
+				} );
+			}
+			revalidateOutside();
+		}
 	}
 	
 	@Override

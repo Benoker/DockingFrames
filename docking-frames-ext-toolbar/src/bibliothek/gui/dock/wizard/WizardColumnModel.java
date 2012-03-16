@@ -28,18 +28,18 @@ import bibliothek.gui.dock.wizard.WizardSplitDockStation.Side;
  */
 public class WizardColumnModel {
 	private WizardSplitDockStation.Side side;
-	private SplitDockStation station;
+	private WizardSplitDockStation station;
 	private double factorW;
 	private double factorH;
 	
 	/** Information about columns that needs to persist even when the stations layout changes */
 	private PersistentColumn[] persistentColumns;
 	
-	public WizardColumnModel( SplitDockStation station, WizardSplitDockStation.Side side ){
+	public WizardColumnModel( WizardSplitDockStation station, WizardSplitDockStation.Side side ){
 		this( station, side, -1, -1 );
 	}
 
-	public WizardColumnModel( SplitDockStation station, WizardSplitDockStation.Side side, double factorW, double factorH ){
+	public WizardColumnModel( WizardSplitDockStation station, WizardSplitDockStation.Side side, double factorW, double factorH ){
 		this.station = station;
 		this.side = side;
 		this.factorH = factorH;
@@ -598,51 +598,11 @@ public class WizardColumnModel {
 				double minDividier = (min + gap()/2) / (double)(available + gap());
 				return Math.max( minDividier, divider );	
 			}
-//			
-//			Column[] left = getColumns( node.getLeft() );
-//			Column[] right = getColumns( node.getRight() );
-//
-//			int needLeft = 0;
-//			int needRight = 0;
-//
-//			int available;
-//			
-//			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ) {
-//				for( Column c : left ) {
-//					needLeft += c.getMinimumSize().width;
-//				}
-//				for( Column c : right ) {
-//					needRight += c.getMinimumSize().width;
-//				}
-//				available = node.getSize().width;
-//			}
-//			else {
-//				for( Column c : left ) {
-//					needLeft += c.getMinimumSize().height;
-//				}
-//				for( Column c : right ) {
-//					needRight += c.getMinimumSize().height;
-//				}
-//				available = node.getSize().height;
-//			}
-//
-//			needLeft += (left.length - 1) * gap();
-//			needRight += (right.length - 1) * gap();
-//
-//			int required = needLeft + gap() + needRight;
-//			if( available <= required ){
-//				return (needLeft + gap() / 2) / (double)required;
-//			}
-//			else{
-//				double minDivider = (needLeft + gap() / 2) / (double)available;
-//				double maxDivider = (available - needRight - gap()/2 ) / (double)available;
-//				
-//				return Math.min( maxDivider, Math.max( minDivider, divider ) );
-//			}
 		}
 		
 		public void applyPersistentSizes(){
 			applyPersistentSizes( station.getRoot() );
+			station.revalidateOutside();
 		}
 		
 		private int applyPersistentSizes( SplitNode node ){
