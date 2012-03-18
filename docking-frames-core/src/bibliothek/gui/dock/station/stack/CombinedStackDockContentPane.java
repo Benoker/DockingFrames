@@ -114,11 +114,9 @@ public class CombinedStackDockContentPane extends ConfiguredBackgroundPanel{
     	
     	Dimension parentSize = parent.getMinimumSize();
     	if( parent.getDockTabPlacement().isHorizontal() ){
-    		result.width = 1;
     		result.height += parentSize.height;
     	}
     	else{
-			result.height = 1;
 			result.width += parentSize.width;
     	}
     	return result;
