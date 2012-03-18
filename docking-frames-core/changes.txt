@@ -711,6 +711,7 @@
 [v1.1.1p7a]
  - Bugfix: OverpaintablePanel now correctly implements getMinimum/Preferred/MaximumSize.
  - Bugfix: RootMenuPiece unbinds itself now with some delay, allowing the attached ActionListeners to complete their work
+ - API: The minimum size for Dockables on a SplitDockStation has been redesigned. Only the minimum size of Components has a real influence now, tabs and titles are most times ignored.
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

@@ -370,7 +370,7 @@ public class MenuLineLayoutPossibility {
 			shrink = 1.0f;
 		}
 		else{
-			shrink = space / (float)available;
+			shrink = (float)available / space;
 			
 			weightTabs = totalWeight - weightTabs;
 			weightInfo = totalWeight - weightInfo;

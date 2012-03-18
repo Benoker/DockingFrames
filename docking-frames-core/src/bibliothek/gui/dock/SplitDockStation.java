@@ -408,6 +408,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/** the newest state issued by the {@link #disablingStrategy} */
 	private boolean disabled = false;
 
+	/** the minimum size a {@link Leaf} can have, in pixels */
+	private Dimension minimumLeafSize = new Dimension( 20, 20 );
+	
 	/**
 	 * Constructs a new {@link SplitDockStation}. 
 	 */
@@ -951,6 +954,26 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	public boolean isContinousDisplay(){
 		return continousDisplay;
+	}
+	
+	/**
+	 * Sets the minimum size a {@link Leaf} can have. The default is 20/20.
+	 * @param minimumLeafSize the new minimum size in pixels, not <code>null</code>
+	 */
+	public void setMinimumLeafSize( Dimension minimumLeafSize ){
+		if( minimumLeafSize == null ){
+			throw new IllegalArgumentException( "minimumLeafSize must not be null" );
+		}
+		this.minimumLeafSize = minimumLeafSize;
+		revalidate();
+	}
+	
+	/**
+	 * Gets the minimum size a {@link Leaf} can have.
+	 * @return the minimum size
+	 */
+	public Dimension getMinimumLeafSize(){
+		return minimumLeafSize;
 	}
 
 	/**

@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station.stack;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -253,6 +254,17 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			index++;
 		}
 		return -1;
+	}
+	
+	@Override
+	public Dimension getMinimumSize(){
+		Dimension result = new Dimension( 1, 1 );
+		for( int i = 0, n = getTabCount(); i<n; i++ ){
+    		Dimension size = getComponentAt( i ).getMinimumSize();
+    		result.width = Math.max( result.width, size.width );
+    		result.height = Math.max( result.height, size.height );
+    	}
+		return result;
 	}
 	
 	/**
