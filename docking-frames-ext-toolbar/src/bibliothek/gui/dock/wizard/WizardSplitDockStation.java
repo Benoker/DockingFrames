@@ -91,7 +91,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		layoutManager = new WizardLayoutManager();
 		setSplitLayoutManager( layoutManager );
 		setDividerStrategy( new WizardDividerStrategy() );
-		setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
+		getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
 		
 		addDockStationListener( new DockStationListener(){
 			@Override
@@ -543,7 +543,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 				Divideable node = super.getDividerNode( x, y );
 				if( node == null ){
 					int gap = getDividerSize();
-					if( side == Side.RIGHT && x < gap ){
+					if( side == Side.RIGHT && x <= gap ){
 						return new ColumnDividier( WizardSplitDockStation.this );
 					}
 					else if( side == Side.LEFT && x >= getWidth() - gap - 1 ){

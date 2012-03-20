@@ -720,25 +720,25 @@ public class WizardColumnModel {
 			return column;
 		}
 
-		private Column[] getColumns( SplitNode node ){
-			List<Column> result = new ArrayList<Column>();
-			searchColumns( node, result );
-			return result.toArray( new Column[result.size()] );
-		}
+//		private Column[] getColumns( SplitNode node ){
+//			List<Column> result = new ArrayList<Column>();
+//			searchColumns( node, result );
+//			return result.toArray( new Column[result.size()] );
+//		}
 
-		private void searchColumns( SplitNode node, List<Column> result ){
-			if( node != null ) {
-				Column column = columns.get( node );
-				if( column != null ) {
-					result.add( column );
-				}
-				else {
-					for( int i = 0, n = node.getMaxChildrenCount(); i < n; i++ ) {
-						searchColumns( node.getChild( i ), result );
-					}
-				}
-			}
-		}
+//		private void searchColumns( SplitNode node, List<Column> result ){
+//			if( node != null ) {
+//				Column column = columns.get( node );
+//				if( column != null ) {
+//					result.add( column );
+//				}
+//				else {
+//					for( int i = 0, n = node.getMaxChildrenCount(); i < n; i++ ) {
+//						searchColumns( node.getChild( i ), result );
+//					}
+//				}
+//			}
+//		}
 	}
 
 	private class Column extends Base {

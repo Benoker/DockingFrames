@@ -2645,7 +2645,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * which are in the structure of this tree.
 	 */
 	public void updateBounds(){
-		Insets insets = getBasePane().getInsets();
+		Insets insets = getContentPane().getInsets();
 		double factorW = getWidth() - insets.left - insets.right;
 		double factorH = getHeight() - insets.top - insets.bottom;
 
