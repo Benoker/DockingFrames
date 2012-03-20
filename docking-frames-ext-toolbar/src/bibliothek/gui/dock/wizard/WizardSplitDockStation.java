@@ -79,6 +79,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	
 	private WizardLayoutManager layoutManager;
 	private Side side;
+	private boolean onRevalidating = false;
 	
 	/**
 	 * Creates a new station.
@@ -134,23 +135,33 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	 * Calls {@link #revalidate()} on the first {@link JComponent} that is outside of the current {@link JScrollPane}. 
 	 */
 	public void revalidateOutside(){
-		EventQueue.invokeLater( new Runnable(){
-			@Override
-			public void run(){
-				if( getParent() instanceof JViewport ){
-					Container parent = getParent();
-					while( parent != null && !(parent instanceof JScrollPane)){
-						parent = parent.getParent();
-					}
-					if( parent != null ){
-						parent = parent.getParent();
-						if( parent != null && parent instanceof JComponent ){
-							((JComponent)parent).revalidate();
+		if( !onRevalidating ){
+			revalidate();
+			EventQueue.invokeLater( new Runnable(){
+				@Override
+				public void run(){
+					if( getParent() instanceof JViewport ){
+						Container parent = getParent();
+						while( parent != null && !(parent instanceof JScrollPane)){
+							parent = parent.getParent();
+						}
+						if( parent != null ){
+							parent = parent.getParent();
+							if( parent != null && parent instanceof JComponent ){
+								((JComponent)parent).revalidate();
+							}
 						}
 					}
+					try{
+						onRevalidating = true;
+						updateBounds();
+					}
+					finally{
+						onRevalidating = false;
+					}
 				}
-			}
-		} );
+			} );
+		}
 	}
 	
 	@Override
@@ -477,6 +488,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		
 		@Override
 		public void updateBounds( Root root, double x, double y, double factorW, double factorH ){
+System.out.println( "updateBounds " + root );
 			model.setFactors( factorW, factorH );
 			model.updateBounds( x, y );
 		}
