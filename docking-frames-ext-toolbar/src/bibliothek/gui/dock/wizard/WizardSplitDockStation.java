@@ -223,7 +223,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 					}
 				} );
 			}
-			revalidateOutside();
+			resetToPreferredSizes();
 		}
 	}
 	
@@ -434,6 +434,13 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	}
 	
 	/**
+	 * Changes the size of all columns and cells such that they met their preferred size.
+	 */
+	public void resetToPreferredSizes(){
+		layoutManager.model.resetToPreferredSizes();
+	}
+	
+	/**
 	 * This {@link SplitLayoutManager} adds restrictions on how a drag and drop operation
 	 * can be performed, and what the boundaries of the children are:
 	 * <ul>
@@ -446,7 +453,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		private WizardColumnModel model;
 		
 		public WizardLayoutManager(){
-			model = new WizardColumnModel( WizardSplitDockStation.this, side );
+			model = new WizardColumnModel( WizardSplitDockStation.this );
 		}
 		
 		@Override
@@ -488,7 +495,6 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		
 		@Override
 		public void updateBounds( Root root, double x, double y, double factorW, double factorH ){
-System.out.println( "updateBounds " + root );
 			model.setFactors( factorW, factorH );
 			model.updateBounds( x, y );
 		}

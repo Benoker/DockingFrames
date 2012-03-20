@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jws.Oneway;
-
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
@@ -29,7 +27,6 @@ import bibliothek.gui.dock.wizard.WizardSplitDockStation.Side;
  * @author Benjamin Sigg
  */
 public class WizardColumnModel {
-	private WizardSplitDockStation.Side side;
 	private WizardSplitDockStation station;
 	private double factorW;
 	private double factorH;
@@ -37,13 +34,12 @@ public class WizardColumnModel {
 	/** Information about columns that needs to persist even when the stations layout changes */
 	private PersistentColumn[] persistentColumns;
 	
-	public WizardColumnModel( WizardSplitDockStation station, WizardSplitDockStation.Side side ){
-		this( station, side, -1, -1 );
+	public WizardColumnModel( WizardSplitDockStation station ){
+		this( station, -1, -1 );
 	}
 
-	public WizardColumnModel( WizardSplitDockStation station, WizardSplitDockStation.Side side, double factorW, double factorH ){
+	public WizardColumnModel( WizardSplitDockStation station, double factorW, double factorH ){
 		this.station = station;
-		this.side = side;
 		this.factorH = factorH;
 		this.factorW = factorW;
 	}
@@ -51,6 +47,10 @@ public class WizardColumnModel {
 	public void setFactors( double factorW, double factorH ){
 		this.factorW = factorW;
 		this.factorH = factorH;
+	}
+	
+	private Side side(){
+		return station.getSide();
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class WizardColumnModel {
 			else if( !n.getLeft().isVisible() || !n.getRight().isVisible() ){
 				return isHeaderLevel( node.getParent(), recursive );
 			}
-			else if( n.getOrientation() == side.getHeaderOrientation() ) {
+			else if( n.getOrientation() == side().getHeaderOrientation() ) {
 				return true;
 			}
 			else if( recursive ) {
@@ -149,7 +149,7 @@ public class WizardColumnModel {
 		else if( node instanceof Node ) {
 			Node n = (Node)node;
 			
-			if( n.getOrientation() == side.getHeaderOrientation() ) {
+			if( n.getOrientation() == side().getHeaderOrientation() ) {
 				return false;
 			}
 			if( n.getLeft() == null || !n.getLeft().isVisible() ){
@@ -192,7 +192,7 @@ public class WizardColumnModel {
 		
 		Dimension result;
 		
-		if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 			result = new Dimension( size, cellMax );
 		}
 		else{
@@ -259,7 +259,7 @@ public class WizardColumnModel {
 			Node node = (Node)divideable;
 			Table table = new Table();
 			Column column;
-			if( side == Side.RIGHT || side == Side.BOTTOM ){
+			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
 				column = table.getHeadColumn( node.getRight() );
 			}
 			else{
@@ -273,7 +273,7 @@ public class WizardColumnModel {
 				if( cell != null ){
 					double dividerDelta = divider - node.getDivider();
 					int deltaPixel;
-					if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+					if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 						deltaPixel = (int)(dividerDelta * node.getSize().height);
 					}
 					else{
@@ -308,15 +308,32 @@ public class WizardColumnModel {
 	
 	private void setDivider( Table table, Column column, double oldDividier, double newDividier, Dimension size ){
 		PersistentColumn persistent = column.getPersistentColumn();
-		double dividerDelta = oldDividier - newDividier;
+		double dividerDelta;
+		if( side() == Side.RIGHT || side() == Side.BOTTOM ){
+			dividerDelta = oldDividier - newDividier;
+		}
+		else{
+			dividerDelta = newDividier - oldDividier;
+		}
 		int deltaPixel;
-		if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 			deltaPixel = (int)(dividerDelta * size.width);
 		}
 		else{
 			deltaPixel = (int)(dividerDelta * size.height);
 		}
 		persistent.size += deltaPixel;
+		table.applyPersistentSizes();
+	}
+	
+	public void resetToPreferredSizes(){
+		Table table = new Table();
+		for( PersistentColumn column : table.getPersistentColumns() ){
+			column.size = column.preferred;
+			for( PersistentCell cell : column.cells.values() ){
+				cell.size = cell.preferred;
+			}
+		}
 		table.applyPersistentSizes();
 	}
 	
@@ -535,7 +552,7 @@ public class WizardColumnModel {
 			int gap = gap();
 			
 			int available;
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 				for( Column column : columns.values() ){
 					min += column.root.getSize().width + gap;
 				}
@@ -553,7 +570,7 @@ public class WizardColumnModel {
 				available = station.getHeight() - gap;
 			}
 			
-			if( side == Side.RIGHT || side == Side.BOTTOM ){
+			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
 				double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
 				return Math.min( maxDividier, divider );
 			}
@@ -564,7 +581,7 @@ public class WizardColumnModel {
 		}
 
 		private double validateHeadNode( double divider, Node node ){
-			if( side == Side.RIGHT || side == Side.BOTTOM ){
+			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
 				if( divider < node.getDivider() ){
 					// it's always possible to go far to the left/top
 					return divider;
@@ -579,7 +596,7 @@ public class WizardColumnModel {
 			
 			Column head;
 			
-			if( side == Side.RIGHT || side == Side.BOTTOM ){
+			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
 				head = getHeadColumn( node.getRight() );
 			}
 			else{
@@ -591,7 +608,7 @@ public class WizardColumnModel {
 			
 			int min;
 			int available;
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 				min = head.getMinimumSize().width + gap();
 				available = node.getSize().width;
 			}
@@ -600,7 +617,7 @@ public class WizardColumnModel {
 				available = node.getSize().height;
 			}
 			
-			if( side == Side.RIGHT || side == Side.BOTTOM ){
+			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
 				double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
 				return Math.min( maxDividier, divider );
 			}
@@ -653,7 +670,7 @@ public class WizardColumnModel {
 					return column;
 				}
 				if( node instanceof Node ){
-					if( side == Side.RIGHT || side == Side.BOTTOM ){
+					if( side() == Side.RIGHT || side() == Side.BOTTOM ){
 						node = ((Node)node).getLeft();
 					}
 					else{
@@ -763,7 +780,7 @@ public class WizardColumnModel {
 				return null;
 			}
 			
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 				size = root.getSize().width;
 				preferred = getPreferredSize().width;
 			}
@@ -809,7 +826,7 @@ public class WizardColumnModel {
 					int size;
 					int preferred;
 					
-					if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+					if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 						size = leaf.getSize().height;
 						preferred = getPreferredSize( leaf ).height;
 					}
@@ -865,7 +882,7 @@ public class WizardColumnModel {
 				requested += cell.size;
 			}
 			
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ) {
+			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ) {
 				double available = height * factorH - gaps * gap();
 				available = Math.max( available, 0 );
 				if( requested < available ) {
@@ -894,7 +911,7 @@ public class WizardColumnModel {
 			
 			int min;
 			int available;
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 				min = node.getLeft().getSize().height - head.node.getSize().height + head.getMinimumSize().height;
 				available = node.getSize().height;
 			}
@@ -915,7 +932,7 @@ public class WizardColumnModel {
 			
 			int min;
 			int available;
-			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 				min = head.getMinimumSize().height + gap();
 				available = leaf.getSize().height;
 			}
