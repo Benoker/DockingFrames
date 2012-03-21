@@ -121,6 +121,14 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     }
     
     /**
+     * Tells whether this window can be moved by grabbing the title.
+     * @return whether a {@link WindowMover} has been created
+     */
+    protected boolean isMoveOnTitleGrab(){
+    	return titleMover != null;
+    }
+    
+    /**
      * Creates a new {@link WindowMover} which is used to move this window if the {@link DockTitle}
      * is dragged by the mouse. This method is only called if {@link WindowConfiguration#isMoveOnTitleGrab()}
      * returns true.

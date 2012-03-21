@@ -45,7 +45,7 @@ public class ToolbarStationPaint extends BasicStationPaint{
 	@Override
 	public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
 		Color color = getColor();
-		setColor( null );
+		setColor( color.DARK_GRAY );
 		super.drawRemoval( g, station, stationBounds, dockableBounds );
 		setColor( color );
 	}

@@ -555,6 +555,11 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     	SecureContainer panel = new SecureContainer(){
             @Override
             protected void paintOverlay( Graphics g ) {
+            	boolean removal = AbstractScreenDockWindow.this.removal;
+            	if( isMoveOnTitleGrab() ){
+            		removal = false;
+            	}
+            	
             	if( combination != null || removal ){
                     ScreenDockStation station = getStation();
                     StationPaint paint = station.getPaint().get();
