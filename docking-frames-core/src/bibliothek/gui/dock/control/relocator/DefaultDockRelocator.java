@@ -825,6 +825,11 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 
             if( movingImageWindow != null )
                 movingImageWindow.close();
+            
+            if( dragOperation != null ){
+            	dragOperation.canceled();
+            	dragOperation = null;
+            }
 
             movingImageWindow = null;
             pressPointScreen = null;
