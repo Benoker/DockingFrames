@@ -39,6 +39,7 @@ import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
@@ -122,6 +123,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 */
 	boolean prepareDropDraw = false;
 
+	/** The dockable that is about to be dragged away from this station */
+	private Dockable removal = null;
+	
 	/** all registered {@link OrientingDockStationListener}s. */
 	private final List<OrientingDockStationListener> orientingListeners = new ArrayList<OrientingDockStationListener>();
 
@@ -346,7 +350,26 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		}
 		return new ToolbarContainerProperty( index, placeholder );
 	}
-
+	
+	@Override
+	public StationDragOperation prepareDrag( Dockable dockable ){
+		removal = dockable;
+		getComponent().repaint();
+		return new StationDragOperation(){
+			@Override
+			public void succeeded(){
+				removal = null;
+				getComponent().repaint();
+			}
+			
+			@Override
+			public void canceled(){
+				removal = null;
+				getComponent().repaint();
+			}
+		};
+	}
+	
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
@@ -983,6 +1006,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 		@Override
 		protected void paintOverlay( Graphics g ){
+			paintRemoval( g );
 			final DefaultStationPaintValue paint = getPaint();
 			Rectangle rectangleAreaBeneathMouse;
 			if( prepareDropDraw ) {
@@ -1029,7 +1053,18 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					paint.drawDivider( g, getContainerPanel().getBounds() );
 				}
 			}
-
+		}
+		
+		private void paintRemoval( Graphics g ){
+			if( removal != null ){
+				for( StationChildHandle handle : dockables.dockables() ){
+					if( handle.getDockable() == removal ){
+						Rectangle bounds = handle.getDisplayer().getComponent().getBounds();
+						getPaint().drawRemoval( g, bounds, bounds );
+						break;
+					}
+				}
+			}
 		}
 
 		@Override

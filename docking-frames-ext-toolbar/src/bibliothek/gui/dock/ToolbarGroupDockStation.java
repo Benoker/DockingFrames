@@ -263,7 +263,27 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		}
 		return column.getItem(line);
 	}
+	
+	/**
+	 * Gets the {@link StationChildHandle} which displayes <code>dockable</code>.
+	 * @param dockable the item to search
+	 * @return the handle showing <code>dockable</code> or <code>null</code> if not found
+	 */
+	public StationChildHandle getHandle( Dockable dockable ){
+		ToolbarColumn<StationChildHandle> column = getColumnModel().getColumn( dockable );
+		if( column == null ){
+			return null;
+		}
+		for( int i = 0, n = column.getDockableCount(); i<n; i++ ){
+			StationChildHandle handle = column.getItem( i );
+			if( handle.getDockable() == dockable ){
+				return handle;
+			}
+		}
+		return null;
+	}
 
+	
 	/**
 	 * Tells if <code>dockable</code> is the last dockable in its column.
 	 * 
@@ -1134,6 +1154,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		@Override
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
+			
+			paintDrag(g);
+			
 			g2D.setStroke(new BasicStroke(2));
 			final int localIndexBeneathMouse = indexBeneathMouse;
 			final Position localSideBeneathMouse = sideBeneathMouse;
@@ -1556,6 +1579,17 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 						}
 						paint.drawInsertionLine(g, x1, y1, x2, y2);
 					}
+				}
+			}
+		}
+		
+		private void paintDrag( Graphics g ){
+			Dockable removal = getRemoval();
+			if( removal != null ){
+				StationChildHandle handle = getHandle( removal );
+				if( handle != null ){
+					Rectangle bounds = handle.getDisplayer().getComponent().getBounds();
+					getPaint().drawRemoval( g, bounds, bounds );
 				}
 			}
 		}

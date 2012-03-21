@@ -27,6 +27,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -275,6 +276,11 @@ public class SimpleToolbarDockStation extends AbstractDockableStation implements
 		final ToolbarStrategy result = value.getValue();
 		value.setProperties( (DockController) null );
 		return result;
+	}
+	
+	@Override
+	public StationDragOperation prepareDrag( Dockable dockable ){
+		return null; // TODO pending
 	}
 
 	@Override

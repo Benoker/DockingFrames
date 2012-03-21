@@ -18,6 +18,7 @@ import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.ToolbarTabDockStation;
@@ -80,6 +81,9 @@ public abstract class AbstractToolbarDockStation extends
 	/** the current behavior of this station */
 	private ExpandedState state = ExpandedState.SHRUNK;
 
+	/** the Dockable that is currently removed */
+	private Dockable removal;
+	
 	// ########################################################
 	// ############ Initialization Managing ###################
 	// ########################################################
@@ -389,6 +393,33 @@ public abstract class AbstractToolbarDockStation extends
 		replace(old.asDockable(), next);
 	}
 
+	@Override
+	public StationDragOperation prepareDrag( Dockable dockable ){
+		removal = dockable;
+		getComponent().repaint();
+		return new StationDragOperation(){
+			@Override
+			public void succeeded(){
+				removal = null;
+				getComponent().repaint();
+			}
+			
+			@Override
+			public void canceled(){
+				removal = null;
+				getComponent().repaint();
+			}
+		};
+	}
+	
+	/**
+	 * Gets the child of this station that is about to be removed.
+	 * @return the child that is involved in a drag and drop operation, can be <code>null</code>
+	 */
+	protected Dockable getRemoval(){
+		return removal;
+	}
+	
 	// ########################################################
 	// ###################### UI Managing #####################
 	// ########################################################

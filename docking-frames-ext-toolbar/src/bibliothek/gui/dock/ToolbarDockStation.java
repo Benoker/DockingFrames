@@ -798,6 +798,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		@Override
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
+			paintRemoval( g );
 			if (prepareDropDraw){
 				if (indexBeneathMouse != -1){
 					final Component componentBeneathMouse = getDockables()
@@ -877,6 +878,19 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 									rectangleTranslated.y
 											+ rectangleTranslated.height);
 						}
+					}
+				}
+			}
+		}
+		
+		private void paintRemoval( Graphics g ){
+			Dockable removal = getRemoval();
+			if( removal != null ){
+				for( StationChildHandle handle : dockables.dockables() ){
+					if( handle.getDockable() == removal ){
+						Rectangle bounds = handle.getDisplayer().getComponent().getBounds();
+						paint.drawRemoval( g, bounds, bounds );
+						break;
 					}
 				}
 			}

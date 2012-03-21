@@ -26,6 +26,8 @@
 package bibliothek.gui.dock.station.toolbar;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.station.StationPaint;
@@ -37,6 +39,14 @@ import bibliothek.gui.dock.themes.basic.BasicStationPaint;
  */
 public class ToolbarStationPaint extends BasicStationPaint{
 	public ToolbarStationPaint(Color color){
+		setColor( color );
+	}
+	
+	@Override
+	public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+		Color color = getColor();
+		setColor( null );
+		super.drawRemoval( g, station, stationBounds, dockableBounds );
 		setColor( color );
 	}
 }
