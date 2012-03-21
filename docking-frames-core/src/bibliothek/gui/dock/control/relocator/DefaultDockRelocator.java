@@ -54,10 +54,12 @@ import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DirectRemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.OrderedLayerCollection;
 import bibliothek.gui.dock.title.DockTitle;
@@ -89,6 +91,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     
 	/** the current destination of a dragged dockable */
     private RelocateOperation operation;
+    
+    /** the current parent of a dragged dockable */
+    private StationDragOperation dragOperation;
     
     /** a window painting a title onto the screen */
     private ImageWindow movingImageWindow;
@@ -179,7 +184,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         disableAllModes();
         
         try{
-        	return operation.execute( dockable, new VetoableDockRelocatorListener(){
+        	boolean success = operation.execute( dockable, new VetoableDockRelocatorListener(){
 				public void searched( DockRelocatorEvent event ){
 					throw new IllegalStateException( "this event must not be called from an operation" );
 				}
@@ -212,6 +217,16 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 					throw new IllegalStateException( "this event must not be called from an operation" );
 				}
 			});
+        	if( dragOperation != null ){
+	        	if( success ){
+	        		dragOperation.succeeded();
+	        	}
+	        	else{
+	        		dragOperation.canceled();
+	        	}
+	        	dragOperation = null;
+        	}
+        	return success;
         }
         finally{
         	operation.destroy();
@@ -340,19 +355,24 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @return a list of stations
      */
     protected List<DockStation> listStationsOrdered( int x, int y, Dockable moved ){
+    	DockController controller = getController();
+    	DisablingStrategy disabling = controller.getProperties().get( DisablingStrategy.STRATEGY );
     	OrderedLayerCollection collection = new OrderedLayerCollection();
-        DockStation movedStation = moved.asDockStation();
-        DockController controller = getController();
-        
-        if( !isCancelLocation( x, y, moved )){
-        	for( DockStation station : controller.getRegister().listDockStations() ){
-        		if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
-        			if( station.isStationShowing() && isStationValid( station ) ){
-        				collection.add( station );
-	                }
-	            }
+    	
+    	if( disabling == null || !disabling.isDisabled( moved )){
+	        DockStation movedStation = moved.asDockStation();
+	        if( !isCancelLocation( x, y, moved )){
+	        	for( DockStation station : controller.getRegister().listDockStations() ){
+	        		if( disabling == null || !disabling.isDisabled( station )){
+		        		if( movedStation == null || (!DockUtilities.isAncestor( movedStation, station ) && movedStation != station )){
+		        			if( station.isStationShowing() && isStationValid( station ) ){
+		        				collection.add( station );
+			                }
+			            }
+	        		}
+		        }
 	        }
-        }
+    	}
 	    return collection.sort( x, y );
     }
     
@@ -589,6 +609,15 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     		}
             
             onMove = true;
+            
+            DockStation parent = dockable.getDockParent();
+            if( dragOperation != null ){
+        		dragOperation.canceled();
+        		dragOperation = null;
+        	}
+            if( parent != null ){
+            	dragOperation = parent.prepareDrag( dockable );
+            }
             
             event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null );
             fireGrabbed( event );
@@ -840,6 +869,11 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        if( operation != null ){
 	            operation.destroy();
 	            operation = null;
+	        }
+	        
+	        if( dragOperation != null ){
+	        	dragOperation.canceled();
+	        	dragOperation = null;
 	        }
 	        
 	        if( movingImageWindow != null )

@@ -66,4 +66,13 @@ public interface StationPaint {
      * @param dockableBounds the bounds that the new child will have
      */
     public void drawInsertion( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds );
+    
+    /**
+     * Paints some markings when a {@link Dockable} is removed from a {@link DockStation}.
+     * @param g the graphics context used for painting
+     * @param station the station on which to paint
+     * @param stationBounds the area on the station which will be affected by the removal
+     * @param dockableBounds the bounds that the old child currently has
+     */
+    public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds );
 }

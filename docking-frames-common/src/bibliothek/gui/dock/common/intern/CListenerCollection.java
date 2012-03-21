@@ -123,6 +123,11 @@ public class CListenerCollection {
 	        for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
 	        	listener.singleTabShownChanged( dockable );
         }
+        
+        public void enabledChanged( CDockable dockable ){
+        	for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
+	        	listener.enabledChanged( dockable );
+        }
     };
     
     /** the list of focus listeners */

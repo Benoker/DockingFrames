@@ -61,6 +61,7 @@ public interface CombinedMenuContent {
 		private String text;
 		private String tooltip;
 		private Icon icon;
+		private boolean enabled;
 		
 		/**
 		 * Creates a new {@link Item}.
@@ -68,8 +69,9 @@ public interface CombinedMenuContent {
 		 * @param text the items text
 		 * @param tooltip the items description
 		 * @param icon the items icon
+		 * @param enabled whether this item is selectable
 		 */
-		public Item( Dockable dockable, String text, String tooltip, Icon icon ){
+		public Item( Dockable dockable, String text, String tooltip, Icon icon, boolean enabled ){
 			if( dockable == null )
 				throw new IllegalArgumentException( "dockable must not be null" );
 			
@@ -77,6 +79,7 @@ public interface CombinedMenuContent {
 			this.text = text;
 			this.tooltip = tooltip;
 			this.icon = icon;
+			this.enabled = enabled;
 		}
 		
 		/**
@@ -109,6 +112,14 @@ public interface CombinedMenuContent {
 		 */
 		public Icon getIcon(){
 			return icon;
+		}
+		
+		/**
+		 * Tells whether this item can be selected.
+		 * @return whether this item is enabled
+		 */
+		public boolean isEnabled(){
+			return enabled;
 		}
 	}
 	

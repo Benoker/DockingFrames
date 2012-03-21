@@ -83,6 +83,10 @@ public class CDockableAdapter implements CDockableStateListener, CDockableProper
     public void visibilityChanged( CDockable dockable ) {
         // empty
     }
+    
+    public void enabledChanged( CDockable dockable ){
+    	// empty
+    }
 
     /**
      * Called when the <code>dockable</code> has been minimized.

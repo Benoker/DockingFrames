@@ -47,11 +47,13 @@ import bibliothek.util.Path;
     "title.background.top.active",
     "title.background.top.inactive.mouse",
     "title.background.top.inactive",
+    "title.background.top.disabled",
     
     "title.background.bottom.active.mouse",
     "title.background.bottom.active",
     "title.background.bottom.inactive.mouse",
     "title.background.bottom.inactive",
+    "title.background.bottom.disabled",
     
     "title.foreground.active.mouse",
     "title.foreground.active",
@@ -109,11 +111,13 @@ public class BubbleDockTitle extends AbstractBubbleDockTitle {
         addColor( "title.background.top.active", path, Color.LIGHT_GRAY );
         addColor( "title.background.top.inactive.mouse", path, Color.BLUE );
         addColor( "title.background.top.inactive", path, Color.DARK_GRAY );
+        addColor( "title.background.top.disabled", path, Color.DARK_GRAY );
 
         addColor( "title.background.bottom.active.mouse", path, Color.LIGHT_GRAY );
         addColor( "title.background.bottom.active", path, Color.WHITE );
         addColor( "title.background.bottom.inactive.mouse", path, Color.DARK_GRAY );
         addColor( "title.background.bottom.inactive", path, Color.BLACK );
+        addColor( "title.background.bottom.disabled", path, Color.BLACK );
 
         addColor( "title.foreground.active.mouse", path, Color.BLACK );
         addColor( "title.foreground.active", path, Color.BLACK );
@@ -138,25 +142,32 @@ public class BubbleDockTitle extends AbstractBubbleDockTitle {
         updateFonts();
         
         String postfix = "";
-        if( isActive() ){
-            if( isMouseOver() )
-                postfix = "active.mouse";
-            else
-                postfix = "active";
+        if( isDisabled() ){
+            updateAnimation( ANIMATION_KEY_TEXT, "title.foreground.inactive" );
+            updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, "title.background.top.disabled" );
+            updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, "title.background.bottom.disabled" );
         }
         else{
-            if( isMouseOver() )
-                postfix = "inactive.mouse";
-            else
-                postfix = "inactive";            
+        	if( isActive() ){
+	            if( isMouseOver() )
+	                postfix = "active.mouse";
+	            else
+	                postfix = "active";
+	        }
+	        else{
+	            if( isMouseOver() )
+	                postfix = "inactive.mouse";
+	            else
+	                postfix = "inactive";            
+	        }
+	        
+	        String top = "title.background.top." + postfix;
+	        String bottom = "title.background.bottom." + postfix;
+	        String text = "title.foreground." + postfix;
+	        
+	        updateAnimation( ANIMATION_KEY_TEXT, text );
+	        updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, top );
+	        updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, bottom );
         }
-        
-        String top = "title.background.top." + postfix;
-        String bottom = "title.background.bottom." + postfix;
-        String text = "title.foreground." + postfix;
-        
-        updateAnimation( ANIMATION_KEY_TEXT, text );
-        updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, top );
-        updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, bottom );
     }
 }

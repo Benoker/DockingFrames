@@ -89,4 +89,17 @@ public class DefaultStationPaintValue extends StationThemeItemValue<StationPaint
     		paint.drawInsertionLine( g, getStation(), x1, y1, x2, y2 );
     	}
     }
+    
+    /**
+     * Paints some markings when a {@link Dockable} is removed from a {@link DockStation}.
+     * @param g the graphics context used for painting
+     * @param stationBounds the area on the station which will be affected by the removal
+     * @param dockableBounds the bounds that the old child currently has
+     */
+    public void drawRemoval( Graphics g, Rectangle stationBounds, Rectangle dockableBounds ){
+    	StationPaint paint = get();
+    	if( paint != null ){
+    		paint.drawRemoval( g, getStation(), stationBounds, dockableBounds );
+    	}
+    }
 }

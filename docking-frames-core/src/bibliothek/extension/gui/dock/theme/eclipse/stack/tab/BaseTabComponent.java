@@ -71,31 +71,56 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
  * {@link ButtonPanel} is present to paint additional buttons.
  * @author Benjamin Sigg
  */
-@ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
-    "stack.tab.top", "stack.tab.top.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
-    "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
-    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
+@ColorCodes({
+	"stack.tab.border", 
+	"stack.tab.border.selected", 
+	"stack.tab.border.selected.focused", 
+	"stack.tab.border.selected.focuslost",
+	"stack.tab.border.disabled",
+	
+    "stack.tab.top", 
+    "stack.tab.top.selected", 
+    "stack.tab.top.selected.focused",
+    "stack.tab.top.selected.focuslost",
+    "stack.tab.top.disabled", 
+    
+    "stack.tab.bottom", 
+    "stack.tab.bottom.selected", 
+    "stack.tab.bottom.selected.focused", 
+    "stack.tab.bottom.selected.focuslost",
+    "stack.tab.bottom.disabled",
+    
+    "stack.tab.text", 
+    "stack.tab.text.selected", 
+    "stack.tab.text.selected.focused", 
+    "stack.tab.text.selected.focuslost",
+    "stack.tab.text.disabled", 
+    
     "stack.border" })
 public abstract class BaseTabComponent extends ConfiguredBackgroundPanel implements TabComponent{
     protected final TabColor colorStackTabBorder;
     protected final TabColor colorStackTabBorderSelected;
     protected final TabColor colorStackTabBorderSelectedFocused;
     protected final TabColor colorStackTabBorderSelectedFocusLost;
+    protected final TabColor colorStackTabBorderDisabled;
     
     protected final TabColor colorStackTabTop;
     protected final TabColor colorStackTabTopSelected;
     protected final TabColor colorStackTabTopSelectedFocused;
     protected final TabColor colorStackTabTopSelectedFocusLost;
+    protected final TabColor colorStackTabTopDisabled;
     
     protected final TabColor colorStackTabBottom;
     protected final TabColor colorStackTabBottomSelected;
     protected final TabColor colorStackTabBottomSelectedFocused;
     protected final TabColor colorStackTabBottomSelectedFocusLost;
+    protected final TabColor colorStackTabBottomDisabled;
     
     protected final TabColor colorStackTabText;
     protected final TabColor colorStackTabTextSelected;
     protected final TabColor colorStackTabTextSelectedFocused;
     protected final TabColor colorStackTabTextSelectedFocusLost;
+    protected final TabColor colorStackTabTextDisabled;
     
     protected final TabColor colorStackBorder;
     
@@ -172,21 +197,25 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         colorStackTabBorderSelected = new BorderTabColor( "stack.tab.border.selected" + colorPostfix, station, Color.WHITE );
         colorStackTabBorderSelectedFocused = new BorderTabColor( "stack.tab.border.selected.focused" + colorPostfix, station, Color.WHITE );
         colorStackTabBorderSelectedFocusLost = new BorderTabColor( "stack.tab.border.selected.focuslost" + colorPostfix, station, Color.WHITE );
+        colorStackTabBorderDisabled = new BorderTabColor( "stack.tab.border.disabled" + colorPostfix, station, Color.WHITE );
         
         colorStackTabTop = new BaseTabColor( "stack.tab.top" + colorPostfix, station, Color.LIGHT_GRAY );
         colorStackTabTopSelected = new BaseTabColor( "stack.tab.top.selected" + colorPostfix, station, Color.LIGHT_GRAY );
         colorStackTabTopSelectedFocused = new BaseTabColor( "stack.tab.top.selected.focused" + colorPostfix, station, Color.LIGHT_GRAY );
         colorStackTabTopSelectedFocusLost = new BaseTabColor( "stack.tab.top.selected.focuslost" + colorPostfix, station, Color.LIGHT_GRAY );
+        colorStackTabTopDisabled = new BaseTabColor( "stack.tab.top.disabled" + colorPostfix, station, Color.LIGHT_GRAY );
         
         colorStackTabBottom = new BaseTabColor( "stack.tab.bottom" + colorPostfix, station, Color.WHITE );
         colorStackTabBottomSelected = new BaseTabColor( "stack.tab.bottom.selected" + colorPostfix, station, Color.WHITE );
         colorStackTabBottomSelectedFocused = new BaseTabColor( "stack.tab.bottom.selected.focused" + colorPostfix, station, Color.WHITE );
         colorStackTabBottomSelectedFocusLost = new BaseTabColor( "stack.tab.bottom.selected.focuslost" + colorPostfix, station, Color.WHITE );
+        colorStackTabBottomDisabled = new BaseTabColor( "stack.tab.bottom.disabled" + colorPostfix, station, Color.WHITE );
         
         colorStackTabText = new BaseTabColor( "stack.tab.text" + colorPostfix, station, Color.BLACK );
         colorStackTabTextSelected = new BaseTabColor( "stack.tab.text.selected" + colorPostfix, station, Color.BLACK );
         colorStackTabTextSelectedFocused = new BaseTabColor( "stack.tab.text.selected.focused" + colorPostfix, station, Color.BLACK );
         colorStackTabTextSelectedFocusLost = new BaseTabColor( "stack.tab.text.selected.focuslost" + colorPostfix, station, Color.BLACK );
+        colorStackTabTextDisabled = new BaseTabColor( "stack.tab.text.disabled" + colorPostfix, station, Color.BLACK );
         
         colorStackBorder = new BaseTabColor( "stack.border" + colorPostfix, station, Color.BLACK );
         
@@ -199,18 +228,22 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
                 colorStackTabBorderSelected,
                 colorStackTabBorderSelectedFocused,
                 colorStackTabBorderSelectedFocusLost,
+                colorStackTabBorderDisabled,
                 colorStackTabTop,
                 colorStackTabTopSelected,
                 colorStackTabTopSelectedFocused,
                 colorStackTabTopSelectedFocusLost,
+                colorStackTabTopDisabled,
                 colorStackTabBottom,
                 colorStackTabBottomSelected,
                 colorStackTabBottomSelectedFocused,
                 colorStackTabBottomSelectedFocusLost,
+                colorStackTabBottomDisabled,
                 colorStackTabText,
                 colorStackTabTextSelected,
                 colorStackTabTextSelectedFocused,
                 colorStackTabTextSelectedFocusLost,
+                colorStackTabTextDisabled,
                 colorStackBorder
         };
         
@@ -252,7 +285,10 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      */
     protected void updateFont(){
         TabFont font = null;
-        if( isFocused() ){
+        if( !isEnabled() ){
+        	font = fontUnselected;
+        }
+        else if( isFocused() ){
             font = fontFocused;
         }
         else if( isSelected() ){
@@ -279,6 +315,11 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      * Called when the colors of this tab changed.
      */
     protected abstract void updateColors();
+    
+    /**
+     * Called when the enabled state of this tab changed.
+     */
+    protected abstract void updateEnabled();
     
     /**
      * Called when the {@link #doPaintIconWhenInactive() paint icon property} of
@@ -712,6 +753,15 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      */
     public ButtonPanel getButtons() {
         return buttons;
+    }
+    
+    @Override
+    public void setEnabled( boolean enabled ){
+    	if( isEnabled() != enabled ){
+	    	super.setEnabled( enabled );
+	    	label.setEnabled( enabled );
+	    	updateEnabled();
+    	}
     }
     
     public void setOrientation( TabPlacement orientation ){

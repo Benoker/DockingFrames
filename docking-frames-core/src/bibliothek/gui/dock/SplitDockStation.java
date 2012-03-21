@@ -62,6 +62,8 @@ import bibliothek.gui.dock.action.HierarchyDockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.control.relocator.Merger;
+import bibliothek.gui.dock.disable.DisablingStrategy;
+import bibliothek.gui.dock.disable.DisablingStrategyListener;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
@@ -86,6 +88,7 @@ import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.NoStationDropOperation;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
@@ -122,6 +125,7 @@ import bibliothek.gui.dock.station.split.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.split.layer.SplitOverrideDropLayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.ComponentDragOperation;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.Enforcement;
@@ -295,6 +299,33 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			placeholderStrategy.setStrategy(newValue);
 		}
 	};
+	
+
+	/** Access to the current {@link DisablingStrategy} */
+	private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>( DisablingStrategy.STRATEGY ){
+		@Override
+		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
+			if( oldValue != null ){	
+				oldValue.removeDisablingStrategyListener( disablingStrategyListener );
+			}
+			if( newValue != null ){
+				newValue.addDisablingStrategyListener( disablingStrategyListener );
+				setDisabled( newValue.isDisabled( SplitDockStation.this ));
+			}
+			else{
+				setDisabled( false );
+			}
+		}
+	};
+	
+	/** observes the {@link #disablingStrategy} and closes the front dockable if necessary */
+	private DisablingStrategyListener disablingStrategyListener = new DisablingStrategyListener(){
+		public void changed( DockElement item ){
+			if( item == SplitDockStation.this ){
+				setDisabled( disablingStrategy.getValue().isDisabled( item ));
+			}
+		}
+	};
 
 	/** strategy for managing placeholders */
 	private RootPlaceholderStrategy placeholderStrategy = new RootPlaceholderStrategy(this);
@@ -354,6 +385,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** Information about the {@link Dockable} which is currently draged onto this station. */
 	private PutInfo putInfo;
+	
+	/** Information aboud the {@link Dockable} that is currently removed from this station */
+	private ComponentDragOperation dragInfo;
 
 	/** A {@link StationPaint} to draw some markings onto this station */
 	private DefaultStationPaintValue paint;
@@ -380,7 +414,13 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	
 	/** the background algorithm of this station */
 	private Background background = new Background();
+	
+	/** the newest state issued by the {@link #disablingStrategy} */
+	private boolean disabled = false;
 
+	/** the minimum size a {@link Leaf} can have, in pixels */
+	private Dimension minimumLeafSize = new Dimension( 20, 20 );
+	
 	/**
 	 * Constructs a new {@link SplitDockStation}. 
 	 */
@@ -608,6 +648,25 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return resizingEnabled;
 	}
 
+	/**
+	 * Called by the current {@link DisablingStrategy} when this station changes its state.
+	 * @param disabled whether the station is enabled or not
+	 */
+	protected void setDisabled( boolean disabled ){
+		this.disabled = disabled;
+		if( disabled ){
+			setCursor( null );
+		}
+	}
+	
+	/**
+	 * Tells the result of the current {@link DisablingStrategy}.
+	 * @return whether this station is currently enabled or not
+	 */
+	public boolean isDisabled(){
+		return disabled;
+	}
+	
 	public void setDockParent( DockStation station ){
 		if( this.parent != null )
 			this.parent.removeDockStationListener(visibleListener);
@@ -650,6 +709,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			combiner.setController( controller );
 			background.setController( controller );
 			dividerStrategy.setProperties( controller );
+			disablingStrategy.setProperties( controller );
 			
 			if( controller != null ) {
 				title = controller.getDockTitleManager().getVersion(TITLE_ID, ControllerTitleFactory.INSTANCE);
@@ -930,6 +990,26 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	public boolean isContinousDisplay(){
 		return continousDisplay;
+	}
+	
+	/**
+	 * Sets the minimum size a {@link Leaf} can have. The default is 20/20.
+	 * @param minimumLeafSize the new minimum size in pixels, not <code>null</code>
+	 */
+	public void setMinimumLeafSize( Dimension minimumLeafSize ){
+		if( minimumLeafSize == null ){
+			throw new IllegalArgumentException( "minimumLeafSize must not be null" );
+		}
+		this.minimumLeafSize = minimumLeafSize;
+		revalidate();
+	}
+	
+	/**
+	 * Gets the minimum size a {@link Leaf} can have.
+	 * @return the minimum size
+	 */
+	public Dimension getMinimumLeafSize(){
+		return minimumLeafSize;
 	}
 
 	/**
@@ -1439,6 +1519,16 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			return null;
 		}
 		return new SplitDropOperation( putInfo, move );
+	}
+	
+	public StationDragOperation prepareDrag( Dockable dockable ){
+		dragInfo = new ComponentDragOperation( dockable, this ){
+			@Override
+			protected void destroy(){
+				dragInfo = null;
+			}
+		};
+		return dragInfo;
 	}
 	
 	/**
@@ -2222,6 +2312,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 
 		dividerStrategy.getValue().paint( this, g );
+		
+		if( dragInfo != null && dragInfo.getDockable() != null ){
+			Leaf leaf = getRoot().getLeaf( dragInfo.getDockable() );
+			StationPaint stationPaint = paint.get();
+			if( stationPaint != null && leaf != null ){
+				Rectangle bounds = leaf.getBounds();
+				stationPaint.drawRemoval( g, this, bounds, bounds );
+			}
+		}
 	}
 
 	/**

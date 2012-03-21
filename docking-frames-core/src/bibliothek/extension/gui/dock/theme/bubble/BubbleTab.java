@@ -40,6 +40,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -107,7 +109,12 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
 	"stack.tab.background.top.focused",
 	"stack.tab.background.bottom.focused",
 	"stack.tab.border.focused",
-	"stack.tab.foreground.focused"
+	"stack.tab.foreground.focused",
+	
+	"stack.tab.background.top.disabled",
+	"stack.tab.background.bottom.disabled",
+	"stack.tab.border.disabled",
+	"stack.tab.foreground.disabled"
 })
 public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab, ChangeListener, Runnable, DockableFocusListener{
 	/** a label showing text and icon for this tab */
@@ -135,6 +142,9 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	/** parent component */
 	private BubbleStackDockComponent parent;
 
+	/** all the {@link MouseListener} that were added */
+	private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
+	
 	/** when to paint this panel */
 	private int zOrder;
 	
@@ -174,6 +184,11 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	private BubbleTabColor bottomFocused;
 	private BubbleTabColor borderFocused;
 	private BubbleTabColor textFocused;
+	
+	private BubbleTabColor topDisabled;
+	private BubbleTabColor bottomDisabled;
+	private BubbleTabColor borderDisabled;
+	private BubbleTabColor textDisabled;
 
 	private BubbleTabColor[] colors;
 
@@ -186,7 +201,8 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	private static final int STATE_SELECTED = 1;
 	private static final int STATE_FOCUSED = 2 | STATE_SELECTED;
 	private static final int STATE_MOUSE = 4;
-
+	private static final int STATE_DISABLED = 8;
+	
 	private int state = 0;
 
 	/**
@@ -236,10 +252,16 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 		borderFocused  = new BubbleTabColor( STATE_FOCUSED, "stack.tab.border.focused", "border", animation, dockable, Color.RED.darker().darker() );
 		textFocused    = new BubbleTabColor( STATE_FOCUSED, "stack.tab.foreground.focused", "text", animation, dockable, Color.BLACK );
 
+		topDisabled     = new BubbleTabColor( STATE_DISABLED, "stack.tab.background.top.disabled", "top", animation, dockable, Color.LIGHT_GRAY.brighter() );
+		bottomDisabled  = new BubbleTabColor( STATE_DISABLED, "stack.tab.background.bottom.disabled", "bottom", animation, dockable, Color.LIGHT_GRAY.darker() );
+		borderDisabled  = new BubbleTabColor( STATE_DISABLED, "stack.tab.border.disabled", "border", animation, dockable, Color.LIGHT_GRAY.darker().darker() );
+		textDisabled    = new BubbleTabColor( STATE_DISABLED, "stack.tab.foreground.disabled", "text", animation, dockable, Color.BLACK );
+		
 		colors = new BubbleTabColor[]{
 				top, bottom, border, text,
 				topMouse, bottomMouse, borderMouse, textMouse,
-
+				topDisabled, bottomDisabled, borderDisabled, textDisabled,
+				
 				topSelected, bottomSelected, borderSelected, textSelected,
 				topSelectedMouse, bottomSelectedMouse, borderSelectedMouse, textSelectedMouse,
 
@@ -310,6 +332,27 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 		parent.getTabHandler().setVisible( this, visible );	
 	}
 
+	@Override
+	public void setEnabled( boolean enabled ){
+		if( isEnabled() != enabled ){
+			super.setEnabled( enabled );
+			label.setEnabled( enabled );
+			
+			if( enabled ){
+				for( MouseInputListener listener : mouseInputListeners ){
+					doRemoveMouseInputListener( listener );
+				}
+			}
+			else{
+				for( MouseInputListener listener : mouseInputListeners ){
+					doAddMouseInputListener( listener );
+				}
+			}
+			
+			checkAnimation();
+		}
+	}
+	
 	public boolean isPaneVisible(){
 		return parent.getTabHandler().isVisible( this );
 	}
@@ -529,6 +572,13 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	}
 
 	public void addMouseInputListener( MouseInputListener listener ) {
+		mouseInputListeners.add( listener );
+		if( isEnabled() ){
+			doAddMouseInputListener( listener );
+		}
+	}
+	
+	private void doAddMouseInputListener( MouseInputListener listener ){
 		addMouseListener( listener );
 		addMouseMotionListener( listener );
 		label.addMouseListener( listener );
@@ -536,6 +586,13 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	}
 
 	public void removeMouseInputListener( MouseInputListener listener ) {
+		mouseInputListeners.remove( listener );
+		if( isEnabled() ){
+			doRemoveMouseInputListener( listener );
+		}
+	}
+	
+	private void doRemoveMouseInputListener( MouseInputListener listener ){
 		removeMouseListener( listener );
 		removeMouseMotionListener( listener );
 		label.removeMouseListener( listener );
@@ -553,14 +610,19 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	private void checkAnimation(){
 		state = 0;
 
-		if( parent.getSelectedDockable() == dockable )
-			state |= STATE_SELECTED;
-
-		if( mouse )
-			state |= STATE_MOUSE;
-
-		if( focused )
-			state |= STATE_FOCUSED;
+		if( !isEnabled() ){
+			state = STATE_DISABLED;
+		}
+		else{
+			if( parent.getSelectedDockable() == dockable )
+				state |= STATE_SELECTED;
+	
+			if( mouse )
+				state |= STATE_MOUSE;
+	
+			if( focused )
+				state |= STATE_FOCUSED;
+		}
 
 		for( BubbleTabColor color : colors )
 			color.transmit();
@@ -572,7 +634,10 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 	 * Ensures that the correct font modifier is used.
 	 */
 	public void updateFonts(){
-		if( focused ){
+		if( !isEnabled() ){
+			label.setFontModifier( fontUnselected.value() );
+		}
+		else if( focused ){
 			label.setFontModifier( fontFocused.value() );
 		}
 		else if( parent.getSelectedDockable() == dockable ){

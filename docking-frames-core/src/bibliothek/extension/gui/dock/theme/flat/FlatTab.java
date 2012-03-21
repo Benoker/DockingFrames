@@ -11,6 +11,8 @@ import java.awt.Paint;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -55,7 +57,9 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
     "stack.tab.border.out.focused", 
     "stack.tab.border.center.focused",
     "stack.tab.border.out", 
-    "stack.tab.border.center", 
+    "stack.tab.border.center",
+    "stack.tab.border.out.disabled", 
+    "stack.tab.border.center.disabled", 
     "stack.tab.border", 
                 
     "stack.tab.background.top.selected", 
@@ -63,11 +67,14 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
     "stack.tab.background.top.focused", 
     "stack.tab.background.bottom.focused",
     "stack.tab.background.top", 
-    "stack.tab.background.bottom", 
+    "stack.tab.background.bottom",
+    "stack.tab.background.top.disabled", 
+    "stack.tab.background.bottom.disabled", 
     "stack.tab.background",
     
     "stack.tab.foreground.selected",
     "stack.tab.foreground.focused",
+    "stack.tab.foreground.disabled",
     "stack.tab.foreground" })
 public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, DockableFocusListener{
 	/** the dockable for which this button is shown */
@@ -99,6 +106,8 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     private TabColor borderFocusedCenter;
     private TabColor borderOut;
     private TabColor borderCenter;
+    private TabColor borderDisabledOut;
+    private TabColor borderDisabledCenter;
     private TabColor border;
     private TabColor backgroundSelectedTop;
     private TabColor backgroundSelectedBottom;
@@ -106,10 +115,13 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     private TabColor backgroundFocusedBottom;
     private TabColor backgroundTop;
     private TabColor backgroundBottom;
+    private TabColor backgroundDisabledTop;
+    private TabColor backgroundDisabledBottom;
     private TabColor background;
     private TabColor foreground;
     private TabColor foregroundSelected;
     private TabColor foregroundFocused;
+    private TabColor foregroundDisabled;
     
     private TabFont fontFocused;
     private TabFont fontSelected;
@@ -127,6 +139,9 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
 	
 	/** layout manager for {@link #label} and {@link #actions} */
 	private TabComponentLayoutManager layoutManager;
+	
+	/** all the {@link MouseInputListener}s that were added to this tab */
+	private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
 	
     /**
      * Constructs a new button
@@ -156,6 +171,8 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
         borderFocusedCenter = new FlatTabColor( "stack.tab.border.center.focused", dockable );
         borderOut            = new FlatTabColor( "stack.tab.border.out", dockable );
         borderCenter         = new FlatTabColor( "stack.tab.border.center", dockable );
+        borderDisabledOut    = new FlatTabColor( "stack.tab.border.out.disabled", dockable );
+        borderDisabledCenter = new FlatTabColor( "stack.tab.border.center.disabled", dockable );
         border               = new FlatTabColor( "stack.tab.border", dockable );
         
         backgroundSelectedTop    = new FlatTabColor( "stack.tab.background.top.selected", dockable );
@@ -164,19 +181,21 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
         backgroundFocusedBottom = new FlatTabColor( "stack.tab.background.bottom.focused", dockable );
         backgroundTop            = new FlatTabColor( "stack.tab.background.top", dockable );
         backgroundBottom         = new FlatTabColor( "stack.tab.background.bottom", dockable );
+        backgroundDisabledTop    = new FlatTabColor( "stack.tab.background.top.disabled", dockable );
+        backgroundDisabledBottom = new FlatTabColor( "stack.tab.background.bottom.disabled", dockable );
         background               = new FlatTabColor( "stack.tab.background", dockable );
         
         foreground = new FlatTabColor( "stack.tab.foreground", dockable ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
-                if( !isSelected() )
+                if( !isSelected() && isEnabled() )
                     setForeground( newColor );
             }
         };
         foregroundSelected = new FlatTabColor( "stack.tab.foreground.selected", dockable ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
-                if( isSelected() && !focused ){
+                if( isSelected() && !focused && isEnabled() ){
                     setForeground( newColor );
                 }
             }
@@ -184,10 +203,18 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
         foregroundFocused = new FlatTabColor( "stack.tab.foreground.focused", dockable ){
             @Override
             protected void changed( Color oldColor, Color newColor ) {
-                if( focused ){
+                if( focused && isEnabled() ){
                     setForeground( newColor );
                 }
             }
+        };
+        foregroundDisabled = new FlatTabColor( "stack.tab.foreground.disabled", dockable ){
+        	@Override
+        	protected void changed( Color oldColor, Color newColor ){
+        		if( !isEnabled() ){
+        			setForeground( newColor );
+        		}
+        	}
         };
         
         fontFocused = new FlatTabFont( DockFont.ID_TAB_FOCUSED, dockable );
@@ -213,7 +240,11 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
                 Color out = null;
                 Color center = null;
 
-                if( focused ){
+                if( !isEnabled() ){
+                	out = borderDisabledOut.value();
+                	center = borderDisabledCenter.value();
+                }
+                else if( focused ){
                     out = borderFocusedOut.value();
                     center = borderFocusedCenter.value();
                 }
@@ -280,7 +311,10 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     }
     
     public void updateForeground(){
-        if( focused ){
+    	if( !isEnabled() ){
+    		setForeground( foregroundDisabled.value() );
+    	}
+    	else if( focused ){
             setForeground( foregroundFocused.value() );
         }
         else if( isSelected() ){
@@ -379,6 +413,8 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
         borderFocusedCenter.connect( controller );
         borderOut.connect( controller );
         borderCenter.connect( controller );
+        borderDisabledOut.connect( controller );
+        borderDisabledCenter.connect( controller );
         border.connect( controller );
         
         backgroundSelectedTop.connect( controller );
@@ -387,10 +423,13 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
         backgroundFocusedBottom.connect( controller );
         backgroundTop.connect( controller );
         backgroundBottom.connect( controller );
+        backgroundDisabledTop.connect( controller );
+        backgroundDisabledBottom.connect( controller );
         background.connect( controller );
         
         foregroundSelected.connect( controller );
         foregroundFocused.connect( controller );
+        foregroundDisabled.connect( controller );
         foreground.connect( controller );
         
         fontFocused.connect( controller );
@@ -442,7 +481,35 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
 	    return true;
     }
     
+    @Override
+    public void setEnabled( boolean enabled ){
+    	if( isEnabled() != enabled ){
+    		label.setEnabled( enabled );
+    		super.setEnabled( enabled );
+    		if( enabled ){
+    			for( MouseInputListener listener : mouseInputListeners ){
+    				doAddMouseInputListener( listener );
+    			}
+    		}
+    		else{
+    			for( MouseInputListener listener : mouseInputListeners ){
+    				doRemoveMouseInputListener( listener );
+    			}
+    		}
+    		updateFonts();
+    		updateForeground();
+    		repaint();
+    	}
+    }
+    
     public void addMouseInputListener( MouseInputListener listener ) {
+    	mouseInputListeners.add( listener );
+    	if( isEnabled() ){
+    		doAddMouseInputListener( listener );
+    	}
+    }
+    
+    private void doAddMouseInputListener( MouseInputListener listener ){
         addMouseListener( listener );
         addMouseMotionListener( listener );
         
@@ -451,6 +518,13 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     }
     
     public void removeMouseInputListener( MouseInputListener listener ) {
+    	mouseInputListeners.remove( listener );
+    	if( isEnabled() ){
+    		doRemoveMouseInputListener( listener );
+    	}
+    }
+    
+    private void doRemoveMouseInputListener( MouseInputListener listener ){
         removeMouseListener( listener );
         removeMouseMotionListener( listener );
         
@@ -556,7 +630,11 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
 	        Color top = null;
 	        Color bottom = null;
 	        
-	        if( focused ){
+	        if( !isEnabled() ){
+	        	top = backgroundDisabledTop.value();
+	        	bottom = backgroundFocusedBottom.value();
+	        }
+	        else if( focused ){
 	            top = backgroundFocusedTop.value();
 	            bottom = backgroundFocusedBottom.value();
 	        }

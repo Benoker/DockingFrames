@@ -45,6 +45,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.disable.TabDisablingStrategyObserver;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPane;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
@@ -199,6 +200,14 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		}
 	};
 
+	/** keeps track of which tabs and menu items must be disabled */
+	private TabDisablingStrategyObserver tabDisabling = new TabDisablingStrategyObserver(){
+		@Override
+		public void setDisabled( Dockable dockable, boolean disabled ){
+			setEnabledAt( dockable, !disabled );
+		}
+	};
+	
 	/**
 	 * Constructs a new component.
 	 */
@@ -299,6 +308,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 			}
 
 			background.setController( controller );
+			tabDisabling.setController( controller );
 			super.setController( controller );
 		}
 	}
@@ -405,7 +415,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 
 	public void insertTab( String title, Icon icon, Component comp, Dockable dockable, int index ){
 		Component between = createLayerAt( comp, dockable );
-		Meta meta = new Meta( dockable, between, title, icon, null );
+		Meta meta = new Meta( dockable, between, title, icon, null, !tabDisabling.isDisabled( dockable ) );
 		components.put( dockable, meta );
 		componentPanel.add( between );
 
@@ -414,6 +424,8 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		meta.forward();
 
 		meta.component.setVisible( getSelectedDockable() == dockable );
+		
+		tabDisabling.add( dockable );
 	}
 
 	public Dimension getMinimumSize( Dockable dockable ){
@@ -452,6 +464,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	@Override
 	public void remove( int index ){
 		Dockable dockable = getDockable( index );
+		tabDisabling.remove( dockable );
 		super.remove( index );
 		Meta meta = components.remove( dockable );
 		meta.setController( null );
@@ -466,6 +479,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 			componentPanel.remove( meta.component );
 			meta.setController( null );
 			meta.component.setVisible( true );
+			tabDisabling.remove( meta.getDockable() );
 		}
 		components.clear();
 	}
@@ -478,6 +492,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		tab.setIcon( meta.icon );
 		tab.setText( meta.text );
 		tab.setTooltip( meta.tooltip );
+		tab.setEnabled( meta.enabled );
 
 		return tab;
 	}
@@ -490,6 +505,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		tab.setIcon( meta.icon );
 		tab.setText( meta.text );
 		tab.setTooltip( meta.tooltip );
+		tab.setEnabled( meta.enabled );
 
 		return tab;
 	}
@@ -502,6 +518,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		menu.setIcon( index, meta.icon );
 		menu.setText( index, meta.text );
 		menu.setTooltip( index, meta.tooltip );
+		menu.setEnabled( index, meta.enabled );
 	}
 
 	protected void removeFromMenu( M menu, Dockable dockable ){
@@ -574,6 +591,19 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		meta.component.setVisible( getSelectedDockable() == meta.dockable );
 		revalidate();
 	}
+	
+	/**
+	 * Changes the enabled state of the item <code>dockable</code>. 
+	 * @param dockable the tab whose state is to be changed
+	 * @param enabled the new enabled state
+	 */
+	protected void setEnabledAt( Dockable dockable, boolean enabled ){
+		Meta meta = components.get( dockable );
+		if( meta != null && meta.enabled != enabled ){
+			meta.enabled = enabled;
+			meta.forward();
+		}
+	}
 
 	public JComponent getComponent(){
 		return panel;
@@ -630,7 +660,9 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		private String tooltip;
 		/** sets the border of {@link #component} */
 		private BorderForwarder border;
-
+		/** whether this tab is enabled */
+		private boolean enabled = true;
+		
 		/**
 		 * Creates new meta information.
 		 * @param dockable the element for which the meta information is required
@@ -638,13 +670,15 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		 * @param text text to be shown in the tab
 		 * @param icon icon to be shown in the tab
 		 * @param tooltip tooltip to be shown on the tab
+		 * @param enabled whether this tab is enabled or not
 		 */
-		public Meta( Dockable dockable, Component component, String text, Icon icon, String tooltip ){
+		public Meta( Dockable dockable, Component component, String text, Icon icon, String tooltip, boolean enabled ){
 			this.dockable = dockable;
 			this.component = component;
 			this.text = text;
 			this.icon = icon;
 			this.tooltip = tooltip;
+			this.enabled = enabled;
 
 			if( component instanceof JComponent ) {
 				border = createContentBorderModifier( dockable, (JComponent) component );
@@ -703,6 +737,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 				tab.setIcon( icon );
 				tab.setText( text );
 				tab.setTooltip( tooltip );
+				tab.setEnabled( enabled );
 			}
 			else {
 				CombinedMenu menu = getMenu( dockable );
@@ -713,6 +748,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 							menu.setIcon( i, icon );
 							menu.setText( i, text );
 							menu.setTooltip( i, tooltip );
+							menu.setEnabled( i, enabled );
 							break;
 						}
 					}

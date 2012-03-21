@@ -29,6 +29,7 @@ package bibliothek.gui.dock.action.actions;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.dropdown.DropDownItemAction;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 
 /**
  * An action that can be shown as child of a {@link DropDownAction} and
@@ -46,6 +47,14 @@ public abstract class SimpleDropDownItemAction extends SimpleDockAction implemen
     /** Whether this action can be triggered when shown on a {@link DropDownAction} or not if it is not selected */
     private boolean dropDownTriggerableNotSelected = true;
 
+    /**
+     * Creates a new action.
+     * @param monitorDisabling whether to monitor the current {@link DisablingStrategy}
+     */
+    public SimpleDropDownItemAction( boolean monitorDisabling ){
+    	super( monitorDisabling );
+    }
+    
     public void setDropDownSelectable( boolean dropDownSelectable ){
 		this.dropDownSelectable = dropDownSelectable;
 	}

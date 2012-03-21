@@ -143,7 +143,10 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
      * which want to use {@link DockTitle}s as tabs, should exchange the
      * {@link TabPainter} by executing this code:<br>
      * <code>controller.getProperties().set( EclipseTheme.TAB_PAINTER, DockTitleTab.FACTORY );</code>
+     * @deprecated While still possible to use, implementing a custom {@link TabPainter} is the preferred option to
+     * replace tabs
      */
+    @Deprecated
     public static final String TAB_DOCK_TITLE = "eclipse.tab";
 
     /** An acceptance that permits combinations of dockables and stations that do not look good */

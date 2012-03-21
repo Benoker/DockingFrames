@@ -32,6 +32,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.DropDownAction;
 import bibliothek.gui.dock.action.StandardDockAction;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 
 /**
  * A dropdown action that has the same properties for all Dockables.
@@ -41,6 +42,21 @@ public class SimpleDropDownAction extends AbstractSimpleDropDownAction implement
 	/** the menu */
 	private DefaultDockActionSource actions = new DefaultDockActionSource();
 
+	/**
+	 * Creates a new action
+	 */
+	public SimpleDropDownAction(){
+		this( true );
+	}
+	
+	/**
+	 * Creates a new action
+	 * @param monitorDisabling whether the current {@link DisablingStrategy} should be monitored
+	 */
+	public SimpleDropDownAction( boolean monitorDisabling ){
+		super( monitorDisabling );
+	}
+	
 	public void add( DockAction action ){
 		actions.add( action );
 	}

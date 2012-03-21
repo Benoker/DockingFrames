@@ -32,6 +32,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.MenuDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 
 /**
  * An action that provides a menu which contains other actions.
@@ -46,7 +47,15 @@ public class SimpleMenuAction extends SimpleDockAction implements MenuDockAction
 	 * @see #setMenu(DockActionSource)
 	 */
 	public SimpleMenuAction(){
-		// do nothing
+		this( true );
+	}
+	
+	/**
+	 * Creates a new action, the method has to be set later.
+	 * @param monitorDisabling whether the current {@link DisablingStrategy} will be monitored
+	 */
+	public SimpleMenuAction( boolean monitorDisabling ){
+		super( monitorDisabling );
 	}
 	
 	/**
@@ -54,6 +63,7 @@ public class SimpleMenuAction extends SimpleDockAction implements MenuDockAction
 	 * @param menu the menu that is shown for this action
 	 */
 	public SimpleMenuAction( DockActionSource menu ){
+		this( true );
 		setMenu( menu );
 	}
 

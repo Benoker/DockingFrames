@@ -2396,7 +2396,7 @@
 	</pictures>
 	<resources>
 		<resource name="CLookAndFeelMenuPiece">
-			<key>l.6.Nimbus.com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel</key>
+			<key>s.default</key>
 		</resource>
 		<resource name="ccontrol.frontend">
 			<areas/>
@@ -2412,16 +2412,12 @@
 										<root>true</root>
 										<content delegate="SplitDockStationFactory">
 											<fullscreen-action>false</fullscreen-action>
-											<node nodeId="1293551127564" orientation="VERTICAL" divider="0.7571121369547784">
-												<node nodeId="1293533691140" orientation="HORIZONTAL" divider="0.38636363636363635">
-													<leaf id="2" nodeId="1293532777226">
+											<node nodeId="1331109464489" orientation="VERTICAL" divider="0.7049366051045696">
+												<node nodeId="1331109469960" orientation="HORIZONTAL" divider="0.2616487455197133">
+													<leaf id="1" nodeId="1331109469958">
 														<placeholders>
 															<placeholder>dock.single.PictureListDockable</placeholder>
 														</placeholders>
-														<placeholder-map>
-															<version>0</version>
-															<format>dock.PlaceholderList</format>
-														</placeholder-map>
 													</leaf>
 													<leaf id="0" nodeId="1265545542869">
 														<placeholders>
@@ -2448,10 +2444,14 @@
 														</placeholder-map>
 													</leaf>
 												</node>
-												<leaf id="1" nodeId="1293551127563">
+												<leaf id="2" nodeId="1293532777226">
 													<placeholders>
 														<placeholder>dock.single.ColorDockable</placeholder>
 													</placeholders>
+													<placeholder-map>
+														<version>0</version>
+														<format>dock.PlaceholderList</format>
+													</placeholder-map>
 												</leaf>
 											</node>
 										</content>
@@ -2548,20 +2548,20 @@
 										</children>
 									</child>
 									<child>
-										<layout factory="predefined" placeholder="dock.single.ColorDockable">
-											<replacement id="dockablesingle ColorDockable"/>
+										<layout factory="predefined" placeholder="dock.single.PictureListDockable">
+											<replacement id="dockablesingle PictureListDockable"/>
 											<delegate id="delegate_ccontrol backup factory id">
-												<id>ColorDockable</id>
+												<id>PictureListDockable</id>
 												<area/>
 											</delegate>
 										</layout>
 										<children ignore="false"/>
 									</child>
 									<child>
-										<layout factory="predefined" placeholder="dock.single.PictureListDockable">
-											<replacement id="dockablesingle PictureListDockable"/>
+										<layout factory="predefined" placeholder="dock.single.ColorDockable">
+											<replacement id="dockablesingle ColorDockable"/>
 											<delegate id="delegate_ccontrol backup factory id">
-												<id>PictureListDockable</id>
+												<id>ColorDockable</id>
 												<area/>
 											</delegate>
 										</layout>
@@ -2714,8 +2714,8 @@
 							<entry id="single PictureListDockable" current="dock.mode.normal">
 								<history>
 									<mode>dock.mode.externalized</mode>
-									<mode>dock.mode.minimized</mode>
 									<mode>dock.mode.maximized</mode>
+									<mode>dock.mode.minimized</mode>
 									<mode>dock.mode.normal</mode>
 								</history>
 								<properties>
@@ -2744,10 +2744,13 @@
 											<property factory="SplitDockPlaceholderProperty">
 												<placeholder>dock.single.PictureListDockable</placeholder>
 												<backup-path>
-													<node location="TOP" size="0.7571214392803598" id="1293551127564"/>
-													<node location="LEFT" size="0.38636363636363635" id="1293533691140"/>
+													<node location="BOTTOM" size="0.33520599250936334" id="1331109464489"/>
 													<leaf id="1293532777226"/>
 												</backup-path>
+											</property>
+											<property factory="StackDockPropertyFactory">
+												<index>0</index>
+												<placeholder>dock.single.PictureListDockable</placeholder>
 											</property>
 										</location>
 									</property>
@@ -2764,10 +2767,6 @@
 												<index>0</index>
 												<holding>false</holding>
 												<size>400</size>
-												<placeholder>dock.single.PictureListDockable</placeholder>
-											</property>
-											<property factory="StackDockPropertyFactory">
-												<index>0</index>
 												<placeholder>dock.single.PictureListDockable</placeholder>
 											</property>
 										</location>
@@ -2849,12 +2848,12 @@
 											<property factory="SplitDockPlaceholderProperty">
 												<placeholder>dock.single.ColorDockable</placeholder>
 												<backup-path>
-													<node location="LEFT" size="0.7363590407164777" id="1293533691140"/>
+													<node location="LEFT" size="0.48924820788530465" id="1293533691140"/>
 													<leaf id="1293532777226"/>
 												</backup-path>
 											</property>
 											<property factory="StackDockPropertyFactory">
-												<index>0</index>
+												<index>1</index>
 												<placeholder>dock.single.ColorDockable</placeholder>
 											</property>
 										</location>
@@ -3041,7 +3040,7 @@
 			</child>
 		</resource>
 		<resource name="dock.ui.ThemeMap">
-			<key>eclipse</key>
+			<key>basic</key>
 		</resource>
 	</resources>
 </config>

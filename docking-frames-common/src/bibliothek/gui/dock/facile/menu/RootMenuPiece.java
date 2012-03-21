@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.facile.menu;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 
@@ -79,7 +80,11 @@ public class RootMenuPiece extends NodeMenuPiece {
         menu.addHierarchyListener( new HierarchyListener(){
 			public void hierarchyChanged( HierarchyEvent e ){
 				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ){
-					checkVisibility();
+					EventQueue.invokeLater( new Runnable(){
+						public void run(){
+							checkVisibility();	
+						}
+					} );
 				}
 			}
 		});

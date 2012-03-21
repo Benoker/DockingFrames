@@ -42,6 +42,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
 
 /**
@@ -71,7 +72,15 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
 		 * Creates the new action
 		 */
 		public Check(){
-			super( ActionType.CHECK );
+			this( true );
+		}
+		
+		/**
+		 * Creates a new action
+		 * @param monitorDisabling whether the current {@link DisablingStrategy} should be monitored
+		 */
+		public Check( boolean monitorDisabling ){
+			super( ActionType.CHECK, monitorDisabling );
 			setDropDownSelectable( false );
 		}
 		
@@ -94,7 +103,15 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
 		 * Creates the new action
 		 */
 		public Radio(){
-			super( ActionType.RADIO );
+			this( true );
+		}
+		
+		/**
+		 * Creates a new action
+		 * @param monitorDisabling whether the current {@link DisablingStrategy} should be monitored
+		 */
+		public Radio( boolean monitorDisabling ){
+			super( ActionType.RADIO, monitorDisabling );
 			setDropDownTriggerableSelected( false );
 		}
 		
@@ -110,8 +127,11 @@ public abstract class SimpleSelectableAction extends SimpleDropDownItemAction im
 	/**
 	 * Creates a new action.
 	 * @param type how this action is to be visualized
+	 * @param monitorDisabling whether the current {@link DisablingStrategy} should be monitored
 	 */
-	public SimpleSelectableAction( ActionType<SelectableDockAction> type ){
+	public SimpleSelectableAction( ActionType<SelectableDockAction> type, boolean monitorDisabling ){
+		super( monitorDisabling );
+		
 		if( type == null )
 			throw new IllegalArgumentException( "Type must not be null" );
 		

@@ -336,7 +336,7 @@ public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements Docka
 		updateFullBorder();
 		updateInvisibleTab();
 	}
-
+	
 	public void setStation( DockStation station ){
 		this.station = station;
 	}

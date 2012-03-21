@@ -68,7 +68,7 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     /** The actions that were suggested to this title */
     private DockActionSource suggestedSource;
     
-	/**
+    /**
      * Constructs a new title
      * @param dockable the Dockable which is the owner of this title
      * @param origin the version which was used to create this title

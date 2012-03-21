@@ -86,6 +86,9 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     /** how to paint a combination */
     private CombinerTarget combination;
 
+    /** whether a drag and drop operation currently removes the child of this window */
+    private boolean removal = false;
+    
     /** the explicit set icon */
     private Icon titleIcon = null;
     
@@ -377,6 +380,11 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         this.combination = target; 
         window.repaint();
     }
+    
+    public void setPaintRemoval( boolean removal ){
+    	this.removal = removal;
+    	window.repaint();
+    }
 
     public void setVisible( boolean visible ) {
     	if( visible != isVisible() ){
@@ -547,7 +555,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     	SecureContainer panel = new SecureContainer(){
             @Override
             protected void paintOverlay( Graphics g ) {
-            	if( combination != null ){
+            	if( combination != null || removal ){
                     ScreenDockStation station = getStation();
                     StationPaint paint = station.getPaint().get();
                     if( paint != null ){
@@ -558,7 +566,12 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 	                            getWidth() - 2*(insets.left+insets.right),
 	                            getHeight() - 2*(insets.top+insets.bottom ));
 	
-	                    combination.paint( g, contentBackground, paint, bounds, insert );
+	                    if( combination != null ){
+	                    	combination.paint( g, contentBackground, paint, bounds, insert );
+	                    }
+	                    else if( removal ){
+	                    	paint.drawRemoval( g, station, bounds, insert );
+	                    }
                     }
                 }
             }

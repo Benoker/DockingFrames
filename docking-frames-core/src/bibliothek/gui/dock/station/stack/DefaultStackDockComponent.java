@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station.stack;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -46,6 +47,7 @@ import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.disable.TabDisablingStrategyObserver;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
 
@@ -68,6 +70,17 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	
 	/** the tab to which mouse-events are currently redirected */
 	private Tab mouseTarget;
+	
+	/** keeps track of all tabs that need to be disabled */
+	private TabDisablingStrategyObserver tabDisabling = new TabDisablingStrategyObserver(){
+		@Override
+		public void setDisabled( Dockable dockable, boolean disabled ){
+			int index = indexOf( dockable );
+			if( index >= 0 ){
+				setEnabledAt( index, !disabled );
+			}
+		}
+	};
 	
 	/**
 	 * Constructs the component, sets the location of the tabs to bottom.
@@ -119,6 +132,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         Tab tab = createTab( dockable );
         dockables.add( index, tab );
         tab.setController( controller );
+        tabDisabling.add( dockable );
     }
     
     /**
@@ -135,6 +149,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 		Tab tab = createTab( dockable );
         dockables.add( tab );
         tab.setController( controller );
+        tabDisabling.add( dockable );
 	}
 	
 	public Dockable getDockableAt( int index ){
@@ -171,16 +186,19 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
     
     @Override
     public void removeAll(){
-    	for( Tab tab : dockables )
+    	for( Tab tab : dockables ){
     	    tab.setController( null );
+    	    tabDisabling.remove( tab.getDockable() );
+    	}
         super.removeAll();
     	dockables.clear();
     }
     
     @Override
     public void remove( int index ){
-        Tab tab = dockables.remove( index );
+    	Tab tab = dockables.remove( index );
         tab.setController( null );
+        tabDisabling.remove( tab.getDockable() );
         super.remove( index );
     }
 
@@ -207,6 +225,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 			}
 			
 			this.controller = controller;
+			tabDisabling.setController( controller );
 			
 		    for( Tab tab : dockables ){
 		        tab.setController( controller );
@@ -224,6 +243,28 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	
 	public DockElementRepresentative createDefaultRepresentation( DockElement target ){
 		return new SimpleDockElementRepresentative( target, this );
+	}
+	
+	public int indexOf( Dockable dockable ){
+		int index = 0;
+		for( Tab tab : dockables ){
+			if( tab.getDockable() == dockable ){
+				return index;
+			}
+			index++;
+		}
+		return -1;
+	}
+	
+	@Override
+	public Dimension getMinimumSize(){
+		Dimension result = new Dimension( 1, 1 );
+		for( int i = 0, n = getTabCount(); i<n; i++ ){
+    		Dimension size = getComponentAt( i ).getMinimumSize();
+    		result.width = Math.max( result.width, size.width );
+    		result.height = Math.max( result.height, size.height );
+    	}
+		return result;
 	}
 	
 	/**

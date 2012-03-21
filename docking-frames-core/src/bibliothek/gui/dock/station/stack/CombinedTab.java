@@ -61,4 +61,11 @@ public interface CombinedTab extends DockElementRepresentative, Tab{
 	 * @param tooltip the tooltip text, can be <code>null</code>
 	 */
 	public void setTooltip( String tooltip );
+	
+	/**
+	 * Enables or disables this tab. A disabled shoutl not react to any mouse input, and it
+	 * should be visually distinct from enabled tabs.
+	 * @param enabled whether to enable or disable this tab
+	 */
+	public void setEnabled( boolean enabled );
 }

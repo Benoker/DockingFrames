@@ -36,6 +36,7 @@ import java.awt.Point;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
@@ -71,6 +72,7 @@ import bibliothek.util.Path;
     "title.background.top.inactive.flap",
     "title.background.top.selected.mouse.flap",
     "title.background.top.selected.flap",
+    "title.background.top.disabled.flap",
     
     "title.background.bottom.active.mouse.flap",
     "title.background.bottom.active.flap",
@@ -78,6 +80,7 @@ import bibliothek.util.Path;
     "title.background.bottom.inactive.flap",
     "title.background.bottom.selected.mouse.flap",
     "title.background.bottom.selected.flap",
+    "title.background.bottom.disabled.flap",
     
     "title.foreground.active.mouse.flap",
     "title.foreground.active.flap",
@@ -97,7 +100,9 @@ import bibliothek.util.Path;
 	"title.flap.selected.knob.highlight",
 	"title.flap.selected.knob.shadow",
 	"title.flap.selected.mouse.knob.highlight",
-	"title.flap.selected.mouse.knob.shadow"
+	"title.flap.selected.mouse.knob.shadow",
+	"title.flap.disabled.knob.highlight",
+	"title.flap.disabled.knob.shadow"
 })
 public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     /**
@@ -168,13 +173,8 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
 			}
 		};
     	
-        if( origin != null ){
-            behavior.setProperties( origin.getController() );
-        }
-        
         init( dockable, origin, false );
         allActionsSource.setSeparateSources( true );
-        behavior.setDockable( dockable );
         updateContent();
     }
     
@@ -206,6 +206,7 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         addColor( "title.background.top.inactive.flap", path, Color.DARK_GRAY );
         addColor( "title.background.top.selected.mouse.flap", path, Color.BLUE );
         addColor( "title.background.top.selected.flap", path, Color.DARK_GRAY );
+        addColor( "title.background.top.disabled.flap", path, Color.DARK_GRAY );
 
         addColor( "title.background.bottom.active.mouse.flap", path, Color.LIGHT_GRAY );
         addColor( "title.background.bottom.active.flap", path, Color.WHITE );
@@ -213,6 +214,7 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         addColor( "title.background.bottom.inactive.flap", path, Color.BLACK );
         addColor( "title.background.bottom.selected.mouse.flap", path, Color.DARK_GRAY );
         addColor( "title.background.bottom.selected.flap", path, Color.BLACK );
+        addColor( "title.background.bottom.disabled.flap", path, Color.BLACK );
 
         addColor( "title.foreground.active.mouse.flap", path, Color.BLACK );
         addColor( "title.foreground.active.flap", path, Color.BLACK );
@@ -233,6 +235,8 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
         addColor( "title.flap.selected.knob.shadow", path, Color.BLACK );
         addColor( "title.flap.selected.mouse.knob.highlight", path, Color.WHITE );
         addColor( "title.flap.selected.mouse.knob.shadow", path, Color.BLACK );
+        addColor( "title.flap.disabled.knob.highlight", path, Color.WHITE );
+        addColor( "title.flap.disabled.knob.shadow", path, Color.BLACK );
         
         addConditionalFont( DockFont.ID_FLAP_BUTTON_ACTIVE, TitleFont.KIND_FLAP_BUTTON_FONT, 
                 new Condition(){
@@ -254,6 +258,24 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
                 return !isActive();
             }
         }, null );
+    }
+
+    @Override
+    public void bind(){
+    	DockTitleVersion origin = getOrigin();
+    	if( origin != null ){
+        	behavior.setProperties( origin.getController() );
+        }
+    	behavior.setDockable( getDockable() );
+        
+    	super.bind();
+    }
+    
+    @Override
+    public void unbind(){
+    	behavior.setProperties( (DockController)null );
+    	behavior.setDockable( null );
+    	super.unbind();
     }
     
     @Override
@@ -284,37 +306,52 @@ public class BubbleButtonDockTitle extends AbstractBubbleDockTitle{
     
     @Override
     protected void updateAnimation(){
-        String postfix = "";
-        if( isActive() ){
-            if( isMouseOver() )
-                postfix = "active.mouse";
-            else
-                postfix = "active";
-        }
-        else if( isSelected() ){
-            if( isMouseOver() )
-                postfix = "selected.mouse";
-            else
-                postfix = "selected";
-        }
-        else{
-            if( isMouseOver() )
-                postfix = "inactive.mouse";
-            else
-                postfix = "inactive";            
-        }
-        
-        String top = "title.background.top." + postfix + ".flap";
-        String bottom = "title.background.bottom." + postfix + ".flap";
-        String text = "title.foreground." + postfix + ".flap";
-        String knobHighlight = "title.flap." + postfix + ".knob.highlight";
-        String knobShadow = "title.flap." + postfix + ".knob.shadow";
-        
-        updateAnimation( ANIMATION_KEY_TEXT, text );
-        updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, top );
-        updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, bottom );
-        updateAnimation( ANIMATION_KEY_KNOB_HIGHLIGHT, knobHighlight );
-        updateAnimation( ANIMATION_KEY_KNOB_SHADOW, knobShadow );
+    	if( isDisabled() ){
+    		String top = "title.background.top.disabled.flap";
+	        String bottom = "title.background.bottom.disabled.flap";
+	        String text = "title.foreground.inactive.flap";
+	        String knobHighlight = "title.flap.disabled.knob.highlight";
+	        String knobShadow = "title.flap.disabled.knob.shadow";
+	        
+	        updateAnimation( ANIMATION_KEY_TEXT, text );
+	        updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, top );
+	        updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, bottom );
+	        updateAnimation( ANIMATION_KEY_KNOB_HIGHLIGHT, knobHighlight );
+	        updateAnimation( ANIMATION_KEY_KNOB_SHADOW, knobShadow );
+    	}
+    	else{
+	        String postfix = "";
+	        if( isActive() ){
+	            if( isMouseOver() )
+	                postfix = "active.mouse";
+	            else
+	                postfix = "active";
+	        }
+	        else if( isSelected() ){
+	            if( isMouseOver() )
+	                postfix = "selected.mouse";
+	            else
+	                postfix = "selected";
+	        }
+	        else{
+	            if( isMouseOver() )
+	                postfix = "inactive.mouse";
+	            else
+	                postfix = "inactive";            
+	        }
+	        
+	        String top = "title.background.top." + postfix + ".flap";
+	        String bottom = "title.background.bottom." + postfix + ".flap";
+	        String text = "title.foreground." + postfix + ".flap";
+	        String knobHighlight = "title.flap." + postfix + ".knob.highlight";
+	        String knobShadow = "title.flap." + postfix + ".knob.shadow";
+	        
+	        updateAnimation( ANIMATION_KEY_TEXT, text );
+	        updateAnimation( ANIMATION_KEY_BACKGROUND_TOP, top );
+	        updateAnimation( ANIMATION_KEY_BACKGROUND_BOTTOM, bottom );
+	        updateAnimation( ANIMATION_KEY_KNOB_HIGHLIGHT, knobHighlight );
+	        updateAnimation( ANIMATION_KEY_KNOB_SHADOW, knobShadow );
+    	}
     }
     
     /**

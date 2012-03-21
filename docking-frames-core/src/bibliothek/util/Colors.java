@@ -135,6 +135,32 @@ public final class Colors {
 		return new Color ( red, green, blue );
 	}
 	
+	/**
+	 * Creates a color that "lies between" the colors <code>a</code>, <code>b</code> and
+	 * <code>c</code>. Each color has a weight, and as higher the weight as more of that color
+	 * is inside the created color.
+	 * @param a the first color to incooperate
+	 * @param weightA how much of <code>a</code> goes into the resulting color
+	 * @param b the second color to incooperate
+	 * @param weightB how much of <code>b</code> goes into the resulting color
+	 * @param c the third color to incooperate
+	 * @param weightC how much of <code>c</code> goes into the resulting color
+	 * @return <code>(a * weightA + b * weightB + c * weightC) / (weightA + weightB + weightC)</code> 
+	 */
+	public static Color between( Color a, double weightA, Color b, double weightB, Color c, double weightC ){
+		double sum = weightA + weightB + weightC;
+		
+		weightA /= sum;
+		weightB /= sum;
+		weightC /= sum;
+		
+		double red = a.getRed() * weightA + b.getRed() * weightB + c.getRed() * weightC;
+		double green = a.getGreen() * weightA + b.getGreen() * weightB + c.getGreen() * weightC;
+		double blue = a.getBlue() * weightA + b.getBlue() * weightB + c.getBlue() * weightC;
+		
+		return new Color( Math.max( 0, Math.min( (int)red, 255 ) ), Math.max( 0, Math.min( (int)green, 255 ) ), Math.max( 0, Math.min( (int)blue, 255 ) ) );
+	}
+	
     public static Color middle( Color a, Color b ){
         return between( a, b, 0.5 );
     }

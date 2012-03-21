@@ -26,6 +26,8 @@
 
 package bibliothek.extension.gui.dock.theme.smooth;
 
+import java.awt.Color;
+
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.themes.basic.BasicStationTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -37,24 +39,31 @@ import bibliothek.util.Colors;
  *
  */
 public class SmoothDefaultStationTitle extends BasicStationTitle{
+	private final int ACTIVE_STATE = 0;
+	private final int INACTIVE_STATE = 1;
+	private final int DISABLED_STATE = 2;
+	
     /** the counter, tells where transition between active and passive stands. */
-    private int current = 0;
+    private int[] current = null;
     
     /**
      * Source for pulses for this title.
      */
-    private SmoothChanger changer = new SmoothChanger( 2 ){
+    private SmoothChanger changer = new SmoothChanger( 3 ){
     	@Override
     	protected int destination() {
-    		if( isActive() )
-    			return 0;
+    		if( isDisabled() ){
+    			return DISABLED_STATE;
+    		}
+    		else if( isActive() )
+    			return ACTIVE_STATE;
     		else
-    			return 1;
+    			return INACTIVE_STATE;
     	}
     	
         @Override
         protected void repaint( int[] current ) {
-            SmoothDefaultStationTitle.this.current = current[0];
+            SmoothDefaultStationTitle.this.current = current;
             SmoothDefaultStationTitle.this.updateColors();
         }
     };
@@ -65,6 +74,15 @@ public class SmoothDefaultStationTitle extends BasicStationTitle{
         
         if( changer != null )
             changer.trigger();
+    }
+    
+    @Override
+    protected void setDisabled( boolean disabled ){
+    	super.setDisabled( disabled );
+    	
+    	if( changer != null ){
+    		changer.trigger();
+    	}
     }
     
     /**
@@ -95,19 +113,18 @@ public class SmoothDefaultStationTitle extends BasicStationTitle{
         
     @Override
     protected void updateColors() {
-        super.updateColors();
-        
-        if( changer != null ){
-            int duration = getDuration();
+        if( changer != null && changer.isRunning() && current != null ){
+        	setForeground( get( getActiveTextColor(), getInactiveTextColor(), getInactiveTextColor() ));
+            setBackground( get( getActiveColor(), getInactiveColor(), getDisabledColor() ));
             
-            if( (isActive() && current != duration) || 
-                (!isActive() && current != 0 )){
-                
-                double ratio = current / (double)duration;
-                
-                setForeground( Colors.between( getInactiveTextColor(), getActiveTextColor(), ratio ));
-                setBackground( Colors.between( getInactiveColor(), getActiveColor(), ratio ) );
-            }
+            repaint();
         }
+        else{
+        	super.updateColors();
+        }
+    }
+    
+    private Color get( Color active, Color inactive, Color disabled ){
+    	return Colors.between( active, current[ACTIVE_STATE], inactive, current[INACTIVE_STATE], disabled, current[DISABLED_STATE] );
     }
 }

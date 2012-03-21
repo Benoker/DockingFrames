@@ -29,6 +29,7 @@ package bibliothek.gui.dock.action.actions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
+import bibliothek.gui.dock.disable.ActionDisablingStrategyObserver;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.StandardDockActionListener;
 
 /**
@@ -52,7 +55,32 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
     
     /** All {@link Dockable Dockables} which can be used by this action */
     private Map<Dockable, Integer> bound = new HashMap<Dockable, Integer>();
+    
+    /** Keeps track of the current {@link DisablingStrategy} and informs this action when its state changed */
+    private ActionDisablingStrategyObserver disabling;
 
+    /**
+     * Creates a new action.
+     * @param monitorDisabling whether the current {@link DisablingStrategy} should be monitored
+     */
+    public AbstractStandardDockAction( boolean monitorDisabling ){
+    	if( monitorDisabling ){
+	    	disabling = new ActionDisablingStrategyObserver( this ){
+				@Override
+				protected void setDisabled( Set<Dockable> dockable, boolean disabled ){
+					fireActionEnabledChanged( dockable );
+				}
+				
+				@Override
+				protected void setDisabled( Dockable dockable, boolean disabled ){
+					Set<Dockable> set = new HashSet<Dockable>( 1 );
+					set.add( dockable );
+					fireActionEnabledChanged( set );
+				}
+			};
+    	}
+    }
+    
     public void addDockActionListener( StandardDockActionListener listener ) {
         listeners.add( listener );
     }
@@ -103,6 +131,9 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
     }
     
     public void bind( Dockable dockable ) {
+    	if( disabling != null ){
+    		disabling.bind( dockable );
+    	}
         Integer old = bound.get( dockable );
         if( old == null ){
             bound.put( dockable, 1 );
@@ -113,6 +144,9 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
     }
     
     public void unbind( Dockable dockable ) {
+    	if( disabling != null ){
+    		disabling.unbind( dockable );
+    	}
         Integer old = bound.get( dockable );
         if( old == null ){
             // that should not happen...
@@ -131,6 +165,16 @@ public abstract class AbstractStandardDockAction implements StandardDockAction {
             else
                 bound.put( dockable, old-1 );
         }
+    }
+    
+    /**
+     * This method chooses the result according to the current {@link DisablingStrategy}.
+     */
+    public boolean isEnabled( Dockable dockable ){
+    	if( disabling == null ){
+    		return true;
+    	}
+    	return !disabling.isDisabled( dockable );
     }
     
     /**

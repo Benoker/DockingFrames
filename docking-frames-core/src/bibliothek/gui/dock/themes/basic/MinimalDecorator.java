@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.themes.basic;
 
 import java.awt.Component;
+import java.awt.Insets;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -54,5 +55,9 @@ public class MinimalDecorator implements BasicDockableDisplayerDecorator{
 	
 	public DockActionSource getActionSuggestion(){
 		return null;
+	}
+	
+	public Insets getDockableInsets(){
+		return new Insets( 0, 0, 0, 0 );
 	}
 }

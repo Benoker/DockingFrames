@@ -33,4 +33,8 @@ public class CDefaultGlassFactory implements IGlassParameterFactory {
    public SGlassParameter getStripBGGlassParameters () {
       return (new SGlassParameter(0.25, 0.0, 0.5, 0.0, 0.0, 0.21, new Color(0, 0, 0), new Color(0, 0, 0), new Color(0, 0, 0), 0.0, 1.0, 0.7, 0.2));
    }
+   
+   public SGlassParameter getDisabledGlassParameters(){
+	   return (new SGlassParameter(0.0D, 0.0D, 0.08D, 0.3D, 1.0D, 0.0D, null, null, null, 1.0D, 0.85D, 0.75D, 0.25D));
+	}
 }

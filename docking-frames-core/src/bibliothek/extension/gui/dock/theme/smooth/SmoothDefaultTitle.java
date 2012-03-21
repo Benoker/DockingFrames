@@ -45,23 +45,29 @@ import bibliothek.util.Colors;
 public class SmoothDefaultTitle extends BasicDockTitle{
 	private final int ACTIVE_STATE = 0;
 	private final int INACTIVE_STATE = 1;
+	private final int DISABLED_STATE = 2;
 	
     /** The current state of the transition */
-    private int current = 0;
+    private int[] current = null;
     
     /** a trigger for the animation */
-    private SmoothChanger changer = new SmoothChanger( 2 ){
+    private SmoothChanger changer = new SmoothChanger( 3 ){
     	@Override
     	protected int destination() {
-    		if( isActive() )
+    		if( isDisabled() ){
+    			return DISABLED_STATE;
+    		}
+    		else if( isActive() ){
     			return ACTIVE_STATE;
-    		else
+    		}
+    		else{
     			return INACTIVE_STATE;
+    		}
     	}
     	
         @Override
         protected void repaint( int[] current ) {
-            SmoothDefaultTitle.this.current = current[ ACTIVE_STATE ];
+            SmoothDefaultTitle.this.current = current;
             updateForegroundColor();
             SmoothDefaultTitle.this.repaint();
         }
@@ -102,6 +108,14 @@ public class SmoothDefaultTitle extends BasicDockTitle{
     }
     
     @Override
+    protected void setDisabled( boolean disabled ){
+    	super.setDisabled( disabled );
+    	
+    	if( changer != null )
+    		changer.trigger();
+    }
+    
+    @Override
     protected void updateColors() {
     	super.updateColors();
     	updateForegroundColor();
@@ -113,13 +127,11 @@ public class SmoothDefaultTitle extends BasicDockTitle{
     protected void updateForegroundColor(){
         boolean done = false;
         
-        if( changer != null ){
+        if( changer != null && current != null ){
             int duration = getDuration();
             
-            if( (isActive() && current != duration) || 
-                (!isActive() && current != 0 )){
-                
-                double ratio = current / (double)duration;
+            if( (isActive() && current[ACTIVE_STATE] != duration) || (!isActive() && current[ACTIVE_STATE] != 0 )){
+                double ratio = current[ACTIVE_STATE] / (double)duration;
                 
                 setForeground( Colors.between( getInactiveTextColor(), getActiveTextColor(), ratio ));
                 done = true;
@@ -138,14 +150,9 @@ public class SmoothDefaultTitle extends BasicDockTitle{
     
     @Override
     protected void paintBackground( Graphics g, JComponent component ) {
-        int duration = getDuration();
-        
-        if( (isActive() && current != duration) ||
-            (!isActive() && current != 0 )){
-            double ratio = current / (double)duration;
-            
-            Color left = Colors.between( getInactiveLeftColor(), getActiveLeftColor(), ratio );
-            Color right = Colors.between( getInactiveRightColor(), getActiveRightColor(), ratio );
+        if( changer.isRunning() && current != null ){
+            Color left = get( getActiveLeftColor(), getInactiveLeftColor(), getDisabledLeftColor() );
+            Color right = get( getActiveRightColor(), getInactiveRightColor(), getDisabledRightColor() );
             
             GradientPaint gradient = getGradient( left, right, component );
             Graphics2D g2 = (Graphics2D)g;
@@ -155,5 +162,9 @@ public class SmoothDefaultTitle extends BasicDockTitle{
         }
         else
             super.paintBackground( g, component );
+    }
+    
+    private Color get( Color active, Color inactive, Color disabled ){
+    	return Colors.between( active, current[ACTIVE_STATE], inactive, current[INACTIVE_STATE], disabled, current[DISABLED_STATE] );
     }
 }

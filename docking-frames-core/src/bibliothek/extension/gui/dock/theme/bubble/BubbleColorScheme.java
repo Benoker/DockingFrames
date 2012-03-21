@@ -102,24 +102,28 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "stack.tab.border.focused",                   color( distribution, 200, 0, 0 ) );
         setColor( "stack.tab.border.focused.mouse",             color( distribution, 255, 150, 150 ) );
         setColor( "stack.tab.border",                           color( distribution, 100, 100, 100 ) );
+        setColor( "stack.tab.border.disabled",                  color( distribution, 150, 150, 150 ) );
         setColor( "stack.tab.border.mouse",                     color( distribution, 100, 175, 100 ) );
         setColor( "stack.tab.background.top.selected",          color( distribution, 160, 150, 150 ) );
         setColor( "stack.tab.background.top.selected.mouse",    color( distribution, 255, 100, 100 ) );
         setColor( "stack.tab.background.top.focused",           color( distribution, 200, 100, 100 ) );
         setColor( "stack.tab.background.top.focused.mouse",     color( distribution, 255, 200, 200 ) );
         setColor( "stack.tab.background.top",                   color( distribution, 150, 150, 150 ) );
+        setColor( "stack.tab.background.top.disabled",          color( distribution, 200, 200, 200 ) );
         setColor( "stack.tab.background.top.mouse",             color( distribution, 150, 255, 150 ) );
         setColor( "stack.tab.background.bottom.selected",       color( distribution, 210, 200, 200 ) );
         setColor( "stack.tab.background.bottom.selected.mouse", color( distribution, 255, 200, 200 ) );
         setColor( "stack.tab.background.bottom.focused",        color( distribution, 255, 200, 200 ) );
         setColor( "stack.tab.background.bottom.focused.mouse",  color( distribution, 255, 255, 255 ) );
         setColor( "stack.tab.background.bottom",                color( distribution, 200, 200, 200 ) );
+        setColor( "stack.tab.background.bottom.disabled",       color( distribution, 200, 200, 200 ) );
         setColor( "stack.tab.background.bottom.mouse",          color( distribution, 220, 255, 220 ) );
         setColor( "stack.tab.foreground.selected",              color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground.selected.mouse",        color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground.focused",               color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground.focused.mouse",         color( distribution, 0, 0, 0 ));
         setColor( "stack.tab.foreground",                       color( distribution, 100, 100, 100 ));
+        setColor( "stack.tab.foreground.disabled",              color( distribution, 150, 150, 150 ));
         setColor( "stack.tab.foreground.mouse",                 color( distribution, 25, 25, 25 ));
         
         // stack menu
@@ -135,10 +139,12 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "title.background.top.active.mouse",         color( distribution, 255, 100, 100 ) );
         setColor( "title.background.top.inactive",             color( distribution, 150, 150, 150 ) );
         setColor( "title.background.top.inactive.mouse",       color( distribution, 150, 255, 150 ) );
+        setColor( "title.background.top.disabled",             color( distribution, 200, 200, 200 ) );
         setColor( "title.background.bottom.active",            color( distribution, 255, 100, 100 ) );
         setColor( "title.background.bottom.active.mouse",      color( distribution, 255, 200, 200 ) );
         setColor( "title.background.bottom.inactive",          color( distribution, 200, 200, 200 ) );
         setColor( "title.background.bottom.inactive.mouse",    color( distribution, 220, 255, 220 ) );
+        setColor( "title.background.bottom.disabled",          color( distribution, 200, 200, 200 ) );
         setColor( "title.foreground.active",              color( distribution, 0, 0, 0 ));
         setColor( "title.foreground.active.mouse",        color( distribution, 0, 0, 0 ));
         setColor( "title.foreground.inactive",            color( distribution, 100, 100, 100 ));
@@ -149,12 +155,14 @@ public class BubbleColorScheme extends DefaultColorScheme {
         setColor( "title.background.top.inactive.flap",             color( distribution, 150, 150, 150 ) );
         setColor( "title.background.top.inactive.mouse.flap",       color( distribution, 150, 255, 150 ) );
         setColor( "title.background.top.selected.flap",             color( distribution, 150, 150, 150 ) );
+        setColor( "title.background.top.disabled.flap",             color( distribution, 200, 200, 200 ) );
         setColor( "title.background.top.selected.mouse.flap",       color( distribution, 150, 255, 150 ) );
         setColor( "title.background.bottom.active.flap",            color( distribution, 255, 100, 100 ) );
         setColor( "title.background.bottom.active.mouse.flap",      color( distribution, 255, 200, 200 ) );
         setColor( "title.background.bottom.inactive.flap",          color( distribution, 200, 200, 200 ) );
         setColor( "title.background.bottom.inactive.mouse.flap",    color( distribution, 220, 255, 220 ) );
         setColor( "title.background.bottom.selected.flap",          color( distribution, 200, 200, 200 ) );
+        setColor( "title.background.bottom.disabled.flap",          color( distribution, 200, 200, 200 ) );
         setColor( "title.background.bottom.selected.mouse.flap",    color( distribution, 220, 255, 220 ) );
         setColor( "title.foreground.active.flap",              color( distribution, 0, 0, 0 ));
         setColor( "title.foreground.active.mouse.flap",        color( distribution, 0, 0, 0 ));
@@ -175,16 +183,20 @@ public class BubbleColorScheme extends DefaultColorScheme {
     	setColor( "title.flap.selected.knob.shadow", color( distribution, 100, 100, 100 ) );
     	setColor( "title.flap.selected.mouse.knob.highlight", color( distribution, 200, 255, 200 ) );
     	setColor( "title.flap.selected.mouse.knob.shadow", color( distribution, 100, 200, 100 ) );
+    	setColor( "title.flap.disabled.knob.highlight", color( distribution, 225, 225, 225 ) );
+    	setColor( "title.flap.disabled.knob.shadow", color( distribution, 175, 175, 175 ) );
         
         // display border
         setColor( "displayer.border.high.active",           color( distribution, 255, 100, 100 ));
         setColor( "displayer.border.high.active.mouse",     color( distribution, 255, 200, 200 ));
         setColor( "displayer.border.high.inactive",         color( distribution, 200, 200, 200 ));
         setColor( "displayer.border.high.inactive.mouse",   color( distribution, 220, 255, 220 ));
+        setColor( "displayer.border.high.disabled",         color( distribution, 220, 200, 200 ));
         setColor( "displayer.border.low.active",            color( distribution, 200, 100, 100 ));
         setColor( "displayer.border.low.active.mouse",      color( distribution, 255, 150, 150 ));
         setColor( "displayer.border.low.inactive",          color( distribution, 100, 100, 100 ));
         setColor( "displayer.border.low.inactive.mouse",    color( distribution, 120, 150, 120 ));
+        setColor( "displayer.border.low.disabled",          color( distribution, 180, 200, 200 ));
         
         // RoundButton
         setColor( "action.button",                                 color( distribution, 255, 255, 255 ));

@@ -34,6 +34,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockableListener;
@@ -57,6 +59,7 @@ import bibliothek.gui.dock.themes.font.TitleFont;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.UIValue;
@@ -112,6 +115,10 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
     private Orientation orientation = Orientation.FREE_HORIZONTAL;
     /** The icon which is shown on this title */
     private Icon icon;
+    
+    /** disabled version of {@link #icon} */
+    private Icon disabledIcon;
+    
     /** number of pixels to paint between icon and text */
     private int iconTextGap = 0;
     
@@ -127,6 +134,12 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
     
     /** the current border, can be <code>null</code> */
     private TitleBorder border;
+    
+    /** whether this title is disabled */
+    private boolean disabled = false;
+    
+    /** all the mouse listeners of this title */
+    private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
     
     /** tells how to paint the text on this title */
     private PropertyValue<OrientationToRotationStrategy> orientationConverter = new PropertyValue<OrientationToRotationStrategy>( DockTitle.ORIENTATION_STRATEGY ){
@@ -312,6 +325,41 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
             return new Rectangle( insets.left, insets.top + (height - icon.getIconHeight()) / 2, icon.getIconWidth(), icon.getIconHeight() );
         }
     }
+
+    /**
+     * Tells this title whether it should be disabled or not. This method is called when the {@link DisablingStrategy}
+     * changes. A disabled title should react to any {@link InputEvent}, and should be painted differently than an
+     * enabled title.
+     * @param disabled whether this title is disabled
+     * @see #isDisabled()
+     */
+    protected void setDisabled( boolean disabled ){
+    	if( this.disabled != disabled ){
+	    	this.disabled = disabled;
+	    	label.setEnabled( !disabled );
+	    	setEnabled( !disabled );
+	    	
+	    	if( disabled ){
+	    		for( MouseInputListener listener : mouseInputListeners ){
+	    			doRemoveMouseInputListener( listener );
+	    		}
+	    	}
+	    	else{
+	    		for( MouseInputListener listener : mouseInputListeners ){
+	    			doAddMouseInputListener( listener );
+	    		}
+	    	}
+    	}
+    }
+    
+    /**
+     * Tells whether this title is disabled, a disabled title does not react to any user input.
+     * @return whether the title is disabled
+     * @set {@link #setDisabled(boolean)}
+     */
+    protected boolean isDisabled(){
+    	return disabled;
+    }
     
     @Override
     public void paintBackground( Graphics g ){
@@ -351,17 +399,25 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
      * @param component the {@link Component} which represents this title
      */
     protected void paintIcon( Graphics g, JComponent component ){
-        if( icon != null ){
-            Insets insets = titleInsets();
-            if( orientation.isVertical() ){
-                int width = getWidth() - insets.left - insets.right;
-                icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
-            }
-            else{
-                int height = getHeight() - insets.top - insets.bottom;
-                icon.paintIcon( this, g, insets.left,
-                        insets.top + (height - icon.getIconHeight()) / 2 );
-            }
+    	Icon icon = this.icon;
+    	if( icon != null ){
+    		if( isDisabled() ){
+    			if( disabledIcon == null ){
+    				disabledIcon = DockUtilities.disabledIcon( component, icon );
+    			}
+    			icon = disabledIcon;
+    		}
+    		if( icon != null ){
+	    		Insets insets = titleInsets();
+	            if( orientation.isVertical() ){
+	                int width = getWidth() - insets.left - insets.right;
+	                icon.paintIcon( this, g, insets.left + (width - icon.getIconWidth())/2, insets.top );
+	            }
+	            else{
+	                int height = getHeight() - insets.top - insets.bottom;
+	                icon.paintIcon( this, g, insets.left, insets.top + (height - icon.getIconHeight()) / 2 );
+	            }
+    		}
         }
     }
     
@@ -372,6 +428,7 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
      */
     protected void setIcon( Icon icon ){
         this.icon = icon;
+        disabledIcon = null;
         revalidate();
         repaint();
     }
@@ -576,20 +633,30 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
             label.setBounds( x, y, width, height );
         }
     }
-    
-    public Component getComponent() {
-        return this;
-    }
 
     public void addMouseInputListener( MouseInputListener listener ) {
-        addMouseListener( listener );
+    	mouseInputListeners.add( listener );
+    	if( !isDisabled() ){
+	        doAddMouseInputListener( listener );
+    	}
+    }
+
+    private void doAddMouseInputListener( MouseInputListener listener ){
+    	addMouseListener( listener );
         addMouseMotionListener( listener );
         label.addMouseListener( listener );
         label.addMouseMotionListener( listener );
     }
-
+    
     public void removeMouseInputListener( MouseInputListener listener ) {
-        removeMouseListener( listener );
+    	mouseInputListeners.remove( listener );
+    	if( !isDisabled() ){
+	        doRemoveMouseInputListener( listener );
+    	}
+    }
+    
+    private void doRemoveMouseInputListener( MouseInputListener listener ){
+    	removeMouseListener( listener );
         removeMouseMotionListener( listener );
         label.removeMouseListener( listener );
         label.removeMouseMotionListener( listener );

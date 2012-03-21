@@ -39,6 +39,7 @@ import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -331,6 +332,14 @@ public interface DockStation extends DockElement{
      * no drop operation is possible
      */
     public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable );
+    
+    /**
+     * Informs this station that a drag and drop operation is in progress and that <code>dockable</code> might
+     * be removed from this station.
+     * @param dockable the child that might be removed in the near future
+     * @return a callback that will be informed when the dockable was removed or the operation canceleled, can be <code>null</code>
+     */
+    public StationDragOperation prepareDrag( Dockable dockable );
     
     /**
      * Adds <code>dockable</code> to this station. The station can decide

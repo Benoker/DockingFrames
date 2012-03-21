@@ -38,6 +38,7 @@ import javax.swing.JComponent;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputAdapter;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.action.DockAction;
@@ -158,10 +159,6 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
 			}
 		};
         
-        if( origin != null ){
-        	behavior.setProperties( origin.getController() );
-        }
-        
         init( dockable, origin, false );
         changeBorder();
         
@@ -214,8 +211,25 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
         }, null );
         
         allActionsSource.setSeparateSources( true );
-        behavior.setDockable( dockable );
         updateContent();
+    }
+    
+    @Override
+    public void bind(){
+    	DockTitleVersion origin = getOrigin();
+    	if( origin != null ){
+        	behavior.setProperties( origin.getController() );
+        }
+    	behavior.setDockable( getDockable() );
+        
+    	super.bind();
+    }
+    
+    @Override
+    public void unbind(){
+    	behavior.setProperties( (DockController)null );
+    	behavior.setDockable( null );
+    	super.unbind();
     }
     
     private void updateContent(){    	

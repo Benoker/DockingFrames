@@ -66,18 +66,22 @@ public class FlatColorScheme extends DefaultColorScheme {
 		
         setColor( "paint", Color.DARK_GRAY );
         setColor( "paint.insertion.area", Color.WHITE );
+        setColor( "paint.removal", Color.GRAY );
         
         Color border = DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND );
         setColor( "stack.tab.border.center.selected", Colors.brighter( border ) );
         setColor( "stack.tab.border.center.focused", Colors.brighter( border ) );
+        setColor( "stack.tab.border.center.disabled", Colors.brighter( border ) );
         setColor( "stack.tab.border.center", Colors.darker( border ) );
         setColor( "stack.tab.border", border );
                         
         setColor( "stack.tab.background.top.selected", Colors.diffMirror( border, 0.2 ) );
         setColor( "stack.tab.background.top.focused", Colors.diffMirror( border, 0.2 ) );
+        setColor( "stack.tab.background.top.disabled", Colors.diffMirror( border, 0.1 ) );
         setColor( "stack.tab.background.top", border );
         setColor( "stack.tab.background.bottom.selected", Colors.diffMirror( border, 0.1 ) );
         setColor( "stack.tab.background.bottom.focused", Colors.diffMirror( border, 0.1 ) );
+        setColor( "stack.tab.background.bottom.disabled", Colors.diffMirror( border, 0.1 ) );
         setColor( "stack.tab.background.bottom", border );
             
         setColor( "stack.tab.foreground", DockUI.getColor( LookAndFeelColors.PANEL_FOREGROUND ));

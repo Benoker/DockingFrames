@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.themes.basic;
 
 import java.awt.Component;
+import java.awt.Insets;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -68,4 +69,11 @@ public interface BasicDockableDisplayerDecorator {
 	 * @return the suggestion for actions, can be <code>null</code>
 	 */
 	public DockActionSource getActionSuggestion();
+	
+	/**
+	 * Gets an estimate of how much space of {@link #getComponent() the component} is used
+	 * by the border around the {@link Dockable}.
+	 * @return an estimate of how much space is used by the border
+	 */
+	public Insets getDockableInsets();
 }

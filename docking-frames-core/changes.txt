@@ -698,7 +698,26 @@
  - API: New enum "IconHandling". If a client sets a null icon at a DefaultDockable, DefaultSingleCDockable or DefaultMultipleCDockable the icon is not shown. If the client does not set an icon, the default icon is shown. The IconHandling allows clients to specify exactly whether "null" means "no icon" or "default icon".  
  - Bugfix: MenuMenuHandler now also supports a "null" component as view, keeping the behavior consistent with ButtonDropDownHandler. 
  - Bugfix: CFlapLayoutManager confused "width" and "height" 
-  
+
+[v1.1.1p6f]
+ - Bugfix: Memory leak in FlapDockStation/ButtonContent, found by Q_LeSoc
+
+[v1.1.1p7]
+ - API: The DisablingStrategy allows to globally disable items like actions or titles
+ - API: All DockActions can now be disabled by the DisablingStrategy
+ ! API: AbstractDockTitle has a new method "setDisabled", it is used to support the DisablingStrategy
+ ! API: All tabs can now be disabled by the DisablingStrategy
+ - API: SplitDockStation and FlapDockStation will react on the DisablingStrategy as well
+ - API: CDockable has a new method "setEnabled" with which parts of the Dockable can be stopped
+
+[v1.1.1p7a]
+ - Bugfix: OverpaintablePanel now correctly implements getMinimum/Preferred/MaximumSize.
+ - Bugfix: RootMenuPiece unbinds itself now with some delay, allowing the attached ActionListeners to complete their work
+ - API: The minimum size for Dockables on a SplitDockStation has been redesigned. Only the minimum size of Components has a real influence now, tabs and titles are most times ignored.
+
+[v1.1.1p7b]
+ ! API: All DockStation can now draw some indicators when a dockable is dragged from them. Only BasicDockTheme and FlatDockTheme do actually draw these markings, BubbleDockTheme and EclipseDockTheme completely ignore them.
+   
 [v1.1.1pToolbar]
  - API: New Inserter can override drop operations before and after they are created
  - API: A lot more configuration options for the ScreenDockStation, these configurations are done by the ScreenDockWindowConfiguration.
@@ -712,8 +731,9 @@
  ! API: NoTitleDisplayer gets replaced by NoTitleBarDisplayer. The new displayer extends BasicDockableDisplayer (now all displayer are derived from this class) and is able to show a DockTitle if asked to do so. 
  - Bugfix: The "showing" property is now checked for correctness when the DockController of a Dockable changes.
  - Bugfix: Resizing a ScreenDockWindow to a size smaller than its acceptable minimum will no longer move the window.
- - APi: The new WizardSplitDockStation is a SplitDockStation that does keep its children in columns. It does store the size of children as pixels, not as ratios. 
+ - API: The new WizardSplitDockStation is a SplitDockStation that does keep its children in columns. It does store the size of children as pixels, not as ratios. 
  - API: The ScreenDropSizeStrategy allows to influence the size a dropped Dockable on a ScreenDockStation gets 
+
 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

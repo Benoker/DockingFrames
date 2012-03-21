@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 
 import javax.swing.Icon;
+import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
 import bibliothek.gui.Dockable;
@@ -60,6 +61,14 @@ public interface TabComponent extends DockElementRepresentative{
 	 * @param focused the state of its dockable.
 	 */
 	public void setFocused( boolean focused );
+	
+	/**
+	 * Enables or disables this component. A disabled component should be visually distinct from an enabled one. Note
+	 * that {@link EclipseTab} automatically removes all {@link MouseInputListener}s from a {@link TabComponent} that
+	 * is not enabled.
+	 * @param enabled whether this component is enabled or not
+	 */
+	public void setEnabled( boolean enabled );
 	
 	/**
 	 * Tells this component whether to paint an {@link Icon} if not selected.

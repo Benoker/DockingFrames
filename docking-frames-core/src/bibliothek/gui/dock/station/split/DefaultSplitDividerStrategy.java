@@ -318,7 +318,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		
 		@Override
 		public void mousePressed( MouseEvent e ){
-			if( station.isResizingEnabled() ) {
+			if( station.isResizingEnabled() && !station.isDisabled() ) {
 				if( !pressed ) {
 					pressed = true;
 					mouseMoved( e );
@@ -333,7 +333,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		}
 
 		public void mouseDragged( MouseEvent e ){
-			if( station.isResizingEnabled() ) {
+			if( station.isResizingEnabled() && !station.isDisabled() ) {
 				if( pressed && current != null ) {
 					divider = current.getDividerAt( e.getX() + deltaX, e.getY() + deltaY );
 					divider = current.validateDivider( divider );
@@ -382,8 +382,8 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		}
 
 		public void mouseMoved( MouseEvent e ){
-			if( station.isResizingEnabled() ) {
-				current = getDividerNode( e.getX(), e.getY() );
+			if( station.isResizingEnabled() && !station.isDisabled() ) {
+				current = station.getRoot().getDividerNode( e.getX(), e.getY() );
 				
 				if( current == null )
 					setCursor( null );
@@ -409,14 +409,12 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 	
 		@Override
 		public void mouseExited( MouseEvent e ){
-			if( station.isResizingEnabled() ) {
-				if( !pressed ) {
-					current = null;
-					setCursor( null );
+			if( !pressed ) {
+				current = null;
+				setCursor( null );
 					
-					// mouse exited divider normally 
-					withinBounds = false;
-				}
+				// mouse exited divider normally 
+				withinBounds = false;
 			}
 		}
 	
@@ -425,7 +423,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		 * @param g the Graphics used to paint
 		 */
 		public void paint( Graphics g ){
-			if( station.isResizingEnabled() ) {
+			if( station.isResizingEnabled() && !station.isDisabled() ) {
 				if( current != null && pressed ) {
 					station.getPaint().drawDivider( g, bounds );
 				}

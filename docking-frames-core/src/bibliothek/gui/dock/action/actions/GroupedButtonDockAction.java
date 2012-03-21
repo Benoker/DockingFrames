@@ -50,7 +50,7 @@ public abstract class GroupedButtonDockAction<K> extends GroupedDropDownItemActi
 
 	@Override
 	protected SimpleButtonAction createGroup( K key ){
-		return new SimpleButtonAction(){
+		return new SimpleButtonAction( false ){
 			@Override
 			public void action( Dockable dockable ){
 				super.action( dockable );

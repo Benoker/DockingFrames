@@ -68,12 +68,18 @@ public class FlatButtonTitle extends BasicButtonDockTitle {
         changeBorder();
     }
     
+    @Override
+    protected void setDisabled( boolean disabled ){
+    	super.setDisabled( disabled );
+    	changeBorder();
+    }
+    
     /**
      * Tells whether the mouse is currently over this button or not.
      * @return <code>true</code> if the mouse is over this button
      */
     public boolean isMouseover() {
-		return mouseover == null ? false : mouseover.isMouseOver();
+		return !isDisabled() && mouseover == null ? false : mouseover.isMouseOver();
 	}
     
     /**

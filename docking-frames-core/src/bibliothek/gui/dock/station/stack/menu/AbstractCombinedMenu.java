@@ -214,6 +214,10 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 		entries.get( index ).tooltip = tooltip;
 	}
 	
+	public void setEnabled( int index, boolean enabled ){
+		entries.get( index ).enabled = enabled;
+	}
+	
 	public void insert( int index, Dockable dockable ){
 		Entry entry = new Entry();
 		entry.dockable = dockable;
@@ -314,13 +318,15 @@ public abstract class AbstractCombinedMenu extends AbstractTabPaneComponent impl
 		public String tooltip;
 		/** small icon */
 		public Icon icon;
+		/** whether this menu is active */
+		public boolean enabled = true;
 		
 		/**
 		 * Creates a new item out of this entry.
 		 * @return the new item
 		 */
 		public CombinedMenuContent.Item toItem(){
-			return new CombinedMenuContent.Item( dockable, text, tooltip, icon );
+			return new CombinedMenuContent.Item( dockable, text, tooltip, icon, enabled );
 		}
 	}
 	

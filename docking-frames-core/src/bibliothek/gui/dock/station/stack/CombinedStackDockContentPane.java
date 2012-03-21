@@ -29,6 +29,7 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
+import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
@@ -109,6 +110,21 @@ public class CombinedStackDockContentPane extends ConfiguredBackgroundPanel{
     
     @Override
     public Dimension getMinimumSize() {
-    	return parent.getMinimumSize();
+    	Dimension result = new Dimension( 5, 5 );
+    	
+    	for( Dockable dockable : parent.getDockables() ){
+    		Dimension size = dockable.getComponent().getMinimumSize();
+    		result.width = Math.max( result.width, size.width );
+    		result.height = Math.max( result.height, size.height );
+    	}
+    	
+    	Dimension parentSize = parent.getMinimumSize();
+    	if( parent.getDockTabPlacement().isHorizontal() ){
+    		result.height += parentSize.height;
+    	}
+    	else{
+			result.width += parentSize.width;
+    	}
+    	return result;
     }
 }

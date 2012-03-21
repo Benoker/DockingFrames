@@ -50,11 +50,32 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * This {@link TabComponent} draws a compact tab.
  * @author Janni Kovacs
  */
-@ColorCodes({"stack.tab.border", "stack.tab.border.selected", "stack.tab.border.selected.focused", "stack.tab.border.selected.focuslost",
-    "stack.tab.top", "stack.tab.top.selected", "stack.tab.top.selected.focused","stack.tab.top.selected.focuslost",
-    "stack.tab.bottom", "stack.tab.bottom.selected", "stack.tab.bottom.selected.focused", "stack.tab.bottom.selected.focuslost",
-    "stack.tab.text", "stack.tab.text.selected", "stack.tab.text.selected.focused", "stack.tab.text.selected.focuslost",
-    "stack.border "})
+@ColorCodes({
+	"stack.tab.border", 
+	"stack.tab.border.selected", 
+	"stack.tab.border.selected.focused", 
+	"stack.tab.border.selected.focuslost",
+	"stack.tab.border.disabled",
+	
+    "stack.tab.top", 
+    "stack.tab.top.selected", 
+    "stack.tab.top.selected.focused",
+    "stack.tab.top.selected.focuslost",
+    "stack.tab.top.disabled", 
+    
+    "stack.tab.bottom", 
+    "stack.tab.bottom.selected", 
+    "stack.tab.bottom.selected.focused", 
+    "stack.tab.bottom.selected.focuslost",
+    "stack.tab.bottom.disabled",
+    
+    "stack.tab.text", 
+    "stack.tab.text.selected", 
+    "stack.tab.text.selected.focused", 
+    "stack.tab.text.selected.focuslost",
+    "stack.tab.text.disabled", 
+    
+    "stack.border" })
 public class RectGradientPainter extends BaseTabComponent {
 	public static final TabPainter FACTORY = new TabPainter(){
 		public TabComponent createTabComponent( EclipseTabPane pane, Dockable dockable ){
@@ -116,6 +137,12 @@ public class RectGradientPainter extends BaseTabComponent {
 	}
 	
 	@Override
+	protected void updateEnabled(){
+		updateBorder();
+		update();
+	}
+	
+	@Override
 	public Dimension getMinimumSize(){
 		return getPreferredSize();
 	}
@@ -152,7 +179,10 @@ public class RectGradientPainter extends BaseTabComponent {
 	private Color getTextColor(){
 		boolean focusTemporarilyLost = isFocusTemporarilyLost();
 		
-        if( isFocused() && !focusTemporarilyLost ){
+		if( !isEnabled() ){
+			return colorStackTabTextDisabled.value();
+		}
+		else  if( isFocused() && !focusTemporarilyLost ){
             return colorStackTabTextSelectedFocused.value();
         }
         else if (isFocused() && focusTemporarilyLost) {
@@ -177,7 +207,10 @@ public class RectGradientPainter extends BaseTabComponent {
 			focusTemporarilyLost = !window.isActive();
 		}
 		
-		if( isSelected() ){
+		if( !isEnabled() ){
+			color2 = colorStackTabBorderDisabled.value();
+		}
+		else if( isSelected() ){
             if( isFocused() ){
                 if( focusTemporarilyLost )
                     color2 = colorStackTabBorderSelectedFocusLost.value();
@@ -215,7 +248,11 @@ public class RectGradientPainter extends BaseTabComponent {
 		
 		TabPlacement orientation = getOrientation();
 		
-        if( isFocused() && !focusTemporarilyLost ){
+		if( !isEnabled() ){
+			color1 = colorStackTabTopDisabled.value();
+			color2 = colorStackTabBottomDisabled.value();
+		}
+		else if( isFocused() && !focusTemporarilyLost ){
             color1 = colorStackTabTopSelectedFocused.value();
             color2 = colorStackTabBottomSelectedFocused.value();
         }

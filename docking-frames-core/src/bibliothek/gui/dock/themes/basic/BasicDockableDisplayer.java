@@ -580,6 +580,12 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
         if( insets == null )
             insets = new Insets(0,0,0,0);
         
+        Insets decorator = this.decorator.getDockableInsets();
+        insets.left += decorator.left;
+        insets.right += decorator.right;
+        insets.top += decorator.top;
+        insets.bottom += decorator.bottom;
+        
         if( title == null && dockable == null )
             return insets;
         

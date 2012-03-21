@@ -320,6 +320,10 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		this.location = location;
 	}
 	
+	public Dimension getNecessarySize(){
+		return getMinimumSize();
+	}
+	
 	public DisplayerCombinerTarget prepareCombination( CombinerSource source, Enforcement force ){
 		TabDisplayerCombinerTarget target = new TabDisplayerCombinerTarget( this, this, source, force );
 		if( target.isValid() ){

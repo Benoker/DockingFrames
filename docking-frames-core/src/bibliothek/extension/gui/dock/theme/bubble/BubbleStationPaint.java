@@ -103,4 +103,8 @@ public class BubbleStationPaint implements StationPaint {
         
         color.connect( null );
     }
+    
+    public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+    	// ignore
+    }
 }

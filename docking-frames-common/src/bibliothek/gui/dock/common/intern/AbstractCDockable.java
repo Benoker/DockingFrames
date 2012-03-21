@@ -35,6 +35,7 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.ColorMap;
+import bibliothek.gui.dock.common.EnableableItem;
 import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockableLocationListener;
@@ -49,6 +50,7 @@ import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.VetoableDockFrontendEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Todo;
@@ -128,6 +130,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** The component which should be focused */
     private Component focusComponent;
+    
+    /** All the items that are enabled */
+    private int enabled = EnableableItem.ALL.getFlag();
     
     /**
      * Creates a new dockable
@@ -513,6 +518,32 @@ public abstract class AbstractCDockable implements CDockable {
             this.resizeLockedVertically = resizeLockedVertically;
             listenerCollection.getCDockablePropertyListener().resizeLockedChanged( this );
         }
+    }
+    
+    /**
+     * Enables or disables a part of this dockable. Some effects are visible immediatelly, others
+     * will need some time to show up. Usually disabling a part means that said part is shown in
+     * some gray colors and won't react to any user input (e.g. to the mouse).<br>
+     * Developers which need more accuraccy in disabling items, should have a look at the
+     * {@link DisablingStrategy}.
+     * @param item what part of this {@link CDockable} should be enabled or disabled 
+     * @param enabled whether the part should be enabled
+     */
+    public void setEnabled( EnableableItem item, boolean enabled ){
+    	int flag = this.enabled;
+		if( enabled ){
+			this.enabled = EnableableItem.add( this.enabled, item );
+		}
+		else{
+			this.enabled = EnableableItem.remove( this.enabled, item );
+		}
+		if( flag != this.enabled ){
+			listenerCollection.getCDockablePropertyListener().enabledChanged( this );
+		}
+	}
+    
+    public boolean isEnabled( EnableableItem item ){
+    	return EnableableItem.isEnabled( enabled, item );
     }
     
     @Deprecated

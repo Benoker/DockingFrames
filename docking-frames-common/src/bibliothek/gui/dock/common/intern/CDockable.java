@@ -37,6 +37,7 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.ColorMap;
 import bibliothek.gui.dock.common.DefaultMultipleCDockable;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.EnableableItem;
 import bibliothek.gui.dock.common.FontMap;
 import bibliothek.gui.dock.common.action.CAction;
 import bibliothek.gui.dock.common.event.CDockableLocationListener;
@@ -538,6 +539,13 @@ public interface CDockable {
      * <code>false</code> if not
      */
     public boolean isSingleTabShown();
+    
+    /**
+     * Tells whether a part of this dockable is enabled.
+     * @param item the part to check
+     * @return whether <code>item</code> is enabled, the default result should be <code>true</code>
+     */
+    public boolean isEnabled( EnableableItem item );
     
     /**
      * Gets the {@link Component} which should receive the focus once this <code>CDockable</code> is focused.

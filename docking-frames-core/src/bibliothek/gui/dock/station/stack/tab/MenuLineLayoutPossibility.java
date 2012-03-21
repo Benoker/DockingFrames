@@ -323,7 +323,11 @@ public class MenuLineLayoutPossibility {
 		
 		// ... check whether there is enough space for all items
 		int space, tabSpace, menuSpace = 0, infoSpace = 0;
-		float totalWeight = order.getWeight( Item.TABS );
+		
+		float weightTabs = order.getWeight( Item.TABS );
+		float weightInfo = 0;
+		float weightMenu = 0;
+		float totalWeight = weightTabs;
 		
 		if( orientation.isHorizontal() ){
 			tabSpace = tabSize.getWidth();
@@ -331,13 +335,15 @@ public class MenuLineLayoutPossibility {
 
 			if( infoSize != null ){
 				infoSpace = infoSize.getWidth();
+				weightInfo = order.getWeight( Item.INFO );
 				space += infoSpace;
-				totalWeight += order.getWeight( Item.INFO );
+				totalWeight += weightInfo;
 			}
 			if( menuSize != null ){
 				menuSpace = menuSize.getWidth();
 				space += menuSpace;
-				totalWeight += order.getWeight( Item.MENU );
+				weightMenu = order.getWeight( Item.MENU );
+				totalWeight += weightMenu;
 			}
 		}
 		else{
@@ -347,13 +353,15 @@ public class MenuLineLayoutPossibility {
 			if( infoSize != null ){
 				infoSpace = infoSize.getHeight();
 				space += infoSpace;
-				totalWeight += order.getWeight( Item.INFO );
+				weightInfo = order.getWeight( Item.INFO );
+				totalWeight += weightInfo;
 			}
 			if( menuSize != null ){
 				menuSpace = menuSize.getHeight();
 				space += menuSpace;
-				totalWeight += order.getWeight( Item.INFO );
-			}
+				weightMenu = order.getWeight( Item.MENU );
+				totalWeight += weightMenu;
+			}			
 		}
 		
 		int overflowSpace = available - space;
@@ -363,19 +371,24 @@ public class MenuLineLayoutPossibility {
 			shrink = 1.0f;
 		}
 		else{
-			shrink = space / (float)available;
+			shrink = (float)available / space;
+			
+			weightTabs = totalWeight - weightTabs;
+			weightInfo = totalWeight - weightInfo;
+			weightMenu = totalWeight - weightMenu;
+			totalWeight = weightInfo + weightTabs + weightMenu;
 		}
 		
 		int visibleItems = 1;
-		float tabsWeight = totalWeight == 0 ? 0 : (order.getWeight( Item.TABS ) / totalWeight);
+		float tabsWeight = totalWeight == 0 ? 0 : (weightTabs / totalWeight);
 		result[0] = (int)(shrink * tabSpace + tabsWeight * overflowSpace);
 		if( menuSize != null ){
-			float menuWeight = totalWeight == 0 ? 0 : (order.getWeight( Item.MENU ) / totalWeight);
+			float menuWeight = totalWeight == 0 ? 0 : (weightMenu / totalWeight);
 			result[1] = (int)(shrink * menuSpace + menuWeight * overflowSpace);
 			visibleItems++;
 		}
 		if( infoSize != null ){
-			float infoWeight = totalWeight == 0 ? 0 : (order.getWeight( Item.INFO ) / totalWeight);
+			float infoWeight = totalWeight == 0 ? 0 : (weightInfo / totalWeight);
 			result[2] = (int)(shrink * infoSpace + infoWeight * overflowSpace);
 			visibleItems++;
 		}

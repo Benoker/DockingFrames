@@ -80,8 +80,17 @@ public class Leaf extends VisibleSplitNode{
     
     @Override
     public Dimension getMinimumSize() {
+    	SplitDockStation station = getStation();
+    	Dimension minimum;
+    	if( station == null ){
+    		minimum = new Dimension( 0, 0 );
+    	}
+    	else{
+    		minimum = station.getMinimumLeafSize();
+    	}
+    	
     	if( handle == null )
-    		return new Dimension( 0, 0 );
+    		return minimum;
     	
     	DockableDisplayer displayer = handle.getDisplayer();
     	if( displayer == null )

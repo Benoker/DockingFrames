@@ -58,6 +58,8 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
+import bibliothek.gui.dock.disable.DisablingStrategy;
+import bibliothek.gui.dock.disable.DisablingStrategyListener;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockableAdapter;
@@ -72,6 +74,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.ButtonPane;
@@ -270,6 +273,33 @@ public class FlapDockStation extends AbstractDockableStation {
 			updateWindow( getFrontDockable(), true );
 		}
 	};
+	
+	/** Access to the current {@link DisablingStrategy} */
+	private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>( DisablingStrategy.STRATEGY ){
+		@Override
+		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
+			if( oldValue != null ){	
+				oldValue.removeDisablingStrategyListener( disablingStrategyListener );
+			}
+			if( newValue != null ){
+				newValue.addDisablingStrategyListener( disablingStrategyListener );
+				if( newValue.isDisabled( FlapDockStation.this )){
+					setFrontDockable( null );
+				}
+			}
+		}
+	};
+	
+	/** observes the {@link #disablingStrategy} and closes the front dockable if necessary */
+	private DisablingStrategyListener disablingStrategyListener = new DisablingStrategyListener(){
+		public void changed( DockElement item ){
+			if( item == FlapDockStation.this ){
+				if( disablingStrategy.getValue().isDisabled( item )){
+					setFrontDockable( null );
+				}
+			}
+		}
+	};
     
     /** The direction in which the popup-window is, in respect to this station */
     private Direction direction = Direction.SOUTH;
@@ -323,6 +353,9 @@ public class FlapDockStation extends AbstractDockableStation {
      * over this station.
      */
     private FlapDropInfo dropInfo;
+    
+    /** Information about a dockable that is removed from this station */
+    private StationDragOperation dragInfo;
     
     /** A listener added to the {@link MouseFocusObserver} */
     private ControllerListener controllerListener = new ControllerListener();
@@ -494,6 +527,7 @@ public class FlapDockStation extends AbstractDockableStation {
             if( window != null ){
             	window.setController( controller );
             }
+            disablingStrategy.setProperties( controller );
             buttonPane.setController( controller );
             FlapLayoutManager oldLayoutManager = layoutManager.getValue();
             layoutManager.setProperties( controller );
@@ -1335,6 +1369,27 @@ public class FlapDockStation extends AbstractDockableStation {
     			new FlapOverrideDropLayer( this ),
     			new WindowDropLayer( this )
     	};
+    }
+    
+    public StationDragOperation prepareDrag( Dockable dockable ){
+    	if( dragInfo != null ){
+    		dragInfo.canceled();
+    	}
+    	if( window != null && window.getDockable() == dockable ){
+    		window.setRemoval( true );
+    		dragInfo = new StationDragOperation(){
+				public void succeeded(){
+					window.setRemoval( false );
+					dragInfo = null;
+				}
+				
+				public void canceled(){
+					window.setRemoval( false );
+					dragInfo = null;
+				}
+			};
+    	}
+    	return dragInfo;
     }
     
     public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ) {
@@ -2307,8 +2362,10 @@ public class FlapDockStation extends AbstractDockableStation {
         public void mouseReleased( MouseEvent e ){
         	if( dockable.getDockParent() == FlapDockStation.this ){
         		final int MASK = InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
+        		DisablingStrategy strategy = disablingStrategy.getValue();
+        		boolean enabled = strategy == null || (!strategy.isDisabled( dockable ) && !strategy.isDisabled( FlapDockStation.this ));
         		
-        		if( e.getButton() == MouseEvent.BUTTON1 && (e.getModifiersEx() & MASK ) == 0 ){
+        		if( enabled && e.getButton() == MouseEvent.BUTTON1 && (e.getModifiersEx() & MASK ) == 0 ){
         			int index = indexOf( dockable );
         			if( index < 0 )
         				return;
