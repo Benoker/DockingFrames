@@ -69,6 +69,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -182,6 +183,9 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /** Information about the current movement of a {@link Dockable} */
     private DropInfo dropInfo;
+    
+    /** Information about the current removal of a {@link Dockable} */
+    private StationDragOperation dragInfo;
     
     /** The {@link Window} that is used as parent for the windows */
     private WindowProvider owner;
@@ -758,6 +762,28 @@ public class ScreenDockStation extends AbstractDockStation {
     
     public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
         return prepare( x, y, titleX, titleY, dockable, dockable.getDockParent() != this );
+    }
+    
+    public StationDragOperation prepareDrag( Dockable dockable ){
+    	final ScreenDockWindow window = getWindow( dockable );
+    	if( dragInfo != null ){
+			dragInfo.canceled();
+		}
+    	if( window != null ){
+    		window.setPaintRemoval( true );
+    		dragInfo = new StationDragOperation(){
+				public void succeeded(){
+					window.setPaintRemoval( false );
+					dragInfo = null;
+				}
+				
+				public void canceled(){
+					window.setPaintRemoval( false );
+					dragInfo = null;
+				}
+			};
+    	}
+    	return dragInfo;
     }
     
     public StationDropOperation prepare( int x, int y, int titleX, int titleY, Dockable dockable, boolean drop ) {

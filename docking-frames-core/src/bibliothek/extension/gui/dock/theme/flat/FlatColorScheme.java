@@ -66,6 +66,7 @@ public class FlatColorScheme extends DefaultColorScheme {
 		
         setColor( "paint", Color.DARK_GRAY );
         setColor( "paint.insertion.area", Color.WHITE );
+        setColor( "paint.removal", Color.GRAY );
         
         Color border = DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND );
         setColor( "stack.tab.border.center.selected", Colors.brighter( border ) );

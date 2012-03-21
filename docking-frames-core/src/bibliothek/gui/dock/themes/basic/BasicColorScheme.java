@@ -84,5 +84,6 @@ public class BasicColorScheme extends DefaultColorScheme{
         setColor( "station.screen.border.hover", DockUI.getColor( LookAndFeelColors.SELECTION ) );
         
         setColor( "paint", DockUI.getColor( LookAndFeelColors.SELECTION ));
+        setColor( "paint.removal", DockUI.getColor( LookAndFeelColors.PANEL_BACKGROUND ));
     }
 }

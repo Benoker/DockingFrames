@@ -74,6 +74,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.ButtonPane;
@@ -346,6 +347,9 @@ public class FlapDockStation extends AbstractDockableStation {
      * over this station.
      */
     private FlapDropInfo dropInfo;
+    
+    /** Information about a dockable that is removed from this station */
+    private StationDragOperation dragInfo;
     
     /** A listener added to the {@link MouseFocusObserver} */
     private ControllerListener controllerListener = new ControllerListener();
@@ -1359,6 +1363,27 @@ public class FlapDockStation extends AbstractDockableStation {
     			new FlapOverrideDropLayer( this ),
     			new WindowDropLayer( this )
     	};
+    }
+    
+    public StationDragOperation prepareDrag( Dockable dockable ){
+    	if( dragInfo != null ){
+    		dragInfo.canceled();
+    	}
+    	if( window != null && window.getDockable() == dockable ){
+    		window.setRemoval( true );
+    		dragInfo = new StationDragOperation(){
+				public void succeeded(){
+					window.setRemoval( false );
+					dragInfo = null;
+				}
+				
+				public void canceled(){
+					window.setRemoval( false );
+					dragInfo = null;
+				}
+			};
+    	}
+    	return dragInfo;
     }
     
     public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ) {

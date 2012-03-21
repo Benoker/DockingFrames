@@ -89,6 +89,12 @@ public interface FlapWindow {
     public void setDropInfo( FlapDropInfo dropInfo );
     
     /**
+     * Tells this window whether a drag and drop operation is currently removing its child.
+     * @param removal whether the child of this window is removed
+     */
+    public void setRemoval( boolean removal );
+    
+    /**
      * Tells this window how to create a title for any {@link Dockable} that
      * may be shown on it.
      * @param title the title or <code>null</code>

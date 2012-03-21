@@ -1,6 +1,7 @@
 package glass.eclipse.theme;
 
 import java.awt.*;
+
 import bibliothek.gui.*;
 import bibliothek.gui.dock.*;
 import bibliothek.gui.dock.station.*;
@@ -67,5 +68,9 @@ public class CGlassStationPaint implements StationPaint {
 		g2d.dispose();
 
 		color.connect(null);
+	}
+	
+	public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+		// ignore
 	}
 }

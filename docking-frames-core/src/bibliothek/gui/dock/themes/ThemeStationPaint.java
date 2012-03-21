@@ -64,4 +64,7 @@ public class ThemeStationPaint implements StationPaint{
 		get( station ).drawInsertionLine( g, station, x1, y1, x2, y2 );
 	}
 	
+	public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+		get( station ).drawRemoval( g, station, stationBounds, dockableBounds );
+	}
 }

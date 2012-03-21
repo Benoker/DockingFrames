@@ -167,6 +167,13 @@ public interface ScreenDockWindow {
     public void setPaintCombining( CombinerTarget target );
     
     /**
+     * Informs this window that a drag and drop operation is in progress, and that the child of
+     * this window may be removed in the near future.
+     * @param removal whether the operation is in progress
+     */
+    public void setPaintRemoval( boolean removal );
+    
+    /**
      * Gets the boundaries of the window.
      * @return the boundaries
      */

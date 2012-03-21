@@ -118,8 +118,8 @@ public interface DockRelocator {
      * is put as soon as the user releases the mouse.
      * @return <code>true</code> if a Dockable is moved
      */
-    public boolean isOnPut();    
-
+    public boolean isOnPut();
+    
     /**
      * Cancels the current drag and drop operation (if there is any). All evidence of a DnD operation is
      * to be removed immediatelly. Listeners will receive a canceled-event.

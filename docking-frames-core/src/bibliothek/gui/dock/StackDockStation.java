@@ -30,7 +30,6 @@ right (C) 2008 Benjamin Sigg
 
 package bibliothek.gui.dock;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -72,6 +71,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
@@ -89,6 +89,7 @@ import bibliothek.gui.dock.station.stack.TabDropLayer;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.ComponentDragOperation;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
@@ -174,6 +175,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /** The preferred location where a dropping {@link Dockable} should be added */
     private Insert insert;
+    
+    /** Information about the dockable that is going to be removed */
+    private ComponentDragOperation dragOperation;
     
      /** The graphical representation of this station */
     private Background background;
@@ -945,6 +949,16 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         return null;
     }
 
+    public StationDragOperation prepareDrag( Dockable dockable ){
+    	dragOperation = new ComponentDragOperation( dockable, getComponent() ){
+			@Override
+			protected void destroy(){
+				dragOperation = null;
+			}
+		};
+		return dragOperation;
+    }
+    
     public void drop( Dockable dockable ) {
     	drop( dockable, true );
     }
@@ -1601,23 +1615,28 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 }
             }
             
-            if( insert != null ){
+            if( insert != null || (dragOperation != null && dragOperation.getDockable() != null )){
                 Rectangle bounds = new Rectangle( 0, 0, getWidth(), getHeight() );
-                Rectangle insert = null;
+                Rectangle frontBounds = null;
                 if( getDockableCount() < 2 )
-                    insert = bounds;
+                    frontBounds = bounds;
                 else{
                 	int index = stackComponent.getSelectedIndex();
                 	if( index >= 0 ){
 	                    Component front = dockables.dockables().get( index ).getDisplayer().getComponent();
 	                    Point location = new Point( 0, 0 );
 	                    location = SwingUtilities.convertPoint( front, location, this );
-	                    insert = new Rectangle( location.x, location.y, front.getWidth(), front.getHeight() );
+	                    frontBounds = new Rectangle( location.x, location.y, front.getWidth(), front.getHeight() );
                 	}
                 }
                 
-                if( insert != null ){
-                	paint.drawInsertion( g, bounds, insert );
+                if( frontBounds != null ){
+                	if( insert != null ){
+                		paint.drawInsertion( g, bounds, frontBounds );
+                	}
+                	else if( dragOperation != null && dragOperation.getDockable() != null ){
+                		paint.drawRemoval( g, bounds, frontBounds );
+                	}
                 }
             }
         }

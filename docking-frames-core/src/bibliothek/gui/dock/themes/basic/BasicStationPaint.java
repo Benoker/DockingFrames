@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.color.ColorManager;
  * @author Benjamin Sigg
  *
  */
-@ColorCodes({ "paint.line", "paint.divider", "paint.insertion" })
+@ColorCodes({ "paint.line", "paint.divider", "paint.insertion", "paint.removal" })
 public class BasicStationPaint implements StationPaint {
     private StationPaintColor color = new StationPaintColor( "", this, SystemColor.textHighlight ){
         @Override
@@ -104,6 +104,28 @@ public class BasicStationPaint implements StationPaint {
         drawInsertionLine( g, station, x+w, y+h, x, y+h, false );
         drawInsertionLine( g, station, x+w, y+h, x+w, y, false );
         
+        color.connect( null );
+    }
+    
+    public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+    	color.setId( "paint.removable" );
+    	color.connect( station.getController() );
+    	
+    	g.setColor( color.value() );
+
+    	Graphics2D g2 = (Graphics2D)g;
+        
+        Composite old = g2.getComposite();
+        g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.33f ));
+
+        int x = dockableBounds.x+1;
+        int y = dockableBounds.y+1;
+        int w = dockableBounds.width-3;
+        int h = dockableBounds.height-3;
+        
+        g2.fillRect( x, y, w, h );
+        
+        g2.setComposite( old );
         color.connect( null );
     }
     

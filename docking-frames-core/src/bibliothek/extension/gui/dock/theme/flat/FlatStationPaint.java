@@ -37,7 +37,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * A paint which draws gray and white markings
  * @author Benjamin Sigg
  */
-@ColorCodes({ "paint.line", "paint.divider", "paint.insertion.area", "paint.insertion.border" })
+@ColorCodes({ "paint.line", "paint.divider", "paint.insertion.area", "paint.insertion.border", "paint.removal" })
 public class FlatStationPaint implements StationPaint{
     private StationPaintColor color = new StationPaintColor( "", this, Color.WHITE ){
         @Override
@@ -97,6 +97,21 @@ public class FlatStationPaint implements StationPaint{
         g.drawRect( dockableBounds.x+1, dockableBounds.y+1, dockableBounds.width-2, dockableBounds.height-2 );
         g2.setStroke( old );
         
+        color.connect( null );
+    }
+    
+    public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+    	color.setId( "paint.removal" );
+        color.setBackup( Color.BLACK );
+        color.connect( station.getController() );
+        
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setColor( color.value() );
+        Composite oldComposite = g2.getComposite();
+        g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.5f ) );
+        g.fillRect( dockableBounds.x+1, dockableBounds.y+1, dockableBounds.width-2, dockableBounds.height-2 );
+        g2.setComposite( oldComposite );
+                
         color.connect( null );
     }
 }

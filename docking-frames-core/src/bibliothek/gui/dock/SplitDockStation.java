@@ -88,6 +88,7 @@ import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.NoStationDropOperation;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
@@ -124,6 +125,7 @@ import bibliothek.gui.dock.station.split.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.split.layer.SplitOverrideDropLayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
+import bibliothek.gui.dock.station.support.ComponentDragOperation;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.Enforcement;
@@ -378,6 +380,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** Information about the {@link Dockable} which is currently draged onto this station. */
 	private PutInfo putInfo;
+	
+	/** Information aboud the {@link Dockable} that is currently removed from this station */
+	private ComponentDragOperation dragInfo;
 
 	/** A {@link StationPaint} to draw some markings onto this station */
 	private DefaultStationPaintValue paint;
@@ -1485,6 +1490,16 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return new SplitDropOperation( putInfo, move );
 	}
 	
+	public StationDragOperation prepareDrag( Dockable dockable ){
+		dragInfo = new ComponentDragOperation( dockable, this ){
+			@Override
+			protected void destroy(){
+				dragInfo = null;
+			}
+		};
+		return dragInfo;
+	}
+	
 	/**
 	 * Gets the location where the currently dragged {@link Dockable} would be dropped.
 	 * @return a possible location, may be <code>null</code>
@@ -2266,6 +2281,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 
 		dividerStrategy.getValue().paint( this, g );
+		
+		if( dragInfo != null && dragInfo.getDockable() != null ){
+			Leaf leaf = getRoot().getLeaf( dragInfo.getDockable() );
+			StationPaint stationPaint = paint.get();
+			if( stationPaint != null && leaf != null ){
+				Rectangle bounds = leaf.getBounds();
+				stationPaint.drawRemoval( g, this, bounds, bounds );
+			}
+		}
 	}
 
 	/**

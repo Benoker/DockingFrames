@@ -93,6 +93,8 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	private ButtonPane buttonPane;
 	/** Information where the user will drop or move a {@link Dockable} */
 	private FlapDropInfo dropInfo;
+	/** Information of an ongoing drag and drop operation that is removing the child of this window */
+	private boolean removal;
 
 	/** the panel onto which {@link #dockable} is put */
 	private JComponent contentPane;
@@ -124,11 +126,16 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		contentContainer = new SecureContainer(){
 			@Override
 			protected void paintOverlay( Graphics g ){
-				if( dropInfo != null && dropInfo.getCombineTarget() != null ) {
+				if( removal || (dropInfo != null && dropInfo.getCombineTarget() != null) ) {
 					Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
 					StationPaint paint = DefaultFlapWindow.this.station.getPaint().get();
 					if( paint != null ){
-						dropInfo.getCombineTarget().paint( g, contentContainer, paint, bounds, bounds );
+						if( dropInfo != null && dropInfo.getCombineTarget() != null ){
+							dropInfo.getCombineTarget().paint( g, contentContainer, paint, bounds, bounds );
+						}
+						else if( removal ){
+							paint.drawRemoval( g, getStation(), bounds, bounds );
+						}
 					}
 				}
 			}
@@ -295,6 +302,11 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		repaint();
 	}
 
+	public void setRemoval( boolean removal ){
+		this.removal = removal;
+		repaint();
+	}
+	
 	/**
 	 * Sets the title which should be displayed.
 	 * @param title the title or <code>null</code>

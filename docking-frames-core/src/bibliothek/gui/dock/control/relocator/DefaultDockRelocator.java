@@ -57,6 +57,7 @@ import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
+import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.OrderedLayerCollection;
 import bibliothek.gui.dock.title.DockTitle;
@@ -76,6 +77,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     
 	/** the current destination of a dragged dockable */
     private RelocateOperation operation;
+    
+    /** the current parent of a dragged dockable */
+    private StationDragOperation dragOperation;
     
     /** a window painting a title onto the screen */
     private ImageWindow movingImageWindow;
@@ -112,7 +116,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     
     public boolean isOnPut() {
         return onPut;
-    }    
+    }
     
     public DirectRemoteRelocator createDirectRemote( Dockable dockable ){
     	return createDirectRemote( dockable, false );
@@ -147,7 +151,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         disableAllModes();
         
         try{
-        	return operation.execute( dockable, new VetoableDockRelocatorListener(){
+        	boolean success = operation.execute( dockable, new VetoableDockRelocatorListener(){
 				public void searched( DockRelocatorEvent event ){
 					throw new IllegalStateException( "this event must not be called from an operation" );
 				}
@@ -180,6 +184,16 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 					throw new IllegalStateException( "this event must not be called from an operation" );
 				}
 			});
+        	if( dragOperation != null ){
+	        	if( success ){
+	        		dragOperation.succeeded();
+	        	}
+	        	else{
+	        		dragOperation.canceled();
+	        	}
+	        	dragOperation = null;
+        	}
+        	return success;
         }
         finally{
         	operation.destroy();
@@ -525,6 +539,15 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             
             onMove = true;
             
+            DockStation parent = dockable.getDockParent();
+            if( dragOperation != null ){
+        		dragOperation.canceled();
+        		dragOperation = null;
+        	}
+            if( parent != null ){
+            	dragOperation = parent.prepareDrag( dockable );
+            }
+            
             event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null );
             fireGrabbed( event );
             if( event.isCanceled() || event.isForbidden() ){
@@ -764,6 +787,11 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        if( operation != null ){
 	            operation.destroy();
 	            operation = null;
+	        }
+	        
+	        if( dragOperation != null ){
+	        	dragOperation.canceled();
+	        	dragOperation = null;
 	        }
 	        
 	        if( movingImageWindow != null )
