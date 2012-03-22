@@ -41,6 +41,8 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.span.Span;
+import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
@@ -51,6 +53,7 @@ import bibliothek.gui.dock.themes.basic.BasicDisplayerFactory;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.themes.basic.BasicDockableSelection;
 import bibliothek.gui.dock.themes.basic.BasicMovingImageFactory;
+import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
 import bibliothek.gui.dock.themes.basic.BasicStackDockComponent;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 import bibliothek.gui.dock.themes.color.ExtendingColorScheme;
@@ -98,6 +101,9 @@ public class BasicTheme implements DockTheme{
     /** the side at which tabs are normally shown */
     private NullPriorityValue<TabPlacement> tabPlacement = new NullPriorityValue<TabPlacement>();
 
+    /** how spans are created */
+    private NullPriorityValue<SpanFactory> spanFactory = new NullPriorityValue<SpanFactory>();
+    
     /** extensions used by this theme */
     private DockThemeExtension[] extensions;
     
@@ -129,12 +135,10 @@ public class BasicTheme implements DockTheme{
         public void updateUI( DockController controller ){
             BasicTheme.this.updateUI();
         }
-        public void themeChanged(DockController controller, DockTheme oldTheme,
-                DockTheme newTheme) {
+        public void themeChanged(DockController controller, DockTheme oldTheme, DockTheme newTheme) {
             // ignore
         }
-        public void themeWillChange(DockController controller,
-                DockTheme oldTheme, DockTheme newTheme) {
+        public void themeWillChange(DockController controller, DockTheme oldTheme, DockTheme newTheme) {
             // ignore
         }
     };
@@ -155,6 +159,7 @@ public class BasicTheme implements DockTheme{
         }, Priority.DEFAULT );
         setDockableSelection( new BasicDockableSelection(), Priority.DEFAULT );
         setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE, Priority.DEFAULT );
+        setSpanFactory( new BasicSpanFactory( 100 ), Priority.DEFAULT );
     }
 
     public void install( DockController controller, DockThemeExtension[] extensions ){
@@ -183,6 +188,7 @@ public class BasicTheme implements DockTheme{
 
         controller.getProperties().set( StackDockStation.COMPONENT_FACTORY, stackDockComponentFactory.get(), Priority.THEME );
         controller.getProperties().set( StackDockStation.TAB_PLACEMENT, tabPlacement.get(), Priority.THEME );
+        controller.getProperties().set( DockTheme.SPAN_FACTORY, spanFactory.get(), Priority.THEME );
         
         colorScheme.setProperties( controller );
 
@@ -195,6 +201,7 @@ public class BasicTheme implements DockTheme{
 
         controller.getProperties().unset( StackDockStation.COMPONENT_FACTORY, Priority.THEME );
         controller.getProperties().unset( StackDockStation.TAB_PLACEMENT, Priority.THEME );
+        controller.getProperties().unset( DockTheme.SPAN_FACTORY, Priority.THEME );
         controller.getColors().clear( Priority.THEME );
         controller.getThemeManager().removeUIListener( uiListener );
 
@@ -294,6 +301,25 @@ public class BasicTheme implements DockTheme{
      */
     public void setStackDockComponentFactory( StackDockComponentFactory stackDockComponentFactory, Priority priority ) {
         this.stackDockComponentFactory.set( priority, stackDockComponentFactory );
+    }
+    
+    /**
+     * Sets the factory which will be used to create new {@link Span}s. Note that this property
+     * has to be set before the theme is installed, otherwise it will take not effect.
+     * @param factory the new factory, can be <code>null</code>
+     */
+    public void setSpanFactory( SpanFactory factory ){
+    	setSpanFactory( factory, Priority.CLIENT );
+    }
+    
+    /**
+     * Sets the factory which will be used to create new {@link Span}s. Note that this property
+     * has to be set before the theme is installed. Otherwise it will take no effect.
+     * @param factory the factory or <code>null</code>
+     * @param priority the imprtance of the new setting (whether it should override existing settings or not).
+     */
+    public void setSpanFactory( SpanFactory factory, Priority priority ){
+    	this.spanFactory.set( priority, factory );
     }
 
     /**
