@@ -93,6 +93,7 @@ import bibliothek.gui.dock.station.flap.button.ButtonContent;
 import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
 import bibliothek.gui.dock.station.flap.button.DefaultButtonContentFilter;
 import bibliothek.gui.dock.station.flap.layer.FlapOverrideDropLayer;
+import bibliothek.gui.dock.station.flap.layer.FlapSideDropLayer;
 import bibliothek.gui.dock.station.flap.layer.WindowDropLayer;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -187,7 +188,7 @@ public class FlapDockStation extends AbstractDockableStation {
      * Key for the minimum size of all {@link FlapDockStation}s.
      */
     public static final PropertyKey<Dimension> MINIMUM_SIZE = new PropertyKey<Dimension>( "flap dock station empty size",
-    		new ConstantPropertyFactory<Dimension>( new Dimension( 10, 10 ) ), true );
+    		new ConstantPropertyFactory<Dimension>( new Dimension( 0, 0 ) ), true );
     
     /**
      * Key for a factory that creates the windows of this station.
@@ -377,6 +378,9 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /** the background algorithm of this component */
     private Background background = new Background();
+    
+    /** tells how far the {@link FlapSideDropLayer} streches */
+    private int borderSideSnapSize = 25;
     
     /**
      * Defaultconstructor of a {@link FlapDockStation}
@@ -570,6 +574,7 @@ public class FlapDockStation extends AbstractDockableStation {
             }
             
             windowFactory.setProperties( controller );
+            buttonPane.setProperties( controller );
             buttonPane.resetTitles();
             
             showingManager.fire();
@@ -1358,12 +1363,41 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public DockStationDropLayer[] getLayers(){
-    	return new DockStationDropLayer[]{
-    			new DefaultDropLayer( this ),
-    			new FlapOverrideDropLayer( this ),
-    			new WindowDropLayer( this )
-    	};
+    	if( getDockableCount() == 0 ){
+	    	return new DockStationDropLayer[]{
+	    			new DefaultDropLayer( this ),
+	    			new FlapOverrideDropLayer( this ),
+	    			new WindowDropLayer( this ),
+	    			new FlapSideDropLayer( this )
+	    	};
+    	}
+    	else{
+    		return new DockStationDropLayer[]{
+	    			new DefaultDropLayer( this ),
+	    			new FlapOverrideDropLayer( this ),
+	    			new WindowDropLayer( this )
+	    	};
+    	}
     }
+    
+    /**
+     * Sets the size of the outside layer. If the mouse is outside this station, but within
+     * <code>borderSideSnapSize</code>, then this station may still be the target of a drag and
+     * drop operation.
+     * @param borderSideSnapSize the size in pixels
+     */
+    public void setBorderSideSnapSize( int borderSideSnapSize ){
+		this.borderSideSnapSize = borderSideSnapSize;
+	}
+    
+    /**
+     * Tells how far the layer outside the station streches.
+     * @return the size of the outside layer
+     * @see #setBorderSideSnapSize(int)
+     */
+    public int getBorderSideSnapSize(){
+		return borderSideSnapSize;
+	}
     
     public StationDragOperation prepareDrag( Dockable dockable ){
     	if( dragInfo != null ){

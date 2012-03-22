@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2012 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,17 +26,17 @@
 package bibliothek.gui.dock.themes;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.station.Combiner;
+import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
 
 /**
- * An {@link UIValue} that is used to retrieve a {@link Combiner} from a {@link ThemeManager}.
+ * An {@link UIValue} that is used to retreive a {@link SpanFactory} from a {@link ThemeManager}. 
  * @author Benjamin Sigg
  */
-public interface CombinerValue extends UIValue<Combiner>{
+public interface SpanFactoryValue extends UIValue<SpanFactory>{
 	/** the kind of {@link UIValue} this is */
-	public static final Path KIND_COMBINER = new Path( "dock", "combiner" );
+	public static final Path KIND_SPAN_FACTORY = new Path( "dock", "span" );
 	
 	/**
 	 * Gets the station for which this {@link UIValue} works.

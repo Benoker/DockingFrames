@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2012 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,24 +23,23 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes;
+package bibliothek.gui.dock.station.span;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.util.UIValue;
-import bibliothek.util.Path;
+import bibliothek.gui.DockTheme;
+import bibliothek.gui.dock.themes.ThemeManager;
 
 /**
- * An {@link UIValue} that is used to retrieve a {@link Combiner} from a {@link ThemeManager}.
+ * A {@link SpanFactory} creates new {@link Span}s.<br>
+ * The current {@link SpanFactory} can be configured using the {@link ThemeManager} or using
+ * {@link DockTheme#SPAN_FACTORY}. 
  * @author Benjamin Sigg
  */
-public interface CombinerValue extends UIValue<Combiner>{
-	/** the kind of {@link UIValue} this is */
-	public static final Path KIND_COMBINER = new Path( "dock", "combiner" );
-	
+public interface SpanFactory {
 	/**
-	 * Gets the station for which this {@link UIValue} works.
-	 * @return the owner
+	 * Creates a new {@link Span}.
+	 * @param callback allows interaction between {@link Span} and {@link DockStation}.
+	 * @return the new {@link Span}, not <code>null</code>
 	 */
-	public DockStation getStation();
+	public Span create( SpanCallback callback );
 }

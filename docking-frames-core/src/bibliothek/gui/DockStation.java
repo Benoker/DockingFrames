@@ -82,7 +82,7 @@ import bibliothek.util.Todo.Version;
  * @author Benjamin Sigg
  */
 public interface DockStation extends DockElement{
-    /**
+	/**
      * Sets the controller of this station. If the station wants to
      * show any {@link DockTitle}, then the titles have to be replaced
      * by new instances (assuming the controller is really new). The
@@ -374,28 +374,6 @@ public interface DockStation extends DockElement{
      * @param property the preferred position of <code>dockable</code>
      */
     public void move( Dockable dockable, DockableProperty property );
-    
-//    /**
-//     * If the controller asks a station if a child could be dropped or moved,
-//     * the controller assumes that no other station has interest in this event.
-//     * However if this station is a dockable, and has a parent, the parent might
-//     * be interested in the new child. This dockable station has to ask the
-//     * parent if the current location of the mouse is in the override-zone. This
-//     * station should not accept a child if the parent returns <code>true</code>.<br>
-//     * On the other hand, this station could be asked by a child whether the mouse
-//     * is in the override-zone. If the mouse hits a point of special interest,
-//     * then the method should return <code>true</code>.<br>
-//     * Note: if this station is asked and is a dockable station itself, then
-//     * this method should ask the parent for his override-zone too.
-//     * @param x the x-coordinate of the mouse on the screen
-//     * @param y the y-coordinate of the mouse on the screen
-//     * @param invoker a child of this station which invoked the method
-//     * @param drop a {@link Dockable} which might become a child
-//     * @param <D> the type of <code>invoker</code>
-//     * @return <code>true</code> if the location of the mouse is of special
-//     * interest
-//     */
-//    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x, int y, D invoker, Dockable drop );
     
     /**
      * Gets a description of all the areas of the screen where this {@link DockStation} can handle a drop event.<br>

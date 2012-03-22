@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2012 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,24 +23,36 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes;
+package bibliothek.gui.dock.station.span;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.util.UIValue;
-import bibliothek.util.Path;
 
 /**
- * An {@link UIValue} that is used to retrieve a {@link Combiner} from a {@link ThemeManager}.
+ * The link between {@link Span} and {@link DockStation}.
  * @author Benjamin Sigg
  */
-public interface CombinerValue extends UIValue<Combiner>{
-	/** the kind of {@link UIValue} this is */
-	public static final Path KIND_COMBINER = new Path( "dock", "combiner" );
-	
+public interface SpanCallback {
 	/**
-	 * Gets the station for which this {@link UIValue} works.
-	 * @return the owner
+	 * Gets the {@link DockStation} that is using this {@link Span}.
+	 * @return the station, never <code>null</code>
 	 */
 	public DockStation getStation();
+	
+	/**
+	 * Tells whether the {@link Span} influences some width.
+	 * @return whether the {@link Span} is horizontal, the opposite of {@link #isVertical()}
+	 */
+	public boolean isHorizontal();
+	
+	/**
+	 * Tells whether the {@link Span} influences some height.
+	 * @return whether the {@link Span} is vertical, the opposite of {@link #isHorizontal()}
+	 */
+	public boolean isVertical();
+	
+	/**
+	 * To be called by the {@link Span} every time when its size changes. This method should be called
+	 * from the <code>EventDispatcherThread</code>.
+	 */
+	public void resized();
 }

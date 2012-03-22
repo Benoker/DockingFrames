@@ -42,6 +42,7 @@ import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.themes.basic.action.buttons.MiniButton;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -94,6 +95,12 @@ public class ThemeManager extends TypedUIProperties{
 	
 	/** unique identifier for the basic {@link BorderModifier} */
 	public static final String BORDER_MODIFIER = "dock.border";
+	
+	/** Identifier for the type {@link SpanFactory} */
+	public static final Type<SpanFactory> SPAN_FACTORY_TYPE = new Type<SpanFactory>( "SpanFactory" );
+	
+	/** unique identifier for the basic {@link SpanFactory} */
+	public static final String SPAN_FACTORY = "dock.spanFactory";
 	
 	/** the controller owning the manager */
 	private DockController controller;
@@ -148,6 +155,7 @@ public class ThemeManager extends TypedUIProperties{
     	registerType( DISPLAYER_FACTORY_TYPE );
     	registerType( BACKGROUND_PAINT_TYPE );
     	registerType( BORDER_MODIFIER_TYPE );
+    	registerType( SPAN_FACTORY_TYPE );
     }
     
     private void link(){
@@ -156,6 +164,7 @@ public class ThemeManager extends TypedUIProperties{
     	link( DockTheme.DISPLAYER_FACTORY, DISPLAYER_FACTORY_TYPE, DISPLAYER_FACTORY );
     	link( DockTheme.BACKGROUND_PAINT, BACKGROUND_PAINT_TYPE, BACKGROUND_PAINT );
     	link( DockTheme.BORDER_MODIFIER, BORDER_MODIFIER_TYPE, BORDER_MODIFIER );
+    	link( DockTheme.SPAN_FACTORY, SPAN_FACTORY_TYPE, SPAN_FACTORY );
     }
     
     /**
@@ -376,6 +385,37 @@ public class ThemeManager extends TypedUIProperties{
     	}
     	else{
     		publish( Priority.CLIENT, kind, DISPLAYER_FACTORY_TYPE, bridge );
+    	}
+    }
+    
+    /**
+     * Sets a strategy to tell how to animate empty spaces when drag and dropping a {@link Dockable}.
+     * Valid identifiers can be, but are not restricted to:
+     * <ul>
+     * 	<li>{@value #DISPLAYER_FACTORY}.flap</li>
+     *  <li>{@value #DISPLAYER_FACTORY}.split</li>
+     *  <li>{@value #DISPLAYER_FACTORY}.stack (currently not used)</li>
+     *  <li>{@value #DISPLAYER_FACTORY}.screen (currently not used)</li>
+     * </ul>
+     * @param id the identifier of the item that uses <code>value</code>
+     * @param value the new strategy, can be <code>null</code>
+     */
+    public void setSpanFactory( String id, SpanFactory value ){
+    	put( Priority.CLIENT, id, SPAN_FACTORY_TYPE, value );
+    }
+    
+    /**
+     * Sets the {@link UIBridge} that will transfer properties to those {@link UIValue}s whose kind is either
+     * <code>kind</code> or a child of <code>kind</code>.
+     * @param kind the kind of {@link UIValue} <code>bridge</code> will handle
+     * @param bridge the new bridge or <code>null</code>
+     */
+    public void setSpanFactoryBridge( Path kind, UIBridge<SpanFactory, UIValue<SpanFactory>> bridge ){
+    	if( bridge == null ){
+    		unpublish( Priority.CLIENT, kind, SPAN_FACTORY_TYPE );
+    	}
+    	else{
+    		publish( Priority.CLIENT, kind, SPAN_FACTORY_TYPE, bridge );
     	}
     }
     
