@@ -1920,8 +1920,8 @@ public class ScreenDockStation extends AbstractDockStation {
 	        }
 		}
 		
-		public void destroy(){
-            if( combine != null ){
+		public void destroy( StationDropOperation next ){
+		    if( combine != null ){
                 combine.setPaintCombining( null );
             }
 			

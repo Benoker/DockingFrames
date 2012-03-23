@@ -2899,10 +2899,12 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			repaint();
 		}
 
-		public void destroy(){
+		public void destroy( StationDropOperation next ){
 			if( SplitDockStation.this.putInfo == putInfo ){
 				SplitDockStation.this.putInfo = null;
-				spanStrategy.setPut( null );
+				if( next == null || !(next instanceof SplitDropOperation) || next.getTarget() != getTarget() ){
+					spanStrategy.setPut( null );
+				}
 				repaint();
 			}
 		}

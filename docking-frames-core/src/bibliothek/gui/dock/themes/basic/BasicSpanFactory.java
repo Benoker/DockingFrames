@@ -174,7 +174,7 @@ public class BasicSpanFactory implements SpanFactory{
 				ratio = 1;
 			}
 			
-			ratio = Math.sqrt( ratio );
+			ratio = 2*(1-ratio)*ratio + ratio*ratio;
 			
 			return (int)(sizeStart * (1-ratio) + sizeTarget * ratio);
 		}

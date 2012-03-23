@@ -1794,7 +1794,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             panel.repaint();
         }
 
-        public void destroy(){
+        public void destroy( StationDropOperation next ){
         	if( StackDockStation.this.insert == insert ){
         		StackDockStation.this.insert = null;
         		panel.repaint();

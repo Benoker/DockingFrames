@@ -2174,9 +2174,11 @@ public class FlapDockStation extends AbstractDockableStation {
 	    	setDropInfo( dropInfo );	
     	}
     	
-    	public void destroy(){
+    	public void destroy( StationDropOperation next ){
     		if( FlapDockStation.this.dropInfo == dropInfo ){
-    			setDropInfo( null );
+    			if( next == null || !(next instanceof FlapDropOperation) || next.getTarget() != getTarget() ){
+    				setDropInfo( null );
+    			}
     		}
     	}
     	

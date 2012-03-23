@@ -177,8 +177,7 @@ public class SplitSpanStrategy {
 	private void reset(){
 		station.getRoot().visit( new SplitNodeVisitor(){
 			public void handleRoot( Root root ){
-				// TODO Auto-generated method stub
-				
+				root.createSpans();
 			}
 			
 			public void handlePlaceholder( Placeholder placeholder ){

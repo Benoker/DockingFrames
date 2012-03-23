@@ -200,7 +200,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         	return success;
         }
         finally{
-        	operation.destroy();
+        	operation.destroy( null );
         	operation = null;
             onPut = false;
             controller.getRegister().setStalled( false );
@@ -605,7 +605,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         }
         else{
             if( operation != null ){
-	            operation.destroy();
+	            operation.destroy( next );
             }
             
             this.operation = next;
@@ -719,7 +719,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                     }
 
                     if( operation != null && (next == null || operation.getStation() != next.getStation() )){
-                        operation.destroy();
+                        operation.destroy( next );
                     }
                     
                     operation = next;
@@ -731,7 +731,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 	event.drop();
                 	fireDropping( event );
                 	if( event.isCanceled() || event.isForbidden() ){
-                		operation.destroy();
+                		operation.destroy( null );
                 		operation = null;
                 	}
                 }
@@ -740,7 +740,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 	consume = true;
                 	Dockable[] implicit = operation.getImplicit( dockable );
                     boolean canceled = !executeOperation( dockable, operation );
-                    operation.destroy();
+                    operation.destroy( null );
                     this.operation = null;
                     
                     dropped = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation.getStation() );
@@ -808,7 +808,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     	if( !isOnPut() ){
     		// if it is on put, than it is too late to stop
 	        if( operation != null ){
-	            operation.destroy();
+	            operation.destroy( null );
 	            operation = null;
 	        }
 	        

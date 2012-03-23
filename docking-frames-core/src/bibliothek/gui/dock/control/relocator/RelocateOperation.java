@@ -49,8 +49,9 @@ public interface RelocateOperation {
 	/**
 	 * Informs this operation that it will never be used (again) and that it should release any
 	 * resources it has acquired.
+	 * @param next the operation that will be executed next, can be <code>null</code>
 	 */
-	public void destroy();
+	public void destroy( RelocateOperation next );
 	
 	/**
 	 * Gets the {@link Dockable}s whose parent will change due to this operation.

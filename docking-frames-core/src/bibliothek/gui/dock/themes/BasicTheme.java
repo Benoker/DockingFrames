@@ -159,7 +159,7 @@ public class BasicTheme implements DockTheme{
         }, Priority.DEFAULT );
         setDockableSelection( new BasicDockableSelection(), Priority.DEFAULT );
         setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE, Priority.DEFAULT );
-        setSpanFactory( new BasicSpanFactory( 100 ), Priority.DEFAULT );
+        setSpanFactory( new BasicSpanFactory( 250 ), Priority.DEFAULT );
     }
 
     public void install( DockController controller, DockThemeExtension[] extensions ){

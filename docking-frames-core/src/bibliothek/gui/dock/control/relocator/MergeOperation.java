@@ -62,8 +62,13 @@ public class MergeOperation implements RelocateOperation{
 		return operation;
 	}
 	
-	public void destroy(){
-		operation.destroy();
+	public void destroy( RelocateOperation next ){
+		if( next == null ){
+			operation.destroy( null );
+		}
+		else{
+			operation.destroy( next.getOperation() );
+		}
 	}
 	
 	public Dockable[] getImplicit( Dockable selection ){
