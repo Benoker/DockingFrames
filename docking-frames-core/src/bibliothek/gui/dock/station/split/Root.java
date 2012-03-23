@@ -42,7 +42,7 @@ import bibliothek.gui.dock.SplitDockStation;
  * {@link SplitDockStation}.
  * @author Benjamin Sigg
  */
-public class Root extends VisibleSplitNode{
+public class Root extends SpanSplitNode{
 	/** the single child of this root */
     private SplitNode child;
     
@@ -58,7 +58,7 @@ public class Root extends VisibleSplitNode{
      * {@link SplitDockStation}, must not be <code>null</code>
      */
     public Root( SplitDockAccess access ){
-        super( access, -1 );
+        this( access, -1 );
     }
     
     /**
@@ -178,9 +178,6 @@ public class Root extends VisibleSplitNode{
      */
     public double getWidthFactor(){
     	return getBaseBounds().getWidth();
-    	
-//        Insets insets = getAccess().getOwner().getInsets();
-//        return getAccess().getOwner().getWidth() - insets.left - insets.right;
     }
     
     /**
@@ -190,9 +187,6 @@ public class Root extends VisibleSplitNode{
      */
     public double getHeightFactor(){
     	return getBaseBounds().getHeight();
-    	
-//        Insets insets = getAccess().getOwner().getInsets();
-//        return getAccess().getOwner().getHeight() - insets.top - insets.bottom;
     }
     
     /**
@@ -313,9 +307,25 @@ public class Root extends VisibleSplitNode{
     @Override
     public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
         super.updateBounds( x, y, width, height, factorW, factorH, components );
-        if( child != null )
+        if( child != null ){
+        	Rectangle bounds = new Rectangle( (int)(x * factorW), (int)(y * factorH), (int)(width * factorW), (int)(height * factorH));
+        	Rectangle refitted = getAccess().getSpanStrategy().modifyBounds( bounds, this );
+
+        	if( !bounds.equals( refitted ) && factorW > 0 && factorH > 0 ){
+	        	x = refitted.x / factorW;
+	        	y = refitted.y / factorH;
+	        	width = refitted.width / factorW;
+	        	height = refitted.height / factorH;
+        	}
+        	
             child.updateBounds( x, y, width, height, factorW, factorH, components );
+        }
         treeChanged = false;
+    }
+    
+    @Override
+    public void onSpanResize(){
+    	getStation().updateBounds();
     }
 
     @Override

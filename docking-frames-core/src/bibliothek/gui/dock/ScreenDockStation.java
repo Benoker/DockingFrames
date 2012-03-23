@@ -70,6 +70,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -760,8 +761,8 @@ public class ScreenDockStation extends AbstractDockStation {
     	return result;
     }
     
-    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
-        return prepare( x, y, titleX, titleY, dockable, dockable.getDockParent() != this );
+    public StationDropOperation prepareDrop( StationDropItem item ){
+        return prepare( item, item.getDockable().getDockParent() != this );
     }
     
     public StationDragOperation prepareDrag( Dockable dockable ){
@@ -786,26 +787,26 @@ public class ScreenDockStation extends AbstractDockStation {
     	return dragInfo;
     }
     
-    public StationDropOperation prepare( int x, int y, int titleX, int titleY, Dockable dockable, boolean drop ) {
+    public StationDropOperation prepare( StationDropItem item, boolean drop ) {
     	DropInfo dropInfo = new DropInfo();
         
         ScreenDockWindow oldCombine = dropInfo.combine;
         
-        dropInfo.x = x;
-        dropInfo.y = y;
-        dropInfo.titleX = titleX;
-        dropInfo.titleY = titleY;
-        dropInfo.dockable = dockable;
+        dropInfo.x = item.getMouseX();
+        dropInfo.y = item.getMouseY();
+        dropInfo.titleX = item.getTitleX();
+        dropInfo.titleY = item.getTitleY();
+        dropInfo.dockable = item.getDockable();
         dropInfo.move = !drop;
         
         Enforcement force = Enforcement.HARD;
-        dropInfo.combine = searchCombineDockable( x, y, dockable, true );
+        dropInfo.combine = searchCombineDockable( dropInfo.x, dropInfo.y, dropInfo.dockable, true );
         if( dropInfo.combine == null ){
         	force = Enforcement.EXPECTED;
-        	dropInfo.combine = searchCombineDockable( x, y, dockable, false );
+        	dropInfo.combine = searchCombineDockable( dropInfo.x, dropInfo.y, dropInfo.dockable, false );
         }
         
-        if( dropInfo.combine != null && dropInfo.combine.getDockable() == dockable )
+        if( dropInfo.combine != null && dropInfo.combine.getDockable() == dropInfo.dockable )
             dropInfo.combine = null;
         
         if( dropInfo.combine != null ){

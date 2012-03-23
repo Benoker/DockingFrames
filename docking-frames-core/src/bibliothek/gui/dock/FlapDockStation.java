@@ -75,6 +75,7 @@ import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.ButtonPane;
@@ -380,7 +381,7 @@ public class FlapDockStation extends AbstractDockableStation {
     private Background background = new Background();
     
     /** tells how far the {@link FlapSideDropLayer} streches */
-    private int borderSideSnapSize = 25;
+    private int borderSideSnapSize = 15;
     
     /**
      * Defaultconstructor of a {@link FlapDockStation}
@@ -1420,7 +1421,11 @@ public class FlapDockStation extends AbstractDockableStation {
     	return dragInfo;
     }
     
-    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ) {
+    public StationDropOperation prepareDrop( StationDropItem item ){
+    	int mouseX = item.getMouseX();
+    	int mouseY = item.getMouseY();
+    	Dockable dockable = item.getDockable();
+    	
     	boolean move = dockable.getDockParent() == this;
     	
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){

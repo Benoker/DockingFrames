@@ -89,10 +89,12 @@ import bibliothek.gui.dock.station.NoStationDropOperation;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
+import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
@@ -120,6 +122,7 @@ import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.split.SplitPlaceholderConverter;
 import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
+import bibliothek.gui.dock.station.split.SplitSpanStrategy;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
 import bibliothek.gui.dock.station.split.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.split.layer.SplitOverrideDropLayer;
@@ -381,6 +384,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/** Information about the {@link Dockable} which is currently draged onto this station. */
 	private PutInfo putInfo;
 	
+	/** Information about the current {@link Span}s */
+	private SplitSpanStrategy spanStrategy;
+	
 	/** Information aboud the {@link Dockable} that is currently removed from this station */
 	private ComponentDragOperation dragInfo;
 
@@ -456,6 +462,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();
+		
+		spanStrategy = new SplitSpanStrategy( this );
 		
 		titleIcon = new DockStationIcon( "dockStation.default", this ){
 			protected void changed( Icon oldValue, Icon newValue ){
@@ -695,6 +703,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			background.setController( controller );
 			dividerStrategy.setProperties( controller );
 			disablingStrategy.setProperties( controller );
+			spanStrategy.setController( controller );
 			
 			if( controller != null ) {
 				title = controller.getDockTitleManager().getVersion(TITLE_ID, ControllerTitleFactory.INSTANCE);
@@ -1458,36 +1467,36 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		};
 	}
 	
-	public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
+	public StationDropOperation prepareDrop( StationDropItem item ){
 		PutInfo putInfo = null;
-		boolean move = dockable.getDockParent() == this;
+		boolean move = item.getDockable().getDockParent() == this;
 		
 		if( move ){
-			putInfo = layoutManager.getValue().prepareMove(this, x, y, titleX, titleY, dockable);
+			putInfo = layoutManager.getValue().prepareMove( this, item );
 			if( putInfo != null ){
 				if( putInfo.getNode() == null ){
-					return new NoStationDropOperation( this, dockable );
+					return new NoStationDropOperation( this, item.getDockable() );
 				}
 				
-				prepareCombine( putInfo, x, y, move );
+				prepareCombine( putInfo, move, item );
 			}
 		}
 		else{
-			if( SwingUtilities.isDescendingFrom(getComponent(), dockable.getComponent()) ){
+			if( SwingUtilities.isDescendingFrom(getComponent(), item.getDockable().getComponent()) ){
 				putInfo = null;
 			}
 			else{
-				putInfo = layoutManager.getValue().prepareDrop(this, x, y, titleX, titleY, dockable);
+				putInfo = layoutManager.getValue().prepareDrop( this, item );
 			}
 			
 			if( putInfo != null ){
-				prepareCombine( putInfo, x, y, move );
+				prepareCombine( putInfo, move, item );
 			}
 		}
 		if( putInfo == null ){
 			return null;
 		}
-		return new SplitDropOperation( putInfo, move );
+		return new SplitDropOperation( putInfo, item, move );
 	}
 	
 	public StationDragOperation prepareDrag( Dockable dockable ){
@@ -1508,10 +1517,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return putInfo;
 	}
 	
-	private void prepareCombine( PutInfo putInfo, int x, int y, boolean move ){
+	private void prepareCombine( PutInfo putInfo, boolean move, StationDropItem item ){
 		if( putInfo.getCombinerSource() == null && putInfo.getCombinerTarget() == null ){
 			if( putInfo.getNode() instanceof Leaf ){
-				Point mouseOnStation = new Point( x, y );
+				Point mouseOnStation = new Point( item.getMouseX(), item.getMouseY() );
 				SwingUtilities.convertPointFromScreen( mouseOnStation, getComponent() );
 				
 				SplitDockCombinerSource source = new SplitDockCombinerSource( putInfo, this, mouseOnStation );
@@ -1536,7 +1545,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 						target = getCombiner().prepare( source, Enforcement.HARD );
 						putInfo.setCombination( source, target );
 
-						if( !merger.canMerge( new SplitDropOperation( putInfo, move ), this, putInfo.getDockable().asDockStation() ) ){
+						if( !merger.canMerge( new SplitDropOperation( putInfo, item, move ), this, putInfo.getDockable().asDockStation() ) ){
 							putInfo.setCombination( null, null );
 						}
 					}
@@ -2240,7 +2249,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	@Override
 	protected void paintOverlay( Graphics g ){
-		if( putInfo != null ) {
+		if( putInfo != null && !putInfo.willHaveNoEffect() ) {
 			DefaultStationPaintValue paint = getPaint();
 			if( putInfo.getNode() == null ) {
 				Rectangle bounds = new Rectangle(0, 0, getWidth(), getHeight());
@@ -2249,7 +2258,12 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			else {
 				CombinerTarget target = putInfo.getCombinerTarget();
 				if( target == null ){
-					Rectangle bounds = putInfo.getNode().getBounds();
+					SplitNode node = putInfo.getNode();
+					if( node.getParent() == getRoot() ){
+						node = getRoot();
+					}
+					
+					Rectangle bounds = node.getBounds();
 	
 					if( putInfo.getPut() == PutInfo.Put.LEFT ) {
 						bounds.width = (int) (bounds.width * putInfo.getDivider() + 0.5);
@@ -2860,15 +2874,18 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	protected class SplitDropOperation implements StationDropOperation{
 		private PutInfo putInfo;
+		private StationDropItem item;
 		private boolean move;
 		
 		/**
 		 * Creates a new operation.
 		 * @param putInfo the desired location of the dropped {@link Dockable}.
+		 * @param item detailed information about the ongoing drag and drop operation
 		 * @param move whether this operation is a move operation or not 
 		 */
-		public SplitDropOperation( PutInfo putInfo, boolean move ){
+		public SplitDropOperation( PutInfo putInfo, StationDropItem item, boolean move ){
 			this.putInfo = putInfo;
+			this.item = item;
 			this.move = move;
 		}
 		
@@ -2878,12 +2895,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		
 		public void draw(){
 			SplitDockStation.this.putInfo = putInfo;
+			spanStrategy.setPut( putInfo );
 			repaint();
 		}
 
 		public void destroy(){
 			if( SplitDockStation.this.putInfo == putInfo ){
 				SplitDockStation.this.putInfo = null;
+				spanStrategy.setPut( null );
 				repaint();
 			}
 		}
@@ -2909,6 +2928,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		
 		public void execute(){
+			spanStrategy.unsetPut();
 			if( isMove() ){
 				move();
 			}
@@ -3027,7 +3047,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		
 					if( !finish ) {
 						updateBounds();
-						layoutManager.getValue().calculateDivider(SplitDockStation.this, putInfo, root().getLeaf(putInfo.getDockable()));
+						layoutManager.getValue().calculateDivider( SplitDockStation.this, putInfo, root().getLeaf(putInfo.getDockable()), item );
 						dropAside( putInfo.getNode(), putInfo.getPut(), putInfo.getDockable(), putInfo.getLeaf(), putInfo.getDivider(), token );
 					}
 				}
@@ -3178,6 +3198,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 		public SplitPlaceholderSet getPlaceholderSet(){
 			return placeholderSet;
+		}
+		
+		public SplitSpanStrategy getSpanStrategy(){
+			return spanStrategy;
 		}
 	}
 }

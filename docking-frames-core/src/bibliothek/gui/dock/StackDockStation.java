@@ -72,6 +72,7 @@ import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
@@ -919,32 +920,32 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	return false;
     }
     
-    public StationDropOperation prepareMove( int x, int y, int titleX, int titleY, Dockable dockable ) {
-        Point point = new Point( x, y );
+    public StationDropOperation prepareMove( StationDropItem item ) {
+        Point point = new Point( item.getMouseX(), item.getMouseY() );
         SwingUtilities.convertPointFromScreen( point, panel );
         
         Insert insert = tabIndexAt( point.x, point.y );
-        if( validate( insert, dockable )){
-        	return new StackDropOperation( dockable, insert, true );
+        if( validate( insert, item.getDockable() )){
+        	return new StackDropOperation( item.getDockable(), insert, true );
         }
         return null;
     }
     
-    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
-    	if( dockable.getDockParent() == this ){
-    		return prepareMove( x, y, titleX, titleY, dockable );
+    public StationDropOperation prepareDrop( StationDropItem item ){
+    	if( item.getDockable().getDockParent() == this ){
+    		return prepareMove( item );
     	}
     	
-    	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
+    	if( SwingUtilities.isDescendingFrom( getComponent(), item.getDockable().getComponent() )){
     		return null;
     	}
     	
-        Point point = new Point( x, y );
+        Point point = new Point( item.getMouseX(), item.getMouseY() );
         SwingUtilities.convertPointFromScreen( point, panel );
         
         Insert insert = tabIndexAt( point.x, point.y );
-        if( validate( insert, dockable )){
-        	return new StackDropOperation( dockable, insert, false );
+        if( validate( insert, item.getDockable() )){
+        	return new StackDropOperation( item.getDockable(), insert, false );
         }
         return null;
     }

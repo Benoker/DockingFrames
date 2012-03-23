@@ -29,6 +29,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 
@@ -66,7 +67,7 @@ public interface SplitLayoutManager {
     public Dockable willMakeFullscreen( SplitDockStation station, Dockable dockable );
 
     /**
-     * Call forwarded from {@link DockStation#prepareDrop(int, int, int, int, boolean, Dockable) DockStation.prepareDrop}.
+     * Call forwarded from {@link DockStation#prepareDrop(StationDropItem) DockStation.prepareDrop}.
      * This method calculates where to drop a new {@link Dockable}.<br>
      * This {@link SplitLayoutManager} may or may not set the {@link CombinerTarget} and {@link CombinerSource} of
      * the created {@link PutInfo}. If there is no combiner information but the mouse is over the center or the title
@@ -74,29 +75,21 @@ public interface SplitLayoutManager {
      * If there is already information set, then the station will silently assume that this manager did set the information
      * and that the information is correct.
      * @param station the calling station
-     * @param x the x-coordinate of the mouse on the screen
-     * @param y the y-coordinate of the mouse on the screen
-     * @param titleX the location of the title or <code>x</code> if no title is grabbed
-     * @param titleY the location of the title or <code>y</code> if no title is grabbed
      * @param dockable the element that might be dropped
      * @return where to drop <code>dockable</code> or <code>null</code> if the element should not be dropped
      */
-    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable );
+    public PutInfo prepareDrop( SplitDockStation station, StationDropItem dockable );
 
     /**
-     * Call forwarded from {@link DockStation#prepareDrop(int, int, int, int, boolean, Dockable) DockStation.prepareDrop} if
+     * Call forwarded from {@link DockStation#prepareDrop(bibliothek.gui.dock.station.StationDropItem) DockStation.prepareDrop} if
      * the operation is a move operation (if the <code>dockable</code> is already a child of this station).
      * This method calculates where to move a {@link Dockable} of <code>station</code>.
      * @param station the calling station
-     * @param x the x-coordinate of the mouse on the screen
-     * @param y the y-coordinate of the mouse on the screen
-     * @param titleX the location of the title or <code>x</code> if no title is grabbed
-     * @param titleY the location of the title or <code>y</code> if no title is grabbed
      * @param dockable the element that might be dropped
      * @return where to drop <code>dockable</code> or <code>null</code> if the element should not be dropped
      * @see #prepareDrop(SplitDockStation, int, int, int, int, boolean, Dockable)
      */
-    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable );
+    public PutInfo prepareMove( SplitDockStation station, StationDropItem dockable );
     
     /**
      * Calculates the value a divider should have if the {@link Dockable}
@@ -105,8 +98,9 @@ public interface SplitLayoutManager {
      * @param station the station for which the calculation has to be done
      * @param putInfo the new child of the station
      * @param origin a leaf of this station or <code>null</code>
+     * @param item detailed information about the drag and drop operation that is going on
      */
-    public void calculateDivider( SplitDockStation station, PutInfo putInfo, Leaf origin );
+    public void calculateDivider( SplitDockStation station, PutInfo putInfo, Leaf origin, StationDropItem item );
     
     /**
      * Tests whether the specified <code>divider</code>-value is legal or not.

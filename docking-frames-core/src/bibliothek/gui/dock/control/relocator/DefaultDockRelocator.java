@@ -58,6 +58,7 @@ import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.OrderedLayerCollection;
 import bibliothek.gui.dock.title.DockTitle;
@@ -89,6 +90,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     private Point pressPointLocal;
     /** the location of the last mouse event */
     private Point lastPoint;
+    
+    /** information about the last dragged dockable */
+    private StationDropItem lastItem;
     
 	/**
 	 * Creates a new manager.
@@ -203,6 +207,16 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         }
     }    
     
+    private StationDropItem createStationDropItem( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
+    	if( lastItem == null || lastItem.getDockable() != dockable ){
+    		lastItem = new StationDropItem( mouseX, mouseY, titleX, titleY, dockable );
+    	}
+    	else{
+    		lastItem = new StationDropItem( mouseX, mouseY, titleX, titleY, dockable, lastItem.getOriginalSize(), lastItem.getMinimumSize() );
+    	}
+    	return lastItem;
+    }
+    
     /**
      * Searches a station which can become the parent of <code>dockable</code> 
      * if the mouse is released at <code>mouseX/mouseY</code>.
@@ -215,9 +229,10 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
+        StationDropItem item = createStationDropItem( mouseX, mouseY, titleX, titleY, dockable );
         
         for( DockStation station : list ){
-        	StationDropOperation operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        	StationDropOperation operation = station.prepareDrop( item );
         	RelocateOperation result = null;
         	
         	boolean merge = canMerge( operation, station, dockable );
@@ -520,6 +535,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             movingImageWindow.close();
             movingImageWindow = null;
         }
+    	lastItem = null;
     	
     	Dockable[] implicit = new Dockable[]{};
     	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null );
@@ -744,6 +760,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             if( movingImageWindow != null )
                 movingImageWindow.close();
             
+            lastItem = null;
+            
             if( dragOperation != null ){
             	dragOperation.canceled();
             	dragOperation = null;
@@ -802,6 +820,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        if( movingImageWindow != null )
 	            movingImageWindow.close();
 	        
+	        lastItem = null;
 	        movingImageWindow = null;
 	        pressPointScreen = null;
 	        pressPointLocal = null;

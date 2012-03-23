@@ -26,9 +26,12 @@
 
 package bibliothek.gui.dock.station.split;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Map;
+
+import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -39,6 +42,7 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Path;
@@ -49,7 +53,7 @@ import bibliothek.util.Path;
  * on the owner-station.
  * @author Benjamin Sigg
  */
-public class Leaf extends VisibleSplitNode{
+public class Leaf extends SpanSplitNode{
 	/** Information about the element that is shown by this leaf */
     private StationChildHandle handle;
     
@@ -58,7 +62,7 @@ public class Leaf extends VisibleSplitNode{
      * @param access the access to the private functions of the owning {@link SplitDockStation}
      */
     public Leaf( SplitDockAccess access ){
-        super( access, -1 );
+        this( access, -1 );
     }
     
     /**
@@ -274,14 +278,34 @@ public class Leaf extends VisibleSplitNode{
     @Override
     public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
         super.updateBounds( x, y, width, height, factorW, factorH, components );
-        DockableDisplayer displayer = getDisplayer();
-        
-        StationChildHandle fullscreen = getAccess().getFullScreenDockable();
-        
-        if( components && displayer != null && (fullscreen == null || displayer != fullscreen.getDisplayer() ))
-            displayer.getComponent().setBounds( getBounds() );
+        if( components ){
+        	resetDisplayerBounds();
+        }
     }
-        
+    
+    @Override
+    public void onSpanResize(){
+    	resetDisplayerBounds();
+    }
+    
+    /**
+     * Resets the boundaries of the {@link DockableDisplayer} of this {@link Leaf}, using the current {@link Span}s
+     * as well.
+     */
+    public void resetDisplayerBounds(){
+    	DockableDisplayer displayer = getDisplayer();
+    	StationChildHandle fullscreen = getAccess().getFullScreenDockable();
+        if( displayer != null && (fullscreen == null || displayer != fullscreen.getDisplayer() )){
+        	Rectangle bounds = getBounds();
+        	bounds = getAccess().getSpanStrategy().modifyBounds( bounds, this );
+        	Component component = displayer.getComponent();
+        	component.setBounds( bounds );
+        	if( component instanceof JComponent ){
+        		((JComponent)component).revalidate();
+        	}
+        }
+    }
+    
     @Override
     public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ) {
     	DockableDisplayer displayer = getDisplayer();

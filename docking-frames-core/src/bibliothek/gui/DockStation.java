@@ -39,6 +39,7 @@ import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -317,21 +318,11 @@ public interface DockStation extends DockElement{
      * <li>The method should use the {@link DockAcceptance} of its controller
      * (see {@link DockController#getAcceptance()}) to ensure that the drop/location is valid.</li>
      * </ul>
-     * This method gets two points: <code>mouseX/mouseY</code> is the location
-     * of the mouse, <code>titleX/titleY</code> is the location of the dragged
-     * title. The second point may be interesting if the title of a dropped
-     * child should have the same coordinates as the image of the dragged title.
-     * @param mouseX the x-coordinate of the mouse on the screen
-     * @param mouseY the y-coordinate of the mouse on the screen
-     * @param titleX the x-location of the dragged title or <code>mouseX</code> if no
-     * title is dragged
-     * @param titleY the y-location of the dragged title or <code>mouseY</code> if no
-     * title is dragged
-     * @param dockable the element which will be dropped
+     * @param dockable information about the dockable that is going to be dropped
      * @return an object describing where the {@link Dockable} can be dropped or <code>null</code> if
      * no drop operation is possible
      */
-    public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable );
+    public StationDropOperation prepareDrop( StationDropItem dockable );
     
     /**
      * Informs this station that a drag and drop operation is in progress and that <code>dockable</code> might

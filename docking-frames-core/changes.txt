@@ -717,6 +717,9 @@
  ! API: All DockStation can now draw some indicators when a dockable is dragged from them. Only BasicDockTheme and FlatDockTheme do actually draw these markings, BubbleDockTheme and EclipseDockTheme completely ignore them.
  - API: The new "span" mechanism allows animations when dropping a Dockable.
  - API: An empty FlapDockStation now has a preferred size of 0/0, but when the mouse is near the station its preferred size increases
+ ! API: DockStation.prepareDrop and associated methods receive now a StationDropItem instead of several parameters. This allows to forward more information to these methods, and will be more backwards compatible for future changes.
+ - API: Making a SplitDockStation very small, such that dividers become invalid, no longer changes the valud of dividers forever.
+ - API: SplitDockStation now suppors "Span" as well.
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

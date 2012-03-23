@@ -358,7 +358,7 @@ public class Node extends VisibleSplitNode{
         	right.updateBounds( x, y, width, height, factorW, factorH, components );
         }
         else if( leftVisible && rightVisible ){
-        	divider = getAccess().validateDivider( divider, this );
+        	double divider = getAccess().validateDivider( this.divider, this );
         	int dividerSize = getAccess().getOwner().getDividerSize();
 
         	if( orientation == Orientation.HORIZONTAL ){
