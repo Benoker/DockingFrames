@@ -23,42 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.station.span;
+package bibliothek.gui.dock.themes.basic;
 
-import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.station.span.Span;
+import bibliothek.gui.dock.station.span.SpanCallback;
+import bibliothek.gui.dock.station.span.SpanFactory;
+import bibliothek.gui.dock.station.span.SpanMode;
+import bibliothek.gui.dock.station.span.SpanUsage;
 
 /**
- * The link between {@link Span} and {@link DockStation}.
+ * This factory creates {@link Span}s that always have a size of <code>0</code>.
  * @author Benjamin Sigg
  */
-public interface SpanCallback {
-	/**
-	 * Gets the {@link DockStation} that is using this {@link Span}.
-	 * @return the station, never <code>null</code>
-	 */
-	public DockStation getStation();
-	
-	/**
-	 * Tells whether the {@link Span} influences some width.
-	 * @return whether the {@link Span} is horizontal, the opposite of {@link #isVertical()}
-	 */
-	public boolean isHorizontal();
-	
-	/**
-	 * Tells whether the {@link Span} influences some height.
-	 * @return whether the {@link Span} is vertical, the opposite of {@link #isHorizontal()}
-	 */
-	public boolean isVertical();
-	
-	/**
-	 * To be called by the {@link Span} every time when its size changes. This method should be called
-	 * from the <code>EventDispatcherThread</code>.
-	 */
-	public void resized();
-	
-	/**
-	 * Tells the {@link Span} how it is used.
-	 * @return the usage
-	 */
-	public SpanUsage getUsage();
+public class NoSpanFactory implements SpanFactory{
+	public Span create( final SpanCallback callback ){
+		return new Span(){
+			public void set( SpanMode mode ){
+				// ignore	
+			}
+			
+			public void mutate( SpanMode mode ){
+				// ignore
+			}
+			
+			public int getSize(){
+				if( callback.getUsage() == SpanUsage.HIDING ){
+					return 5;
+				}
+				return 0;
+			}
+			
+			public void configureSize( SpanMode mode, int size ){
+				// ignore
+			}
+		};
+	}
 }

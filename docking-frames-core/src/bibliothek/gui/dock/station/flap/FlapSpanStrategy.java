@@ -36,6 +36,7 @@ import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.span.SpanCallback;
 import bibliothek.gui.dock.station.span.SpanMode;
+import bibliothek.gui.dock.station.span.SpanUsage;
 import bibliothek.gui.dock.themes.StationSpanFactoryValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 
@@ -103,13 +104,13 @@ public class FlapSpanStrategy {
 		}
 		
 		if( teaser == null ){
-			teaser = createSpan( !horizontal );
+			teaser = createSpan( !horizontal, SpanUsage.HIDING );
 		}
 		
 		int requested = buttons.getNumberOfButtons()+1;
 		int actual = spans.size();
 		while( requested > actual ){
-			spans.add( createSpan( horizontal ));
+			spans.add( createSpan( horizontal, SpanUsage.INSERTING ));
 			actual++;
 		}
 		while( requested < actual ){
@@ -122,7 +123,7 @@ public class FlapSpanStrategy {
 		}
 	}
 	
-	private Span createSpan( final boolean horizontal ){
+	private Span createSpan( final boolean horizontal, final SpanUsage usage ){
 		return factory.create( new SpanCallback(){
 			public void resized(){
 				buttons.spanResized();
@@ -138,6 +139,10 @@ public class FlapSpanStrategy {
 			
 			public DockStation getStation(){
 				return station;
+			}
+			
+			public SpanUsage getUsage(){
+				return usage;
 			}
 		} );
 	}

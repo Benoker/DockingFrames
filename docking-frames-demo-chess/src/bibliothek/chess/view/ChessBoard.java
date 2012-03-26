@@ -601,7 +601,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			repaint();
 		}
 		
-		public void destroy(){
+		public void destroy( StationDropOperation next ){
 			if( drop == this ){
 				drop = null;
 				repaint();

@@ -26,39 +26,17 @@
 package bibliothek.gui.dock.station.span;
 
 import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
 
 /**
- * The link between {@link Span} and {@link DockStation}.
+ * A description telling for what purpose a {@link Span} is used. Clients may define their own constants, but the
+ * framework itself will only use the default purposes.
  * @author Benjamin Sigg
  */
-public interface SpanCallback {
-	/**
-	 * Gets the {@link DockStation} that is using this {@link Span}.
-	 * @return the station, never <code>null</code>
-	 */
-	public DockStation getStation();
+public class SpanUsage {
+	/** Marks a {@link Span} that usually has a size of <code>0</code> and is made larger for an invisible {@link DockStation} to show up */
+	public static final SpanUsage HIDING = new SpanUsage();
 	
-	/**
-	 * Tells whether the {@link Span} influences some width.
-	 * @return whether the {@link Span} is horizontal, the opposite of {@link #isVertical()}
-	 */
-	public boolean isHorizontal();
-	
-	/**
-	 * Tells whether the {@link Span} influences some height.
-	 * @return whether the {@link Span} is vertical, the opposite of {@link #isHorizontal()}
-	 */
-	public boolean isVertical();
-	
-	/**
-	 * To be called by the {@link Span} every time when its size changes. This method should be called
-	 * from the <code>EventDispatcherThread</code>.
-	 */
-	public void resized();
-	
-	/**
-	 * Tells the {@link Span} how it is used.
-	 * @return the usage
-	 */
-	public SpanUsage getUsage();
+	/** Marks a {@link Span} that shows up when inserting a {@link Dockable} at a specific place, e.g. between two existing {@link Dockable}s */
+	public static final SpanUsage INSERTING = new SpanUsage();
 }

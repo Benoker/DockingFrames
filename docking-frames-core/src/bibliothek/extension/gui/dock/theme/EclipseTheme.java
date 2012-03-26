@@ -71,6 +71,7 @@ import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
+import bibliothek.gui.dock.themes.basic.NoSpanFactory;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicMenuHandler;
@@ -181,6 +182,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         }, Priority.DEFAULT );
         setDockableSelection( new EclipseDockableSelection(), Priority.DEFAULT );
         setTabPlacement( TabPlacement.TOP_OF_DOCKABLE, Priority.DEFAULT );
+        setSpanFactory( new NoSpanFactory() );
     }
 
     @Override

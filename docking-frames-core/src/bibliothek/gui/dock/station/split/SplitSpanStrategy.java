@@ -33,6 +33,7 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.span.SpanCallback;
 import bibliothek.gui.dock.station.span.SpanMode;
+import bibliothek.gui.dock.station.span.SpanUsage;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.themes.StationSpanFactoryValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -234,6 +235,10 @@ public class SplitSpanStrategy {
 			
 			public DockStation getStation(){
 				return station;
+			}
+			
+			public SpanUsage getUsage(){
+				return SpanUsage.INSERTING;
 			}
 		} );
 	}
