@@ -720,6 +720,7 @@
  ! API: DockStation.prepareDrop and associated methods receive now a StationDropItem instead of several parameters. This allows to forward more information to these methods, and will be more backwards compatible for future changes.
  - API: Making a SplitDockStation very small, such that dividers become invalid, no longer changes the valud of dividers forever.
  - API: SplitDockStation now suppors "Span" as well.
+ - Bugfix: When multiple listeners are receiving Key- and DoubleClick-Events, the the listeners further down the tree are invoked first.
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them
