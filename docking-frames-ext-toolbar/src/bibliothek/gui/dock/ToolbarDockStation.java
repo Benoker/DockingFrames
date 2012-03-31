@@ -31,6 +31,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
@@ -292,8 +293,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	}
 
 	@Override
-	public StationDropOperation prepareDrop( int mouseX, int mouseY,
-			int titleX, int titleY, Dockable dockable ){
+	public StationDropOperation prepareDrop( StationDropItem item ){
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
 		final DockController controller = getController();
 
@@ -301,6 +301,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			return null;
 		}
 
+		Dockable dockable = item.getDockable();
 		// check if the dockable and the station accept each other
 		if (this.accept(dockable) & dockable.accept(this)){
 			// check if controller exist and if the controller accept that
@@ -311,7 +312,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				}
 			}
 			return new ToolbarDropInfo<AbstractToolbarDockStation>(dockable,
-					this, mouseX, mouseY){
+					this, item.getMouseX(), item.getMouseY()){
 				@Override
 				public void execute(){
 					drop(this);
@@ -322,7 +323,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				// is created
 
 				@Override
-				public void destroy(){
+				public void destroy( StationDropOperation next ){
 					// without this line, nothing is displayed except if you
 					// drag another component
 					ToolbarDockStation.this.indexBeneathMouse = -1;

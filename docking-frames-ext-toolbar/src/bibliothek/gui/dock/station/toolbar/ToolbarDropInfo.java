@@ -76,16 +76,6 @@ public abstract class ToolbarDropInfo<S extends OrientedDockStation> implements
 	}
 
 	@Override
-	public abstract void destroy();
-
-	// enable this ToolbarDropInfo to draw some markings on the stationHost
-	@Override
-	public abstract void draw();
-
-	@Override
-	public abstract void execute();
-
-	@Override
 	public CombinerTarget getCombination(){
 		// not supported by this kind of station
 		return null;

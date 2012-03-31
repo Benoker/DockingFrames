@@ -39,7 +39,7 @@ import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
 
 /**
- * A <code>CombinerWrapper</code> encloses a {@link Combiner} and uses
+ * A <code>StationCombinerValue</code> encloses a {@link Combiner} and uses
  * the combiner as delegate. If the wrapper has no delegate, it uses
  * the {@link DockUI} to get a combiner from the current {@link DockTheme}.
  * @author Benjamin Sigg

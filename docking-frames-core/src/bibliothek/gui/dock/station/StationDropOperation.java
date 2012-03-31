@@ -46,8 +46,9 @@ public interface StationDropOperation {
 	/**
 	 * Informs this operation that it is no longer used and that it should release any resources
 	 * it has acquired.
+	 * @param next the operation that replaces this operation, can be <code>null</code>
 	 */
-	public void destroy();
+	public void destroy( StationDropOperation next );
 	
 	/**
 	 * Tells whether this operation is a move operation. A move operation is an operation where

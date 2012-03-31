@@ -27,6 +27,7 @@ package bibliothek.gui.dock.facile.station.split;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.split.*;
 
 /**
@@ -48,20 +49,20 @@ public class DelegatingSplitLayoutManager implements SplitLayoutManager {
         this.delegate = delegate;
     }
     
-    public void calculateDivider( SplitDockStation station, PutInfo putInfo, Leaf origin ) {
-        delegate.calculateDivider( station, putInfo, origin );
+    public void calculateDivider( SplitDockStation station, PutInfo putInfo, Leaf origin, StationDropItem item ) {
+        delegate.calculateDivider( station, putInfo, origin, item );
     }
 
     public void install( SplitDockStation station ) {
         delegate.install( station );
     }
 
-    public PutInfo prepareDrop( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable ) {
-        return delegate.prepareDrop( station, x, y, titleX, titleY, dockable );
+    public PutInfo prepareDrop( SplitDockStation station, StationDropItem dockable ){
+        return delegate.prepareDrop( station, dockable );
     }
 
-    public PutInfo prepareMove( SplitDockStation station, int x, int y, int titleX, int titleY, Dockable dockable ) {
-        return delegate.prepareMove( station, x, y, titleX, titleY, dockable );
+    public PutInfo prepareMove( SplitDockStation station, StationDropItem dockable ){
+        return delegate.prepareMove( station, dockable );
     }
 
     public void uninstall( SplitDockStation station ) {

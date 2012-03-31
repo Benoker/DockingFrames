@@ -73,16 +73,22 @@ public class LayerPriority implements Comparable<LayerPriority>{
 	 * what will happen.
 	 */
 	public static final LayerPriority OVERRIDE_PRECISE = new LayerPriority( 0.5f, false );
+
+	/**
+	 * Used for the area around a {@link DockStation}, the layer has a high priority and
+	 * is accessed unless there are floating windows present.
+	 */
+	public static final LayerPriority OUTSIDE_HIGH = new LayerPriority( 0.6f, false );
 	
 	/**
 	 * Describes a layer that is floating above a window, but still attached to that window. 
 	 */
-	public static final LayerPriority FLOAT_ANCHORED = new LayerPriority( 0.6f, false );
+	public static final LayerPriority FLOAT_ANCHORED = new LayerPriority( 0.7f, false );
 	
 	/**
 	 * Describes a layer that is floating freely above all other windows.
 	 */
-	public static final LayerPriority FLOAT_FREE = new LayerPriority( 0.7f, false );
+	public static final LayerPriority FLOAT_FREE = new LayerPriority( 0.8f, false );
 	
 	private LayerPriority sub;
 	private boolean reverse;

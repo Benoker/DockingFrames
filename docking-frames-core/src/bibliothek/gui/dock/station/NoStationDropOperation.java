@@ -52,7 +52,7 @@ public class NoStationDropOperation implements StationDropOperation{
 		// ignore
 	}
 
-	public void destroy(){
+	public void destroy( StationDropOperation next ){
 		// ignore		
 	}
 

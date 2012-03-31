@@ -105,7 +105,7 @@ public class DefaultDockableFactory implements DockFactory<DefaultDockable, Defa
     }
     
     public Object getPerspectiveLayout( DefaultDockablePerspective element, Map<PerspectiveDockable, Integer> children ){
-    	return new DefaultDockable();
+    	return new Object();
     }
 
     public Object read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException {

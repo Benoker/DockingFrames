@@ -65,6 +65,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.themes.BasicTheme;
 import bibliothek.gui.dock.themes.ColorScheme;
 import bibliothek.gui.dock.themes.ThemeProperties;
+import bibliothek.gui.dock.themes.basic.NoSpanFactory;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonHandler;
 import bibliothek.gui.dock.themes.basic.action.BasicButtonModel;
 import bibliothek.gui.dock.themes.basic.action.BasicDropDownButtonHandler;
@@ -131,6 +132,7 @@ import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
         }, Priority.DEFAULT );
         setMovingImageFactory( new ScreencaptureMovingImageFactory( new Dimension( 300, 200 ) ), Priority.DEFAULT );
         setTabPlacement( TabPlacement.BOTTOM_OF_DOCKABLE, Priority.DEFAULT );
+        setSpanFactory( new NoSpanFactory() );
     }
 
     @Override

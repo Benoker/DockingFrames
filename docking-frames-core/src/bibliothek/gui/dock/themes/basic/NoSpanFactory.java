@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2010 Benjamin Sigg
+ * Copyright (C) 2012 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,24 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.themes;
+package bibliothek.gui.dock.themes.basic;
 
-import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.station.Combiner;
-import bibliothek.gui.dock.util.UIValue;
-import bibliothek.util.Path;
+import bibliothek.gui.dock.station.span.Span;
+import bibliothek.gui.dock.station.span.SpanCallback;
+import bibliothek.gui.dock.station.span.SpanFactory;
+import bibliothek.gui.dock.station.span.SpanMode;
+import bibliothek.gui.dock.station.span.SpanUsage;
 
 /**
- * An {@link UIValue} that is used to retrieve a {@link Combiner} from a {@link ThemeManager}.
+ * This factory creates {@link Span}s that always have a size of <code>0</code>.
  * @author Benjamin Sigg
  */
-public interface CombinerValue extends UIValue<Combiner>{
-	/** the kind of {@link UIValue} this is */
-	public static final Path KIND_COMBINER = new Path( "dock", "combiner" );
-	
-	/**
-	 * Gets the station for which this {@link UIValue} works.
-	 * @return the owner
-	 */
-	public DockStation getStation();
+public class NoSpanFactory implements SpanFactory{
+	public Span create( final SpanCallback callback ){
+		return new Span(){
+			public void set( SpanMode mode ){
+				// ignore	
+			}
+			
+			public void mutate( SpanMode mode ){
+				// ignore
+			}
+			
+			public int getSize(){
+				if( callback.getUsage() == SpanUsage.HIDING ){
+					return 5;
+				}
+				return 0;
+			}
+			
+			public void configureSize( SpanMode mode, int size ){
+				// ignore
+			}
+		};
+	}
 }

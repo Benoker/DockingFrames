@@ -35,6 +35,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -384,8 +385,8 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		return null;
 	}
 	
-	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
-		return prepare( mouseX, mouseY, (ChessFigure)dockable );
+	public StationDropOperation prepareDrop( StationDropItem item ){
+		return prepare( item.getMouseX(), item.getMouseY(), (ChessFigure)item.getDockable() );
 	}
 	
 	/**
@@ -600,7 +601,7 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 			repaint();
 		}
 		
-		public void destroy(){
+		public void destroy( StationDropOperation next ){
 			if( drop == this ){
 				drop = null;
 				repaint();

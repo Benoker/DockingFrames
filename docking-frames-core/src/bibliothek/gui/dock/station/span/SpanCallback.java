@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2011 Benjamin Sigg
+ * Copyright (C) 2012 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,36 +23,42 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control.relocator;
+package bibliothek.gui.dock.station.span;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.StationDropItem;
-import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
- * Contains information about a drop and drop operation that needs to be examined by
- * an {@link Inserter}.
+ * The link between {@link Span} and {@link DockStation}.
  * @author Benjamin Sigg
  */
-public interface InserterSource {
+public interface SpanCallback {
 	/**
-	 * Gets the {@link DockStation} which might be the next parent of {@link #getChild()}.
-	 * @return the future parent, never <code>null</code>
+	 * Gets the {@link DockStation} that is using this {@link Span}.
+	 * @return the station, never <code>null</code>
 	 */
-	public DockStation getParent();
+	public DockStation getStation();
 	
 	/**
-	 * Gets information about the item that is dropped.
-	 * @return detailed information about the dropping {@link Dockable}
+	 * Tells whether the {@link Span} influences some width.
+	 * @return whether the {@link Span} is horizontal, the opposite of {@link #isVertical()}
 	 */
-	public StationDropItem getItem();
+	public boolean isHorizontal();
 	
 	/**
-	 * Gets the {@link StationDropOperation} that was created by {@link DockStation#prepareDrop(int, int, int, int, Dockable)},
-	 * this might be <code>null</code> if the station was not yet asked or if the station does not
-	 * accept the new child.
-	 * @return the pending operation, can be <code>null</code>
+	 * Tells whether the {@link Span} influences some height.
+	 * @return whether the {@link Span} is vertical, the opposite of {@link #isHorizontal()}
 	 */
-	public StationDropOperation getOperation();
+	public boolean isVertical();
+	
+	/**
+	 * To be called by the {@link Span} every time when its size changes. This method should be called
+	 * from the <code>EventDispatcherThread</code>.
+	 */
+	public void resized();
+	
+	/**
+	 * Tells the {@link Span} how it is used.
+	 * @return the usage
+	 */
+	public SpanUsage getUsage();
 }

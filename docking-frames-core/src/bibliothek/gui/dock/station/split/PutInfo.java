@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -92,6 +93,43 @@ public class PutInfo {
         this.put = put;
         this.dockable = dockable;
         this.combining = combining;
+    }
+    
+    /**
+     * If this {@link PutInfo} describes the current layout, then nothing will happen if it is applied.
+     * @return whether this info describes the current layout
+     */
+    public boolean willHaveNoEffect(){
+    	if( node instanceof Leaf ){
+    		SplitNode parent = node.getParent();
+    		if( parent instanceof Node ){
+    			if( ((Node)parent).getOrientation() == Orientation.HORIZONTAL ){
+    				if( put == Put.TOP || put == Put.BOTTOM ){
+    					parent = null;
+    				}
+    			}
+    			else{
+    				if( put == Put.LEFT || put == Put.RIGHT ){
+    					parent = null;
+    				}
+    			}
+    			if( parent != null ){
+	    			SplitNode neighbor;
+	    			if( put == Put.LEFT || put == Put.TOP ){
+	    				neighbor = ((Node)parent).getLeft();
+	    			}
+	    			else{
+	    				neighbor = ((Node)parent).getRight();
+	    			}
+	    			
+	    			
+	    			if( neighbor instanceof Leaf && ((Leaf)neighbor).getDockable() == dockable ){
+	    				return true;
+	    			}
+    			}
+    		}
+    	}
+    	return false;
     }
     
     /**

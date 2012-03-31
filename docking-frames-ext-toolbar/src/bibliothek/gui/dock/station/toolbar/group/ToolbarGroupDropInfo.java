@@ -1,7 +1,5 @@
 package bibliothek.gui.dock.station.toolbar.group;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
@@ -10,7 +8,6 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.SwingUtilities;
 
-import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.RectGradientPainter;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
@@ -85,16 +82,6 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	public ToolbarGroupDockStation getTarget(){
 		return stationHost;
 	}
-
-	@Override
-	public abstract void destroy();
-
-	// enable this ToolbarDropInfo to draw some markings on the stationHost
-	@Override
-	public abstract void draw();
-
-	@Override
-	public abstract void execute();
 
 	@Override
 	public CombinerTarget getCombination(){

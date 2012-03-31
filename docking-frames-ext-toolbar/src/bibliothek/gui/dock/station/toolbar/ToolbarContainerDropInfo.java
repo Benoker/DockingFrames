@@ -84,15 +84,6 @@ public abstract class ToolbarContainerDropInfo implements StationDropOperation{
 	}
 
 	@Override
-	public abstract void destroy();
-
-	@Override
-	public abstract void draw();
-
-	@Override
-	public abstract void execute();
-
-	@Override
 	public CombinerTarget getCombination(){
 		// not supported by this kind of station
 		return null;

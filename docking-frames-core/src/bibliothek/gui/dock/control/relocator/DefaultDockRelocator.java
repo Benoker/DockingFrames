@@ -60,6 +60,7 @@ import bibliothek.gui.dock.dockable.MovingImage;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.OrderedLayerCollection;
 import bibliothek.gui.dock.title.DockTitle;
@@ -103,6 +104,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     private Point pressPointLocal;
     /** the location of the last mouse event */
     private Point lastPoint;
+    
+    /** information about the last dragged dockable */
+    private StationDropItem lastItem;
     
 	/**
 	 * Creates a new manager.
@@ -229,12 +233,22 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         	return success;
         }
         finally{
-        	operation.destroy();
+        	operation.destroy( null );
         	operation = null;
             onPut = false;
             controller.getRegister().setStalled( false );
         }
     }    
+    
+    private StationDropItem createStationDropItem( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
+    	if( lastItem == null || lastItem.getDockable() != dockable ){
+    		lastItem = new StationDropItem( mouseX, mouseY, titleX, titleY, dockable );
+    	}
+    	else{
+    		lastItem = new StationDropItem( mouseX, mouseY, titleX, titleY, dockable, lastItem.getOriginalSize(), lastItem.getMinimumSize() );
+    	}
+    	return lastItem;
+    }
     
     /**
      * Searches a station which can become the parent of <code>dockable</code> 
@@ -248,16 +262,19 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
+
         Inserter inserter = getInserter();
+        StationDropItem item = createStationDropItem( mouseX, mouseY, titleX, titleY, dockable );
+
         for( DockStation station : list ){
         	StationDropOperation operation = null;
-        	DefaultInserterSource inserterSource = new DefaultInserterSource( station, dockable, mouseX, mouseY, titleX, titleY );
+        	DefaultInserterSource inserterSource = new DefaultInserterSource( station, item );
         	
         	if( inserter != null ){
         		operation = inserter.before( inserterSource );
         	}
         	if( operation == null ){
-        		operation = station.prepareDrop( mouseX, mouseY, titleX, titleY, dockable );
+        		operation = station.prepareDrop( item );
         		if( inserter != null ){
         			inserterSource.setOperation( operation );
         			operation = inserter.after( inserterSource );
@@ -589,6 +606,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             movingImageWindow.close();
             movingImageWindow = null;
         }
+    	lastItem = null;
     	
     	Dockable[] implicit = new Dockable[]{};
     	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null );
@@ -660,7 +678,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         }
         else{
             if( operation != null ){
-	            operation.destroy();
+	            operation.destroy( next );
             }
             
             this.operation = next;
@@ -785,7 +803,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                     }
 
                     if( operation != null && (next == null || operation.getStation() != next.getStation() )){
-                        operation.destroy();
+                        operation.destroy( next );
                     }
                     
                     operation = next;
@@ -797,7 +815,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 	event.drop();
                 	fireDropping( event );
                 	if( event.isCanceled() || event.isForbidden() ){
-                		operation.destroy();
+                		operation.destroy( null );
                 		operation = null;
                 	}
                 }
@@ -806,7 +824,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 	consume = true;
                 	Dockable[] implicit = operation.getImplicit( dockable );
                     boolean canceled = !executeOperation( dockable, operation );
-                    operation.destroy();
+                    operation.destroy( null );
                     this.operation = null;
                     
                     dropped = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation.getStation() );
@@ -825,6 +843,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 
             if( movingImageWindow != null )
                 movingImageWindow.close();
+            
+            lastItem = null;
             
             if( dragOperation != null ){
             	dragOperation.canceled();
@@ -872,7 +892,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     	if( !isOnPut() ){
     		// if it is on put, than it is too late to stop
 	        if( operation != null ){
-	            operation.destroy();
+	            operation.destroy( null );
 	            operation = null;
 	        }
 	        
@@ -884,6 +904,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        if( movingImageWindow != null )
 	            movingImageWindow.close();
 	        
+	        lastItem = null;
 	        movingImageWindow = null;
 	        pressPointScreen = null;
 	        pressPointLocal = null;

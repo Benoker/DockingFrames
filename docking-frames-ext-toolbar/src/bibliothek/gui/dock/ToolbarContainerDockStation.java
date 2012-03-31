@@ -40,6 +40,7 @@ import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
@@ -371,10 +372,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	}
 	
 	@Override
-	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
+	public StationDropOperation prepareDrop( StationDropItem item ){
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
 		final DockController controller = getController();
 
+		Dockable dockable = item.getDockable();
+		
 		// check if the dockable and the station accept each other
 		if( this.accept( dockable ) & dockable.accept( this ) ) {
 			// check if controller exist and if the controller accept that
@@ -384,7 +387,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					return null;
 				}
 			}
-			final Point mousePoint = new Point( mouseX, mouseY );
+			final Point mousePoint = new Point( item.getMouseX(), item.getMouseY() );
 			SwingUtilities.convertPointFromScreen( mousePoint, mainPanel.getContentPane() );
 
 			if( !getToolbarStrategy().isToolbarPart( dockable ) ) {
@@ -392,7 +395,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				return null;
 			}
 
-			final ToolbarContainerDropInfo result = new ToolbarContainerDropInfo( dockable, this, dockables, mouseX, mouseY ){
+			final ToolbarContainerDropInfo result = new ToolbarContainerDropInfo( dockable, this, dockables, item.getMouseX(), item.getMouseY() ){
 				@Override
 				public void execute(){
 					drop( this );
@@ -403,7 +406,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				// is created
 
 				@Override
-				public void destroy(){
+				public void destroy( StationDropOperation next ){
 					// without this line, nothing is displayed except if you
 					// drag another component
 					indexBeneathMouse = -1;

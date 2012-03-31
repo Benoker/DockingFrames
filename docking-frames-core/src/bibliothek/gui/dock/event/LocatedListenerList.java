@@ -95,15 +95,15 @@ public class LocatedListenerList<L extends LocatedListener> {
                     return 0;
                 
                 if( a == null )
-                    return -1;
-                
-                if( b == null )
                     return 1;
                 
-                if( DockUtilities.isAncestor( a, b ))
+                if( b == null )
                     return -1;
                 
-                return 1;
+                if( DockUtilities.isAncestor( a, b ))
+                    return 1;
+                
+                return -1;
             }
         });
         

@@ -33,10 +33,13 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.themes.StationCombinerValue;
+import bibliothek.gui.dock.station.span.DefaultSpanFactory;
+import bibliothek.gui.dock.station.span.Span;
+import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.DockThemeExtension;
+import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.ThemeCombiner;
 import bibliothek.gui.dock.themes.ThemeDisplayerFactory;
 import bibliothek.gui.dock.themes.ThemeDockableMovingImageFactory;
@@ -77,6 +80,9 @@ public interface DockTheme {
 	 * A unique identifier for the {@link DockProperties} to access the current {@link BorderModifier}.
 	 */
 	public static final PropertyKey<BorderModifier> BORDER_MODIFIER = new PropertyKey<BorderModifier>( "dock.borderModifier" );
+	
+	/** The factory creating {@link Span}s and ultimatively deciding how the animation looks like when dropping a {@link Dockable} */
+	public static final PropertyKey<SpanFactory> SPAN_FACTORY = new PropertyKey<SpanFactory>( "span factory", new ConstantPropertyFactory<SpanFactory>( new DefaultSpanFactory() ), true );
 	
 	/**
      * Install this theme at <code>controller</code>. The theme

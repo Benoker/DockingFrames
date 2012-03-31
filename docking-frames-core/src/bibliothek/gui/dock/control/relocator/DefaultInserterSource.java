@@ -26,8 +26,7 @@
 package bibliothek.gui.dock.control.relocator;
 
 import bibliothek.gui.DockStation;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
@@ -35,54 +34,26 @@ import bibliothek.gui.dock.station.StationDropOperation;
  * @author Benjamin Sigg
  */
 public class DefaultInserterSource implements InserterSource{
-	private int mouseX;
-	private int mouseY;
-	private int titleX;
-	private int titleY;
 	private DockStation parent;
-	private Dockable child;
 	private StationDropOperation operation;
+	private StationDropItem item;
 	
 	/**
 	 * Creates a new {@link InserterSource}.
-	 * @param parent the future parent of <code>child</code>
-	 * @param child the future child of <code>parent</code>
-	 * @param mouseX the x-position of the mouse on the screen
-	 * @param mouseY the y-position of the mouse on the screen
-	 * @param titleX the x-position of the grabbed {@link DockElementRepresentative}
-	 * @param titleY the y-position of the grabbed {@link DockElementRepresentative}
+	 * @param parent the future parent
+	 * @param item detailed information about the dropping child
 	 */
-	public DefaultInserterSource( DockStation parent, Dockable child, int mouseX, int mouseY, int titleX, int titleY ){
+	public DefaultInserterSource( DockStation parent, StationDropItem item ){
 		this.parent = parent;
-		this.child = child;
-		this.mouseX = mouseX;
-		this.mouseY = mouseY;
-		this.titleX = titleX;
-		this.titleY = titleY;
-	}
-	
-	public int getMouseX(){
-		return mouseX;
-	}
-
-	public int getMouseY(){
-		return mouseY;
-	}
-
-	public int getTitleX(){
-		return titleX;
-	}
-	
-	public int getTitleY(){
-		return titleY;
+		this.item = item;
 	}
 	
 	public DockStation getParent(){
 		return parent;
 	}
 
-	public Dockable getChild(){
-		return child;
+	public StationDropItem getItem(){
+		return item;
 	}
 
 	/**

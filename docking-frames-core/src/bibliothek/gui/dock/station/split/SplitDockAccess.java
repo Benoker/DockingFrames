@@ -32,6 +32,8 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.span.Span;
+import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
 /**
@@ -133,4 +135,10 @@ public interface SplitDockAccess {
 	 * @return the placeholder set
 	 */
 	public SplitPlaceholderSet getPlaceholderSet();
+	
+	/**
+	 * Gets the object that manages all {@link Span}s.
+	 * @return access to the current {@link SpanFactory}
+	 */
+	public SplitSpanStrategy getSpanStrategy();
 }

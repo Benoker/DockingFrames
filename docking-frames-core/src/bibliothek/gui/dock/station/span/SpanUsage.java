@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2011 Benjamin Sigg
+ * Copyright (C) 2012 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,36 +23,20 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.control.relocator;
+package bibliothek.gui.dock.station.span;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.station.StationDropItem;
-import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
- * Contains information about a drop and drop operation that needs to be examined by
- * an {@link Inserter}.
+ * A description telling for what purpose a {@link Span} is used. Clients may define their own constants, but the
+ * framework itself will only use the default purposes.
  * @author Benjamin Sigg
  */
-public interface InserterSource {
-	/**
-	 * Gets the {@link DockStation} which might be the next parent of {@link #getChild()}.
-	 * @return the future parent, never <code>null</code>
-	 */
-	public DockStation getParent();
+public class SpanUsage {
+	/** Marks a {@link Span} that usually has a size of <code>0</code> and is made larger for an invisible {@link DockStation} to show up */
+	public static final SpanUsage HIDING = new SpanUsage();
 	
-	/**
-	 * Gets information about the item that is dropped.
-	 * @return detailed information about the dropping {@link Dockable}
-	 */
-	public StationDropItem getItem();
-	
-	/**
-	 * Gets the {@link StationDropOperation} that was created by {@link DockStation#prepareDrop(int, int, int, int, Dockable)},
-	 * this might be <code>null</code> if the station was not yet asked or if the station does not
-	 * accept the new child.
-	 * @return the pending operation, can be <code>null</code>
-	 */
-	public StationDropOperation getOperation();
+	/** Marks a {@link Span} that shows up when inserting a {@link Dockable} at a specific place, e.g. between two existing {@link Dockable}s */
+	public static final SpanUsage INSERTING = new SpanUsage();
 }

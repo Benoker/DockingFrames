@@ -81,11 +81,13 @@ public class ScreenToolbarInserter implements Inserter {
 			return null;
 		}
 		final ToolbarStrategy strategy = getStrategy();
-		if( !strategy.isToolbarPart( source.getChild() ) ) {
+		Dockable child = source.getItem().getDockable();
+		
+		if( !strategy.isToolbarPart( child ) ) {
 			return null;
 		}
 
-		if( source.getParent().accept( source.getChild() ) && source.getChild().accept( source.getParent() ) ) {
+		if( source.getParent().accept( child ) && child.accept( source.getParent() ) ) {
 			// if a DockAcceptance does not allow the combination, while the
 			// involved elements do, we better
 			// assume the DockAcceptance has a good reason.
@@ -107,10 +109,11 @@ public class ScreenToolbarInserter implements Inserter {
 	 */
 	protected void execute( InserterSource source, Orientation orientation ){
 		final ToolbarStrategy strategy = getStrategy();
-
-		final Dockable item = strategy.ensureToolbarLayer( source.getParent(), source.getChild() );
-		if( item != source.getChild() ){
-			item.asDockStation().drop( source.getChild() );
+		
+		Dockable child = source.getItem().getDockable();
+		final Dockable item = strategy.ensureToolbarLayer( source.getParent(), child );
+		if( item != child ){
+			item.asDockStation().drop( child );
 		}
 		
 		if( (orientation != null) && (item.asDockStation() instanceof OrientedDockStation) ) {
@@ -122,7 +125,7 @@ public class ScreenToolbarInserter implements Inserter {
 		item.getComponent().validate();
 		final Dimension size = item.getComponent().getPreferredSize();
 
-		final ScreenDockProperty location = new ScreenDockProperty( source.getTitleX(), source.getTitleY(), size.width, size.height );
+		final ScreenDockProperty location = new ScreenDockProperty( source.getItem().getTitleX(), source.getItem().getTitleY(), size.width, size.height );
 		station.drop( item, location, false );
 	}
 
@@ -146,7 +149,7 @@ public class ScreenToolbarInserter implements Inserter {
 		public Operation( InserterSource source ){
 			this.source = source;
 
-			final Dockable dockable = source.getChild();
+			final Dockable dockable = source.getItem().getDockable();
 			final DockStation parent = dockable.getDockParent();
 
 			orientation = null;
@@ -164,7 +167,7 @@ public class ScreenToolbarInserter implements Inserter {
 		}
 
 		@Override
-		public void destroy(){
+		public void destroy( StationDropOperation next ){
 			// nothing to do
 		}
 
@@ -185,7 +188,7 @@ public class ScreenToolbarInserter implements Inserter {
 
 		@Override
 		public Dockable getItem(){
-			return source.getChild();
+			return source.getItem().getDockable();
 		}
 
 		@Override

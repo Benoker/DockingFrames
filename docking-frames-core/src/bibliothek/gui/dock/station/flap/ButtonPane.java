@@ -31,11 +31,14 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Rectangle;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.FlapDockStation.Direction;
 import bibliothek.gui.dock.security.SecureContainer;
+import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
@@ -57,11 +60,15 @@ public class ButtonPane extends SecureContainer{
     /** the content pane */
     private Content content;
     
+    /** handles the {@link Span}s used on this panel */
+    private FlapSpanStrategy span;
+    
     /**
      * Constructs a new panel.
      * @param station The owner
      */
     public ButtonPane( FlapDockStation station ){
+    	span = new FlapSpanStrategy( station, this );
     	content = new Content();
         setBasePane( content );
         this.station = station;
@@ -80,6 +87,26 @@ public class ButtonPane extends SecureContainer{
      * @param dropInfo the target or <code>null</code>
      */
     public void setDropInfo( FlapDropInfo dropInfo ) {
+        if( dropInfo == null ){
+        	span.untease();
+        }
+        else if( dropInfo.getCombineTarget() != null ){
+        	span.tease( -1 );
+        }
+        else{
+        	int index = dropInfo.getIndex();
+        	if( index < station.getDockableCount() && station.getDockable( index ) == dropInfo.getDockable()){
+        		dropInfo = null;
+        		span.tease( -1 );
+        	}
+        	else if( index-1 >= 0 && index-1 < station.getDockableCount() && station.getDockable( index-1 ) == dropInfo.getDockable()){
+        		dropInfo = null;
+        		span.tease( -1 );
+        	}
+        	else{
+        		span.tease( dropInfo.getIndex() );
+        	}
+        }
         this.dropInfo = dropInfo;
         repaint();
     }
@@ -108,6 +135,14 @@ public class ButtonPane extends SecureContainer{
     }
     
     /**
+     * Called by the owning {@link FlapDockStation} if the {@link DockController} changes.
+     * @param controller the new controller, can be <code>null</code>
+     */
+    public void setProperties( DockController controller ){
+    	span.setController( controller );
+    }
+    
+    /**
      * Ensures that all titles of the title-map, which was given to the
      * constructor, are shown on this panel. This method works asynchronous.
      */
@@ -123,6 +158,7 @@ public class ButtonPane extends SecureContainer{
 			                getContentPane().add( title.getComponent() );
 			            }
 			        }
+			        span.reset();
 			        revalidate();
 				}
 			};
@@ -152,62 +188,82 @@ public class ButtonPane extends SecureContainer{
             
             if( leftTitle == null && rightTitle == null ){
                 if( horizontal ){
-                    x1 = getX() + getWidth()/2;
+                    x1 = 0;
                     y1 = 0;
-                    x2 = x1;
+                    x2 = getWidth();
                     y2 = getHeight();
                 }
                 else{
                     x1 = 0;
-                    y1 = getY() + getHeight()/2;
+                    y1 = 0;
                     x2 = getWidth();
-                    y2 = y1;
+                    y2 = getHeight();
                 }
             }
             else if( leftTitle == null ){
                 if( horizontal ){
-                    x1 = rightTitle.getComponent().getX();
+                    x1 = 0;
                     y1 = 0;
-                    x2 = x1;
+                    x2 = rightTitle.getComponent().getX();
                     y2 = getHeight();
                 }
                 else{
                     x1 = 0;
-                    y1 = rightTitle.getComponent().getY();
+                    y1 = 0;
                     x2 = getWidth();
-                    y2 = y1;
+                    y2 = rightTitle.getComponent().getY();
                 }
             }
             else if( rightTitle == null ){
+            	int last = getNumberOfButtons();
                 if( horizontal ){
                     x1 = leftTitle.getComponent().getX() + leftTitle.getComponent().getWidth();
                     y1 = 0;
-                    x2 = x1;
+                    x2 = x1 + span.getGap( last );
                     y2 = getHeight();
                 }
                 else{
                     x1 = 0;
                     y1 = leftTitle.getComponent().getY() + leftTitle.getComponent().getHeight();
                     x2 = getWidth();
-                    y2 = y1;
+                    y2 = y1 + span.getGap( last );
                 }
             }
             else{
                 if( horizontal ){
-                    x1 = (rightTitle.getComponent().getX() + leftTitle.getComponent().getX() + leftTitle.getComponent().getWidth()) / 2;
+                    x1 = leftTitle.getComponent().getX() + leftTitle.getComponent().getWidth();
                     y1 = 0;
-                    x2 = x1;
+                    x2 = rightTitle.getComponent().getX();
                     y2 = getHeight();
                 }
                 else{
                     x1 = 0;
-                    y1 = (rightTitle.getComponent().getY() + leftTitle.getComponent().getY() + leftTitle.getComponent().getHeight() ) / 2;
+                    y1 = leftTitle.getComponent().getY() + leftTitle.getComponent().getHeight();
                     x2 = getWidth();
-                    y2 = y1;
+                    y2 = rightTitle.getComponent().getY();
                 }
             }
             
-            station.getPaint().drawInsertionLine( g, x1, y1, x2, y2 );
+            x1++;
+            y1++;
+            x2--;
+            y2--;
+            
+            if( x1 >= x2 || y1 >= y2 ){
+            	if( horizontal ){
+            		x1 = (x1 + x2) / 2;
+            		x2 = x1;
+            	}
+            	else{
+            		y1 = (y1 + y2) / 2;
+            		y2 = y1;
+            	}
+            	
+            	station.getPaint().drawInsertionLine( g, x1, y1, x2, y2 );
+            }
+            else{
+            	station.getPaint().drawInsertion( g, new Rectangle( 0, 0, getWidth(), getHeight()), new Rectangle( x1, y1, x2-x1, y2-y1 ));
+            }
         }
     }
     
@@ -269,30 +325,57 @@ public class ButtonPane extends SecureContainer{
     public Dimension getPreferredSize() {
         int width = 0;
         int height = 0;
-        
+        int count = station.getDockableCount();
+
         if( station.getDirection() == Direction.NORTH || station.getDirection() == Direction.SOUTH ){
-            for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+        	height = span.getTeasing();
+            for( int i = 0; i<count; i++ ){
                 DockTitle title = station.getButton( i );
                 if( title != null ){
                     Dimension size = title.getComponent().getPreferredSize();
                     width += size.width;
                     height = Math.max( height, size.height );
                 }
+                width += span.getGap( i );
+            }
+            if( count > 0 ){
+            	width += span.getGap( count );
             }
         }
         else{
-            for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+        	width = span.getTeasing();
+            for( int i = 0; i<count; i++ ){
                 DockTitle title = station.getButton( i );
                 if( title != null ){
                     Dimension size = title.getComponent().getPreferredSize();
                     height += size.height;
                     width = Math.max( width, size.width );
                 }
+                height += span.getGap( i );
+            }
+            if( count > 0 ){
+            	height += span.getGap( count );
             }
         }
         
         Dimension empty = station.getMinimumSize();
         return new Dimension( Math.max( empty.width, width ), Math.max( empty.height, height ));
+    }
+    
+    /**
+     * Gets the number of buttons that are actually shown.
+     * @return the number of buttons
+     */
+    public int getNumberOfButtons(){
+    	return getContentPane().getComponentCount();
+    }
+    
+    /**
+     * Called if the {@link Span}s used by this {@link ButtonPane} changed their size.
+     */
+    public void spanResized(){
+    	getContentPane().revalidate();
+    	revalidate();
     }
     
     /**
@@ -333,6 +416,10 @@ public class ButtonPane extends SecureContainer{
                     widths[i] = size.width;
                     preferredHeight = Math.max( preferredHeight, size.height );
                     sum += widths[i];
+                    sum += span.getGap( i );
+                }
+                if( count > 0 ){
+                	sum += span.getGap( count );
                 }
                 
                 if( station.isSmallButtons() && preferredHeight < height ){
@@ -344,6 +431,7 @@ public class ButtonPane extends SecureContainer{
                 if( sum > width ){
                     double ratio = ((double)width) / sum;
                     for( int i = 0; i < count; i++ ){
+                    	x += span.getGap( i );
                         int temp = (int)(widths[i]*ratio);
                         getComponent( i ).setBounds( x, y, temp, height );
                         x += temp;
@@ -351,6 +439,7 @@ public class ButtonPane extends SecureContainer{
                 }
                 else{
                     for( int i = 0; i < count; i++ ){
+                    	x += span.getGap( i );
                         getComponent( i ).setBounds( x, y, widths[i], height );
                         x += widths[i];
                     }
@@ -367,6 +456,10 @@ public class ButtonPane extends SecureContainer{
                     heights[i] = size.height;
                     preferredWidth = Math.max( preferredWidth, size.width );
                     sum += heights[i];
+                    sum += span.getGap( i );
+                }
+                if( count > 0 ){
+                	sum += span.getGap( count );
                 }
                 
                 if( station.isSmallButtons() && preferredWidth < width ){
@@ -378,6 +471,7 @@ public class ButtonPane extends SecureContainer{
                 if( sum > height ){
                     double ratio = ((double)height) / sum;
                     for( int i = 0; i < count; i++ ){
+                    	y += span.getGap( i );
                         int temp = (int)(heights[i]*ratio);
                         getComponent( i ).setBounds( x, y, width, temp );
                         y += temp;
@@ -385,6 +479,7 @@ public class ButtonPane extends SecureContainer{
                 }
                 else{
                     for( int i = 0; i < count; i++ ){
+                    	y += span.getGap( i );
                         getComponent( i ).setBounds( x, y, width, heights[i] );
                         y += heights[i];
                     }

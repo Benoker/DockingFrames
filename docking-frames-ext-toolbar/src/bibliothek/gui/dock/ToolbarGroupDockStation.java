@@ -36,6 +36,7 @@ import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
@@ -480,10 +481,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	public boolean accept( DockStation base, Dockable neighbor ){
 		return false;
 	}
-
+	
 	@Override
-	public StationDropOperation prepareDrop( int mouseX, int mouseY,
-			int titleX, int titleY, Dockable dockable ){
+	public StationDropOperation prepareDrop( StationDropItem item ){
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
 		final DockController controller = getController();
 
@@ -491,6 +491,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			return null;
 		}
 
+		Dockable dockable = item.getDockable();
+		
 		// check if the dockable and the station accept each other
 		if (this.accept(dockable) & dockable.accept(this)){
 			// check if controller exists and if the controller accepts that
@@ -500,7 +502,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					return null;
 				}
 			}
-			return new ToolbarGroupDropInfo(dockable, ToolbarGroupDockStation.this, mouseX, mouseY){
+			return new ToolbarGroupDropInfo(dockable, ToolbarGroupDockStation.this, item.getMouseX(), item.getMouseY() ){
 				@Override
 				public void execute(){
 					drop(this);
@@ -511,7 +513,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 				// is created
 
 				@Override
-				public void destroy(){
+				public void destroy( StationDropOperation next ){
 					// without this line, nothing is displayed except if you
 					// drag another component
 					ToolbarGroupDockStation.this.indexBeneathMouse = -1;

@@ -64,8 +64,13 @@ public class DropOperation implements RelocateOperation{
 		return new Dockable[]{};
 	}
 	
-	public void destroy(){
-		operation.destroy();
+	public void destroy( RelocateOperation next ){
+		if( next == null ){
+			operation.destroy( null );
+		}
+		else{
+			operation.destroy( next.getOperation() );
+		}
 	}
 	
 	public boolean execute( Dockable selection, VetoableDockRelocatorListener listener ){
@@ -94,7 +99,7 @@ public class DropOperation implements RelocateOperation{
 			}
 		}
 		finally{
-			operation.destroy();
+			operation.destroy( null );
 		}
 		return true;	
 	}
