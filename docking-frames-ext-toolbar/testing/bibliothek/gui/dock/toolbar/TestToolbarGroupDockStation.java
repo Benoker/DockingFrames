@@ -16,13 +16,16 @@ import javax.swing.border.EmptyBorder;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
+import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarGroupDockStation {
@@ -43,6 +46,8 @@ public class TestToolbarGroupDockStation {
 		final DockController controller = new DockController();
 		//controller.setTheme( new EclipseTheme() );
 
+		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500 ) );
+		
 		// controller.setRestrictedEnvironment( true );
 
 		final ScreenDockStation screen = new ScreenDockStation( frame );

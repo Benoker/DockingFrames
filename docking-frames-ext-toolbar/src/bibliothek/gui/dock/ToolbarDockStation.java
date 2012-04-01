@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.HierarchyEvent;
@@ -11,7 +12,6 @@ import java.awt.event.HierarchyListener;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -42,6 +42,7 @@ import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.toolbar.SpanToolbarLayoutManager;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
@@ -106,6 +107,9 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	/** added to the current parent of this dockable */
 	private VisibleListener visibleListener;
+	
+	/** the {@link LayoutManager} positioning the children of this station */
+	private SpanToolbarLayoutManager layoutManager;
 
 	// ########################################################
 	// ############ Initialization Managing ###################
@@ -242,6 +246,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			displayerFactory.setController(controller);
 			displayers.setController(controller);
 			mainPanel.setController(controller);
+			layoutManager.setController( controller );
 
 			if (controller != null){
 				dockables.bind();
@@ -311,41 +316,53 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 					return null;
 				}
 			}
-			return new ToolbarDropInfo<AbstractToolbarDockStation>(dockable,
-					this, item.getMouseX(), item.getMouseY()){
-				@Override
-				public void execute(){
-					drop(this);
-				}
-
-				// Note: draw() is called first by the Controller. It seems
-				// destroy() is called after, after a new StationDropOperation
-				// is created
-
-				@Override
-				public void destroy( StationDropOperation next ){
-					// without this line, nothing is displayed except if you
-					// drag another component
-					ToolbarDockStation.this.indexBeneathMouse = -1;
-					ToolbarDockStation.this.sideBeneathMouse = null;
-					ToolbarDockStation.this.prepareDropDraw = false;
-					mainPanel.repaint();
-				}
-
-				@Override
-				public void draw(){
-					// without this line, nothing is displayed
-					ToolbarDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
-					ToolbarDockStation.this.prepareDropDraw = true;
-					ToolbarDockStation.this.sideBeneathMouse = getSideDockableBeneathMouse();
-					// without this line, line is displayed only on the first
-					// component met
-					mainPanel.repaint();
-				}
-			};
+			return new DropInfo(dockable, item.getMouseX(), item.getMouseY());
 		} else{
 			return null;
 		}
+	}
+	
+	private class DropInfo extends ToolbarDropInfo<AbstractToolbarDockStation>{
+		public DropInfo( Dockable dockable, int mouseX, int mouseY ){
+			super( dockable, ToolbarDockStation.this, mouseX, mouseY );
+		}
+		
+		@Override
+		public void execute(){
+			drop(this);
+			layoutManager.setExpandedSpan( -1, false );
+		}
+
+		// Note: draw() is called first by the Controller. It seems
+		// destroy() is called after, after a new StationDropOperation
+		// is created
+
+		@Override
+		public void destroy( StationDropOperation next ){
+			// without this line, nothing is displayed except if you
+			// drag another component
+			ToolbarDockStation.this.indexBeneathMouse = -1;
+			ToolbarDockStation.this.sideBeneathMouse = null;
+			ToolbarDockStation.this.prepareDropDraw = false;
+			mainPanel.repaint();
+			
+			if( next == null || next.getTarget() != getTarget() ){
+				layoutManager.setExpandedSpan( -1, true );
+			}
+		}
+
+		@Override
+		public void draw(){
+			// without this line, nothing is displayed
+			ToolbarDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
+			ToolbarDockStation.this.prepareDropDraw = true;
+			ToolbarDockStation.this.sideBeneathMouse = getSideDockableBeneathMouse();
+			// without this line, line is displayed only on the first
+			// component met
+			layoutManager.setSpanSize( getDockableBeneathMouse() );
+			layoutManager.setExpandedSpan( indexBeneathMouse, true );
+			mainPanel.repaint();
+		}		
 	}
 
 	/**
@@ -747,6 +764,13 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			setBasePane(dockablePane);
 			setSolid(false);
 			dockablePane.setOpaque(false);
+			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this ){
+				@Override
+				protected void revalidate(){
+					dockablePane.revalidate();	
+				}
+			};
+			dockablePane.setLayout( layoutManager );
 		}
 
 		@Override
@@ -769,31 +793,31 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 * {@linl ToolbarDockStation}
 		 */
 		public void updateAlignment(){
-			if (getOrientation() != null){
-				switch (getOrientation()) {
-				case HORIZONTAL:
-					// insets use to draw insertion lines with proper larger
-					// basePane.setBorder(new EmptyBorder(new Insets(0,
-					// INSETS_SIZE, 0, INSETS_SIZE + 1)));
-					dockablePane.setLayout(new BoxLayout(dockablePane,
-							BoxLayout.X_AXIS));
-					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
-					dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-					break;
-				case VERTICAL:
-					// insets use to draw insertion lines with proper larger
-					// basePane.setBorder(new EmptyBorder(new
-					// Insets(INSETS_SIZE,
-					// 0, INSETS_SIZE + 1, 0)));
-					dockablePane.setLayout(new BoxLayout(dockablePane,
-							BoxLayout.Y_AXIS));
-					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
-					dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
-					break;
-				default:
-					throw new IllegalArgumentException();
-				}
-			}
+//			if (getOrientation() != null){
+//				switch (getOrientation()) {
+//				case HORIZONTAL:
+//					// insets use to draw insertion lines with proper larger
+//					// basePane.setBorder(new EmptyBorder(new Insets(0,
+//					// INSETS_SIZE, 0, INSETS_SIZE + 1)));
+//					dockablePane.setLayout(new BoxLayout(dockablePane,
+//							BoxLayout.X_AXIS));
+//					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
+//					dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+//					break;
+//				case VERTICAL:
+//					// insets use to draw insertion lines with proper larger
+//					// basePane.setBorder(new EmptyBorder(new
+//					// Insets(INSETS_SIZE,
+//					// 0, INSETS_SIZE + 1, 0)));
+//					dockablePane.setLayout(new BoxLayout(dockablePane,
+//							BoxLayout.Y_AXIS));
+//					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
+//					dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
+//					break;
+//				default:
+//					throw new IllegalArgumentException();
+//				}
+//			}
 		}
 
 		@Override
