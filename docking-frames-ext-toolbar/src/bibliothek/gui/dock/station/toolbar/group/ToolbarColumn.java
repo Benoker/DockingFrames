@@ -27,6 +27,13 @@ public interface ToolbarColumn<P> {
 	public Dockable getDockable( int index );
 	
 	/**
+	 * Gets the index of <code>dockable</code>.
+	 * @param dockable the item to search
+	 * @return its index of -1 if the item was not fount
+	 */
+	public int indexOf( Dockable dockable );
+	
+	/**
 	 * Gets a wrapper item that represents the {@link Dockable} at <code>index</code>.
 	 * @param index the index of the item
 	 * @return the element at <code>index</code>, never <code>null</code>

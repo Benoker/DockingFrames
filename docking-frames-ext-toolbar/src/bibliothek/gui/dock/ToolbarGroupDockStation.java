@@ -429,6 +429,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			displayerFactory.setController(controller);
 			displayers.setController(controller);
 			mainPanel.setController(controller);
+			layoutManager.setController( controller );
 
 			if (getController() != null){
 				dockables.bind();
@@ -514,6 +515,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 				@Override
 				public void destroy( StationDropOperation next ){
+					if( next == null || next.getTarget() != getTarget() ){
+						layoutManager.mutate();
+					}
 					// without this line, nothing is displayed except if you
 					// drag another component
 					ToolbarGroupDockStation.this.indexBeneathMouse = -1;
@@ -525,12 +529,51 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 				@Override
 				public void draw(){
 					System.out.println(toSummaryString());
+					Position position = getSideDockableBeneathMouse();
+					
 					// without this line, nothing is displayed
 					ToolbarGroupDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
 					ToolbarGroupDockStation.this.prepareDropDraw = true;
-					ToolbarGroupDockStation.this.sideBeneathMouse = getSideDockableBeneathMouse();
+					ToolbarGroupDockStation.this.sideBeneathMouse = position;
 					// without this line, line is displayed only on the first
 					// component met
+					
+					ToolbarColumn<?> column = getColumnModel().getColumn( getDockableBeneathMouse() );
+					int columnIndex = column.getColumnIndex();
+					int lineIndex = column.indexOf( getDockableBeneathMouse() );
+					if( getOrientation() == Orientation.HORIZONTAL ){
+						switch( position ){
+							case WEST:
+								layoutManager.mutate( columnIndex, lineIndex );
+								break;
+							case EAST:
+								layoutManager.mutate( columnIndex, lineIndex+1 );
+								break;
+							case NORTH:
+								layoutManager.mutate( columnIndex );
+								break;
+							case SOUTH:
+								layoutManager.mutate( columnIndex+1 );
+								break;
+						}
+					}
+					else{
+						switch( position ){
+							case NORTH:
+								layoutManager.mutate( columnIndex, lineIndex );
+								break;
+							case SOUTH:
+								layoutManager.mutate( columnIndex, lineIndex+1 );
+								break;
+							case WEST:
+								layoutManager.mutate( columnIndex );
+								break;
+							case EAST:
+								layoutManager.mutate( columnIndex+1 );
+								break;
+						}
+					}
+					
 					mainPanel.repaint();
 				}
 			};
@@ -1141,14 +1184,19 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		public void updateAlignment(){
 			final Orientation orientation = getOrientation();
 			if (orientation != null){
+				if( layoutManager != null ){
+					layoutManager.setController( null );
+				}
+				
 				layoutManager = new ToolbarGridLayoutManager<StationChildHandle>(
-						dockablePane, orientation, dockables){
+						dockablePane, orientation, dockables, ToolbarGroupDockStation.this ){
 					@Override
 					protected Component toComponent( StationChildHandle item ){
 						return item.getDisplayer().getComponent();
 					}
 				};
 				dockablePane.setLayout(layoutManager);
+				layoutManager.setController( getController() );
 			}
 			mainPanel.revalidate();
 		}

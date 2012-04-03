@@ -276,6 +276,16 @@ public class DockablePlaceholderToolbarGrid<P extends PlaceholderListItem<Dockab
 		}
 		
 		@Override
+		public int indexOf( Dockable dockable ){
+			for( int i = 0, n = getDockableCount(); i<n; i++ ){
+				if( getDockable( i ) == dockable ){
+					return i;
+				}
+			}
+			return -1;
+		}
+		
+		@Override
 		public P getItem( int index ){
 			return items.get( index );
 		}

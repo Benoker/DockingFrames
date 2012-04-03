@@ -12,11 +12,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
+import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupSpanStrategy;
 
 /**
  * This {@link LayoutManager2} orders a set of {@link Component}s in columns. To
@@ -34,6 +39,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 	/** the {@link Container} which is using this {@link LayoutManager} */
 	private Container parent;
+	
+	/** tells the size of gaps between columns and lines */
+	private ToolbarGroupSpanStrategy<P> spans;
 
 	private enum Size {
 		MAXIMUM, MINIMUM, PREFERRED;
@@ -54,16 +62,12 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 	/**
 	 * Creates a new layout manager.
-	 * 
-	 * @param parent
-	 *            the {@link Container} which is going to use this
-	 *            {@link LayoutManager}
-	 * @param orientation
-	 *            the orientation, must not be <code>null</code>
-	 * @param grid
-	 *            the list of items to lay out, must not be <code>null</code>
+	 * @param parent the {@link Container} which is going to use this {@link LayoutManager}
+	 * @param orientation the orientation, must not be <code>null</code>
+	 * @param grid the list of items to lay out, must not be <code>null</code>
+	 * @param station the station using this layout manager
 	 */
-	public ToolbarGridLayoutManager( Container parent, Orientation orientation, DockablePlaceholderToolbarGrid<P> grid ){
+	public ToolbarGridLayoutManager( Container parent, Orientation orientation, DockablePlaceholderToolbarGrid<P> grid, ToolbarGroupDockStation station ){
 		if( orientation == null ) {
 			throw new IllegalArgumentException( "orientation must not be null" );
 		}
@@ -77,8 +81,50 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		this.orientation = orientation;
 		this.grid = grid;
 		this.parent = parent;
+		this.spans = new ToolbarGroupSpanStrategy<P>( grid, station ){
+			@Override
+			protected void handleResized(){
+				Container p = ToolbarGridLayoutManager.this.parent;
+				if( p instanceof JComponent ){
+					((JComponent)p).revalidate();
+				}
+			}
+		};
+	}
+	
+	/**
+	 * Sets the {@link DockController} in whose realm this manager works. Allows this manager access to properties
+	 * like the {@link SpanFactory}.
+	 * @param controller the controller or <code>null</code>
+	 */
+	public void setController( DockController controller ){
+		spans.setController( controller );
 	}
 
+	/**
+	 * Closes all gaps for inserting items.
+	 */
+	public void mutate(){
+		mutate( -1 );
+	}
+	
+	/**
+	 * Opens a gap for inserting an item into <code>column</code>.
+	 * @param column the column where an item is inserted
+	 */
+	public void mutate( int column ){
+		spans.mutate( column );
+	}
+	
+	/**
+	 * Opens a gap for inserting an item into <code>column</code> at <code>line</code>.
+	 * @param column the column into which an item is inserted
+	 * @param line the location of the new item
+	 */
+	public void mutate( int column, int line ){
+		spans.mutate( column, line );
+	}
+	
 	/**
 	 * Converts <code>item</code> into a {@link Component}, this
 	 * {@link LayoutManager} will then set the location and size of the
@@ -141,21 +187,31 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	}
 
 	private Dimension layoutSize( Container parent, Wrapper[][] content, Size size ){
+		spans.reset( false );
+		
 		int width = 0;
 		int height = 0;
 
 		if( orientation == Orientation.HORIZONTAL ) {
+			int index = 0;
 			for( final Wrapper[] column : content ) {
-				final Dimension dim = layoutSize( column, size );
+				final Dimension dim = layoutSize( index++, column, size );
 				width = Math.max( width, dim.width );
 				height += dim.height;
 			}
+			for( int i = 0; i <= content.length; i++ ){
+				height += spans.getColumn( i );
+			}
 		}
 		else {
+			int index = 0;
 			for( final Wrapper[] column : content ) {
-				final Dimension dim = layoutSize( column, size );
+				final Dimension dim = layoutSize( index++, column, size );
 				height = Math.max( height, dim.height );
 				width += dim.width;
+			}
+			for( int i = 0; i <= content.length; i++ ){
+				width += spans.getColumn( i );
 			}
 		}
 
@@ -168,7 +224,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		return result;
 	}
 
-	private Dimension layoutSize( Wrapper[] column, Size size ){
+	private Dimension layoutSize( int columnIndex, Wrapper[] column, Size size ){
 		int width = 0;
 		int height = 0;
 
@@ -179,6 +235,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				width += dim.width;
 				height = Math.max( dim.height, height );
 			}
+			for( int i = 0; i <= column.length; i++ ){
+				width += spans.getLine( columnIndex, i );
+			}
 		}
 		else {
 			for( final Wrapper item : column ) {
@@ -186,6 +245,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				final Dimension dim = item.required;
 				height += dim.height;
 				width = Math.max( dim.width, width );
+			}
+			for( int i = 0; i <= column.length; i++ ){
+				height += spans.getLine( columnIndex, i );
 			}
 		}
 
@@ -227,14 +289,14 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 		final Dimension[] columns = new Dimension[components.length];
 		for( int i = 0; i < columns.length; i++ ) {
-			columns[i] = layoutSize( components[i], size );
+			columns[i] = layoutSize( i, components[i], size );
 		}
 
 		Insets insets = parent.getInsets();
 
 		if( orientation == Orientation.HORIZONTAL ) {
-			if( required.height > available.height ) {
-				double factor = available.height / (double) required.height;
+			double factor = available.height / (double) required.height;
+			if( factor < 1 ){
 				int sum = 0;
 				for( int i = 0, n = columns.length - 1; i < n; i++ ) {
 					columns[i].height = (int) (factor * columns[i].height);
@@ -242,18 +304,22 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				}
 				columns[columns.length - 1].height = available.height - sum;
 			}
+			else{
+				factor = 1;
+			}
 			int y = 0;
 			if( insets != null ) {
 				y = insets.top;
 			}
 			for( int i = 0; i < columns.length; i++ ) {
-				layout( components[i], columns[i], available, y, size );
+				y += spans.getColumn( i ) * factor;
+				layout( components[i], i, columns[i], available, y, size );
 				y += columns[i].height;
 			}
 		}
 		else {
-			if( required.width > available.width ) {
-				final double factor = available.width / (double) required.width;
+			double factor = available.width / (double) required.width;
+			if( factor < 1 ) {
 				int sum = 0;
 				for( int i = 0, n = columns.length - 1; i < n; i++ ) {
 					columns[i].width = (int) (factor * columns[i].width);
@@ -261,22 +327,26 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				}
 				columns[columns.length - 1].width = available.width - sum;
 			}
+			else{
+				factor = 1;
+			}
 
 			int x = 0;
 			if( insets != null ) {
 				x = insets.left;
 			}
 			for( int i = 0; i < columns.length; i++ ) {
-				layout( components[i], columns[i], available, x, size );
+				x += spans.getColumn( i ) * factor;
+				layout( components[i], i, columns[i], available, x, size );
 				x += columns[i].width;
 			}
 		}
 	}
 
-	private void layout( Wrapper[] column, Dimension required, Dimension available, int startPoint, Size size ){
+	private void layout( Wrapper[] column, int columnIndex, Dimension required, Dimension available, int startPoint, Size size ){
 		if( orientation == Orientation.HORIZONTAL ) {
-			if( required.width > available.width ) {
-				final double factor = available.width / (double) required.width;
+			double factor = available.width / (double) required.width;
+			if( factor < 1 ){
 				int sum = 0;
 				for( int i = 0, n = column.length - 1; i < n; i++ ) {
 					final Dimension dim = column[i].required;
@@ -285,18 +355,22 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				}
 				column[column.length - 1].required.width = available.width - sum;
 			}
-
+			else{
+				factor = 1;
+			}
+			
 			int x = 0;
 			final int y = startPoint;
 
 			for( int i = 0; i < column.length; i++ ) {
+				x += spans.getLine( columnIndex, i ) * factor;
 				column[i].component.setBounds( x, y, column[i].required.width, required.height );
 				x += column[i].required.width;
 			}
 		}
 		else {
-			if( required.height > available.height ) {
-				final double factor = available.height / (double) required.height;
+			double factor = available.height / (double) required.height;
+			if( factor < 1 ){
 				int sum = 0;
 				for( int i = 0, n = column.length - 1; i < n; i++ ) {
 					final Dimension dim = column[i].required;
@@ -305,11 +379,15 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				}
 				column[column.length - 1].required.height = available.height - sum;
 			}
+			else{
+				factor = 1;
+			}
 
 			final int x = startPoint;
 			int y = 0;
 
 			for( int i = 0; i < column.length; i++ ) {
+				y += spans.getLine( columnIndex, i ) * factor;
 				column[i].component.setBounds( x, y, required.width, column[i].required.height );
 				y += column[i].required.height;
 			}
