@@ -309,7 +309,7 @@ public interface DockStation extends DockElement{
     
     /**
      * Prepares this station to get the new child <code>dockable</code> or to move around the known child <code>dockable</code>.
-     * The station can refuse <code>dockable</code>, in this case nothing this method just returns <code>null</code>.
+     * The station can refuse <code>dockable</code>, in this case this method just returns <code>null</code>.
      * There are some constraints:
      * <ul>
      * <li>This method should use {@link #accept(Dockable)} and {@link Dockable#accept(DockStation)}

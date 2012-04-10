@@ -103,7 +103,7 @@ public abstract class ListSpanStrategy {
 	protected abstract void spanResized();
 	
 	/**
-	 * Called if the number of buttons or the orientation changed.
+	 * To be called if the number of children or the orientation changed.
 	 */
 	public void reset(){
 		boolean orientation = isHorizontal();
@@ -172,6 +172,18 @@ public abstract class ListSpanStrategy {
 			else{
 				spans.get( i ).mutate( SpanMode.OFF );
 			}
+		}
+	}
+	
+	/**
+	 * Configures the size of the <code>index</code>'th {@link Span}. Nothing happens if there
+	 * is no span at <code>index</code>.
+	 * @param index the index of the span
+	 * @param size the new size
+	 */
+	public void size( int index, int size ){
+		if( index >= 0 && index < spans.size() ){
+			spans.get( index ).configureSize( SpanMode.OPEN, size );
 		}
 	}
 	

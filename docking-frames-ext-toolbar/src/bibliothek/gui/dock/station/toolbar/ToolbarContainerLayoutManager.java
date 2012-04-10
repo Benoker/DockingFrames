@@ -7,8 +7,11 @@ import java.awt.LayoutManager2;
 
 import javax.swing.JComponent;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Orientation;
+import bibliothek.gui.Position;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.station.support.ListSpanStrategy;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -23,10 +26,47 @@ public class ToolbarContainerLayoutManager implements LayoutManager2{
 	private ToolbarContainerDockStation station;
 	private ListSpanStrategy spans;
 	
+	/**
+	 * Creates a new layout manager
+	 * @param parent the panel using this layout manager
+	 * @param station the station showing <code>panel</code>
+	 */
 	public ToolbarContainerLayoutManager( JComponent parent, ToolbarContainerDockStation station ){
 		this.parent = parent;
 		this.station = station;
 		spans = createSpans();
+	}
+	
+	/**
+	 * Sets the {@link DockController} in whose realm this layout manager is used.
+	 * @param controller the controller, can be <code>null</code>
+	 */
+	public void setController( DockController controller ){
+		spans.setController( controller );
+	}
+	
+	/**
+	 * Tells this layout manager which {@link Span}s have to mutate.
+	 * @param info information about the item that is currently dropped
+	 */
+	public void setDrawing( ToolbarContainerDropInfo info ){
+		if( info == null ){
+			spans.untease();
+		}
+		else{
+			int index = info.getIndex();
+			Position position = info.getSideDockableBeneathMouse();
+			if( position == Position.SOUTH || position == Position.EAST ){
+				index++;
+			}
+			spans.tease( index );
+			if( station.getOrientation() == Orientation.HORIZONTAL ){
+				spans.size( index, info.getItem().getComponent().getWidth() );
+			}
+			else{
+				spans.size( index, info.getItem().getComponent().getHeight() );
+			}
+		}
 	}
 	
 	private ListSpanStrategy createSpans(){
@@ -50,12 +90,12 @@ public class ToolbarContainerLayoutManager implements LayoutManager2{
 	
 	@Override
 	public void addLayoutComponent( String name, Component comp ){
-		// ignore
+		spans.reset();
 	}
 
 	@Override
 	public void removeLayoutComponent( Component comp ){
-		// ignore
+		spans.reset();
 	}
 	
 	@Override
@@ -65,7 +105,7 @@ public class ToolbarContainerLayoutManager implements LayoutManager2{
 
 	@Override
 	public Dimension preferredLayoutSize( Container parent ){
-		if( station.getOrientation() == Orientation.HORIZONTAL ){
+		if( station.getOrientation() == Orientation.VERTICAL ){
 			int width = spans.getTeasing();
 			int height = 0;
 			for( int i = 0, n = parent.getComponentCount(); i<n; i++ ){
@@ -93,7 +133,54 @@ public class ToolbarContainerLayoutManager implements LayoutManager2{
 	
 	@Override
 	public void layoutContainer( Container parent ){
+		Dimension preferred = preferredLayoutSize( parent );
+		int gaps = 0;
+		for( int i = 0, n = parent.getComponentCount(); i <= n; i++ ){
+			gaps += spans.getGap( i );
+		}
 		
+		if( station.getOrientation() == Orientation.HORIZONTAL ){
+			if( preferred.width > gaps ){
+				float factor = parent.getWidth() / (float)(preferred.width - gaps);
+				if( factor > 1 ){
+					factor = 1;
+				}
+				else if( factor < 0 ){
+					factor = 0;
+				}
+				int x = 0;
+				int height = parent.getHeight();
+				for( int i = 0, n = parent.getComponentCount(); i<n; i++ ){
+					x += spans.getGap( i );
+					Component child = parent.getComponent( i );
+					Dimension size = child.getPreferredSize();
+					int width = (int)(size.width * factor);
+					child.setBounds( x, 0, width, Math.min( height, size.height ) );
+					x += width;
+				}
+			}
+		}
+		else{
+			if( preferred.height > gaps ){
+				float factor = parent.getHeight() / (float)(preferred.height - gaps);
+				if( factor > 1 ){
+					factor = 1;
+				}
+				else if( factor < 0 ){
+					factor = 0;
+				}
+				int y = 0;
+				int width = parent.getWidth();
+				for( int i = 0, n = parent.getComponentCount(); i<n; i++ ){
+					y += spans.getGap( i );
+					Component child = parent.getComponent( i );
+					Dimension size = child.getPreferredSize();
+					int height = (int)(size.height * factor);
+					child.setBounds( 0, y, Math.min( width, size.width ), height );
+					y += height;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -103,7 +190,7 @@ public class ToolbarContainerLayoutManager implements LayoutManager2{
 
 	@Override
 	public void addLayoutComponent( Component comp, Object constraints ){
-		// ignore
+		spans.reset();
 	}
 
 	@Override

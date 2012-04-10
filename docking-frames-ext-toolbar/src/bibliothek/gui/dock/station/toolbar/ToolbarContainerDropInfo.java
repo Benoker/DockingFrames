@@ -101,6 +101,12 @@ public abstract class ToolbarContainerDropInfo implements StationDropOperation{
 	}
 
 	/**
+	 * Gets the index of {@link #getDockableBeneathMouse()} in the parent {@link DockStation}.
+	 * @return the index or -1 if not available
+	 */
+	public abstract int getIndex();
+	
+	/**
 	 * Gets the <code>index</code> of the component beneath the mouse
 	 * 
 	 * @return the index

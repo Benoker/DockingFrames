@@ -3,6 +3,7 @@ package bibliothek.gui.dock;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.LayoutManager2;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.HierarchyEvent;
@@ -43,6 +44,7 @@ import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -52,6 +54,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarContainerConverter;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerConverterCallback;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
+import bibliothek.gui.dock.station.toolbar.ToolbarContainerLayoutManager;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
@@ -143,12 +146,26 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	
 	/** added to the current parent of this dockable */
 	private VisibleListener visibleListener;
+	
+	/** This {@link LayoutManager} is responsible for updating the boundaries of all {@link Dockable}s and keeping track of {@link Span}s */
+	private ToolbarContainerLayoutManager layoutManager;
 
 	/**
 	 * Constructs a new ContainerLineStation
 	 */
 	public ToolbarContainerDockStation( Orientation orientation ){
+		this( orientation, 1 );
+	}
+	
+	/**
+	 * Creates a new station
+	 * @param orientation the orientation of the content
+	 * @param maxNumberOfDockables the maximum number of children
+	 */
+	public ToolbarContainerDockStation( Orientation orientation, int maxNumberOfDockables ){
 		this.orientation = orientation;
+		setDockablesMaxNumber( maxNumberOfDockables );
+		
 		mainPanel = new OverpaintablePanelBase();
 		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar", this );
 
@@ -197,17 +214,20 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		final JPanel panel = new JPanel();
 
 		panel.setOpaque( false );
-
-		switch( orientation ){
-			case HORIZONTAL:
-				panel.setLayout( new BoxLayout( panel, BoxLayout.X_AXIS ) );
-				panel.setAlignmentX( Component.LEFT_ALIGNMENT );
-				break;
-			case VERTICAL:
-				panel.setLayout( new BoxLayout( panel, BoxLayout.Y_AXIS ) );
-				panel.setAlignmentY( Component.TOP_ALIGNMENT );
-				break;
-		}
+		
+//		switch( orientation ){
+//			case HORIZONTAL:
+//				panel.setLayout( new BoxLayout( panel, BoxLayout.X_AXIS ) );
+//				panel.setAlignmentX( Component.LEFT_ALIGNMENT );
+//				break;
+//			case VERTICAL:
+//				panel.setLayout( new BoxLayout( panel, BoxLayout.Y_AXIS ) );
+//				panel.setAlignmentY( Component.TOP_ALIGNMENT );
+//				break;
+//		}
+		
+		layoutManager = new ToolbarContainerLayoutManager( panel, ToolbarContainerDockStation.this );
+		panel.setLayout( layoutManager );
 		panel.setBorder( new EmptyBorder( new Insets( 3, 3, 3, 3 ) ) );
 		return panel;
 	}
@@ -379,7 +399,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		Dockable dockable = item.getDockable();
 		
 		// check if the dockable and the station accept each other
-		if( this.accept( dockable ) & dockable.accept( this ) ) {
+		if( this.accept( dockable ) && dockable.accept( this ) ) {
 			// check if controller exist and if the controller accept that
 			// the dockable become a child of this station
 			if( controller != null ) {
@@ -387,8 +407,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					return null;
 				}
 			}
-			final Point mousePoint = new Point( item.getMouseX(), item.getMouseY() );
-			SwingUtilities.convertPointFromScreen( mousePoint, mainPanel.getContentPane() );
+//			final Point mousePoint = new Point( item.getMouseX(), item.getMouseY() );
+//			SwingUtilities.convertPointFromScreen( mousePoint, mainPanel.getContentPane() );
 
 			if( !getToolbarStrategy().isToolbarPart( dockable ) ) {
 				// only ToolbarElementInterface can be drop or move into this
@@ -407,6 +427,10 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 				@Override
 				public void destroy( StationDropOperation next ){
+					if( next == null || next.getTarget() != getTarget() ){
+						layoutManager.setDrawing( null );
+					}
+					
 					// without this line, nothing is displayed except if you
 					// drag another component
 					indexBeneathMouse = -1;
@@ -417,11 +441,18 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				}
 
 				@Override
+				public int getIndex(){
+					return indexOf( getDockableBeneathMouse() );
+				}
+				
+				@Override
 				public void draw(){
+					layoutManager.setDrawing( this );
+					
 					// without this line, nothing is displayed
 					// Reminder: if dockable beneath mouse doesn't belong to
 					// this, then indexOf return -1
-					indexBeneathMouse = indexOf( getDockableBeneathMouse() );
+					indexBeneathMouse = getIndex();
 					prepareDropDraw = true;
 					sideAboveMouse = getSideDockableBeneathMouse();
 					// without this line, line is displayed only on the first
@@ -1120,6 +1151,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			// BasicDockTitle.FACTORY).
 
 			displayerFactory.setController( controller );
+			layoutManager.setController( controller );
 
 			if( controller == null ) {
 				title = null;
