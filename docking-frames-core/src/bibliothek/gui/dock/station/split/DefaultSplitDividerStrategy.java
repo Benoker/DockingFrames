@@ -383,7 +383,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 
 		public void mouseMoved( MouseEvent e ){
 			if( station.isResizingEnabled() && !station.isDisabled() ) {
-				current = station.getRoot().getDividerNode( e.getX(), e.getY() );
+				current = getDividerNode( e.getX(), e.getY() );
 				
 				if( current == null )
 					setCursor( null );

@@ -294,6 +294,14 @@ public class Leaf extends SpanSplitNode{
     }
     
     @Override
+    public void setBounds( double x, double y, double width, double height, double factorW, double factorH, boolean updateComponentBounds ){
+    	super.setBounds( x, y, width, height, factorW, factorH, updateComponentBounds );
+    	if( updateComponentBounds ){
+    		resetDisplayerBounds();
+    	}
+    }
+    
+    @Override
     public void onSpanResize(){
     	resetDisplayerBounds();
     }

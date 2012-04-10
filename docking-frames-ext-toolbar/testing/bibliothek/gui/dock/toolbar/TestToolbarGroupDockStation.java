@@ -26,6 +26,7 @@ import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
+import bibliothek.gui.dock.themes.basic.NoSpanFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarGroupDockStation {
@@ -47,6 +48,7 @@ public class TestToolbarGroupDockStation {
 		//controller.setTheme( new EclipseTheme() );
 
 		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500 ) );
+		//controller.getProperties().set( DockTheme.SPAN_FACTORY, new NoSpanFactory() );
 		
 		// controller.setRestrictedEnvironment( true );
 
