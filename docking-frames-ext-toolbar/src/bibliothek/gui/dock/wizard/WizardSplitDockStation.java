@@ -92,6 +92,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		setSplitLayoutManager( layoutManager );
 		setDividerStrategy( new WizardDividerStrategy() );
 		getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
+		setAllowSideSnap( false );
 		
 		addDockStationListener( new DockStationListener(){
 			@Override
