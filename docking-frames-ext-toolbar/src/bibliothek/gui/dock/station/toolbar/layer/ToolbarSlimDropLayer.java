@@ -1,7 +1,6 @@
 package bibliothek.gui.dock.station.toolbar.layer;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 
 import javax.swing.SwingUtilities;
 
@@ -39,13 +38,11 @@ public class ToolbarSlimDropLayer extends DefaultDropLayer{
 			// The goal it to reduce the default layer so, only if the default
 			// layer (parent of this layer) contains this coordinates we have to
 			// check if this layer contains the same coordinate.
-			final Rectangle stationArea = station.getComponent().getBounds();
 			final Point mouseCoord = new Point(x, y);
 			SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
 			final int size = station.getLateralNodropZoneSize();
 			if (station.getOrientation() == Orientation.VERTICAL){
-				if ((mouseCoord.x > (stationArea.getX() + size))
-						&& (mouseCoord.x < (stationArea.getMaxX() - size))){
+				if ((mouseCoord.x > size) && (mouseCoord.x < (getComponent().getWidth() - size -1))){
 //					System.out.println("true");
 					return true;
 				} else{
@@ -53,8 +50,7 @@ public class ToolbarSlimDropLayer extends DefaultDropLayer{
 					return false;
 				}
 			} else{
-				if ((mouseCoord.y > (stationArea.getY() + size))
-						&& (mouseCoord.y < (stationArea.getMaxY() - size))){
+				if ((mouseCoord.y > size) && (mouseCoord.y < getComponent().getHeight() - size - 1)){
 //					System.out.println("true");
 					return true;
 				} else{
