@@ -11,10 +11,30 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import bibliothek.gui.dock.ComponentDockable;
+import bibliothek.gui.dock.ToolbarDockStation;
 
 public class DropSampleMain {
 	public static void main( String[] args ){
-		toolbarDockStation();
+		toolbarGroupDockStation();
+		// toolbarDockStation();
+	}
+	
+	private static void toolbarGroupDockStation(){
+		ToolbarGroupDockStationSample sample = new ToolbarGroupDockStationSample();
+		
+		ToolbarDockStation[] children = new ToolbarDockStation[4];
+		for( int i = 0; i < children.length; i++ ){
+			children[i] = new ToolbarDockStation();
+			children[i].drop( new ComponentDockable( new JButton( "A" ) ) );
+			children[i].drop( new ComponentDockable( new JButton( "B" ) ) );
+			children[i].drop( new ComponentDockable( new JButton( "C" ) ) );
+		}
+		
+		sample.getStation().drop( children[0], 0 );
+		sample.getStation().drop( children[1], 1 );
+		sample.getStation().drop( children[2], 1, 1 );
+		sample.getStation().drop( children[3], 2 );
+		start( sample );
 	}
 	
 	private static void toolbarDockStation(){
