@@ -529,7 +529,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 				else{
 					int y = columnBounds.y;
 					int height = columnBounds.height;
-					if( y+height/5 <= mouse.x && mouse.x <= y+height*4/5 ){
+					if( y+height/5 <= mouse.y && mouse.y <= y+height*4/5 ){
 						line = layoutManager.getInsertionLineAt( column, mouse.x );
 					}
 					else if( mouse.y >= y+height*4/5 ){
