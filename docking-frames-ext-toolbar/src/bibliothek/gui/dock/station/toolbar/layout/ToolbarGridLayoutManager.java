@@ -171,6 +171,84 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		// nothing to do
 	}
 
+	/**
+	 * Tells which column covers the coordinate <code>location</code>. If the location is between columns, then the
+	 * result can be either of these columns.
+	 * @param location a point on the axis that is orthogonal to the orientation of the columns
+	 * @return the column covering <code>location</code> or -1 if out of bounds
+	 * @see #isColumnAt(int)
+	 */
+	public int getColumnAt( int location ){
+		int index = 0;
+		
+		for( int i = 0, n = grid.getColumnCount(); i<n; i++ ){
+			index = i;
+			Rectangle bounds = getBounds( i );
+			
+			if( orientation == Orientation.VERTICAL ){
+				if( bounds.x + bounds.width > location ){
+					break;
+				}
+			}
+			else{
+				if( bounds.y + bounds.height > location ){
+					break;
+				}
+			}
+		}
+		
+		return index;
+	}
+	
+	/**
+	 * Tells whether there is a column covering <code>location</code>.
+	 * @param location a point on the axis that is orthogonal to the orientation of the columns
+	 * @return whether there is a column directly covering <code>location</code>
+	 * @see #getColumnAt(int)
+	 */
+	public boolean isColumnAt( int location ){
+		for( int i = 0, n = grid.getColumnCount(); i<n; i++ ){
+			Rectangle bounds = getBounds( i );
+			
+			if( orientation == Orientation.VERTICAL ){
+				if( bounds.x <= location && bounds.x + bounds.width > location ){
+					return true;
+				}
+			}
+			else{
+				if( bounds.y <= location && bounds.y + bounds.height > location ){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Tells where to insert an item during a drag and drop operation, if the mouse is hovering over 
+	 * the column <code>column</code>.
+	 * @param column the column over which the mouse is hovering, must be an existing column
+	 * @param location a point on the axis that is parallel to the orientation of the columns
+	 * @return the best line to insert a new item or -1
+	 */
+	public int getInsertionLineAt( int column, int location ){
+		int count = grid.getLineCount( column );
+		for( int i = 0; i<count; i++ ){
+			Rectangle bounds = getBounds( column, i );
+			if( orientation == Orientation.HORIZONTAL ){
+				if( bounds.x + bounds.width/2 >= location ){
+					return i;
+				}
+			}
+			else{
+				if( bounds.y + bounds.height/2 >= location ){
+					return i;
+				}
+			}
+		}
+		return count;
+	}
+	
 	@Override
 	public Dimension maximumLayoutSize( Container parent ){
 		return layoutSize( parent, layout(), Size.MAXIMUM );
@@ -483,6 +561,28 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				result = result.union( cell.getBounds() );
 			}
 		}
+		
+		int left = spans.getLine( column, 0 );
+		if( orientation == Orientation.HORIZONTAL ){
+			result.x -= left;
+			result.width += left;
+		}
+		else{
+			result.y -= left;
+			result.height += left;
+		}
+		
+		int lines = cells[column].length;
+		if( lines > 0 ){
+			int right = spans.getLine( column, lines );
+			if( orientation == Orientation.HORIZONTAL ){
+				result.width += right;
+			}
+			else{
+				result.height += right;
+			}	
+		}
+		
 		return result;
 	}
 
@@ -570,6 +670,49 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		}
 	}
 
+	/**
+	 * Gets the size of a gap between two rows.
+	 * @param column the column in which the rows are
+	 * @param line the row into which an item is inserted
+	 * @return the gap between <code>line-1</code> and <code>line</code>
+	 */
+	public Rectangle getGapBounds( int column, int line ){
+		Wrapper[][] cells = layout();
+		int gap = spans.getLine( column, line );
+		if( orientation == Orientation.HORIZONTAL ){
+			int y = Integer.MAX_VALUE;
+			int height = 0;
+			for( Wrapper cell : cells[column] ){
+				Rectangle bounds = cell.getBounds();
+				y = Math.min( y, bounds.y );
+				height = Math.max( height, y - bounds.y + bounds.height );
+			}
+			if( line == 0 ){
+				return new Rectangle( cells[column][line].getBounds().x-gap, y, gap, height );
+			}
+			else{
+				Rectangle bounds = cells[column][line-1].getBounds();
+				return new Rectangle( bounds.x + bounds.width, y, gap, height );
+			}
+		}
+		else{
+			int x = Integer.MAX_VALUE;
+			int width = 0;
+			for( Wrapper cell : cells[column] ){
+				Rectangle bounds = cell.getBounds();
+				x = Math.min( x, bounds.x );
+				width = Math.max( width, x - bounds.x + bounds.width );
+			}
+			if( line == 0 ){
+				return new Rectangle( x, cells[column][line].getBounds().y-gap, width, gap );
+			}
+			else{
+				Rectangle bounds = cells[column][line-1].getBounds();
+				return new Rectangle( x, bounds.y + bounds.height, width, gap );
+			}
+		}
+	}
+	
 	/**
 	 * A wrapper around one {@link Component}, caches minimal, maximal or
 	 * preferred size.

@@ -1,21 +1,16 @@
 package bibliothek.gui.dock.station.toolbar.layer;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Area;
 
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.layer.LayerPriority;
-import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
-import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
 import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
 
 /**
@@ -25,7 +20,7 @@ import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
  * 
  * @author Herve Guillaume
  */
-public class DefaultDropLayerComplex implements DockStationDropLayer{
+public class ToolbarGroupInnerLayer implements DockStationDropLayer{
 	private final ToolbarGroupDockStation station;
 	private LayerPriority priority = LayerPriority.BASE;
 
@@ -35,7 +30,7 @@ public class DefaultDropLayerComplex implements DockStationDropLayer{
 	 * @param station
 	 *            the station which owns this layer
 	 */
-	public DefaultDropLayerComplex( ToolbarGroupDockStation station ){
+	public ToolbarGroupInnerLayer( ToolbarGroupDockStation station ){
 		this.station = station;
 	}
 
@@ -52,39 +47,31 @@ public class DefaultDropLayerComplex implements DockStationDropLayer{
 	@Override
 	public boolean contains( int x, int y ){
 		final Point mouseCoord = new Point(x, y);
-		@SuppressWarnings("unchecked")
-		final ToolbarGridLayoutManager<StationChildHandle> layout = station
-				.getLayoutManager();
+		SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
+		final ToolbarGridLayoutManager<StationChildHandle> layout = station.getLayoutManager();
 		if (station.columnCount() == 0){
 			// if there's no dockable inside the station, the shape of the layer
 			// is computed with regards to the station component
-			SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
-			// System.out.println("MOUSE: " + mouseCoord);
-			// System.out.println("Component: " + getComponent().getBounds());
-			// System.out.println("DefaultDropLayerComplex: "
-			// + getComponent().contains(mouseCoord));
 			return getComponent().contains(mouseCoord);
-		} else{
-			// System.out.println("MOUSE: " + mouseCoord);
-			// System.out.println("Columns number: " + station.columnCount());
-			for (int columnIndex = 0; columnIndex < station.columnCount(); columnIndex++){
-				Rectangle columnBounds = layout.getBounds(columnIndex);
-				Point a = new Point(columnBounds.x, columnBounds.y);
-				SwingUtilities.convertPointToScreen(a, getComponent());
-				Rectangle columnBoundsTranslate = new Rectangle(a.x, a.y,
-						columnBounds.width, columnBounds.height);
-
-//				System.out.println("Column" + columnIndex + ": "
-//						+ columnBoundsTranslate);
-				if (columnBoundsTranslate.contains(mouseCoord)){
-//					System.out.println("DefaultDropLayerComplex: TRUE");
+		} else {
+			int count = station.columnCount();
+			
+			// check if the point is *inside* a child
+			for( int i = 0; i < count; i++ ){
+				Rectangle bound = layout.getBounds( i );
+				if( bound.contains( mouseCoord )){
 					return true;
-				} else{
-//					System.out.println("DefaultDropLayerComplex: FALSE");
+				}
+			}
+			
+			// check if the point is *between* two children
+			for( int i = 0; i <= count; i++ ){
+				Rectangle bound = layout.getGapBounds( i );
+				if( bound.contains( mouseCoord )){
+					return true;
 				}
 			}
 		}
-//		System.out.println("DefaultDropLayerComplex: FALSE");
 		return false;
 	}
 
@@ -108,7 +95,7 @@ public class DefaultDropLayerComplex implements DockStationDropLayer{
 	}
 
 	@Override
-	public DockStation getStation(){
+	public ToolbarGroupDockStation getStation(){
 		return station;
 	}
 

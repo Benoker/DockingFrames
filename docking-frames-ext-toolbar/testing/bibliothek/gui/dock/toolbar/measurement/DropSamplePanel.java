@@ -8,10 +8,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.BorderFactory;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -23,7 +28,7 @@ public class DropSamplePanel extends OverpaintablePanel{
 	
 	public DropSamplePanel(){
 		getContentPane().setLayout( new GridLayout( 1, 1 ) );
-		getContentPane().setBorder( new EmptyBorder( 50, 50, 50, 50 ) );
+		getContentPane().setBorder( BorderFactory.createCompoundBorder( new EmptyBorder( 50, 50, 50, 50 ), new LineBorder( Color.BLACK, 1 ) ));
 	}
 	
 	public void setSample( DropSample sample ){
@@ -49,6 +54,24 @@ public class DropSamplePanel extends OverpaintablePanel{
 		}
 	}
 	
+	private void refill( final BufferedImage image ){
+		Timer timer = new Timer( 1000, new ActionListener(){
+			@Override
+			public void actionPerformed( ActionEvent e ){
+				EventQueue.invokeLater( new Runnable(){
+					@Override
+					public void run(){
+						if( image == overlay ){
+							fill( overlay, 0 );
+						}
+					}
+				} );	
+			}
+		} );
+		timer.setRepeats( false );
+		timer.start();
+	}
+	
 	private void fill( final BufferedImage image, final int y ){
 		EventQueue.invokeLater( new Runnable(){
 			@Override
@@ -59,6 +82,9 @@ public class DropSamplePanel extends OverpaintablePanel{
 					if( next < image.getHeight() ){
 						fill( image, next );
 					}
+					else{
+						refill( image );
+					}
 				}
 			}
 		} );
@@ -67,6 +93,7 @@ public class DropSamplePanel extends OverpaintablePanel{
 	private void paint( BufferedImage image, int y ){
 		int width = image.getWidth();
 		Graphics g = image.createGraphics();
+		((Graphics2D)g).setBackground( new Color( 0, 0, 0, 0 ) );
 		
 		for( int x = 0; x < width; x++ ){
 			Point point = new Point( x, y );
@@ -83,6 +110,9 @@ public class DropSamplePanel extends OverpaintablePanel{
 				}
 				g.setColor( color );
 				g.fillRect( x, y, 1, 1 );
+			}
+			else{
+				g.clearRect( x, y, 1, 1 );
 			}
 		}
 		

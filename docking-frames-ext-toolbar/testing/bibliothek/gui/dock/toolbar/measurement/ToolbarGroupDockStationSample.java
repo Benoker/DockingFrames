@@ -42,44 +42,8 @@ public class ToolbarGroupDockStationSample implements DropSample {
 		}
 		ToolbarGroupDropInfo info = (ToolbarGroupDropInfo)operation;
 		
-		if( info.getDockableBeneathMouse() == null ){
-			return Color.WHITE;
-		}
-		
-		int column = station.column( info.getDockableBeneathMouse() );
-		int line = station.line( info.getDockableBeneathMouse() );
-		if( station.getOrientation() == Orientation.HORIZONTAL ){
-			switch( info.getSideDockableBeneathMouse() ){
-				case CENTER:
-					return Color.WHITE;
-				case NORTH:
-					line = -1;
-					break;
-				case SOUTH:
-					line = -1;
-					column++;
-					break;
-				case EAST:
-					line++;
-					break;
-			}
-		}
-		else{
-			switch( info.getSideDockableBeneathMouse() ){
-				case CENTER:
-					return Color.WHITE;
-				case WEST:
-					line = -1;
-					break;
-				case EAST:
-					line = -1;
-					column++;
-					break;
-				case SOUTH:
-					line++;
-					break;
-			}
-		}
+		int column = info.getColumn();
+		int line = info.getLine();
 		
 		if( line == -1 ){
 			if( column % 2 == 0 ){

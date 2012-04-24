@@ -171,7 +171,6 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 	 */
 	public void mutate( int column, int line ){
 		if( currentColumn != column || currentLine != line ){
-System.out.println( "mutate: " + column + " " + line );
 			currentColumn = column;
 			currentLine = line;
 			
