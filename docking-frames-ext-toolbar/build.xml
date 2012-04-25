@@ -18,14 +18,19 @@
 		<property name="toolbar.doc" value="${toolbar.base}/doc"/>
 
 		<property name="name.toolbar" value="docking-frames-ext-toolbar"/>
+		<property name="name.toolbar.common" value="docking-frames-ext-toolbar-common"/>
 		
 		<property name="location.toolbar" value="docking-frames-ext-toolbar"/>
+		<property name="location.toolbar.common" value="docking-frames-ext-toolbar-common"/>
 	</target>
 	
 	<target name="doc" depends="source, paths, dock.paths">
 		<mkdir dir="${toolbar.doc}/${name.toolbar}"/>
 		<javadoc destdir="${toolbar.doc}/${name.toolbar}" use="true" splitindex="true" useexternalfile="true">
 			<fileset dir="${toolbar.source}/${name.toolbar}">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="${toolbar.source}/${name.toolbar.common}">
 				<include name="**/*.java"/>
 			</fileset>
 			<classpath path="${bin}/${name.common}.jar"/>
@@ -35,11 +40,18 @@
 		</javadoc>
 	</target>
 	
-	<target name="bin" depends="source, bin.dir, bin.toolbar, paths">
+	<target name="bin" depends="source, bin.dir, bin.toolbar, bin.toolbar.common, paths">
 		<jar destfile="${toolbar.bin}/${name.toolbar}.jar">
 			<fileset dir="${toolbar.temp}/${name.toolbar}"/>
 			<manifest>
 				<attribute name="Class-Path" value="${name.core}.jar"/>
+			</manifest>
+		</jar>
+		
+		<jar destfile="${toolbar.bin}/${name.toolbar.common}.jar">
+			<fileset dir="${toolbar.temp}/${name.toolbar.common}"/>
+			<manifest>
+				<attribute name="Class-Path" value="${name.core}.jar ${name.common}.jar ${name.toolbar}.jar"/>
 			</manifest>
 		</jar>
 	</target>
@@ -56,18 +68,37 @@
 		</copy>
 	</target>
 	
+	<target name="bin.toolbar.common" depends="source, bin.dir, bin.toolbar">
+		<javac srcdir="${toolbar.source}/${name.toolbar.common}" destdir="${toolbar.temp}/${name.toolbar.common}">
+			<classpath path="${bin}/${name.core}.jar"/>
+			<classpath path="${bin}/${name.common}.jar"/>
+			<classpath path="${toolbar.temp}/${name.toolbar}"/>
+		</javac>
+		<copy todir="${toolbar.temp}/${name.toolbar.common}">
+			<fileset dir="${toolbar.source}/${name.toolbar.common}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
 	<!-- Paths -->
 	<target name="bin.dir" depends="clean, paths">
 		<mkdir dir="${toolbar.base}"/>
 		<mkdir dir="${toolbar.bin}"/>
 		<mkdir dir="${toolbar.temp}"/>
 		<mkdir dir="${toolbar.temp}/${name.toolbar}"/>
+		<mkdir dir="${toolbar.temp}/${name.toolbar.common}"/>
 	</target>
 
 	<!-- copy source -->
 	<target name="source" depends="source dir, clean, paths">
 		<copy todir="${toolbar.source}/${name.toolbar}">
 			<fileset dir="${location.toolbar}/src">
+				<exclude name="*.svn/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${toolbar.source}/${name.toolbar.common}">
+			<fileset dir="${location.toolbar.common}/src">
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
@@ -78,6 +109,7 @@
 		<mkdir dir="${toolbar.base}"/>
 		<mkdir dir="${toolbar.source}"/>
 		<mkdir dir="${toolbar.source}/${name.toolbar}"/>
+		<mkdir dir="${toolbar.source}/${name.toolbar.common}"/>
 	</target>
 
 

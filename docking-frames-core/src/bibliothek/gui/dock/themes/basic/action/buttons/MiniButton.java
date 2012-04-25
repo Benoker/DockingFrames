@@ -312,7 +312,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
     }
 
     /**
-     * Gets the key for modifying the border which was set by {@link #setMouseNormalBorder(Border)}.
+     * Gets the key for modifying the border which was set by {@link #setNormalBorder(Border)}.
      * @return the key, not <code>null</code> 
      */
     public String getBorderKeyNormal(){
@@ -320,7 +320,7 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
 	}
     
     /**
-     * Gets the key for modifying the border which was set by {@link #setMouseNormalBorder(Border)}.
+     * Gets the key for modifying the border which was set by {@link #setNormalBorder(Border)}.
      * @param borderKeyMousePressed the new key, not <code>null</code>
      */
     public void setBorderKeyNormal( String borderKeyNormal ){
