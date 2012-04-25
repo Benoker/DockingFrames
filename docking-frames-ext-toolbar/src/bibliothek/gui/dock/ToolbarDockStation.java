@@ -20,7 +20,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.Position;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -110,6 +109,9 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	
 	/** the {@link LayoutManager} positioning the children of this station */
 	private SpanToolbarLayoutManager layoutManager;
+	
+	/** information about the {@link Dockable} that is currently dropped */
+	private DropInfo dropInfo;
 
 	// ########################################################
 	// ############ Initialization Managing ###################
@@ -316,106 +318,55 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 					return null;
 				}
 			}
-			return new DropInfo(dockable, item.getMouseX(), item.getMouseY());
+			Point mouse = new Point( item.getMouseX(), item.getMouseY() );
+			SwingUtilities.convertPointFromScreen( mouse, mainPanel );
+			int index = layoutManager.getInsertionIndex( mouse.x, mouse.y );
+			DropInfo info = new DropInfo( dockable, index );
+			if( info.hasNoEffect() ){
+				return null;
+			}
+			return info;
 		} else{
 			return null;
 		}
 	}
 	
-	private class DropInfo extends ToolbarDropInfo<AbstractToolbarDockStation>{
-		public DropInfo( Dockable dockable, int mouseX, int mouseY ){
-			super( dockable, ToolbarDockStation.this, mouseX, mouseY );
+	private class DropInfo extends ToolbarDropInfo {
+		public DropInfo( Dockable dockable, int index ){
+			super( dockable, ToolbarDockStation.this, index );
 		}
 		
 		@Override
 		public void execute(){
-			drop(this);
+			dropInfo = null;
 			layoutManager.setExpandedSpan( -1, false );
+			
+			if( isMove() ){
+				move( getItem(), getIndex() );
+			}
+			else{
+				drop( getItem(), getIndex() );
+			}
 		}
-
-		// Note: draw() is called first by the Controller. It seems
-		// destroy() is called after, after a new StationDropOperation
-		// is created
 
 		@Override
 		public void destroy( StationDropOperation next ){
-			// without this line, nothing is displayed except if you
-			// drag another component
-			ToolbarDockStation.this.indexBeneathMouse = -1;
-			ToolbarDockStation.this.sideBeneathMouse = null;
-			ToolbarDockStation.this.prepareDropDraw = false;
-			mainPanel.repaint();
-			
+			if( dropInfo == this ){
+				dropInfo = null;
+			}
 			if( next == null || next.getTarget() != getTarget() ){
 				layoutManager.setExpandedSpan( -1, true );
 			}
+			mainPanel.repaint();
 		}
 
 		@Override
 		public void draw(){
-			// without this line, nothing is displayed
-			ToolbarDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
-			ToolbarDockStation.this.prepareDropDraw = true;
-			ToolbarDockStation.this.sideBeneathMouse = getSideDockableBeneathMouse();
-			// without this line, line is displayed only on the first
-			// component met
-			layoutManager.setSpanSize( getDockableBeneathMouse() );
-			layoutManager.setExpandedSpan( indexBeneathMouse, true );
+			dropInfo = this;
+			layoutManager.setSpanSize( getItem() );
+			layoutManager.setExpandedSpan( getIndex(), true );
 			mainPanel.repaint();
 		}		
-	}
-
-	/**
-	 * Drop thanks to information collect by dropInfo
-	 * 
-	 * @param dropInfo
-	 */
-	@Override
-	protected void drop( StationDropOperation dropInfo ){
-		@SuppressWarnings("unchecked")
-		final ToolbarDropInfo<ToolbarDockStation> dropInfoToolbar = (ToolbarDropInfo<ToolbarDockStation>) dropInfo;
-		if (dropInfoToolbar.getItemPositionVSBeneathDockable() != Position.CENTER){
-			// Note: Computation of index to insert drag dockable is not the
-			// same between a move() and a drop(), because with a move() it is
-			// as if the drag dockable were remove first then added again in the
-			// list -> so the list is shrunk and the index are shifted behind
-			// the remove dockable. (Note: It's weird because indeed drag() is
-			// called after move()...)
-			int dropIndex;
-			final int indexBeneathMouse = indexOf(dropInfoToolbar
-					.getDockableBeneathMouse());
-			if (dropInfoToolbar.isMove()){
-				int shift = 0;
-				if ((dropInfoToolbar.getItemPositionVSBeneathDockable() == Position.NORTH)
-						|| (dropInfoToolbar.getItemPositionVSBeneathDockable() == Position.WEST)){
-					// index shifted because the drag dockable is above (or
-					// at the left of) the dockable beneath mouse
-					shift = -1;
-				}
-				if ((dropInfoToolbar.getSideDockableBeneathMouse() == Position.SOUTH)
-						|| (dropInfoToolbar.getSideDockableBeneathMouse() == Position.EAST)){
-					// the drag dockable is put below (or at the right of) the
-					// dockable beneath mouse
-					dropIndex = indexBeneathMouse + 1 + shift;
-				} else{
-					// the drag dockable is put above (or at the left of) the
-					// dockable beneath mouse
-					dropIndex = indexBeneathMouse + shift;
-				}
-				move(dropInfoToolbar.getItem(), dropIndex);
-			} else{
-				if ((dropInfoToolbar.getSideDockableBeneathMouse() == Position.SOUTH)
-						|| (dropInfoToolbar.getSideDockableBeneathMouse() == Position.EAST)){
-					// the drag dockable is put below (or at right of) the
-					// dockable beneath mouse
-					drop(dropInfoToolbar.getItem(), indexBeneathMouse + 1);
-				} else{
-					// the drag dockable is put above (or at left of) the
-					// dockable beneath mouse
-					drop(dropInfoToolbar.getItem(), indexBeneathMouse);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -476,7 +427,16 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			if (controller != null){
 				controller.freezeLayout();
 			}
-			this.add(dockable, index);
+			int current = indexOf( dockable );
+			if( current == -1 ){
+				throw new IllegalArgumentException( "dockable is not known to this station" );
+			}
+			if( current < index ){
+				index--;
+			}
+			if( current != index ){
+				this.add(dockable, index);
+			}
 		} finally{
 			if (controller != null){
 				controller.meltLayout();
@@ -720,8 +680,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
 
-		private final int INSETS_SIZE = 1;
-
 		/**
 		 * A panel with a fixed size (minimum, maximum and preferred size have
 		 * same values).
@@ -764,7 +722,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			setBasePane(dockablePane);
 			setSolid(false);
 			dockablePane.setOpaque(false);
-			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this ){
+			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this, dockablePane ){
 				@Override
 				protected void revalidate(){
 					dockablePane.revalidate();	
@@ -824,87 +782,43 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
 			paintRemoval( g );
-			if (prepareDropDraw){
-				if (indexBeneathMouse != -1){
-					final Component componentBeneathMouse = getDockables()
-							.get(indexBeneathMouse).getDisplayer()
-							.getComponent();
-
-					if (componentBeneathMouse != null){
-						// highlights the whole toolbar
-						paint.drawDivider(g2D, this.getVisibleRect());
-
-						// WARNING:
-						// 1. This rectangle stands for the component beneath
-						// mouse. His coordinates are in the frame of reference
-						// its direct parent.
-						// 2. g is in the frame of reference of the overlayPanel
-						// 3. So we need to translate this rectangle in the
-						// frame of reference of the overlay panel, which is the
-						// same that the base pane
-						final Rectangle rectBeneathMouse = componentBeneathMouse
-								.getBounds();
-						final Point pBeneath = rectBeneathMouse.getLocation();
-						SwingUtilities.convertPointToScreen(pBeneath,
-								componentBeneathMouse.getParent());
-						SwingUtilities.convertPointFromScreen(pBeneath,
-								getBasePane());
-						final Rectangle rectangleTranslated = new Rectangle(
-								pBeneath.x, pBeneath.y, rectBeneathMouse.width,
-								rectBeneathMouse.height);
-						switch (getOrientation()) {
-						case VERTICAL:
-							int y;
-							if (sideBeneathMouse == Position.NORTH){
-								y = rectangleTranslated.y;
-							} else{
-								y = rectangleTranslated.y
-										+ rectangleTranslated.height;
-							}
-							// the y value is slightly modified to allow to draw
-							// the insertion lines with a proper larger
-							// (otherwise, part of the insertion line falls
-							// outside of the overlay pane and can't be drawn)
-							if (indexBeneathMouse == 0
-									&& sideBeneathMouse == Position.NORTH){
-								y = y + 1;
-							} else if (indexBeneathMouse == (ToolbarDockStation.this
-									.getDockableCount() - 1)
-									&& sideBeneathMouse == Position.SOUTH){
-								y = y - 2;
-							}
-							paint.drawInsertionLine(g, rectangleTranslated.x,
-									y, rectangleTranslated.x
-											+ rectangleTranslated.width, y);
-
-							break;
-						case HORIZONTAL:
-							int x;
-							if (sideBeneathMouse == Position.WEST){
-								x = rectangleTranslated.x;
-							} else{
-								x = rectangleTranslated.x
-										+ rectangleTranslated.width;
-							}
-							// the x value is slightly modified to allow to draw
-							// the insertion lines with a proper larger
-							// (otherwise, part of the insertion line falls
-							// outside of the overlay pane and can't be drawn)
-							if ((indexBeneathMouse == 0)
-									&& (sideBeneathMouse == Position.WEST)){
-								x = x + 1;
-							} else if ((indexBeneathMouse == (ToolbarDockStation.this
-									.getDockableCount() - 1))
-									&& (sideBeneathMouse == Position.EAST)){
-								x = x - 2;
-							}
-							paint.drawInsertionLine(g, x,
-									rectangleTranslated.y, x,
-									rectangleTranslated.y
-											+ rectangleTranslated.height);
-						}
+			if( dropInfo != null ){
+				int index = dropInfo.getIndex();
+				int x, y, width, height;
+				if( getOrientation() == Orientation.HORIZONTAL ){
+					if( index == 0 ){
+						x = 0;
 					}
+					else{
+						x = dockablePane.getComponent( index-1 ).getX() + dockablePane.getComponent( index-1 ).getWidth();
+					}
+					if( index == dockablePane.getComponentCount() ){
+						width = getWidth() - x;
+					}
+					else{
+						width = dockablePane.getComponent( index ).getX() - x;
+					}
+					y = 0;
+					height = getHeight();
 				}
+				else{
+					if( index == 0 ){
+						y = 0;
+					}
+					else{
+						y = dockablePane.getComponent( index-1 ).getY() + dockablePane.getComponent( index-1 ).getHeight();
+					}
+					if( index == dockablePane.getComponentCount() ){
+						height = getHeight() - y;
+					}
+					else{
+						height = dockablePane.getComponent( index ).getY() - y;
+					}
+					x = 0;
+					width = getWidth();
+				}
+				Rectangle stationBounds = new Rectangle( 0, 0, getWidth(), getHeight() );
+				paint.drawInsertion( g2D, stationBounds, new Rectangle( x, y, width, height ) );
 			}
 		}
 		

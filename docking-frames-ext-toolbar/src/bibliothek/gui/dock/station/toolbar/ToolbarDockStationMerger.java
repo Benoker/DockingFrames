@@ -5,7 +5,6 @@ import java.util.List;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.Position;
 import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -25,7 +24,7 @@ public class ToolbarDockStationMerger extends AbstractToolbarMerger{
 	@Override
 	public void merge( StationDropOperation operation, DockStation parent,
 			DockStation child ){
-		final ToolbarDropInfo<ToolbarDockStation> operationToolbar = (ToolbarDropInfo<ToolbarDockStation>) operation;
+		final ToolbarDropInfo operationToolbar = (ToolbarDropInfo) operation;
 		final ToolbarDockStation station = (ToolbarDockStation) parent;
 		// WARNING: if I don't do a copy of dockables, problem occurs.
 		// Perhaps due to concurrent access to the dockable (drop in
@@ -35,13 +34,7 @@ public class ToolbarDockStationMerger extends AbstractToolbarMerger{
 		for (int i = 0; i < count; i++){
 			insertDockables.add(child.getDockable(i));
 		}
-		int increment = 0;
-		if ((operationToolbar.getSideDockableBeneathMouse() == Position.SOUTH)
-				|| (operationToolbar.getSideDockableBeneathMouse() == Position.EAST)){
-			increment++;
-		}
-		int dropIndex = station.indexOf(operationToolbar
-				.getDockableBeneathMouse()) + increment;
+		int dropIndex = operationToolbar.getIndex();
 		for (int i = 0; i < count; i++){
 			station.drop(insertDockables.get(i), dropIndex++);
 		}

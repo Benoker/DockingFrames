@@ -5,7 +5,6 @@ import java.awt.Component;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.Position;
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.station.StationDropItem;
@@ -40,35 +39,16 @@ public class ToolbarDockStationSample implements DropSample{
 			return Color.BLACK;
 		}
 		else{
-			ToolbarDropInfo<?> info = (ToolbarDropInfo<?>)operation;
+			ToolbarDropInfo info = (ToolbarDropInfo)operation;
 			
-			int index = station.indexOf( info.getDockableBeneathMouse() );
-			Position side = info.getSideDockableBeneathMouse();
+			int index = info.getIndex();
 			
-			int color = 0;
-			switch( side ){
-				case CENTER:
-					color = 255;
-					break;
-				case NORTH:
-				case SOUTH:
-					color = 150;
-					break;
-				case EAST:
-				case WEST:
-					color = 50;
-					break;
-			}
-			
-			index %= 3;
+			index %= 2;
 			if( index == 0 ){
-				return new Color( color, 0, 0 );
+				return Color.RED;
 			}
 			else if( index == 1 ){
-				return new Color( 0, color, 0 );
-			}
-			else if( index == 2 ){
-				return new Color( 0, 0, color );
+				return Color.BLUE;
 			}
 			
 			return Color.WHITE;

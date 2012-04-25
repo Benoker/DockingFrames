@@ -7,7 +7,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.Position;
 import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.station.AbstractDockableStation;
@@ -19,7 +18,6 @@ import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.StationDragOperation;
-import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.ToolbarTabDockStation;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
@@ -60,15 +58,6 @@ public abstract class AbstractToolbarDockStation extends
 	protected DockTitleVersion title;
 	/** A paint to draw lines */
 	protected DefaultStationPaintValue paint;
-	/** the index of the closest dockable above the mouse */
-	protected int indexBeneathMouse = -1;
-	/** closest side of the the closest dockable above the mouse */
-	protected Position sideBeneathMouse = null;
-	/**
-	 * Tells if this station is in prepareDrop state and should draw something
-	 * accordingly
-	 */
-	protected boolean prepareDropDraw = false;
 
 	/** Alignment of the content of this station */
 	protected Orientation orientation = Orientation.HORIZONTAL;
@@ -352,13 +341,6 @@ public abstract class AbstractToolbarDockStation extends
 		value.setProperties((DockController) null);
 		return result;
 	}
-
-	/**
-	 * Drop thanks to information collect by dropInfo
-	 * 
-	 * @param dropInfo
-	 */
-	protected abstract void drop( StationDropOperation dropInfo );
 
 	@Override
 	public boolean canDrag( Dockable dockable ){

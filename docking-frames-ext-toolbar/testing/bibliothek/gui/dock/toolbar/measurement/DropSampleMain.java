@@ -3,6 +3,7 @@ package bibliothek.gui.dock.toolbar.measurement;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintStream;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -12,11 +13,44 @@ import javax.swing.JMenuBar;
 
 import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarGroupDockStation;
 
 public class DropSampleMain {
 	public static void main( String[] args ){
-		toolbarGroupDockStation();
-		// toolbarDockStation();
+//		System.setOut( new PrintStream( System.out ){
+//			public void println(String x){
+//				super.println( x );
+//			}
+//		} );
+		
+		//toolbarContainerDockStation();
+		//toolbarGroupDockStation();
+		toolbarDockStation();
+	}
+	
+	private static void toolbarContainerDockStation(){
+		ToolbarContainerDockStationSample sample = new ToolbarContainerDockStationSample();
+		
+		for( int i = 0; i < 5; i++ ){
+			ToolbarGroupDockStation group = new ToolbarGroupDockStation();
+			ToolbarDockStation[] children = new ToolbarDockStation[4];
+			for( int j = 0; j < children.length; j++ ){
+				children[j] = new ToolbarDockStation();
+				children[j].drop( new ComponentDockable( new JButton( "A" ) ) );
+				children[j].drop( new ComponentDockable( new JButton( "B" ) ) );
+				children[j].drop( new ComponentDockable( new JButton( "C" ) ) );
+			}
+			
+			group.drop( children[0], 0 );
+			group.drop( children[1], 1 );
+			group.drop( children[2], 1, 1 );
+			group.drop( children[3], 2 );
+			
+			sample.getStation().drop( group );
+		}
+		
+		start( sample );
 	}
 	
 	private static void toolbarGroupDockStation(){

@@ -24,12 +24,14 @@ import bibliothek.gui.dock.themes.ThemeManager;
  */
 public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 	private ToolbarDockStation station;
+	private Container parent;
 	private Span[] spans = new Span[]{};
 	private StationSpanFactoryValue factory;
 	private int size;
 	private int index = -1;
 	
-	public SpanToolbarLayoutManager( ToolbarDockStation station ){
+	public SpanToolbarLayoutManager( ToolbarDockStation station, Container parent ){
+		this.parent = parent;
 		this.station = station;
 		factory = new StationSpanFactoryValue( ThemeManager.SPAN_FACTORY + ".toolbar", station ){
 			@Override
@@ -41,6 +43,41 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 	
 	public void setController( DockController controller ){
 		factory.setController( controller );
+	}
+	
+	/**
+	 * Calculates where to insert an item assuming the mouse is at position <code>x/y</code>.
+	 * @param x the x coordinate of the mouse
+	 * @param y the y coordinate of the mouse
+	 * @return the preferred position to insert a new {@link Dockable}
+	 */
+	public int getInsertionIndex( int x, int y ){
+		if( station.getDockableCount() == 0 ){
+			return 0;
+		}
+		int[] positions = new int[parent.getComponentCount()];
+		int location;
+		if( station.getOrientation() == Orientation.HORIZONTAL ){
+			location = x;
+			for( int i = 0; i < positions.length; i++ ){
+				Component child = parent.getComponent( i );
+				positions[i] = child.getX() + child.getWidth()/2;
+			}
+		}
+		else{
+			location = y;
+			for( int i = 0; i < positions.length; i++ ){
+				Component child = parent.getComponent( i );
+				positions[i] = child.getY() + child.getHeight()/2;
+			}
+		}
+		
+		for( int i = 0; i < positions.length; i++ ){
+			if( location <= positions[i] ){
+				return i;
+			}
+		}
+		return positions.length;
 	}
 	
 	public void setSpanSize( Dockable moved ){

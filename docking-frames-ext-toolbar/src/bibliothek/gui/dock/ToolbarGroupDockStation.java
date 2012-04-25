@@ -604,12 +604,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	/**
 	 * Drops thanks to information collect by dropInfo.
 	 * 
-	 * @param dropInfo
+	 * @param dropInfoGroup
 	 */
-	@Override
-	protected void drop( StationDropOperation dropInfo ){
-		final ToolbarGroupDropInfo dropInfoGroup = (ToolbarGroupDropInfo) dropInfo;
-		
+	protected void drop( ToolbarGroupDropInfo dropInfoGroup ){
 		int line = dropInfoGroup.getLine();
 		if( line == -1 ){
 			drop( dropInfoGroup.getItem(), dropInfoGroup.getColumn() );
