@@ -39,8 +39,11 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +77,9 @@ import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBar;
+import bibliothek.gui.dock.station.toolbar.group.SwingColumnScrollBarFactory;
+import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBarFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDropInfo;
@@ -127,8 +133,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	private ToolbarGroupExpander expander;
 
 	/** The {@link PlaceholderStrategy} that is used by {@link #dockables} */
-	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
-			PlaceholderStrategy.PLACEHOLDER_STRATEGY){
+	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY){
 		@Override
 		protected void valueChanged( PlaceholderStrategy oldValue,
 				PlaceholderStrategy newValue ){
@@ -165,7 +170,21 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 * Information about the drop operation that is currently in progress
 	 */
 	private ToolbarGroupDropInfo dropInfo;
+	
+	/** the factory that creates new scrollbars */
+	private ColumnScrollBarFactory scrollbarFactory = new SwingColumnScrollBarFactory();
 
+	/** the scrollbars that are currently shown on this station */
+	private Map<Integer, ColumnScrollBar> scrollbars = new HashMap<Integer, ColumnScrollBar>();
+	
+	/** this listener is added to all {@link ColumnScrollBar}s and ensures an update of positions if the bar changes its value */
+	private AdjustmentListener adjustmentListener = new AdjustmentListener(){
+		@Override
+		public void adjustmentValueChanged( AdjustmentEvent e ){
+			mainPanel.dockablePane.revalidate();
+		}
+	};
+	
 	public ToolbarGridLayoutManager<StationChildHandle> getLayoutManager(){
 		return layoutManager;
 	}
@@ -485,6 +504,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		// dockables first, else doLayout() is done on wrong inside information
 		this.orientation = orientation;
 		fireOrientingEvent();
+		for( ColumnScrollBar scrollbar : scrollbars.values() ){
+			scrollbar.setOrientation( orientation );
+		}
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
 	}
@@ -1083,12 +1105,51 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 					layoutManager.setController( null );
 				}
 				
-				layoutManager = new ToolbarGridLayoutManager<StationChildHandle>(
-						dockablePane, orientation, dockables, ToolbarGroupDockStation.this ){
+				layoutManager = new ToolbarGridLayoutManager<StationChildHandle>( dockablePane, orientation, dockables, ToolbarGroupDockStation.this ){
 					@Override
 					protected Component toComponent( StationChildHandle item ){
 						return item.getDisplayer().getComponent();
 					}
+
+					@Override
+					protected void setShowScrollbar( int column, boolean show ){
+						if( show ){
+							if( !scrollbars.containsKey( column )){
+								ColumnScrollBar bar = scrollbarFactory.create( ToolbarGroupDockStation.this );
+								bar.setOrientation( getOrientation() );
+								scrollbars.put( column, bar );
+								dockablePane.add( bar.getComponent() );
+								bar.addAdjustmentListener( adjustmentListener );
+							}
+						}
+						else{
+							ColumnScrollBar bar = scrollbars.remove( column );
+							if( bar != null ){
+								dockablePane.remove( bar.getComponent() );
+								bar.removeAdjustmentListener( adjustmentListener );
+							}
+						}
+					}
+
+					@Override
+					protected int getScrollbarValue( int column, int required, int available ){
+						ColumnScrollBar scrollbar = scrollbars.get( column );
+						if( scrollbar == null ){
+							return 0;
+						}
+						scrollbar.setValues( required, available );
+						return scrollbar.getValue();
+					}
+
+					@Override
+					protected Component getScrollbar( int column ){
+						ColumnScrollBar scrollbar = scrollbars.get( column );
+						if( scrollbar == null ){
+							return null;
+						}
+						return scrollbar.getComponent();
+					}
+					
 				};
 				dockablePane.setLayout(layoutManager);
 				layoutManager.setController( getController() );

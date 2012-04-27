@@ -72,6 +72,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	
 	/** tells the size of gaps between columns and lines */
 	private ToolbarGroupSpanStrategy<P> spans;
+	
+	/** whether this layout manager should be allowed to create scrollbars */
+	private boolean useScrollbars = true;
 
 	private enum Size {
 		MAXIMUM, MINIMUM, PREFERRED;
@@ -165,6 +168,29 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 * @return the {@link Component} whose position and size will be set
 	 */
 	protected abstract Component toComponent( P item );
+	
+	/**
+	 * Enables or disables a scrollbar for a column.
+	 * @param column the column whose settings are updated
+	 * @param show whether to show scrollbars or not
+	 */
+	protected abstract void setShowScrollbar( int column, boolean show );
+	
+	/**
+	 * Gets the current position of the scrollbar for <code>column</code>, this method is at the same time
+	 * used to inform the scrollbar about the required and available size.
+	 * @param required the amount of pixels required to show the column
+	 * @param available the amount of pixels actually available for showing the column
+	 * @return the offset of the scrollbar, a value between <code>0</code> and <code>required - available</code>
+	 */
+	protected abstract int getScrollbarValue( int column, int required, int available );
+	
+	/**
+	 * Gets the scrollbars that are currently shown for <code>column</code>.
+	 * @param column the column whose scrollbars are requested
+	 * @return the scrollbars or <code>null</code> if not present
+	 */
+	protected abstract Component getScrollbar( int column );
 
 	/**
 	 * Gets an array of columns, where each column is an array of
@@ -310,6 +336,14 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			for( int i = 0; i <= content.length; i++ ){
 				height += spans.getColumn( i );
 			}
+			if( useScrollbars ){
+				for( int i = 0; i < content.length; i++ ){
+					Component bar = getScrollbar( i );
+					if( bar != null ){
+						height += size.get( bar ).height;
+					}
+				}
+			}
 		}
 		else {
 			int index = 0;
@@ -320,6 +354,14 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			}
 			for( int i = 0; i <= content.length; i++ ){
 				width += spans.getColumn( i );
+			}
+			if( useScrollbars ){
+				for( int i = 0; i < content.length; i++ ){
+					Component bar = getScrollbar( i );
+					if( bar != null ){
+						width += size.get( bar ).width;
+					}
+				}
 			}
 		}
 
@@ -421,8 +463,15 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			}
 			for( int i = 0; i < columns.length; i++ ) {
 				y += spans.getColumn( i ) * factor;
-				layout( components[i], i, columns[i], available, y, size );
+				layout( components[i], i, columns[i], available, y );
 				y += columns[i].height;
+				
+				Component bar = getScrollbar( i );
+				if( bar != null ){
+					int barSize = (int)(size.get( bar ).height * factor);
+					bar.setBounds( 0, y, available.width, barSize );
+					y += barSize;
+				}
 			}
 		}
 		else {
@@ -445,29 +494,53 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			}
 			for( int i = 0; i < columns.length; i++ ) {
 				x += spans.getColumn( i ) * factor;
-				layout( components[i], i, columns[i], available, x, size );
+				layout( components[i], i, columns[i], available, x );
 				x += columns[i].width;
+				Component bar = getScrollbar( i );
+				if( bar != null ){
+					int barSize = (int)(size.get( bar ).width * factor);
+					bar.setBounds( x, 0, barSize, available.height );
+					x += barSize;
+				}
 			}
 		}
 	}
 
-	private void layout( Wrapper[] column, int columnIndex, Dimension required, Dimension available, int startPoint, Size size ){
+	/**
+	 * Sets the boundaries of a column of {@link Component}s, this method does not change the boundaries of any
+	 * scrollbar, but does enabled or disable them if necessary.
+	 * @param column the {@link Component}s to update
+	 * @param columnIndex the index of the column
+	 * @param required the amount of pixels required to show <code>column</code>
+	 * @param available the amount of pixels actually available to show <code>column</code>
+	 * @param startPoint where to insert the column, e.g. if the orientation is horizontal, then this point is the y coordinate
+	 */
+	private void layout( Wrapper[] column, int columnIndex, Dimension required, Dimension available, int startPoint ){
 		if( orientation == Orientation.HORIZONTAL ) {
 			double factor = available.width / (double) required.width;
 			if( factor < 1 ){
-				int sum = 0;
-				for( int i = 0, n = column.length - 1; i < n; i++ ) {
-					final Dimension dim = column[i].required;
-					dim.width = (int) (dim.width * factor);
-					sum += dim.width;
+				if( useScrollbars ){
+					factor = 1;
+					setShowScrollbar( columnIndex, true );
 				}
-				column[column.length - 1].required.width = available.width - sum;
+				else{
+					int sum = 0;
+					for( int i = 0, n = column.length - 1; i < n; i++ ) {
+						final Dimension dim = column[i].required;
+						dim.width = (int) (dim.width * factor);
+						sum += dim.width;
+					}
+					column[column.length - 1].required.width = available.width - sum;
+				}
 			}
 			else{
 				factor = 1;
+				if( useScrollbars ){
+					setShowScrollbar( columnIndex, false );
+				}
 			}
 			
-			int x = 0;
+			int x = -getScrollbarValue( columnIndex, required.width, available.width );
 			final int y = startPoint;
 
 			for( int i = 0; i < column.length; i++ ) {
@@ -479,20 +552,29 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		else {
 			double factor = available.height / (double) required.height;
 			if( factor < 1 ){
-				int sum = 0;
-				for( int i = 0, n = column.length - 1; i < n; i++ ) {
-					final Dimension dim = column[i].required;
-					dim.height = (int) (dim.height * factor);
-					sum += dim.height;
+				if( useScrollbars ){
+					factor = 1;
+					setShowScrollbar( columnIndex, true );
 				}
-				column[column.length - 1].required.height = available.height - sum;
+				else{
+					int sum = 0;
+					for( int i = 0, n = column.length - 1; i < n; i++ ) {
+						final Dimension dim = column[i].required;
+						dim.height = (int) (dim.height * factor);
+						sum += dim.height;
+					}
+					column[column.length - 1].required.height = available.height - sum;
+				}
 			}
 			else{
 				factor = 1;
+				if( useScrollbars ){
+					setShowScrollbar( columnIndex, false );
+				}
 			}
 
 			final int x = startPoint;
-			int y = 0;
+			int y = -getScrollbarValue( columnIndex, required.height, available.height );
 
 			for( int i = 0; i < column.length; i++ ) {
 				y += spans.getLine( columnIndex, i ) * factor;
