@@ -27,24 +27,17 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui.dock.station.toolbar;
 
-import java.awt.Component;
-
-import bibliothek.gui.dock.ComponentDockable;
+import bibliothek.gui.dock.ToolbarActionDockable;
 
 /**
- * A factory for reading and writing {@link ComponentDockable}s. Since there is
- * no way to guess which {@link Component} is actually shown by the
- * {@link ComponentDockable} this factory does never create new
- * {@link ComponentDockable}s nor does it store any information.
- * 
+ * A factory for reading and writing {@link ToolbarActionDockable}s.
  * @author Benjamin Sigg
  */
-public class ToolbarPartDockFactory extends DummyDockFactory<ComponentDockable>{
+public class ToolbarActionDockableFactory extends DummyDockFactory<ToolbarActionDockable>{
 	/** unique unmodifiable identifier of this factory */
-	public static final String ID = "ToolbarPartDockFactory";
+	public static final String ID = "ToolbarActionDockableFactory";
 
 	@Override
 	public String getID(){
