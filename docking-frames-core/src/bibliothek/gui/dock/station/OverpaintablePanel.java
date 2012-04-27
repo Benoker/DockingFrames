@@ -269,6 +269,7 @@ public class OverpaintablePanel extends JLayeredPane {
         
     private class Overlay extends JPanel{
         public Overlay(){
+        	setLayout( null );
             setOpaque( false );
             Workarounds.getDefault().markAsGlassPane( this );
         }

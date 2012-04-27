@@ -29,12 +29,14 @@
  */
 
 package bibliothek.gui.dock.toolbar;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -44,7 +46,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Orientation;
@@ -53,10 +54,8 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
-import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
-import bibliothek.gui.dock.themes.basic.NoSpanFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarGroupDockStation {
@@ -90,6 +89,10 @@ public class TestToolbarGroupDockStation {
 		final ToolbarContainerDockStation north = new ToolbarContainerDockStation( Orientation.HORIZONTAL, 5 );
 		final ToolbarContainerDockStation south = new ToolbarContainerDockStation( Orientation.HORIZONTAL, 5 );
 
+		JPanel center = new JPanel();
+		center.setBorder( BorderFactory.createLineBorder( Color.BLACK, 1 ) );
+		frame.add( center, BorderLayout.CENTER );
+		
 		controller.add( west );
 		controller.add( east );
 		controller.add( north );

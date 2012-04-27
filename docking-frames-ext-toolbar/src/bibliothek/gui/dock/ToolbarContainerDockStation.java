@@ -33,8 +33,7 @@ package bibliothek.gui.dock;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.LayoutManager2;
-import java.awt.Point;
+import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -43,9 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.DockController;
@@ -74,6 +71,8 @@ import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
@@ -87,6 +86,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarContainerDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerLayoutManager;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.station.toolbar.layer.ToolbarContainerDropLayer;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
@@ -180,6 +180,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/** This {@link LayoutManager} is responsible for updating the boundaries of all {@link Dockable}s and keeping track of {@link Span}s */
 	private ToolbarContainerLayoutManager layoutManager;
 
+	/** the number of pixels outside this station where a drag and drop operation is still possible */
+	private int sideSnapSize = 10;
+	
 	/**
 	 * Constructs a new ContainerLineStation
 	 */
@@ -244,17 +247,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		final JPanel panel = new JPanel();
 
 		panel.setOpaque( false );
-		
-//		switch( orientation ){
-//			case HORIZONTAL:
-//				panel.setLayout( new BoxLayout( panel, BoxLayout.X_AXIS ) );
-//				panel.setAlignmentX( Component.LEFT_ALIGNMENT );
-//				break;
-//			case VERTICAL:
-//				panel.setLayout( new BoxLayout( panel, BoxLayout.Y_AXIS ) );
-//				panel.setAlignmentY( Component.TOP_ALIGNMENT );
-//				break;
-//		}
 		
 		layoutManager = new ToolbarContainerLayoutManager( panel, ToolbarContainerDockStation.this );
 		panel.setLayout( layoutManager );
@@ -418,6 +410,32 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				removal = null;
 				getComponent().repaint();
 			}
+		};
+	}
+	
+	/**
+	 * Sets the number of pixels outside the station where a drag and drop
+	 * operation can still start.
+	 * @param sideSnapSize the size in pixels
+	 */
+	public void setSideSnapSize( int sideSnapSize ){
+		this.sideSnapSize = sideSnapSize;
+	}
+	
+	/**
+	 * Gets the number of pixels outside the station where a drag and drop 
+	 * operation can still start
+	 * @return the size in pixels
+	 */
+	public int getSideSnapSize(){
+		return sideSnapSize;
+	}
+	
+	@Override
+	public DockStationDropLayer[] getLayers(){
+		return new DockStationDropLayer[]{
+				new DefaultDropLayer( this ),
+				new ToolbarContainerDropLayer( this )
 		};
 	}
 	
