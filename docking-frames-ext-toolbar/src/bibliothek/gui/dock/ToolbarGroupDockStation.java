@@ -33,6 +33,7 @@ package bibliothek.gui.dock;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -1113,6 +1114,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 					@Override
 					protected void setShowScrollbar( int column, boolean show ){
+						boolean change = false;
+						
 						if( show ){
 							if( !scrollbars.containsKey( column )){
 								ColumnScrollBar bar = scrollbarFactory.create( ToolbarGroupDockStation.this );
@@ -1120,6 +1123,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 								scrollbars.put( column, bar );
 								dockablePane.add( bar.getComponent() );
 								bar.addAdjustmentListener( adjustmentListener );
+								change = true;
 							}
 						}
 						else{
@@ -1127,7 +1131,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 							if( bar != null ){
 								dockablePane.remove( bar.getComponent() );
 								bar.removeAdjustmentListener( adjustmentListener );
+								change = true;
 							}
+						}
+						if( change ){
+							revalidateLater();
 						}
 					}
 
@@ -1155,6 +1163,34 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 				layoutManager.setController( getController() );
 			}
 			mainPanel.revalidate();
+		}
+		
+		/**
+		 * Asynchronously revalidates {@link #dockablePane}, but only if its size did not change
+		 */
+		private void revalidateLater(){
+			if( orientation == Orientation.VERTICAL ){
+				final int height = dockablePane.getHeight();
+				EventQueue.invokeLater( new Runnable(){
+					@Override
+					public void run(){
+						if( height == dockablePane.getHeight() ){
+							dockablePane.revalidate();	
+						}
+					}
+				});
+			}
+			else{
+				final int width = dockablePane.getWidth();
+				EventQueue.invokeLater( new Runnable(){
+					@Override
+					public void run(){
+						if( width == dockablePane.getWidth() ){
+							dockablePane.revalidate();	
+						}
+					}
+				});
+			}
 		}
 
 		@Override
