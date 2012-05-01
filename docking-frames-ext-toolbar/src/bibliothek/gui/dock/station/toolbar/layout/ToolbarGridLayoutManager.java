@@ -451,8 +451,10 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				for( int i = 0, n = columns.length - 1; i < n; i++ ) {
 					columns[i].height = (int) (factor * columns[i].height);
 					sum += columns[i].height;
+					sum += (int)(factor * spans.getColumn( i ));
 				}
-				columns[columns.length - 1].height = available.height - sum;
+				sum += (int)(factor * spans.getColumn( columns.length ));
+				columns[columns.length - 1].height = Math.min( available.height - sum, columns[columns.length - 1].height );
 			}
 			else{
 				factor = 1;
@@ -481,8 +483,10 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				for( int i = 0, n = columns.length - 1; i < n; i++ ) {
 					columns[i].width = (int) (factor * columns[i].width);
 					sum += columns[i].width;
+					sum += (int)(factor * spans.getColumn( i ));
 				}
-				columns[columns.length - 1].width = available.width - sum;
+				sum += (int)(factor * spans.getColumn( columns.length ));
+				columns[columns.length - 1].width = Math.min( available.width - sum, columns[columns.length - 1].width );
 			}
 			else{
 				factor = 1;

@@ -55,8 +55,8 @@ public class DropSampleMain {
 //		} );
 		
 		//toolbarContainerDockStation();
-		//toolbarGroupDockStation();
-		toolbarDockStation();
+		toolbarGroupDockStation();
+		//toolbarDockStation();
 	}
 	
 	private static void toolbarContainerDockStation(){
