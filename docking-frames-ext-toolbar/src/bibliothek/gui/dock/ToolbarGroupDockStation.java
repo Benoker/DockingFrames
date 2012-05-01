@@ -79,6 +79,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBar;
+import bibliothek.gui.dock.station.toolbar.group.SlimScrollbar;
 import bibliothek.gui.dock.station.toolbar.group.SwingColumnScrollBarFactory;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBarFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
@@ -100,9 +101,11 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
 
 /**
@@ -126,6 +129,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 * {@link DisplayerFactory}s
 	 */
 	public static final String DISPLAYER_ID = "toolbar.group";
+	
+	/** Key for the factory that creates new {@link ColumnScrollBar}s */
+	public static final PropertyKey<ColumnScrollBarFactory> SCROLLBAR_FACTORY = 
+			new PropertyKey<ColumnScrollBarFactory>( "dock.scrollbarFactory", new ConstantPropertyFactory<ColumnScrollBarFactory>( SlimScrollbar.FACTORY ), true );
 
 	/** A list of all children organized in columns and lines */
 	private final DockablePlaceholderToolbarGrid<StationChildHandle> dockables = new DockablePlaceholderToolbarGrid<StationChildHandle>();
@@ -173,7 +180,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	private ToolbarGroupDropInfo dropInfo;
 	
 	/** the factory that creates new scrollbars */
-	private ColumnScrollBarFactory scrollbarFactory = new SwingColumnScrollBarFactory();
+	private PropertyValue<ColumnScrollBarFactory> scrollbarFactory = new PropertyValue<ColumnScrollBarFactory>( SCROLLBAR_FACTORY ){
+		@Override
+		protected void valueChanged( ColumnScrollBarFactory oldValue, ColumnScrollBarFactory newValue ){
+			resetScrollbars();
+		}
+	};
 
 	/** the scrollbars that are currently shown on this station */
 	private Map<Integer, ColumnScrollBar> scrollbars = new HashMap<Integer, ColumnScrollBar>();
@@ -483,6 +495,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			displayers.setController(controller);
 			mainPanel.setController(controller);
 			layoutManager.setController( controller );
+			scrollbarFactory.setProperties( controller );
 
 			if (getController() != null){
 				dockables.bind();
@@ -1022,6 +1035,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		handle.updateDisplayer();
 		addComponent(handle);
 	}
+	
+	private void resetScrollbars(){
+		for( Map.Entry<Integer, ColumnScrollBar> entry : scrollbars.entrySet() ){
+			ColumnScrollBar replacement = scrollbarFactory.getValue().create( this );
+			mainPanel.dockablePane.remove( entry.getValue().getComponent() );
+			entry.setValue( replacement );
+			mainPanel.dockablePane.add( entry.getValue().getComponent() );
+		}
+	}
 
 	/**
 	 * This panel is used as base of the station. All children of the station
@@ -1118,7 +1140,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 						
 						if( show ){
 							if( !scrollbars.containsKey( column )){
-								ColumnScrollBar bar = scrollbarFactory.create( ToolbarGroupDockStation.this );
+								ColumnScrollBar bar = scrollbarFactory.getValue().create( ToolbarGroupDockStation.this );
 								bar.setOrientation( getOrientation() );
 								scrollbars.put( column, bar );
 								dockablePane.add( bar.getComponent() );
