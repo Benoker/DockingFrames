@@ -1201,7 +1201,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			
 			if( dropInfo != null ){
 				if( dropInfo.getLine() == -1 ){
-					paint.drawInsertion( g2D, new Rectangle( 0, 0, mainPanel.getWidth(), mainPanel.getHeight()), layoutManager.getGapBounds( dropInfo.getColumn() ));
+					paint.drawInsertion( g2D, new Rectangle( 0, 0, mainPanel.getWidth(), mainPanel.getHeight()), layoutManager.getGapBounds( dropInfo.getColumn(), false ));
 				}
 				else{
 					paint.drawInsertion( g2D, new Rectangle( 0, 0, mainPanel.getWidth(), mainPanel.getHeight()), layoutManager.getGapBounds( dropInfo.getColumn(), dropInfo.getLine() ));

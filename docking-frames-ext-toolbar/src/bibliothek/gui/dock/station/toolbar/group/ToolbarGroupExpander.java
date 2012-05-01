@@ -285,9 +285,6 @@ public class ToolbarGroupExpander {
 		private Rectangle getBoundaries( Component component ){
 			Rectangle bounds = component.getBounds();
 			if( SwingUtilities.isDescendingFrom( component, station.getComponent() ) ) {
-				if( !station.getComponent().isValid() ){
-					station.getComponent().validate();
-				}
 				return SwingUtilities.convertRectangle( component.getParent(), bounds, station.getComponent() );
 			}
 			else {

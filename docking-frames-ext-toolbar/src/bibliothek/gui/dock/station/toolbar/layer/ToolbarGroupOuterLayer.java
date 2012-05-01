@@ -105,7 +105,7 @@ public class ToolbarGroupOuterLayer extends ToolbarGroupInnerLayer{
 			
 			// check if the point is *between* two children
 			for( int i = 0; i <= count; i++ ){
-				Rectangle bound = layout.getGapBounds( i );
+				Rectangle bound = layout.getGapBounds( i, true );
 				if( isNear( bound, size, mouseCoord )){
 					return true;
 				}

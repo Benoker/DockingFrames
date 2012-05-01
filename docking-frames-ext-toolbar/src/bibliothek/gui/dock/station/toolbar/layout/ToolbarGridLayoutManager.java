@@ -732,15 +732,16 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 * this method does have a width and a height smaller then the width and
 	 * height of the {@link Container}.
 	 * 
-	 * @param column
-	 *            the column whose left gap is searched
+	 * @param column the column whose left gap is searched
+	 * @param includeScrollBars if <code>true</code>, then the scrollbars are part of the gap as well
+	 *            
 	 * @return the gap, <code>null</code> if one columns has no cells. This
 	 *         however is a case that should not appear in a live client and
 	 *         that indicates a bigger issue.
 	 * @throws IllegalArgumentException
 	 *             if <code>column</code> is out of bounds
 	 */
-	public Rectangle getGapBounds( int column ){
+	public Rectangle getGapBounds( int column, boolean includeScrollBars ){
 		Wrapper[][] cells = layout();
 		Rectangle left;
 		Insets insets = parent.getInsets();
@@ -775,6 +776,13 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			int y = left.y + left.height;
 			int width = Math.max( left.x + left.width, right.x + right.width ) - x;
 			int height = right.y - y;
+			if( !includeScrollBars && column > 0 ){
+				Component bar = getScrollbar( column-1 );
+				if( bar != null ){
+					x += bar.getWidth();
+					width -= bar.getWidth();
+				}
+			}
 			return new Rectangle( x, y, width, height );
 		}
 		else {
@@ -782,6 +790,13 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			int y = Math.min( left.y, right.y );
 			int width = right.x - x;
 			int height = Math.max( left.y + left.height, right.y + right.height ) - y;
+			if( !includeScrollBars && column > 0 ){
+				Component bar = getScrollbar( column-1 );
+				if( bar != null ){
+					x += bar.getWidth();
+					width -= bar.getWidth();
+				}
+			}
 			return new Rectangle( x, y, width, height );
 		}
 	}
