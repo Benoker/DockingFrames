@@ -73,6 +73,7 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.action.predefined.CCloseAction;
 import bibliothek.gui.dock.common.action.util.CDefaultDockActionDistributor;
 import bibliothek.gui.dock.common.event.CControlListener;
+import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.event.CDoubleClickListener;
@@ -187,8 +188,8 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.text.DefaultTextScheme;
 import bibliothek.util.Filter;
 import bibliothek.util.Todo;
-import bibliothek.util.Version;
 import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 import bibliothek.util.xml.XIO;
@@ -320,6 +321,9 @@ public class CControl {
 
     /** the model which is used to translate between {@link #preferences} and <code>this</code> */
     private PreferenceModel preferenceModel;
+    
+    /** if <code>true</code>, then minimizing a Dockable will automatically transfer focus to a not minimized Dockable */
+    private boolean transferFocusOnMinimize = true;
 
     /**
      * Creates a new control. Note that a control should know the main
@@ -460,6 +464,7 @@ public class CControl {
         initExtensions( controller );
         initFocusListeners( controller );
         initInputListener( controller );
+        initMinimizeFocusTransfer( controller );
 
         frontend = factory.createFrontend( access, controller );
         frontend.setOwner( window );
@@ -621,6 +626,34 @@ public class CControl {
                 }
             }
         });
+    }
+    
+    /**
+     * Adds a {@link CDockableStateListener} to this {@link CControl}, if a {@link CDockable} is
+     * {@link ExtendedMode#MINIMIZED minimized}, another {@link Dockable} receives the focus. Subclasses
+     * may override this method to disable or modify the feature.
+     * @param controller the controller used by this {@link CControl}
+     */
+    protected void initMinimizeFocusTransfer( DockController controller ){
+    	addStateListener( new CDockableAdapter(){
+    		@Override
+    		public void extendedModeChanged( CDockable dockable, ExtendedMode mode ){
+    			if( transferFocusOnMinimize ){
+		    		if( mode == ExtendedMode.MINIMIZED ){
+		    			Dockable[] history = getController().getFocusHistory().getHistory();
+		    			for( int i = history.length-1; i >= 0; i-- ){
+		    				Dockable next = history[i];
+		    				if( next instanceof CommonDockable ){
+		    					CDockable cdockable = ((CommonDockable)next).getDockable();
+		    					if( cdockable.getExtendedMode() != ExtendedMode.MINIMIZED ){
+		    						getController().setFocusedDockable( cdockable.intern(), false );
+		    					}
+		    				}
+		    			}
+		    		}
+    			}
+    		}
+    	});
     }
 
     private void initInputListener( DockController controller ){
@@ -2580,6 +2613,25 @@ public class CControl {
     public boolean isRevertToBasicModes(){
     	return intern().isRevertToBasicModes();
     }
+    
+    /**
+     * If a {@link CDockable} is minimized, the focus can be automatically transfered to another {@link CDockable}. This
+     * feature is implemented by the method {@link #initMinimizeFocusTransfer(DockController)}, which may be
+     * overriden by subclasses.
+     * @param transferFocusOnMinimize whether to enable the feature or not (default is <code>true</code>)
+     */
+    public void setTransferFocusOnMinimize( boolean transferFocusOnMinimize ){
+		this.transferFocusOnMinimize = transferFocusOnMinimize;
+	}
+    
+    /**
+     * If a {@link CDockable} is minimized, the focus can be automatically transfered to another {@link Dockable}.
+     * @return whether the focus will be transfered
+     * @see #setTransferFocusOnMinimize(boolean)
+     */
+    public boolean isTransferFocusOnMinimize(){
+		return transferFocusOnMinimize;
+	}
 
     /**
      * Writes the current and all known layouts into <code>file</code>.<br>
