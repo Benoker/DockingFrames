@@ -52,6 +52,7 @@ import bibliothek.gui.dock.support.mode.ModeManagerListener;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.gui.dock.support.mode.UndoableModeSettings;
+import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.IconManager;
 import bibliothek.util.Path;
 import bibliothek.util.container.Single;
@@ -348,6 +349,36 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
             return null;
         
         return cmode.getCLocation( dockable, location );
+    }
+    
+    /**
+     * Tries to find the "optimal spot" where to put a new child onto <code>station</code>. In this
+     * case the optimal spot is {@link CLocation#aside()} the latest focused child of <code>station</code>.
+     * @param station the station where a {@link CDockable} is about to be dropped onto
+     * @return the preferred location of the new child
+     */
+    public CLocation getDropLocation( CStation<?> station ){
+    	Dockable[] history = control.getOwner().getController().getFocusHistory().getHistory();
+    	for( int i = history.length-1; i >= 0; i-- ){
+    		Dockable next = history[i];
+    		if( next instanceof CommonDockable && next.asDockStation() != station.getStation() && DockUtilities.isAncestor( station.getStation(), next )){
+    			CDockable cnext = ((CommonDockable)next).getDockable();
+    			boolean valid;
+    			if( station.isWorkingArea() ){
+    				valid = cnext.getWorkingArea() == station;
+    			}
+    			else{
+    				valid = cnext.getWorkingArea() == null;
+    			}
+    			if( valid ){
+    				CLocation location = cnext.getBaseLocation();
+    				if( location != null ){
+    					return location.aside();
+    				}
+        		}
+    		}
+    	}
+    	return station.getStationLocation();
     }
     
     @Override

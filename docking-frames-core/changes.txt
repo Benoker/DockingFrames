@@ -723,6 +723,7 @@
  - Bugfix: When multiple listeners are receiving Key- and DoubleClick-Events, the the listeners further down the tree are invoked first.
  - API: New FocusHistory keeps track of the order of focused Dockables, can be accessed through DockController.getFocusHistory
  - API: CControl will transfer the focus from minimized Dockables to not minimized Dockables
+ - API: CWorkingArea offers the new method "show" which show a Dockable at the "optimal spot"
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

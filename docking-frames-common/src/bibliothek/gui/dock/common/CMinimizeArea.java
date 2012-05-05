@@ -156,6 +156,13 @@ public class CMinimizeArea extends JPanel implements CStation<CFlapDockStation>{
         return new CMinimizeAreaLocation( this );
     }
     
+    public CLocation getDropLocation(){
+    	if( access == null ){
+    		return null;
+    	}
+    	return access.getLocationManager().getDropLocation( this );
+    }
+    
     public boolean isWorkingArea() {
         return false;
     }

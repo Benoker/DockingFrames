@@ -92,6 +92,14 @@ public abstract class AbstractDockableCStation<S extends CommonDockStation<?, ?>
     public CLocation getStationLocation() {
         return location;
     }
+    
+    public CLocation getDropLocation(){
+    	CControlAccess control = getControlAccess();
+    	if( control == null ){
+    		return null;
+    	}
+    	return control.getLocationManager().getDropLocation( this );
+    }
 
     public String getUniqueId() {
         return id;
