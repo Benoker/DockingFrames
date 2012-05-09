@@ -100,7 +100,6 @@ public class RectGradientPainter extends BaseTabComponent {
 	public RectGradientPainter( EclipseTabPane pane, Dockable dockable ){
 	    super( pane, dockable );
 	    
-		setLayout( null );
 		setOpaque( false );
 		
         update();

@@ -260,6 +260,8 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy() );
         buttons = new ButtonPanel( false );
 		add( buttons );
+		
+		setLayout( new BaseTabComponentLayoutManager( this, label, buttons ) );
     }
     
     /**
@@ -754,6 +756,18 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         return buttons;
     }
     
+    /**
+     * Tells whether the {@link #getButtons() buttons} contain the position <code>x/y</code>.
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return <code>true</code> if the buttons contains this location
+     */
+    protected boolean containsButton( int x, int y ){
+    	x -= buttons.getX();
+    	y -= buttons.getY();
+    	return buttons.contains( x, y );
+    }
+    
     @Override
     public void setEnabled( boolean enabled ){
     	if( isEnabled() != enabled ){
@@ -838,59 +852,6 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
 		cleanPreviousTabSelected();
 	}
 
-    @Override
-    public Dimension getMinimumSize(){
-    	return getPreferredSize();
-    }
-    
-    @Override
-    public Dimension getPreferredSize(){
-    	if( label == null )
-    		return new Dimension( 1, 1 );
-
-    	Dimension labelSize = label.getPreferredSize();
-    	Dimension buttonSize = buttons.getPreferredSize();
-
-    	if( orientation.isHorizontal() ){
-    		return new Dimension(
-    				labelSize.width + buttonSize.width + labelInsets.left + labelInsets.right + buttonInsets.left + buttonInsets.right,
-    				Math.max( labelSize.height + labelInsets.top + labelInsets.bottom, buttonSize.height + buttonInsets.top + buttonInsets.bottom ));
-    	}
-    	else{
-    		return new Dimension(
-    				Math.max( labelSize.width + labelInsets.left + labelInsets.right, buttonSize.width + buttonInsets.left + buttonInsets.right ),
-    				labelSize.height + buttonSize.height + labelInsets.top + labelInsets.bottom + buttonInsets.top + buttonInsets.bottom );
-    	}
-    }
-    
-    @Override
-    public void doLayout(){
-    	if( label != null && buttons != null ){
-    		Dimension labelSize = label.getPreferredSize();
-    		Dimension buttonSize = buttons.getPreferredSize();
-    		
-    		int width = getWidth();
-    		int height = getHeight();
-    		
-    		if( orientation.isHorizontal() ){
-    			int labelHeight = labelSize.height + labelInsets.top + labelInsets.bottom;
-    			int buttonHeight = buttonSize.height + buttonInsets.top + buttonInsets.bottom;
-    			
-    			label.setBounds( labelInsets.left, (height-labelHeight)/2 + labelInsets.top, labelSize.width, labelSize.height );
-    			buttons.setBounds( width - buttonSize.width - buttonInsets.right, (height-buttonHeight)/2 + buttonInsets.top, buttonSize.width, buttonSize.height );
-    		}
-    		else{
-    			int labelWidth = labelSize.width + labelInsets.left + labelInsets.right;
-    			int buttonWidth = buttonSize.width + buttonInsets.left + buttonInsets.right;
-    			
-    			label.setBounds( (width-labelWidth)/2 + labelInsets.left, labelInsets.top, labelSize.width, labelSize.height );
-    			buttons.setBounds( (width - buttonWidth)/2 + buttonInsets.left, height - buttonSize.height - buttonInsets.bottom, buttonSize.width, buttonSize.height );
-    		}
-    		
-    		repaint();
-    	}
-    }
-    
     /**
      * A color used in the border
      * @author Benjamin Sigg

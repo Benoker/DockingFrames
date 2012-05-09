@@ -119,7 +119,6 @@ public class ArchGradientPainter extends BaseTabComponent {
 	public ArchGradientPainter( EclipseTabPane pane, Dockable dockable ){
 		super( pane, dockable );
 
-		setLayout( null );
 		setOpaque( false );
 
 		update();
@@ -381,6 +380,10 @@ public class ArchGradientPainter extends BaseTabComponent {
 		if( !super.contains( x, y ) )
 			return false;
 
+		if( containsButton( x, y )){
+			return true;
+		}
+		
 		if( isSelected() ){
 			int w = getWidth();
 			int h = getHeight();

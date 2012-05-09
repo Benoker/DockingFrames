@@ -147,7 +147,6 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    public CGlassEclipseTabPainter (EclipseTabPane pane, Dockable dockable) {
       super(pane, dockable, ".glass");
 
-      setLayout(null);
       setOpaque(false);
 
       initAdditionalColors();
@@ -475,6 +474,10 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
          return (false);
       }
 
+      if( containsButton( x, y )){
+    	  return true;
+      }
+      
       boolean bRet = true;
       if (isSelected()) {
          Shape s = createSelectedTabShape(getWidth(), getHeight(), false);
