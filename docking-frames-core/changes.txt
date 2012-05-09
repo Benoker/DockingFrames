@@ -724,6 +724,9 @@
  - API: New FocusHistory keeps track of the order of focused Dockables, can be accessed through DockController.getFocusHistory
  - API: CControl will transfer the focus from minimized Dockables to not minimized Dockables
  - API: CWorkingArea offers the new method "show" which show a Dockable at the "optimal spot"
+
+[v1.1.1p7c]
+ - Bugfix: Focus transfer on minimization is now forced, this prevents focus stealing when minimizing a non-focused Dockable.
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

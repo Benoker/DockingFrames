@@ -464,7 +464,7 @@ public class CControl {
         initExtensions( controller );
         initFocusListeners( controller );
         initInputListener( controller );
-        initMinimizeFocusTransfer( controller );
+        initTransferFocusOnMinimize( controller );
 
         frontend = factory.createFrontend( access, controller );
         frontend.setOwner( window );
@@ -633,8 +633,9 @@ public class CControl {
      * {@link ExtendedMode#MINIMIZED minimized}, another {@link Dockable} receives the focus. Subclasses
      * may override this method to disable or modify the feature.
      * @param controller the controller used by this {@link CControl}
+     * @see #setTransferFocusOnMinimize(boolean)
      */
-    protected void initMinimizeFocusTransfer( DockController controller ){
+    protected void initTransferFocusOnMinimize( DockController controller ){
     	addStateListener( new CDockableAdapter(){
     		@Override
     		public void extendedModeChanged( CDockable dockable, ExtendedMode mode ){
@@ -646,7 +647,7 @@ public class CControl {
 		    				if( next instanceof CommonDockable ){
 		    					CDockable cdockable = ((CommonDockable)next).getDockable();
 		    					if( cdockable.getExtendedMode() != ExtendedMode.MINIMIZED ){
-		    						getController().setFocusedDockable( cdockable.intern(), false );
+		    						getController().setFocusedDockable( cdockable.intern(), true );
 		    					}
 		    				}
 		    			}
@@ -746,7 +747,7 @@ public class CControl {
      * Called during construction of this {@link CControl}, this method adds {@link DockFactory}s
      * to the {@link #intern() intern representation} of this {@link CControl}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void initFactories(){
         CommonSingleDockableFactory backupFactory = register.getBackupFactory();
         frontend.registerFactory( backupFactory );
@@ -2616,7 +2617,7 @@ public class CControl {
     
     /**
      * If a {@link CDockable} is minimized, the focus can be automatically transfered to another {@link CDockable}. This
-     * feature is implemented by the method {@link #initMinimizeFocusTransfer(DockController)}, which may be
+     * feature is implemented by the method {@link #initTransferFocusOnMinimize(DockController)}, which may be
      * overriden by subclasses.
      * @param transferFocusOnMinimize whether to enable the feature or not (default is <code>true</code>)
      */
