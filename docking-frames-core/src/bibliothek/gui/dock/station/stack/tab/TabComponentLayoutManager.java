@@ -249,6 +249,14 @@ public class TabComponentLayoutManager implements LayoutManager{
 		}
 	}
 	
+	/**
+	 * Gets the current position of the tab in relation to the {@link Dockable}s.
+	 * @return the location of the tab
+	 */
+	public TabPlacement getOrientation(){
+		return orientation;
+	}
+	
 	public void addLayoutComponent( String name, Component comp ){
 		if( comp != label && comp != actions ){
 			throw new IllegalArgumentException( "must add either label or panel" );
@@ -332,7 +340,14 @@ public class TabComponentLayoutManager implements LayoutManager{
 		}
 		else{
 			actions.setVisible( false );
-			actionsSize = new Dimension( 0, 0 );
+			if( configuration.isHiddenActionUsingSpace() ){
+				actionsSize = new Dimension( 
+						actionInsets.right,
+						actionInsets.bottom );
+			}
+			else{
+				actionsSize = new Dimension( 0, 0 );
+			}
 		}
 		
 		
@@ -406,6 +421,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 				}
 			break;
 		}
+		label.setIconHidden( !shouldShowIcon() );
 	}
 	
 	/**
@@ -468,6 +484,38 @@ public class TabComponentLayoutManager implements LayoutManager{
 			}
 			return minSize <= parent.getHeight();
 		}
+	}
+	
+	/**
+	 * Tells whether the icon should be shown for the current size of {@link #getLabel() the label}.
+	 * @return whether to show the icon
+	 */
+	protected boolean shouldShowIcon(){
+		if( label.getIcon() == null ){
+			return true;
+		}
+		
+		if( orientation.isHorizontal() ){
+			switch( getConfiguration().getIconHiding() ){
+				case NEVER:
+					return true;
+				case NO_SPACE_LEFT:
+					return label.getWidth() >= label.getIconOffset() + label.getIcon().getIconWidth();
+				case TEXT_DISAPPEARING:
+					return label.getWidth() >= label.getPreferredSize().getWidth();
+			}
+		}
+		else{
+			switch( getConfiguration().getIconHiding() ){
+				case NEVER:
+					return true;
+				case NO_SPACE_LEFT:
+					return label.getHeight() >= label.getIconOffset() + label.getIcon().getIconHeight();
+				case TEXT_DISAPPEARING:
+					return label.getHeight() >= label.getPreferredSize().getHeight();
+			}
+		}
+		return true;
 	}
 		
 	public void removeLayoutComponent( Component comp ){

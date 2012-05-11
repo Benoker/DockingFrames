@@ -728,6 +728,9 @@
 [v1.1.1p7c]
  - Bugfix: Focus transfer on minimization is now forced, this prevents focus stealing when minimizing a non-focused Dockable.
  - Bugfix: Shrinking an Eclipse-Tab now keeps the action visible and clickable as long as possible. Text and icon of the tab have lesser importance than the action.
+
+[v1.1.1p7d]
+ - API: New property StackDockStation.TAB_CONFIGURATION allows to fine tune the look of tabs 
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them
