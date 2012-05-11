@@ -28,6 +28,7 @@ package bibliothek.gui.dock.themes.basic.action.menu;
 
 import java.util.Set;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 
@@ -106,7 +107,7 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
 
                 if( item != null ){
                 	item.setEnabled( action.isEnabled( dockable ));
-                    item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ));
+                    item.setIcon( getIcon( ActionContentModifier.NONE_HORIZONTAL ) );
                     item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
                     item.setText( action.getText( dockable ));
                     item.setToolTipText( action.getTooltipText( dockable ));
@@ -115,6 +116,17 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
             else
                 throw new IllegalStateException( "Handler is already bound" );
         }
+    }
+    
+    private Icon getIcon( ActionContentModifier modifier ){
+    	while( modifier != null ){
+    		Icon icon = action.getIcon( dockable, modifier );
+    		if( icon != null ){
+    			return icon;
+    		}
+    		modifier = modifier.getBackup();
+    	}
+    	return null;
     }
     
     /**
@@ -147,10 +159,10 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
         public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
         	if( item != null ){
 	        	if( modifier == null || modifier == ActionContentModifier.NONE_HORIZONTAL ){
-	        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ) );
+	        		item.setIcon( getIcon( ActionContentModifier.NONE_HORIZONTAL ) );
 	        	}
 	        	else if( modifier == null || modifier == ActionContentModifier.NONE ){
-	        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ) );
+	        		item.setIcon( getIcon( ActionContentModifier.NONE_HORIZONTAL ) );
 	        	}
 	        	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
 	        		item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
