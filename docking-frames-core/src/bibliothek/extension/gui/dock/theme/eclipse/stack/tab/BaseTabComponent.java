@@ -48,6 +48,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.station.stack.tab.Tab;
+import bibliothek.gui.dock.station.stack.tab.TabComponentLayoutManager;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
@@ -56,7 +58,6 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.themes.color.TabColor;
 import bibliothek.gui.dock.themes.font.TabFont;
-import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.color.ColorCodes;
@@ -135,7 +136,6 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     private boolean paintIconWhenInactive = false;
     private Icon icon;
     
-    private Insets buttonInsets = new Insets( 0, 0, 0, 0 );
     private ButtonPanel buttons;
     
     private boolean hasFocus;
@@ -147,7 +147,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     
     private Background background;
     
-    private Insets labelInsets = new Insets( 0, 0, 0, 0 );
+    
     private OrientedLabel label = new OrientedLabel();
     
     private TabPlacement orientation = TabPlacement.TOP_OF_DOCKABLE;
@@ -157,6 +157,8 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     
     private boolean nextTabSelectedSet = false;
     private boolean nextTabSelected = false;
+    
+    private TabComponentLayoutManager layoutManager;
     
     /**
      * Creates a new {@link TabComponent}
@@ -261,7 +263,8 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         buttons = new ButtonPanel( false );
 		add( buttons );
 		
-		setLayout( new BaseTabComponentLayoutManager( this, label, buttons ) );
+		layoutManager = new TabComponentLayoutManager( label, buttons, pane.getConfiguration( dockable ) );
+		setLayout( layoutManager );
     }
     
     /**
@@ -274,6 +277,10 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     	System.arraycopy( this.colors, 0, newColors, 0, this.colors.length );
     	System.arraycopy( colors, 0, newColors, this.colors.length, colors.length );
     	this.colors = newColors;
+    }
+    
+    public void setConfiguration( TabConfiguration configuration ){
+    	layoutManager.setConfiguration( configuration );
     }
     
     /**
@@ -706,9 +713,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      * @param labelInsets the free space, not <code>null</code>
      */
     public void setLabelInsets( Insets labelInsets ){
-    	if( labelInsets == null )
-    		throw new IllegalArgumentException( "insets must not be null" );
-		this.labelInsets = new Insets( labelInsets.top, labelInsets.left, labelInsets.bottom, labelInsets.right );
+    	layoutManager.setLabelInsets( labelInsets );
 		revalidate();
 	}
     
@@ -717,7 +722,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      * @return the free space, not <code>null</code>
      */
     public Insets getLabelInsets(){
-		return labelInsets;
+		return layoutManager.getLabelInsets();
 	}
     
     /**
@@ -725,10 +730,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      * @param buttonInsets the free space, not <code>null</code>
      */
     public void setButtonInsets( Insets buttonInsets ){
-    	if( buttonInsets == null )
-    		throw new IllegalArgumentException( "insets must not be null" );
-    	
-		this.buttonInsets = buttonInsets;
+    	layoutManager.setActionInsets( buttonInsets );
 		revalidate();
 	}
     
@@ -737,7 +739,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
      * @return the free space
      */
     public Insets getButtonInsets(){
-		return buttonInsets;
+		return layoutManager.getActionInsets();
 	}
     
     /**
@@ -783,26 +785,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
 	    
     	if( this.orientation != orientation ){
 	    	this.orientation = orientation;	
-		    
-		    switch( orientation ){
-		    	case TOP_OF_DOCKABLE:
-		    		buttons.setOrientation( Orientation.NORTH_SIDED );
-		    		label.setHorizontal( true );
-		    		break;
-		    	case BOTTOM_OF_DOCKABLE:
-		    		buttons.setOrientation( Orientation.SOUTH_SIDED );
-		    		label.setHorizontal( true );
-		    		break;
-		    	case LEFT_OF_DOCKABLE:
-		    		buttons.setOrientation( Orientation.EAST_SIDED );
-		    		label.setHorizontal( false );
-		    		break;
-		    	case RIGHT_OF_DOCKABLE:
-		    		buttons.setOrientation( Orientation.WEST_SIDED );
-		    		label.setHorizontal( false );
-		    		break;
-		    }
-		    
+	    	layoutManager.setOrientation( orientation );    
 		    updateOrientation();
     	}
     }

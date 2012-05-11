@@ -87,6 +87,7 @@ import bibliothek.gui.dock.station.stack.StackDockStationFactory;
 import bibliothek.gui.dock.station.stack.TabContent;
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 import bibliothek.gui.dock.station.stack.TabDropLayer;
+import bibliothek.gui.dock.station.stack.tab.TabConfigurations;
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -152,6 +153,14 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public static final PropertyKey<Boolean> IMMUTABLE_SELECTION_INDEX = 
     	new PropertyKey<Boolean>( "stack dock immutable selection index", 
     			new ConstantPropertyFactory<Boolean>( false ), true );
+    
+    /**
+     * Allows fine tuning of the look and behavior of tabs. The default settings however should suffice
+     * for most clients. 
+     */
+    public static final PropertyKey<TabConfigurations> TAB_CONFIGURATIONS =
+    	new PropertyKey<TabConfigurations>( "stack dock tab configurations",
+    			new ConstantPropertyFactory<TabConfigurations>( TabConfigurations.DEFAULT ), true );
     
     /** A list of all children */
     private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();

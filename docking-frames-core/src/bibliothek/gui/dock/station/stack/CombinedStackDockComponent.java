@@ -45,10 +45,13 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.disable.TabDisablingStrategyObserver;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPane;
 import bibliothek.gui.dock.station.stack.tab.AbstractTabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.LonelyTabPaneComponent;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
+import bibliothek.gui.dock.station.stack.tab.TabConfigurations;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneBackgroundComponent;
@@ -58,6 +61,7 @@ import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
 import bibliothek.util.FrameworkOnly;
 
@@ -78,6 +82,16 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	/** A list of all {@link Component Components} which are shown on this {@link #componentPanel}  */
 	private Map<Dockable, Meta> components = new HashMap<Dockable, Meta>();
 
+	/** The current configuration of the tabs */
+	private PropertyValue<TabConfigurations> tabConfiguration = new PropertyValue<TabConfigurations>( StackDockStation.TAB_CONFIGURATIONS ){
+		@Override
+		protected void valueChanged( TabConfigurations oldValue, TabConfigurations newValue ){
+			for( T tab : getTabsList() ){
+				tab.setConfiguration( newValue.getConfiguration( tab.getDockable() ));
+			}
+		}
+	};
+	
 	/** the background of this component */
 	private BackgroundAlgorithm background;
 
@@ -306,10 +320,22 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 				meta.setController( controller );
 			}
 
+			
 			background.setController( controller );
 			tabDisabling.setController( controller );
+			tabConfiguration.setProperties( controller );
 			super.setController( controller );
 		}
+	}
+	
+	/**
+	 * Forwards <code>child</code> to the current {@link TabConfigurations}, in order to 
+	 * get the matching {@link TabConfiguration}.
+	 * @param child some child of this {@link StackDockComponent}
+	 * @return the {@link TabConfiguration} that should be used for its tab
+	 */
+	public TabConfiguration getConfiguration( Dockable child ){
+		return tabConfiguration.getValue().getConfiguration( child );
 	}
 
 	/**

@@ -84,7 +84,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
 	}
     
     /**
-     * Gets the distance between icon the the tree adjacent borders.
+     * Gets the distance between icon and the tree adjacent borders.
      * @return the distance
      */
     public int getIconOffset(){

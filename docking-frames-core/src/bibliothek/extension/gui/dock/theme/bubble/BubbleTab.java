@@ -60,6 +60,7 @@ import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabComponentLayoutManager;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
@@ -277,7 +278,7 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 		setOpaque( false );
 		add( label );
 		add( actions );
-		layoutManager = new TabComponentLayoutManager( label, actions );
+		layoutManager = new TabComponentLayoutManager( label, actions, parent.getConfiguration( dockable ) );
 		layoutManager.setFreeSpaceToSideBorder( borderSize + borderSize );
 		layoutManager.setFreeSpaceToParallelBorder( borderSize );
 		layoutManager.setFreeSpaceBetweenLabelAndActions( borderSize );
@@ -305,6 +306,10 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 
 		addMouseListener( listener );
 		label.addMouseListener( listener );
+	}
+	
+	public void setConfiguration( TabConfiguration configuration ){
+		layoutManager.setConfiguration( configuration );	
 	}
 
 	public TabPane getTabParent(){
