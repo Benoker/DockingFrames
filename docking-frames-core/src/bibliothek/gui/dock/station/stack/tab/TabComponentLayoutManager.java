@@ -356,7 +356,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 				label.setBounds(
 						freeSpaceToSideBorder+labelInsets.left, 
 						freeSpaceToOpenSide+labelInsets.top, 
-						width-2*freeSpaceToSideBorder - actionsSize.width - labelInsets.left - labelInsets.right,
+						labelSize( parent, width-2*freeSpaceToSideBorder - actionsSize.width - labelInsets.left - labelInsets.right, freeSpaceToSideBorder+labelInsets.left, showActions ),
 						height-freeSpaceToOpenSide-freeSpaceToParallelBorder - labelInsets.top - labelInsets.bottom );
 				if( showActions ){
 					int actionsHeight = Math.min( actionsSize.height, height - freeSpaceToOpenSide - freeSpaceToParallelBorder );
@@ -373,7 +373,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 				label.setBounds(
 						freeSpaceToSideBorder + labelInsets.left, 
 						freeSpaceToParallelBorder + labelInsets.top, 
-						width-2*freeSpaceToSideBorder-actionsSize.width - labelInsets.left - labelInsets.right,
+						labelSize( parent, width-2*freeSpaceToSideBorder-actionsSize.width - labelInsets.left - labelInsets.right, freeSpaceToSideBorder + labelInsets.left, showActions ),
 						height-freeSpaceToOpenSide-freeSpaceToParallelBorder - labelInsets.top - labelInsets.bottom );
 				if( showActions ){
 					int actionsHeight = Math.min( actionsSize.height, height-freeSpaceToOpenSide-freeSpaceToParallelBorder );
@@ -391,7 +391,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 						freeSpaceToParallelBorder + labelInsets.left, 
 						freeSpaceToSideBorder + labelInsets.top,
 						width-freeSpaceToOpenSide-freeSpaceToParallelBorder - labelInsets.left - labelInsets.right,
-						height-2*freeSpaceToSideBorder-actionsSize.height - labelInsets.top - labelInsets.bottom );
+						labelSize( parent, height-2*freeSpaceToSideBorder-actionsSize.height - labelInsets.top - labelInsets.bottom, freeSpaceToSideBorder + labelInsets.top, showActions ) );
 				if( showActions ){
 					int actionsWidth = Math.min( actionsSize.width, width-freeSpaceToOpenSide-freeSpaceToParallelBorder );
 					int delta = width-freeSpaceToOpenSide-freeSpaceToParallelBorder-actionsWidth-actionInsets.left-actionInsets.right;
@@ -408,7 +408,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 						freeSpaceToOpenSide + labelInsets.left, 
 						freeSpaceToSideBorder + labelInsets.top,
 						width-freeSpaceToOpenSide-freeSpaceToParallelBorder - labelInsets.left - labelInsets.right,
-						height-2*freeSpaceToSideBorder - actionsSize.height - labelInsets.top - labelInsets.bottom );
+						labelSize( parent, height-2*freeSpaceToSideBorder - actionsSize.height - labelInsets.top - labelInsets.bottom, freeSpaceToSideBorder + labelInsets.top, showActions ) );
 				if( showActions ){
 					int actionsWidth = Math.min( actionsSize.width, width-freeSpaceToOpenSide-freeSpaceToParallelBorder );
 					int delta = width-freeSpaceToOpenSide-freeSpaceToParallelBorder-actionsWidth-actionInsets.left-actionInsets.right;
@@ -422,6 +422,21 @@ public class TabComponentLayoutManager implements LayoutManager{
 			break;
 		}
 		label.setIconHidden( !shouldShowIcon() );
+	}
+	
+	private int labelSize( Container parent, int suggested, int start, boolean showActions ){
+		if( showActions ){
+			return suggested;
+		}
+		if( configuration.isKeepLabelBig() && label.getIcon() != null ){
+			if( orientation.isHorizontal() ){
+				return Math.min( Math.max( suggested, label.getIconOffset() + label.getIcon().getIconWidth() ), parent.getWidth() - start );
+			}
+			else{
+				return Math.min( Math.max( suggested, label.getIconOffset() + label.getIcon().getIconHeight() ), parent.getHeight() - start );
+			}
+		}
+		return suggested;
 	}
 	
 	/**

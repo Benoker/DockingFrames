@@ -62,10 +62,13 @@ public class TabConfiguration {
 	private ActionHiding actionHiding = ActionHiding.ICON_DISAPPEARING;
 
 	/** if and when to hide the icon */
-	private IconHiding iconHiding = IconHiding.NEVER;
+	private IconHiding iconHiding = IconHiding.NO_SPACE_LEFT;
 	
 	/** whether the actions still use up space even if hidden */
 	private boolean hiddenActionUsingSpace = true;
+	
+	/** allow the label to remain as big as the icon even if there is not enough space */
+	private boolean keepLabelBig = true;
 	
 	/**
 	 * Tells if and when to make buttons on the tab invisible.
@@ -103,6 +106,26 @@ public class TabConfiguration {
 	 */
 	public IconHiding getIconHiding(){
 		return iconHiding;
+	}
+	
+	/**
+	 * Sets whether the label should be kept big enough to show the icon even if the tab itself
+	 * demands a size that is smaller. This option can lead to some graphical errors as the icon
+	 * appears to be outside of the tab. The default value of this option is <code>true</code>.
+	 * @param keepLabelBig whether to keep the label big
+	 */
+	public void setKeepLabelBig( boolean keepLabelBig ){
+		this.keepLabelBig = keepLabelBig;
+	}
+	
+	/**
+	 * Tells whether the label should be kept big enough to show the icon even if the tab itself
+	 * demands a size that is smaller.
+	 * @return whether to keep the label big
+	 * @see #setKeepLabelBig(boolean)
+	 */
+	public boolean isKeepLabelBig(){
+		return keepLabelBig;
 	}
 	
 	/**

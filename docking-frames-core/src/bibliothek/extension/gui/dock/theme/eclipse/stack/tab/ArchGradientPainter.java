@@ -518,14 +518,14 @@ public class ArchGradientPainter extends BaseTabComponent {
 			Rectangle rightBox = right.getBounds();
 			
 			if( orientation.isHorizontal() ){
-				if( leftBox.x+leftBox.width < rightBox.x ){
+				if( leftBox.x+leftBox.width <= rightBox.x ){
 					g.fillRect(
 							leftBox.x+leftBox.width, 0,
 							rightBox.x-leftBox.x-leftBox.width+1, h );
 				}
 			}
 			else{
-				if( leftBox.y+leftBox.height < rightBox.y ){
+				if( leftBox.y+leftBox.height <= rightBox.y ){
 					g.fillRect(
 							0, leftBox.y+leftBox.height,
 							w, rightBox.y-leftBox.y-leftBox.height+1 );
@@ -638,6 +638,17 @@ public class ArchGradientPainter extends BaseTabComponent {
 	 * @return the new polygon
 	 */
 	private Polygon rightSide( int x, int y, int w, int h ){
+		int labelMin = 6;
+		
+		if( getIcon() != null ){
+			if( getOrientation().isHorizontal() ){
+				labelMin += getIcon().getIconWidth() + getLabel().getIconOffset();
+			}
+			else{
+				labelMin += getIcon().getIconHeight() + getLabel().getIconOffset();
+			}
+		}
+		
 		if( getOrientation().isVertical() ){
 			int t = x;
 			x = y;
@@ -648,13 +659,13 @@ public class ArchGradientPainter extends BaseTabComponent {
 			h = t;
 		}
 		
-		Polygon polygon = rightSideTop( x, y, w, h );
+		Polygon polygon = rightSideTop( x, y, w, h, labelMin );
 		transformFromTopToOrientation( polygon );
 		return polygon;
 	}
 	
-	private Polygon rightSideTop( int x, int y, int w, int h ){
-		Arch arch = arch( h*34/22, h );
+	private Polygon rightSideTop( int x, int y, int w, int h, int labelMin ){
+		Arch arch = arch( Math.max( 1, Math.min( w-labelMin, h*34/22 ) ), h );
 		
 		int[] xPoints = new int[ arch.getWidth()+1 ];
 		int[] yPoints = new int[ arch.getWidth()+1 ];
@@ -666,7 +677,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 		
 		int index = xPoints.length-1;
 		
-		xPoints[ index ] = xPoints[0];
+		xPoints[ index ] = xPoints[ 0 ];
 		yPoints[ index ] = yPoints[ index-1 ];
 		
 		return new Polygon( xPoints, yPoints, xPoints.length );
