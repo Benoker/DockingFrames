@@ -44,6 +44,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarExtension;
@@ -63,7 +64,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  */
 public class ToolbarDockTitlePoint extends AbstractDockTitle{
 
-	private final Color color;
+	private Color backgroundColor = UIManager.getColor("Button.background");
+	private Color pointColor = backgroundColor.darker();
+	
 
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitlePoint}s.
@@ -72,7 +75,8 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 	 *            the color of the title
 	 * @return the new factory
 	 */
-	public static DockTitleFactory createFactory( final Color color ){
+	public static DockTitleFactory createFactory( final Color backgroundColor,
+			final Color pointColor ){
 		return new DockTitleFactory(){
 			@Override
 			public void uninstall( DockTitleRequest request ){
@@ -82,7 +86,34 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 			@Override
 			public void request( DockTitleRequest request ){
 				request.answer(new ToolbarDockTitlePoint(request.getVersion(),
-						request.getTarget(), color));
+						request.getTarget(), backgroundColor, pointColor));
+			}
+
+			@Override
+			public void install( DockTitleRequest request ){
+				// ignore
+			}
+		};
+	}
+
+	/**
+	 * Creates a new factory that creates new {@link ToolbarDockTitlePoint}s.
+	 * 
+	 * @param color
+	 *            the color of the title
+	 * @return the new factory
+	 */
+	public static DockTitleFactory createFactory(){
+		return new DockTitleFactory(){
+			@Override
+			public void uninstall( DockTitleRequest request ){
+				// ignore
+			}
+
+			@Override
+			public void request( DockTitleRequest request ){
+				request.answer(new ToolbarDockTitlePoint(request.getVersion(),
+						request.getTarget()));
 			}
 
 			@Override
@@ -93,9 +124,14 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 	}
 
 	public ToolbarDockTitlePoint( DockTitleVersion origin, Dockable dockable,
-			Color color ){
+			Color backgroundColor, Color pointColor ){
 		super(dockable, origin, true);
-		this.color = color;
+		this.backgroundColor = backgroundColor;
+		this.pointColor = pointColor;
+	}
+
+	public ToolbarDockTitlePoint( DockTitleVersion origin, Dockable dockable ){
+		super(dockable, origin, true);
 	}
 
 	@Override
@@ -117,52 +153,30 @@ public class ToolbarDockTitlePoint extends AbstractDockTitle{
 		repaint();
 	}
 
-	@Override
-	public void paintBackground( Graphics g, JComponent component ){
-		g.setColor(color);
-		g.fillRect(0, 0, getWidth(), getHeight());
-
-		if (isActive()){
-			g.setColor(Color.GREEN);
-			g.fillRect(0, 0, getWidth(), getHeight());
-		}
-	}
-
-	private static final Image POINT;
-	private static final int POINT_DISTANCE = 4;
-
-	// this model draw an image ==> so the background is behind and invisible
-	static{
-		final ColorModel colorModel = new DirectColorModel(24, 0xff0000,
-				0x00ff00, 0x0000ff);
-		final SampleModel sampleModel = colorModel.createCompatibleSampleModel(
-				3, 3);
-		final int[] pixels = new int[] { 0xffd6cfc6, 0xffb3b0ab, 0xffefebe7,
-				0xffb3b0a3, 0xff8d887a, 0xffffffff, 0xffe7e7e7, 0xffffffff,
-				0xfffbffff, };
-
-		final DataBufferInt dataBuffer = new DataBufferInt(pixels, 9);
-		final WritableRaster writableRaster = Raster.createWritableRaster(
-				sampleModel, dataBuffer, new Point());
-		POINT = new BufferedImage(colorModel, writableRaster, false, null);
-	}
+	private static final int POINT_DISTANCE = 2;
 
 	@Override
 	protected void paintComponent( Graphics g ){
+		// paint background
+		g.setColor(backgroundColor);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor(pointColor);
 		if (getOrientation().isHorizontal()){
 			// Draw a horizontal handle.
-			int x = 4;
-			final int y = 3;
-			while (x < (getWidth() - POINT_DISTANCE)){
-				g.drawImage(POINT, x, y, this);
+			int x = this.getWidth() / 6 ;
+			final int y = this.getHeight() / 2;
+			while (x <= (this.getWidth() - (this.getWidth() / 6))){
+				g.drawLine(x, y - 1, x, y - 1);
+				g.drawLine(x, y + 1, x, y + 1);
 				x += POINT_DISTANCE;
 			}
 		} else{
 			// Draw a vertical handle.
-			final int x = 3;
-			int y = 4;
-			while (y < (getHeight() - POINT_DISTANCE)){
-				g.drawImage(POINT, x, y, this);
+			final int x = this.getWidth() / 2;
+			int y = this.getHeight() / 6 ;
+			while (y < (this.getHeight() - (this.getHeight() / 6))){
+				g.drawLine(x - 1, y , x - 1, y);
+				g.drawLine(x + 1, y, x + 1, y);
 				y += POINT_DISTANCE;
 			}
 

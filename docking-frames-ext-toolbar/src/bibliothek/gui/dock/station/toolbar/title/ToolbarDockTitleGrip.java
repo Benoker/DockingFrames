@@ -35,6 +35,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarExtension;
@@ -54,10 +55,9 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  */
 public class ToolbarDockTitleGrip extends AbstractDockTitle{
 
-	private final Color COLOR;
-
-	private final Color SHADOW = Color.gray;
-	private final Color CLEAR_COLOR = Color.white;
+	private Color backgroundColor = UIManager.getColor("Button.background");
+	private Color gripShadowColor = Color.gray;
+	private Color gripColor = Color.white;
 
 	/**
 	 * Creates a new factory that creates new {@link ToolbarDockTitleGrip}s.
@@ -66,7 +66,8 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 	 *            the color of the title
 	 * @return the new factory
 	 */
-	public static DockTitleFactory createFactory( final Color color ){
+	public static DockTitleFactory createFactory( final Color backgroundColor,
+			final Color gripColor, final Color gripShadowColor ){
 		return new DockTitleFactory(){
 			@Override
 			public void uninstall( DockTitleRequest request ){
@@ -76,7 +77,35 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 			@Override
 			public void request( DockTitleRequest request ){
 				request.answer(new ToolbarDockTitleGrip(request.getVersion(),
-						request.getTarget(), color));
+						request.getTarget(), backgroundColor, gripColor,
+						gripShadowColor));
+			}
+
+			@Override
+			public void install( DockTitleRequest request ){
+				// ignore
+			}
+		};
+	}
+
+	/**
+	 * Creates a new factory that creates new {@link ToolbarDockTitleGrip}s.
+	 * 
+	 * @param color
+	 *            the color of the title
+	 * @return the new factory
+	 */
+	public static DockTitleFactory createFactory(){
+		return new DockTitleFactory(){
+			@Override
+			public void uninstall( DockTitleRequest request ){
+				// ignore
+			}
+
+			@Override
+			public void request( DockTitleRequest request ){
+				request.answer(new ToolbarDockTitleGrip(request.getVersion(),
+						request.getTarget()));
 			}
 
 			@Override
@@ -87,9 +116,15 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 	}
 
 	public ToolbarDockTitleGrip( DockTitleVersion origin, Dockable dockable,
-			Color color ){
+			Color backgroundColor, Color gripColor, Color gripShadowColor ){
 		super(dockable, origin, true);
-		this.COLOR = color;
+		this.backgroundColor = backgroundColor;
+		this.gripColor = gripColor;
+		this.gripShadowColor = gripShadowColor;
+	}
+
+	public ToolbarDockTitleGrip( DockTitleVersion origin, Dockable dockable ){
+		super(dockable, origin, true);
 	}
 
 	@Override
@@ -112,36 +147,26 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 	}
 
 	@Override
-	public void paintBackground( Graphics g, JComponent component ){
-		g.setColor(COLOR);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		// if (isActive()){
-		// g.setColor(Color.GREEN);
-		// g.fillRect(0, 0, getWidth(), getHeight());
-		// }
-	}
-
-	@Override
 	protected void paintComponent( Graphics g ){
 
 		final int lineOffset = 5;
 		final int headerOffset = 3;
 		// paint background
-		g.setColor(COLOR);
+		g.setColor(backgroundColor);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		if (getOrientation().isHorizontal()){
 			// Draw a horizontal handle.
 			final int width = getSize().width;
 
 			// Draw the light line.
-			g.setColor(CLEAR_COLOR);
+			g.setColor(gripColor);
 			g.drawLine(lineOffset, headerOffset, width - lineOffset,
 					headerOffset);
 			g.drawLine(lineOffset, headerOffset + 1, width - lineOffset,
 					headerOffset + 1);
 
 			// Draw the shadow.
-			g.setColor(SHADOW);
+			g.setColor(gripShadowColor);
 			g.drawLine((width - lineOffset) + 1, headerOffset,
 					(width - lineOffset) + 1, headerOffset + 2);
 			g.drawLine(lineOffset, headerOffset + 2, width - lineOffset,
@@ -152,14 +177,14 @@ public class ToolbarDockTitleGrip extends AbstractDockTitle{
 			final int height = getSize().height;
 
 			// Draw the light line.
-			g.setColor(CLEAR_COLOR);
+			g.setColor(gripColor);
 			g.drawLine(headerOffset, lineOffset, headerOffset, height
 					- lineOffset);
 			g.drawLine(headerOffset + 1, lineOffset, headerOffset + 1, height
 					- lineOffset);
 
 			// Draw the shadow.
-			g.setColor(SHADOW);
+			g.setColor(gripShadowColor);
 			g.drawLine(headerOffset, (height - lineOffset) + 1,
 					headerOffset + 2, (height - lineOffset) + 1);
 			g.drawLine(headerOffset + 2, lineOffset, headerOffset + 2, height
