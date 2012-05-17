@@ -980,6 +980,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public void setDividerStrategy( SplitDividerStrategy strategy ){
 		dividerStrategy.setValue( strategy );
 	}
+	
+	/**
+	 * Gets read access to the strategy which is responsible for handling the {@link Span}s of
+	 * this station.
+	 * @return the object responsible for handling {@link Span}s, not <code>null</code> 
+	 */
+	protected SplitSpanStrategy getSpanStrategy(){
+		return spanStrategy;
+	}
 
 	/**
 	 * Sets whether the dockables should be resized while the split

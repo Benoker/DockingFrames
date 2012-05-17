@@ -41,8 +41,6 @@ import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout;
 import bibliothek.gui.dock.station.split.SplitDockStationLayout.Entry;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.wizard.WizardColumnModel.PersistentCell;
-import bibliothek.gui.dock.wizard.WizardColumnModel.PersistentColumn;
 import bibliothek.gui.dock.wizard.WizardSplitDockStationLayout.Column;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;

@@ -64,6 +64,7 @@ import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+import bibliothek.gui.dock.themes.basic.NoSpanFactory;
 
 /**
  * A {@link WizardSplitDockStation} has some additional restrictions and other behavior than an ordinary {@link SplitDockStation}:
@@ -123,6 +124,9 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		setDividerStrategy( new WizardDividerStrategy() );
 		getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
 		setAllowSideSnap( false );
+		
+		// disable the standard mechanism for showing spans
+		getSpanStrategy().getFactory().setDelegate( new NoSpanFactory() );
 		
 		addDockStationListener( new DockStationListener(){
 			@Override
@@ -395,7 +399,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		return null;
 	}
 	
-	public WizardColumnModel.PersistentColumn[] getPersistentColumns(){
+	public PersistentColumn[] getPersistentColumns(){
 		return layoutManager.model.getPersistentColumns();
 	}
 	
@@ -476,7 +480,6 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	 * can be performed, and what the boundaries of the children are:
 	 * <ul>
 	 * 	<li>DnD operations must ensure that the {@link Dockable}s remain in columns, see {@link #ensureDropLocation(PutInfo)}</li>
-	 *  <li> </li>
 	 * </ul> 
 	 * @author Benjamin Sigg
 	 */

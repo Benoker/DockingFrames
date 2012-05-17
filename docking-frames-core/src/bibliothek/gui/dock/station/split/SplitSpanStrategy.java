@@ -196,6 +196,14 @@ public class SplitSpanStrategy {
 	}
 	
 	/**
+	 * Gets the factory which is responsible for creating new {@link Span}s.
+	 * @return the factory
+	 */
+	public StationSpanFactoryValue getFactory(){
+		return factory;
+	}
+	
+	/**
 	 * Sets the {@link DockController} which is used by the {@link SplitDockStation}.
 	 * @param controller the controller in whose realm this strategy works
 	 */

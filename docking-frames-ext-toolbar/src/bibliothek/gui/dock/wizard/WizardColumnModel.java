@@ -32,12 +32,6 @@ package bibliothek.gui.dock.wizard;
 
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
@@ -45,10 +39,10 @@ import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.station.split.Divideable;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
-import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.Root;
 import bibliothek.gui.dock.station.split.SplitNode;
-import bibliothek.gui.dock.station.split.SplitNodeVisitor;
+import bibliothek.gui.dock.wizard.WizardNodeMap.Cell;
+import bibliothek.gui.dock.wizard.WizardNodeMap.Column;
 import bibliothek.gui.dock.wizard.WizardSplitDockStation.Side;
 
 /**
@@ -84,140 +78,96 @@ public class WizardColumnModel {
 	}
 
 	/**
-	 * Updates the boundaries of all {@link SplitNode}s.
-	 * @param x the top left corner
-	 * @param y the top left corner
+	 * Gets the size of the gap between the column <code>column</code> and
+	 * <code>column-1</code> (the left side of <code>column</code>).
+	 * @param column the column whose gap on the left side is requested
+	 * @return the size of the gap
 	 */
-	public void updateBounds( double x, double y ){
-		Root root = station.getRoot();
-		root.updateBounds( x, y, 1.0, 1.0, factorW, factorH, false );
-		new Table().updateBounds( x, y );
-	}
-
-	/**
-	 * Calculates the valid value of <code>divider</code> for <code>node</code>.
-	 * @param divider the location of the divider
-	 * @param node the node whose divider is changed
-	 * @return the valid divider
-	 */
-	public double validateDivider( double divider, Node node ){
-		Table table = new Table();
-		return table.validateDivider( divider, node );
+	private int gap( int column ){
+		return station.getDividerSize();
 	}
 	
 	/**
-	 * Calculates the valid value of <code>divider</code> for <code>leaf</code>.
-	 * @param divider the location of the divider
-	 * @param node the node whose divider is changed
-	 * @return the valid divider
+	 * Gets the size of the gap between the cell <code>cell</code> and <code>cell-1</code> 
+	 * (the top side of <code>cell</code>).
+	 * @param column the column in which the gap is requested
+	 * @param cell the cell whose gap on the upper side is requested
+	 * @return the size of the gap
 	 */
-	public double validateDivider( double divider, Leaf leaf ){
-		Table table = new Table();
-		return table.validateDivider( divider, leaf );
+	private int gap( int column, int cell ){
+		return station.getDividerSize();
 	}
-
+	
 	/**
-	 * Calculates the valid value of <code>divider</code> for the outermost column
-	 * @param divider the location of the divider
-	 * @param node the node whose divider is changed
-	 * @return the valid divider
+	 * Gets the size of the gap that is currently to be used by <code>node</code>
+	 * @param node the node whose inner gap is requested
+	 * @return the size of the inner gap
 	 */
-	public double validateColumnDivider( double divider ){
-		Table table = new Table();
-		return table.validateColumnDivider( divider );
+	private int gap( Node node ){
+		return station.getDividerSize();
 	}
-
+	
 	private int gap(){
 		return station.getDividerSize();
 	}
 
-	/**
-	 * Tells whether <code>node</code> is part of the header. The header includes all
-	 * nodes whose orientation is orthogonal to the orientation of the layout.
-	 * @param node the node to check
-	 * @return whether <code>node</code> belongs to the header
-	 */
+	public Leaf[] getLastLeafOfColumns(){
+		return getMap().getLastLeafOfColumns();
+	}
+	
+	public PersistentColumn[] getPersistentColumns(){
+		return getMap().getPersistentColumns();
+	}
+	
 	public boolean isHeaderLevel( SplitNode node ){
-		return isHeaderLevel( node, true );
+		return getMap().isHeaderLevel( node );
 	}
 
 	public boolean isHeaderLevel( SplitNode node, boolean recursive ){
-		if( node instanceof Root ) {
-			return true;
-		}
-		else if( node instanceof Node ) {
-			Node n = (Node)node;
-			if( n.getLeft() == null || n.getRight() == null ){
-				return false;
-			}
-			else if( !n.getLeft().isVisible() || !n.getRight().isVisible() ){
-				return isHeaderLevel( node.getParent(), recursive );
-			}
-			else if( n.getOrientation() == side().getHeaderOrientation() ) {
-				return true;
-			}
-			else if( recursive ) {
-				return isHeaderLevel( node.getParent(), false );
-			}
-			else {
-				return false;
-			}
-		}
-		else if( node.getParent() instanceof Root ) {
-			return true;
-		}
-		else if( node instanceof Leaf ) {
-			return isHeaderLevel( node.getParent(), false );
-		}
-		return false;
-	}
-
-	private boolean isColumnRoot( SplitNode node ){
-		if( node instanceof Root ) {
-			return false;
-		}
-		else if( node instanceof Node ) {
-			Node n = (Node)node;
-			
-			if( n.getOrientation() == side().getHeaderOrientation() ) {
-				return false;
-			}
-			if( n.getLeft() == null || !n.getLeft().isVisible() ){
-				return false;
-			}
-			if( n.getRight() == null || !n.getRight().isVisible() ){
-				return false;
-			}
-			
-			return isHeaderLevel( node );
-			
-		}
-		else if( node instanceof Leaf ) {
-			return isHeaderLevel( node, false );
-		}
-		return false;
+		return getMap().isHeaderLevel( node, recursive );
 	}
 	
+	/**
+	 * Gets a map containing the current columns and cells. This method may decide
+	 * at any time to create a new map. Callers may use the map to ask as many queries as they
+	 * want, they should however never use more than one map at the same time.
+	 * @return the current map of cells and columns
+	 */
+	protected WizardNodeMap getMap(){
+		return new WizardNodeMap( station, persistentColumns ){
+			@Override
+			protected void handlePersistentColumnsAdapted( PersistentColumn[] persistentColumns ){
+				WizardColumnModel.this.persistentColumns = persistentColumns;	
+			}
+		};
+	}
+	
+	/**
+	 * Gets the current preferred size of the entire {@link WizardSplitDockStation}
+	 * @return the current preferred size
+	 */
 	public Dimension getPreferredSize(){
-		Table table = new Table();
-		PersistentColumn[] columns = table.getPersistentColumns();
+		PersistentColumn[] columns = getMap().getPersistentColumns();
 		
 		int size = 0;
 		int cellMax = 20;
-		for( PersistentColumn column : columns ){
-			size += column.size;
+		for( int c = 0; c < columns.length; c++ ){
+			PersistentColumn column = columns[c];
+			size += column.getSize();
+			size += gap( c );
 			
 			int cellSize = 0;
 			int count = 0;
-			for( PersistentCell cell : column.cells.values() ){
-				cellSize += cell.size;
+			for( PersistentCell cell : column.getCells().values() ){
+				cellSize += cell.getSize();
+				cellSize += gap( c, count );
 				count++;
 			}
-			cellSize += (count-1) * gap();
+			cellSize += gap( c, count );
 			cellMax = Math.max( cellMax, cellSize );
 		}
-		size += (columns.length-1) * gap();
 		
+		size += gap( columns.length );		
 		size = Math.max( size, 5 );
 		
 		Dimension result;
@@ -237,37 +187,28 @@ public class WizardColumnModel {
 		return result;
 	}
 	
-	public Leaf[] getLastLeafOfColumns(){
-		List<Leaf> result = new ArrayList<Leaf>();
-		Table table = new Table();
-		for( Column column : table.columns.values() ){
-			Leaf last = column.getLastLeafOfColumn();
-			if( last != null ){
-				result.add( last );
-			}
-		}
-		return result.toArray( new Leaf[ result.size() ] );
-	}
-	
-	public PersistentColumn[] getPersistentColumns(){
-		Table table = new Table();
-		return table.getPersistentColumns();
-	}
-	
+	/**
+	 * Visits all {@link PersistentColumn}s and {@link PersistentCell}s and updates them according
+	 * to the values delivered to this method. If the current layout does not match the arguments, then
+	 * some cells will simply be ignored. 
+	 * @param columnsAndCells the children of the station, sorted into columns and cells. The actual layout on the
+	 * station does not have to match this array, the other arguments of the method however must. 
+	 * @param cellSizes the size of each cell, this array must have the same dimensions as <code>columnsAndCells</code>
+	 * @param columnSizes the size of each column, this array must have the same dimensions as <code>columnsAndCells</code>
+	 */
 	public void setPersistentColumns( Dockable[][] columnsAndCells, int[][] cellSizes, int[] columnSizes ){
-		Table table = new Table();
-		PersistentColumn[] persistentColumns = table.getPersistentColumns();
+		WizardNodeMap map = getMap();
+		PersistentColumn[] persistentColumns = map.getPersistentColumns();
 		
 		for( int i = 0; i < columnsAndCells.length; i++ ){
 			loop:for( int j = 0; j < columnsAndCells[i].length; j++ ){
 				Dockable key = columnsAndCells[i][j];
 				if( key != null ){
 					for( PersistentColumn column : persistentColumns ){
-						PersistentCell cell = column.cells.get( key );
+						PersistentCell cell = column.getCells().get( key );
 						if( cell != null ){
-							
-							cell.size = cellSizes[i][j];
-							column.size = columnSizes[i];
+							cell.setSize( cellSizes[i][j] );
+							column.setSize( columnSizes[i] );
 							
 							continue loop;
 						}
@@ -276,7 +217,7 @@ public class WizardColumnModel {
 			}
 		}
 		
-		table.applyPersistentSizes();
+		applyPersistentSizes( map );
 	}
 	
 	/**
@@ -285,21 +226,22 @@ public class WizardColumnModel {
 	 * @param divider the new dividier
 	 */
 	public void setDivider( Divideable divideable, double divider ){
+		WizardNodeMap map = getMap();
+		
 		if( divideable instanceof Node ){
 			Node node = (Node)divideable;
-			Table table = new Table();
 			Column column;
 			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
-				column = table.getHeadColumn( node.getRight() );
+				column = map.getHeadColumn( node.getRight() );
 			}
 			else{
-				column = table.getHeadColumn( node.getLeft() );
+				column = map.getHeadColumn( node.getLeft() );
 			}
 			if( column != null ){
-				setDivider( table, column, node.getDivider(), divider, node.getSize() );
+				setDivider( map, column, node.getDivider(), divider, node.getSize() );
 			}
 			else{
-				PersistentCell cell = table.getHeadCell( node.getLeft() );
+				PersistentCell cell = map.getHeadCell( node.getLeft() );
 				if( cell != null ){
 					double dividerDelta = divider - node.getDivider();
 					int deltaPixel;
@@ -309,8 +251,8 @@ public class WizardColumnModel {
 					else{
 						deltaPixel = (int)(dividerDelta * node.getSize().width);
 					}
-					cell.size += deltaPixel;
-					table.applyPersistentSizes();
+					cell.setSize( cell.getSize() + deltaPixel );
+					applyPersistentSizes( map );
 				}
 				else{
 					node.setDivider( divider );
@@ -318,25 +260,23 @@ public class WizardColumnModel {
 			}
 		}
 		else if( divideable instanceof ColumnDividier ){
-			Table table = new Table();
-			Column column = table.getHeadColumn( station.getRoot() );
+			Column column = map.getHeadColumn( station.getRoot() );
 			if( column != null ){
-				setDivider( table, column, divideable.getDivider(), divider, station.getSize() );
+				setDivider( map, column, divideable.getDivider(), divider, station.getSize() );
 			}
 		}
 		else if( divideable instanceof CellDivider ){
-			Table table = new Table();
-			PersistentCell cell = table.getHeadCell( ((CellDivider)divideable).getLeaf() );
+			PersistentCell cell = map.getHeadCell( ((CellDivider)divideable).getLeaf() );
 			if( cell != null ){
 				double dividierDelta = divider - divideable.getDivider();
-				int deltaPixel = (int)(dividierDelta * cell.size);
-				cell.size += deltaPixel;
-				table.applyPersistentSizes();
+				int deltaPixel = (int)(dividierDelta * cell.getSize());
+				cell.setSize( cell.getSize() + deltaPixel );
+				applyPersistentSizes( map );
 			}
 		}
 	}
 	
-	private void setDivider( Table table, Column column, double oldDividier, double newDividier, Dimension size ){
+	private void setDivider( WizardNodeMap map, Column column, double oldDividier, double newDividier, Dimension size ){
 		PersistentColumn persistent = column.getPersistentColumn();
 		double dividerDelta;
 		if( side() == Side.RIGHT || side() == Side.BOTTOM ){
@@ -352,804 +292,404 @@ public class WizardColumnModel {
 		else{
 			deltaPixel = (int)(dividerDelta * size.height);
 		}
-		persistent.size += deltaPixel;
-		table.applyPersistentSizes();
-	}
-	
-	public void resetToPreferredSizes(){
-		Table table = new Table();
-		for( PersistentColumn column : table.getPersistentColumns() ){
-			column.size = column.preferred;
-			for( PersistentCell cell : column.cells.values() ){
-				cell.size = cell.preferred;
-			}
-		}
-		table.applyPersistentSizes();
+		persistent.setSize( persistent.getSize() + deltaPixel );
+		applyPersistentSizes( map );
 	}
 	
 	/**
-	 * Tries to remap the size information from <code>oldColumns</code> to <code>newColumns</code>. The size
-	 * of unmapped columns will be -1.
-	 * @param oldColumns an old set of columns, may be modified
-	 * @param newColumns the new set of columns, may be modified
-	 * @return the remaped columns, may be one of the input arrays
+	 * Updates the size of each cell and column such that they met their preferred size.
 	 */
-	private PersistentColumn[] adapt( PersistentColumn[] oldColumns, PersistentColumn[] newColumns ){
-		for( PersistentColumn column : newColumns ){
-			/*
-			 * There are three possible operations:
-			 * merge -> size = max( sizes )
-			 * split -> size = old size
-			 * new   -> nop
-			 */
-			
-			Set<PersistentColumn> sources = new HashSet<PersistentColumn>();
-			contentLoop:for( Map.Entry<Dockable, PersistentCell> entry : column.cells.entrySet() ){
-				for( PersistentColumn source : oldColumns ){
-					PersistentCell cell = source.cells.get( entry.getKey() );
-					if( cell != null ){
-						sources.add( source );
-						entry.getValue().size = cell.size;
-						continue contentLoop;
-					}
-				}
-			}
-			
-			if( sources.size() == 1 ){
-				PersistentColumn source = sources.iterator().next();
-				if( source.cells.keySet().equals( column.cells.keySet() )){
-					column.size = source.size;
-				}
-				else{
-					column.size = Math.max( column.size, column.preferred );
-				}
-			}
-			else if( sources.size() > 0 ){
-				int max = 0;
-				for( PersistentColumn source : sources ){
-					max = Math.max( max, source.size );
-				}
-				column.size = max;
+	public void resetToPreferredSizes(){
+		WizardNodeMap map = getMap();
+		for( PersistentColumn column : map.getPersistentColumns() ){
+			column.setSize( column.getPreferredSize() );
+			for( PersistentCell cell : column.getCells().values() ){
+				cell.setSize( cell.getPreferredSize() );
 			}
 		}
-		return newColumns;
+		applyPersistentSizes( map );
 	}
 	
-	public class PersistentColumn{
-		private int size;
-		private int preferred;
-		private Map<Dockable, PersistentCell> cells;
-		
-		public PersistentColumn( int size, int preferred, Map<Dockable, PersistentCell> cells ){
-			this.size = size;
-			this.preferred = preferred;
-			if( size <= 0 ){
-				this.size = preferred;
+	/**
+	 * Updates the dividers of all {@link Node}s such that the actual size of the columns and cells results. 
+	 * @param map information about the layout of the station
+	 */
+	protected void applyPersistentSizes( WizardNodeMap map ){
+		applyPersistentSizes( station.getRoot(), map );
+		station.revalidateOutside();
+	}
+	
+	/**
+	 * Updates the dividers of the head of the columns such that the actual size of the columns results. 
+	 * @param node a head node
+	 * @param map information about the layout of the station
+	 * @return the number of pixels required for <code>node</code>
+	 */
+	private int applyPersistentSizes( SplitNode node, WizardNodeMap map ){
+		Column column = map.getColumn( node, false );
+		if( column != null ){
+			applyPersistentSizes( column.getRoot(), column.getPersistentColumn() );
+			PersistentColumn persistent = column.getPersistentColumn();
+			if( persistent == null ){
+				return 0;
 			}
-			this.cells = cells;
+			return persistent.getSize();
 		}
 		
-		public int getSize(){
-			return size;
+		if( node instanceof Root ){
+			return applyPersistentSizes( ((Root)node).getChild(), map );
 		}
-		
-		public Map<Dockable, PersistentCell> getCells(){
-			return cells;
+		else if( node instanceof Node ){
+			int left = applyPersistentSizes( ((Node)node).getLeft(), map );
+			int right = applyPersistentSizes( ((Node)node).getRight(), map );
+			int gap = gap( (Node)node );
+			
+			((Node)node).setDivider( (left + gap/2) / (double)(left + right + gap));
+			return left + gap + right;
+		}
+		else{
+			return 0;
 		}
 	}
 	
-	public class PersistentCell{
-		private int size;
-		private int preferred;
-		
-		public PersistentCell( int size, int preferred ){
-			this.size = size;
-			this.preferred = preferred;
-			if( size <= 0 ){
-				this.size = preferred;
+	/**
+	 * Updates the dividers of an node inside of <code>column</code> such that the actual size of the cells results.
+	 * @param node a node inside <code>column</code>
+	 * @param column detailed information about the current column
+	 * @return the number of pixels required for <code>node</code>
+	 */
+	private int applyPersistentSizes( SplitNode node, PersistentColumn column ){
+		if( node instanceof Root ){
+			return applyPersistentSizes( ((Root)node).getChild(), column );
+		}
+		else if( node instanceof Node ){
+			Node n = (Node)node;
+			
+			int left = applyPersistentSizes( n.getLeft(), column );
+			int right = applyPersistentSizes( n.getRight(), column );
+			
+			if( n.getLeft() == null || !n.getLeft().isVisible() ){
+				return right;
+			}
+			if( n.getRight() == null || !n.getRight().isVisible() ){
+				return left;
+			}
+			
+			int gap = gap((Node)node);
+			((Node)node).setDivider( (left + gap/2) / (double)(left + right + gap));
+			return left + gap + right;
+		}
+		else if( node instanceof Leaf ){
+			PersistentCell cell = column.getCells().get( ((Leaf)node).getDockable() );
+			if( cell != null ){
+				return cell.getSize();
 			}
 		}
-		
-		public int getSize(){
-			return size;
-		}
+		return 0;
 	}
 
-	private class Base {
-		protected void updateBounds( SplitNode node, double x, double y, double width, double height ){
-			if( node != null && node.isVisible() ) {
-				if( node instanceof Root ) {
-					updateBounds( ((Root) node).getChild(), x, y, width, height );
-				}
-				else if( node instanceof Node ) {
-					Node n = (Node) node;
-					if( n.getLeft() != null && n.getLeft().isVisible() && n.getRight() != null && n.getRight().isVisible() ) {
-						if( n.getOrientation() == Orientation.HORIZONTAL ) {
-							double dividerWidth = factorW > 0 ? Math.max( 0, gap() / factorW ) : 0.0;
-							double dividerLocation = width * n.getDivider();
+	/**
+	 * Updates the boundaries of all {@link SplitNode}s.
+	 * @param x the top left corner
+	 * @param y the top left corner
+	 */
+	public void updateBounds( double x, double y ){
+		Root root = station.getRoot();
+		root.updateBounds( x, y, 1.0, 1.0, factorW, factorH, false );
+		WizardNodeMap map = getMap();
+		applyPersistentSizes( map );
+		updateBounds( station.getRoot(), x, y, 1.0, 1.0, map );
+	}
+	
+	/**
+	 * Updates the boundaries of <code>node</code> and all its children. This method forwards the call
+	 * to either {@link #updateBounds(SplitNode, double, double, double, double)} or 
+	 * {@link #updateBounds(double, double, double, double, Column)} depending on the existence of a 
+	 * {@link Column} for <code>node</code> in <code>map</code>.
+	 * @param node the node whose boundaries are to be updated
+	 * @param x the minimum x coordinate
+	 * @param y the minimum y coordinate
+	 * @param width the maximum width
+	 * @param height the maximum height
+	 * @param map more information about the current layout.
+	 */
+	protected void updateBounds( SplitNode node, double x, double y, double width, double height, WizardNodeMap map ){
+		if( node != null && node.isVisible() ) {
+			Column column = map.getColumn( node, false );
+			if( column != null ) {
+				updateBounds( x, y, width, height, column, map );
+			}
+			else {
+				updateBoundsRecursive( node, x, y, width, height, map );
+			}
+		}
+	}
+	
+	/**
+	 * Update the boundaries of the column <code>column</code> and all its children.
+	 * @param x the minimum x coordinate
+	 * @param y the minimum y coordinate
+	 * @param width the maximum width
+	 * @param height the maximum height
+	 * @param column the column whose boundaries are to be updated
+	 * @param map information about the current layout
+	 */
+	protected void updateBounds( double x, double y, double width, double height, Column column, WizardNodeMap map ){
+		int requested = 0;
+		int count = 0;
+		int gaps = 0;
+		
+		for( PersistentCell cell : column.getPersistentColumn().getCells().values()){
+			requested += cell.getSize();
+			gaps += gap( column.getIndex(), count );
+			count++;
+		}
+		gaps += gap( column.getIndex(), count );
+		
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ) {
+			double available = height * factorH - gaps;
+			available = Math.max( available, 0 );
+			if( requested < available ) {
+				height = requested / factorH + gaps / factorH;
+			}
+		}
+		else {
+			double available = width * factorW - gaps;
+			available = Math.max( available, 0 );
+			if( requested < available ) {
+				width = requested / factorW + gaps / factorW;
+			}
+		}
+		updateBoundsRecursive( column.getRoot(), x, y, width, height, map );
+	}
+	
+	/**
+	 * Updates the boundaries of <code>node</code> and all its children. This method recursively visites all
+	 * children of <code>node</code> and forwards the call to {@link #updateBounds(SplitNode, double, double, double, double, WizardNodeMap)}
+	 * if a {@link Root} or a {@link Node} is found.
+	 * @param node the node whose boundaries are to be update
+	 * @param x the minimum x coordinate
+	 * @param y the minimum y coordinate
+	 * @param width the maximum width
+	 * @param height the maximum height
+	 * @param map information about the current layout
+	 */
+	protected void updateBoundsRecursive( SplitNode node, double x, double y, double width, double height, WizardNodeMap map ){
+		if( node != null && node.isVisible() ) {
+			if( node instanceof Root ) {
+				updateBounds( ((Root) node).getChild(), x, y, width, height, map );
+			}
+			else if( node instanceof Node ) {
+				Node n = (Node) node;
+				if( n.getLeft() != null && n.getLeft().isVisible() && n.getRight() != null && n.getRight().isVisible() ) {
+					if( n.getOrientation() == Orientation.HORIZONTAL ) {
+						double dividerWidth = factorW > 0 ? Math.max( 0, gap( n ) / factorW ) : 0.0;
+						double dividerLocation = width * n.getDivider();
 
-							updateBounds( n.getLeft(), x, y, dividerLocation - dividerWidth / 2, height );
-							updateBounds( n.getRight(), x + dividerLocation + dividerWidth / 2, y, width - dividerLocation - dividerWidth / 2, height );
-						}
-						else {
-							double dividerHeight = factorH > 0 ? Math.max( 0, gap() / factorH ) : 0.0;
-							double dividerLocation = height * n.getDivider();
-
-							updateBounds( n.getLeft(), x, y, width, dividerLocation - dividerHeight / 2 );
-							updateBounds( n.getRight(), x, y + dividerLocation + dividerHeight / 2, width, height - dividerLocation - dividerHeight / 2 );
-						}
+						updateBounds( n.getLeft(), x, y, dividerLocation - dividerWidth / 2, height, map );
+						updateBounds( n.getRight(), x + dividerLocation + dividerWidth / 2, y, width - dividerLocation - dividerWidth / 2, height, map );
 					}
 					else {
-						updateBounds( n.getLeft(), x, y, width, height );
-						updateBounds( n.getRight(), x, y, width, height );
+						double dividerHeight = factorH > 0 ? Math.max( 0, gap( n ) / factorH ) : 0.0;
+						double dividerLocation = height * n.getDivider();
+
+						updateBounds( n.getLeft(), x, y, width, dividerLocation - dividerHeight / 2, map );
+						updateBounds( n.getRight(), x, y + dividerLocation + dividerHeight / 2, width, height - dividerLocation - dividerHeight / 2, map );
 					}
 				}
-				node.setBounds( x, y, width, height, factorW, factorH, true );
+				else {
+					updateBounds( n.getLeft(), x, y, width, height, map );
+					updateBounds( n.getRight(), x, y, width, height, map );
+				}
 			}
+			node.setBounds( x, y, width, height, factorW, factorH, true );
 		}
 	}
 
-	private class Table extends Base {
-		private Map<SplitNode, Column> columns = new HashMap<SplitNode, Column>();
 
-		public Table(){
-			station.getRoot().visit( new SplitNodeVisitor(){
-				@Override
-				public void handleRoot( Root root ){
-					// ignore
-				}
+	/**
+	 * Calculates the valid value of <code>divider</code> for <code>node</code>.
+	 * @param divider the location of the divider
+	 * @param node the node whose divider is changed
+	 * @return the valid divider
+	 */
+	public double validateDivider( double divider, Node node ){
+		return validateDivider( divider, node, getMap() );
+	}
+	
+	/**
+	 * Calculates the valid value of <code>divider</code> for <code>leaf</code>.
+	 * @param divider the location of the divider
+	 * @param node the node whose divider is changed
+	 * @return the valid divider
+	 */
+	public double validateDivider( double divider, Leaf leaf ){
+		return validateDivider( divider, leaf, getMap() );
+	}
 
-				@Override
-				public void handleNode( Node node ){
-					if( isColumnRoot( node ) ) {
-						columns.put( node, new Column( Table.this, node ) );
-					}
-				}
-
-				@Override
-				public void handleLeaf( Leaf leaf ){
-					if( isColumnRoot( leaf ) ) {
-						columns.put( leaf, new Column( Table.this, leaf ) );
-					}
-				}
-
-				@Override
-				public void handlePlaceholder( Placeholder placeholder ){
-					// ignore
-				}
-			} );
+	/**
+	 * Calculates the valid value of <code>divider</code> for the outermost column
+	 * @param divider the location of the divider
+	 * @param node the node whose divider is changed
+	 * @return the valid divider
+	 */
+	public double validateColumnDivider( double divider ){
+		return validateColumnDivider( divider, getMap() );
+	}
+	
+	/**
+	 * Validates <code>divider</code>, makes sure it is within acceptable boundaries.
+	 * @param divider the divider to validate
+	 * @param node the node which owns the dividier
+	 * @param map information about the current layout
+	 * @return the validated divider
+	 */
+	private double validateDivider( double divider, Node node, WizardNodeMap map ){
+		Column column = map.getColumn( node, true );
+		if( column == null ) {
+			return validateHeadNode( divider, node, map );
 		}
+		else {
+			return validateDivider( column, divider, node, map );
+		}
+	}
+	
+	
+	private double validateDivider( double divider, Leaf leaf, WizardNodeMap map ){
+		Column column = map.getColumn( leaf, true );
+		if( column != null ) {
+			return validateDivider( column, divider, leaf, map );
+		}
+		return divider;
+	}
 
-		public PersistentColumn[] getPersistentColumns(){
-			List<PersistentColumn> result = new ArrayList<PersistentColumn>( columns.size() );
-			for( Column column : columns.values() ){
-				PersistentColumn next = column.toPersistentColumn();
-				if( next != null ){
-					result.add( next );
-				}
+	private double validateColumnDivider( double divider, WizardNodeMap map ){
+		Column outer = map.getOutermostColumn();
+		if( outer == null ){
+			return divider;
+		}
+		int min = 0;
+		int gap = gap();
+		
+		int available;
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
+			for( Column column : map.getColumns().values() ){
+				min += column.getRoot().getSize().width + gap;
 			}
-			if( persistentColumns == null ){
-				persistentColumns = result.toArray( new PersistentColumn[ result.size() ] );
+			min -= outer.getRoot().getSize().width + gap;
+			min += outer.getMinimumSize().width;
+			available = station.getWidth() - gap;
+		}
+		else{
+			for( Column column : map.getColumns().values() ){
+				min += column.getRoot().getSize().height + gap;
 			}
-			else {
-				persistentColumns = adapt( persistentColumns, result.toArray( new PersistentColumn[ result.size() ] ) );
-			}
-			return persistentColumns;
+			
+			min -= outer.getRoot().getSize().height + gap;
+			min += outer.getMinimumSize().height;
+			available = station.getHeight() - gap;
 		}
 		
-		public void updateBounds( double x, double y ){
-			applyPersistentSizes();
-			updateBounds( station.getRoot(), x, y, 1.0, 1.0 );
+		if( side() == Side.RIGHT || side() == Side.BOTTOM ){
+			double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
+			return Math.min( maxDividier, divider );
 		}
+		else{
+			double minDividier = (min + gap()/2) / (double)(available + gap());
+			return Math.max( minDividier, divider );
+		}
+	}
 
-		@Override
-		protected void updateBounds( SplitNode node, double x, double y, double width, double height ){
-			if( node != null && node.isVisible() ) {
-				Column column = columns.get( node );
-				if( column != null ) {
-					column.updateBounds( x, y, width, height );
-				}
-				else {
-					super.updateBounds( node, x, y, width, height );
-				}
+	private double validateHeadNode( double divider, Node node, WizardNodeMap map ){
+		if( side() == Side.RIGHT || side() == Side.BOTTOM ){
+			if( divider < node.getDivider() ){
+				// it's always possible to go far to the left/top
+				return divider;
 			}
 		}
-
-		public double validateDivider( double divider, Node node ){
-			Column column = getColumn( node );
-			if( column == null ) {
-				return validateHeadNode( divider, node );
-			}
-			else {
-				return column.validateDivider( divider, node );
+		else{
+			if( divider > node.getDivider() ){
+				// it's always possible to go far to the right/bottom
+				return divider;
 			}
 		}
 		
-		public double validateDivider( double divider, Leaf leaf ){
-			Column column = getColumn( leaf );
-			if( column != null ) {
-				return column.validateDivider( divider, leaf );
-			}
+		Column head;
+		
+		if( side() == Side.RIGHT || side() == Side.BOTTOM ){
+			head = map.getHeadColumn( node.getRight() );
+		}
+		else{
+			head = map.getHeadColumn( node.getLeft() );
+		}
+		if( head == null ){
 			return divider;
 		}
 		
-		public double validateColumnDivider( double divider ){
-			Column outer = getOutermostColumn();
-			if( outer == null ){
-				return divider;
-			}
-			int min = 0;
-			int gap = gap();
-			
-			int available;
-			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
-				for( Column column : columns.values() ){
-					min += column.root.getSize().width + gap;
-				}
-				min -= outer.root.getSize().width + gap;
-				min += outer.getMinimumSize().width;
-				available = station.getWidth() - gap;
-			}
-			else{
-				for( Column column : columns.values() ){
-					min += column.root.getSize().height + gap;
-				}
-				
-				min -= outer.root.getSize().height + gap;
-				min += outer.getMinimumSize().height;
-				available = station.getHeight() - gap;
-			}
-			
-			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
-				double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
-				return Math.min( maxDividier, divider );
-			}
-			else{
-				double minDividier = (min + gap()/2) / (double)(available + gap());
-				return Math.max( minDividier, divider );
-			}
+		int min;
+		int available;
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
+			min = head.getMinimumSize().width + gap();
+			available = node.getSize().width;
 		}
-
-		private double validateHeadNode( double divider, Node node ){
-			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
-				if( divider < node.getDivider() ){
-					// it's always possible to go far to the left/top
-					return divider;
-				}
-			}
-			else{
-				if( divider > node.getDivider() ){
-					// it's always possible to go far to the right/bottom
-					return divider;
-				}
-			}
-			
-			Column head;
-			
-			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
-				head = getHeadColumn( node.getRight() );
-			}
-			else{
-				head = getHeadColumn( node.getLeft() );
-			}
-			if( head == null ){
-				return divider;
-			}
-			
-			int min;
-			int available;
-			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
-				min = head.getMinimumSize().width + gap();
-				available = node.getSize().width;
-			}
-			else{
-				min = head.getMinimumSize().height + gap();
-				available = node.getSize().height;
-			}
-			
-			if( side() == Side.RIGHT || side() == Side.BOTTOM ){
-				double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
-				return Math.min( maxDividier, divider );
-			}
-			else{
-				double minDividier = (min + gap()/2) / (double)(available + gap());
-				return Math.max( minDividier, divider );	
-			}
+		else{
+			min = head.getMinimumSize().height + gap();
+			available = node.getSize().height;
 		}
 		
-		public void applyPersistentSizes(){
-			applyPersistentSizes( station.getRoot() );
-			station.revalidateOutside();
+		if( side() == Side.RIGHT || side() == Side.BOTTOM ){
+			double maxDividier = 1.0 - (min + gap()/2) / (double)(available + gap());
+			return Math.min( maxDividier, divider );
 		}
-		
-		private int applyPersistentSizes( SplitNode node ){
-			Column column = columns.get( node );
-			if( column != null ){
-				column.applyPersistentSizes();
-				PersistentColumn persistent = column.getPersistentColumn();
-				if( persistent == null ){
-					return 0;
-				}
-				return persistent.size;
-			}
-			
-			if( node instanceof Root ){
-				return applyPersistentSizes( ((Root)node).getChild() );
-			}
-			else if( node instanceof Node ){
-				int left = applyPersistentSizes( ((Node)node).getLeft() );
-				int right = applyPersistentSizes( ((Node)node).getRight() );
-				int gap = gap();
-				
-				((Node)node).setDivider( (left + gap/2) / (double)(left + right + gap));
-				return left + gap + right;
-			}
-			else{
-				return 0;
-			}
-		}
-		
-		public Column getOutermostColumn(){
-			return getHeadColumn( station.getRoot() );
-		}
-		
-		public Column getHeadColumn( SplitNode node ){
-			while( node != null ){
-				Column column = columns.get( node );
-				if( column != null ){
-					return column;
-				}
-				if( node instanceof Node ){
-					if( side() == Side.RIGHT || side() == Side.BOTTOM ){
-						node = ((Node)node).getLeft();
-					}
-					else{
-						node = ((Node)node).getRight();
-					}
-				}
-				else if( node instanceof Root ){
-					node = ((Root)node).getChild();
-				}
-				else{
-					node = null;
-				}
-			}
-			return null;
-		}
-
-		public PersistentCell getHeadCell( SplitNode node ){
-			while( node != null ){
-				if( node instanceof Leaf ){
-					Dockable dockable = ((Leaf)node).getDockable();
-					for( Column column : columns.values() ){
-						if( column.cells.get( node ) != null ){
-							PersistentCell cell = column.getPersistentColumn().cells.get( dockable );
-							if( cell != null ){
-								return cell;
-							}
-						}
-					}
-					node = null;
-				}
-				if( node instanceof Node ){
-					node = ((Node)node).getRight();
-				}
-				else{
-					node = null;
-				}
-			}
-			return null;
-		}
-		
-		private Column getColumn( SplitNode node ){
-			Column column = null;
-			while( node != null && column == null ) {
-				column = columns.get( node );
-				node = node.getParent();
-			}
-			return column;
-		}
-
-//		private Column[] getColumns( SplitNode node ){
-//			List<Column> result = new ArrayList<Column>();
-//			searchColumns( node, result );
-//			return result.toArray( new Column[result.size()] );
-//		}
-
-//		private void searchColumns( SplitNode node, List<Column> result ){
-//			if( node != null ) {
-//				Column column = columns.get( node );
-//				if( column != null ) {
-//					result.add( column );
-//				}
-//				else {
-//					for( int i = 0, n = node.getMaxChildrenCount(); i < n; i++ ) {
-//						searchColumns( node.getChild( i ), result );
-//					}
-//				}
-//			}
-//		}
-	}
-
-	private class Column extends Base {
-		private SplitNode root;
-		private Table table;
-		private Map<SplitNode, Cell> cells = new HashMap<SplitNode, Cell>();
-
-		public Column( Table table, SplitNode root ){
-			this.table = table;
-			this.root = root;
-			root.visit( new SplitNodeVisitor(){
-				@Override
-				public void handleRoot( Root root ){
-					cells.put( root, new Cell( root, Column.this ) );
-				}
-
-				@Override
-				public void handlePlaceholder( Placeholder placeholder ){
-					cells.put( placeholder, new Cell( placeholder, Column.this ) );
-				}
-
-				@Override
-				public void handleNode( Node node ){
-					cells.put( node, new Cell( node, Column.this ) );
-				}
-
-				@Override
-				public void handleLeaf( Leaf leaf ){
-					cells.put( leaf, new Cell( leaf, Column.this ) );
-				}
-			} );
-		}
-
-		public PersistentColumn toPersistentColumn(){
-			int size;
-			int preferred;
-			Map<Dockable, PersistentCell> leafs = getLeafs();
-			if( leafs.size() == 0 ){
-				return null;
-			}
-			
-			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
-				size = root.getSize().width;
-				preferred = getPreferredSize().width;
-			}
-			else{
-				size = root.getSize().height;
-				preferred = getPreferredSize().height;
-			}
-			return new PersistentColumn( size, preferred, leafs );
-		}
-		
-		public PersistentColumn getPersistentColumn(){
-			Map<Dockable, PersistentCell> leafs = getLeafs();
-			
-			for( PersistentColumn column : table.getPersistentColumns() ){
-				if( column.cells.keySet().equals( leafs.keySet() )){
-					return column;
-				}
-			}
-			
-			return null;
-		}
-		
-		private Map<Dockable, PersistentCell> getLeafs(){
-			final Map<Dockable, PersistentCell> leafs = new HashMap<Dockable, PersistentCell>();
-			root.visit( new SplitNodeVisitor(){
-				@Override
-				public void handleRoot( Root root ){
-					// ignore	
-				}
-				
-				@Override
-				public void handlePlaceholder( Placeholder placeholder ){
-					// ignore					
-				}
-				
-				@Override
-				public void handleNode( Node node ){
-					// ignore
-				}
-				
-				@Override
-				public void handleLeaf( Leaf leaf ){
-					int size;
-					int preferred;
-					
-					if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
-						size = leaf.getSize().height;
-						preferred = getPreferredSize( leaf ).height;
-					}
-					else{
-						size = leaf.getSize().width;
-						preferred = getPreferredSize( leaf ).width;
-					}
-					leafs.put( leaf.getDockable(), new PersistentCell( size, preferred ));
-				}
-			} );
-			return leafs;
-		}
-		
-		public void applyPersistentSizes(){
-			applyPersistentSizes( root, getPersistentColumn() );
-		}
-		
-		private int applyPersistentSizes( SplitNode node, PersistentColumn column ){
-			if( node instanceof Root ){
-				return applyPersistentSizes( ((Root)node).getChild(), column );
-			}
-			else if( node instanceof Node ){
-				Node n = (Node)node;
-				
-				int left = applyPersistentSizes( n.getLeft(), column );
-				int right = applyPersistentSizes( n.getRight(), column );
-				
-				if( n.getLeft() == null || !n.getLeft().isVisible() ){
-					return right;
-				}
-				if( n.getRight() == null || !n.getRight().isVisible() ){
-					return left;
-				}
-				
-				int gap = gap();
-				((Node)node).setDivider( (left + gap/2) / (double)(left + right + gap));
-				return left + gap + right;
-			}
-			else if( node instanceof Leaf ){
-				PersistentCell cell = column.cells.get( ((Leaf)node).getDockable() );
-				if( cell != null ){
-					return cell.size;
-				}
-			}
-			return 0;
-		}
-		
-		public void updateBounds( double x, double y, double width, double height ){
-			int gaps = getGaps();
-			int requested = 0;
-			
-			for( PersistentCell cell : getPersistentColumn().cells.values()){
-				requested += cell.size;
-			}
-			
-			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ) {
-				double available = height * factorH - gaps * gap();
-				available = Math.max( available, 0 );
-				if( requested < available ) {
-					height = requested / factorH + gaps * gap() / factorH;
-				}
-			}
-			else {
-				double available = width * factorW - gaps * gap();
-				available = Math.max( available, 0 );
-				if( requested < available ) {
-					width = requested / factorW + gaps * gap() / factorW;
-				}
-			}
-			updateBounds( root, x, y, width, height );
-		}
-
-		public double validateDivider( double divider, Node node ){
-			if( divider > node.getDivider() ){
-				return divider;
-			}
-			
-			Cell head = getRightmostCell( node.getLeft() );
-			if( head == null ){
-				return divider;
-			}
-			
-			int min;
-			int available;
-			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
-				min = node.getLeft().getSize().height - head.node.getSize().height + head.getMinimumSize().height;
-				available = node.getSize().height;
-			}
-			else{
-				min = node.getLeft().getSize().width - head.node.getSize().width + head.getMinimumSize().width;
-				available = node.getSize().width;
-			}
-			
+		else{
 			double minDividier = (min + gap()/2) / (double)(available + gap());
-			return Math.max( minDividier, divider );
-		}
-		
-		public double validateDivider( double divider, Leaf leaf ){
-			Cell head = getRightmostCell( leaf );
-			if( head == null ){
-				return divider;
-			}
-			
-			int min;
-			int available;
-			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
-				min = head.getMinimumSize().height + gap();
-				available = leaf.getSize().height;
-			}
-			else{
-				min = head.getMinimumSize().width + gap();
-				available = leaf.getSize().width;
-			}
-			
-			double minDividier = (min + gap()/2) / (double)(available + gap());
-			return Math.max( minDividier, divider );
-		}
-		
-		public Cell getRightmostCell( SplitNode node ){
-			while( node != null ){
-				if( node instanceof Node ){
-					node = ((Node)node).getRight();
-				}
-				else{
-					return cells.get( node );
-				}
-			}
-			return null;
-		}
-
-		public Leaf getLastLeafOfColumn(){
-			SplitNode node = root;
-			while( node != null ){
-				if( node instanceof Root ){
-					node = ((Root)node).getChild();
-				}
-				else if( node instanceof Node ){
-					node = ((Node)node).getRight();
-				}
-				else if( node instanceof Leaf ){
-					return (Leaf)node;
-				}
-				else {
-					node = null;
-				}
-			}
-			return null;
-		}
-		
-		public Dimension getPreferredSize( SplitNode node ){
-			Cell cell = cells.get( node );
-			if( cell == null ){
-				return null;
-			}
-			return cell.getPreferredSize();
-		}
-		
-		public Dimension getMinimumSize( SplitNode node ){
-			Cell cell = cells.get( node );
-			if( cell == null ){
-				return null;
-			}
-			return cell.getMinimumSize();
-		}
-
-		public Dimension getPreferredSize(){
-			return getPreferredSize( root );
-		}
-		
-		public Dimension getMinimumSize(){
-			return getMinimumSize( root );
-		}
-
-		public int getGaps( SplitNode node ){
-			Cell cell = cells.get( node );
-			if( cell == null ){
-				return 0;
-			}
-			return cell.getGaps();
-		}
-
-		public int getGaps(){
-			return getGaps( root );
+			return Math.max( minDividier, divider );	
 		}
 	}
-
-	private class Cell {
-		private SplitNode node;
-		private Column column;
-		private Dimension preferredSize;
-		private Dimension minimumSize;
-		
-		public Cell( SplitNode node, Column column ){
-			this.node = node;
-			this.column = column;
-		}
-
-		/**
-		 * Gets the preferred size of this cell, does not include any gaps
-		 * @return the preferred size ignoring gaps
-		 */
-		public Dimension getPreferredSize(){
-			if( preferredSize == null ) {
-				if( node instanceof Leaf ) {
-					preferredSize = ((Leaf) node).getDisplayer().getComponent().getPreferredSize();
-				}
-				if( node instanceof Node ) {
-					Dimension left = column.getPreferredSize( ((Node) node).getLeft() );
-					Dimension right = column.getPreferredSize( ((Node) node).getRight() );
-					if( left == null ) {
-						preferredSize = right;
-					}
-					else if( right == null ) {
-						preferredSize = left;
-					}
-					else if( left != null && right != null ) {
-						if( ((Node) node).getOrientation() == Orientation.HORIZONTAL ) {
-							preferredSize = new Dimension( left.width + right.width, Math.max( left.height, right.height ) );
-						}
-						else {
-							preferredSize = new Dimension( Math.max( left.width, right.width ), left.height + right.height );
-						}
-					}
-				}
-				if( node instanceof Root ) {
-					preferredSize = column.getPreferredSize( ((Root) node).getChild() );
-				}
-			}
-			return preferredSize;
+	
+	public double validateDivider( Column column, double divider, Node node, WizardNodeMap map ){
+		if( divider > node.getDivider() ){
+			return divider;
 		}
 		
-		/**
-		 * Gets the minimum size of this cell, does not include any gaps
-		 * @return the minimum size ignoring gaps
-		 */
-		public Dimension getMinimumSize(){
-			if( minimumSize == null ) {
-				if( node instanceof Leaf ) {
-					minimumSize = ((Leaf) node).getDisplayer().getComponent().getMinimumSize();
-				}
-				if( node instanceof Node ) {
-					Dimension left = column.getMinimumSize( ((Node) node).getLeft() );
-					Dimension right = column.getMinimumSize( ((Node) node).getRight() );
-					if( left == null ) {
-						minimumSize = right;
-					}
-					else if( right == null ) {
-						minimumSize = left;
-					}
-					else if( left != null && right != null ) {
-						if( ((Node) node).getOrientation() == Orientation.HORIZONTAL ) {
-							minimumSize = new Dimension( left.width + right.width, Math.max( left.height, right.height ) );
-						}
-						else {
-							minimumSize = new Dimension( Math.max( left.width, right.width ), left.height + right.height );
-						}
-					}
-				}
-				if( node instanceof Root ) {
-					minimumSize = column.getMinimumSize( ((Root) node).getChild() );
-				}
-			}
-			return minimumSize;
+		Cell head = column.getRightmostCell( node.getLeft() );
+		if( head == null ){
+			return divider;
 		}
-
-		/**
-		 * Gets the number of gaps between the leafs of this cell
-		 * @return the number of gaps
-		 */
-		public int getGaps(){
-			if( node instanceof Leaf ) {
-				return 0;
-			}
-			if( node instanceof Node ) {
-				int left = column.getGaps( ((Node) node).getLeft() );
-				int right = column.getGaps( ((Node) node).getRight() );
-				if( left == -1 ) {
-					return right;
-				}
-				if( right == -1 ) {
-					return left;
-				}
-				if( left == -1 && right == -1 ) {
-					return -1;
-				}
-				return left + 1 + right;
-			}
-			else if( node instanceof Root ) {
-				return column.getGaps( ((Root) node).getChild() );
-			}
-			else {
-				return -1;
-			}
+		
+		int min;
+		int available;
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
+			min = node.getLeft().getSize().height - head.getNode().getSize().height + head.getMinimumSize().height;
+			available = node.getSize().height;
 		}
+		else{
+			min = node.getLeft().getSize().width - head.getNode().getSize().width + head.getMinimumSize().width;
+			available = node.getSize().width;
+		}
+		
+		double minDividier = (min + gap()/2) / (double)(available + gap());
+		return Math.max( minDividier, divider );
+	}
+	
+	public double validateDivider( Column column, double divider, Leaf leaf, WizardNodeMap map ){
+		Cell head = column.getRightmostCell( leaf );
+		if( head == null ){
+			return divider;
+		}
+		
+		int min;
+		int available;
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
+			min = head.getMinimumSize().height + gap();
+			available = leaf.getSize().height;
+		}
+		else{
+			min = head.getMinimumSize().width + gap();
+			available = leaf.getSize().width;
+		}
+		
+		double minDividier = (min + gap()/2) / (double)(available + gap());
+		return Math.max( minDividier, divider );
 	}
 }
