@@ -44,7 +44,6 @@ import bibliothek.gui.dock.station.span.SpanUsage;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.SplitNode;
-import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.themes.StationSpanFactoryValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.wizard.WizardNodeMap.Cell;
@@ -219,9 +218,7 @@ public class WizardSpanStrategy {
 		}
 	}
 	
-	private void setPut( int column, int cell ){
-		
-System.out.println( getClass().getSimpleName() + " " + column + " " + cell );		
+	private void setPut( int column, int cell ){		
 		for( int i = 0; i < columnSpans.length; i++ ){
 			if( i == column && cell == -1 ){
 				columnSpans[i].mutate( SpanMode.OPEN );
@@ -262,6 +259,9 @@ System.out.println( getClass().getSimpleName() + " " + column + " " + cell );
 	 * @return the size of the gap
 	 */
 	public int getGap( int column ){
+		if( column >= columnSpans.length ){
+			return 0;
+		}
 		return columnSpans[column].getSize();
 	}
 	
@@ -272,6 +272,12 @@ System.out.println( getClass().getSimpleName() + " " + column + " " + cell );
 	 * @return the gap before <code>cell</code>
 	 */
 	public int getGap( int column, int cell ){
+		if( column >= cellSpans.length ){
+			return 0;
+		}
+		if( cell >= cellSpans[column].length ){
+			return 0;
+		}
 		return cellSpans[column][cell].getSize();
 	}
 	

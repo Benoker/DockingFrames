@@ -127,7 +127,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		setSplitLayoutManager( layoutManager );
 		setDividerStrategy( new WizardDividerStrategy() );
 		getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
-		setAllowSideSnap( false );
+		setAllowSideSnap( true );
 		
 		// disable the standard mechanism for showing spans
 		getSpanStrategy().getFactory().setDelegate( new NoSpanFactory() );
@@ -534,6 +534,52 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		
 		public Leaf[] getLastLeafOfColumns(){
 			return model.getLastLeafOfColumns();
+		}
+		
+		@Override
+		protected PutInfo calculateSideSnap( SplitDockStation station, int x, int y, Leaf leaf, Dockable drop ){
+			if( contains( x, y )){
+				if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+					if( x < getWidth() / 2 ){
+						return new PutInfo( leftMost( getRoot() ), Put.LEFT, drop, false );
+					}
+					else{
+						return new PutInfo( rightMost( getRoot() ), Put.RIGHT, drop, false );
+					}
+				}
+				else{
+					if( y < getHeight() / 2 ){
+						return new PutInfo( leftMost( getRoot() ), Put.TOP, drop, false );
+					}
+					else{
+						return new PutInfo( rightMost( getRoot() ), Put.BOTTOM, drop, false );
+					}
+				}
+			}
+			return null;
+		}
+		
+		private SplitNode leftMost( SplitNode node ){
+			while( true ){
+				if( node.getMaxChildrenCount() > 0 ){
+					node = node.getChild( 0 );
+				}
+				else{
+					return node;
+				}
+			}
+		}
+		
+		private SplitNode rightMost( SplitNode node ){
+			while( true ){
+				int max = node.getMaxChildrenCount();
+				if( max > 0 ){
+					node = node.getChild( max-1 );
+				}
+				else{
+					return node;
+				}
+			}
 		}
 
 		/**
