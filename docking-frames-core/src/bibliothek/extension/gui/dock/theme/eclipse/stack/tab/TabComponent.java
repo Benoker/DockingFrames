@@ -35,6 +35,7 @@ import javax.swing.event.MouseInputListener;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
 /**
@@ -89,6 +90,12 @@ public interface TabComponent extends DockElementRepresentative{
 	 * @param tab the owner of this {@link TabComponent}
 	 */
 	public void setTab( EclipseTab tab );
+	
+	/**
+	 * Fine tunes the look and behavior of this tab.
+	 * @param configuration the new configuration to use, not <code>null</code>
+	 */
+	public void setConfiguration( TabConfiguration configuration );
 	
 	/**
 	 * Gets the number of pixels which should be covered at the sides

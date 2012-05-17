@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.intern.AbstractCDockable;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
@@ -33,10 +34,6 @@ import bibliothek.gui.dock.common.location.CWorkingAreaLocation;
 import bibliothek.gui.dock.common.perspective.CWorkingPerspective;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A working area is an element which is always visible and contains some
@@ -95,6 +92,38 @@ public class CWorkingArea extends CGridArea{
         getStation().dropTree( tree );
     }
 
+    /**
+     * First {@link #add(SingleCDockable) adds} <code>dockable</code> to the 
+     * {@link CControl} of this {@link CWorkingArea}, then makes it visible at a good position. A good position
+     * is {@link CLocation#aside()} the latest focused {@link Dockable} that is child of this station.<br>
+     * This method does <b>not</b> force a focus transfer, clients need to call {@link AbstractCDockable#toFront()}
+     * if the require a focus switch to <code>dockable</code>. 
+     * @param dockable the element to show
+     * @return <code>dockable</code>
+     */
+    public <F extends SingleCDockable> F show( F dockable ){
+    	add( dockable );
+    	dockable.setLocation( getDropLocation() );
+    	dockable.setVisible( true );
+    	return dockable;
+    }
+
+    /**
+     * First {@link #add(MultipleCDockable) adds} <code>dockable</code> to the 
+     * {@link CControl} of this {@link CWorkingArea}, then makes it visible at a good position. A good position
+     * is {@link CLocation#aside()} the latest focused {@link Dockable} that is child of this station. <br>
+     * This method does <b>not</b> force a focus transfer, clients need to call {@link AbstractCDockable#toFront()}
+     * if the require a focus switch to <code>dockable</code>.
+     * @param dockable the element to show
+     * @return <code>dockable</code>
+     */
+    public <F extends MultipleCDockable> F show( F dockable ){
+    	add( dockable );
+    	dockable.setLocation( getDropLocation() );
+    	dockable.setVisible( true );
+    	return dockable;
+    }
+    
     /**
      * Ensures that <code>this</code> is the parent of <code>dockable</code>
      * and adds <code>dockable</code> to the {@link CControl} which is associated

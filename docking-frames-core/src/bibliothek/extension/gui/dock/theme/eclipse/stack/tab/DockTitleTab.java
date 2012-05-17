@@ -24,6 +24,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
@@ -177,6 +178,10 @@ public class DockTitleTab implements TabComponent{
 				}
 			}
 		};
+    }
+    
+    public void setConfiguration( TabConfiguration configuration ){
+    	// ignore
     }
     
     public void setOrientation( TabPlacement orientation ){

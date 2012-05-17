@@ -101,6 +101,16 @@ public interface CStation<S extends CommonDockStation<?, ?>> {
     public CLocation getStationLocation();
     
     /**
+     * Creates a {@link CLocation} that can be used to drop a new {@link CDockable} on this station
+     * or one of its children stations. This method returns the "optimal spot", where the definition
+     * of "optimal spot" is up to the station itself. The default implementations however call
+     * {@link CLocationModeManager#getDropLocation(CStation)}. 
+     * @return the optimal spot for dropping a new {@link CDockable} or <code>null</code> if this
+     * station is not able to calculate the optimal spot (e.g. because the station is not visible)
+     */
+    public CLocation getDropLocation();
+    
+    /**
      * Called by {@link CControl} when this {@link CStation} is added or removed.
      * There are two actions which most stations might want to do:<br>
      * <ul>

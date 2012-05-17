@@ -87,6 +87,13 @@ public abstract class AbstractCStation<S extends CommonDockStation<?, ?>> implem
     public CLocation getStationLocation() {
         return location;
     }
+    
+    public CLocation getDropLocation(){
+    	if( control == null ){
+    		return null;
+    	}
+    	return control.getLocationManager().getDropLocation( this );
+    }
 
     public String getUniqueId() {
         return id;

@@ -42,6 +42,7 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.station.stack.CombinedTab;
 import bibliothek.gui.dock.station.stack.tab.AbstractTab;
 import bibliothek.gui.dock.station.stack.tab.Tab;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 
@@ -74,6 +75,10 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		component.setIcon( dockable.getTitleIcon() );
 		component.setText( dockable.getTitleText() );
 		component.setTab( this );
+	}
+	
+	public void setConfiguration( TabConfiguration configuration ){
+		component.setConfiguration( configuration );
 	}
 	
 	@Override

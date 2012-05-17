@@ -33,6 +33,7 @@ import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
 import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.FocusHistory;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockRegisterListener;
@@ -110,6 +111,15 @@ public interface DockControllerFactory {
      * @return the controller, not <code>null</code>
      */
     public FocusController createFocusController( DockController controller, ControllerSetupCollection setup );
+    
+    /**
+     * Creates the focus history of <code>controller</code> 
+     * @param controller the controller for which the element is created
+     * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished.
+     * @return the class managing the history, not <code>null</code>
+     */
+    public FocusHistory createFocusHistory( DockController controller, ControllerSetupCollection setup );
     
     /**
      * Creates the controller that will forward double clicks with the mouse.

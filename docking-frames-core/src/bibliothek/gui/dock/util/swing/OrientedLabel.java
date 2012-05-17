@@ -46,6 +46,9 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     /** the current angle of this label */
     private Rotation rotation = Rotation.DEGREE_0;
     
+    /** if <code>true</code>, then the {@link #icon} is not painted */
+    private boolean hideIcon = false;
+    
     /**
      * Creates a new label with no text
      */
@@ -85,7 +88,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
 	}
     
     /**
-     * Gets the distance between icon the the tree adjacent borders.
+     * Gets the distance between icon and the tree adjacent borders.
      * @return the distance
      */
     public int getIconOffset(){
@@ -210,6 +213,27 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     	return label.getBackground();
     }
     
+    /**
+     * Tells whether the icon is not painted.
+     * @return whether the icon is hidden
+     * @see #setIconHidden(boolean)
+     */
+    public boolean isIconHidden(){
+		return hideIcon;
+	}
+    
+    /**
+     * Tells whether the {@link #setIcon(Icon) icon} is hidden. If the icon is hidden, it is not painted
+     * and does not take any space. It is however treated normally when serving calls to {@link #getPreferredSize()}.
+     * @param hideIcon whether to hide the icon
+     */
+    public void setIconHidden( boolean hideIcon ){
+		if( this.hideIcon != hideIcon ){
+			this.hideIcon = hideIcon;
+			repaint();
+		}
+	}
+    
     @Override
     public void updateUI() {
         super.updateUI();
@@ -319,7 +343,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     @Override
     public void paintForeground( Graphics g ){
         if( rotation == Rotation.DEGREE_0 ){
-        	if( icon == null ){
+        	if( icon == null || isIconHidden() ){
         		label.paint( g );
         	}
         	else{
@@ -349,7 +373,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         }
         else if( rotation == Rotation.DEGREE_90 ){
         	double angle = Math.PI/2.0;
-        	if( icon == null ){
+        	if( icon == null || isIconHidden() ){
 	            Graphics2D g2 = (Graphics2D)g.create();
 	            g2.rotate( angle, 0, 0 );
 	            g2.translate( 0, -getWidth() );
@@ -377,7 +401,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         }
         else if( rotation == Rotation.DEGREE_180 ){
         	double angle = Math.PI;
-        	if( icon == null ){
+        	if( icon == null || isIconHidden() ){
 	            Graphics2D g2 = (Graphics2D)g.create();
 	            g2.rotate( angle, 0, 0 );
 	            g2.translate( -getWidth(), -getHeight() );
@@ -404,7 +428,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         }
     	else{
         	double angle = Math.PI+Math.PI/2.0;
-        	if( icon == null ){
+        	if( icon == null || isIconHidden() ){
 	            Graphics2D g2 = (Graphics2D)g.create();
 	            g2.rotate( angle, 0, 0 );
 	            g2.translate( -getHeight(), 0 );
@@ -443,8 +467,8 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         super.setBounds(x, y, w, h);
         
         if( isHorizontal() )
-            label.setBounds( 0, 0, w, h );
+            label.setBounds( 0, 0, w+30, h );
         else
-            label.setBounds( 0, 0, h, w );
+            label.setBounds( 0, 0, h, w+30 );
     }
 }

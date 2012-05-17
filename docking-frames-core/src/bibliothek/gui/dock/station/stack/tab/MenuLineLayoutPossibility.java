@@ -366,31 +366,61 @@ public class MenuLineLayoutPossibility {
 		
 		int overflowSpace = available - space;
 		
-		float shrink;
-		if( overflowSpace >= 0 ){
-			shrink = 1.0f;
-		}
-		else{
-			shrink = (float)available / space;
-			
-			weightTabs = totalWeight - weightTabs;
-			weightInfo = totalWeight - weightInfo;
-			weightMenu = totalWeight - weightMenu;
-			totalWeight = weightInfo + weightTabs + weightMenu;
-		}
+		float tabsWeight = totalWeight == 0 ? 0 : (weightTabs / totalWeight);
+		float menuWeight = totalWeight == 0 ? 0 : (weightMenu / totalWeight);
+		float infoWeight = totalWeight == 0 ? 0 : (weightInfo / totalWeight);
 		
 		int visibleItems = 1;
-		float tabsWeight = totalWeight == 0 ? 0 : (weightTabs / totalWeight);
-		result[0] = (int)(shrink * tabSpace + tabsWeight * overflowSpace);
-		if( menuSize != null ){
-			float menuWeight = totalWeight == 0 ? 0 : (weightMenu / totalWeight);
-			result[1] = (int)(shrink * menuSpace + menuWeight * overflowSpace);
-			visibleItems++;
+		if( overflowSpace >= 0 ){
+			
+			result[0] = (int)(tabSpace + tabsWeight * overflowSpace);
+			if( menuSize != null ){
+				result[1] = (int)(menuSpace + menuWeight * overflowSpace);
+				visibleItems++;
+			}
+			if( infoSize != null ){
+				result[2] = (int)(infoSpace + infoWeight * overflowSpace);
+				visibleItems++;
+			}
 		}
-		if( infoSize != null ){
-			float infoWeight = totalWeight == 0 ? 0 : (weightInfo / totalWeight);
-			result[2] = (int)(shrink * infoSpace + infoWeight * overflowSpace);
-			visibleItems++;
+		else{
+			float[] maximums = { tabSpace, menuSpace, infoSpace };
+			float[] claims = { available * weightTabs, available * weightMenu, available * weightInfo }; 
+			
+			if( menuSize == null ){
+				claims[1] = -1;
+			}
+			if( infoSize == null ){
+				claims[2] = -1;
+			}
+			
+			for( int i = 0; i < available; i++ ){
+				float maxClaim = -1;
+				int maxIndex = -1;
+				for( int c = 0; c < 3; c++ ){
+					if( claims[c] > maxClaim ){
+						maxClaim = claims[c];
+						maxIndex = c;
+					}
+				}
+				if( maxIndex >= 0 ){
+					claims[maxIndex] -= 1;
+					if( claims[maxIndex] < 0 ){
+						claims[maxIndex] = -0.5f;
+					}
+					result[maxIndex] += 1;
+					if( result[maxIndex] >= maximums[maxIndex] ){
+						claims[maxIndex] = -1;
+					}
+				}
+			}
+			
+			if( menuSize != null ){
+				visibleItems++;
+			}
+			if( infoSize != null ){
+				visibleItems++;
+			}
 		}
 		
 		// make sure sum equals available

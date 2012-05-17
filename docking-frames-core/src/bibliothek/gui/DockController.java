@@ -74,6 +74,7 @@ import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.control.PopupController;
 import bibliothek.gui.dock.control.SingleParentRemover;
 import bibliothek.gui.dock.control.focus.FocusController;
+import bibliothek.gui.dock.control.focus.FocusHistory;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
@@ -173,6 +174,9 @@ public class DockController {
     
     /** class managing focus transfer between {@link Dockable}s */
     private FocusController focusController;
+    
+    /** class telling the order in which {@link Dockable}s had the focus */
+    private FocusHistory focusHistory;
     
     /** an observer of the bound {@link DockTitle}s */
     private DockTitleObserver dockTitleObserver = new DockTitleObserver();
@@ -334,6 +338,7 @@ public class DockController {
         defaultActionOffer = factory.createDefaultActionOffer( this, setup );
         focusObserver = factory.createMouseFocusObserver( this, setup );
         focusController = factory.createFocusController( this, setup );
+        focusHistory = factory.createFocusHistory( this, setup );
         actionViewConverter = factory.createActionViewConverter( this, setup );
         doubleClickController = factory.createDoubleClickController( this, setup );
         keyboardController = factory.createKeyboardController( this, setup );
@@ -440,6 +445,14 @@ public class DockController {
      */
     public FocusController getFocusController(){
 		return focusController;
+	}
+    
+    /**
+     * Gets the history of the focused {@link Dockable}s.
+     * @return the history, not <code>null</code>
+     */
+    public FocusHistory getFocusHistory(){
+		return focusHistory;
 	}
     
     /**

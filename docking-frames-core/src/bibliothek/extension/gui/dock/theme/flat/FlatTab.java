@@ -30,6 +30,7 @@ import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabComponentLayoutManager;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.stack.tab.TabPaneComponent;
 import bibliothek.gui.dock.station.stack.tab.TabPaneTabBackgroundComponent;
@@ -155,7 +156,7 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     	
     	add( label );
     	add( actions );
-    	layoutManager = new TabComponentLayoutManager( label, actions );
+    	layoutManager = new TabComponentLayoutManager( label, actions, pane.getConfiguration( dockable ) );
     	layoutManager.setFreeSpaceToSideBorder( 2 );
     	layoutManager.setFreeSpaceToParallelBorder( 2 );
     	layoutManager.setFreeSpaceToOpenSide( 2 );
@@ -308,6 +309,10 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
                 return false;
             }
         });
+    }
+    
+    public void setConfiguration( TabConfiguration configuration ){
+	    layoutManager.setConfiguration( configuration );	
     }
     
     public void updateForeground(){

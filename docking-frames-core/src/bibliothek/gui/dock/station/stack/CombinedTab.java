@@ -32,6 +32,7 @@ import javax.swing.Icon;
 
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.station.stack.tab.Tab;
+import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 
 /**
  * A tab of a {@link CombinedStackDockComponent}. Every tab represents one
@@ -68,4 +69,11 @@ public interface CombinedTab extends DockElementRepresentative, Tab{
 	 * @param enabled whether to enable or disable this tab
 	 */
 	public void setEnabled( boolean enabled );
+	
+	/**
+	 * Fine tunes this tab.
+	 * @param configuration the new configuration to use
+	 * @see CombinedStackDockComponent#getConfiguration(bibliothek.gui.Dockable)
+	 */
+	public void setConfiguration( TabConfiguration configuration );
 }
