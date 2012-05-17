@@ -44,11 +44,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
 import bibliothek.gui.dock.station.split.Divideable;
@@ -109,6 +111,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	}
 	
 	private WizardLayoutManager layoutManager;
+	private WizardSpanStrategy wizardSpanStrategy;
 	private Side side;
 	private boolean onRevalidating = false;
 	
@@ -120,6 +123,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	public WizardSplitDockStation( Side side ){
 		this.side = side;
 		layoutManager = new WizardLayoutManager();
+		wizardSpanStrategy = new WizardSpanStrategy( this );
 		setSplitLayoutManager( layoutManager );
 		setDividerStrategy( new WizardDividerStrategy() );
 		getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
@@ -206,6 +210,38 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	
 	public WizardLayoutManager getWizardSplitLayoutManager(){
 		return layoutManager;
+	}
+	
+	/**
+	 * Gets the strategy which is responsible for managing the {@link Span}s.
+	 * @return the span strategy
+	 */
+	public WizardSpanStrategy getWizardSpanStrategy(){
+		return wizardSpanStrategy;
+	}
+	
+	@Override
+	public void setDividerSize( int dividerSize ){
+		super.setDividerSize( dividerSize );
+		if( wizardSpanStrategy != null ){
+			wizardSpanStrategy.reset();
+		}
+	}
+	
+	@Override
+	public void setController( DockController controller ){
+		wizardSpanStrategy.setController( controller );
+		super.setController( controller );
+	}
+	
+	@Override
+	protected void setPut( PutInfo info ){
+		wizardSpanStrategy.setPut( info );
+	}
+	
+	@Override
+	protected void unsetPut(){
+		wizardSpanStrategy.unsetPut();
 	}
 	
 	/**
@@ -553,6 +589,10 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		public void setDivider( Divideable node, double divider ){
 			model.setDivider( node, divider );
 			revalidate();
+		}
+		
+		public WizardNodeMap getMap(){
+			return model.getMap();
 		}
 	}
 	

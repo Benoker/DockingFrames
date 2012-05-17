@@ -33,6 +33,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,6 +144,22 @@ public abstract class WizardNodeMap {
 			buildColumns();
 		}
 		return columns;
+	}
+	
+	/**
+	 * Gets all the columns sorted by their {@link Column#getIndex() index}.
+	 * @return the ordered columns
+	 */
+	public Column[] getSortedColumns(){
+		Collection<Column> columns = getColumns().values();
+		Column[] array = columns.toArray( new Column[ columns.size() ] );
+		Arrays.sort( array, new Comparator<Column>(){
+			@Override
+			public int compare( Column o1, Column o2 ){
+				return o1.getIndex() - o2.getIndex();
+			}
+		});
+		return array;
 	}
 
 	/**
@@ -300,6 +317,38 @@ public abstract class WizardNodeMap {
 	}
 	
 	/**
+	 * Searches the column which contains <code>node</code>. If <code>node</code> is part of
+	 * the header, then the result represents the column at the right side of the divider.
+	 * @param node the node whose column index is searched
+	 * @return the column, may be <code>null</code>
+	 */
+	public Column getColumn( SplitNode node ){
+		Column column = getColumn( node, true );
+		if( column != null ){
+			return column;
+		}
+		if( node instanceof Root ){
+			node = ((Root)node).getChild();
+		}
+		if( node instanceof Node ){
+			SplitNode child = ((Node)node).getRight();
+			while( child != null ){
+				Column result = getColumns().get( child );
+				if( result != null ){
+					return result;
+				}
+				if( child instanceof Node ){
+					child = ((Node)child).getLeft();
+				}
+				else{
+					child = null;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Gets the {@link Column} which contains <code>node</code>.
 	 * @param node the node whose column is searched
 	 * @param upwards if <code>false</code>, then <code>node</code>
@@ -416,6 +465,7 @@ public abstract class WizardNodeMap {
 	public class Column{
 		private SplitNode root;
 		private Map<SplitNode, Cell> cells = new HashMap<SplitNode, Cell>();
+		private List<Cell> leafCells = new ArrayList<WizardNodeMap.Cell>();
 		private int index;
 		
 		private Column( SplitNode root ){
@@ -438,9 +488,44 @@ public abstract class WizardNodeMap {
 
 				@Override
 				public void handleLeaf( Leaf leaf ){
-					cells.put( leaf, new Cell( leaf, Column.this ) );
+					Cell cell = new Cell( leaf, Column.this );
+					cells.put( leaf, cell );
+					leafCells.add( cell );
 				}
-			} );
+			});
+			
+			Cell[] array = leafCells.toArray( new Cell[ leafCells.size() ] );
+			
+			Arrays.sort( array, new Comparator<Cell>(){
+				@Override
+				public int compare( Cell a, Cell b ){
+					int sa = score( a );
+					int sb = score( b );
+					if( sa < sb ){
+						return -1;
+					}
+					else if( sa > sb ){
+						return 1;
+					}
+					return 0;
+				}
+				
+				private int score( Cell c ){
+					SplitNode node = c.getNode();
+					int score = 0;
+					while( node != Column.this.root ){
+						if( node.getParent().getChildLocation( node ) > 0 ){
+							score++;
+						}
+						node = node.getParent();
+					}
+					return score;
+				}
+			});
+			
+			for( int i = 0; i < array.length; i++ ){
+				array[i].index = i;
+			}
 		}
 
 		/**
@@ -449,6 +534,21 @@ public abstract class WizardNodeMap {
 		 */
 		public SplitNode getRoot(){
 			return root;
+		}
+		
+		/**
+		 * Gets the cells ordered by their index.
+		 * @return the cells
+		 */
+		public Cell[] getSortedCells(){
+			Cell[] array = cells.values().toArray( new Cell[ cells.size() ] );
+			Arrays.sort( array, new Comparator<Cell>(){
+				@Override
+				public int compare( Cell o1, Cell o2 ){
+					return o1.getIndex() - o2.getIndex();
+				}
+			});
+			return array;
 		}
 		
 		/**
@@ -543,6 +643,18 @@ public abstract class WizardNodeMap {
 			return null;
 		}
 
+		public Cell getLeftmostCell( SplitNode node ){
+			while( node != null ){
+				if( node instanceof Node ){
+					node = ((Node)node).getLeft();
+				}
+				else{
+					return cells.get( node );
+				}
+			}
+			return null;
+		}
+		
 		public Leaf getLastLeafOfColumn(){
 			SplitNode node = root;
 			while( node != null ){
@@ -585,6 +697,10 @@ public abstract class WizardNodeMap {
 		public Dimension getMinimumSize(){
 			return getMinimumSize( root );
 		}
+		
+		public int getCellCount(){
+			return leafCells.size();
+		}
 
 		public int getGaps( SplitNode node ){
 			Cell cell = cells.get( node );
@@ -608,6 +724,7 @@ public abstract class WizardNodeMap {
 		private Column column;
 		private Dimension preferredSize;
 		private Dimension minimumSize;
+		private int index;
 		
 		private Cell( SplitNode node, Column column ){
 			this.node = node;
@@ -622,6 +739,14 @@ public abstract class WizardNodeMap {
 			return node;
 		}
 
+		/**
+		 * Gets the index of this cell.
+		 * @return the index
+		 */
+		public int getIndex(){
+			return index;
+		}
+		
 		/**
 		 * Gets the preferred size of this cell, does not include any gaps
 		 * @return the preferred size ignoring gaps

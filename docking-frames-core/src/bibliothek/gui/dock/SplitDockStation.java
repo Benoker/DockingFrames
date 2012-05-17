@@ -2780,6 +2780,21 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			manager.updateBounds(root(), insets.left / factorW, insets.top / factorH, factorW, factorH);
 		}
 	}
+	
+	/**
+	 * Forwards a call to {@link SplitSpanStrategy#setPut(PutInfo)}.
+	 * @param info the new put info, can be <code>null</code>
+	 */
+	protected void setPut( PutInfo info ){
+		spanStrategy.setPut( info );
+	}
+	
+	/**
+	 * Forwards a call to {@link SplitSpanStrategy#unsetPut()}
+	 */
+	protected void unsetPut(){
+		spanStrategy.unsetPut();
+	}
 
 	/**
 	 * The background algorithm of this {@link SplitDockStation}.
@@ -2935,7 +2950,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		
 		public void draw(){
 			SplitDockStation.this.putInfo = putInfo;
-			spanStrategy.setPut( putInfo );
+			setPut( putInfo );
 			repaint();
 		}
 
@@ -2943,7 +2958,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			if( SplitDockStation.this.putInfo == putInfo ){
 				SplitDockStation.this.putInfo = null;
 				if( next == null || !(next instanceof SplitDropOperation) || next.getTarget() != getTarget() ){
-					spanStrategy.setPut( null );
+					setPut( null );
 				}
 				repaint();
 			}
@@ -2970,7 +2985,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		
 		public void execute(){
-			spanStrategy.unsetPut();
+			unsetPut();
 			if( isMove() ){
 				move();
 			}

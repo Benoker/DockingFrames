@@ -33,6 +33,8 @@ package bibliothek.gui.dock.wizard;
 import java.awt.Dimension;
 import java.awt.Insets;
 
+import javax.swing.JComponent;
+
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
@@ -84,7 +86,7 @@ public class WizardColumnModel {
 	 * @return the size of the gap
 	 */
 	private int gap( int column ){
-		return station.getDividerSize();
+		return station.getWizardSpanStrategy().getGap( column );
 	}
 	
 	/**
@@ -95,16 +97,17 @@ public class WizardColumnModel {
 	 * @return the size of the gap
 	 */
 	private int gap( int column, int cell ){
-		return station.getDividerSize();
+		return station.getWizardSpanStrategy().getGap( column, cell );
 	}
 	
 	/**
 	 * Gets the size of the gap that is currently to be used by <code>node</code>
 	 * @param node the node whose inner gap is requested
+	 * @param map detailed information about the layout of this station
 	 * @return the size of the inner gap
 	 */
-	private int gap( Node node ){
-		return station.getDividerSize();
+	private int gap( Node node, WizardNodeMap map ){
+		return station.getWizardSpanStrategy().getGap( node, map );
 	}
 	
 	private int gap(){
@@ -217,7 +220,7 @@ public class WizardColumnModel {
 			}
 		}
 		
-		applyPersistentSizes( map );
+		applyPersistentSizes( map, true );
 	}
 	
 	/**
@@ -252,7 +255,7 @@ public class WizardColumnModel {
 						deltaPixel = (int)(dividerDelta * node.getSize().width);
 					}
 					cell.setSize( cell.getSize() + deltaPixel );
-					applyPersistentSizes( map );
+					applyPersistentSizes( map, true );
 				}
 				else{
 					node.setDivider( divider );
@@ -271,7 +274,7 @@ public class WizardColumnModel {
 				double dividierDelta = divider - divideable.getDivider();
 				int deltaPixel = (int)(dividierDelta * cell.getSize());
 				cell.setSize( cell.getSize() + deltaPixel );
-				applyPersistentSizes( map );
+				applyPersistentSizes( map, true );
 			}
 		}
 	}
@@ -293,7 +296,7 @@ public class WizardColumnModel {
 			deltaPixel = (int)(dividerDelta * size.height);
 		}
 		persistent.setSize( persistent.getSize() + deltaPixel );
-		applyPersistentSizes( map );
+		applyPersistentSizes( map, true );
 	}
 	
 	/**
@@ -307,16 +310,19 @@ public class WizardColumnModel {
 				cell.setSize( cell.getPreferredSize() );
 			}
 		}
-		applyPersistentSizes( map );
+		applyPersistentSizes( map, true );
 	}
 	
 	/**
 	 * Updates the dividers of all {@link Node}s such that the actual size of the columns and cells results. 
 	 * @param map information about the layout of the station
+	 * @param revalidate if <code>true</code>, a call to {@link JComponent#revalidate()} is made
 	 */
-	protected void applyPersistentSizes( WizardNodeMap map ){
+	protected void applyPersistentSizes( WizardNodeMap map, boolean revalidate ){
 		applyPersistentSizes( station.getRoot(), map );
-		station.revalidateOutside();
+		if( revalidate ){
+			station.revalidateOutside();
+		}
 	}
 	
 	/**
@@ -328,7 +334,7 @@ public class WizardColumnModel {
 	private int applyPersistentSizes( SplitNode node, WizardNodeMap map ){
 		Column column = map.getColumn( node, false );
 		if( column != null ){
-			applyPersistentSizes( column.getRoot(), column.getPersistentColumn() );
+			applyPersistentSizes( column.getRoot(), column.getPersistentColumn(), map );
 			PersistentColumn persistent = column.getPersistentColumn();
 			if( persistent == null ){
 				return 0;
@@ -342,7 +348,7 @@ public class WizardColumnModel {
 		else if( node instanceof Node ){
 			int left = applyPersistentSizes( ((Node)node).getLeft(), map );
 			int right = applyPersistentSizes( ((Node)node).getRight(), map );
-			int gap = gap( (Node)node );
+			int gap = gap( (Node)node, map );
 			
 			((Node)node).setDivider( (left + gap/2) / (double)(left + right + gap));
 			return left + gap + right;
@@ -356,17 +362,18 @@ public class WizardColumnModel {
 	 * Updates the dividers of an node inside of <code>column</code> such that the actual size of the cells results.
 	 * @param node a node inside <code>column</code>
 	 * @param column detailed information about the current column
+	 * @param map detailed information about the layout
 	 * @return the number of pixels required for <code>node</code>
 	 */
-	private int applyPersistentSizes( SplitNode node, PersistentColumn column ){
+	private int applyPersistentSizes( SplitNode node, PersistentColumn column, WizardNodeMap map ){
 		if( node instanceof Root ){
-			return applyPersistentSizes( ((Root)node).getChild(), column );
+			return applyPersistentSizes( ((Root)node).getChild(), column, map );
 		}
 		else if( node instanceof Node ){
 			Node n = (Node)node;
 			
-			int left = applyPersistentSizes( n.getLeft(), column );
-			int right = applyPersistentSizes( n.getRight(), column );
+			int left = applyPersistentSizes( n.getLeft(), column, map );
+			int right = applyPersistentSizes( n.getRight(), column, map );
 			
 			if( n.getLeft() == null || !n.getLeft().isVisible() ){
 				return right;
@@ -375,7 +382,7 @@ public class WizardColumnModel {
 				return left;
 			}
 			
-			int gap = gap((Node)node);
+			int gap = gap((Node)node, map );
 			((Node)node).setDivider( (left + gap/2) / (double)(left + right + gap));
 			return left + gap + right;
 		}
@@ -394,11 +401,32 @@ public class WizardColumnModel {
 	 * @param y the top left corner
 	 */
 	public void updateBounds( double x, double y ){
-		Root root = station.getRoot();
-		root.updateBounds( x, y, 1.0, 1.0, factorW, factorH, false );
+		double w = 1.0;
+		double h = 1.0;
+		int gap0 = gap( 0 );
 		WizardNodeMap map = getMap();
-		applyPersistentSizes( map );
-		updateBounds( station.getRoot(), x, y, 1.0, 1.0, map );
+		int columns = map.getColumns().size();
+		
+		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
+			x += gap0 / factorW;
+			w -= gap0 / factorW;
+			if( columns > 0 ){
+				w -= gap( columns ) / factorW;
+			}
+		}
+		else{
+			y += gap0 / factorH;
+			h -= gap0 / factorH;
+			if( columns > 0 ){
+				h -= gap( columns ) / factorH;
+			}
+		}
+		
+		Root root = station.getRoot();
+		root.updateBounds( x, y, w, h, factorW, factorH, false );
+		applyPersistentSizes( map, false );
+		
+		updateBounds( station.getRoot(), x, y, w, h, map );
 	}
 	
 	/**
@@ -445,6 +473,8 @@ public class WizardColumnModel {
 			count++;
 		}
 		gaps += gap( column.getIndex(), count );
+		int gap0 = gap( column.getIndex(), 0 );
+		int cellCount = column.getCellCount();
 		
 		if( side().getHeaderOrientation() == Orientation.HORIZONTAL ) {
 			double available = height * factorH - gaps;
@@ -452,12 +482,22 @@ public class WizardColumnModel {
 			if( requested < available ) {
 				height = requested / factorH + gaps / factorH;
 			}
+			y += gap0 / factorH;
+			height -= gap0 / factorH;
+			if( cellCount > 0 ){
+				height -= gap( column.getIndex(), cellCount ) / factorH;
+			}
 		}
 		else {
 			double available = width * factorW - gaps;
 			available = Math.max( available, 0 );
 			if( requested < available ) {
 				width = requested / factorW + gaps / factorW;
+			}
+			x += gap0 / factorW;
+			width -= gap0 / factorW;
+			if( cellCount > 0 ){
+				width -= gap( column.getIndex(), cellCount ) / factorW;
 			}
 		}
 		updateBoundsRecursive( column.getRoot(), x, y, width, height, map );
@@ -483,14 +523,14 @@ public class WizardColumnModel {
 				Node n = (Node) node;
 				if( n.getLeft() != null && n.getLeft().isVisible() && n.getRight() != null && n.getRight().isVisible() ) {
 					if( n.getOrientation() == Orientation.HORIZONTAL ) {
-						double dividerWidth = factorW > 0 ? Math.max( 0, gap( n ) / factorW ) : 0.0;
+						double dividerWidth = factorW > 0 ? Math.max( 0, gap( n, map ) / factorW ) : 0.0;
 						double dividerLocation = width * n.getDivider();
 
 						updateBounds( n.getLeft(), x, y, dividerLocation - dividerWidth / 2, height, map );
 						updateBounds( n.getRight(), x + dividerLocation + dividerWidth / 2, y, width - dividerLocation - dividerWidth / 2, height, map );
 					}
 					else {
-						double dividerHeight = factorH > 0 ? Math.max( 0, gap( n ) / factorH ) : 0.0;
+						double dividerHeight = factorH > 0 ? Math.max( 0, gap( n, map ) / factorH ) : 0.0;
 						double dividerLocation = height * n.getDivider();
 
 						updateBounds( n.getLeft(), x, y, width, dividerLocation - dividerHeight / 2, map );

@@ -303,10 +303,12 @@ public class Node extends VisibleSplitNode implements Divideable{
     }
     
     public void setDivider( double divider ){
-        this.divider = divider;
-        getAccess().getOwner().revalidate();
-        getAccess().getOwner().repaint();
-        getAccess().repositioned( this );
+    	if( this.divider != divider ){
+	        this.divider = divider;
+	        getAccess().getOwner().revalidate();
+	        getAccess().getOwner().repaint();
+	        getAccess().repositioned( this );
+    	}
     }
     
     public double getDivider() {
