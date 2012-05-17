@@ -114,11 +114,11 @@ public class PutInfo {
     				}
     			}
     			if( parent != null ){
-	    			SplitNode neighbor;
+	    			SplitNode neighbor = null;
 	    			if( put == Put.LEFT || put == Put.TOP ){
 	    				neighbor = ((Node)parent).getLeft();
 	    			}
-	    			else{
+	    			else if( put == Put.RIGHT || put == Put.BOTTOM ){
 	    				neighbor = ((Node)parent).getRight();
 	    			}
 	    			

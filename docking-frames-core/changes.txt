@@ -731,6 +731,9 @@
 
 [v1.1.1p7d]
  - API: New property StackDockStation.TAB_CONFIGURATION allows to fine tune the look of tabs 
+
+[v1.1.1p7e]
+ - Bugfix: Insertion area was not always painted on a SplitDockStation
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them
