@@ -299,11 +299,6 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	}
 	
 	@Override
-	public Dimension getMinimumSize(){
-		return getPreferredSize();
-	}
-	
-	@Override
 	public int getScrollableUnitIncrement( Rectangle visibleRect, int orientation, int direction ){
 		return 10;
 	}
@@ -342,6 +337,11 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Dimension getMinimumSize(){
+		return getPreferredSize();
 	}
 	
 	@Override

@@ -181,7 +181,7 @@ public class WizardColumnModel {
 			result = new Dimension( cellMax, size );
 		}
 		
-		Insets insets = station.getInsets();
+		Insets insets = station.getContentPane().getInsets();
 		if( insets != null ){
 			result.width += insets.left + insets.right;
 			result.height += insets.top + insets.bottom;
