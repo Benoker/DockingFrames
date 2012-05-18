@@ -370,7 +370,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 				
 				if( target == null ){
 					Rectangle bounds = putInfo.getNode().getBounds();
-					int gap = getDividerSize();
+					int gap = getWizardSpanStrategy().getGap();
 					
 					if( putInfo.getPut() == PutInfo.Put.LEFT ) {
 						bounds.x -= gap;

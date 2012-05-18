@@ -61,6 +61,9 @@ public class WizardSpanStrategy {
 	
 	private StationSpanFactoryValue factory;
 	
+	private int selectedColumn = -1;
+	private int selectedCell = -1;
+	
 	public WizardSpanStrategy( WizardSplitDockStation station ){
 		this.station = station;
 		factory = new StationSpanFactoryValue( ThemeManager.SPAN_FACTORY + ".wizard", station ){
@@ -113,6 +116,9 @@ public class WizardSpanStrategy {
 	 * Deletes and recreates all spans.
 	 */
 	public void reset(){
+		selectedColumn = -1;
+		selectedCell = -1;
+		
 		WizardNodeMap map = station.getWizardSplitLayoutManager().getMap();
 		Column[] columns = map.getSortedColumns();
 		
@@ -218,7 +224,10 @@ public class WizardSpanStrategy {
 		}
 	}
 	
-	private void setPut( int column, int cell ){		
+	private void setPut( int column, int cell ){
+		selectedColumn = column;
+		selectedCell = cell;
+		
 		for( int i = 0; i < columnSpans.length; i++ ){
 			if( i == column && cell == -1 ){
 				columnSpans[i].mutate( SpanMode.OPEN );
@@ -243,6 +252,9 @@ public class WizardSpanStrategy {
 	 * Immediatelly resets all {@link Span}s to have a size of <code>0</code>.
 	 */
 	public void unsetPut(){
+		selectedColumn = -1;
+		selectedCell = -1;
+		
 		for( Span span : columnSpans ){
 			span.set( SpanMode.OFF );
 		}
@@ -251,6 +263,34 @@ public class WizardSpanStrategy {
 				span.set( SpanMode.OFF );
 			}
 		}
+	}
+	
+	/**
+	 * Gets the size of the currently selected {@link Span} according to
+	 * {@link #setPut(PutInfo)}. If there is no {@link Span} selected, then
+	 * this method returns the standard size of a gap.
+	 * @return the size of the currently selected gap
+	 */
+	public int getGap(){
+		if( selectedColumn == -1 ){
+			return station.getDividerSize();
+		}
+		if( selectedCell == -1 ){
+			if( selectedColumn >= columnSpans.length ){
+				return station.getDividerSize();
+			}
+			else{
+				return columnSpans[selectedColumn].getSize();
+			}
+		}
+		if( selectedColumn >= cellSpans.length ){
+			return station.getDividerSize();
+		}
+		Span[] array = cellSpans[selectedColumn];
+		if( selectedCell >= array.length ){
+			return station.getDividerSize();
+		}
+		return array[selectedCell].getSize();
 	}
 	
 	/**
