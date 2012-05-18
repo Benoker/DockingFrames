@@ -36,7 +36,6 @@ import java.awt.Rectangle;
 
 import javax.swing.SwingUtilities;
 
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
@@ -53,15 +52,16 @@ import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
 public class ToolbarGroupInnerLayer implements DockStationDropLayer{
 	private final ToolbarGroupDockStation station;
 	private LayerPriority priority = LayerPriority.BASE;
-
+	private Component component;
+	
 	/**
 	 * Creates a new layer.
-	 * 
-	 * @param station
-	 *            the station which owns this layer
+	 * @param station the station which owns this layer
+	 * @param component the component which actually shows the dockables.
 	 */
-	public ToolbarGroupInnerLayer( ToolbarGroupDockStation station ){
+	public ToolbarGroupInnerLayer( ToolbarGroupDockStation station, Component component ){
 		this.station = station;
+		this.component = component;
 	}
 
 	@Override
@@ -77,12 +77,12 @@ public class ToolbarGroupInnerLayer implements DockStationDropLayer{
 	@Override
 	public boolean contains( int x, int y ){
 		final Point mouseCoord = new Point(x, y);
-		SwingUtilities.convertPointFromScreen(mouseCoord, getComponent());
+		SwingUtilities.convertPointFromScreen(mouseCoord, component);
 		final ToolbarGridLayoutManager<StationChildHandle> layout = station.getLayoutManager();
 		if (station.columnCount() == 0){
 			// if there's no dockable inside the station, the shape of the layer
 			// is computed with regards to the station component
-			return getComponent().contains(mouseCoord);
+			return component.contains(mouseCoord);
 		} else {
 			int count = station.columnCount();
 			
@@ -107,11 +107,7 @@ public class ToolbarGroupInnerLayer implements DockStationDropLayer{
 
 	@Override
 	public Component getComponent(){
-		final Dockable dockable = station.asDockable();
-		if (dockable == null){
-			return null;
-		}
-		return dockable.getComponent();
+		return component;
 	}
 
 	@Override

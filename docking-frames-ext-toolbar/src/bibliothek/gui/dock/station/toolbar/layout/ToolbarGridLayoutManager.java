@@ -33,7 +33,6 @@ package bibliothek.gui.dock.station.toolbar.layout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.LayoutManager2;
 import java.awt.Point;
@@ -75,7 +74,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	
 	/** whether this layout manager should be allowed to create scrollbars */
 	private boolean useScrollbars = true;
-
+	
 	private enum Size {
 		MAXIMUM, MINIMUM, PREFERRED;
 
@@ -133,7 +132,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	public void setController( DockController controller ){
 		spans.setController( controller );
 	}
-
+	
 	/**
 	 * Closes all gaps for inserting items.
 	 */
@@ -325,7 +324,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		
 		int width = 0;
 		int height = 0;
-
+		
 		if( orientation == Orientation.HORIZONTAL ) {
 			int index = 0;
 			for( final Wrapper[] column : content ) {
@@ -365,13 +364,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			}
 		}
 
-		Insets insets = parent.getInsets();
-		Dimension result = new Dimension( width, height );
-		if( insets != null ) {
-			result.width += insets.left + insets.right;
-			result.height += insets.top + insets.bottom;
-		}
-		return result;
+		return new Dimension( width, height );
 	}
 
 	private Dimension layoutSize( int columnIndex, Wrapper[] column, Size size ){
@@ -421,16 +414,11 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 * Layouts <code>components</code> such that they fit into
 	 * <code>available</code>.
 	 * 
-	 * @param parent
-	 *            the {@link Container} whose layout is upated
-	 * @param components
-	 *            the components to layout
-	 * @param required
-	 *            the size required for the optimal layout
-	 * @param available
-	 *            the size that is actually available
-	 * @param size
-	 *            which {@link Dimension} to get for layouting the components
+	 * @param parent the {@link Container} whose layout is upated
+	 * @param components the components to layout
+	 * @param required the size required for the optimal layout
+	 * @param available the size that is actually available
+	 * @param size which {@link Dimension} to get for layouting the components
 	 */
 	protected void layout( Container parent, Wrapper[][] components, Dimension required, Dimension available, Size size ){
 		if( components.length == 0 || available.width < 1 || available.height < 1 ) {
@@ -441,8 +429,6 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		for( int i = 0; i < columns.length; i++ ) {
 			columns[i] = layoutSize( i, components[i], size );
 		}
-
-		Insets insets = parent.getInsets();
 
 		if( orientation == Orientation.HORIZONTAL ) {
 			double factor = available.height / (double) required.height;
@@ -460,9 +446,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 				factor = 1;
 			}
 			int y = 0;
-			if( insets != null ) {
-				y = insets.top;
-			}
+			
 			for( int i = 0; i < columns.length; i++ ) {
 				y += spans.getColumn( i ) * factor;
 				layout( components[i], i, columns[i], available, y );
@@ -493,9 +477,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			}
 
 			int x = 0;
-			if( insets != null ) {
-				x = insets.left;
-			}
+			
 			for( int i = 0; i < columns.length; i++ ) {
 				x += spans.getColumn( i ) * factor;
 				layout( components[i], i, columns[i], available, x );
@@ -744,10 +726,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	public Rectangle getGapBounds( int column, boolean includeScrollBars ){
 		Wrapper[][] cells = layout();
 		Rectangle left;
-		Insets insets = parent.getInsets();
-
+		
 		if( column == 0 ) {
-			left = new Rectangle( insets.left, insets.right, 0, 0 );
+			left = new Rectangle( 0, 0, 0, 0 );
 		}
 		else {
 			left = getBounds( column - 1, cells );
@@ -755,12 +736,12 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 		Rectangle right = null;
 		if( column == cells.length ) {
-			right = new Rectangle( insets.left, insets.right, 0, 0 );
+			right = new Rectangle( 0, 0, 0, 0 );
 			if( orientation == Orientation.HORIZONTAL ) {
-				right.y = parent.getHeight() - insets.bottom;
+				right.y = parent.getHeight();
 			}
 			else {
-				right.x = parent.getWidth() - insets.right;
+				right.x = parent.getWidth();
 			}
 		}
 		else {

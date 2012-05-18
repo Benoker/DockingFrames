@@ -30,13 +30,13 @@
 
 package bibliothek.gui.dock;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -66,7 +66,6 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
-import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -79,13 +78,14 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBar;
-import bibliothek.gui.dock.station.toolbar.group.SlimScrollbar;
-import bibliothek.gui.dock.station.toolbar.group.SwingColumnScrollBarFactory;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBarFactory;
+import bibliothek.gui.dock.station.toolbar.group.SlimScrollbar;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDropInfo;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupExpander;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeader;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeaderFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.station.toolbar.layer.ToolbarGroupInnerLayer;
 import bibliothek.gui.dock.station.toolbar.layer.ToolbarGroupOuterLayer;
@@ -134,6 +134,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	public static final PropertyKey<ColumnScrollBarFactory> SCROLLBAR_FACTORY = 
 			new PropertyKey<ColumnScrollBarFactory>( "dock.scrollbarFactory", new ConstantPropertyFactory<ColumnScrollBarFactory>( SlimScrollbar.FACTORY ), true );
 
+	/** Key for a factory that creates new {@link ToolbarGroupHeader}s */
+	public static final PropertyKey<ToolbarGroupHeaderFactory> HEADER_FACTORY =
+			new PropertyKey<ToolbarGroupHeaderFactory>( "dock.toolbarGroupHeaderFactory" );
+	
 	/** A list of all children organized in columns and lines */
 	private final DockablePlaceholderToolbarGrid<StationChildHandle> dockables = new DockablePlaceholderToolbarGrid<StationChildHandle>();
 
@@ -202,6 +206,29 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		return layoutManager;
 	}
 
+	/** the factory used to create new headers for this station */
+	private PropertyValue<ToolbarGroupHeaderFactory> headerFactory = new PropertyValue<ToolbarGroupHeaderFactory>( HEADER_FACTORY ){
+		@Override
+		protected void valueChanged( ToolbarGroupHeaderFactory oldValue, ToolbarGroupHeaderFactory newValue ){
+			ToolbarGroupHeader header = null;
+			if( newValue != null ){
+				header = newValue.create( ToolbarGroupDockStation.this );
+			}
+			
+			if( groupHeader != null ){
+				mainPanel.removeHeaderCopmonent( groupHeader.getComponent() );
+			}
+			groupHeader = header;
+			if( groupHeader != null ){
+				groupHeader.setOrientation( getOrientation() );
+				mainPanel.addHeaderComponent( groupHeader.getComponent() );
+			}
+		}
+	};
+	
+	/** the current component at the top end of this station */
+	private ToolbarGroupHeader groupHeader;
+	
 	// ########################################################
 	// ############ Initialization Managing ###################
 	// ########################################################
@@ -496,6 +523,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			mainPanel.setController(controller);
 			layoutManager.setController( controller );
 			scrollbarFactory.setProperties( controller );
+			headerFactory.setProperties( controller );
 
 			if (getController() != null){
 				dockables.bind();
@@ -514,12 +542,21 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public void setOrientation( Orientation orientation ){
+		if( orientation == null ){
+			throw new IllegalArgumentException( "orientation must not be null" );
+		}
+		
 		// it's very important to change position and orientation of inside
 		// dockables first, else doLayout() is done on wrong inside information
 		this.orientation = orientation;
 		fireOrientingEvent();
 		for( ColumnScrollBar scrollbar : scrollbars.values() ){
 			scrollbar.setOrientation( orientation );
+		}
+		if( groupHeader != null ){
+			groupHeader.setOrientation( orientation );
+			mainPanel.removeHeaderCopmonent( groupHeader.getComponent() );
+			mainPanel.addHeaderComponent( groupHeader.getComponent() );
 		}
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
@@ -531,8 +568,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[] { new ToolbarGroupInnerLayer(this),
-				new ToolbarGroupOuterLayer(this) };
+		return new DockStationDropLayer[] { 
+				new ToolbarGroupInnerLayer(this, mainPanel.dockablePane),
+				new ToolbarGroupOuterLayer(this, mainPanel.dockablePane) };
 		// return new DockStationDropLayer[] { new DefaultDropLayer(this),
 		// new SideSnapDropLayer(this) };
 	}
@@ -574,7 +612,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			}
 			
 			Point mouse = new Point( item.getMouseX(), item.getMouseY() );
-			SwingUtilities.convertPointFromScreen( mouse, mainPanel );
+			SwingUtilities.convertPointFromScreen( mouse, mainPanel.dockablePane );
 			
 			int column = getColumnAt( mouse );
 			int line = -1;
@@ -778,7 +816,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 *            the handle to add
 	 */
 	private void addComponent( StationChildHandle handle ){
-		mainPanel.getContentPane().add(handle.getDisplayer().getComponent());
+		mainPanel.dockablePane.add(handle.getDisplayer().getComponent());
 		mainPanel.getContentPane().revalidate();
 	}
 
@@ -792,7 +830,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	 *            the handle to remove
 	 */
 	private void removeComponent( StationChildHandle handle ){
-		mainPanel.getContentPane().remove(handle.getDisplayer().getComponent());
+		mainPanel.dockablePane.remove(handle.getDisplayer().getComponent());
 		mainPanel.getContentPane().revalidate();
 	}
 
@@ -995,6 +1033,35 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 	public ColumnDockActionSource getExpandActionSource(){
 		return expander.getActions();
 	}
+	
+	/**
+	 * Gets the factory for the {@link #getHeaderComponent() header component} which is currently
+	 * in use.
+	 * @return the current factory, can be <code>null</code>
+	 * @see #HEADER_FACTORY
+	 */
+	public ToolbarGroupHeaderFactory getHeaderComponentFactory(){
+		return headerFactory.getValue();
+	}
+	
+	/**
+	 * Sets the factory for the {@link #getHeaderComponent() header component}. A value of <code>null</code>
+	 * will be interpreted as a request to reinstall the default factory.
+	 * @param factory the new factory, can be <code>null</code> in order to reinstall the default factory
+	 * @see #HEADER_FACTORY
+	 */
+	public void setHeaderComponentFactory( ToolbarGroupHeaderFactory factory ){
+		headerFactory.setValue( factory );
+	}
+	
+	/**
+	 * Gets the {@link Component} which is currently shown at the top of this station.
+	 * @return the component or <code>null</code>
+	 * @see #HEADER_FACTORY
+	 */
+	public ToolbarGroupHeader getHeaderComponent(){
+		return groupHeader;
+	}
 
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
@@ -1059,47 +1126,42 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
 
-		/**
-		 * A panel with a fixed size (minimum, maximum and preferred size have
-		 * same values). Computation of the size takes insets into account.
-		 * 
-		 * @author Herve Guillaume
-		 * 
-		 */
-		@SuppressWarnings("serial")
-		private class SizeFixedPanel extends JPanel{
-			@Override
-			public Dimension getPreferredSize(){
-				final Dimension pref = super.getPreferredSize();
-				final Insets insets = getInsets();
-				pref.height += insets.top + insets.bottom;
-				pref.width += insets.left + insets.right;
-				return pref;
-			}
-
-			@Override
-			public Dimension getMaximumSize(){
-				return getPreferredSize();
-			}
-
-			@Override
-			public Dimension getMinimumSize(){
-				return getPreferredSize();
-			}
-		}
 
 		/**
-		 * The content Pane of this {@link OverpaintablePanel}.
+		 * The direct parent {@link Container} of {@link Dockable}s.
 		 */
-		private final JPanel dockablePane = new SizeFixedPanel();
+		private final JPanel dockablePane = new JPanel();
+		
+		/**
+		 * The parent of {@link #dockablePane}, adds insets, borders and other
+		 * decorations.
+		 */
+		private JPanel decorationPane = new JPanel();
 
 		/**
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			setBasePane(dockablePane);
+			setBasePane(decorationPane);
 			setSolid(false);
+			decorationPane.setOpaque( false );
 			dockablePane.setOpaque(false);
+			
+			decorationPane.setLayout( new BorderLayout() );
+			decorationPane.add( dockablePane, BorderLayout.CENTER );
+		}
+		
+		public void addHeaderComponent( Component header ){
+			if( getOrientation() == Orientation.HORIZONTAL ){
+				decorationPane.add( header, BorderLayout.WEST );
+			}
+			else{
+				decorationPane.add( header, BorderLayout.NORTH );
+			}
+		}
+		
+		public void removeHeaderCopmonent( Component header ){
+			decorationPane.remove( header );
 		}
 
 		@Override
@@ -1188,27 +1250,27 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		}
 		
 		/**
-		 * Asynchronously revalidates {@link #dockablePane}, but only if its size did not change
+		 * Asynchronously revalidates {@link #decorationPane}, but only if its size did not change
 		 */
 		private void revalidateLater(){
 			if( orientation == Orientation.VERTICAL ){
-				final int height = dockablePane.getHeight();
+				final int height = decorationPane.getHeight();
 				EventQueue.invokeLater( new Runnable(){
 					@Override
 					public void run(){
-						if( height == dockablePane.getHeight() ){
-							dockablePane.revalidate();	
+						if( height == decorationPane.getHeight() ){
+							decorationPane.revalidate();	
 						}
 					}
 				});
 			}
 			else{
-				final int width = dockablePane.getWidth();
+				final int width = decorationPane.getWidth();
 				EventQueue.invokeLater( new Runnable(){
 					@Override
 					public void run(){
-						if( width == dockablePane.getWidth() ){
-							dockablePane.revalidate();	
+						if( width == decorationPane.getWidth() ){
+							decorationPane.revalidate();	
 						}
 					}
 				});
@@ -1222,12 +1284,23 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			paintDrag(g);
 			
 			if( dropInfo != null ){
+				Component dockablePane = mainPanel.dockablePane;
+				Point zero = new Point( 0, 0 );
+				zero = SwingUtilities.convertPoint( dockablePane, zero, this );
+				
+				Rectangle gapBounds;
+				
+				
 				if( dropInfo.getLine() == -1 ){
-					paint.drawInsertion( g2D, new Rectangle( 0, 0, mainPanel.getWidth(), mainPanel.getHeight()), layoutManager.getGapBounds( dropInfo.getColumn(), false ));
+					gapBounds = layoutManager.getGapBounds( dropInfo.getColumn(), false );
 				}
 				else{
-					paint.drawInsertion( g2D, new Rectangle( 0, 0, mainPanel.getWidth(), mainPanel.getHeight()), layoutManager.getGapBounds( dropInfo.getColumn(), dropInfo.getLine() ));
+					gapBounds = layoutManager.getGapBounds( dropInfo.getColumn(), dropInfo.getLine() );
 				}
+				
+				gapBounds.x += zero.x;
+				gapBounds.y += zero.y;
+				paint.drawInsertion( g2D, new Rectangle( zero.x, zero.y, dockablePane.getWidth(), dockablePane.getHeight()), gapBounds);
 			}
 		}
 		
@@ -1237,6 +1310,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 				StationChildHandle handle = getHandle( removal );
 				if( handle != null ){
 					Rectangle bounds = handle.getDisplayer().getComponent().getBounds();
+					
+					Component dockablePane = mainPanel.dockablePane;
+					Point zero = new Point( 0, 0 );
+					zero = SwingUtilities.convertPoint( dockablePane, zero, this );
+					bounds.x += zero.x;
+					bounds.y += zero.y;
+					
 					getPaint().drawRemoval( g, bounds, bounds );
 				}
 			}
@@ -1566,8 +1646,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 		} else{
 			level = Level.DOCKABLE;
 		}
-		dockables.move(sourceColumn, sourceLine, destinationColumn,
-				destinationLine, level);
+		dockables.move(sourceColumn, sourceLine, destinationColumn, destinationLine, level);
 		mainPanel.getContentPane().revalidate();
 	}
 }

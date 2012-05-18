@@ -30,6 +30,7 @@
 
 package bibliothek.gui.dock.station.toolbar.layer;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -51,12 +52,11 @@ import bibliothek.gui.dock.station.toolbar.layout.ToolbarGridLayoutManager;
 public class ToolbarGroupOuterLayer extends ToolbarGroupInnerLayer{
 	/**
 	 * Creates a new <code>SideSnapDropLayerComplex</code>
-	 * 
-	 * @param station
-	 *            the owner of this level
+	 * @param station the owner of this layer
+	 * @param component the component which actually shows the dockables
 	 */
-	public ToolbarGroupOuterLayer( ToolbarGroupDockStation station ){
-		super( station );
+	public ToolbarGroupOuterLayer( ToolbarGroupDockStation station, Component component ){
+		super( station, component );
 		setPriority( LayerPriority.OUTSIDE_LOW );
 	}
 

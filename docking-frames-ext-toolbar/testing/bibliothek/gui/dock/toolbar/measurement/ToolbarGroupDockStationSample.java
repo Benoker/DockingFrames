@@ -33,6 +33,8 @@ package bibliothek.gui.dock.toolbar.measurement;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.JButton;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
@@ -41,6 +43,8 @@ import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDropInfo;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeader;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeaderFactory;
 
 public class ToolbarGroupDockStationSample implements DropSample {
 	private ToolbarGroupDockStation station;
@@ -51,6 +55,25 @@ public class ToolbarGroupDockStationSample implements DropSample {
 		station.setOrientation( Orientation.VERTICAL );
 		DockController controller = new DockController();
 		controller.add( station );
+		
+		controller.getProperties().set( ToolbarGroupDockStation.HEADER_FACTORY, new ToolbarGroupHeaderFactory(){
+			@Override
+			public ToolbarGroupHeader create( ToolbarGroupDockStation station ){
+				return new ToolbarGroupHeader(){
+					private JButton button = new JButton( "+" );
+					
+					@Override
+					public void setOrientation( Orientation orientation ){
+						// ignore
+					}
+					
+					@Override
+					public Component getComponent(){
+						return button;
+					}
+				};
+			}
+		} );
 	}
 
 	@Override

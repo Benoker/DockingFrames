@@ -54,6 +54,8 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeader;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeaderFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
@@ -74,6 +76,26 @@ public class TestToolbarGroupDockStation {
 		frame.add( pane );
 
 		final DockController controller = new DockController();
+		
+		controller.getProperties().set( ToolbarGroupDockStation.HEADER_FACTORY, new ToolbarGroupHeaderFactory(){
+			@Override
+			public ToolbarGroupHeader create( ToolbarGroupDockStation station ){
+				return new ToolbarGroupHeader(){
+					private JButton button = new JButton( "+" );
+					
+					@Override
+					public void setOrientation( Orientation orientation ){
+						// ignore
+					}
+					
+					@Override
+					public Component getComponent(){
+						return button;
+					}
+				};
+			}
+		} );
+		
 		//controller.setTheme( new EclipseTheme() );
 
 		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500 ) );
