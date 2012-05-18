@@ -67,7 +67,9 @@ public class TestWizardSplitDockStationSide {
 		final WizardSplitDockStation station = new WizardSplitDockStation( Side.RIGHT );
 		
 		controller.add( station );
-		borderPanel.add( new JScrollPane( station.getComponent() ), BorderLayout.EAST);
+		JScrollPane scroll = new JScrollPane( station.getComponent() );
+		scroll.setBorder( null );
+		borderPanel.add( scroll, BorderLayout.EAST);
 
 		ScreenDockStation screen = new ScreenDockStation( frame );
 		controller.add( screen );

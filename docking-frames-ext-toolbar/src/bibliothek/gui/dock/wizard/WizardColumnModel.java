@@ -171,7 +171,6 @@ public class WizardColumnModel {
 		}
 		
 		size += gap( columns.length );		
-		size = Math.max( size, 5 );
 		
 		Dimension result;
 		

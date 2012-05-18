@@ -538,25 +538,22 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		
 		@Override
 		protected PutInfo calculateSideSnap( SplitDockStation station, int x, int y, Leaf leaf, Dockable drop ){
-			if( contains( x, y )){
-				if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
-					if( x < getWidth() / 2 ){
-						return new PutInfo( leftMost( getRoot() ), Put.LEFT, drop, false );
-					}
-					else{
-						return new PutInfo( rightMost( getRoot() ), Put.RIGHT, drop, false );
-					}
+			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
+				if( x < getWidth() / 2 ){
+					return new PutInfo( leftMost( getRoot() ), Put.LEFT, drop, false );
 				}
 				else{
-					if( y < getHeight() / 2 ){
-						return new PutInfo( leftMost( getRoot() ), Put.TOP, drop, false );
-					}
-					else{
-						return new PutInfo( rightMost( getRoot() ), Put.BOTTOM, drop, false );
-					}
+					return new PutInfo( rightMost( getRoot() ), Put.RIGHT, drop, false );
 				}
 			}
-			return null;
+			else{
+				if( y < getHeight() / 2 ){
+					return new PutInfo( leftMost( getRoot() ), Put.TOP, drop, false );
+				}
+				else{
+					return new PutInfo( rightMost( getRoot() ), Put.BOTTOM, drop, false );
+				}
+			}
 		}
 		
 		private SplitNode leftMost( SplitNode node ){
