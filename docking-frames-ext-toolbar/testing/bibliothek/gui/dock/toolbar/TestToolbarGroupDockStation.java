@@ -57,6 +57,10 @@ import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeader;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeaderFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
+import bibliothek.gui.dock.station.toolbar.menu.CustomizationButton;
+import bibliothek.gui.dock.station.toolbar.menu.CustomizationMenuContentGrid;
+import bibliothek.gui.dock.station.toolbar.menu.DefaultCustomizationMenu;
+import bibliothek.gui.dock.station.toolbar.menu.EagerCustomizationToolbarButton;
 import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
@@ -77,31 +81,17 @@ public class TestToolbarGroupDockStation {
 
 		final DockController controller = new DockController();
 		
-		controller.getProperties().set( ToolbarGroupDockStation.HEADER_FACTORY, new ToolbarGroupHeaderFactory(){
-			@Override
-			public ToolbarGroupHeader create( ToolbarGroupDockStation station ){
-				return new ToolbarGroupHeader(){
-					private JButton button = new JButton( "+" );
-					
-					@Override
-					public void setOrientation( Orientation orientation ){
-						// ignore
-					}
-					
-					@Override
-					public Component getComponent(){
-						return button;
-					}
-				};
-			}
-		} );
+		CustomizationButton customization = new CustomizationButton( controller );
+		CustomizationMenuContentGrid customizationContent = new CustomizationMenuContentGrid( 2, 2 );
+		customization.setMenu( new DefaultCustomizationMenu() );
+		customization.setContent( customizationContent );
+		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.BLUE ), false ) ) );
+		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.YELLOW ), false ) ) );
+		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.GREEN ), false ) ) );
+		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.WHITE ), false ) ) );
+		controller.getProperties().set( ToolbarGroupDockStation.HEADER_FACTORY, customization );
 		
-		//controller.setTheme( new EclipseTheme() );
-
 		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500 ) );
-		//controller.getProperties().set( DockTheme.SPAN_FACTORY, new NoSpanFactory() );
-		
-		// controller.setRestrictedEnvironment( true );
 
 		final ScreenDockStation screen = new ScreenDockStation( frame );
 		controller.add( screen );
@@ -126,62 +116,17 @@ public class TestToolbarGroupDockStation {
 		frame.add( south.getComponent(), BorderLayout.SOUTH );
 
 		final ToolbarGroupDockStation group = new ToolbarGroupDockStation();
-//
-//		group.getColumnModel().addListener( new ToolbarColumnModelListener(){
-//			private ToolbarColumnListener listener = new ToolbarColumnListener(){
-//				@Override
-//				public void inserted( ToolbarColumn column, Dockable item, int index ){
-//					System.out.println( "item inserted: " + column.getColumnIndex() + ", " + index );
-//				}
-//
-//				@Override
-//				public void removed( ToolbarColumn column, Dockable item, int index ){
-//					System.out.println( "item removed: " + column.getColumnIndex() + ", " + index );
-//				}
-//			};
-//
-//			@Override
-//			public void removed( ToolbarColumnModel model, ToolbarColumn column, int index ){
-//				System.out.println( "column removed: " + index );
-//				column.removeListener( listener );
-//			}
-//
-//			@Override
-//			public void inserted( ToolbarColumnModel model, ToolbarColumn column, int index ){
-//				System.out.println( "column inserted: " + index );
-//				column.addListener( listener );
-//			}
-//		} );
 
-		//		Icon icon = new ImageIcon(
-		//				TestPersistentLayout.class.getResource("/resources/film.png"));
+		Icon redIcon = new ColorIcon( Color.RED );
 
-		Icon icon = new Icon(){
-			@Override
-			public void paintIcon( Component c, Graphics g, int x, int y ){
-				g.setColor( Color.RED );
-				g.fillOval( x, y, 40, 40 );
-			}
+		group.drop( createToolbar( true, redIcon, redIcon, redIcon ), 0, 0 );
+		group.drop( createToolbar( true, redIcon, redIcon, redIcon ), 0, 1 );
+		group.drop( createToolbar( false, redIcon, redIcon ), 1, 0 );
+		group.drop( createToolbar( true, redIcon, redIcon ), 1, 1 );
 
-			@Override
-			public int getIconWidth(){
-				return 40;
-			}
-
-			@Override
-			public int getIconHeight(){
-				return 40;
-			}
-		};
-
-		group.drop( createToolbar( true, icon, icon, icon ), 0, 0 );
-		group.drop( createToolbar( true, icon, icon, icon ), 0, 1 );
-		group.drop( createToolbar( false, icon, icon ), 1, 0 );
-		group.drop( createToolbar( true, icon, icon ), 1, 1 );
-
-		group.drop( createToolbar( false, icon, icon ), new ToolbarGroupProperty( 1, 0, null ) );
-		group.drop( createToolbar( false, icon, icon, icon ), new ToolbarGroupProperty( 3, 2, null ) );
-		group.drop( createToolbar( true, icon, icon, icon ), new ToolbarGroupProperty( -1, 5, null ) );
+		group.drop( createToolbar( false, redIcon, redIcon ), new ToolbarGroupProperty( 1, 0, null ) );
+		group.drop( createToolbar( false, redIcon, redIcon, redIcon ), new ToolbarGroupProperty( 3, 2, null ) );
+		group.drop( createToolbar( true, redIcon, redIcon, redIcon ), new ToolbarGroupProperty( -1, 5, null ) );
 
 		// Disable the expand state action button
 //		controller.getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, new DefaultExpandableToolbarItemStrategy(){
@@ -229,11 +174,36 @@ public class TestToolbarGroupDockStation {
 		JButton button = new JButton( icon );
 		button.setBorder( new EmptyBorder( new Insets( 4, 4, 4, 4 ) ) );
 		final ComponentDockable dockable = new ComponentDockable( button );
+		dockable.setTitleIcon( icon );
 		if (largeText) {
 			dockable.setComponent( new JButton( "a lot of text is written!!" ), ExpandedState.STRETCHED );
 		} else {
 			dockable.setComponent( new JButton( "short text" ), ExpandedState.STRETCHED );
 		}
 		return dockable;
+	}
+	
+	private static class ColorIcon implements Icon{
+		private Color color;
+		
+		public ColorIcon( Color color ){
+			this.color = color;
+		}
+		
+		@Override
+		public void paintIcon( Component c, Graphics g, int x, int y ){
+			g.setColor( color );
+			g.fillOval( x, y, 40, 40 );
+		}
+
+		@Override
+		public int getIconWidth(){
+			return 40;
+		}
+
+		@Override
+		public int getIconHeight(){
+			return 40;
+		}
 	}
 }

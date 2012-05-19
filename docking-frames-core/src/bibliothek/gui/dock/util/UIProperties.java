@@ -39,7 +39,7 @@ import bibliothek.gui.DockController;
 import bibliothek.util.Path;
 
 /**
- * A map containing which contains some string-values pairs and so called
+ * A map containing some string-values pairs and so called
  * bridges to modify these values when reading them out. 
  * @author Benjamin Sigg
  * @param <V> The kind of values this map contains
