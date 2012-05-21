@@ -76,6 +76,7 @@ public class CustomizationMenuContentGrid implements CustomizationMenuContent{
 	
 	@Override
 	public void setController( DockController controller ){
+		this.controller = controller;
 		for( CustomizationMenuContent item : content ){
 			item.setController( controller );
 		}

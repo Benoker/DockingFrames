@@ -196,6 +196,7 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 		@Override
 		public void closed(){
 			open = false;
+			toggle.setSelected( false );
 		}
 	}
 }
