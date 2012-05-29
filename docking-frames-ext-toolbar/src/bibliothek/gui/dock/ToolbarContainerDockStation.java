@@ -30,6 +30,7 @@
 
 package bibliothek.gui.dock;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -1073,6 +1074,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
+			setBackground(new Color(100, 100, 100));
 			containerPanel = createPanel();
 			// content.setBounds( 0, 0, content.getPreferredSize().width,
 			// content.getPreferredSize().height );
@@ -1081,7 +1083,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			// content.getPreferredSize().height ) );
 			setBasePane( containerPanel );
 			setContentPane( containerPanel );
-			setSolid( false );
+			setSolid( true );
 			getContentPane().revalidate();
 			getContentPane().repaint();
 		}

@@ -39,19 +39,30 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
 
 /**
- * This {@link StationPaint} is used to draw content on all the toolbar- {@link DockStation}s.
+ * This {@link StationPaint} is used to draw content on all the toolbar-
+ * {@link DockStation}s.
+ * 
  * @author Benjamin Sigg
  */
 public class ToolbarStationPaint extends BasicStationPaint{
-	public ToolbarStationPaint(Color color){
-		setColor( color );
+	private Color dragColor;
+
+	public ToolbarStationPaint( Color dropColor, Color dragColor ){
+		setColor(dropColor);
+		this.dragColor = dragColor;
 	}
-	
+
 	@Override
-	public void drawRemoval( Graphics g, DockStation station, Rectangle stationBounds, Rectangle dockableBounds ){
+	public void drawRemoval( Graphics g, DockStation station,
+			Rectangle stationBounds, Rectangle dockableBounds ){
 		Color color = getColor();
-		setColor( color.DARK_GRAY );
-		super.drawRemoval( g, station, stationBounds, dockableBounds );
-		setColor( color );
+		if (dragColor == null) {
+			setColor(Color.GRAY);
+		} else {
+			setColor(dragColor);
+		}
+		
+		super.drawRemoval(g, station, stationBounds, dockableBounds);
+		setColor(color);
 	}
 }

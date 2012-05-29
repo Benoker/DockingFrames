@@ -357,10 +357,12 @@ public class ToolbarExtension implements Extension{
 		controller.getProperties().get(ExpandableToolbarItemStrategy.STRATEGY)
 				.install(controller);
 
-		controller.getThemeManager().put(Priority.THEME,
+		controller.getThemeManager().put(
+				Priority.THEME,
 				ThemeManager.STATION_PAINT + ".toolbar",
 				ThemeManager.STATION_PAINT_TYPE,
-				new ToolbarStationPaint(new Color(255, 0, 0, 125)));
+				new ToolbarStationPaint(new Color(255, 0, 0, 125), new Color(
+						128, 128, 128, 125)));
 	}
 
 	private Icon loadIcon( String name ){
@@ -536,8 +538,8 @@ public class ToolbarExtension implements Extension{
 
 				final DockTitleManager titles = controller
 						.getDockTitleManager();
-//				titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,
-//						ToolbarDockTitleGrip.createFactory());
+				// titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,
+				// ToolbarDockTitleGrip.createFactory());
 				titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,
 						ToolbarDockTitlePoint.createFactory());
 				titles.registerTheme(ToolbarDockStation.TITLE_ID,
