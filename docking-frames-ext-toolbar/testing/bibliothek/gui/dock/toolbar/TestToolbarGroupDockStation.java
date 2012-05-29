@@ -61,6 +61,7 @@ import bibliothek.gui.dock.station.toolbar.menu.CustomizationButton;
 import bibliothek.gui.dock.station.toolbar.menu.CustomizationMenuContentGrid;
 import bibliothek.gui.dock.station.toolbar.menu.DefaultCustomizationMenu;
 import bibliothek.gui.dock.station.toolbar.menu.EagerCustomizationToolbarButton;
+import bibliothek.gui.dock.station.toolbar.menu.GroupedCustomizationMenuContent;
 import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
@@ -82,13 +83,26 @@ public class TestToolbarGroupDockStation {
 		final DockController controller = new DockController();
 		
 		CustomizationButton customization = new CustomizationButton( controller );
-		CustomizationMenuContentGrid customizationContent = new CustomizationMenuContentGrid( 2, 2 );
+		GroupedCustomizationMenuContent customizationContent = new GroupedCustomizationMenuContent();
 		customization.setMenu( new DefaultCustomizationMenu() );
 		customization.setContent( customizationContent );
-		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.BLUE ), false ) ) );
-		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.YELLOW ), false ) ) );
-		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.GREEN ), false ) ) );
-		customizationContent.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.WHITE ), false ) ) );
+		
+		GroupedCustomizationMenuContent.Group groupA = customizationContent.addGroup( "Top group" );
+		GroupedCustomizationMenuContent.Group groupB = customizationContent.addGroup( "Bottom group" );
+		
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.BLUE ), false ) ) );
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.YELLOW ), false ) ) );
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.GREEN ), false ) ) );
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.WHITE ), false ) ) );
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.BLACK ), false ) ) );
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.CYAN ), false ) ) );
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.LIGHT_GRAY ), false ) ) );
+		groupA.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.MAGENTA ), false ) ) );
+		
+		groupB.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.BLUE ), false ) ) );
+		groupB.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.YELLOW ), false ) ) );
+		groupB.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.GREEN ), false ) ) );
+		groupB.add( new EagerCustomizationToolbarButton( createDockable( new ColorIcon( Color.WHITE ), false ) ) );
 		controller.getProperties().set( ToolbarGroupDockStation.HEADER_FACTORY, customization );
 		
 		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500 ) );

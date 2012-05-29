@@ -30,15 +30,21 @@
 package bibliothek.gui.dock.station.toolbar.menu;
 
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JToggleButton;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
  * The {@link CustomizationToolbarButton} is a button that allows to add one {@link Dockable} to a 
@@ -47,21 +53,48 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  */
 public abstract class CustomizationToolbarButton implements CustomizationMenuContent{
+	/** The different locations where a {@link Dockable} can be in respect to this button */
+	public static enum ItemLocation{
+		/** The {@link Dockable} is not visible anywhere */
+		INVISIBLE,
+		/** The {@link Dockable} is visible, but it is part of another {@link DockStation} */
+		ELSEWHERE,
+		/** The {@link Dockable} is visible and it is part of this {@link DockStation} */
+		HERE
+	}
+	
+	private DockController controller;
+	
 	private Icon icon;
 	private String description;
 	
+	private JLayeredPane base;
 	private JToggleButton button;
+	private JLabel here;
 	
 	private CustomizationMenuCallback callback;
 	
+	/** the icon of {@link #here} */
+	private DockIcon hereIcon = new DockIcon( "toolbar.customization.here", DockIcon.KIND_ICON ){
+		@Override
+		protected void changed( Icon oldValue, Icon newValue ){
+			if( here != null ){
+				here.setIcon( newValue );
+			}
+		}
+	};
+	
 	@Override
 	public void setController( DockController controller ){
-		// not required for now
+		this.controller = controller;
+		if( callback != null ){
+			hereIcon.setController( controller );
+		}
 	}
 	
 	@Override
 	public Component getView(){
-		return button;
+		return base;
 	}
 	
 	@Override
@@ -70,34 +103,129 @@ public abstract class CustomizationToolbarButton implements CustomizationMenuCon
 		button = new JToggleButton();
 		button.setIcon( icon );
 		button.setToolTipText( description );
+		button.setOpaque( false );
 		
-		if( hasDockable() ){
-			Dockable item = getDockable();
-			button.setSelected( item.getDockParent() != null );
-			if( item.getDockParent() != null && !item.getDockParent().canDrag( item )){
-				button.setEnabled( false );
+		here = new JLabel();
+		hereIcon.setController( controller );
+		here.setIcon( hereIcon.value() );
+		here.setVisible( false );
+		
+		base = new JLayeredPane();
+		base.add( button );
+		base.add( here );
+		base.setLayer( button, JLayeredPane.DEFAULT_LAYER );
+		base.setLayer( here, JLayeredPane.MODAL_LAYER );
+		base.setLayout( new LayoutManager(){
+			@Override
+			public void removeLayoutComponent( Component comp ){
+				// ignore	
 			}
-		}
+			
+			@Override
+			public Dimension preferredLayoutSize( Container parent ){
+				return button.getPreferredSize();
+			}
+			
+			@Override
+			public Dimension minimumLayoutSize( Container parent ){
+				return button.getMinimumSize();
+			}
+			
+			@Override
+			public void layoutContainer( Container parent ){
+				if( parent.getComponentCount() == 2 ){
+					int width = parent.getWidth();
+					int height = parent.getHeight();
+					Dimension preferred = here.getPreferredSize();
+					int labelWidth = Math.min( preferred.width, width-1 );
+					int labelHeight = Math.min( preferred.height, height-1 );
+					
+					button.setBounds( 0, 0, width, height);
+					here.setBounds( 1, height - labelHeight, labelWidth, labelHeight );
+				}
+			}
+			
+			@Override
+			public void addLayoutComponent( String name, Component comp ){
+				// ignore	
+			}
+		} );
 		
 		button.addActionListener( new ActionListener(){
 			@Override
 			public void actionPerformed( ActionEvent e ){
-				Dockable item = getDockable();
-				DockStation parent = item.getDockParent();
-				if( parent != null ){
-					parent.drag( item );
-				}
-				
-				if( button.isSelected() ){
-					CustomizationToolbarButton.this.callback.append( item );
-				}
+				ItemLocation location = getItemLocation();
+				setItemVisible( location != ItemLocation.HERE );
 			}
 		});
+		
+		select();
+	}
+	
+	private void select(){
+		ItemLocation location = getItemLocation();
+		here.setVisible( location == ItemLocation.HERE );
+		button.setSelected( location != ItemLocation.INVISIBLE );
+	}
+	
+	/**
+	 * Gets the current location of the {@link Dockable} that is described by this button.
+	 * @return the current location
+	 * @throws IllegalStateExceptione if {@link #bind(CustomizationMenuCallback)} was not called
+	 */
+	protected ItemLocation getItemLocation(){
+		if( callback == null ){
+			throw new IllegalStateException( "this information is only available if the button has been bound" );
+		}
+		
+		if( !hasDockable() ){
+			return ItemLocation.INVISIBLE;
+		}
+		Dockable item = getDockable();
+		DockStation parent = item.getDockParent();
+		if( parent == null ){
+			return ItemLocation.INVISIBLE;
+		}
+		DockStation owner = callback.getOwner();
+		while( parent != null ){
+			if( parent == owner ){
+				return ItemLocation.HERE;
+			}
+			item = parent.asDockable();
+			if( item == null ){
+				parent = null;
+			}
+			else{
+				parent = item.getDockParent();
+			}
+		}
+		return ItemLocation.ELSEWHERE;
+	}
+	
+	/**
+	 * Removes the {@link Dockable} from its current parent and maybe appends it to the owner of this button.
+	 * @param visible whether the item should be visible or not
+	 */
+	protected void setItemVisible( boolean visible ){
+		Dockable item = getDockable();
+		DockStation parent = item.getDockParent();
+		if( parent != null ){
+			parent.drag( item );
+		}
+		
+		if( visible ){
+			CustomizationToolbarButton.this.callback.append( item );
+		}
+		
+		select();
 	}
 	
 	@Override
 	public void unbind(){
+		base = null;
 		button = null;
+		here = null;
+		hereIcon.setController( null );
 	}
 	
 	/**
