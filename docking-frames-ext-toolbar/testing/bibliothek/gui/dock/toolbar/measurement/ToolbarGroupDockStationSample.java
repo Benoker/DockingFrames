@@ -71,6 +71,11 @@ public class ToolbarGroupDockStationSample implements DropSample {
 					public Component getComponent(){
 						return button;
 					}
+					
+					@Override
+					public void destroy(){
+						
+					}
 				};
 			}
 		} );

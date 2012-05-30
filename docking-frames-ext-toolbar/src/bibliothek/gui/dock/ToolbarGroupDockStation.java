@@ -217,6 +217,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation{
 			
 			if( groupHeader != null ){
 				mainPanel.removeHeaderCopmonent( groupHeader.getComponent() );
+				groupHeader.destroy();
 			}
 			groupHeader = header;
 			if( groupHeader != null ){

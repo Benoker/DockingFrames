@@ -54,4 +54,9 @@ public interface ToolbarGroupHeader {
 	 * @param orientation the orientation of the station, which is orthogonal to how the component is shown, not <code>null</code>
 	 */
 	public void setOrientation( Orientation orientation );
+	
+	/**
+	 * Called if this header is no longer required
+	 */
+	public void destroy();
 }

@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -50,6 +51,7 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeader;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeaderFactory;
+import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
  * A factory for a toggle button that will open the {@link CustomizationMenu}.
@@ -115,30 +117,25 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 		private boolean open = false;
 		private ToolbarGroupDockStation station;
 		
+		private DockIcon toolIcon = new DockIcon( "toolbar.customization.tool", DockIcon.KIND_ICON ){
+			@Override
+			protected void changed( Icon oldValue, Icon newValue ){
+				if( toggle != null ){
+					toggle.setIcon( newValue );
+				}
+			}
+		};
+		
 		/**
 		 * Creates a new button
 		 * @param station the station on which this button will be shown
 		 */
 		public Button( ToolbarGroupDockStation station ){
 			this.station = station;
-			ImageIcon icon = null;
-			try{
-				final InputStream in = getClass().getResourceAsStream(
-						"/data/bibliothek/gui/toolbar/tool.png");
-				if (in == null){
-					throw new FileNotFoundException("cannot find file 'tool.png'");
-				}
-				icon = new ImageIcon(ImageIO.read(in));
-				in.close();
-			} catch (final IOException e){
-				e.printStackTrace();
-				icon = null;
-			}
-			if (icon != null) {
-				toggle = new JToggleButton( icon );
-			} else {
-				toggle = new JToggleButton( ">" );
-			}
+			
+			toolIcon.setController( controller );
+			toggle = new JToggleButton();
+			toggle.setIcon( toolIcon.value() );
 			
 			toggle.addActionListener( new ActionListener(){
 				@Override
@@ -153,6 +150,11 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 					}
 				}
 			} );
+		}
+		
+		@Override
+		public void destroy(){
+			toolIcon.setController( null );	
 		}
 		
 		private void showMenu(){
