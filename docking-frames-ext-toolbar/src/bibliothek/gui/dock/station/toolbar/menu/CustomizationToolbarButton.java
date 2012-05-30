@@ -179,8 +179,8 @@ public abstract class CustomizationToolbarButton implements
 
 	private void select(){
 		ItemLocation location = getItemLocation();
-		elsewhere.setVisible(location == ItemLocation.HERE);
-		button.setSelected(location != ItemLocation.INVISIBLE);
+		elsewhere.setVisible(location == ItemLocation.HERE || location == ItemLocation.ELSEWHERE);
+		button.setSelected(location == ItemLocation.HERE);
 	}
 
 	/**
