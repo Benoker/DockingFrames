@@ -34,7 +34,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
@@ -116,7 +121,25 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 		 */
 		public Button( ToolbarGroupDockStation station ){
 			this.station = station;
-			toggle = new JToggleButton( ">" );
+			ImageIcon icon = null;
+			try{
+				final InputStream in = getClass().getResourceAsStream(
+						"/data/bibliothek/gui/toolbar/tool.png");
+				if (in == null){
+					throw new FileNotFoundException("cannot find file 'tool.png'");
+				}
+				icon = new ImageIcon(ImageIO.read(in));
+				in.close();
+			} catch (final IOException e){
+				e.printStackTrace();
+				icon = null;
+			}
+			if (icon != null) {
+				toggle = new JToggleButton( icon );
+			} else {
+				toggle = new JToggleButton( ">" );
+			}
+			
 			toggle.addActionListener( new ActionListener(){
 				@Override
 				public void actionPerformed( ActionEvent e ){

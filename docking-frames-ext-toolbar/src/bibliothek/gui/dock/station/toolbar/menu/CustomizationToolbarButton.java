@@ -47,39 +47,52 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
- * The {@link CustomizationToolbarButton} is a button that allows to add one {@link Dockable} to a 
- * {@link DockStation}. This button also offers an indication telling whether the {@link Dockable} is
- * already shown on another station. 
+ * The {@link CustomizationToolbarButton} is a button that allows to add one
+ * {@link Dockable} to a {@link DockStation}. This button also offers an
+ * indication telling whether the {@link Dockable} is already shown on another
+ * station.
+ * 
  * @author Benjamin Sigg
  */
-public abstract class CustomizationToolbarButton implements CustomizationMenuContent{
-	/** The different locations where a {@link Dockable} can be in respect to this button */
+public abstract class CustomizationToolbarButton implements
+		CustomizationMenuContent{
+	/**
+	 * The different locations where a {@link Dockable} can be in respect to
+	 * this button
+	 */
 	public static enum ItemLocation{
 		/** The {@link Dockable} is not visible anywhere */
 		INVISIBLE,
-		/** The {@link Dockable} is visible, but it is part of another {@link DockStation} */
+		/**
+		 * The {@link Dockable} is visible, but it is part of another
+		 * {@link DockStation}
+		 */
 		ELSEWHERE,
-		/** The {@link Dockable} is visible and it is part of this {@link DockStation} */
+		/**
+		 * The {@link Dockable} is visible and it is part of this
+		 * {@link DockStation}
+		 */
 		HERE
 	}
-	
+
 	private DockController controller;
-	
+
 	private Icon icon;
 	private String description;
-	
+
 	private JLayeredPane base;
 	private JToggleButton button;
-	private JLabel here;
-	
+	private JLabel elsewhere;
+
 	private CustomizationMenuCallback callback;
-	
+
 	/** the icon of {@link #here} */
-	private DockIcon hereIcon = new DockIcon( "toolbar.customization.here", DockIcon.KIND_ICON ){
+	private DockIcon elsewhereIcon = new DockIcon(
+			"toolbar.customization.check", DockIcon.KIND_ICON){
 		@Override
 		protected void changed( Icon oldValue, Icon newValue ){
-			if( here != null ){
-				here.setIcon( newValue );
+			if (elsewhere != null){
+				elsewhere.setIcon(newValue);
 			}
 		}
 	};
@@ -87,179 +100,195 @@ public abstract class CustomizationToolbarButton implements CustomizationMenuCon
 	@Override
 	public void setController( DockController controller ){
 		this.controller = controller;
-		if( callback != null ){
-			hereIcon.setController( controller );
+		if (callback != null){
+		elsewhereIcon.setController(controller);
 		}
 	}
-	
+
 	@Override
 	public Component getView(){
 		return base;
 	}
-	
+
 	@Override
 	public void bind( CustomizationMenuCallback callback ){
 		this.callback = callback;
 		button = new JToggleButton();
-		button.setIcon( icon );
-		button.setToolTipText( description );
-		button.setOpaque( false );
+		button.setIcon(icon);
+		button.setToolTipText(description);
+		button.setOpaque(false);
 		
-		here = new JLabel();
-		hereIcon.setController( controller );
-		here.setIcon( hereIcon.value() );
-		here.setVisible( false );
-		
+		elsewhere = new JLabel();
+		elsewhereIcon.setController(controller);
+		elsewhere.setIcon(elsewhereIcon.value());
+		elsewhere.setVisible(false);
+
 		base = new JLayeredPane();
-		base.add( button );
-		base.add( here );
-		base.setLayer( button, JLayeredPane.DEFAULT_LAYER );
-		base.setLayer( here, JLayeredPane.MODAL_LAYER );
-		base.setLayout( new LayoutManager(){
+		base.add(button);
+		base.add(elsewhere);
+		base.setLayer(button, JLayeredPane.DEFAULT_LAYER);
+		base.setLayer(elsewhere, JLayeredPane.MODAL_LAYER);
+		base.setLayout(new LayoutManager(){
 			@Override
 			public void removeLayoutComponent( Component comp ){
-				// ignore	
+				// ignore
 			}
-			
+
 			@Override
 			public Dimension preferredLayoutSize( Container parent ){
-				return button.getPreferredSize();
+				return new Dimension(button.getPreferredSize().width
+						+ elsewhere.getPreferredSize().width + 1, button
+						.getPreferredSize().height);
 			}
-			
+
 			@Override
 			public Dimension minimumLayoutSize( Container parent ){
 				return button.getMinimumSize();
 			}
-			
+
 			@Override
 			public void layoutContainer( Container parent ){
-				if( parent.getComponentCount() == 2 ){
+				if (parent.getComponentCount() == 2){
 					int width = parent.getWidth();
 					int height = parent.getHeight();
-					Dimension preferred = here.getPreferredSize();
-					int labelWidth = Math.min( preferred.width, width-1 );
-					int labelHeight = Math.min( preferred.height, height-1 );
-					
-					button.setBounds( 0, 0, width, height);
-					here.setBounds( 1, height - labelHeight, labelWidth, labelHeight );
+					Dimension preferred = elsewhere.getPreferredSize();
+					int labelWidth = Math.min(preferred.width, width - 1);
+					int labelHeight = Math.min(preferred.height, height - 1);
+					button.setBounds(labelWidth + 2, 0, width - labelWidth - 2, height);
+					elsewhere.setBounds(1, 0, labelWidth,
+							labelHeight);
 				}
 			}
-			
+
 			@Override
 			public void addLayoutComponent( String name, Component comp ){
-				// ignore	
+				// ignore
 			}
-		} );
-		
-		button.addActionListener( new ActionListener(){
+		});
+
+		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed( ActionEvent e ){
 				ItemLocation location = getItemLocation();
-				setItemVisible( location != ItemLocation.HERE );
+				setItemVisible(location != ItemLocation.HERE);
 			}
 		});
-		
+
 		select();
 	}
-	
+
 	private void select(){
 		ItemLocation location = getItemLocation();
-		here.setVisible( location == ItemLocation.HERE );
-		button.setSelected( location != ItemLocation.INVISIBLE );
+		elsewhere.setVisible(location == ItemLocation.HERE || location == ItemLocation.ELSEWHERE);
+		button.setSelected(location != ItemLocation.INVISIBLE);
+		button.setSelected(location == ItemLocation.HERE);
 	}
-	
+
 	/**
-	 * Gets the current location of the {@link Dockable} that is described by this button.
+	 * Gets the current location of the {@link Dockable} that is described by
+	 * this button.
+	 * 
 	 * @return the current location
-	 * @throws IllegalStateExceptione if {@link #bind(CustomizationMenuCallback)} was not called
+	 * @throws IllegalStateExceptione
+	 *             if {@link #bind(CustomizationMenuCallback)} was not called
 	 */
 	protected ItemLocation getItemLocation(){
-		if( callback == null ){
-			throw new IllegalStateException( "this information is only available if the button has been bound" );
+		if (callback == null){
+			throw new IllegalStateException(
+					"this information is only available if the button has been bound");
 		}
-		
-		if( !hasDockable() ){
+
+		if (!hasDockable()){
 			return ItemLocation.INVISIBLE;
 		}
 		Dockable item = getDockable();
 		DockStation parent = item.getDockParent();
-		if( parent == null ){
+		if (parent == null){
 			return ItemLocation.INVISIBLE;
 		}
 		DockStation owner = callback.getOwner();
-		while( parent != null ){
-			if( parent == owner ){
+		while (parent != null){
+			if (parent == owner){
 				return ItemLocation.HERE;
 			}
 			item = parent.asDockable();
-			if( item == null ){
+			if (item == null){
 				parent = null;
-			}
-			else{
+			} else{
 				parent = item.getDockParent();
 			}
 		}
 		return ItemLocation.ELSEWHERE;
 	}
-	
+
 	/**
-	 * Removes the {@link Dockable} from its current parent and maybe appends it to the owner of this button.
-	 * @param visible whether the item should be visible or not
+	 * Removes the {@link Dockable} from its current parent and maybe appends it
+	 * to the owner of this button.
+	 * 
+	 * @param visible
+	 *            whether the item should be visible or not
 	 */
 	protected void setItemVisible( boolean visible ){
 		Dockable item = getDockable();
 		DockStation parent = item.getDockParent();
-		if( parent != null ){
-			parent.drag( item );
+		if (parent != null){
+			parent.drag(item);
 		}
-		
-		if( visible ){
-			CustomizationToolbarButton.this.callback.append( item );
+
+		if (visible){
+			CustomizationToolbarButton.this.callback.append(item);
 		}
-		
+
 		select();
 	}
-	
+
 	@Override
 	public void unbind(){
 		base = null;
 		button = null;
-		here = null;
-		hereIcon.setController( null );
+		elsewhere = null;
+		elsewhereIcon.setController(null);
 	}
-	
+
 	/**
 	 * Sets the icon which should be shown on the button.
-	 * @param icon the new icon, can be <code>null</code>
+	 * 
+	 * @param icon
+	 *            the new icon, can be <code>null</code>
 	 */
 	public void setIcon( Icon icon ){
 		this.icon = icon;
-		if( button != null ){
-			button.setIcon( icon );
+		if (button != null){
+			button.setIcon(icon);
 		}
 	}
-	
+
 	/**
 	 * Sets a text which describes the meaning of the button.
-	 * @param description the description, can be <code>null</code>
+	 * 
+	 * @param description
+	 *            the description, can be <code>null</code>
 	 */
 	public void setDescription( String description ){
 		this.description = description;
-		if( button != null ){
-			button.setToolTipText( description );
+		if (button != null){
+			button.setToolTipText(description);
 		}
 	}
-	
+
 	/**
-	 * Tells whether the {@link Dockable} of this button, accessible by calling {@link #getDockable()}, is
-	 * already present. If the item is not yet present, then it cannot be visible or selected at this time.
+	 * Tells whether the {@link Dockable} of this button, accessible by calling
+	 * {@link #getDockable()}, is already present. If the item is not yet
+	 * present, then it cannot be visible or selected at this time.
+	 * 
 	 * @return whether the {@link Dockable} already exists
 	 */
 	protected abstract boolean hasDockable();
-	
+
 	/**
-	 * Gets the element that is put onto a toolbar. This method may create the {@link Dockable} lazily
-	 * in the very moment it is used the first time.
+	 * Gets the element that is put onto a toolbar. This method may create the
+	 * {@link Dockable} lazily in the very moment it is used the first time.
+	 * 
 	 * @return the item to show on the toolbar
 	 */
 	protected abstract Dockable getDockable();

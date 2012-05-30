@@ -34,7 +34,7 @@ import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
 
 /**
- * This class is used to retreive {@link Icon}s from the {@link IconManager}.
+ * This class is used to retrieve {@link Icon}s from the {@link IconManager}.
  * @author Benjamin Sigg
  */
 public abstract class DockIcon extends AbstractUIValue<Icon, DockIcon>{
