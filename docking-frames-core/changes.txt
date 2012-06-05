@@ -734,6 +734,8 @@
 
 [v1.1.1p7e]
  - Bugfix: Insertion area was not always painted on a SplitDockStation
+ - Bugfix: New Icons for the EclipseTheme by Nicolas Roduit. The new icons should work well with dark backgrounds.
+ 
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them
