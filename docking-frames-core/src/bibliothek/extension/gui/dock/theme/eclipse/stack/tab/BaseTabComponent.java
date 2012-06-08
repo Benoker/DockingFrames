@@ -27,7 +27,6 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.ContainerOrderFocusTraversalPolicy;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -47,6 +46,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabComponentLayoutManager;
 import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
@@ -254,15 +254,13 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
                 fontUnselected
         };
         
-        // Moved to EclipseTabPane
-//        addHierarchyListener( new WindowActiveObserver() );
+        buttons = new ButtonPanel( false );
+		add( buttons );
         
         setFocusable( false );
         setFocusTraversalPolicyProvider( true );
-        setFocusTraversalPolicy( new ContainerOrderFocusTraversalPolicy() );
-        buttons = new ButtonPanel( false );
-		add( buttons );
-		
+        setFocusTraversalPolicy( new DockFocusTraversalPolicy( new BaseTabFocusTraversalPolicy( buttons ), true ) );
+        
 		layoutManager = new TabComponentLayoutManager( label, buttons, pane.getConfiguration( dockable ) );
 		setLayout( layoutManager );
     }
