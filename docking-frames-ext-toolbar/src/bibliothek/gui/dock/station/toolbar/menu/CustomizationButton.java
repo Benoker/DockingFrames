@@ -34,13 +34,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 

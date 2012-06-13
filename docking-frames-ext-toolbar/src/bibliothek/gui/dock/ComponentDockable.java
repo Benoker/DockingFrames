@@ -37,6 +37,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -296,6 +297,10 @@ public class ComponentDockable extends AbstractDockable implements
 	 *            the state in which to show <code>component</code>
 	 */
 	public void setComponent( Component component, ExpandedState state ){
+		if (component instanceof AbstractButton) {
+			((AbstractButton) component).setBorderPainted(false);
+		}
+		
 		final Component previous = components[state.ordinal()];
 		if (previous != component){
 			if (previous != null){

@@ -189,24 +189,35 @@ public class SlimScrollbar extends JComponent implements ColumnScrollBar,
 		int thumb = getThumbSize();
 
 		Rectangle2D rec = null;
+		final int baseColorValue = 120;
 		if (hover){
 			if (orientation == Orientation.HORIZONTAL){
-				g2D.setPaint(new GradientPaint(new Point(value, 0),
-						new Color(130, 130, 130), new Point(value, 6), new Color(51, 51, 51)));
+				g2D.setPaint(new GradientPaint(new Point(value, 0), new Color(
+						baseColorValue + 120, baseColorValue + 120,
+						baseColorValue + 120), new Point(value, 6), new Color(
+						baseColorValue + 40, baseColorValue + 40,
+						baseColorValue + 40)));
 				rec = new Rectangle2D.Double(value, 0, thumb, 6);
 			} else{
-				g2D.setPaint(new GradientPaint(new Point(0, value),
-						new Color(130, 130, 130), new Point(6, value), new Color(51, 51, 51)));
+				g2D.setPaint(new GradientPaint(new Point(0, value), new Color(
+						baseColorValue + 120, baseColorValue + 120,
+						baseColorValue + 120), new Point(6, value), new Color(
+						baseColorValue + 40, baseColorValue + 40,
+						baseColorValue + 40)));
 				rec = new Rectangle2D.Double(0, value, 6, thumb);
 			}
 		} else{
 			if (orientation == Orientation.HORIZONTAL){
-				g2D.setPaint(new GradientPaint(new Point(value, 0),
-						new Color(100, 100, 100), new Point(value, 6), new Color(10, 10, 10)));
+				g2D.setPaint(new GradientPaint(new Point(value, 0), new Color(
+						baseColorValue + 90, baseColorValue + 90,
+						baseColorValue + 90), new Point(value, 6), new Color(
+						baseColorValue, baseColorValue, baseColorValue)));
 				rec = new Rectangle2D.Double(value, 0, thumb, 6);
 			} else{
-				g2D.setPaint(new GradientPaint(new Point(0, value),
-						new Color(100, 100, 100), new Point(6, value), new Color(10, 10, 10)));
+				g2D.setPaint(new GradientPaint(new Point(0, value), new Color(
+						baseColorValue + 90, baseColorValue + 90,
+						baseColorValue + 90), new Point(6, value), new Color(
+						baseColorValue, baseColorValue, baseColorValue)));
 				rec = new Rectangle2D.Double(0, value, 6, thumb);
 			}
 
