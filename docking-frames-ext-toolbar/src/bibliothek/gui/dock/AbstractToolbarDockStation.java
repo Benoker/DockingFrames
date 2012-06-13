@@ -41,7 +41,6 @@ import bibliothek.gui.ToolbarElementInterface;
 import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
-import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.OrientedDockStation;
@@ -60,7 +59,6 @@ import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.SilentPropertyValue;
-import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.FrameworkOnly;
 
 /**

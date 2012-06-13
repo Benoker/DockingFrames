@@ -50,6 +50,7 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDividerStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupSpanStrategy;
 
 /**
@@ -74,6 +75,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	
 	/** whether this layout manager should be allowed to create scrollbars */
 	private boolean useScrollbars = true;
+	
+	/** the cached result for {@link #layout()} */
+	private Wrapper[][] cachedComponents;
 	
 	private enum Size {
 		MAXIMUM, MINIMUM, PREFERRED;
@@ -131,6 +135,15 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 */
 	public void setController( DockController controller ){
 		spans.setController( controller );
+	}
+	
+	/**
+	 * Sets the strategy responsible for painting a border between the {@link Dockable}s. The strategy is
+	 * required to find the minimum size of the gaps between the items.
+	 * @param dividers the new strategy, can be <code>null</code>
+	 */
+	public void setDividerStrategy( ToolbarGroupDividerStrategy dividers ){
+		spans.setDividers( dividers );
 	}
 	
 	/**
@@ -199,16 +212,19 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 */
 	@SuppressWarnings("unchecked")
 	protected Wrapper[][] layout(){
-		final Wrapper[][] components = new ToolbarGridLayoutManager.Wrapper[grid.getColumnCount()][];
-		for( int i = 0; i < components.length; i++ ) {
-			final List<Wrapper> list = new ArrayList<Wrapper>();
-			final Iterator<P> iter = grid.getColumnContent( i );
-			while( iter.hasNext() ) {
-				list.add( new Wrapper( toComponent( iter.next() ) ) );
+		if( cachedComponents == null ){
+			Wrapper[][] components = new ToolbarGridLayoutManager.Wrapper[grid.getColumnCount()][];
+			for( int i = 0; i < components.length; i++ ) {
+				final List<Wrapper> list = new ArrayList<Wrapper>();
+				final Iterator<P> iter = grid.getColumnContent( i );
+				while( iter.hasNext() ) {
+					list.add( new Wrapper( toComponent( iter.next() ) ) );
+				}
+				components[i] = list.toArray( new ToolbarGridLayoutManager.Wrapper[list.size()] );
 			}
-			components[i] = list.toArray( new ToolbarGridLayoutManager.Wrapper[list.size()] );
+			cachedComponents = components;
 		}
-		return components;
+		return cachedComponents;
 	}
 
 	@Override
@@ -582,7 +598,7 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 	@Override
 	public void invalidateLayout( Container target ){
-		// nothing to do
+		cachedComponents = null;
 	}
 
 	/**

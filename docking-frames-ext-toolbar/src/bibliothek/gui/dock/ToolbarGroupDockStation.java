@@ -79,9 +79,12 @@ import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBar;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBarFactory;
+import bibliothek.gui.dock.station.toolbar.group.DefaultToolbarGroupDividierStrategy;
 import bibliothek.gui.dock.station.toolbar.group.SlimScrollbar;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDividerStrategy;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDividerStrategyFactory;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDropInfo;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupExpander;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeader;
@@ -136,6 +139,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	/** Key for a factory that creates new {@link ToolbarGroupHeader}s */
 	public static final PropertyKey<ToolbarGroupHeaderFactory> HEADER_FACTORY = new PropertyKey<ToolbarGroupHeaderFactory>( "dock.toolbarGroupHeaderFactory" );
 
+	/** Key for a strategy for painting borders between the {@link Dockable}s */
+	public static final PropertyKey<ToolbarGroupDividerStrategyFactory> DIVIDER_STRATEGY_FACTORY = new PropertyKey<ToolbarGroupDividerStrategyFactory>( "dock.toolbarGroupDividerStrategy", new ConstantPropertyFactory<ToolbarGroupDividerStrategyFactory>( DefaultToolbarGroupDividierStrategy.FACTORY ), true );
+	
 	/** A list of all children organized in columns and lines */
 	private final DockablePlaceholderToolbarGrid<StationChildHandle> dockables = new DockablePlaceholderToolbarGrid<StationChildHandle>();
 
@@ -149,6 +155,22 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			dockables.setStrategy( newValue );
 		}
 	};
+
+	/** factory creating the current dividier strategy */
+	private PropertyValue<ToolbarGroupDividerStrategyFactory> dividerStrategyFactory = new PropertyValue<ToolbarGroupDividerStrategyFactory>( DIVIDER_STRATEGY_FACTORY ){
+		@Override
+		protected void valueChanged( ToolbarGroupDividerStrategyFactory oldValue, ToolbarGroupDividerStrategyFactory newValue ){
+			if( newValue == null ){
+				setDividerStrategy( null );
+			}
+			else{
+				setDividerStrategy( newValue.create( ToolbarGroupDockStation.this ));
+			}
+		}
+	};
+	
+	/** Responsible for painting a border between the {@link Dockable}s, can be <code>null</code> */
+	private ToolbarGroupDividerStrategy dividerStrategy;
 
 	/**
 	 * The graphical representation of this station: the pane which contains
@@ -254,6 +276,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 		setTitleIcon( null );
 		expander = new ToolbarGroupExpander( this );
+		setDividerStrategy( dividerStrategyFactory.getValue().create( this ) );
 	}
 
 	// ########################################################
@@ -522,6 +545,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			layoutManager.setController( controller );
 			scrollbarFactory.setProperties( controller );
 			headerFactory.setProperties( controller );
+			dividerStrategyFactory.setProperties( controller );
 
 			if( getController() != null ) {
 				dockables.bind();
@@ -1090,6 +1114,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 	}
 
+	private void setDividerStrategy( ToolbarGroupDividerStrategy dividerStrategy ){
+		this.dividerStrategy = dividerStrategy;
+		layoutManager.setDividerStrategy( dividerStrategy );
+		mainPanel.revalidate();
+	}
+	
 	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
@@ -1107,7 +1137,14 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		/**
 		 * The direct parent {@link Container} of {@link Dockable}s.
 		 */
-		private final JPanel dockablePane = new JPanel();
+		private final JPanel dockablePane = new JPanel(){
+			protected void paintComponent( Graphics g ){
+				super.paintComponent( g );
+				if( dividerStrategy != null ){
+					dividerStrategy.paint( this, g, layoutManager );
+				}
+			}
+		};
 
 		/**
 		 * The parent of {@link #dockablePane}, adds insets, borders and other
@@ -1221,6 +1258,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 				};
 				dockablePane.setLayout( layoutManager );
+				layoutManager.setDividerStrategy( dividerStrategy );
 				layoutManager.setController( getController() );
 			}
 			mainPanel.revalidate();

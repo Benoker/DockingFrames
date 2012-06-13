@@ -67,6 +67,9 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 	/** the station using this strategy */
 	private ToolbarGroupDockStation station;
 	
+	/** tells the minimum size for each gap */
+	private ToolbarGroupDividerStrategy dividers = ToolbarGroupDividerStrategy.NULL;
+	
 	private int currentColumn = -1;
 	private int currentLine = -1;
 	
@@ -84,6 +87,19 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 				reset( true );
 			}
 		};
+	}
+	
+	/**
+	 * Sets the strategy for painting between the {@link Dockable}s. The strategy is required
+	 * to find the minimum size of all gaps.
+	 * @param dividers the new strategy, can be <code>null</code>
+	 */
+	public void setDividers( ToolbarGroupDividerStrategy dividers ){
+		if( dividers == null ){
+			dividers = ToolbarGroupDividerStrategy.NULL;
+		}
+		this.dividers = dividers;
+		handleResized();
 	}
 	
 	/**
@@ -175,7 +191,7 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 	 * @return the size of the gap
 	 */
 	public int getColumn( int index ){
-		return columnSpans[ index ].getSize();
+		return Math.max( columnSpans[ index ].getSize(), dividers.getColumn( index ));
 	}
 	
 	/**
@@ -186,7 +202,7 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 	 * @return the size of the gap
 	 */
 	public int getLine( int column, int index ){
-		return lineSpans[ column ][ index ].getSize();
+		return Math.max( lineSpans[ column ][ index ].getSize(), dividers.getLine( column, index ));
 	}
 	
 	/**
