@@ -445,12 +445,6 @@ public abstract class AbstractToolbarDockStation extends
 	protected abstract DefaultDisplayerFactoryValue createDisplayerFactory();
 
 	/**
-	 * Gets an id that is forwarded to {@link Extension}s which load additional
-	 * {@link DisplayerFactory}s
-	 */
-	protected abstract String getDisplayerId();
-
-	/**
 	 * Gets a {@link StationPaint} which is used to paint some lines onto this
 	 * station. Use a {@link DefaultStationPaintValue#setDelegate(StationPaint)
 	 * delegate} to exchange the paint.

@@ -30,6 +30,14 @@
 
 package bibliothek.gui.dock.station.toolbar;
 
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Insets;
+
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
@@ -64,24 +72,90 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer {
 		}
 	};
 	
+	/**
+	 * A factory creating new {@link ToolbarDockableDisplayer}s, this factory configures the displayers such that they
+	 * have a border.
+	 */
+	public static final DisplayerFactory FACTORY_BORDER = new DisplayerFactory(){
+		@Override
+		public void request( DisplayerRequest request ){
+			ToolbarDockableDisplayer displayer = new ToolbarDockableDisplayer( request.getParent(), request.getTarget(), request.getTitle() );
+			displayer.setDefaultBorderHint( true );
+			displayer.setRespectBorderHint( false );
+			request.answer( displayer );
+		}
+	};
+	
 	/** Keeps track of the orientation of the current {@link Dockable} and updates the location of the title if necessary */
 	private OrientationObserver observer;
 	
+	/** the panel showing the dockable */
+	private JPanel dockable;
+	
+	/** the border of this displayer */
+	private DisplayerBorder toolbarBorder;
+	
 	/**
 	 * Creates a new displayer.
-	 * 
-	 * @param station
-	 *            the owner of this displayer
-	 * @param dockable
-	 *            the element shown on this displayer, can be <code>null</code>
-	 * @param title
-	 *            the title shown on this displayer, can be <code>null</code>
+	 * @param station the owner of this displayer
+	 * @param dockable the element shown on this displayer, can be <code>null</code>
+	 * @param title the title shown on this displayer, can be <code>null</code>
 	 */
 	public ToolbarDockableDisplayer( DockStation station, Dockable dockable, DockTitle title ){
 		super( station );
 		setTransparency( Transparency.TRANSPARENT );
 		setDockable( dockable );
 		setTitle( title );
+	}
+	
+	@Override
+	protected Component getComponent( Dockable dockable ){
+		ensureDockable();
+		return this.dockable;
+	}
+	
+	private void ensureDockable(){
+		if( dockable == null ){
+			dockable = new JPanel( new GridLayout( 1, 1 ) );
+			dockable.setOpaque( false );
+			toolbarBorder = new DisplayerBorder( this.dockable, "toolbar" );
+		}
+	}
+	
+	@Override
+	protected Border getDefaultBorder(){
+		return new ToolbarLineBorder( this );
+	}
+	
+	@Override
+	protected void updateBorder(){
+		if( isSingleTabShowing() ){
+			super.updateBorder();
+		}
+		else{
+			ensureDockable();
+			setBaseBorder( null );
+			setContentBorder( null );
+			boolean show;
+			if( isRespectBorderHint() ){
+				show = getHints().getShowBorderHint();
+			}
+			else{
+				show = getDefaultBorderHint();
+			}
+			if( show ){
+				toolbarBorder.setBorder( getDefaultBorder() );
+			}
+			else{
+				toolbarBorder.setBorder( null );
+			}
+		}
+	}
+	
+	@Override
+	public void setController( DockController controller ){
+		super.setController( controller );
+		toolbarBorder.setController( controller );
 	}
 	
 	@Override
@@ -93,7 +167,10 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer {
 				observer = null;
 			}
 			super.setDockable( dockable );
+			ensureDockable();
+			this.dockable.removeAll();
 			if( dockable != null ){
+				this.dockable.add( dockable.getComponent() );
 				observer = new OrientationObserver( dockable ){
 					@Override
 					protected void orientationChanged( Orientation current ){
@@ -103,6 +180,20 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer {
 				setOrientation( getOrientation() );
 			}
 		}
+	}
+	
+	@Override
+	public Insets getDockableInsets(){
+        Insets insets = super.getDockableInsets();
+        Border border = dockable.getBorder();
+        if( border != null ){
+            Insets borderInsets = border.getBorderInsets( dockable );
+            insets.left += borderInsets.left;
+            insets.right += borderInsets.right;
+            insets.top += borderInsets.top;
+            insets.bottom += borderInsets.bottom;
+        }
+        return insets;
 	}
 	
 	/**

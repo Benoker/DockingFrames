@@ -96,7 +96,7 @@ import bibliothek.util.Path;
  * 
  * @author Herve Guillaume
  */
-public class ToolbarDockStation extends AbstractToolbarDockStation{
+public class ToolbarDockStation extends AbstractToolbarDockStation {
 
 	/** the id of the {@link DockTitleFactory} which is used by this station */
 	public static final String TITLE_ID = "toolbar";
@@ -122,12 +122,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	private int lateralNodropZoneSize = 2;
 
 	/** current {@link PlaceholderStrategy} */
-	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
-			PlaceholderStrategy.PLACEHOLDER_STRATEGY){
+	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
 		@Override
-		protected void valueChanged( PlaceholderStrategy oldValue,
-				PlaceholderStrategy newValue ){
-			dockables.setStrategy(newValue);
+		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
+			dockables.setStrategy( newValue );
 		}
 	};
 
@@ -136,10 +134,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	/** added to the current parent of this dockable */
 	private VisibleListener visibleListener;
-	
+
 	/** the {@link LayoutManager} positioning the children of this station */
 	private SpanToolbarLayoutManager layoutManager;
-	
+
 	/** information about the {@link Dockable} that is currently dropped */
 	private DropInfo dropInfo;
 
@@ -157,36 +155,33 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	@Override
 	protected void init(){
 		mainPanel = new OverpaintablePanelBase();
-		paint = new DefaultStationPaintValue(ThemeManager.STATION_PAINT
-				+ ".toolbar", this);
-		setOrientation(getOrientation());
+		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar", this );
+		setOrientation( getOrientation() );
 		displayerFactory = createDisplayerFactory();
-		displayers = new DisplayerCollection(this, displayerFactory,
-				getDisplayerId());
-		displayers
-				.addDockableDisplayerListener(new DockableDisplayerListener(){
-					@Override
-					public void discard( DockableDisplayer displayer ){
-						ToolbarDockStation.this.discard(displayer);
-					}
-				});
+		displayers = new DisplayerCollection( this, displayerFactory, getDisplayerId() );
+		displayers.addDockableDisplayerListener( new DockableDisplayerListener(){
+			@Override
+			public void discard( DockableDisplayer displayer ){
+				ToolbarDockStation.this.discard( displayer );
+			}
+		} );
 
-		setTitleIcon(null);
+		setTitleIcon( null );
 
-		visibility = new DockableShowingManager(listeners);
+		visibility = new DockableShowingManager( listeners );
 		visibleListener = new VisibleListener();
 
-		getComponent().addHierarchyListener(new HierarchyListener(){
+		getComponent().addHierarchyListener( new HierarchyListener(){
 			public void hierarchyChanged( HierarchyEvent e ){
-				if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0){
-					if (getDockParent() == null){
+				if( (e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 ) {
+					if( getDockParent() == null ) {
 						getDockableStateListeners().checkShowing();
 					}
 
 					visibility.fire();
 				}
 			}
-		});
+		} );
 	}
 
 	// ########################################################
@@ -205,7 +200,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public Dockable getDockable( int index ){
-		return dockables.dockables().get(index).getDockable();
+		return dockables.dockables().get( index ).getDockable();
 	}
 
 	@Override
@@ -223,9 +218,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 *             if the size is smaller than 0
 	 */
 	public void setLateralNodropZoneSize( int lateralNodropZoneSize ){
-		if (lateralNodropZoneSize < 0){
-			throw new IllegalArgumentException(
-					"borderSideSnapeSize must not be less than 0");
+		if( lateralNodropZoneSize < 0 ) {
+			throw new IllegalArgumentException( "borderSideSnapeSize must not be less than 0" );
 		}
 		this.lateralNodropZoneSize = lateralNodropZoneSize;
 	}
@@ -243,48 +237,49 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	@Override
 	public void setDockParent( DockStation station ){
 		DockStation old = getDockParent();
-		if (old != null)
-			old.removeDockStationListener(visibleListener);
+		if( old != null )
+			old.removeDockStationListener( visibleListener );
 
-		super.setDockParent(station);
+		super.setDockParent( station );
 
-		if (station != null)
-			station.addDockStationListener(visibleListener);
+		if( station != null )
+			station.addDockStationListener( visibleListener );
 
 		visibility.fire();
 	}
 
 	@Override
 	public void setController( DockController controller ){
-		if (getController() != controller){
-			if (getController() != null){
+		if( getController() != controller ) {
+			if( getController() != null ) {
 				dockables.unbind();
 			}
-			for (final StationChildHandle handle : dockables.dockables()){
-				handle.setTitleRequest(null);
+			for( final StationChildHandle handle : dockables.dockables() ) {
+				handle.setTitleRequest( null );
 			}
 
-			super.setController(controller);
+			super.setController( controller );
 			// if not set controller of the DefaultStationPaintValue, call to
 			// DefaultStationPaintValue do nothing
 
-			if (controller == null){
+			if( controller == null ) {
 				title = null;
-			} else{
-				title = registerTitle(controller);
 			}
-			paint.setController(controller);
-			placeholderStrategy.setProperties(controller);
-			displayerFactory.setController(controller);
-			displayers.setController(controller);
-			mainPanel.setController(controller);
+			else {
+				title = registerTitle( controller );
+			}
+			paint.setController( controller );
+			placeholderStrategy.setProperties( controller );
+			displayerFactory.setController( controller );
+			displayers.setController( controller );
+			mainPanel.setController( controller );
 			layoutManager.setController( controller );
 
-			if (controller != null){
+			if( controller != null ) {
 				dockables.bind();
 			}
-			for (final StationChildHandle handle : dockables.dockables()){
-				handle.setTitleRequest(title, true);
+			for( final StationChildHandle handle : dockables.dockables() ) {
+				handle.setTitleRequest( title, true );
 			}
 
 			visibility.fire();
@@ -311,18 +306,17 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[] { new ToolbarSlimDropLayer(this) };
+		return new DockStationDropLayer[]{ new ToolbarSlimDropLayer( this ) };
 	}
 
 	@Override
 	public boolean accept( Dockable child ){
-		return getToolbarStrategy().isToolbarPart(child);
+		return getToolbarStrategy().isToolbarPart( child );
 	}
 
 	@Override
 	public boolean accept( DockStation station ){
-		return getToolbarStrategy().isToolbarGroupPartParent(station, this,
-				false);
+		return getToolbarStrategy().isToolbarGroupPartParent( station, this, false );
 	}
 
 	public boolean accept( DockStation base, Dockable neighbor ){
@@ -334,17 +328,17 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
 		final DockController controller = getController();
 
-		if (getExpandedState() == ExpandedState.EXPANDED){
+		if( getExpandedState() == ExpandedState.EXPANDED ) {
 			return null;
 		}
 
 		Dockable dockable = item.getDockable();
 		// check if the dockable and the station accept each other
-		if (this.accept(dockable) & dockable.accept(this)){
+		if( this.accept( dockable ) & dockable.accept( this ) ) {
 			// check if controller exist and if the controller accept that
 			// the dockable become a child of this station
-			if (controller != null){
-				if (!controller.getAcceptance().accept(this, dockable)){
+			if( controller != null ) {
+				if( !controller.getAcceptance().accept( this, dockable ) ) {
 					return null;
 				}
 			}
@@ -352,39 +346,40 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			SwingUtilities.convertPointFromScreen( mouse, mainPanel );
 			int index = layoutManager.getInsertionIndex( mouse.x, mouse.y );
 			DropInfo info = new DropInfo( dockable, index );
-			if( info.hasNoEffect() ){
+			if( info.hasNoEffect() ) {
 				return null;
 			}
 			return info;
-		} else{
+		}
+		else {
 			return null;
 		}
 	}
-	
+
 	private class DropInfo extends ToolbarDropInfo {
 		public DropInfo( Dockable dockable, int index ){
 			super( dockable, ToolbarDockStation.this, index );
 		}
-		
+
 		@Override
 		public void execute(){
 			dropInfo = null;
 			layoutManager.setExpandedSpan( -1, false );
-			
-			if( isMove() ){
+
+			if( isMove() ) {
 				move( getItem(), getIndex() );
 			}
-			else{
+			else {
 				drop( getItem(), getIndex() );
 			}
 		}
 
 		@Override
 		public void destroy( StationDropOperation next ){
-			if( dropInfo == this ){
+			if( dropInfo == this ) {
 				dropInfo = null;
 			}
-			if( next == null || next.getTarget() != getTarget() ){
+			if( next == null || next.getTarget() != getTarget() ) {
 				layoutManager.setExpandedSpan( -1, true );
 			}
 			mainPanel.repaint();
@@ -396,13 +391,13 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 			layoutManager.setSpanSize( getItem() );
 			layoutManager.setExpandedSpan( getIndex(), true );
 			mainPanel.repaint();
-		}		
+		}
 	}
 
 	@Override
 	public void drop( Dockable dockable ){
 		// System.out.println(this.toString() + "## drop(Dockable dockable)##");
-		this.drop(dockable, getDockableCount(), true);
+		this.drop( dockable, getDockableCount(), true );
 	}
 
 	/**
@@ -415,7 +410,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * @return whether the operation was succesfull or not
 	 */
 	public boolean drop( Dockable dockable, int index ){
-		return drop(dockable, index, false);
+		return drop( dockable, index, false );
 	}
 
 	protected boolean drop( Dockable dockable, int index, boolean force ){
@@ -423,19 +418,18 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		// ToolbarGroupDockStationMerger
 		// System.out.println(this.toString()
 		// + "## drop(Dockable dockable, int index)##");
-		if (force || this.accept(dockable)){
-			if (!force){
-				Dockable replacement = getToolbarStrategy().ensureToolbarLayer(
-						this, dockable);
-				if (replacement == null){
+		if( force || this.accept( dockable ) ) {
+			if( !force ) {
+				Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+				if( replacement == null ) {
 					return false;
 				}
-				if (replacement != dockable){
-					replacement.asDockStation().drop(dockable);
+				if( replacement != dockable ) {
+					replacement.asDockStation().drop( dockable );
 					dockable = replacement;
 				}
 			}
-			add(dockable, index);
+			add( dockable, index );
 			return true;
 		}
 		return false;
@@ -453,71 +447,71 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 */
 	protected void move( Dockable dockable, int index ){
 		final DockController controller = getController();
-		try{
-			if (controller != null){
+		try {
+			if( controller != null ) {
 				controller.freezeLayout();
 			}
 			int current = indexOf( dockable );
-			if( current == -1 ){
+			if( current == -1 ) {
 				throw new IllegalArgumentException( "dockable is not known to this station" );
 			}
-			if( current < index ){
+			if( current < index ) {
 				index--;
 			}
-			if( current != index ){
-				this.add(dockable, index);
+			if( current != index ) {
+				this.add( dockable, index );
 			}
-		} finally{
-			if (controller != null){
+		}
+		finally {
+			if( controller != null ) {
 				controller.meltLayout();
 			}
 		}
 	}
 
 	protected void add( Dockable dockable, int index ){
-		add(dockable, index, null);
+		add( dockable, index, null );
 	}
 
 	protected void add( Dockable dockable, int index, Path placeholder ){
-		DockUtilities.ensureTreeValidity(this, dockable);
+		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
 		// Case where dockable is instance of ToolbarDockStation is handled by
 		// the "ToolbarDockStationMerger"
 		// Case where dockable is instance of ToolbarGroupDockStation is handled
 		// by the "ToolbarStrategy.ensureToolbarLayer" method
-		Dockable replacement = getToolbarStrategy().ensureToolbarLayer(this,
-				dockable);
-		if (replacement != dockable){
-			replacement.asDockStation().drop(dockable);
+		Dockable replacement = getToolbarStrategy().ensureToolbarLayer( this, dockable );
+		if( replacement != dockable ) {
+			replacement.asDockStation().drop( dockable );
 			dockable = replacement;
 		}
-		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(
-				this, dockable);
-		try{
-			listeners.fireDockableAdding(dockable);
+		final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
+		try {
+			listeners.fireDockableAdding( dockable );
 			int inserted = -1;
 
-			final StationChildHandle handle = new StationChildHandle(this,
-					displayers, dockable, title);
+			final StationChildHandle handle = new StationChildHandle( this, displayers, dockable, title );
 			handle.updateDisplayer();
 
-			if ((placeholder != null)
-					&& (dockables.getDockableAt(placeholder) == null)){
-				inserted = dockables.put(placeholder, handle);
-			} else if (placeholder != null){
-				index = dockables.getDockableIndex(placeholder);
+			if( (placeholder != null) && (dockables.getDockableAt( placeholder ) == null) ) {
+				inserted = dockables.put( placeholder, handle );
+			}
+			else if( placeholder != null ) {
+				index = dockables.getDockableIndex( placeholder );
 			}
 
-			if (inserted == -1){
-				getDockables().add(index, handle);
-			} else{
+			if( inserted == -1 ) {
+				getDockables().add( index, handle );
+			}
+			else {
 				index = inserted;
 			}
 
-			insertAt(handle, index);
-			listeners.fireDockableAdded(dockable);
-			fireDockablesRepositioned(index + 1);
-		} finally{
+			insertAt( handle, index );
+			listeners.fireDockableAdded( dockable );
+			fireDockablesRepositioned( index + 1 );
+		}
+		finally {
 			token.release();
 		}
 	}
@@ -525,10 +519,9 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	protected void insertAt( StationChildHandle handle, int index ){
 		final Dockable dockable = handle.getDockable();
 
-		dockable.setDockParent(this);
+		dockable.setDockParent( this );
 
-		mainPanel.getContentPane().add(handle.getDisplayer().getComponent(),
-				index);
+		mainPanel.getContentPane().add( handle.getDisplayer().getComponent(), index );
 		mainPanel.getContentPane().invalidate();
 
 		// mainPanel.getContentPane().setBounds( 0, 0,
@@ -546,11 +539,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	public void drag( Dockable dockable ){
 		// System.out.println(this.toString() +
 		// "## drag(Dockable dockable) ##");
-		if (dockable.getDockParent() != this){
-			throw new IllegalArgumentException(
-					"The dockable cannot be dragged, it is not child of this station.");
+		if( dockable.getDockParent() != this ) {
+			throw new IllegalArgumentException( "The dockable cannot be dragged, it is not child of this station." );
 		}
-		this.remove(dockable);
+		this.remove( dockable );
 	}
 
 	/**
@@ -565,29 +557,28 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	@Override
 	protected void remove( Dockable dockable ){
 		DockUtilities.checkLayoutLocked();
-		final int index = indexOf(dockable);
-		final StationChildHandle handle = dockables.dockables().get(index);
+		final int index = indexOf( dockable );
+		final StationChildHandle handle = dockables.dockables().get( index );
 
-		if (getFrontDockable() == dockable){
-			setFrontDockable(null);
+		if( getFrontDockable() == dockable ) {
+			setFrontDockable( null );
 		}
 
-		final DockHierarchyLock.Token token = DockHierarchyLock
-				.acquireUnlinking(this, dockable);
-		try{
-			listeners.fireDockableRemoving(dockable);
-			dockable.setDockParent(null);
+		final DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
+		try {
+			listeners.fireDockableRemoving( dockable );
+			dockable.setDockParent( null );
 
-			dockables.remove(index);
-			mainPanel.getContentPane().remove(
-					handle.getDisplayer().getComponent());
+			dockables.remove( index );
+			mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
 			mainPanel.doLayout();
 			mainPanel.revalidate();
 			mainPanel.repaint();
 			handle.destroy();
-			listeners.fireDockableRemoved(dockable);
-			fireDockablesRepositioned(index);
-		} finally{
+			listeners.fireDockableRemoved( dockable );
+			fireDockablesRepositioned( index );
+		}
+		finally {
 			token.release();
 		}
 	}
@@ -603,29 +594,28 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 */
 	protected void remove( int index ){
 		DockUtilities.checkLayoutLocked();
-		final StationChildHandle handle = dockables.dockables().get(index);
-		final Dockable dockable = getDockable(index);
+		final StationChildHandle handle = dockables.dockables().get( index );
+		final Dockable dockable = getDockable( index );
 
-		if (getFrontDockable() == dockable){
-			setFrontDockable(null);
+		if( getFrontDockable() == dockable ) {
+			setFrontDockable( null );
 		}
 
-		final DockHierarchyLock.Token token = DockHierarchyLock
-				.acquireUnlinking(this, dockable);
-		try{
-			listeners.fireDockableRemoving(dockable);
-			dockable.setDockParent(null);
+		final DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
+		try {
+			listeners.fireDockableRemoving( dockable );
+			dockable.setDockParent( null );
 
-			dockables.remove(index);
-			mainPanel.getContentPane().remove(
-					handle.getDisplayer().getComponent());
+			dockables.remove( index );
+			mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
 			mainPanel.doLayout();
 			mainPanel.getContentPane().revalidate();
 			mainPanel.getContentPane().repaint();
 			handle.destroy();
-			listeners.fireDockableRemoved(dockable);
-			fireDockablesRepositioned(index);
-		} finally{
+			listeners.fireDockableRemoved( dockable );
+			fireDockablesRepositioned( index );
+		}
+		finally {
 			token.release();
 		}
 	}
@@ -634,14 +624,14 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	public void replace( Dockable old, Dockable next ){
 		DockUtilities.checkLayoutLocked();
 		final DockController controller = getController();
-		if (controller != null){
+		if( controller != null ) {
 			controller.freezeLayout();
 		}
-		final int index = indexOf(old);
-		remove(old);
+		final int index = indexOf( old );
+		remove( old );
 		// the child is a ToolbarGroupDockStation because canReplace()
 		// ensure it
-		add(next, index);
+		add( next, index );
 		controller.meltLayout();
 	}
 
@@ -651,24 +641,25 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
-		DockUI.updateTheme(this, new ToolbarDockStationFactory());
+		DockUI.updateTheme( this, new ToolbarDockStationFactory() );
 	}
 
 	@Override
 	protected DefaultDisplayerFactoryValue createDisplayerFactory(){
-		return new DefaultDisplayerFactoryValue(ThemeManager.DISPLAYER_FACTORY
-				+ ".toolbar", this);
+		return new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar", this );
 	}
 
-	@Override
+	/**
+	 * Gets a unique identifier used to get the {@link DisplayerFactory} for this station.
+	 * @return the unique identifier, not <code>null</code>
+	 */
 	protected String getDisplayerId(){
 		return DISPLAYER_ID;
 	}
 
 	@Override
 	protected DockTitleVersion registerTitle( DockController controller ){
-		return controller.getDockTitleManager().getVersion(TITLE_ID,
-				BasicDockTitleFactory.FACTORY);
+		return controller.getDockTitleManager().getVersion( TITLE_ID, BasicDockTitleFactory.FACTORY );
 	}
 
 	/**
@@ -683,17 +674,16 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	protected void discard( DockableDisplayer displayer ){
 		final Dockable dockable = displayer.getDockable();
 
-		final int index = indexOf(dockable);
-		if (index < 0){
-			throw new IllegalArgumentException(
-					"displayer is not a child of this station: " + displayer);
+		final int index = indexOf( dockable );
+		if( index < 0 ) {
+			throw new IllegalArgumentException( "displayer is not a child of this station: " + displayer );
 		}
 
-		final StationChildHandle handle = dockables.dockables().get(index);
+		final StationChildHandle handle = dockables.dockables().get( index );
 
-		mainPanel.getContentPane().remove(handle.getDisplayer().getComponent());
+		mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
 		handle.updateDisplayer();
-		insertAt(handle, index);
+		insertAt( handle, index );
 	}
 
 	/**
@@ -703,7 +693,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * 
 	 * @author Herve Guillaume
 	 */
-	protected class OverpaintablePanelBase extends SecureContainer{
+	protected class OverpaintablePanelBase extends SecureContainer {
 
 		/**
 		 * Generated serial number
@@ -718,7 +708,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 * 
 		 */
 		@SuppressWarnings("serial")
-		private class SizeFixedPanel extends JPanel{
+		private class SizeFixedPanel extends JPanel {
 			@Override
 			public Dimension getPreferredSize(){
 				final Dimension pref = super.getPreferredSize();
@@ -749,13 +739,13 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			setBasePane(dockablePane);
-			setSolid(false);
-			dockablePane.setOpaque(false);
+			setBasePane( dockablePane );
+			setSolid( false );
+			dockablePane.setOpaque( false );
 			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this, dockablePane ){
 				@Override
 				protected void revalidate(){
-					dockablePane.revalidate();	
+					dockablePane.revalidate();
 				}
 			};
 			dockablePane.setLayout( layoutManager );
@@ -781,67 +771,67 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 		 * {@linl ToolbarDockStation}
 		 */
 		public void updateAlignment(){
-//			if (getOrientation() != null){
-//				switch (getOrientation()) {
-//				case HORIZONTAL:
-//					// insets use to draw insertion lines with proper larger
-//					// basePane.setBorder(new EmptyBorder(new Insets(0,
-//					// INSETS_SIZE, 0, INSETS_SIZE + 1)));
-//					dockablePane.setLayout(new BoxLayout(dockablePane,
-//							BoxLayout.X_AXIS));
-//					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
-//					dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-//					break;
-//				case VERTICAL:
-//					// insets use to draw insertion lines with proper larger
-//					// basePane.setBorder(new EmptyBorder(new
-//					// Insets(INSETS_SIZE,
-//					// 0, INSETS_SIZE + 1, 0)));
-//					dockablePane.setLayout(new BoxLayout(dockablePane,
-//							BoxLayout.Y_AXIS));
-//					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
-//					dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
-//					break;
-//				default:
-//					throw new IllegalArgumentException();
-//				}
-//			}
+			//			if (getOrientation() != null){
+			//				switch (getOrientation()) {
+			//				case HORIZONTAL:
+			//					// insets use to draw insertion lines with proper larger
+			//					// basePane.setBorder(new EmptyBorder(new Insets(0,
+			//					// INSETS_SIZE, 0, INSETS_SIZE + 1)));
+			//					dockablePane.setLayout(new BoxLayout(dockablePane,
+			//							BoxLayout.X_AXIS));
+			//					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
+			//					dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+			//					break;
+			//				case VERTICAL:
+			//					// insets use to draw insertion lines with proper larger
+			//					// basePane.setBorder(new EmptyBorder(new
+			//					// Insets(INSETS_SIZE,
+			//					// 0, INSETS_SIZE + 1, 0)));
+			//					dockablePane.setLayout(new BoxLayout(dockablePane,
+			//							BoxLayout.Y_AXIS));
+			//					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
+			//					dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
+			//					break;
+			//				default:
+			//					throw new IllegalArgumentException();
+			//				}
+			//			}
 		}
 
 		@Override
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
 			paintRemoval( g );
-			if( dropInfo != null ){
+			if( dropInfo != null ) {
 				int index = dropInfo.getIndex();
 				int x, y, width, height;
-				if( getOrientation() == Orientation.HORIZONTAL ){
-					if( index == 0 ){
+				if( getOrientation() == Orientation.HORIZONTAL ) {
+					if( index == 0 ) {
 						x = 0;
 					}
-					else{
-						x = dockablePane.getComponent( index-1 ).getX() + dockablePane.getComponent( index-1 ).getWidth();
+					else {
+						x = dockablePane.getComponent( index - 1 ).getX() + dockablePane.getComponent( index - 1 ).getWidth();
 					}
-					if( index == dockablePane.getComponentCount() ){
+					if( index == dockablePane.getComponentCount() ) {
 						width = getWidth() - x;
 					}
-					else{
+					else {
 						width = dockablePane.getComponent( index ).getX() - x;
 					}
 					y = 0;
 					height = getHeight();
 				}
-				else{
-					if( index == 0 ){
+				else {
+					if( index == 0 ) {
 						y = 0;
 					}
-					else{
-						y = dockablePane.getComponent( index-1 ).getY() + dockablePane.getComponent( index-1 ).getHeight();
+					else {
+						y = dockablePane.getComponent( index - 1 ).getY() + dockablePane.getComponent( index - 1 ).getHeight();
 					}
-					if( index == dockablePane.getComponentCount() ){
+					if( index == dockablePane.getComponentCount() ) {
 						height = getHeight() - y;
 					}
-					else{
+					else {
 						height = dockablePane.getComponent( index ).getY() - y;
 					}
 					x = 0;
@@ -851,12 +841,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 				paint.drawInsertion( g2D, stationBounds, new Rectangle( x, y, width, height ) );
 			}
 		}
-		
+
 		private void paintRemoval( Graphics g ){
 			Dockable removal = getRemoval();
-			if( removal != null ){
-				for( StationChildHandle handle : dockables.dockables() ){
-					if( handle.getDockable() == removal ){
+			if( removal != null ) {
+				for( StationChildHandle handle : dockables.dockables() ) {
+					if( handle.getDockable() == removal ) {
 						Rectangle bounds = handle.getDisplayer().getComponent().getBounds();
 						paint.drawRemoval( g, bounds, bounds );
 						break;
@@ -867,8 +857,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 		@Override
 		public String toString(){
-			return this.getClass().getSimpleName() + '@'
-					+ Integer.toHexString(hashCode());
+			return this.getClass().getSimpleName() + '@' + Integer.toHexString( hashCode() );
 		}
 
 	}
@@ -899,9 +888,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 *         <code>placeholder</code> and any other information a subclass
 	 *         deems necessary to store
 	 */
-	protected DockableProperty getDockableProperty( Dockable child,
-			Dockable target, int index, Path placeholder ){
-		return new ToolbarProperty(index, placeholder);
+	protected DockableProperty getDockableProperty( Dockable child, Dockable target, int index, Path placeholder ){
+		return new ToolbarProperty( index, placeholder );
 	}
 
 	/**
@@ -963,35 +951,31 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	public PlaceholderMap getPlaceholders( final Map<Dockable, Integer> children ){
 		final PlaceholderStrategy strategy = getPlaceholderStrategy();
 
-		return dockables
-				.toMap(new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
-					@Override
-					public ConvertedPlaceholderListItem convert( int index,
-							StationChildHandle handle ){
-						final Dockable dockable = handle.getDockable();
+		return dockables.toMap( new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
+			@Override
+			public ConvertedPlaceholderListItem convert( int index, StationChildHandle handle ){
+				final Dockable dockable = handle.getDockable();
 
-						final Integer id = children.get(dockable);
-						if (id == null){
-							return null;
-						}
+				final Integer id = children.get( dockable );
+				if( id == null ) {
+					return null;
+				}
 
-						final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-						item.putInt("id", id);
-						item.putInt("index", index);
+				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+				item.putInt( "id", id );
+				item.putInt( "index", index );
 
-						if (strategy != null){
-							final Path placeholder = strategy
-									.getPlaceholderFor(dockable);
-							if (placeholder != null){
-								item.putString("placeholder",
-										placeholder.toString());
-								item.setPlaceholder(placeholder);
-							}
-						}
-
-						return item;
+				if( strategy != null ) {
+					final Path placeholder = strategy.getPlaceholderFor( dockable );
+					if( placeholder != null ) {
+						item.putString( "placeholder", placeholder.toString() );
+						item.setPlaceholder( placeholder );
 					}
-				});
+				}
+
+				return item;
+			}
+		} );
 	}
 
 	/**
@@ -1005,72 +989,66 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * @throws IllegalStateException
 	 *             if there are children left on this station
 	 */
-	public void setPlaceholders( PlaceholderMap map,
-			final Map<Integer, Dockable> children ){
+	public void setPlaceholders( PlaceholderMap map, final Map<Integer, Dockable> children ){
 		DockUtilities.checkLayoutLocked();
-		if (getDockableCount() > 0){
-			throw new IllegalStateException("must not have any children");
+		if( getDockableCount() > 0 ) {
+			throw new IllegalStateException( "must not have any children" );
 		}
 		final DockController controller = getController();
 
-		try{
-			if (controller != null){
+		try {
+			if( controller != null ) {
 				controller.freezeLayout();
 			}
 
 			final DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>();
 
-			if (getController() != null){
-				dockables.setStrategy(null);
+			if( getController() != null ) {
+				dockables.setStrategy( null );
 				dockables.unbind();
 				dockables = next;
-			} else{
+			}
+			else {
 				dockables = next;
 			}
 
-			next.read(
-					map,
-					new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
-						private DockHierarchyLock.Token token;
-						private int index = 0;
+			next.read( map, new PlaceholderListItemAdapter<Dockable, StationChildHandle>(){
+				private DockHierarchyLock.Token token;
+				private int index = 0;
 
-						@Override
-						public StationChildHandle convert(
-								ConvertedPlaceholderListItem item ){
-							final int id = item.getInt("id");
-							final Dockable dockable = children.get(id);
-							if (dockable != null){
-								DockUtilities.ensureTreeValidity(
-										ToolbarDockStation.this, dockable);
-								token = DockHierarchyLock.acquireLinking(
-										ToolbarDockStation.this, dockable);
-								listeners.fireDockableAdding(dockable);
-								return new StationChildHandle(
-										ToolbarDockStation.this, displayers,
-										dockable, title);
-							}
-							return null;
-						}
+				@Override
+				public StationChildHandle convert( ConvertedPlaceholderListItem item ){
+					final int id = item.getInt( "id" );
+					final Dockable dockable = children.get( id );
+					if( dockable != null ) {
+						DockUtilities.ensureTreeValidity( ToolbarDockStation.this, dockable );
+						token = DockHierarchyLock.acquireLinking( ToolbarDockStation.this, dockable );
+						listeners.fireDockableAdding( dockable );
+						return new StationChildHandle( ToolbarDockStation.this, displayers, dockable, title );
+					}
+					return null;
+				}
 
-						@Override
-						public void added( StationChildHandle handle ){
-							try{
-								handle.updateDisplayer();
-								insertAt(handle, index++);
-								listeners.fireDockableAdded(handle
-										.getDockable());
-							} finally{
-								token.release();
-							}
-						}
-					});
+				@Override
+				public void added( StationChildHandle handle ){
+					try {
+						handle.updateDisplayer();
+						insertAt( handle, index++ );
+						listeners.fireDockableAdded( handle.getDockable() );
+					}
+					finally {
+						token.release();
+					}
+				}
+			} );
 
-			if (getController() != null){
+			if( getController() != null ) {
 				dockables.bind();
-				dockables.setStrategy(getPlaceholderStrategy());
+				dockables.setStrategy( getPlaceholderStrategy() );
 			}
-		} finally{
-			if (controller != null){
+		}
+		finally {
+			if( controller != null ) {
 				controller.meltLayout();
 			}
 		}
@@ -1083,24 +1061,24 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 
 	@Override
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		if (getDockableCount() > 0){
-			throw new IllegalStateException(
-					"only allowed if there are not children present");
+		if( getDockableCount() > 0 ) {
+			throw new IllegalStateException( "only allowed if there are not children present" );
 		}
 
-		try{
-			final DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>(
-					placeholders);
-			if (getController() != null){
-				dockables.setStrategy(null);
+		try {
+			final DockablePlaceholderList<StationChildHandle> next = new DockablePlaceholderList<StationChildHandle>( placeholders );
+			if( getController() != null ) {
+				dockables.setStrategy( null );
 				dockables.unbind();
 				dockables = next;
 				dockables.bind();
-				dockables.setStrategy(getPlaceholderStrategy());
-			} else{
+				dockables.setStrategy( getPlaceholderStrategy() );
+			}
+			else {
 				dockables = next;
 			}
-		} catch (final IllegalArgumentException ex){
+		}
+		catch( final IllegalArgumentException ex ) {
 			// silent
 		}
 	}
@@ -1122,74 +1100,69 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 *            the new strategy, can be <code>null</code>
 	 */
 	public void setPlaceholderStrategy( PlaceholderStrategy strategy ){
-		placeholderStrategy.setValue(strategy);
+		placeholderStrategy.setValue( strategy );
 	}
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		final int index = indexOf(child);
+		final int index = indexOf( child );
 		Path placeholder = null;
 		final PlaceholderStrategy strategy = getPlaceholderStrategy();
-		if (strategy != null){
-			placeholder = strategy.getPlaceholderFor(target == null ? child
-					: target);
-			if (placeholder != null){
-				dockables.dockables().addPlaceholder(index, placeholder);
+		if( strategy != null ) {
+			placeholder = strategy.getPlaceholderFor( target == null ? child : target );
+			if( placeholder != null ) {
+				dockables.dockables().addPlaceholder( index, placeholder );
 			}
 		}
-		return getDockableProperty(child, target, index, placeholder);
+		return getDockableProperty( child, target, index, placeholder );
 	}
 
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
-		if (isValidProperty(property)){
-			final boolean acceptable = acceptable(dockable);
+		if( isValidProperty( property ) ) {
+			final boolean acceptable = acceptable( dockable );
 			boolean result = false;
-			final int index = Math.min(getDockableCount(), getIndex(property));
+			final int index = Math.min( getDockableCount(), getIndex( property ) );
 
-			final Path placeholder = getPlaceholder(property);
-			if ((placeholder != null) && (property.getSuccessor() != null)){
-				final StationChildHandle preset = dockables
-						.getDockableAt(placeholder);
-				if (preset != null){
-					final DockStation station = preset.getDockable()
-							.asDockStation();
-					if (station != null){
-						if (station.drop(dockable, property.getSuccessor())){
-							dockables.removeAll(placeholder);
+			final Path placeholder = getPlaceholder( property );
+			if( (placeholder != null) && (property.getSuccessor() != null) ) {
+				final StationChildHandle preset = dockables.getDockableAt( placeholder );
+				if( preset != null ) {
+					final DockStation station = preset.getDockable().asDockStation();
+					if( station != null ) {
+						if( station.drop( dockable, property.getSuccessor() ) ) {
+							dockables.removeAll( placeholder );
 							result = true;
 						}
 					}
 				}
 			}
 
-			if (!result && (placeholder != null)){
-				if (acceptable && dockables.hasPlaceholder(placeholder)){
-					add(dockable, index, placeholder);
+			if( !result && (placeholder != null) ) {
+				if( acceptable && dockables.hasPlaceholder( placeholder ) ) {
+					add( dockable, index, placeholder );
 					result = true;
 				}
 			}
 
-			if (!result && (dockables.dockables().size() == 0)){
-				if (acceptable){
-					drop(dockable);
+			if( !result && (dockables.dockables().size() == 0) ) {
+				if( acceptable ) {
+					drop( dockable );
 					result = true;
 				}
 			}
 
-			if (!result){
-				if ((index < dockables.dockables().size())
-						&& (property.getSuccessor() != null)){
-					final DockStation child = getDockable(index)
-							.asDockStation();
-					if (child != null){
-						result = child.drop(dockable, property.getSuccessor());
+			if( !result ) {
+				if( (index < dockables.dockables().size()) && (property.getSuccessor() != null) ) {
+					final DockStation child = getDockable( index ).asDockStation();
+					if( child != null ) {
+						result = child.drop( dockable, property.getSuccessor() );
 					}
 				}
 			}
 
-			if (!result && acceptable){
-				result = drop(dockable, index);
+			if( !result && acceptable ) {
+				result = drop( dockable, index );
 			}
 
 			return result;
@@ -1209,11 +1182,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation{
 	 * 
 	 * @author Benjamin Sigg
 	 */
-	private class VisibleListener extends DockStationAdapter{
+	private class VisibleListener extends DockStationAdapter {
 		@Override
-		public void dockableShowingChanged( DockStation station,
-				Dockable dockable, boolean visible ){
-			if (dockable == ToolbarDockStation.this){
+		public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ){
+			if( dockable == ToolbarDockStation.this ) {
 				visibility.fire();
 			}
 		}

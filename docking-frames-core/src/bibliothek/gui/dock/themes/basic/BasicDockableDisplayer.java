@@ -313,6 +313,14 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
     
     /**
+     * Tells whether this displayer currently is showing a single tab.
+     * @return whether a tab is shown
+     */
+    public boolean isSingleTabShowing(){
+		return singleTabShowing;
+	}
+    
+    /**
      * Tells this displayer that it is used inside a tabbed environment. This displayer will call
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
      * @param stacked whether this displayer is part of a stack of displayerss
