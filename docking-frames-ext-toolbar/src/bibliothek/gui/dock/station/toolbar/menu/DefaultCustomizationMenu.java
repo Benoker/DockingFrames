@@ -115,7 +115,9 @@ public class DefaultCustomizationMenu extends AbstractCustomizationMenu{
 			
 			@Override
 			public void windowDeactivated( WindowEvent e ){
-				if( isCloseOnFocusLost() ){
+				CustomizationMenuCallback callback = getCallback();
+				
+				if( isCloseOnFocusLost() && (callback == null || callback.isAutoCloseAllowed()) ){
 					close();
 				}
 			}

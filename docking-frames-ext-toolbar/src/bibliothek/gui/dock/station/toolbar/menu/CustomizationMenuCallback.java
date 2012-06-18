@@ -70,7 +70,13 @@ public interface CustomizationMenuCallback {
 	public void append( Dockable dockable );
 	
 	/**
-	 * Called if the menu was closed.
+	 * Tells the menu whether it is currently allowed to close itself automatically.
+	 * @return whether the menu is allowed to close itself
+	 */
+	public boolean isAutoCloseAllowed();
+	
+	/**
+	 * To be called if the menu was closed.
 	 */
 	public void closed();
 }

@@ -34,6 +34,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.JToggleButton;
@@ -111,6 +113,7 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 		private Orientation orientation;
 		private boolean open = false;
 		private ToolbarGroupDockStation station;
+		private boolean mousePressed = false;
 		
 		private DockIcon toolIcon = new DockIcon( "toolbar.customization.tool", DockIcon.KIND_ICON ){
 			@Override
@@ -145,6 +148,17 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 					}
 				}
 			} );
+			toggle.addMouseListener( new MouseAdapter(){
+				public void mousePressed( MouseEvent e ){
+					mousePressed = true;
+				}
+				
+				public void mouseReleased( MouseEvent e ){
+					if(( e.getModifiersEx() & (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) == 0){
+						mousePressed = false;
+					}
+				}
+			} );
 		}
 		
 		@Override
@@ -164,6 +178,7 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 			else{
 				location.x += toggle.getWidth();
 			}
+			open = true;
 			menu.open( location.x, location.y, this );
 		}
 		
@@ -211,6 +226,11 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 					return;
 				}
 			}
+		}
+		
+		@Override
+		public boolean isAutoCloseAllowed(){
+			return !mousePressed;
 		}
 
 		@Override
