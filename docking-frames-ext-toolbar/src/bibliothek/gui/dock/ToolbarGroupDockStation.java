@@ -590,9 +590,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public DockStationDropLayer[] getLayers(){
-		return new DockStationDropLayer[]{ new ToolbarGroupInnerLayer( this, mainPanel.dockablePane ), new ToolbarGroupOuterLayer( this, mainPanel.dockablePane ) };
-		// return new DockStationDropLayer[] { new DefaultDropLayer(this),
-		// new SideSnapDropLayer(this) };
+		return new DockStationDropLayer[]{
+				new ToolbarGroupInnerLayer( this, mainPanel.dockablePane ), 
+				new ToolbarGroupOuterLayer( this, mainPanel.dockablePane ) };
 	}
 
 	@Override

@@ -54,15 +54,15 @@ public class DropSampleMain {
 //			}
 //		} );
 		
-		//toolbarContainerDockStation();
-		toolbarGroupDockStation();
+		toolbarContainerDockStation();
+		//toolbarGroupDockStation();
 		//toolbarDockStation();
 	}
 	
 	private static void toolbarContainerDockStation(){
 		ToolbarContainerDockStationSample sample = new ToolbarContainerDockStationSample();
 		
-		for( int i = 0; i < 5; i++ ){
+		for( int i = 0; i < 2; i++ ){
 			ToolbarGroupDockStation group = new ToolbarGroupDockStation();
 			ToolbarDockStation[] children = new ToolbarDockStation[4];
 			for( int j = 0; j < children.length; j++ ){

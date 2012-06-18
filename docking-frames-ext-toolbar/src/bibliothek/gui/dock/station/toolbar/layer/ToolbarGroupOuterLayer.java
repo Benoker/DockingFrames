@@ -57,7 +57,7 @@ public class ToolbarGroupOuterLayer extends ToolbarGroupInnerLayer{
 	 */
 	public ToolbarGroupOuterLayer( ToolbarGroupDockStation station, Component component ){
 		super( station, component );
-		setPriority( LayerPriority.OUTSIDE_LOW );
+		setPriority( LayerPriority.OVERRIDE_PRECISE );
 	}
 
 	@Override

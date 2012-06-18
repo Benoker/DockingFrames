@@ -197,7 +197,7 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 	
 	private void reset(){
 		index = -1;
-		int count = station.getDockableCount();
+		int count = station.getDockableCount()+1;
 		if( spans.length != count ){
 			SpanCallback callback = new SpanCallback(){
 				@Override
