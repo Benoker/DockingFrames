@@ -59,6 +59,8 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 	private StationSpanFactoryValue factory;
 	private int size;
 	private int index = -1;
+	private int gap = 3;
+	private int sideGap = 5;
 	
 	public SpanToolbarLayoutManager( ToolbarDockStation station, Container parent ){
 		this.parent = parent;
@@ -69,6 +71,44 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 				reset();	
 			}
 		};
+	}
+	
+	/**
+	 * Gets the size of the gap between each child component.
+	 * @return the gap size
+	 */
+	public int getGap(){
+		return gap;
+	}
+	
+	/**
+	 * Sets the size of the gap between each child component. 
+	 * @param gap the size of the gap, at least 0
+	 */
+	public void setGap( int gap ){
+		if( gap < 0 ){
+			throw new IllegalArgumentException( "gap must not be smaller than 0" );
+		}
+		this.gap = gap;
+	}
+	
+	/**
+	 * Gets the size of the gap between the children and the outside border.
+	 * @return the size of the gap
+	 */
+	public int getSideGap(){
+		return sideGap;
+	}
+	
+	/**
+	 * Sets the size of the gap between the children and the outside border.
+	 * @param sideGap the size of the gap, at least 0
+	 */
+	public void setSideGap( int sideGap ){
+		if( sideGap < 0 ){
+			throw new IllegalArgumentException( "sideGap must not be smaller than 0" );
+		}
+		this.sideGap = sideGap;
 	}
 	
 	public void setController( DockController controller ){
@@ -214,14 +254,22 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 				Component child = parent.getComponent( i );
 				Dimension size = child.getPreferredSize();
 				width += size.width;
+				if( i == 0 ){
+					width += sideGap;
+				}
+				else{
+					width += gap;
+				}
 				height = Math.max( height, size.height );
 			}
+			
+			width += sideGap;
 			
 			for( Span span : spans ){
 				width += span.getSize();
 			}
 			
-			return new Dimension( width, height );
+			return new Dimension( width, height+2*sideGap );
 		}
 		else{
 			int width = 0;
@@ -231,14 +279,22 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 				Component child = parent.getComponent( i );
 				Dimension size = child.getPreferredSize();
 				height += size.height;
+				if( i == 0 ){
+					height += sideGap;
+				}
+				else{
+					height += gap;
+				}
 				width = Math.max( width, size.width );
 			}
+			
+			height += sideGap;
 			
 			for( Span span : spans ){
 				height += span.getSize();
 			}
 			
-			return new Dimension( width, height );
+			return new Dimension( width+2*sideGap, height );
 		}
 	}
 
@@ -259,9 +315,15 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 					span = spans[i].getSize();
 				}
 				x += span;
+				if( i == 0 ){
+					x += sideGap;
+				}
+				else{
+					x += gap;
+				}
 				Component comp = parent.getComponent( i );
 				Dimension size = comp.getPreferredSize();
-				comp.setBounds( x, 0, size.width, height );
+				comp.setBounds( x, sideGap, size.width, height-2*sideGap );
 				x += size.width;
 			}
 		}
@@ -275,9 +337,15 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 					span = spans[i].getSize();
 				}
 				y += span;
+				if( i == 0 ){
+					y += sideGap;
+				}
+				else{
+					y += gap;
+				}
 				Component comp = parent.getComponent( i );
 				Dimension size = comp.getPreferredSize();
-				comp.setBounds( 0, y, width, size.height );
+				comp.setBounds( sideGap, y, width-2*sideGap, size.height );
 				y += size.height;
 			}
 		}

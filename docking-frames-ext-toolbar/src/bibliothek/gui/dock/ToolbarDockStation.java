@@ -84,8 +84,10 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.extension.Extension;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
 
 /**
@@ -105,6 +107,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	 * {@link DisplayerFactory}s
 	 */
 	public static final String DISPLAYER_ID = "toolbar";
+	
+	/** Key for setting the size of the gap between the children of a {@link ToolbarDockStation}. */
+	public static final PropertyKey<Integer> GAP = new PropertyKey<Integer>( "dock.toolbar.gap", new ConstantPropertyFactory<Integer>( Integer.valueOf( 2 ) ), true );
+	
+	/** Key for setting the size of the gap between the children of a station and the border of the station */
+	public static final PropertyKey<Integer> SIDE_GAP = new PropertyKey<Integer>( "dock.toolbar.sidegap", new ConstantPropertyFactory<Integer>( Integer.valueOf( 4 ) ), true );
 
 	/** A list of all children */
 	protected DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
@@ -140,6 +148,22 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 
 	/** information about the {@link Dockable} that is currently dropped */
 	private DropInfo dropInfo;
+	
+	/** size of the gap between children */
+	private PropertyValue<Integer> gap = new PropertyValue<Integer>( GAP ){
+		@Override
+		protected void valueChanged( Integer oldValue, Integer newValue ){
+			layoutManager.setGap( newValue.intValue() );
+		}
+	};
+	
+	/** size of the gap between children and border */
+	private PropertyValue<Integer> sideGap = new PropertyValue<Integer>( SIDE_GAP ){
+		@Override
+		protected void valueChanged( Integer oldValue, Integer newValue ){
+			layoutManager.setSideGap( newValue.intValue() );
+		}
+	};
 
 	// ########################################################
 	// ############ Initialization Managing ###################
@@ -274,6 +298,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 			displayers.setController( controller );
 			mainPanel.setController( controller );
 			layoutManager.setController( controller );
+			gap.setProperties( controller );
+			sideGap.setProperties( controller );
 
 			if( controller != null ) {
 				dockables.bind();

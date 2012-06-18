@@ -81,20 +81,20 @@ public class TestToolbarGroupDockStation{
 //			}
 //		}, MouseEvent.MOUSE_EVENT_MASK | MouseEvent.MOUSE_MOTION_EVENT_MASK);
 		
-		try{
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
-				if ("GTK+".equals(info.getName())){
-					UIManager.setLookAndFeel(info.getClassName());
-					System.out.println("GTK+");
-					break;
-				}
-				if ("Nimbus".equals(info.getName())){
-					UIManager.setLookAndFeel(info.getClassName());
-					System.out.println("Nimbus");
-				}
-			}
-		} catch (Exception e){
-		}
+//		try{
+//			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()){
+//				if ("GTK+".equals(info.getName())){
+//					UIManager.setLookAndFeel(info.getClassName());
+//					System.out.println("GTK+");
+//					break;
+//				}
+//				if ("Nimbus".equals(info.getName())){
+//					UIManager.setLookAndFeel(info.getClassName());
+//					System.out.println("Nimbus");
+//				}
+//			}
+//		} catch (Exception e){
+//		}
 
 		
 		final JFrame frame = new JFrame();
