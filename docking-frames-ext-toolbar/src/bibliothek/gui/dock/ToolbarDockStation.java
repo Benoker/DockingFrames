@@ -51,6 +51,7 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.ToolbarInterface;
+import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.security.SecureContainer;
@@ -215,6 +216,16 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	@Override
 	public Component getComponent(){
 		return mainPanel;
+	}
+	
+	@Override
+	public void configureDisplayerHints( DockableDisplayerHints hints ){
+		super.configureDisplayerHints( hints );
+		if( hints != null ){
+			if( hints.getStation() instanceof ScreenDockStation ){
+				hints.setShowBorderHint( Boolean.TRUE );
+			}
+		}
 	}
 
 	@Override

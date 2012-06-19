@@ -813,6 +813,10 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     protected class Hints implements DockableDisplayerHints{
         private Boolean border;
         
+        public DockStation getStation(){
+        	return station;
+        }
+        
         public void setShowBorderHint( Boolean border ) {
             if( this.border != border ){
                 this.border = border;

@@ -23,7 +23,6 @@ import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
-import bibliothek.gui.dock.action.LocationHint.Origin;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;

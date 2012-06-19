@@ -402,7 +402,7 @@ public class ToolbarExtension implements Extension {
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.simple", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.FACTORY );
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.FACTORY );
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.container", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.FACTORY );
-				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.FACTORY_BORDER );
+				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.FACTORY );
 
 				final DockTitleManager titles = controller.getDockTitleManager();
 				// titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,

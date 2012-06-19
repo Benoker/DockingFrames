@@ -108,7 +108,7 @@ public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements Docka
 	
 	private Background background = new Background();
 	
-	public NoTitleDisplayer( DockStation station, Dockable dockable, TitleBar bar ){
+	public NoTitleDisplayer( final DockStation station, Dockable dockable, TitleBar bar ){
 		super( Transparency.TRANSPARENT );
 		setLayout( new GridLayout( 1, 1, 0, 0 ) );
 		setBackground( background );
@@ -127,6 +127,10 @@ public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements Docka
 		
 		if( respectHints ){
 		    hints = new DockableDisplayerHints(){
+		    	public DockStation getStation(){
+		    		return station;
+		    	}
+		    	
 		        public void setShowBorderHint( Boolean border ) {
 		            borderHint = border;
 		            updateFullBorder();

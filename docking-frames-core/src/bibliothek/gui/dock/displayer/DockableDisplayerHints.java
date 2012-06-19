@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.displayer;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 
 /**
@@ -35,6 +36,12 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  */
 public interface DockableDisplayerHints {
+	/**
+	 * Gets the {@link DockStation} which is currently responsible for showing a
+	 * {@link Dockable}.
+	 */
+	public DockStation getStation();
+	
     /**
      * Tells whether to paint a border or not.
      * @param border <code>true</code> if the border should be painted,

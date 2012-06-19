@@ -72,20 +72,6 @@ public class ToolbarDockableDisplayer extends BasicDockableDisplayer {
 		}
 	};
 	
-	/**
-	 * A factory creating new {@link ToolbarDockableDisplayer}s, this factory configures the displayers such that they
-	 * have a border.
-	 */
-	public static final DisplayerFactory FACTORY_BORDER = new DisplayerFactory(){
-		@Override
-		public void request( DisplayerRequest request ){
-			ToolbarDockableDisplayer displayer = new ToolbarDockableDisplayer( request.getParent(), request.getTarget(), request.getTitle() );
-			displayer.setDefaultBorderHint( true );
-			displayer.setRespectBorderHint( false );
-			request.answer( displayer );
-		}
-	};
-	
 	/** Keeps track of the orientation of the current {@link Dockable} and updates the location of the title if necessary */
 	private OrientationObserver observer;
 	
