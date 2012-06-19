@@ -777,7 +777,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		 */
 		public OverpaintablePanelBase(){
 			setBasePane( dockablePane );
-			setSolid( false );
+			setSolid( true );
 			dockablePane.setOpaque( false );
 			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this, dockablePane ){
 				@Override
