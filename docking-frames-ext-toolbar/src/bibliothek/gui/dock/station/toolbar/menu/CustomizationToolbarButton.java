@@ -79,6 +79,7 @@ public abstract class CustomizationToolbarButton implements
 
 	private Icon icon;
 	private String description;
+	private String text;
 
 	private JLayeredPane base;
 	private JToggleButton button;
@@ -116,6 +117,7 @@ public abstract class CustomizationToolbarButton implements
 		button = new JToggleButton();
 		button.setIcon(icon);
 		button.setToolTipText(description);
+		button.setText(text);
 		button.setOpaque(false);
 		
 		elsewhere = new JLabel();
@@ -259,6 +261,19 @@ public abstract class CustomizationToolbarButton implements
 		this.icon = icon;
 		if (button != null){
 			button.setIcon(icon);
+		}
+	}
+	
+	/**
+	 * Sets the text which should be shown on the button.
+	 * 
+	 * @param icon
+	 *            the new text, can be <code>null</code>
+	 */
+	public void setText( String text){
+		this.text = text;
+		if (button != null){
+			button.setText(text);
 		}
 	}
 

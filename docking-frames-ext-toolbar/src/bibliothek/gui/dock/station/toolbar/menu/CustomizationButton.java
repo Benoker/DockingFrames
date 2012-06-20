@@ -29,6 +29,7 @@
  */
 package bibliothek.gui.dock.station.toolbar.menu;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -37,6 +38,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -115,7 +117,7 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 		private ToolbarGroupDockStation station;
 		private boolean mousePressed = false;
 		
-		private DockIcon toolIcon = new DockIcon( "toolbar.customization.tool", DockIcon.KIND_ICON ){
+		private DockIcon toolIcon = new DockIcon( "toolbar.customization.preferences", DockIcon.KIND_ICON ){
 			@Override
 			protected void changed( Icon oldValue, Icon newValue ){
 				if( toggle != null ){
@@ -133,6 +135,7 @@ public class CustomizationButton implements ToolbarGroupHeaderFactory{
 			
 			toolIcon.setController( controller );
 			toggle = new JToggleButton();
+			toggle.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			toggle.setIcon( toolIcon.value() );
 			
 			toggle.addActionListener( new ActionListener(){

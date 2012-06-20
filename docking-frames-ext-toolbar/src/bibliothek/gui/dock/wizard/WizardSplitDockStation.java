@@ -126,7 +126,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		wizardSpanStrategy = new WizardSpanStrategy( this );
 		setSplitLayoutManager( layoutManager );
 		setDividerStrategy( new WizardDividerStrategy() );
-		getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
+		// getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
 		setAllowSideSnap( true );
 		
 		// disable the standard mechanism for showing spans

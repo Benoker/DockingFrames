@@ -222,7 +222,8 @@ public class ToolbarExtension implements Extension {
 		icons.setIconDefault( "toolbar.item.smaller.hover.vertical", loadIcon( "smaller_hover_vertical.png" ) );
 		icons.setIconDefault( "toolbar.customization.here", loadIcon( "here.png" ) );
 		icons.setIconDefault( "toolbar.customization.check", loadIcon( "check.png" ) );
-		icons.setIconDefault( "toolbar.customization.tool", loadIcon( "tool.png" ) );
+		icons.setIconDefault( "toolbar.customization.preferences", loadIcon( "preferences.png" ) );
+
 
 		// controller.addActionGuard( new ExpandedActionGuard( controller ) );
 		new ExpandManager( controller );
