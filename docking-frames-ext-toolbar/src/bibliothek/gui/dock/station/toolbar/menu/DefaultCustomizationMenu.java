@@ -32,6 +32,7 @@ package bibliothek.gui.dock.station.toolbar.menu;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -115,11 +116,16 @@ public class DefaultCustomizationMenu extends AbstractCustomizationMenu{
 			
 			@Override
 			public void windowDeactivated( WindowEvent e ){
-				CustomizationMenuCallback callback = getCallback();
-				
-				if( isCloseOnFocusLost() && (callback == null || callback.isAutoCloseAllowed()) ){
-					close();
-				}
+				EventQueue.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						CustomizationMenuCallback callback = getCallback();
+						
+						if( isCloseOnFocusLost() && (callback == null || callback.isAutoCloseAllowed()) ){
+							close();
+						}	
+					}
+				});
 			}
 		});
 		dialog.setUndecorated( undecorated );
