@@ -41,7 +41,7 @@ public class TestCloseButton {
 		
 		//controller.setTheme( new EclipseTheme() );
 
-		frontend.getController().getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500 ) );
+		frontend.getController().getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500, 250 ) );
 		//controller.getProperties().set( DockTheme.SPAN_FACTORY, new NoSpanFactory() );
 		
 		// controller.setRestrictedEnvironment( true );

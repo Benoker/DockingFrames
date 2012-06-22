@@ -45,15 +45,18 @@ import bibliothek.gui.dock.station.span.SpanMode;
  */
 public class BasicSpanFactory implements SpanFactory{
 	private int duration;
+	private int minSpeed;
 	private Timer timer;
 	private Collection<BasicSpan> ticking = new HashSet<BasicSpan>(); 
 	
 	/**
 	 * Creates a new factory
 	 * @param duration how long the animation takes
+	 * @param minSpeed the minimum speed, how many pixels must be shown/hidden on average within 1000 milliseconds.
 	 */
-	public BasicSpanFactory( int duration ){
+	public BasicSpanFactory( int duration, int minSpeed ){
 		setDuration( duration );
+		setMinSpeed( minSpeed );
 		timer = new Timer( 0, new ActionListener(){
 			public void actionPerformed( ActionEvent e ){
 				tick();
@@ -75,6 +78,24 @@ public class BasicSpanFactory implements SpanFactory{
 			throw new IllegalArgumentException( "duration must be at least 0 milliseconds" );
 		}
 		this.duration = duration;
+	}
+	
+	/**
+	 * Sets the minimum speed to open/close spans. The minimum speed is the average amount of pixels
+	 * in which the size has to change within 1000 milliseconds.
+	 * @param minSpeed the minimum speed, can be 0
+	 */
+	public void setMinSpeed( int minSpeed ){
+		this.minSpeed = minSpeed;
+	}
+	
+	/**
+	 * Gets the minimum speed of the animation.
+	 * @return the minimum speed
+	 * @see #setMinSpeed(int)
+	 */
+	public int getMinSpeed(){
+		return minSpeed;
 	}
 	
 	public Span create( SpanCallback callback ){
@@ -114,6 +135,7 @@ public class BasicSpanFactory implements SpanFactory{
 		private int sizeTarget;
 		private int animationDuration = -1;
 		private long animationStart = -1;
+		private int duration;
 		
 		public BasicSpan( SpanCallback callback ){
 			this.callback = callback;
@@ -122,7 +144,14 @@ public class BasicSpanFactory implements SpanFactory{
 		public void mutate( SpanMode mode ){
 			sizeStart = getSize();
 			sizeTarget = getSize( mode );
+			
+			this.duration = BasicSpanFactory.this.duration;
+			
 			if( sizeStart != sizeTarget ){
+				if( minSpeed > 0 ){
+					duration = Math.min( duration, 1000 * Math.abs( sizeStart - sizeTarget ) / minSpeed );
+				}
+				
 				animationDuration = 0;
 				animationStart = -1;
 				start( this );

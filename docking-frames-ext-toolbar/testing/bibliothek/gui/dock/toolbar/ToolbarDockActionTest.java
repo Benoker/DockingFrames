@@ -80,7 +80,7 @@ public class ToolbarDockActionTest {
 		timer.setRepeats( true );
 		timer.start();
 		
-		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500 ) );
+		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500, 250 ) );
 
 		final ScreenDockStation screen = new ScreenDockStation( frame );
 		controller.add( screen );

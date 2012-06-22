@@ -157,7 +157,7 @@ public class TestToolbarGroupDockStation{
 				customization);
 
 		controller.getProperties().set(DockTheme.SPAN_FACTORY,
-				new BasicSpanFactory(500));
+				new BasicSpanFactory(250, 250));
 
 		final ScreenDockStation screen = new ScreenDockStation(frame);
 		controller.add(screen);
