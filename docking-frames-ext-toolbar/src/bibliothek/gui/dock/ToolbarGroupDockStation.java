@@ -663,8 +663,16 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			if( column == -1 ) {
 				column = 0;
 			}
+			
+			boolean effect = true;
+			if( dockable.getDockParent() == this ){
+				int currentColumn = column( dockable );
+				int currentLine = line( dockable );
+				effect = currentColumn != column || (currentLine != line && currentLine != line-1 );
+				effect = effect && !(line == -1 && lineCount( currentColumn ) == 1 && (currentColumn == column || currentColumn == column-1));
+			}
 
-			return new ToolbarGroupDropInfo( dockable, ToolbarGroupDockStation.this, column, line ){
+			return new ToolbarGroupDropInfo( dockable, ToolbarGroupDockStation.this, column, line, effect ){
 				@Override
 				public void execute(){
 					dropInfo = null;
@@ -687,7 +695,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 				@Override
 				public void draw(){
 					dropInfo = this;
-					layoutManager.mutate( getColumn(), getLine() );
+					int column = getColumn();
+					int line = getLine();
+					
+					if( hasEffect() ){
+						layoutManager.mutate( column, line );
+					}
+					else{
+						layoutManager.mutate();
+					}
 					mainPanel.repaint();
 				}
 			};
@@ -1298,7 +1314,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 			paintDrag( g );
 
-			if( dropInfo != null ) {
+			if( dropInfo != null && dropInfo.hasEffect() ) {
 				Component dockablePane = mainPanel.dockablePane;
 				Point zero = new Point( 0, 0 );
 				zero = SwingUtilities.convertPoint( dockablePane, zero, this );

@@ -456,8 +456,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 					return null;
 				}
 			}
-//			final Point mousePoint = new Point( item.getMouseX(), item.getMouseY() );
-//			SwingUtilities.convertPointFromScreen( mousePoint, mainPanel.getContentPane() );
 
 			if( !getToolbarStrategy().isToolbarPart( dockable ) ) {
 				// only ToolbarElementInterface can be drop or move into this
@@ -496,16 +494,24 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				
 				@Override
 				public void draw(){
-					layoutManager.setDrawing( this );
-					
-					// without this line, nothing is displayed
-					// Reminder: if dockable beneath mouse doesn't belong to
-					// this, then indexOf return -1
+					boolean effect = true;
 					indexBeneathMouse = getIndex();
-					prepareDropDraw = true;
+					if( isMove() ){
+						int target = moveIndex( this, indexBeneathMouse );
+						int current = indexOf( getItem() );
+						effect = target != current && target != current-1;
+					}
+					
+					if( effect ){
+						layoutManager.setDrawing( this );
+						prepareDropDraw = true;
+					}
+					else{
+						layoutManager.setDrawing( null );
+						prepareDropDraw = false;
+					}
+					
 					sideAboveMouse = getSideDockableBeneathMouse();
-					// without this line, line is displayed only on the first
-					// component met
 					mainPanel.repaint();
 				}
 			};
@@ -586,47 +592,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			int dropIndex;
 
 			if( dropInfo.isMove() ) {
-				switch( getOrientation() ){
-					case VERTICAL:
-						if( dropInfo.getItemPositionVSBeneathDockable() == Position.SOUTH ) {
-							if( dropInfo.getSideDockableBeneathMouse() == Position.SOUTH ) {
-								dropIndex = indexBeneathMouse + 1;
-							}
-							else {
-								dropIndex = indexBeneathMouse;
-							}
-						}
-						else {
-							if( dropInfo.getSideDockableBeneathMouse() == Position.SOUTH ) {
-								dropIndex = indexBeneathMouse;
-							}
-							else {
-								dropIndex = indexBeneathMouse - 1;
-							}
-						}
-						move( dropInfo.getItem(), dropIndex );
-						break;
-					case HORIZONTAL:
-						if( dropInfo.getItemPositionVSBeneathDockable() == Position.EAST ) {
-							if( dropInfo.getSideDockableBeneathMouse() == Position.EAST ) {
-								dropIndex = indexBeneathMouse + 1;
-							}
-							else {
-								dropIndex = indexBeneathMouse;
-							}
-						}
-						else {
-							if( dropInfo.getSideDockableBeneathMouse() == Position.EAST ) {
-								dropIndex = indexBeneathMouse;
-							}
-							else {
-								dropIndex = indexBeneathMouse - 1;
-							}
-						}
-						move( dropInfo.getItem(), dropIndex );
-						break;
-				}
-
+				move( dropInfo.getItem(), moveIndex( dropInfo, indexBeneathMouse ));
 			}
 			else {
 				int increment = 0;
@@ -637,7 +603,47 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				drop( dropInfo.getItem(), dropIndex );
 			}
 		}
-
+	}
+	
+	private int moveIndex( ToolbarContainerDropInfo dropInfo, int indexBeneathMouse ){
+		switch( getOrientation() ){
+			case VERTICAL:
+				if( dropInfo.getItemPositionVSBeneathDockable() == Position.SOUTH ) {
+					if( dropInfo.getSideDockableBeneathMouse() == Position.SOUTH ) {
+						return indexBeneathMouse + 1;
+					}
+					else {
+						return indexBeneathMouse;
+					}
+				}
+				else {
+					if( dropInfo.getSideDockableBeneathMouse() == Position.SOUTH ) {
+						return indexBeneathMouse;
+					}
+					else {
+						return indexBeneathMouse - 1;
+					}
+				}
+			case HORIZONTAL:
+				if( dropInfo.getItemPositionVSBeneathDockable() == Position.EAST ) {
+					if( dropInfo.getSideDockableBeneathMouse() == Position.EAST ) {
+						return indexBeneathMouse + 1;
+					}
+					else {
+						return indexBeneathMouse;
+					}
+				}
+				else {
+					if( dropInfo.getSideDockableBeneathMouse() == Position.EAST ) {
+						return indexBeneathMouse;
+					}
+					else {
+						return indexBeneathMouse - 1;
+					}
+				}
+			default:
+				throw new IllegalStateException( "unknown orientation: " + getOrientation() );
+		}
 	}
 
 	@Override

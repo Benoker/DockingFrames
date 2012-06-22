@@ -60,17 +60,10 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	
 	/** the row into which to insert the {@link #dragDockable} or -1 */
 	private int line;
-
-	/**
-	 * Creates a new drop info for a {@link Dockable} that is inserted into a new column.
-	 * @param dockable the item that is dropped
-	 * @param station the station onto which <code>dockable</code> is dropped
-	 * @param column the index of the new column
-	 */
-	public ToolbarGroupDropInfo( Dockable dockable, ToolbarGroupDockStation station, int column ){
-		this( dockable, station, column, -1 );
-	}
 	
+	/** whether the operation will change the location of a {@link Dockable} */
+	private boolean effect;
+
 	/**
 	 * Creates a new drop info.
 	 * @param dockable the item that is dropped
@@ -79,12 +72,14 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 * column or a new column
 	 * @param line the row in which <code>dockable</code> will appear, a value of -1 indiciates that
 	 * the item will appear in a new column
+	 * @param effect whether the operation has any effect
 	 */
-	public ToolbarGroupDropInfo( Dockable dockable, ToolbarGroupDockStation station, int column, int line ){
+	public ToolbarGroupDropInfo( Dockable dockable, ToolbarGroupDockStation station, int column, int line, boolean effect ){
 		this.dragDockable = dockable;
 		this.stationHost = station;
 		this.column = column;
 		this.line = line;
+		this.effect = effect;
 	}
 
 	@Override
@@ -95,6 +90,14 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	@Override
 	public ToolbarGroupDockStation getTarget(){
 		return stationHost;
+	}
+	
+	/**
+	 * Tells whether executing this operation will results in any changes of the layout.
+	 * @return whether this operation has an effect
+	 */
+	public boolean hasEffect(){
+		return effect;
 	}
 
 	/**
