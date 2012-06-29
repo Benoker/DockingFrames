@@ -154,6 +154,7 @@ import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
@@ -173,7 +174,7 @@ import bibliothek.util.Todo.Version;
 public class SplitDockStation extends SecureContainer implements Dockable, DockStation {
 	/** The ID under which this station tries to register a {@link DockTitleFactory} */
 	public static final String TITLE_ID = "split";
-
+	
 	/**
 	 * Describes which {@link KeyEvent} will maximize/normalize the currently
 	 * selected {@link Dockable}. 
@@ -193,7 +194,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * grabbing a gab between two children and moving that gap around.
 	 */
 	public static final PropertyKey<SplitDividerStrategy> DIVIDER_STRATEGY = new PropertyKey<SplitDividerStrategy>("SplitDockStation divider strategy",
-			new ConstantPropertyFactory<SplitDividerStrategy>( new DefaultSplitDividerStrategy() ), true);
+			new DynamicPropertyFactory<SplitDividerStrategy>(){
+				public SplitDividerStrategy getDefault( PropertyKey<SplitDividerStrategy> key, DockProperties properties ){
+					return new DefaultSplitDividerStrategy();
+				}
+				@Override
+				public SplitDividerStrategy getDefault( PropertyKey<SplitDividerStrategy> key ){
+					return null;
+				}
+			}, true);
 	
 	/** The parent of this station */
 	private DockStation parent;
@@ -458,7 +467,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		visibility = new DockableShowingManager(dockStationListeners);
 
-		dividerStrategy.getValue().install( this, getContentPane() );
+		SplitDividerStrategy strategy = dividerStrategy.getValue();
+		if( strategy != null ){
+			strategy.install( this, getContentPane() );
+		}
 		
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();

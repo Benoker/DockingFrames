@@ -736,6 +736,7 @@
  - Bugfix: Insertion area was not always painted on a SplitDockStation
  - Bugfix: New Icons for the EclipseTheme by Nicolas Roduit. The new icons should work well with dark backgrounds.
  - Bugfix: BaseTabComponent has now its own FocusTraversalPolicy allowing the user to press "tab" and focus a component outside of the tab.
+ - Bugfix: Wrong usage of DefaultSplitDividerStrategy causes memory leak
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them
