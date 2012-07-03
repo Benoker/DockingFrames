@@ -229,7 +229,6 @@ public class ButtonPanel extends JPanel{
      * Changes the content which is shown.
      * @param dockable the Dockable for which the actions are shown, can be <code>null</code>
      * @param source the list of actions, can be <code>null</code>
-     * @param controller the controller in whose realm this panel is used, can be <code>null</code>
      * @throws IllegalArgumentException if <code>dockable</code> or <code>source</code>
      * is <code>null</code> while the other is not <code>null</code>.
      */
