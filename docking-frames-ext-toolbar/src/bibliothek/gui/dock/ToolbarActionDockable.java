@@ -32,10 +32,13 @@ package bibliothek.gui.dock;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -77,6 +80,9 @@ public class ToolbarActionDockable extends AbstractDockable {
 	
 	/** the orientation of the {@link #view} */
 	private Orientation orientation = Orientation.FREE_HORIZONTAL;
+	
+	/** {@link MouseInputListener}s that were added to this {@link Dockable} */
+	private List<MouseInputListener> mouseListeners = new ArrayList<MouseInputListener>();
 	
 	/** Called if the current {@link DockTheme} changes */
 	private UIListener uiListener = new UIListener(){
@@ -145,6 +151,11 @@ public class ToolbarActionDockable extends AbstractDockable {
 	private void destroyView(){
 		if( getController() != null ){
 			if( view != null ){
+				JComponent item = view.getItem();
+				for( MouseInputListener listener : mouseListeners ){
+					item.removeMouseListener( listener );
+					item.removeMouseMotionListener( listener );
+				}
 				view.unbind();
 				view = null;
 			}
@@ -162,7 +173,31 @@ public class ToolbarActionDockable extends AbstractDockable {
 				view.setOrientation( orientation );
 				view.bind();
 				content.add( view.getItem() );
+				JComponent item = view.getItem();
+				for( MouseInputListener listener : mouseListeners ){
+					item.addMouseListener( listener );
+					item.addMouseMotionListener( listener );
+				}
 			}
+		}
+	}
+	
+	@Override
+	public void addMouseInputListener( MouseInputListener listener ){
+		super.addMouseInputListener( listener );
+		mouseListeners.add( listener );
+		if( view != null ){
+			view.getItem().addMouseListener( listener );
+			view.getItem().addMouseMotionListener( listener );
+		}
+	}
+	
+	public void removeMouseInputListener( MouseInputListener listener ){
+		super.removeMouseInputListener( listener );
+		mouseListeners.remove( listener );
+		if( view != null ){
+			view.getItem().removeMouseListener( listener );
+			view.getItem().removeMouseMotionListener( listener );
 		}
 	}
 	

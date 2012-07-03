@@ -194,7 +194,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/**
 	 * Creates a new station
 	 * @param orientation the orientation of the content
-	 * @param maxNumberOfDockables the maximum number of children
+	 * @param maxNumberOfDockables the maximum number of children or -1
 	 */
 	public ToolbarContainerDockStation( Orientation orientation, int maxNumberOfDockables ){
 		this.orientation = orientation;

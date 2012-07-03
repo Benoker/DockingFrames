@@ -805,7 +805,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 
 		/**
 		 * Update alignment with regards to the current orientation of this
-		 * {@linl ToolbarDockStation}
+		 * {@link ToolbarDockStation}
 		 */
 		public void updateAlignment(){
 			//			if (getOrientation() != null){

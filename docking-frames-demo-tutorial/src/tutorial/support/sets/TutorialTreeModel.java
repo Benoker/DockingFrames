@@ -6,18 +6,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import tutorial.TutorialExtension;
 import tutorial.support.Tutorial;
 
 public class TutorialTreeModel implements TreeModel{
 	private Node root;
+	private Set<TutorialExtension> extensions;
 	
-	public TutorialTreeModel( Class<?> root ) throws InstantiationException, IllegalAccessException{
+	public TutorialTreeModel( Class<?> root, Set<TutorialExtension> extensions ) throws InstantiationException, IllegalAccessException{
+		this.extensions = extensions;
 		this.root = new Node( root );
 	}
 	
@@ -84,6 +88,9 @@ public class TutorialTreeModel implements TreeModel{
 			
 			if( TutorialSet.class.isAssignableFrom( clazz )){
 				TutorialSet set = (TutorialSet) clazz.newInstance();
+				for( TutorialExtension extension : extensions ){
+					set.append( extension );
+				}
 				children = new Node[ set.getChildren().length ];
 				for( int i = 0; i < children.length; i++ ){
 					children[i] = new Node( set.getChildren()[ i ]);
@@ -140,7 +147,7 @@ public class TutorialTreeModel implements TreeModel{
 					descriptionSet = true;
 				
 					try{
-						InputStream in = getClass().getResourceAsStream( "/data/tutorial/" + id + ".html");
+						InputStream in = clazz.getResourceAsStream( "/data/tutorial/" + id + ".html");
 						InputStreamReader reader = new InputStreamReader( in, "UTF-8" );
 						StringBuilder builder = new StringBuilder();
 						int next;
@@ -166,7 +173,7 @@ public class TutorialTreeModel implements TreeModel{
 				String id = tutorial == null ? null : tutorial.id();
 				if( id != null ){
 					try{
-						InputStream in = getClass().getResourceAsStream( "/data/tutorial/" + id + ".png" );
+						InputStream in = clazz.getResourceAsStream( "/data/tutorial/" + id + ".png" );
 						if( in == null ){
 							return null;
 						}
@@ -206,7 +213,7 @@ public class TutorialTreeModel implements TreeModel{
 				reader.close();
 				return builder.toString();
 			}
-			return null;
+			return "n/a";
 		}
 	}
 }
