@@ -287,7 +287,7 @@ public abstract class AbstractToolbarDockStation extends
 			remove(getDockable(i));
 		}
 
-		final StackDockStation station = new ToolbarTabDockStation();
+		final ToolbarTabDockStation station = new ToolbarTabDockStation();
 		for (final Dockable child : children){
 			station.drop(child);
 		}
@@ -373,7 +373,8 @@ public abstract class AbstractToolbarDockStation extends
 	@Override
 	public boolean canDrag( Dockable dockable ){
 		if (getExpandedState() == ExpandedState.EXPANDED){
-			return false;
+			DockStation child = dockable.asDockStation();
+			return child != null && child.getDockableCount() == 0;
 		}
 		return true;
 	}

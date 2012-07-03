@@ -752,7 +752,8 @@
  - Bugfix: Resizing a ScreenDockWindow to a size smaller than its acceptable minimum will no longer move the window.
  - API: The new WizardSplitDockStation is a SplitDockStation that does keep its children in columns. It does store the size of children as pixels, not as ratios. 
  - API: The ScreenDropSizeStrategy allows to influence the size a dropped Dockable on a ScreenDockStation gets 
-
-
+ - Bugfix: StackDockStation could throw exception during drag and drop when having only one child
+ - Bugfix: ToolbarTabDockStation respects and forwards the orientation of its parent
+ 
 [Todo]
 - Drop StackDockStation over Dockable and merge them

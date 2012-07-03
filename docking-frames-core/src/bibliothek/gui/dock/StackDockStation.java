@@ -1167,14 +1167,17 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     protected Insert exactTabIndexAt( int x, int y ){
         Point point = SwingUtilities.convertPoint( panel, x, y, stackComponent.getComponent() );
         
-        for( int i = 0, n = dockables.dockables().size(); i<n; i++ ){
-            Rectangle bounds = stackComponent.getBoundsAt( i );
-            if( bounds != null && bounds.contains( point )){
-            	if( tabPlacement.getValue().isHorizontal() )
-            		return new Insert( i, bounds.x + bounds.width/2 < point.x );
-            	else
-            		return new Insert( i, bounds.y + bounds.height/2 < point.y );
-            }
+        int size = dockables.dockables().size();
+        if( size > 1 || singleTabStackDockComponent() ){
+	        for( int i = 0; i<size; i++ ){
+	            Rectangle bounds = stackComponent.getBoundsAt( i );
+	            if( bounds != null && bounds.contains( point )){
+	            	if( tabPlacement.getValue().isHorizontal() )
+	            		return new Insert( i, bounds.x + bounds.width/2 < point.x );
+	            	else
+	            		return new Insert( i, bounds.y + bounds.height/2 < point.y );
+	            }
+	        }
         }
                
         return null;
