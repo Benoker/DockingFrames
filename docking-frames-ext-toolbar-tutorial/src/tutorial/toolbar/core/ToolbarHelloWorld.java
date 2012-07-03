@@ -27,7 +27,6 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 @Tutorial( id="ToolbarHelloWorld", title="Basic Toolbars")
 public class ToolbarHelloWorld {
 	public static void main( String[] args ){
-		
 		/* A toolbar is nothing more than a specialized DockStation, with some special Dockables
 		 * as children. Each Dockable represents one "item" of the toolbar, e.g. a button. The user
 		 * can drag and drop the buttons, and thus customize his application.
