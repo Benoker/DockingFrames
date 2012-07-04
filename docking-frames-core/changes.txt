@@ -738,5 +738,8 @@
  - Bugfix: BaseTabComponent has now its own FocusTraversalPolicy allowing the user to press "tab" and focus a component outside of the tab.
  - Bugfix: Wrong usage of DefaultSplitDividerStrategy causes memory leak
    
+[v1.1.1p7f]
+ - Bugfix: Icons of size 0/0 should no longer produce an exception in DockUtilities.disabledIcon
+   
 [Todo]
 - Drop StackDockStation over Dockable and merge them

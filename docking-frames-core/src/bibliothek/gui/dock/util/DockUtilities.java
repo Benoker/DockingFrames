@@ -518,12 +518,16 @@ public class DockUtilities {
         	return result;
         
         if( parent != null ){
-        	BufferedImage image = new BufferedImage( icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB );
-        	Graphics g = image.createGraphics();
-        	icon.paintIcon( parent, g, 0, 0 );
-        	g.dispose();
-        	icon = new ImageIcon( image );
-        	result = UIManager.getLookAndFeel().getDisabledIcon( parent, icon );
+        	int width = icon.getIconWidth();
+        	int height = icon.getIconHeight();
+        	if( width > 0 && height > 0 ){
+	        	BufferedImage image = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
+	        	Graphics g = image.createGraphics();
+	        	icon.paintIcon( parent, g, 0, 0 );
+	        	g.dispose();
+	        	icon = new ImageIcon( image );
+	        	result = UIManager.getLookAndFeel().getDisabledIcon( parent, icon );
+        	}
         }
         
         if( result != null )
