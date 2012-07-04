@@ -18,6 +18,7 @@ import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarItemDockable;
+import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
@@ -87,7 +88,9 @@ public class ToolbarExpanding {
 		dockable.setTitleText( "Name" );
 		
 		/* For each of the possible states we add one Component to the dockable */
-		dockable.setComponent( new JButton( icon ), ExpandedState.SHRUNK );
+		SimpleButtonAction action = new SimpleButtonAction();
+		action.setIcon( icon );
+		dockable.setAction( action, ExpandedState.SHRUNK );
 		dockable.setComponent( new JButton( "This is a description" ), ExpandedState.STRETCHED );
 		dockable.setComponent( new JScrollPane( new JTextArea( "Some detailed information about this feature." ) ), ExpandedState.EXPANDED );
 		

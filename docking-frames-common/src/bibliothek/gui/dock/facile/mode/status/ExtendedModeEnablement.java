@@ -72,6 +72,27 @@ public interface ExtendedModeEnablement {
 		public boolean isAvailable(){
 			return available;
 		}
+		
+		/**
+		 * Gets the strongest {@link Availability} of <code>this</code> and <code>other</code>.
+		 * @param other some other {@link Availability}
+		 * @return the stronger of <code>this</code> and <code>other</code>
+		 */
+		public Availability strongest( Availability other ){
+			if( this == STRONG_FORBIDDEN || other == STRONG_FORBIDDEN ){
+				return STRONG_FORBIDDEN;
+			}
+			if( this == STRONG_AVAILABLE || other == STRONG_AVAILABLE ){
+				return STRONG_AVAILABLE;
+			}
+			if( this == WEAK_FORBIDDEN || other == WEAK_FORBIDDEN ){
+				return WEAK_FORBIDDEN;
+			}
+			if( this == WEAK_AVAILABLE || other == WEAK_AVAILABLE ){
+				return WEAK_AVAILABLE;
+			}
+			return UNCERTAIN;
+		}
 	}
 	
 	/**

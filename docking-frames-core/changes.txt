@@ -755,6 +755,7 @@
  - Bugfix: StackDockStation could throw exception during drag and drop when having only one child
  - Bugfix: ToolbarTabDockStation respects and forwards the orientation of its parent
  - API: Added tutorials to show how to use toolbars
- 
+ - API: DefaultExtendedModeEnablement offers now an extension
+  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

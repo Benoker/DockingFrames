@@ -38,6 +38,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.location.CLocationExpandStrategy;
 import bibliothek.gui.dock.common.location.DefaultExpandStrategy;
+import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
+import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
+import bibliothek.gui.dock.toolbar.intern.ToolbarExtendedModeEnablement;
 import bibliothek.gui.dock.toolbar.location.CToolbarMode;
 import bibliothek.gui.dock.toolbar.location.ToolbarExpandStrategy;
 import bibliothek.gui.dock.util.extension.Extension;
@@ -89,13 +92,22 @@ public class CToolbarExtension implements Extension{
 			return (Collection<E>) createExpandStrategy();
 		}
 		
-		// TODO Auto-generated method stub
+		if( extension.getName().equals( DefaultExtendedModeEnablement.EXTENSION )){
+			return (Collection<E>) createEnablements();
+		}
+		
 		return null;
 	}
 
 	protected Collection<CLocationExpandStrategy> createExpandStrategy(){
 		List<CLocationExpandStrategy> result = new ArrayList<CLocationExpandStrategy>();
 		result.add( new ToolbarExpandStrategy() );
+		return result;
+	}
+	
+	protected Collection<ExtendedModeEnablementFactory> createEnablements(){
+		List<ExtendedModeEnablementFactory> result = new ArrayList<ExtendedModeEnablementFactory>();
+		result.add( ToolbarExtendedModeEnablement.FACTORY );
 		return result;
 	}
 }
