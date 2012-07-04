@@ -84,6 +84,7 @@ public class ToolbarGroupExpander {
 	 */
 	public ToolbarGroupExpander( ToolbarGroupDockStation station ){
 		this.station = station;
+		setController( station.getController() );
 		station.getColumnModel().addListener( new ToolbarColumnModelListener<StationChildHandle>(){
 			@Override
 			public void removed( ToolbarColumnModel<StationChildHandle> model, ToolbarColumn<StationChildHandle> column, int index ){
@@ -181,11 +182,13 @@ public class ToolbarGroupExpander {
 							@Override
 							public void run(){
 								set( strategy, dockable, newState );
+								actions.update( dockable );
 							}
 						} );
 					}
 					else {
 						set( strategy, dockable, state );
+						actions.update( dockable );
 					}
 				}
 			}

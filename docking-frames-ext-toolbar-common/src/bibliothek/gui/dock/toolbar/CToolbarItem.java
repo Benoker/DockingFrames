@@ -133,7 +133,7 @@ public class CToolbarItem extends AbstractCDockable implements SingleCDockable{
 
 	@Override
 	public boolean isStackable(){
-		return false;
+		return true;
 	}
 
 	@Override

@@ -258,9 +258,6 @@ public abstract class AbstractToolbarDockStation extends
 				for (final ExpandableToolbarItemListener listener : expandableListeners){
 					listener.changed(this, oldState, state);
 				}
-				
-				
-				
 			} finally{
 				if (controller != null){
 					controller.meltLayout();
