@@ -7,6 +7,7 @@ import tutorial.support.sets.TutorialSet;
 public class BasicToolbarTutorials extends TutorialSet{
 	public BasicToolbarTutorials(){
 		super( ToolbarHelloWorld.class,
-				ToolbarCustomization.class );
+				ToolbarCustomization.class,
+				ToolbarExpanding.class );
 	}
 }

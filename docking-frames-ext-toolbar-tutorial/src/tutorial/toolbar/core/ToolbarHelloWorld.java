@@ -13,7 +13,6 @@ import tutorial.support.Tutorial;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarActionDockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
@@ -21,8 +20,6 @@ import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
-import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
-import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 @Tutorial( id="ToolbarHelloWorld", title="Basic Toolbars")
 public class ToolbarHelloWorld {
@@ -52,16 +49,6 @@ public class ToolbarHelloWorld {
 		/* Toolbars can float if a ScreenDockStation is available, so we add one */
 		ScreenDockStation screen = new ScreenDockStation(frame);
 		controller.add(screen);
-		
-		/* Toolbars have the ability to appear in different sizes. In order to use this feature an
-		 * application has to create special Dockables. We will not look into the details, and just
-		 * disable the feature. */
-		controller.getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, new DefaultExpandableToolbarItemStrategy(){
-			@Override
-			public boolean isEnabled( Dockable item, ExpandedState state ){
-				return false;
-			}
-		});
 
 		/* We now create the root stations. Notice how each station requires an "Orientation", the
 		 * orientation will automatically forwarded to the children of the station */

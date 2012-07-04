@@ -27,49 +27,50 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui.dock.toolbar.expand;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.actions.GroupKeyGenerator;
+import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 
 /**
- * An {@link AbstractGroupedExpandAction} used for items that can switch between all
- * {@link ExpandedState}s. This action makes items as small as possible
- * 
+ * This implementation of {@link ExpandableToolbarItemStrategy} does not do anything, it just disables
+ * any feature related to expandable items.
  * @author Benjamin Sigg
  */
-public class SmallExpandAction extends AbstractGroupedExpandAction{
-	public SmallExpandAction( DockController controller ){
-		super(controller, Action.LARGER, Action.SMALLEST, Action.SMALLER);
-
-		setGenerator(new GroupKeyGenerator<Action>(){
-			@Override
-			public Action generateKey( Dockable dockable ){
-				switch (getStrategy().getState(dockable)) {
-				case EXPANDED:
-					return Action.SMALLEST;
-				case SHRUNK:
-					return Action.LARGER;
-				case STRETCHED:
-					return Action.SMALLER;
-				default:
-					return null;
-				}
-			}
-		});
+public class DisabledExpandableToolbarItemStrategy implements ExpandableToolbarItemStrategy{
+	@Override
+	public void install( DockController controller ){
+		// ignore
 	}
 
 	@Override
-	public void action( Dockable dockable ){
-		switch (getStrategy().getState(dockable)) {
-		case SHRUNK:
-			getStrategy().setState(dockable, ExpandedState.STRETCHED);
-			return;
-		default:
-			getStrategy().setState(dockable, ExpandedState.SHRUNK);
-			return;
-		}
+	public void uninstall( DockController controller ){
+		// ignore		
+	}
+
+	@Override
+	public boolean isEnabled( Dockable item, ExpandedState state ){
+		return false;
+	}
+
+	@Override
+	public ExpandedState getState( Dockable item ){
+		return null;
+	}
+
+	@Override
+	public void setState( Dockable item, ExpandedState state ){
+		// ignore		
+	}
+
+	@Override
+	public void addExpandedListener( ExpandableToolbarItemStrategyListener listener ){
+		// ignore
+	}
+
+	@Override
+	public void removeExpandedListener( ExpandableToolbarItemStrategyListener listener ){
+		// ignore
 	}
 }
