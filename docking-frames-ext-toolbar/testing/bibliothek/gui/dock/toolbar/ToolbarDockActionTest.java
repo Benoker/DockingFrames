@@ -48,10 +48,10 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ToolbarActionDockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
@@ -155,7 +155,7 @@ public class ToolbarDockActionTest {
 		return toolbar;
 	}
 
-	private static ToolbarActionDockable createDockable( Icon icon, boolean largeText ){
+	private static ToolbarItemDockable createDockable( Icon icon, boolean largeText ){
 		SimpleButtonAction action = new SimpleButtonAction();
 		action.setIcon( icon );
 		if( largeText ){
@@ -165,6 +165,6 @@ public class ToolbarDockActionTest {
 			action.setText( "short text" );
 		}
 		
-		return new ToolbarActionDockable( action );
+		return new ToolbarItemDockable( action );
 	}
 }

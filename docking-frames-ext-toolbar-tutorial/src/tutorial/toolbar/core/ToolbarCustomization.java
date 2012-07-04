@@ -11,18 +11,15 @@ import tutorial.support.Tutorial;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
-import bibliothek.gui.dock.ToolbarActionDockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.station.toolbar.menu.CustomizationButton;
 import bibliothek.gui.dock.station.toolbar.menu.DefaultCustomizationMenu;
 import bibliothek.gui.dock.station.toolbar.menu.EagerCustomizationToolbarButton;
 import bibliothek.gui.dock.station.toolbar.menu.GroupedCustomizationMenuContent;
-import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
-import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 @Tutorial(id = "ToolbarCustomization", title = "Customizing")
 public class ToolbarCustomization {
@@ -41,16 +38,6 @@ public class ToolbarCustomization {
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
 		frame.destroyOnClose( controller );
-
-		/* Toolbars have the ability to appear in different sizes. In order to use this feature an
-		 * application has to create special Dockables. We will not look into the details, and just
-		 * disable the feature. */
-		controller.getProperties().set( ExpandableToolbarItemStrategy.STRATEGY, new DefaultExpandableToolbarItemStrategy(){
-			@Override
-			public boolean isEnabled( Dockable item, ExpandedState state ){
-				return false;
-			}
-		});
 		
 		/* We start by creating a ToolbarGroupHeaderFactory, in this case we use the implementation
 		 * offered by CustomizationButton. This factory is registered in the properties. */
@@ -150,8 +137,8 @@ public class ToolbarCustomization {
 		SimpleButtonAction action = new SimpleButtonAction();
 		action.setIcon( icon );
 
-		/* To convert the DockAction into a Dockable we create a new ToolbarActionDockable */
-		ToolbarActionDockable dockable = new ToolbarActionDockable( action );
+		/* To convert the DockAction into a Dockable we create a new ToolbarItemDockable */
+		ToolbarItemDockable dockable = new ToolbarItemDockable( action );
 		dockable.setTitleIcon( icon );
 		return dockable;
 	}

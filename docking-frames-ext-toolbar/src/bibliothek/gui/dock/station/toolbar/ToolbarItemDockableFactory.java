@@ -30,15 +30,15 @@
 
 package bibliothek.gui.dock.station.toolbar;
 
-import bibliothek.gui.dock.ToolbarActionDockable;
+import bibliothek.gui.dock.ToolbarItemDockable;
 
 /**
- * A factory for reading and writing {@link ToolbarActionDockable}s.
+ * A factory for reading and writing {@link ToolbarItemDockable}s.
  * @author Benjamin Sigg
  */
-public class ToolbarActionDockableFactory extends DummyDockFactory<ToolbarActionDockable>{
+public class ToolbarItemDockableFactory extends DummyDockFactory<ToolbarItemDockable>{
 	/** unique unmodifiable identifier of this factory */
-	public static final String ID = "ToolbarActionDockableFactory";
+	public static final String ID = "ToolbarItemDockableFactory";
 
 	@Override
 	public String getID(){

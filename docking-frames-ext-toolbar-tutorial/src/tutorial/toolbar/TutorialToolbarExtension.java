@@ -1,16 +1,16 @@
 package tutorial.toolbar;
 
 import tutorial.TutorialExtension;
-import tutorial.support.sets.BasicsSet;
+import tutorial.core.basics.BasicCoreSet;
 import tutorial.support.sets.TutorialSet;
-import tutorial.toolbar.core.BasicToolbarTutorials;
+import tutorial.toolbar.core.CoreToolbarTutorials;
 
 public class TutorialToolbarExtension implements TutorialExtension{
 
 	@Override
 	public Class<?>[] getTutorials( Class<? extends TutorialSet> set ){
-		if( set.isAssignableFrom( BasicsSet.class )){
-			return new Class[]{ BasicToolbarTutorials.class };
+		if( set.isAssignableFrom( BasicCoreSet.class )){
+			return new Class[]{ CoreToolbarTutorials.class };
 		}
 		return null;
 	}

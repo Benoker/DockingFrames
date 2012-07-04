@@ -31,7 +31,6 @@
 package bibliothek.gui.dock.toolbar;
 
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.AbstractCStation;

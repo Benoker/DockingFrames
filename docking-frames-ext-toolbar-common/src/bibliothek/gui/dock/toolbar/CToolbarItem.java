@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.intern.AbstractCDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
-import bibliothek.gui.dock.toolbar.intern.CommonComponentDockable;
+import bibliothek.gui.dock.toolbar.intern.CommonToolbarItemDockable;
 
 /**
  * A {@link CToolbarItem} is an item (e.g. a button) that is shown in a toolbar.
@@ -90,12 +90,12 @@ public class CToolbarItem extends AbstractCDockable implements SingleCDockable{
 	}
 	
 	@Override
-	public CommonComponentDockable intern(){
-		return (CommonComponentDockable)super.intern();
+	public CommonToolbarItemDockable intern(){
+		return (CommonToolbarItemDockable)super.intern();
 	}
 
 	@Override
-	protected CommonComponentDockable createCommonDockable(){
-		return new CommonComponentDockable( this );
+	protected CommonToolbarItemDockable createCommonDockable(){
+		return new CommonToolbarItemDockable( this );
 	}
 }

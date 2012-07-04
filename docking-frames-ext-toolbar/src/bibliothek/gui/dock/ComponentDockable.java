@@ -59,6 +59,10 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.icon.DockIcon;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link Dockable} which consist only of one {@link JComponent}. This
@@ -66,9 +70,12 @@ import bibliothek.gui.dock.util.icon.DockIcon;
  * {@link ToolbarInterface}
  * 
  * @author Herve Guillaume
+ * @deprecated replaced by {@link ToolbarItemDockable}, which offers the same functionality and more
  */
-public class ComponentDockable extends AbstractDockable implements
-		ToolbarElementInterface, ExpandableToolbarItem{
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+description="to be removed")
+public class ComponentDockable extends AbstractDockable implements ToolbarElementInterface, ExpandableToolbarItem{
 
 	/** the component */
 	private JPanel content;

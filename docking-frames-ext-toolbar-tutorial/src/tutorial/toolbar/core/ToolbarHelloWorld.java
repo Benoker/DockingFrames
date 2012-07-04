@@ -14,10 +14,10 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ToolbarActionDockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.action.actions.SimpleButtonAction;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 
@@ -128,7 +128,7 @@ public class ToolbarHelloWorld {
 		action.setIcon( icon );
 		
 		/* To convert the DockAction into a Dockable we create a new ToolbarActionDockable */
-		ToolbarActionDockable dockable = new ToolbarActionDockable( action );
+		ToolbarItemDockable dockable = new ToolbarItemDockable( action );
 		dockable.setTitleIcon(icon);
 		return dockable;
 	}

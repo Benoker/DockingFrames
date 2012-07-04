@@ -49,7 +49,6 @@ import javax.swing.JComponent;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.ToolbarActionDockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
@@ -85,7 +84,7 @@ import bibliothek.gui.dock.station.screen.ToolbarScreenDockStationExtension;
 import bibliothek.gui.dock.station.screen.ToolbarWindowConfiguration;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfiguration;
-import bibliothek.gui.dock.station.toolbar.ToolbarActionDockableFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarItemDockableFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
@@ -113,6 +112,7 @@ import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.NullTitleFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandManager;
+import bibliothek.gui.dock.toolbar.item.DockActionItem;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockPropertyListener;
 import bibliothek.gui.dock.util.IconManager;
@@ -166,37 +166,37 @@ public class ToolbarExtension implements Extension {
 			}
 		} );
 
-		converter.putDefault( ActionType.BUTTON, ToolbarActionDockable.TOOLBAR, new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
+		converter.putDefault( ActionType.BUTTON, DockActionItem.TOOLBAR, new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
 			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.BUTTON, action, ViewTarget.TITLE, dockable );
 			}
 		} );
-		converter.putDefault( ActionType.CHECK, ToolbarActionDockable.TOOLBAR, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+		converter.putDefault( ActionType.CHECK, DockActionItem.TOOLBAR, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
 			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.CHECK, action, ViewTarget.TITLE, dockable );
 			}
 		} );
-		converter.putDefault( ActionType.DROP_DOWN, ToolbarActionDockable.TOOLBAR, new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
+		converter.putDefault( ActionType.DROP_DOWN, DockActionItem.TOOLBAR, new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
 			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
 				return converter.createView( ActionType.DROP_DOWN, action, ViewTarget.TITLE, dockable );
 			}
 		} );
-		converter.putDefault( ActionType.MENU, ToolbarActionDockable.TOOLBAR, new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
+		converter.putDefault( ActionType.MENU, DockActionItem.TOOLBAR, new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
 			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.MENU, action, ViewTarget.TITLE, dockable );
 			}
 		} );
-		converter.putDefault( ActionType.RADIO, ToolbarActionDockable.TOOLBAR, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
+		converter.putDefault( ActionType.RADIO, DockActionItem.TOOLBAR, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
 			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.RADIO, action, ViewTarget.TITLE, dockable );
 			}
 		} );
-		converter.putDefault( ActionType.SEPARATOR, ToolbarActionDockable.TOOLBAR, new ViewGenerator<SeparatorAction, BasicTitleViewItem<JComponent>>(){
+		converter.putDefault( ActionType.SEPARATOR, DockActionItem.TOOLBAR, new ViewGenerator<SeparatorAction, BasicTitleViewItem<JComponent>>(){
 			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SeparatorAction action, Dockable dockable ){
 				return converter.createView( ActionType.SEPARATOR, action, ViewTarget.TITLE, dockable );
@@ -365,7 +365,7 @@ public class ToolbarExtension implements Extension {
 		result.add( new ToolbarContainerDockStationFactory() );
 		result.add( new ToolbarTabDockStationFactory() );
 		result.add( new WizardSplitDockStationFactory() );
-		result.add( new ToolbarActionDockableFactory() );
+		result.add( new ToolbarItemDockableFactory() );
 		return result;
 	}
 

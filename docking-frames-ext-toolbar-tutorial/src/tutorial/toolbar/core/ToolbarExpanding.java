@@ -14,10 +14,10 @@ import tutorial.support.Tutorial;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
@@ -32,7 +32,7 @@ public class ToolbarExpanding {
 		 * but there is a default implementation of the interface searching for ExpandableToolbarItems, 
 		 * an interface that can be implemented by Dockables. 
 		 * 
-		 * The class ComponentDockable implements ExpandableToolbarItems, we need to initialize it with different
+		 * The class ToolbarItemDockable implements ExpandableToolbarItems, we need to initialize it with different
 		 * Components for the different states. */
 		
 		/* As in any example we need a frame and a controller */
@@ -82,7 +82,7 @@ public class ToolbarExpanding {
 	
 	/* This methods creates one button of the toolbar */
 	private static Dockable createDockable( Icon icon ){
-		ComponentDockable dockable = new ComponentDockable();
+		ToolbarItemDockable dockable = new ToolbarItemDockable();
 		dockable.setTitleIcon( icon );
 		dockable.setTitleText( "Name" );
 		

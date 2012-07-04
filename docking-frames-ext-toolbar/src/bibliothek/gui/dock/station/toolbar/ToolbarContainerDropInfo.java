@@ -213,8 +213,6 @@ public abstract class ToolbarContainerDropInfo implements StationDropOperation{
 			final double middleX = (dockableBeneathMouse.getComponent()
 					.getBounds().getMinX() + dockableBeneathMouse
 					.getComponent().getBounds().getMaxX()) / 2.0;
-			System.out.println(Math.abs(mouseCoordinate.getX()));
-			System.out.println(middleX + " / " + mouseCoordinate.getX());
 
 			if (Math.abs(mouseCoordinate.getX()) <= middleX){
 				return Position.WEST;

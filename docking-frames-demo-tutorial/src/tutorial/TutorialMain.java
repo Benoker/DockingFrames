@@ -72,7 +72,9 @@ public class TutorialMain extends JFrame{
 		currentCodeDockable.setLayout( new BorderLayout() );
 		currentCodeDockable.add( currentCode.toComponent(), BorderLayout.CENTER );
 		currentCodeDockable.setCloseable( false );
-		currentCodeDockable.addAction( new CopyCodeAction( currentCode ));
+		if( !control.getController().isRestrictedEnvironment() ){
+			currentCodeDockable.addAction( new CopyCodeAction( currentCode ));
+		}
 		layout.add( 30, 0, 70, 100, currentCodeDockable );
 		layout.select( 30, 0, 70, 100, currentSelectionDockable ); 
 	
