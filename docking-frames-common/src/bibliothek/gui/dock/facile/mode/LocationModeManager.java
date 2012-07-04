@@ -378,6 +378,21 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	}
 	
 	/**
+	 * Using the current {@link ExtendedModeEnablement} this method tells whether
+	 * mode <code>mode</code> is hidden from the user when looking at <code>dockable</code>. A hidden
+	 * mode 
+	 * @param dockable some element, not <code>null</code>
+	 * @param mode some mode, not <code>null</code>
+	 * @return the result of {@link ExtendedModeEnablement#isAvailable(Dockable, ExtendedMode)}
+	 */
+	public boolean isModeHidden( Dockable dockable, ExtendedMode mode ){
+		if( enablement == null )
+			return false;
+		
+		return enablement.isHidden( dockable, mode ).isHidden();
+	}
+	
+	/**
 	 * Adds a listener to the mode with unique identifier <code>identifier</code>. If the
 	 * mode is exchanged then this listener is automatically removed and may be re-added
 	 * to the new mode.

@@ -133,6 +133,14 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 		return available;
 	}
 	
+	public Hidden isHidden( Dockable dockable, ExtendedMode mode ){
+		Hidden hidden = Hidden.WEAK_VISIBLE;
+		for( ExtendedModeEnablement extension : extensions ){
+			hidden = hidden.strongest( extension.isHidden( dockable, mode ) );
+		}
+		return hidden;
+	}
+	
 	/**
 	 * The actual implementation of {@link ExtendedModeEnablement#isAvailable(Dockable, ExtendedMode)}
 	 * @param dockable the item whose mode should be checked

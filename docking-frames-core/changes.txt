@@ -756,6 +756,7 @@
  - Bugfix: ToolbarTabDockStation respects and forwards the orientation of its parent
  - API: Added tutorials to show how to use toolbars
  - API: DefaultExtendedModeEnablement offers now an extension
+ ! API: ExtendedModeEnablement now also decides which hints (buttons) are visible for the user
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them

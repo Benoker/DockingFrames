@@ -66,6 +66,25 @@ public class ToolbarExtendedModeEnablement implements ExtendedModeEnablement{
 	}
 	
 	@Override
+	public Hidden isHidden( Dockable dockable, ExtendedMode mode ){
+		ToolbarStrategy strategy = this.strategy.getValue();
+		if( strategy == null ){
+			return Hidden.UNCERTAIN;
+		}
+		if( strategy.isToolbarGroupPart( dockable ) || strategy.isToolbarPart( dockable )){
+			if( CToolbarMode.TOOLBAR.equals( mode )){
+				return Hidden.WEAK_VISIBLE;
+			}
+			else{
+				return Hidden.WEAK_HIDDEN;
+			}
+		}
+		else{
+			return Hidden.UNCERTAIN;
+		}
+	}
+	
+	@Override
 	public Availability isAvailable( Dockable dockable, ExtendedMode mode ){
 		ToolbarStrategy strategy = this.strategy.getValue();
 		if( strategy == null ){
@@ -74,6 +93,9 @@ public class ToolbarExtendedModeEnablement implements ExtendedModeEnablement{
 		if( strategy.isToolbarGroupPart( dockable ) || strategy.isToolbarPart( dockable )){
 			if( CToolbarMode.TOOLBAR.equals( mode )){
 				return Availability.STRONG_AVAILABLE;
+			}
+			else if( ExtendedMode.EXTERNALIZED.equals( mode )){
+				return Availability.WEAK_AVAILABLE;
 			}
 			else{
 				return Availability.WEAK_FORBIDDEN;

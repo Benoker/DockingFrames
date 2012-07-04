@@ -128,7 +128,7 @@ public class CToolbarItem extends AbstractCDockable implements SingleCDockable{
 
 	@Override
 	public boolean isExternalizable(){
-		return false;
+		return true;
 	}
 
 	@Override
