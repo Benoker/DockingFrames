@@ -435,7 +435,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	@Override
 	public DockStationDropLayer[] getLayers(){
 		return new DockStationDropLayer[]{
-				new DefaultDropLayer( this ),
+				new DefaultDropLayer( this ){
+					@Override
+					public Component getComponent(){
+						return ToolbarContainerDockStation.this.getComponent();
+					}
+				},
 				new ToolbarContainerDropLayer( this )
 		};
 	}
