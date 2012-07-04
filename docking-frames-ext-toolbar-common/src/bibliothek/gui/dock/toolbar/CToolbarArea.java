@@ -67,6 +67,11 @@ public class CToolbarArea extends AbstractCStation<CommonToolbarContainerDockSta
 	}
 	
 	@Override
+	public CToolbarAreaLocation getStationLocation(){
+		return (CToolbarAreaLocation)super.getStationLocation();
+	}
+	
+	@Override
 	public CStationPerspective createPerspective(){
 		return new CToolbarAreaPerspective( getUniqueId() );
 	}
