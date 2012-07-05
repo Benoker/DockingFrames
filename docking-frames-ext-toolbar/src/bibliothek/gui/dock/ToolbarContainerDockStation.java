@@ -212,6 +212,10 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			public void discard( DockableDisplayer displayer ){
 				ToolbarContainerDockStation.this.discard( displayer );
 			}
+			@Override
+			public void moveableElementChanged( DockableDisplayer displayer ){
+				// ignore
+			}
 		};
 		displayer.addDockableDisplayerListener( listener );
 		setTitleIcon( null );

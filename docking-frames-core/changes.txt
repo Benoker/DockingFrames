@@ -757,6 +757,8 @@
  - API: Added tutorials to show how to use toolbars
  - API: DefaultExtendedModeEnablement offers now an extension
  ! API: ExtendedModeEnablement now also decides which hints (buttons) are visible for the user
+ ! API: StackDockComponent has now a custom listener instead of the generic ChangeListener
+ ! API: ScreenDockStation can now move a window when grabbed at its only tab
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them

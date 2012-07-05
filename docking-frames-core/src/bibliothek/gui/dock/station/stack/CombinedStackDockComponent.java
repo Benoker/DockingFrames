@@ -38,8 +38,6 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -132,7 +130,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	};
 
 	/** listeners to be informed when the selection changes */
-	private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
+	private List<StackDockComponentListener> listeners = new ArrayList<StackDockComponentListener>();
 
 	/** Handles visibility of tabs */
 	private CombinedHandler<CombinedTab> tabHandler = new CombinedHandler<CombinedTab>(){
@@ -242,9 +240,8 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 			}
 
 			public void selectionChanged( TabPane pane ){
-				ChangeEvent event = new ChangeEvent( CombinedStackDockComponent.this );
-				for( ChangeListener listener : listeners.toArray( new ChangeListener[listeners.size()] ) ) {
-					listener.stateChanged( event );
+				for( StackDockComponentListener listener : listeners.toArray( new StackDockComponentListener[listeners.size()] ) ) {
+					listener.selectionChanged( CombinedStackDockComponent.this );
 				}
 			}
 
@@ -291,14 +288,25 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		panel.repaint();
 	}
 
-	public void addChangeListener( ChangeListener listener ){
+	public void addStackDockComponentListener( StackDockComponentListener listener ){
 		listeners.add( listener );
 	}
 
-	public void removeChangeListener( ChangeListener listener ){
+	public void removeStackDockComponentListener( StackDockComponentListener listener ){
 		listeners.remove( listener );
 	}
 
+	/**
+	 * Calls {@link StackDockComponentListener#tabChanged(StackDockComponent, int)} on all listeners that
+	 * are currently registered.
+	 * @param dockable the element whose tab changed
+	 */
+	protected void fireTabChanged( Dockable dockable ){
+		for( StackDockComponentListener listener : listeners ){
+			listener.tabChanged( this, dockable );
+		}
+	}
+	
 	public void setController( DockController controller ){
 		DockController old = getController();
 
@@ -465,6 +473,10 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	public Dockable getDockableAt( int index ){
 		return getDockable( index );
 	}
+	
+	public DockElementRepresentative getTabAt( int index ){
+		return getTab( getDockableAt( index ) );
+	}
 
 	public void moveTab( int source, int destination ){
 		if( source == destination ) {
@@ -534,6 +546,30 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		tab.setEnabled( meta.enabled );
 
 		return tab;
+	}
+	
+	@Override
+	protected T putTab( Dockable dockable, T tab ){
+		T result = super.putTab( dockable, tab );
+		fireTabChanged( dockable );
+		return result;
+	}
+	
+	@Override
+	protected T removeTab( Dockable dockable ){
+		T result = super.removeTab( dockable );
+		if( result != null ){
+			fireTabChanged( dockable );
+		}
+		return result;
+	}
+	
+	@Override
+	protected void clearTabs(){
+		super.clearTabs();
+		for( int i = 0, n = getDockableCount(); i<n; i++ ){
+			fireTabChanged( getDockable( i ) );
+		}
 	}
 
 	protected void addToMenu( M menu, Dockable dockable ){

@@ -456,6 +456,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			public void discard( DockableDisplayer displayer ){
 				SplitDockStation.this.discard(displayer);
 			}
+			public void moveableElementChanged( DockableDisplayer displayer ){
+				// ignore
+			}
 		});
 
 		if( createFullScreenAction ){

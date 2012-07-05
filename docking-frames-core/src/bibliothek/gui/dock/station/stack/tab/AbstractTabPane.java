@@ -321,7 +321,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 			tab.setPaneVisible( false );
 			tabRemoved( tab );
 		}
-		tabs.clear();
+		clearTabs();
 		
 		for( Map.Entry<Dockable, M> item : menuPosition.entrySet() ){
 			removeFromMenu( item.getValue(), item.getKey() );
@@ -348,7 +348,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 			tab.setPaneVisible( false );
 			tabRemoved( tab );
 		}
-		tabs.clear();
+		clearTabs();
 		
 		for( Map.Entry<Dockable, M> item : menuPosition.entrySet() ){
 			removeFromMenu( item.getValue(), item.getKey() );
@@ -476,7 +476,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	}
 	
 	/**
-	 * Gets all known tabs of this pane, including invisible tabs.
+	 * Gets all known tabs of this pane, including invisible tabs. The list is not ordered.
 	 * @return the tabs of this pane
 	 */
 	public List<T> getTabsList(){
@@ -502,7 +502,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		if( tab == null ){
 			tab = newTab( dockable );
 			tab.setOrientation( getDockTabPlacement() );
-			tabs.put( dockable, tab );
+			putTab( dockable, tab );
 		}
 		tab.setPaneVisible( true );
 		
@@ -524,7 +524,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		if( tab == null ){
 			tab = newTab( dockable );
 			tab.setOrientation( getDockTabPlacement() );
-			tabs.put( dockable, tab );
+			putTab( dockable, tab );
 		}
 		return tab;
 	}
@@ -656,7 +656,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 */
 	private void cleanOut( Dockable dockable ){
 		// tab
-		T tab = tabs.remove( dockable );
+		T tab = removeTab( dockable );
 		if( tab != null ){
 			tab.setPaneVisible( false );
 			tabRemoved( tab );
@@ -667,6 +667,39 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 		if( menu != null ){
 			removeFromMenu( menu, dockable );
 		}
+	}
+	
+	/**
+	 * Associates <code>tab</code> with <code>dockable</code>. this method
+	 * modifies the internal data structure in order to store the change.<br>
+	 * Subclasses may override this method to be informed about the exact time when 
+	 * a tab changes, but the overriden method must call the original method.
+	 * @param dockable the key for the tab-map
+	 * @param tab the value for the tab-map
+	 * @return the old tab at <code>dockable</code>
+	 */
+	protected T putTab( Dockable dockable, T tab ){
+		return tabs.put( dockable, tab );
+	}
+	
+	/**
+	 * Removes the tab of <code>dockable</code> from the internal data structure.
+	 * @param dockable the key of the element to be removed from the tab-map<br>
+	 * Subclasses may override this method to be informed about the exact time when 
+	 * a tab changes, but the overriden method must call the original method.
+	 * @return the removed element
+	 */
+	protected T removeTab( Dockable dockable ){
+		return tabs.remove( dockable );
+	}
+	
+	/**
+	 * Removes all tabs from the internal data structure.<br>
+	 * Subclasses may override this method to be informed about the exact time when 
+	 * a tab changes, but the overriden method must call the original method.
+	 */
+	protected void clearTabs(){
+		tabs.clear();
 	}
 	
 	/**

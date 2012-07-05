@@ -29,6 +29,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
@@ -36,12 +38,14 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockComponentListener;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
 import bibliothek.gui.dock.station.stack.TabContent;
@@ -59,21 +63,48 @@ import bibliothek.gui.dock.util.PropertyValue;
  * @author Benjamin Sigg
  */
 public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockComponentParent{
+	/**
+	 * A listener added to the current {@link #component}, finds out when a new
+	 * {@link DockElementRepresentative} is available. 
+	 */
+	private StackDockComponentListener componentListener = new StackDockComponentListener(){
+		public void tabChanged( StackDockComponent stack, Dockable dockable ){
+			fireMoveableElementChanged();	
+		}
+		
+		public void selectionChanged( StackDockComponent stack ){
+			// ignore
+		}
+	};
+	
 	private PropertyValue<StackDockComponentFactory> factory = 
 		new PropertyValue<StackDockComponentFactory>( StackDockStation.COMPONENT_FACTORY ){
 		@Override
 		protected void valueChanged( StackDockComponentFactory oldValue, StackDockComponentFactory newValue ){
+			TabContentFilter filter = null;
+			if( TabDecorator.this.filter != null ){
+				filter = TabDecorator.this.filter.getValue();
+			}
+			
 			if( component != null ){
 				component.setController( null );
 				component.removeAll();
+				if( filter != null ){
+					filter.uninstall( component );
+				}
+				component.removeStackDockComponentListener( componentListener );
 				component = null;
 			}
 			
 			if( newValue != null ){
 				component = newValue.create( TabDecorator.this );
 				component.setDockTabPlacement( tabPlacement.getValue() );
+				if( filter != null ){
+					filter.install( component );
+				}
 				
 				component.setController( controller );
+				component.addStackDockComponentListener( componentListener );
 				if( dockable != null ){
 					component.addTab( dockable.getTitleText(), dockable.getTitleIcon(), representation, dockable );
 					component.setSelectedIndex( 0 );
@@ -81,6 +112,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 			}
 			
 			representative.setComponent( component );
+			fireMoveableElementChanged();
 		}
 	};
 	
@@ -99,11 +131,15 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		@Override
 		protected void valueChanged( TabContentFilter oldValue, TabContentFilter newValue ){
 			if( oldValue != null ){
-				oldValue.uninstall( component );
+				if( component != null ){
+					oldValue.uninstall( component );
+				}
 				oldValue.removeListener( filterListener );
 			}
 			if( newValue != null ){
-				newValue.install( component );
+				if( component != null ){
+					newValue.install( component );
+				}
 				newValue.addListener( filterListener );
 			}
 			
@@ -154,6 +190,7 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 	private Component representation;
 	private StackDockComponentRepresentative representative = new StackDockComponentRepresentative();
 	private DockActionDistributorSource actions;
+	private List<BasicDockableDisplayerDecoratorListener> listeners = new ArrayList<BasicDockableDisplayerDecoratorListener>( 2 );
 	
 	/**
 	 * Creates a new decorator
@@ -164,6 +201,24 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		this.station = station;
 		if( distributor != null ){
 			actions = new DockActionDistributorSource( Target.TITLE, distributor );
+		}
+	}
+	
+	public void addDecoratorListener( BasicDockableDisplayerDecoratorListener listener ){
+		listeners.add( listener );
+	}
+	
+	public void removeDecoratorListener( BasicDockableDisplayerDecoratorListener listener ){
+		listeners.remove( listener );
+	}
+	
+	/**
+	 * Calls {@link BasicDockableDisplayerDecoratorListener#moveableElementChanged(BasicDockableDisplayerDecorator)} on
+	 * all listeners that are currently registered.
+	 */
+	protected void fireMoveableElementChanged(){
+		for( BasicDockableDisplayerDecoratorListener listener : listeners.toArray( new BasicDockableDisplayerDecoratorListener[ listeners.size() ] )){
+			listener.moveableElementChanged( this );
 		}
 	}
 	
@@ -210,8 +265,16 @@ public class TabDecorator implements BasicDockableDisplayerDecorator, StackDockC
 		if( actions != null ){
 			actions.setDockable( dockable );
 		}
+		fireMoveableElementChanged();
 	}
 
+	public DockElementRepresentative getMoveableElement(){
+		if( component.getTabCount() > 0 ){
+			return component.getTabAt( 0 );
+		}
+		return null;
+	}
+	
 	private void updateTabContent(){
 		if( dockable != null && component != null && component.getTabCount() == 1 ){
 			TabContent content = new TabContent( dockable.getTitleIcon(), dockable.getTitleText(), dockable.getTitleToolTip() );

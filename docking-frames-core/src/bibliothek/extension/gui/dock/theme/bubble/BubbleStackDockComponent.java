@@ -63,13 +63,13 @@ public class BubbleStackDockComponent extends CombinedStackDockComponent<BubbleT
 	@Override
 	protected BubbleTab newTab( Dockable dockable ){
 		BubbleTab tab = new BubbleTab( this, dockable );
-		addChangeListener( tab );
+		addStackDockComponentListener( tab );
 		return tab;
 	}
 	
 	@Override
 	protected void tabRemoved( BubbleTab tab ){
-		removeChangeListener( tab );
+		removeStackDockComponentListener( tab );
 		tab.setController( null );
         tab.stopAnimation();
 	}

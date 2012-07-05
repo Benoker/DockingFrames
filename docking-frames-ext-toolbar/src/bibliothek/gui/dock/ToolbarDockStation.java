@@ -189,6 +189,11 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 			public void discard( DockableDisplayer displayer ){
 				ToolbarDockStation.this.discard( displayer );
 			}
+			
+			@Override
+			public void moveableElementChanged( DockableDisplayer displayer ){
+				// ignore
+			}
 		} );
 
 		setTitleIcon( null );

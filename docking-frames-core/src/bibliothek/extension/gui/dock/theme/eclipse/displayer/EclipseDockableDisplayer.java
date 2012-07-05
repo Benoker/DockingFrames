@@ -45,6 +45,7 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
@@ -178,6 +179,11 @@ public class EclipseDockableDisplayer extends EclipseTabPane implements Dockable
 		setDockable(dockable);
 		
 		getComponent().setFocusCycleRoot( true );
+	}
+	
+	public DockElementRepresentative getMoveableElement(){
+		// not implemented, as this class is already deprecated
+		return null;
 	}
 
 	@Override

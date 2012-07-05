@@ -28,17 +28,15 @@ package bibliothek.gui.dock.station.stack.tab;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
-import bibliothek.gui.dock.station.stack.TabContentFilterListener;
+import bibliothek.gui.dock.station.stack.StackDockComponentListener;
 import bibliothek.gui.dock.station.stack.TabContent;
+import bibliothek.gui.dock.station.stack.TabContentFilterListener;
 
 /**
  * An abstract implementation of {@link TabContentFilter}, knows which {@link StackDockStation}s
@@ -81,9 +79,13 @@ public abstract class AbstractTabContentFilter implements TabContentFilter{
 		}
 	};
 	
-	private ChangeListener componentListener = new ChangeListener() {
-		public void stateChanged( ChangeEvent e ){
-				
+	private StackDockComponentListener componentListener = new StackDockComponentListener(){
+		public void tabChanged( StackDockComponent stack, Dockable dockable ){
+			// ignore
+		}
+		
+		public void selectionChanged( StackDockComponent stack ){
+			AbstractTabContentFilter.this.selectionChanged( stack );
 		}
 	};
 	
@@ -156,7 +158,7 @@ public abstract class AbstractTabContentFilter implements TabContentFilter{
 	
 	public void install( StackDockComponent component ){
 		components.add( component );
-		component.addChangeListener( componentListener );
+		component.addStackDockComponentListener( componentListener );
 	}
 	
 	public void uninstall( StackDockStation station ){
@@ -166,7 +168,7 @@ public abstract class AbstractTabContentFilter implements TabContentFilter{
 	
 	public void uninstall( StackDockComponent component ){
 		components.remove( component );
-		component.removeChangeListener( componentListener );
+		component.removeStackDockComponentListener( componentListener );
 	}
 	
 	/**
