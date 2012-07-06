@@ -39,7 +39,7 @@ import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.toolbar.CToolbarItem;
 
 /**
- * A {@link ComponentDockable} that is used as {@link CommonDockable} by a {@link CToolbarItem}.
+ * A {@link ToolbarItemDockable} that is used as {@link CommonDockable} by a {@link CToolbarItem}.
  * @author Benjamin Sigg
  */
 public class CommonToolbarItemDockable extends ToolbarItemDockable implements CommonDockable {

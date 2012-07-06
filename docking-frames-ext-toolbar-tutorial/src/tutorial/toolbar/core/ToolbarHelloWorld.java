@@ -45,7 +45,7 @@ public class ToolbarHelloWorld {
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
 		frame.destroyOnClose( controller );
-		
+
 		/* Toolbars can float if a ScreenDockStation is available, so we add one */
 		ScreenDockStation screen = new ScreenDockStation(frame);
 		controller.add(screen);

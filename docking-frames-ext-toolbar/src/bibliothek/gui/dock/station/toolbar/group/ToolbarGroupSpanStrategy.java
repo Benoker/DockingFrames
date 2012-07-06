@@ -171,10 +171,7 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 			
 			@Override
 			public SpanUsage getUsage(){
-				if( column ){
-					return SpanUsage.INSERTING;
-				}
-				return SpanUsage.HIDING;
+				return SpanUsage.INSERTING;
 			}
 			
 			@Override

@@ -996,7 +996,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	/**
 	 * Add one dockable at the index position. The dockable can be a
-	 * {@link ComponentDockable}, {@link ToolbarDockStation} or a
+	 * {@link ToolbarItemDockable}, {@link ToolbarDockStation} or a
 	 * {@link ToolbarGroupDockStation} (see method accept()). All the
 	 * ComponentDockable extracted from the element are merged together and
 	 * wrapped in a {@link ToolbarDockStation} before to be added at index
@@ -1028,7 +1028,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 			try {
 				listeners.fireDockableAdding( dockable );
-				dockable.setDockParent( this );
 				final DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables().dockables();
 				final StationChildHandle handle = new StationChildHandle( this, displayer, dockable, title );
 				if( placeholder != null ){
@@ -1039,6 +1038,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				}
 				handle.updateDisplayer();
 				insertAt( handle, index );
+				dockable.setDockParent( this );
 				listeners.fireDockableAdded( dockable );
 				fireDockablesRepositioned( index + 1 );
 			}

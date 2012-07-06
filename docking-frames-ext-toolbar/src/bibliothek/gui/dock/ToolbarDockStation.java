@@ -93,9 +93,9 @@ import bibliothek.util.Path;
 
 /**
  * A {@link Dockable} and a {@link DockStation} which stands for a group of
- * {@link ComponentDockable}. As dockable it can be put in {@link DockStation}
+ * {@link ToolbarItemDockable}. As dockable it can be put in {@link DockStation}
  * which implements marker interface {@link ToolbarInterface}. As DockStation it
- * accept a {@link ComponentDockable} or a {@link ToolbarDockStation}
+ * accept a {@link ToolbarItemDockable} or a {@link ToolbarDockStation}
  * 
  * @author Herve Guillaume
  */
