@@ -30,13 +30,16 @@
 package bibliothek.gui.dock.station.toolbar.menu;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 import bibliothek.gui.DockController;
 
@@ -47,6 +50,8 @@ import bibliothek.gui.DockController;
 public class GroupedCustomizationMenuTitle implements CustomizationMenuContent{
 	private JPanel titlePanel;
 	private String title;
+	private Insets textInsets = new Insets( 1, 10, 3, 5 );
+	private Insets insets = new Insets( 1, 0, 0, 1 );
 	
 	/**
 	 * Creates a new title.
@@ -72,6 +77,44 @@ public class GroupedCustomizationMenuTitle implements CustomizationMenuContent{
 		return title;
 	}
 	
+	/**
+	 * Sets the area around the text that should remain empty.
+	 * @param insets the area to remain empty
+	 */
+	public void setTextInsets( Insets insets ){
+		if( insets == null ){
+			throw new IllegalArgumentException( "insets must not be null" );
+		}
+		this.textInsets = insets;
+	}
+	
+	/**
+	 * Gets the area around the text that should remain empty.
+	 * @return the area, not <code>null</code>
+	 */
+	public Insets getTextInsets(){
+		return textInsets;
+	}
+	
+	/**
+	 * Sets the area around the entire title that should remain empty.
+	 * @param insets the area to remain empty
+	 */
+	public void setInsets( Insets insets ){
+		if( insets == null ){
+			throw new IllegalArgumentException( "insets must not be null" );
+		}
+		this.insets = insets;
+	}
+	
+	/**
+	 * Gets the area around the entire title that remains empty.
+	 * @return the area that remains empty
+	 */
+	public Insets getInsets(){
+		return insets;
+	}
+	
 	@Override
 	public Component getView(){
 		return titlePanel;
@@ -84,48 +127,65 @@ public class GroupedCustomizationMenuTitle implements CustomizationMenuContent{
 
 	@Override
 	public void bind( CustomizationMenuCallback callback ){
-		titlePanel = new JPanel(){
+		titlePanel = new JPanel();
+		final JSeparator line = new JSeparator( SwingConstants.HORIZONTAL );
+		final JLabel text = new JLabel( title );
+		text.setOpaque( true );
+		text.setBorder( BorderFactory.createEmptyBorder( 1, 2, 1, 2 ) );
+		titlePanel.add( text );
+		titlePanel.add( line );
+		
+		titlePanel.setLayout( new LayoutManager(){
 			@Override
-			public Dimension getMinimumSize(){
-				return getPreferredSize();
+			public Dimension preferredLayoutSize( Container parent ){
+				Dimension textDimension = text.getPreferredSize();
+				Dimension lineDimension = line.getPreferredSize();
+				
+				int width = Math.max( textDimension.width + textInsets.left + textInsets.right, lineDimension.width ) + insets.left + insets.right;
+				int height = Math.max( textDimension.height + textInsets.top + textInsets.bottom, lineDimension.height ) + insets.top + insets.bottom;
+				return new Dimension( width, height );
 			}
 			
 			@Override
-			public Dimension getPreferredSize(){
-				Insets insets = getInsets();
-				return new Dimension( insets.left + insets.right, insets.top + insets.bottom );
+			public Dimension minimumLayoutSize( Container parent ){
+				Dimension textDimension = text.getMinimumSize();
+				Dimension lineDimension = line.getMinimumSize();
+				
+				int width = Math.max( textDimension.width + textInsets.left + textInsets.right, lineDimension.width ) + insets.left + insets.right;
+				int height = Math.max( textDimension.height + textInsets.top + textInsets.bottom, lineDimension.height ) + insets.top + insets.bottom;
+				return new Dimension( width, height );
 			}
-		};
-		titlePanel.setBorder( new TopBorder( BorderFactory.createTitledBorder( title ) ) );
+			
+			@Override
+			public void layoutContainer( Container parent ){
+				Dimension size = line.getPreferredSize();
+				int maxHeight = parent.getHeight() - insets.top - insets.bottom;
+				int height = Math.min( size.height, maxHeight );
+				int y = insets.top + maxHeight/2 - height/2;
+				line.setBounds( insets.left, y, parent.getWidth()-insets.left-insets.right, height );
+				
+				size = text.getPreferredSize();
+				int width = Math.min( size.width, parent.getWidth()-insets.left-insets.right-textInsets.left-textInsets.right );
+				maxHeight = parent.getHeight()-insets.top-insets.bottom-textInsets.top-textInsets.bottom;
+				height = Math.min( size.height, maxHeight );
+				y = insets.top + textInsets.top + maxHeight/2 - height/2;
+				text.setBounds( insets.left+textInsets.left, y, width, height );
+			}
+			
+			@Override
+			public void addLayoutComponent( String name, Component comp ){
+				// ignore
+			}
+			
+			@Override
+			public void removeLayoutComponent( Component comp ){
+				// ignore
+			}
+		});
 	}
 
 	@Override
 	public void unbind(){
 		titlePanel = null;
-	}
-	
-	private class TopBorder implements Border{
-		private Border border;
-		
-		public TopBorder( Border border ){
-			this.border = border;
-		}
-
-		@Override
-		public void paintBorder( Component c, Graphics g, int x, int y, int width, int height ){
-			Insets insets = border.getBorderInsets( c );
-			border.paintBorder( c, g, x-insets.left, y, width+insets.left+insets.right, height+insets.bottom );
-		}
-
-		@Override
-		public Insets getBorderInsets( Component c ){
-			Insets insets = border.getBorderInsets( c );
-			return new Insets( insets.top, 0, 0, 0 );
-		}
-
-		@Override
-		public boolean isBorderOpaque(){
-			return border.isBorderOpaque();
-		}
 	}
 }
