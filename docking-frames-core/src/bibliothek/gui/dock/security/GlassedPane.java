@@ -36,6 +36,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.EventListener;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -48,6 +49,10 @@ import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 import bibliothek.util.Workarounds;
 
 /**
@@ -58,6 +63,8 @@ import bibliothek.util.Workarounds;
  * them, and then forward the events to the "content pane".
  * @author Benjamin Sigg
  */
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+	description="In Java 1.7 if a mouse-dragged is followed by a mouse-exit, and the mouse is over another GlassedPane, then this GlassedPane no longer receives events that it received in Java 1.6")
 public class GlassedPane extends JPanel{
 	/** the strategy used by a {@link GlassedPane} to manage its tooltips */
 	public static final PropertyKey<TooltipStrategy> TOOLTIP_STRATEGY = new PropertyKey<TooltipStrategy>( "tooltip strategy", 
@@ -215,15 +222,6 @@ public class GlassedPane extends JPanel{
             
             Workarounds.getDefault().markAsGlassPane( this );
         }
-
-//        @Override
-//        protected void paintComponent( Graphics g ){
-//	        g.setColor( Color.BLUE );
-//	        int w = getWidth();
-//	        int h = getHeight();
-//	        g.drawLine( 0, 0, w, h );
-//	        g.drawLine( w, 0, 0, h );
-//        }
         
         public void mouseClicked( MouseEvent e ) {
             if( !e.isConsumed() )
@@ -293,6 +291,9 @@ public class GlassedPane extends JPanel{
             if( component != null && !component.isEnabled() ){
             	component = null;
             }
+            else{
+            	component = fallThrough( component, e );
+            }
 
             boolean drag = id == MouseEvent.MOUSE_DRAGGED;
             boolean press = id == MouseEvent.MOUSE_PRESSED;
@@ -353,7 +354,7 @@ public class GlassedPane extends JPanel{
                 setToolTipText( null );
             }
             else{
-                mouse = SwingUtilities.convertPoint( this, mouse, component );
+            	mouse = SwingUtilities.convertPoint( this, mouse, component );
                 MouseEvent forward = new MouseEvent( 
                         component, id, e.getWhen(), e.getModifiers(), 
                         mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
@@ -371,6 +372,33 @@ public class GlassedPane extends JPanel{
 
                 tooltips.getValue().setTooltipText( over, forward, overNewComponent, callback );
             }
+        }
+        
+        /**
+         * Assuming this {@link GlassedPane} wants to forward <code>event</code> to <code>component</code>,
+         * this method can decide that <code>component</code> should not receive the event. Instead some
+         * other {@link Component} should.
+         * @param component the component which in theory should get the event
+         * @param event the event to be forwarded
+         * @return the component which really gets the event, can also be <code>null</code> or <code>component</code>
+         */
+        private Component fallThrough( Component component, MouseEvent event ){
+        	Class<? extends EventListener> type = null;
+        	if( event.getID() == MouseEvent.MOUSE_DRAGGED || event.getID() == MouseEvent.MOUSE_MOVED ){
+        		type = MouseMotionListener.class;
+        	}
+        	else if( event.getID() == MouseEvent.MOUSE_WHEEL ){
+        		type = MouseWheelListener.class;
+        	}
+        	else{
+        		type = MouseListener.class;
+        	}
+        	
+        	while( component != null && component.getListeners( type ).length == 0 ){
+        		component = component.getParent();
+        	}
+        	
+        	return component;
         }
 
         @Override

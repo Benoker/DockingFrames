@@ -740,6 +740,7 @@
    
 [v1.1.1p7f]
  - Bugfix: Icons of size 0/0 should no longer produce an exception in DockUtilities.disabledIcon
+ - Bugfix: GlassedPane now emulates "fall through" behavior for MouseEvents
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them
