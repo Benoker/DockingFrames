@@ -97,6 +97,7 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
+import bibliothek.gui.dock.station.split.DefaultSplitNodeFactory;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
@@ -119,6 +120,7 @@ import bibliothek.gui.dock.station.split.SplitDropTreeException;
 import bibliothek.gui.dock.station.split.SplitFullScreenAction;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
+import bibliothek.gui.dock.station.split.SplitNodeFactory;
 import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.split.SplitPlaceholderConverter;
 import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
@@ -156,6 +158,7 @@ import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
@@ -379,6 +382,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** The root of the tree which determines the structure of this station */
 	private Root root;
+	
+	/** The factory responsible for creating new {@link SplitNode}s */
+	private SplitNodeFactory nodeFactory = new DefaultSplitNodeFactory();
 
 	/** Ensures that no placeholder is used twice on this station */
 	private SplitPlaceholderSet placeholderSet;
@@ -513,15 +519,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	/**
-	 * Creates a new root for this station.
-	 * @param access access to the internals of this station
-	 * @return the new root
-	 */
-	protected Root createRoot( SplitDockAccess access ){
-		return new Root(access);
-	}
-
-	/**
 	 * Gets the root of this station, creates a root if necessary. This
 	 * method cannot be overridden while {@link #getRoot()} can. This method
 	 * just returns the value of {@link #root}, makes it a read only variable.
@@ -530,7 +527,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 */
 	protected final Root root(){
 		if( root == null ) {
-			root = createRoot(access);
+			root = access.createRoot( -1 );
 		}
 		return root;
 	}
@@ -993,6 +990,29 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return spanStrategy;
 	}
 
+	/**
+	 * Sets the factory which is responsible for creating new {@link SplitNode}s. Clients usually have no
+	 * need to change this property.
+	 * @param factory the new factory, must not be <code>null</code>
+	 */
+	@FrameworkOnly
+	public void setNodeFactory( SplitNodeFactory factory ){
+		if( factory == null ){
+			throw new IllegalArgumentException( "factory must not be null" );
+		}
+		this.nodeFactory = factory;
+	}
+	
+	/**
+	 * Gets the factory which is responsible for creating new {@link SplitNode}s. Clients usually have no
+	 * need to access this property.
+	 * @return the current factory, not <code>null</code>
+	 */
+	@FrameworkOnly
+	public SplitNodeFactory getNodeFactory(){
+		return nodeFactory;
+	}
+	
 	/**
 	 * Sets whether the dockables should be resized while the split
 	 * is dragged, or not.
@@ -2054,7 +2074,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				boolean leafSet = false;
 		
 				if( leaf == null ) {
-					leaf = new Leaf(access);
+					leaf = access.createLeaf( -1 );
 					leafSet = true;
 				}
 		
@@ -2065,17 +2085,27 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				updateBounds();
 				int location = parent.getChildLocation(neighbor);
 		
+				node = access.createNode( -1 );
+				
 				if( put == PutInfo.Put.TOP ) {
-					node = new Node(access, leaf, neighbor, Orientation.VERTICAL);
+					node.setLeft( leaf );
+					node.setRight( neighbor );
+					node.setOrientation( Orientation.VERTICAL );
 				}
 				else if( put == PutInfo.Put.BOTTOM ) {
-					node = new Node(access, neighbor, leaf, Orientation.VERTICAL);
+					node.setLeft( neighbor );
+					node.setRight( leaf );
+					node.setOrientation( Orientation.VERTICAL );
 				}
 				else if( put == PutInfo.Put.LEFT ) {
-					node = new Node(access, leaf, neighbor, Orientation.HORIZONTAL);
+					node.setLeft( leaf );
+					node.setRight( neighbor );
+					node.setOrientation( Orientation.HORIZONTAL );
 				}
 				else {
-					node = new Node(access, neighbor, leaf, Orientation.HORIZONTAL);
+					node.setLeft( neighbor );
+					node.setRight( leaf );
+					node.setOrientation( Orientation.HORIZONTAL );
 				}
 		
 				node.setDivider(divider);
@@ -2379,7 +2409,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				if( fire ){
 					dockStationListeners.fireDockableAdding(dockable);
 				}
-				Leaf leaf = new Leaf(access);
+				Leaf leaf = access.createLeaf( -1 );
 		
 				Root root = root();
 				if( root.getChild() == null ) {
@@ -2387,9 +2417,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				}
 				else {
 					SplitNode child = root.getChild();
-					root.setChild(null);
-					Node node = new Node(access, leaf, child);
-					root.setChild(node);
+					root.setChild( null );
+					Node node = access.createNode( -1 );
+					node.setLeft( leaf );
+					node.setRight( child );
+					root.setChild( node );
 				}
 		
 				leaf.setDockable( dockable, token );
@@ -2798,7 +2830,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	protected void unsetPut(){
 		spanStrategy.unsetPut();
 	}
-
+	
 	/**
 	 * The background algorithm of this {@link SplitDockStation}.
 	 * @author Benjamin Sigg
@@ -3262,6 +3294,27 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		
 		public SplitSpanStrategy getSpanStrategy(){
 			return spanStrategy;
+		}
+		
+		public Leaf createLeaf( long id ){
+			return nodeFactory.createLeaf( this, id );
+		}
+		
+		public Node createNode( long id ){
+			return nodeFactory.createNode( this, id );
+		}
+		
+		public Placeholder createPlaceholder( long id ){
+			return nodeFactory.createPlaceholder( this, id );
+		}
+		
+		/**
+		 * Creates a new {@link Root}.
+		 * @param id the unique identifier of the new root
+		 * @return the new root
+		 */
+		public Root createRoot( long id ){
+			return nodeFactory.createRoot( this, id );
 		}
 	}
 }

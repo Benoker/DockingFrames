@@ -682,11 +682,17 @@ public class Node extends VisibleSplitNode implements Divideable{
     				int location = parent.getChildLocation( this );
     				if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
     						node.getLocation() == SplitDockPathProperty.Location.TOP ){
-    					split = new Node( getAccess(), leaf, this, orientation, splitId );
+    					split = createNode( splitId );
+    					split.setLeft( leaf );
+    					split.setRight( this );
+    					split.setOrientation( orientation );
     					split.setDivider( node.getSize() );
     				}
     				else{
-    					split = new Node( getAccess(), this, leaf, orientation, splitId );
+    					split = createNode( splitId );
+    					split.setLeft( this );
+    					split.setRight( leaf );
+    					split.setOrientation( orientation );
     					split.setDivider( 1-node.getSize() );
     				}
     				parent.setChild( split, location );

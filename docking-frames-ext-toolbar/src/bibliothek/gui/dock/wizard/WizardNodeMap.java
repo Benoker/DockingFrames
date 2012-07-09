@@ -31,6 +31,7 @@ package bibliothek.gui.dock.wizard;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -144,6 +145,14 @@ public abstract class WizardNodeMap {
 			buildColumns();
 		}
 		return columns;
+	}
+	
+	/**
+	 * Gets the number of columns.
+	 * @return the number of columns
+	 */
+	public int getColumnCount(){
+		return getColumns().size();
 	}
 	
 	/**
@@ -696,6 +705,10 @@ public abstract class WizardNodeMap {
 		
 		public Dimension getMinimumSize(){
 			return getMinimumSize( root );
+		}
+		
+		public Rectangle getBounds(){
+			return root.getBounds();
 		}
 		
 		public int getCellCount(){

@@ -37,7 +37,6 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -53,20 +52,23 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
+import bibliothek.gui.dock.station.split.DefaultSplitNodeFactory;
 import bibliothek.gui.dock.station.split.Divideable;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
-import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.Root;
+import bibliothek.gui.dock.station.split.SplitDockAccess;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
+import bibliothek.gui.dock.station.split.SplitNodeVisitor;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.basic.NoSpanFactory;
+import bibliothek.gui.dock.wizard.WizardNodeMap.Column;
 
 /**
  * A {@link WizardSplitDockStation} has some additional restrictions and other behavior than an ordinary {@link SplitDockStation}:
@@ -131,6 +133,12 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		
 		// disable the standard mechanism for showing spans
 		getSpanStrategy().getFactory().setDelegate( new NoSpanFactory() );
+		
+		setNodeFactory( new DefaultSplitNodeFactory(){
+			public Leaf createLeaf( SplitDockAccess access, long id ){
+				return new WizardLeaf( access, id );
+			}
+		} );
 		
 		addDockStationListener( new DockStationListener(){
 			@Override
@@ -538,8 +546,47 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		
 		@Override
 		protected PutInfo calculateSideSnap( SplitDockStation station, int x, int y, Leaf leaf, Dockable drop ){
+			WizardSpanStrategy spanStrategy = getWizardSpanStrategy();
+			WizardLayoutManager layout = getWizardSplitLayoutManager();
+			WizardNodeMap map = layout.getMap();
+			Column[] columns = map.getSortedColumns();
+			
+			int columnCount = map.getColumnCount();
+			
+			int first = 0;
+			int total = 0;
+			if( columnCount > 0 ){
+				first = spanStrategy.getGap( 0 );
+				total = first;
+				for( int i = 1; i < columnCount; i++ ){
+					total += spanStrategy.getGap( i );
+				}
+			}
+			
 			if( side.getHeaderOrientation() == Orientation.HORIZONTAL ){
-				if( x < getWidth() / 2 ){
+				for( int i = 0; i < columnCount; i++ ){
+					Rectangle bounds = columns[i].getBounds();
+					if( x >= bounds.x && x <= bounds.x + bounds.width ){
+						if( y < bounds.y ){
+							return new PutInfo( columns[i].getRoot(), Put.TOP, drop, false );
+						}
+						else if( y > bounds.y + bounds.height ){
+							return new PutInfo( columns[i].getRoot(), Put.BOTTOM, drop, false );
+						}
+						else if( x < bounds.x + bounds.width/2 ){
+							return new PutInfo( columns[i].getRoot(), Put.LEFT, drop, false );
+						}
+						else{
+							return new PutInfo( columns[i].getRoot(), Put.RIGHT, drop, false );
+						}
+					}
+				}
+				
+				int width = getWidth() - total;
+				x -= first;
+				
+				
+				if( x < width / 2 ){
 					return new PutInfo( leftMost( getRoot() ), Put.LEFT, drop, false );
 				}
 				else{
@@ -547,7 +594,10 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 				}
 			}
 			else{
-				if( y < getHeight() / 2 ){
+				int height = getHeight() - total;
+				y -= first;
+			654	
+				if( y < height / 2 ){
 					return new PutInfo( leftMost( getRoot() ), Put.TOP, drop, false );
 				}
 				else{

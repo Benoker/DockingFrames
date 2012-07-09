@@ -43,8 +43,10 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.span.Span;
+import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Path;
 
 /**
@@ -334,85 +336,141 @@ public class Leaf extends SpanSplitNode{
         PutInfo result = null;
         boolean centered = false;
         
-        if( displayer.getTitle() != null ){
-            if( displayer.getTitleLocation() == DockableDisplayer.Location.TOP ){
-                int height = displayer.getTitle().getComponent().getHeight();
-                bounds.y += height;
-                bounds.height -= height;
-                
-                if( y <= bounds.y ){
-                	centered = true;
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
-                }
-            }
-            
-            else if( displayer.getTitleLocation() == DockableDisplayer.Location.BOTTOM ){
-                int height = displayer.getTitle().getComponent().getHeight();
-                bounds.height -= height;
-                
-                if( y >= bounds.y+bounds.height ){
-                	centered = true;
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
-                }
-            }
-            
-            else if( displayer.getTitleLocation() == DockableDisplayer.Location.LEFT ){
-                int width = displayer.getTitle().getComponent().getWidth();
-                bounds.x += width;
-                bounds.width -= width;
-                
-                if( x <= bounds.x ){
-                	centered = true;
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
-                }
-            }
-            
-            else if( displayer.getTitleLocation() == DockableDisplayer.Location.RIGHT ){
-                int width = displayer.getTitle().getComponent().getWidth();
-                bounds.width -= width;
-                
-                if( x >= bounds.x + bounds.width ){
-                	centered = true;
-                    result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
-                }
-            }
+        bounds = removeTitle( bounds );
+        
+        if( isTitlePut( bounds, x, y )){
+        	centered = true;
+        	result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TITLE, drop, true ));
         }
         
         if( result != null )
             return result;
         
-        float sideSnapSize = getAccess().getOwner().getSideSnapSize();
-        
-        if( x > bounds.x + sideSnapSize*bounds.width && 
-            x < bounds.x + bounds.width - sideSnapSize*bounds.width &&
-            y > bounds.y + sideSnapSize*bounds.height &&
-            y < bounds.y + bounds.height - sideSnapSize*bounds.height ){
-        	
+        if( isCenterPut( bounds, x, y )){
         	centered = true;
-            
             result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop, true ));
         }
         
         if( result != null )
             return result;
         
-        if( above( bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, x, y )){
-            if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                result = getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TOP, drop, centered ));
-            else
-                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.RIGHT, drop, centered ));
-        }
-        else{
-            if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
-                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.LEFT, drop, centered ));
-            else
-                result = getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.BOTTOM, drop, centered ));
-        }
+        result = createSidePut( bounds, x, y, drop, centered );
         
         if( result != null )
             return result;
         
         return getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.CENTER, drop, centered ));
+    }
+    
+    /**
+     * Asks the {@link DockableDisplayer} for its current {@link DockTitle} and removes the size
+     * of the title from <code>bounds</code>. Depending on the position of the title <code>bounds</code>
+     * is moved, shrunk only horizontally or vertically.
+     * @param bounds some boundaries, usually describing the boundaries of this {@link Leaf} but
+     * any {@link Rectangle} can be modified by this method
+     * @return a copy of <code>bounds</code> where the size of the title (if there is any) has been removed
+     */
+    protected Rectangle removeTitle( Rectangle bounds ){
+    	DockableDisplayer displayer = getDisplayer();
+    	bounds = new Rectangle( bounds );
+    	
+        if( displayer.getTitle() != null ){
+            if( displayer.getTitleLocation() == DockableDisplayer.Location.TOP ){
+                int height = displayer.getTitle().getComponent().getHeight();
+                bounds.y += height;
+                bounds.height -= height;
+            }
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.BOTTOM ){
+                int height = displayer.getTitle().getComponent().getHeight();
+                bounds.height -= height;
+            }
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.LEFT ){
+                int width = displayer.getTitle().getComponent().getWidth();
+                bounds.x += width;
+                bounds.width -= width;
+            }
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.RIGHT ){
+                int width = displayer.getTitle().getComponent().getWidth();
+                bounds.width -= width;                
+            }
+        }
+        
+        return bounds;
+    }
+
+    /**
+     * Tells whether the position of the mouse <code>x/y</code> would result in a drag and drop operation where
+     * {@link Put#CENTER} is apropriate.
+     * @param bounds the boundaries of the {@link Dockable}, this {@link Leaf} or any other representation of
+     * the {@link Dockable}
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @return whether the location of the mouse would allow a combination of the {@link Dockable}s
+     */
+    protected boolean isCenterPut( Rectangle bounds, int x, int y ){
+        float sideSnapSize = getAccess().getOwner().getSideSnapSize();
+        
+        return x > bounds.x + sideSnapSize*bounds.width && 
+            x < bounds.x + bounds.width - sideSnapSize*bounds.width &&
+            y > bounds.y + sideSnapSize*bounds.height &&
+            y < bounds.y + bounds.height - sideSnapSize*bounds.height;
+    }
+    
+    /**
+     * Tells whether the position of the mouse <code>x/y</code> would result in a drag and drop operation where
+     * {@link Put#TITLE} is apropriate.
+     * @param bounds the boundaries of the {@link Dockable}, this {@link Leaf} or any other representation of
+     * the {@link Dockable}
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @return whether the location of the mouse would allow a combination of the {@link Dockable}s
+     */
+    protected boolean isTitlePut( Rectangle bounds, int x, int y ){
+    	DockableDisplayer displayer = getDisplayer();
+    	
+        if( displayer.getTitle() != null ){
+        	if( displayer.getTitleLocation() == DockableDisplayer.Location.TOP ){
+                return y <= bounds.y;
+            }
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.BOTTOM ){
+                return y >= bounds.y+bounds.height;
+            }
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.LEFT ){
+                return x <= bounds.x;
+            }
+            else if( displayer.getTitleLocation() == DockableDisplayer.Location.RIGHT ){
+                return x >= bounds.x + bounds.width;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Assuming the mouse at <code>x/y</code> is within <code>bounds</code>, this method calculates which one
+     * of the non-combining {@link Put}s describe the situation best. The method creates and validates a new
+     * {@link PutInfo}.
+     * @param bounds the boundaries of the {@link Dockable}, the {@link Leaf} or any other representation of the
+     * {@link Dockable}.
+     * @param x the x-coordinate of the mouse
+     * @param y the y-coordinate of the mouse
+     * @param drop the item that is about to be dropped
+     * @param centered whether the mouse position alone would usually require one of the combining {@link Put}s
+     * @return the new drag and drop operation, or <code>null</code> if the suggested operation is not valid
+     */
+    protected PutInfo createSidePut( Rectangle bounds, int x, int y, Dockable drop, boolean centered ){
+        if( above( bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, x, y )){
+            if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
+                return getAccess().validatePutInfo( new PutInfo( this, PutInfo.Put.TOP, drop, centered ));
+            else
+                return getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.RIGHT, drop, centered ));
+        }
+        else{
+            if( above( bounds.x, bounds.y + bounds.height, bounds.x + bounds.width, bounds.y, x, y ))
+                return getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.LEFT, drop, centered ));
+            else
+                return getAccess().validatePutInfo(  new PutInfo( this, PutInfo.Put.BOTTOM, drop, centered ));
+        }
     }
     
     @Override
@@ -497,11 +555,17 @@ public class Leaf extends SpanSplitNode{
             SplitNode parent = getParent();
             int location = parent.getChildLocation( this );
             if( reverse ){
-                split = new Node( getAccess(), this, leaf, orientation, newNodeId );
+                split = createNode( newNodeId );
+                split.setOrientation( orientation );
+                split.setLeft( this );
+                split.setRight( leaf );
                 split.setDivider( 1 - node.getSize() );
             }
             else{
-                split = new Node( getAccess(), leaf, this, orientation, newNodeId );
+                split = createNode( newNodeId );
+                split.setLeft( leaf );
+                split.setRight( this );
+                split.setOrientation( orientation );
                 split.setDivider( node.getSize() );
             }
             
