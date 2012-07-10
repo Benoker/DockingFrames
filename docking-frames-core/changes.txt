@@ -739,12 +739,11 @@
  - Bugfix: New Icons for the EclipseTheme by Nicolas Roduit. The new icons should work well with dark backgrounds.
  - Bugfix: BaseTabComponent has now its own FocusTraversalPolicy allowing the user to press "tab" and focus a component outside of the tab.
  - Bugfix: Wrong usage of DefaultSplitDividerStrategy causes memory leak
-   
-[v1.1.1p7f]
+
+[v1.1.1p8]
  - Bugfix: Icons of size 0/0 should no longer produce an exception in DockUtilities.disabledIcon
  - Bugfix: GlassedPane now emulates "fall through" behavior for MouseEvents
-   
-[v1.1.1pToolbar]
+
  - API: New Inserter can override drop operations before and after they are created
  - API: A lot more configuration options for the ScreenDockStation, these configurations are done by the ScreenDockWindowConfiguration.
  ! API: PaintableComponent uses now a transparency enumeration instead of two booleans 
