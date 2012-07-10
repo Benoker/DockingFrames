@@ -594,9 +594,27 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 				}
 			}
 			else{
+				for( int i = 0; i < columnCount; i++ ){
+					Rectangle bounds = columns[i].getBounds();
+					if( y >= bounds.y && y <= bounds.y + bounds.height ){
+						if( x < bounds.x ){
+							return new PutInfo( columns[i].getRoot(), Put.LEFT, drop, false );
+						}
+						else if( x > bounds.x + bounds.width ){
+							return new PutInfo( columns[i].getRoot(), Put.RIGHT, drop, false );
+						}
+						else if( y < bounds.y + bounds.height/2 ){
+							return new PutInfo( columns[i].getRoot(), Put.TOP, drop, false );
+						}
+						else{
+							return new PutInfo( columns[i].getRoot(), Put.BOTTOM, drop, false );
+						}
+					}
+				}
+				
 				int height = getHeight() - total;
 				y -= first;
-			654	
+				
 				if( y < height / 2 ){
 					return new PutInfo( leftMost( getRoot() ), Put.TOP, drop, false );
 				}
