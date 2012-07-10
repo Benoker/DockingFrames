@@ -158,6 +158,7 @@ import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.icon.DockIcon;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 import bibliothek.util.Todo;
@@ -201,7 +202,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * grabbing a gab between two children and moving that gap around.
 	 */
 	public static final PropertyKey<SplitDividerStrategy> DIVIDER_STRATEGY = new PropertyKey<SplitDividerStrategy>("SplitDockStation divider strategy",
-			new ConstantPropertyFactory<SplitDividerStrategy>( new DefaultSplitDividerStrategy() ), true);
+			new DynamicPropertyFactory<SplitDividerStrategy>(){
+				public SplitDividerStrategy getDefault( PropertyKey<SplitDividerStrategy> key, DockProperties properties ){
+					return new DefaultSplitDividerStrategy();
+				}
+				@Override
+				public SplitDividerStrategy getDefault( PropertyKey<SplitDividerStrategy> key ){
+					return null;
+				}
+			}, true);
 	
 	/** The parent of this station */
 	private DockStation parent;
@@ -472,7 +481,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		visibility = new DockableShowingManager(dockStationListeners);
 
-		dividerStrategy.getValue().install( this, getContentPane() );
+		SplitDividerStrategy strategy = dividerStrategy.getValue();
+		if( strategy != null ){
+			strategy.install( this, getContentPane() );
+		}
 		
 		globalSource = new HierarchyDockActionSource(this);
 		globalSource.bind();
