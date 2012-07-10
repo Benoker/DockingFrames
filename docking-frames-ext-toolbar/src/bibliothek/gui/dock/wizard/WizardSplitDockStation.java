@@ -52,7 +52,6 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
 import bibliothek.gui.dock.station.split.DefaultSplitLayoutManager;
-import bibliothek.gui.dock.station.split.DefaultSplitNodeFactory;
 import bibliothek.gui.dock.station.split.Divideable;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
@@ -60,7 +59,6 @@ import bibliothek.gui.dock.station.split.Placeholder;
 import bibliothek.gui.dock.station.split.PutInfo;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.split.Root;
-import bibliothek.gui.dock.station.split.SplitDockAccess;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
@@ -133,12 +131,6 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		
 		// disable the standard mechanism for showing spans
 		getSpanStrategy().getFactory().setDelegate( new NoSpanFactory() );
-		
-		setNodeFactory( new DefaultSplitNodeFactory(){
-			public Leaf createLeaf( SplitDockAccess access, long id ){
-				return new WizardLeaf( access, id );
-			}
-		} );
 		
 		addDockStationListener( new DockStationListener(){
 			@Override
