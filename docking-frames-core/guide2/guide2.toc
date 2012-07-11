@@ -70,7 +70,9 @@
 \contentsline {subsubsection}{\numberline {6.3.11}Displayers}{48}
 \contentsline {section}{\numberline {7}Stations in depth}{50}
 \contentsline {subsection}{\numberline {7.1}ScreenDockStation}{50}
-\contentsline {subsubsection}{\numberline {7.1.1}Stickiness and attraction}{50}
+\contentsline {subsubsection}{\numberline {7.1.1}Window type}{50}
+\contentsline {subsubsection}{\numberline {7.1.2}Window configuration}{50}
+\contentsline {subsubsection}{\numberline {7.1.3}Stickiness and attraction}{50}
 \contentsline {section}{\numberline {8}Drag and Drop}{51}
 \contentsline {subsection}{\numberline {8.1}Relocator}{51}
 \contentsline {subsection}{\numberline {8.2}Deciding what element to drag}{51}

@@ -278,6 +278,10 @@ public class TabComponentLayoutManager implements LayoutManager{
 				result.width += size.width+actionInsets.left+actionInsets.right;
 				result.height = Math.max( result.height, size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.top+actionInsets.bottom );
 			}
+			else{
+				result.width += actionInsets.right;
+				result.height = Math.max( result.height, size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.bottom );
+			}
 		}
 		else{
 			result = new Dimension( 
@@ -288,6 +292,10 @@ public class TabComponentLayoutManager implements LayoutManager{
 				size = actions.getPreferredSize();
 				result.height += size.height+actionInsets.top+actionInsets.bottom;
 				result.width = Math.max( result.width, size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.left+actionInsets.right );
+			}
+			else{
+				result.height += actionInsets.bottom;
+				result.width = Math.max( result.width, size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.right );
 			}
 		}
 		return result;
@@ -308,6 +316,10 @@ public class TabComponentLayoutManager implements LayoutManager{
 				result.width += size.width+actionInsets.left+actionInsets.right;
 				result.height = Math.max( result.height, size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.top+actionInsets.bottom );
 			}
+			else{
+				result.width += actionInsets.right;
+				result.height = Math.max( result.height, size.height+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.bottom );
+			}
 		}
 		else{
 			result = new Dimension( 
@@ -318,6 +330,10 @@ public class TabComponentLayoutManager implements LayoutManager{
 				size = actions.getMinimumSize();
 				result.height += size.height+actionInsets.top+actionInsets.bottom;
 				result.width = Math.max( result.width, size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.left+actionInsets.right );
+			}
+			else{
+				result.height += actionInsets.bottom;
+				result.width = Math.max( result.width, size.width+freeSpaceToOpenSide+freeSpaceToParallelBorder+actionInsets.right );
 			}
 		}
 		return result;

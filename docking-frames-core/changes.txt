@@ -766,6 +766,7 @@
 
 [v1.1.1p8a]
  - API: new tutorial for WizardSplitDockStation
+ - Bugfix: Eclipse-tabs without actions did not show the entire text even if there was enough space
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them
