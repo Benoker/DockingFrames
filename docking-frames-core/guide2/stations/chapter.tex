@@ -1,0 +1,23 @@
+\section{Stations in depth}
+\src{DockStation}s are the most complex classes, or modules, of the framework. It is not required to fully understand how the stations work in order to use the framework, in fact skipping this chapter will not give you any disadvantage. But some of the stations offer fine tuning that could be interesting for the more ambitious projects. Before reading this chapter you should read about the Basics (page \pageref{sec:basics}), it offers a nice overview of the stations.
+
+\subsection{ScreenDockStation}
+This stations packs its children into free floating panels, these panels are called \src{ScreenDockWindow}s or just windows.
+
+\subsubsection{Window type}
+Usually the windows are in fact \src{JDialog}s. 
+
+\subsubsection{Window configuration}
+
+
+\subsubsection{Stickiness and attraction}
+What happens when a window is dragged near another window? Or if two windows touch each other and one of them is dragged away? The framework offers some special behavior in these cases:
+\begin{itemize}
+ \item A window dragged near another window can be \emph{attracted} to the fixed window. The dragged window will move itself a little bit such that the sides of the windows touch each other.
+ \item A window dragged away from a neighbour can be \emph{sticking} to the neighbour. If one window is dragged, the neighbours are automatically dragged as well.
+\end{itemize}
+The exact behavior of each window is defined by the \src{AttractorStrategy}. Clients can set up their own strategy by using the property key \newline \src{ScreenDockStation.ATTRACTOR\_STRATEGY}.
+
+\classbox{
+The actual implementation of attracting and sticking windows is provided by the \src{MagnetStrategy}, which can be replaced using the property key \src{ScreenDockStation.MAGNET\_STRATEGY}.
+Clients providing their own \src{MagnetStrategy} may be interested in using the \src{StickMagnetGraph}, a class that analyzes the layout of the windows and their dependencies. }

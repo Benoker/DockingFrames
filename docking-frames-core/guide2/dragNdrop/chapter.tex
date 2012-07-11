@@ -50,7 +50,7 @@ A relocator needs to find the one \src{DockStation} on which the \src{Dockable} 
 The \src{DefaultDockRelocator} searches the destination anew whenever the mouse is moved. A search consists of these steps::
 \begin{enumerate}
  \item An ordered list of all potential destinations is built. A \src{DockStation} is a potential destination if it is visible (\src{isStationVisible} of \src{DockStation}), not the dragged \src{Dockable} nor one of its children, and its boundaries contain the location of the mouse (\src{getStationBounds} of \src{DockStation}). The order depends on parent-child relations between the stations, between the \src{Window}s on which the stations are, and on custom conditions that every station can offer (\src{canCompare} and \src{compare} of \src{DockStation}).
- \item Then the method \src{prepareMove} or \src{prepareDrop} of \src{DockStation} is called. These methods check whether the station really is a good destination. They return \src{true} if so, \src{false} if not. The first station that returns \src{true} is the destination.
+ \item Then the method \src{prepareDrop} of \src{DockStation} is called. These methods check whether the station really is a good destination. They return \src{true} if so, \src{false} if not. The first station that returns \src{true} is the destination.
  \item The method \src{draw} of the new destination is called, the method \src{forget} on the old destination. The new destination will paint some markings to give a visual feedback to the user, the old destination will delete all the information about any drag and drop operation.
 \end{enumerate}
 
@@ -107,4 +107,22 @@ Currently two modes are installed:
 \end{description}
 
 \classbox{The keys that have to be pressed to activate \src{SCREEN\_ONLY} or \src{NO\_COMBINATION} are the properties \src{SCREEN\_MASK} and \src{NO\_COMBINATION\_MASK}. The can be changed by accessing the \src{DockProperties}.}
+
+\subsection{Animations}
+During drag and drop, the framework may show some animations to help the user understand what effects dropping the \src{Dockable} would have. The animations usually involve moving or resizing the \src{Dockable}s that are not dragged. These animations are implemented with help of the \src{Span} interface. Each \src{Span} object represents some gap in the layout, a \src{Span} basically is a self mutating integer, to be understood as the size of a gap in pixels. Each \src{DockStation} may use several \src{Span}s at the same time, and an animation may involve multiple \src{Span}s changing their value simultaneously.
+
+\infobox{ There are two sides involved in the animations:
+\begin{itemize}
+ \item The \src{DockStation}s define \emph{where} and \emph{when} the animations appear. For example a \src{FlapDockStation} can trigger an animation to insert empty space between each of its buttons.
+ \item The \src{Span}s define \emph{how} an animation looks like. For example a \src{Span} could be implemented such that an animation starts slowly and increases its speed over time.
+\end{itemize}}
+Clients cannot tell a \src{DockStation} where the animations take place, but they can influence how the animations look like. To do that, clients need to implement both the \src{Span} and the \src{SpanFactory} interface. The \src{DockStation} will configure the \src{Span}, by associating different sizes (number of pixels) to different \src{SpanMode}s, and later by telling the \src{Span} which \src{SpanMode} currently is required. In return the \src{Span} will call the \src{resized} method of the \src{SpanCallback} whenever the size of the gap changes.
+
+\classbox{To install a new \src{SpanFactory} clients can:
+\begin{itemize}
+ \item Use the property key \src{DockTheme.SPAN\_FACTORY} to globally change the factory.
+ \item Use \src{ThemeManager.setSpanFactory} to change the factory only for one class of \src{DockStation}s.
+ \item Calling \src{setSpanFactory} of \src{BasicTheme} \emph{before} the theme is installed.
+\end{itemize}}
+\warningbox{Some themes, like the \src{EclipseTheme}, deliberately disable the animations by installing the \src{NoSpanFactory}. }
 

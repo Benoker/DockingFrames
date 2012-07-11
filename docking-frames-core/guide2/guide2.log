@@ -1,0 +1,1477 @@
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2012.6.30)  30 JUN 2012 11:19
+entering extended mode
+**guide2.tex
+
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\guide2.tex"
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2012-05-30, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
+ lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
+german-x-2012-05-30, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
+an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
+ishmax, welsh, loaded.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls"
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\listings\listings.sty"
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+\lst@mode=\count87
+\lst@gtempboxa=\box26
+\lst@token=\toks15
+\lst@length=\count88
+\lst@currlwidth=\dimen103
+\lst@column=\count89
+\lst@pos=\count90
+\lst@lostspace=\dimen104
+\lst@width=\dimen105
+\lst@newlines=\count91
+\lst@lineno=\count92
+\lst@maxwidth=\dimen106
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\listings\lstmisc.sty"
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+\c@lstnumber=\count93
+\lst@skipnumbers=\count94
+\lst@framebox=\box27
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\listings\listings.cfg"
+File: listings.cfg 2007/02/22 1.4 listings configuration
+))
+Package: listings 2007/02/22 1.4 (Carsten Heinz)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\color.sty"
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count95
+))
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+)
+\Gin@req@height=\dimen107
+\Gin@req@width=\dimen108
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\textcomp.sty"
+Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
+Package textcomp Info: Sub-encoding information:
+(textcomp)               5 = only ISO-Adobe without \textcurrency
+(textcomp)               4 = 5 + \texteuro
+(textcomp)               3 = 4 + \textohm
+(textcomp)               2 = 3 + \textestimated + \textcurrency
+(textcomp)               1 = TS1 - \textcircled - \t
+(textcomp)               0 = TS1 (full)
+(textcomp)             Font families with sub-encoding setting implement
+(textcomp)             only a restricted character set as indicated.
+(textcomp)             Family '?' is the default used for unknown fonts.
+(textcomp)             See the documentation for details.
+Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 71.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1enc.def"
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+)
+LaTeX Info: Redefining \oldstylenums on input line 266.
+Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 281.
+Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 282.
+Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 283.
+Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 284.
+Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 285.
+Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 286.
+Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 287.
+Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 288.
+Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 289.
+Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 290.
+Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 291.
+Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 292.
+Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 293.
+Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 294.
+Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 295.
+Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 296.
+Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 297.
+Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 298.
+Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 299.
+Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 300.
+Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 301.
+Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 302.
+Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 303.
+Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 304.
+
+Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 305.
+Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 306.
+Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 307.
+Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 308.
+Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 309.
+Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 310.
+Package textcomp Info: Setting lmr sub-encoding to TS1/0 on input line 311.
+Package textcomp Info: Setting lmdh sub-encoding to TS1/0 on input line 312.
+Package textcomp Info: Setting lmss sub-encoding to TS1/0 on input line 313.
+Package textcomp Info: Setting lmssq sub-encoding to TS1/0 on input line 314.
+Package textcomp Info: Setting lmvtt sub-encoding to TS1/0 on input line 315.
+Package textcomp Info: Setting qhv sub-encoding to TS1/0 on input line 316.
+Package textcomp Info: Setting qag sub-encoding to TS1/0 on input line 317.
+Package textcomp Info: Setting qbk sub-encoding to TS1/0 on input line 318.
+Package textcomp Info: Setting qcr sub-encoding to TS1/0 on input line 319.
+Package textcomp Info: Setting qcs sub-encoding to TS1/0 on input line 320.
+Package textcomp Info: Setting qpl sub-encoding to TS1/0 on input line 321.
+Package textcomp Info: Setting qtm sub-encoding to TS1/0 on input line 322.
+Package textcomp Info: Setting qzc sub-encoding to TS1/0 on input line 323.
+Package textcomp Info: Setting qhvc sub-encoding to TS1/0 on input line 324.
+Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 325.
+Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 326.
+Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 327.
+Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 328.
+Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 329.
+Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 330.
+Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 331.
+Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 332.
+Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 333.
+Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 334.
+Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 335.
+Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 336.
+Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 337.
+Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 338.
+Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 339.
+Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 340.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
+File: lstlang1.sty 2004/09/05 1.3 listings language file
+)
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\guide2.aux"
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\introduction/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\basics/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\layouts/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\actions/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\titles/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\themes/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\stations/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\dragNdrop/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\preferences/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\extensions/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\properties/chapter.aux"))
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 78.
+LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 78.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 78.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
+File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 78.
+\c@lstlisting=\count96
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count97
+\scratchdimen=\dimen109
+\scratchbox=\box28
+\nofMPsegments=\count98
+\nofMParguments=\count99
+\everyMPshowfont=\toks16
+\MPscratchCnt=\count100
+\MPscratchDim=\dimen110
+\MPnumerator=\count101
+\makeMPintoPDFobject=\count102
+\everyMPtoPDFconversion=\toks17
+)
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 80.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 80.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 80.
+ [1
+
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\guide2.toc"
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 2.
+ [2] [3])
+\tf@toc=\write3
+ [4]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\introduction/chapter.tex"
+Underfull \hbox (badness 10000) in paragraph at lines 6--7
+\OT1/cmr/m/n/10 tion
+ []
+
+[5
+
+]
+\contentbox=\box29
+\bkgdbox=\box30
+ <info.png, id=24, 102.784pt x 102.784pt>
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 35.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box31
+\bkgdbox=\box32
+
+<stop.png, id=26, 102.784pt x 102.784pt>
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 37.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box33
+\bkgdbox=\box34
+
+<class.png, id=27, 102.784pt x 102.784pt>
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 39.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box35
+\bkgdbox=\box36
+
+<design.png, id=28, 102.784pt x 102.784pt>
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 41.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box37
+\bkgdbox=\box38
+
+<code.png, id=29, 102.784pt x 102.784pt>
+File: code.png Graphic file (type png)
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 43.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [6
+
+pdfTeX warning: miktex-pdftex.exe: pop empty color page stack 0
+
+
+pdfTeX warning: miktex-pdftex.exe: pop empty color page stack 0
+ <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/gui
+de2/info.png> <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-fr
+ames-core/guide2/stop.png> <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFram
+es/docking-frames-core/guide2/class.png> <C:/Users/Benjamin Sigg/Documents/GitH
+ub/DockingFrames/docking-frames-core/guide2/design.png> <C:/Users/Benjamin Sigg
+/Documents/GitHub/DockingFrames/docking-frames-core/guide2/code.png>]
+\contentbox=\box39
+\bkgdbox=\box40
+File: info.png Graphic file (type png)
+
+<use info.png>
+Package pdftex.def Info: info.png used on input line 75.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [7] [8]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\basics/chapter.tex"
+\contentbox=\box41
+\bkgdbox=\box42
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 4.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 16.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omscmr.fd"
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <7> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 16.
+
+<basics/HelloWorld.png, id=46, 332.27586pt x 159.34229pt>
+File: basics/HelloWorld.png Graphic file (type png)
+
+<use basics/HelloWorld.png>
+Package pdftex.def Info: basics/HelloWorld.png used on input line 41.
+(pdftex.def)             Requested size: 172.5pt x 82.7223pt.
+ [9
+
+
+ <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/gui
+de2/basics/HelloWorld.png>]
+\contentbox=\box43
+\bkgdbox=\box44
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 52.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box45
+\bkgdbox=\box46
+File: code.png Graphic file (type png)
+
+<use code.png>
+Package pdftex.def Info: code.png used on input line 54.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box47
+\bkgdbox=\box48
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 70.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box49
+\bkgdbox=\box50
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 76.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [10]
+\contentbox=\box51
+\bkgdbox=\box52
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 94.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+<basics/StackDockStation.png, id=57, 338.92139pt x 185.46397pt>
+File: basics/StackDockStation.png Graphic file (type png)
+
+<use basics/StackDockStation.png>
+Package pdftex.def Info: basics/StackDockStation.png used on input line 103.
+(pdftex.def)             Requested size: 172.5pt x 94.39859pt.
+ [11]
+\contentbox=\box53
+\bkgdbox=\box54
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 111.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+<basics/stack.png, id=61, 287.474pt x 154.979pt>
+File: basics/stack.png Graphic file (type png)
+ <use basics/stack.png>
+Package pdftex.def Info: basics/stack.png used on input line 111.
+(pdftex.def)             Requested size: 213.28125pt x 114.98299pt.
+
+<basics/SplitDockStation.png, id=62, 288.24931pt x 242.93169pt>
+File: basics/SplitDockStation.png Graphic file (type png)
+
+<use basics/SplitDockStation.png>
+Package pdftex.def Info: basics/SplitDockStation.png used on input line 118.
+(pdftex.def)             Requested size: 172.5pt x 145.38573pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+\contentbox=\box55
+\bkgdbox=\box56
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 126.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 2772) in paragraph at lines 126--126
+[]\OT1/cmr/m/n/10 Like the \OT1/cmtt/m/n/10 StackDockStation\OT1/cmr/m/n/10 , t
+his sta-tion con-sists of four
+ []
+
+
+Underfull \hbox (badness 4193) in paragraph at lines 126--126
+\OT1/cmr/m/n/10 lay-ers. Lay-ers 1, 3 and 4 are iden-ti-cal to the lay-
+ []
+
+
+Underfull \hbox (badness 2181) in paragraph at lines 126--126
+\OT1/cmr/m/n/10 ers of the \OT1/cmtt/m/n/10 StackDockStation\OT1/cmr/m/n/10 . A
+ back-ground panel (1),
+ []
+
+<basics/split.png, id=63, 395.879pt x 220.825pt>
+File: basics/split.png Graphic file (type png)
+ <use basics/split.png>
+Package pdftex.def Info: basics/split.png used on input line 126.
+(pdftex.def)             Requested size: 213.28125pt x 118.97078pt.
+
+[12 <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/
+guide2/basics/StackDockStation.png> <C:/Users/Benjamin Sigg/Documents/GitHub/Do
+ckingFrames/docking-frames-core/guide2/basics/stack.png>]
+<basics/FlapDockStation.png, id=69, 288.24931pt x 242.93169pt>
+File: basics/FlapDockStation.png Graphic file (type png)
+
+<use basics/FlapDockStation.png>
+Package pdftex.def Info: basics/FlapDockStation.png used on input line 133.
+(pdftex.def)             Requested size: 172.5pt x 145.38573pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+\contentbox=\box57
+\bkgdbox=\box58
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 141.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ <basics/flap.png, id=70, 404.712pt x 248.127pt>
+File: basics/flap.png Graphic file (type png)
+
+<use basics/flap.png>
+Package pdftex.def Info: basics/flap.png used on input line 141.
+(pdftex.def)             Requested size: 213.28125pt x 130.7608pt.
+ [13 <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core
+/guide2/basics/SplitDockStation.png> <C:/Users/Benjamin Sigg/Documents/GitHub/D
+ockingFrames/docking-frames-core/guide2/basics/split.png>] <basics/ScreenDockSt
+ation.png, id=77, 327.29172pt x 292.5629pt>
+File: basics/ScreenDockStation.png Graphic file (type png)
+
+<use basics/ScreenDockStation.png>
+Package pdftex.def Info: basics/ScreenDockStation.png used on input line 148.
+(pdftex.def)             Requested size: 172.5pt x 154.20047pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+\contentbox=\box59
+\bkgdbox=\box60
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 156.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ <basics/screen.png, id=78, 281.853pt x 246.521pt>
+File: basics/screen.png Graphic file (type png)
+
+<use basics/screen.png>
+Package pdftex.def Info: basics/screen.png used on input line 156.
+(pdftex.def)             Requested size: 213.28125pt x 186.54915pt.
+ [14 <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core
+/guide2/basics/FlapDockStation.png> <C:/Users/Benjamin Sigg/Documents/GitHub/Do
+ckingFrames/docking-frames-core/guide2/basics/flap.png>] [15 <C:/Users/Benjamin
+ Sigg/Documents/GitHub/DockingFrames/docking-frames-core/guide2/basics/ScreenDo
+ckStation.png (PNG copy)> <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrame
+s/docking-frames-core/guide2/basics/screen.png>]
+\contentbox=\box61
+\bkgdbox=\box62
+File: class.png Graphic file (type png)
+
+<use class.png>
+Package pdftex.def Info: class.png used on input line 173.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box63
+\bkgdbox=\box64
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 175.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 4543) in paragraph at lines 175--175
+[]\OT1/cmr/m/n/10 Never for-get to reg-is-ter the root-\OT1/cmtt/m/n/10 DockSta
+tion\OT1/cmr/m/n/10 (s) at the
+ []
+
+\contentbox=\box65
+\bkgdbox=\box66
+File: design.png Graphic file (type png)
+<use design.png>
+Package pdftex.def Info: design.png used on input line 177.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box67
+\bkgdbox=\box68
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 184.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box69
+\bkgdbox=\box70
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 186.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [16]
+\contentbox=\box71
+\bkgdbox=\box72
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 188.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box73
+\bkgdbox=\box74
+File: design.png Graphic file (type png)
+
+<use design.png>
+Package pdftex.def Info: design.png used on input line 197.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [17]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\layouts/chapter.tex"
+Underfull \hbox (badness 7722) in paragraph at lines 6--7
+\OT1/cmr/m/n/10 par-ent(s). Lo-cal in-for-ma-tion is rep-re-sented by a chain o
+f
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6--7
+\OT1/cmtt/m/n/10 DockableProperty\OT1/cmr/m/n/10 s, and each \OT1/cmtt/m/n/10 D
+ockStation \OT1/cmr/m/n/10 of-fers a method
+ []
+
+
+Underfull \hbox (badness 1484) in paragraph at lines 7--8
+[]\OT1/cmr/m/n/10 Global in-for-ma-tion de-scribes the re-la-tion-ship of an en
+-tire tree of
+ []
+
+\contentbox=\box75
+\bkgdbox=\box76
+File: info.png Graphic file (type png)
+<use info.png>
+Package pdftex.def Info: info.png used on input line 12.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box77
+\bkgdbox=\box78
+File: code.png Graphic file (type png)
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 19.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box79
+\bkgdbox=\box80
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 21.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [18
+
+
+]
+\contentbox=\box81
+\bkgdbox=\box82
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 23.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 23--23
+[]\OT1/cmr/m/n/10 Most \OT1/cmtt/m/n/10 DockStation\OT1/cmr/m/n/10 s use the \O
+T1/cmtt/m/n/10 PlaceholderList \OT1/cmr/m/n/10 and the
+ []
+
+
+Underfull \hbox (badness 1924) in paragraph at lines 23--23
+\OT1/cmtt/m/n/10 PlacehoderMap \OT1/cmr/m/n/10 to man-age their \OT1/cmtt/m/n/1
+0 Dockable\OT1/cmr/m/n/10 s and place-hold-
+ []
+
+\contentbox=\box83
+\bkgdbox=\box84
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 50.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 2980) in paragraph at lines 50--50
+[]\OT1/cmr/m/n/10 also for \OT1/cmtt/m/n/10 SplitDockStation\OT1/cmr/m/n/10 .
+ []
+
+[19]
+\contentbox=\box85
+\bkgdbox=\box86
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 67.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [20]
+\contentbox=\box87
+\bkgdbox=\box88
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 72.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box89
+\bkgdbox=\box90
+File: code.png Graphic file (type png)
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 77.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box91
+\bkgdbox=\box92
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 90.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [21]
+\contentbox=\box93
+\bkgdbox=\box94
+File: class.png Graphic file (type png)
+
+<use class.png>
+Package pdftex.def Info: class.png used on input line 103.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 1552) in paragraph at lines 103--103
+\OT1/cmr/m/n/10 Each \OT1/cmtt/m/n/10 DockLayout \OT1/cmr/m/n/10 con-tains a un
+ique iden-ti-fier for the fac-
+ []
+
+
+Underfull \hbox (badness 2126) in paragraph at lines 103--103
+\OT1/cmr/m/n/10 tory and the data gen-er-ated by the fac-tory. Fi-nally a
+ []
+
+\contentbox=\box95
+\bkgdbox=\box96
+File: info.png Graphic file (type png)
+<use info.png>
+Package pdftex.def Info: info.png used on input line 105.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [22]
+\contentbox=\box97
+\bkgdbox=\box98
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 112.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 112--112
+[]\OT1/cmr/m/n/10 Default fac-to-ries are in-stalled for \OT1/cmtt/m/n/10 Defau
+ltDockable\OT1/cmr/m/n/10 ,
+ []
+
+\contentbox=\box99
+\bkgdbox=\box100
+File: stop.png Graphic file (type png)
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 114.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 128.
+
+ ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omlcmr.fd"
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <7> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 128.
+
+[23]
+Overfull \hbox (0.55472pt too wide) in paragraph at lines 172--173
+[]\OT1/cmr/m/n/10 The ex-tended al-go-rithm uses a spe-cial \OT1/cmtt/m/n/10 Do
+ckFactory\OT1/cmr/m/n/10 , called \OT1/cmtt/m/n/10 PreloadFactory\OT1/cmr/m/n/1
+0 ,
+ []
+
+\contentbox=\box101
+\bkgdbox=\box102
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 176.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [24]
+\contentbox=\box103
+\bkgdbox=\box104
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 180.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box105
+\bkgdbox=\box106
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 182.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <7> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 194.
+\contentbox=\box107
+\bkgdbox=\box108
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 204.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [25]
+\contentbox=\box109
+\bkgdbox=\box110
+File: info.png Graphic file (type png)
+
+<use info.png>
+Package pdftex.def Info: info.png used on input line 233.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 3029) in paragraph at lines 233--233
+[]\OT1/cmr/m/n/10 A \OT1/cmtt/m/n/10 DockFrontend \OT1/cmr/m/n/10 will es-ti-ma
+te lo-ca-tions of those miss-ing
+ []
+
+\contentbox=\box111
+\bkgdbox=\box112
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 235.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 235--235
+[]\OT1/cmr/m/n/10 If us-ing a \OT1/cmtt/m/n/10 PredefinedDockSituation\OT1/cmr/
+m/n/10 , the method
+ []
+
+[26]
+\contentbox=\box113
+\bkgdbox=\box114
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 247.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Overfull \hbox (0.85176pt too wide) in paragraph at lines 249--250
+\OT1/cmr/m/n/10 write the xml, bi-nary or the in-ter-me-di-ate for-mat. Clients
+ us-ing a \OT1/cmtt/m/n/10 DockSituation
+ []
+
+\contentbox=\box115
+\bkgdbox=\box116
+File: code.png Graphic file (type png)
+<use code.png>
+Package pdftex.def Info: code.png used on input line 253.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [27]
+\contentbox=\box117
+\bkgdbox=\box118
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 280.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box119
+\bkgdbox=\box120
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 284.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [28]
+\contentbox=\box121
+\bkgdbox=\box122
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 292.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box123
+\bkgdbox=\box124
+File: stop.png Graphic file (type png)
+
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 294.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box125
+\bkgdbox=\box126
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 296.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [29]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\actions/chapter.tex" <actions/actions.png, id=134, 234.476pt x 220.825pt>
+File: actions/actions.png Graphic file (type png)
+
+<use actions/actions.png>
+Package pdftex.def Info: actions/actions.png used on input line 6.
+(pdftex.def)             Requested size: 117.2377pt x 110.41222pt.
+\contentbox=\box127
+\bkgdbox=\box128
+File: code.png Graphic file (type png)
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 11.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box129
+\bkgdbox=\box130
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 17.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box131
+\bkgdbox=\box132
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 19.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+[30
+
+
+ <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/gui
+de2/actions/actions.png>]
+\contentbox=\box133
+\bkgdbox=\box134
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 29.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [31]
+\contentbox=\box135
+\bkgdbox=\box136
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 50.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box137
+\bkgdbox=\box138
+File: stop.png Graphic file (type png)
+
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 52.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 1796) in paragraph at lines 52--52
+[]\OT1/cmr/m/n/10 It is gen-er-ally a bad idea to write \OT1/cmtt/m/n/10 DockAc
+tionOffer\OT1/cmr/m/n/10 s or
+ []
+
+[32] [33]
+\contentbox=\box139
+\bkgdbox=\box140
+File: code.png Graphic file (type png)
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 136.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [34]
+\contentbox=\box141
+\bkgdbox=\box142
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 142.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box143
+\bkgdbox=\box144
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 144.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box145
+\bkgdbox=\box146
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 152.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 2626) in paragraph at lines 158--159
+\OT1/cmr/m/n/10 can use an \OT1/cmtt/m/n/10 ActionType \OT1/cmr/m/n/10 as key f
+or a fac-tory that is stored in the
+ []
+
+[35] [36]
+Underfull \hbox (badness 1609) in paragraph at lines 223--224
+\OT1/cmtt/m/n/10 ActionType CUSTOM\OT1/cmr/m/n/10 . This should be done on star
+tup, be-fore the first
+ []
+
+\contentbox=\box147
+\bkgdbox=\box148
+File: stop.png Graphic file (type png)
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 248.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [37]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\titles/chapter.tex" <titles/titles.png, id=162, 224.037pt x 223.43475pt>
+File: titles/titles.png Graphic file (type png)
+
+<use titles/titles.png>
+Package pdftex.def Info: titles/titles.png used on input line 6.
+(pdftex.def)             Requested size: 112.01822pt x 111.7171pt.
+
+Underfull \hbox (badness 3078) in paragraph at lines 14--15
+[]\OT1/cmr/m/n/10 The \OT1/cmr/m/it/10 kind \OT1/cmr/m/n/10 of a ti-tle is spec
+-i-fied by a \OT1/cmtt/m/n/10 DockTitleVersion\OT1/cmr/m/n/10 . New
+ []
+
+\contentbox=\box149
+\bkgdbox=\box150
+File: stop.png Graphic file (type png)
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 20.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box151
+\bkgdbox=\box152
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 26.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 2310) in paragraph at lines 26--26
+[]\OT1/cmr/m/n/10 The method \OT1/cmtt/m/n/10 listBoundTitles \OT1/cmr/m/n/10 r
+e-turns an list of all
+ []
+
+[38
+
+
+ <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/gui
+de2/titles/titles.png>]
+Underfull \hbox (badness 2111) in paragraph at lines 34--35
+\OT1/cmr/m/n/10 tle it-self: the method \OT1/cmtt/m/n/10 changed\OT1/cmr/m/n/10
+ . Mod-ules use this method to send
+ []
+
+\contentbox=\box153
+\bkgdbox=\box154
+File: design.png Graphic file (type png)
+<use design.png>
+Package pdftex.def Info: design.png used on input line 36.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box155
+\bkgdbox=\box156
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 45.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [39]
+\contentbox=\box157
+\bkgdbox=\box158
+File: code.png Graphic file (type png)
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 47.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 1424) in paragraph at lines 56--57
+[]\OT1/cmr/m/n/10 The \OT1/cmtt/m/n/10 DockTheme \OT1/cmr/m/n/10 can be used as
+ well. Ei-ther over-ride the method
+ []
+
+
+Underfull \hbox (badness 1460) in paragraph at lines 58--59
+\OT1/cmtt/m/n/10 DockTitleManager \OT1/cmr/m/n/10 can be ac-cessed by call-ing 
+\OT1/cmtt/m/n/10 getDockTitleManager \OT1/cmr/m/n/10 of
+ []
+
+) [40]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\themes/chapter.tex"
+<themes/theme_default.png, id=174, 609.27625pt x 436.63126pt>
+File: themes/theme_default.png Graphic file (type png)
+
+<use themes/theme_default.png>
+Package pdftex.def Info: themes/theme_default.png used on input line 26.
+(pdftex.def)             Requested size: 172.5pt x 123.62172pt.
+ [41
+
+
+ <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/gui
+de2/themes/theme_default.png>]
+<themes/theme_flat.png, id=178, 456.95718pt x 327.47343pt>
+File: themes/theme_flat.png Graphic file (type png)
+
+<use themes/theme_flat.png>
+Package pdftex.def Info: themes/theme_flat.png used on input line 39.
+(pdftex.def)             Requested size: 172.5pt x 123.61671pt.
+
+<themes/theme_bubble.png, id=179, 456.95718pt x 327.47343pt>
+File: themes/theme_bubble.png Graphic file (type png)
+
+<use themes/theme_bubble.png>
+Package pdftex.def Info: themes/theme_bubble.png used on input line 49.
+(pdftex.def)             Requested size: 172.5pt x 123.61671pt.
+ [42 <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core
+/guide2/themes/theme_flat.png> <C:/Users/Benjamin Sigg/Documents/GitHub/Docking
+Frames/docking-frames-core/guide2/themes/theme_bubble.png>] <themes/theme_eclip
+se.png, id=183, 456.95718pt x 327.47343pt>
+File: themes/theme_eclipse.png Graphic file (type png)
+
+<use themes/theme_eclipse.png>
+Package pdftex.def Info: themes/theme_eclipse.png used on input line 59.
+(pdftex.def)             Requested size: 172.5pt x 123.61671pt.
+\contentbox=\box159
+\bkgdbox=\box160
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 71.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box161
+\bkgdbox=\box162
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 73.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 1642) in paragraph at lines 73--73
+[]\OT1/cmr/m/n/10 The set-tings for ti-tles and bor-ders that are given by an
+ []
+
+[43 <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/
+guide2/themes/theme_eclipse.png>]
+\contentbox=\box163
+\bkgdbox=\box164
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 83.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box165
+\bkgdbox=\box166
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 88.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [44]
+\contentbox=\box167
+\bkgdbox=\box168
+File: design.png Graphic file (type png)
+
+<use design.png>
+Package pdftex.def Info: design.png used on input line 113.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [45]
+Underfull \hbox (badness 2828) in paragraph at lines 127--128
+\OT1/cmtt/m/n/10 ColorManager \OT1/cmr/m/n/10 is an \OT1/cmtt/m/n/10 UIProperti
+es \OT1/cmr/m/n/10 and can be ac-cessed through the
+ []
+
+\contentbox=\box169
+\bkgdbox=\box170
+File: code.png Graphic file (type png)
+<use code.png>
+Package pdftex.def Info: code.png used on input line 159.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box171
+\bkgdbox=\box172
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 161.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 1137) in paragraph at lines 161--161
+[]\OT1/cmr/m/n/10 There is no global list of keys and ev-ery \OT1/cmtt/m/n/10 D
+ockTheme \OT1/cmr/m/n/10 uses
+ []
+
+[46]
+\contentbox=\box173
+\bkgdbox=\box174
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 163.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 1590) in paragraph at lines 163--163
+[]\OT1/cmr/m/n/10 All the stan-dard themes use a \OT1/cmtt/m/n/10 ColorScheme \
+OT1/cmr/m/n/10 as their ini-
+ []
+
+
+Underfull \hbox (badness 2119) in paragraph at lines 163--163
+\OT1/cmr/m/n/10 stant \OT1/cmtt/m/n/10 BASIC[]COLOR[]SCHEME\OT1/cmr/m/n/10 . Th
+ere are sev-eral sub-classes of
+ []
+
+\contentbox=\box175
+\bkgdbox=\box176
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 176.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 2521) in paragraph at lines 179--180
+\OT1/cmr/m/n/10 cessed through the method \OT1/cmtt/m/n/10 getIcons \OT1/cmr/m/
+n/10 of \OT1/cmtt/m/n/10 DockController\OT1/cmr/m/n/10 . It is an
+ []
+
+[47]
+Underfull \hbox (badness 2809) in paragraph at lines 208--209
+\OT1/cmr/m/n/10 tions like a ti-tle or some bor-der. All \OT1/cmtt/m/n/10 DockS
+tation\OT1/cmr/m/n/10 s make use of
+ []
+
+
+Overfull \hbox (0.22102pt too wide) in paragraph at lines 210--211
+\OT1/cmr/m/n/10 dis-player needs to call the \OT1/cmtt/m/n/10 discard \OT1/cmr/
+m/n/10 method of any \OT1/cmtt/m/n/10 DockableDisplayerListener
+ []
+
+[48]) [49]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\stations/chapter.tex"
+\contentbox=\box177
+\bkgdbox=\box178
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 17.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [50
+
+
+]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\dragNdrop/chapter.tex"
+Underfull \hbox (badness 1648) in paragraph at lines 5--6
+\OT1/cmr/m/n/10 makes sure that the user has some vi-sual feed-back is lo-cated
+ in the
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5--6
+\OT1/cmtt/m/n/10 DefaultDockRelocator\OT1/cmr/m/n/10 . \OT1/cmtt/m/n/10 Default
+DockRelocator \OT1/cmr/m/n/10 it-self ex-tends from
+ []
+
+\contentbox=\box179
+\bkgdbox=\box180
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 9.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 2334) in paragraph at lines 9--9
+\OT1/cmr/m/n/10 in or-der to in-stall their cus-tomized class. The method
+ []
+
+\contentbox=\box181
+\bkgdbox=\box182
+File: info.png Graphic file (type png)
+<use info.png>
+Package pdftex.def Info: info.png used on input line 21.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box183
+\bkgdbox=\box184
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 23.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 4608) in paragraph at lines 23--23
+[]\OT1/cmr/m/n/10 The be-hav-ior for rep-re-sen-ta-tions of \OT1/cmtt/m/n/10 Do
+ckable\OT1/cmr/m/n/10 s that are
+ []
+
+
+Underfull \hbox (badness 2376) in paragraph at lines 23--23
+\OT1/cmr/m/n/10 not reg-is-tered is un-spec-i-fied. Clients should not add a
+ []
+
+[51
+
+
+]
+Underfull \hbox (badness 3386) in paragraph at lines 28--29
+[]\OT1/cmr/m/n/10 A \OT1/cmtt/m/n/10 RemoteRelocator \OT1/cmr/m/n/10 can be op-
+tained by call-ing \OT1/cmtt/m/n/10 createRemote \OT1/cmr/m/n/10 of
+ []
+
+\contentbox=\box185
+\bkgdbox=\box186
+File: class.png Graphic file (type png)
+<use class.png>
+Package pdftex.def Info: class.png used on input line 42.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 1005) in paragraph at lines 42--42
+\OT1/cmr/m/n/10 stances can be op-tained by call-ing \OT1/cmtt/m/n/10 createDir
+ectRemote \OT1/cmr/m/n/10 of
+ []
+
+\contentbox=\box187
+\bkgdbox=\box188
+File: info.png Graphic file (type png)
+<use info.png>
+Package pdftex.def Info: info.png used on input line 44.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [52]
+\contentbox=\box189
+\bkgdbox=\box190
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 57.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box191
+\bkgdbox=\box192
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 66.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 4429) in paragraph at lines 66--66
+[]\OT1/cmtt/m/n/10 DockController.getAcceptance \OT1/cmr/m/n/10 al-lows ac-cess
+ to the
+ []
+
+
+Underfull \hbox (badness 1810) in paragraph at lines 66--66
+\OT1/cmr/m/n/10 global \OT1/cmtt/m/n/10 DockAcceptance\OT1/cmr/m/n/10 , an ad-d
+i-tional re-stric-tion that
+ []
+
+[53]
+\contentbox=\box193
+\bkgdbox=\box194
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 77.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Overfull \hbox (0.3329pt too wide) in paragraph at lines 80--81
+\OT1/cmr/m/n/10 Not ev-ery pos-si-ble \OT1/cmtt/m/n/10 DockStation \OT1/cmr/m/n
+/10 is a good or valid tar-get for a dragged \OT1/cmtt/m/n/10 Dockable\OT1/cmr/
+m/n/10 .
+ []
+
+\contentbox=\box195
+\bkgdbox=\box196
+File: stop.png Graphic file (type png)
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 94.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box197
+\bkgdbox=\box198
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 98.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [54]
+\contentbox=\box199
+\bkgdbox=\box200
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 109.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 6428) in paragraph at lines 109--109
+\OT1/cmr/m/n/10 or \OT1/cmtt/m/n/10 NO[]COMBINATION \OT1/cmr/m/n/10 are the pro
+p-er-ties \OT1/cmtt/m/n/10 SCREEN[]MASK \OT1/cmr/m/n/10 and
+ []
+
+[55]
+\contentbox=\box201
+\bkgdbox=\box202
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 118.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box203
+\bkgdbox=\box204
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 126.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box205
+\bkgdbox=\box206
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 127.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [56]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\preferences/chapter.tex"
+<preferences/preferences.png, id=229, 466.74374pt x 204.765pt>
+File: preferences/preferences.png Graphic file (type png)
+
+<use preferences/preferences.png>
+Package pdftex.def Info: preferences/preferences.png used on input line 6.
+(pdftex.def)             Requested size: 172.5pt x 75.67749pt.
+\contentbox=\box207
+\bkgdbox=\box208
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 27.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [57
+
+
+ <C:/Users/Benjamin Sigg/Documents/GitHub/DockingFrames/docking-frames-core/gui
+de2/preferences/preferences.png>]
+\contentbox=\box209
+\bkgdbox=\box210
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 29.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box211
+\bkgdbox=\box212
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 36.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 36--36
+[]\OT1/cmr/m/n/10 Several mod-els can be com-bined us-ing a
+ []
+
+\contentbox=\box213
+\bkgdbox=\box214
+File: info.png Graphic file (type png)
+<use info.png>
+Package pdftex.def Info: info.png used on input line 40.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+\contentbox=\box215
+\bkgdbox=\box216
+File: class.png Graphic file (type png)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 45.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [58]
+Underfull \hbox (badness 3803) in paragraph at lines 66--67
+[]\OT1/cmr/m/n/10 Preferences can have op-er-a-tions as well. The method
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
+\OT1/cmr/m/n/10 change the en-abled state by call-ing \OT1/cmtt/m/n/10 preferen
+ceChanged \OT1/cmr/m/n/10 of
+ []
+
+
+Underfull \hbox (badness 5050) in paragraph at lines 66--67
+\OT1/cmtt/m/n/10 PreferenceModelListener\OT1/cmr/m/n/10 . If the user trig-gers
+ an op-er-a-tion,
+ []
+
+\contentbox=\box217
+\bkgdbox=\box218
+File: info.png Graphic file (type png)
+<use info.png>
+Package pdftex.def Info: info.png used on input line 70.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [59]
+\contentbox=\box219
+\bkgdbox=\box220
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 107.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [60]) [61]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\extensions/chapter.tex"
+\contentbox=\box221
+\bkgdbox=\box222
+File: design.png Graphic file (type png)
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 6.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 18--19
+\OT1/cmtt/m/n/10 EclipseTheme\OT1/cmr/m/n/10 . Clients only need to en-sure tha
+t the li-braries
+ []
+
+\contentbox=\box223
+\bkgdbox=\box224
+File: stop.png Graphic file (type png)
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 23.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [62
+
+
+]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\properties/chapter.tex"
+\contentbox=\box225
+\bkgdbox=\box226
+File: stop.png Graphic file (type png)
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 8.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [63
+
+
+] [64] [65]
+Underfull \hbox (badness 3547) in paragraph at lines 40--40
+\OT1/cmr/m/n/10 Chang-ing this prop-erty has no ef-fect on ex-ist-ing win-dows.
+
+ []
+
+[66] [67] [68] [69]) [70]
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\guide2.aux"
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\introduction/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\basics/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\layouts/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\actions/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\titles/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\themes/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\stations/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\dragNdrop/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\preferences/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\extensions/chapter.aux")
+("C:\Users\Benjamin Sigg\Documents\GitHub\DockingFrames\docking-frames-core\gui
+de2\properties/chapter.aux")) ) 
+Here is how much of TeX's memory you used:
+ 3398 strings out of 493921
+ 56344 string characters out of 3144852
+ 187314 words of memory out of 3000000
+ 6581 multiletter control sequences out of 15000+200000
+ 9403 words of font info for 33 fonts, out of 3000000 for 9000
+ 841 hyphenation exceptions out of 8191
+ 30i,12n,40p,985b,1466s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\Benjamin Sigg\AppData\Local\MiKTeX\2.
+9\fonts\pk\ljfour\jknappen\ec\dpi600\tcrm1000.pk><C:/Program Files (x86)/MiKTeX
+ 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9
+/fonts/type1/public/amsfonts/cm/cmbx7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fo
+nts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/t
+ype1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type
+1/public/amsfonts/cm/cmr12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/p
+ublic/amsfonts/cm/cmr17.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publ
+ic/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
+msfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsf
+onts/cm/cmti10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmti7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/
+cm/cmtt10.pfb>
+Output written on guide2.pdf (70 pages, 827601 bytes).
+PDF statistics:
+ 322 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 106 words of extra memory for PDF output out of 10000 (max. 10000000)
+
