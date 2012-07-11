@@ -38,4 +38,10 @@ public interface DockableDisplayerListener {
 	 * @param displayer the displayer to replace
 	 */
 	public void discard( DockableDisplayer displayer );
+	
+	/**
+	 * Called if the result of {@link DockableDisplayer#getMoveableElement()} changed.
+	 * @param displayer the source of the event
+	 */
+	public void moveableElementChanged( DockableDisplayer displayer );
 }

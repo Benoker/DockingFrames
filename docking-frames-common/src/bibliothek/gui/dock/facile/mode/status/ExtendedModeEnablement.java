@@ -72,6 +72,87 @@ public interface ExtendedModeEnablement {
 		public boolean isAvailable(){
 			return available;
 		}
+		
+		/**
+		 * Gets the strongest {@link Availability} of <code>this</code> and <code>other</code>.
+		 * @param other some other {@link Availability}
+		 * @return the stronger of <code>this</code> and <code>other</code>
+		 */
+		public Availability strongest( Availability other ){
+			if( this == STRONG_FORBIDDEN || other == STRONG_FORBIDDEN ){
+				return STRONG_FORBIDDEN;
+			}
+			if( this == STRONG_AVAILABLE || other == STRONG_AVAILABLE ){
+				return STRONG_AVAILABLE;
+			}
+			if( this == WEAK_FORBIDDEN || other == WEAK_FORBIDDEN ){
+				return WEAK_FORBIDDEN;
+			}
+			if( this == WEAK_AVAILABLE || other == WEAK_AVAILABLE ){
+				return WEAK_AVAILABLE;
+			}
+			return UNCERTAIN;
+		}
+	}
+	
+	/**
+	 * A measurement of how hidden a certain mode is. Is several {@link Hidden}s are present,
+	 * the first one of this list wins:
+	 * <ol>
+	 * 	<li> {@link Hidden#STRONG_HIDDEN} </li>
+	 *  <li> {@link Hidden#STRONG_VISIBLE} </li>
+	 *  <li> {@link Hidden#WEAK_HIDDEN} </li>
+	 *  <li> {@link Hidden#WEAK_VISIBLE} </li>
+	 *  <li> {@link Hidden#UNCERTAIN} </li>
+	 * </ol>
+	 * @author Benjamin Sigg
+	 */
+	public static enum Hidden{
+		/** the mode is most certainly hidden */
+		STRONG_HIDDEN( true ),
+		/** the mode is probably hidden */
+		WEAK_HIDDEN( true ),
+		/** the strategy cannot decide, some other code will make the decision */
+		UNCERTAIN( true ),
+		/** the mode is probably visible */
+		WEAK_VISIBLE( false ),
+		/** the mode is visible */
+		STRONG_VISIBLE( false );
+		
+		private boolean hidden;
+		
+		private Hidden( boolean available ){
+			this.hidden = available;
+		}
+		
+		/**
+		 * Tells whether this {@link Hidden} means "hidden" or "visible".
+		 * @return <code>true</code> if <code>this</code> means "hidden".
+		 */
+		public boolean isHidden(){
+			return hidden;
+		}
+		
+		/**
+		 * Gets the strongest {@link Hidden} of <code>this</code> and <code>other</code>.
+		 * @param other some other {@link Hidden}
+		 * @return the stronger of <code>this</code> and <code>other</code>
+		 */
+		public Hidden strongest( Hidden other ){
+			if( this == STRONG_HIDDEN || other == STRONG_HIDDEN ){
+				return STRONG_HIDDEN;
+			}
+			if( this == STRONG_VISIBLE || other == STRONG_VISIBLE ){
+				return STRONG_VISIBLE;
+			}
+			if( this == WEAK_HIDDEN || other == WEAK_HIDDEN ){
+				return WEAK_HIDDEN;
+			}
+			if( this == WEAK_VISIBLE || other == WEAK_VISIBLE ){
+				return WEAK_VISIBLE;
+			}
+			return UNCERTAIN;
+		}
 	}
 	
 	/**
@@ -83,6 +164,16 @@ public interface ExtendedModeEnablement {
 	 * Must never be <code>null</code>, but a result of {@link Availability#UNCERTAIN} indicates that this enablement does not know 
 	 */
 	public Availability isAvailable( Dockable dockable, ExtendedMode mode );
+	
+	/**
+	 * Tells whether <code>mode</code> is hidden from the user for <code>dockable</code>. If a mode
+	 * is hidden it can still be available, the user will just not be informed (e.g. there is no button
+	 * that will move the dockable).
+	 * @param dockable some element, not <code>null</code>
+	 * @param mode some mode, not <code>null</code>
+	 * @return whether <code>mode</code> is hidden from the user when looking at <code>dockable</code>
+	 */
+	public Hidden isHidden( Dockable dockable, ExtendedMode mode );
 	
 	/**
 	 * Adds a listener to this enablement, the listener has be informed if the availability state of

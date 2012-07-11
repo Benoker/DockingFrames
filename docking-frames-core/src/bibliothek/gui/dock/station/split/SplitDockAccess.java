@@ -141,4 +141,25 @@ public interface SplitDockAccess {
 	 * @return access to the current {@link SpanFactory}
 	 */
 	public SplitSpanStrategy getSpanStrategy();
+	
+	/**
+	 * Creates a new {@link Leaf}.
+	 * @param id the unique identifier of the leaf
+	 * @return the new leaf
+	 */
+	public Leaf createLeaf( long id );
+	
+	/**
+	 * Creates a new {@link Node}.
+	 * @param id the unique identifier of the node
+	 * @return the new node
+	 */
+	public Node createNode( long id );
+	
+	/**
+	 * Creates a new {@link Placeholder}.
+	 * @param id the unique identifier of this placeholder
+	 * @return the new placeholder
+	 */
+	public Placeholder createPlaceholder( long id );
 }

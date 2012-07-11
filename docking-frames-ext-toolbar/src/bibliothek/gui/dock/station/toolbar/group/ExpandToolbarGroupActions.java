@@ -95,13 +95,6 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 		public void enablementChanged( Dockable item, ExpandedState state, boolean enabled ){
 			update( item );
 		}
-		
-		private void update( Dockable item ){
-			ExpandColumn column = getColumn( item );
-			if( column != null ){
-				column.source.update();
-			}
-		}
 	};
 	
 	/** the controller in whose realm this action is used */
@@ -133,6 +126,17 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 	 */
 	public ExpandableToolbarItemStrategy getStrategy(){
 		return strategy.getValue();
+	}
+	
+	/**
+	 * Checks the state of the column in which <code>item</code> is and updates the actions.
+	 * @param item the item whose column should be checked
+	 */
+	public void update( Dockable item ){
+		ExpandColumn column = getColumn( item );
+		if( column != null ){
+			column.source.update();
+		}
 	}
 
 	protected class ExpandColumn extends AbstractToolbarGroupActions<P, ExpandColumn>.Column {

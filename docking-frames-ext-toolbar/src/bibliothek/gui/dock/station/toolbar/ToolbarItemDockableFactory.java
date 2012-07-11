@@ -28,48 +28,20 @@
  * CH - Switzerland
  */
 
-package bibliothek.gui.dock.toolbar.expand;
+package bibliothek.gui.dock.station.toolbar;
 
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.actions.GroupKeyGenerator;
+import bibliothek.gui.dock.ToolbarItemDockable;
 
 /**
- * An {@link AbstractGroupedExpandAction} used for items that can switch between all
- * {@link ExpandedState}s. This action makes items as small as possible
- * 
+ * A factory for reading and writing {@link ToolbarItemDockable}s.
  * @author Benjamin Sigg
  */
-public class SmallExpandAction extends AbstractGroupedExpandAction{
-	public SmallExpandAction( DockController controller ){
-		super(controller, Action.LARGER, Action.SMALLEST, Action.SMALLER);
-
-		setGenerator(new GroupKeyGenerator<Action>(){
-			@Override
-			public Action generateKey( Dockable dockable ){
-				switch (getStrategy().getState(dockable)) {
-				case EXPANDED:
-					return Action.SMALLEST;
-				case SHRUNK:
-					return Action.LARGER;
-				case STRETCHED:
-					return Action.SMALLER;
-				default:
-					return null;
-				}
-			}
-		});
-	}
+public class ToolbarItemDockableFactory extends DummyDockFactory<ToolbarItemDockable>{
+	/** unique unmodifiable identifier of this factory */
+	public static final String ID = "ToolbarItemDockableFactory";
 
 	@Override
-	public void action( Dockable dockable ){
-		switch (getStrategy().getState(dockable)) {
-		case SHRUNK:
-			getStrategy().setState(dockable, ExpandedState.STRETCHED);
-			return;
-		default:
-			getStrategy().setState(dockable, ExpandedState.SHRUNK);
-			return;
-		}
+	public String getID(){
+		return ID;
 	}
 }

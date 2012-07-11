@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.facile.mode.status;
 
+import java.util.List;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
@@ -33,6 +35,9 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
+import bibliothek.gui.dock.util.extension.ExtensionManager;
+import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 
 /**
  * This default implementation observes {@link CDockable#isExternalizable()},
@@ -41,6 +46,12 @@ import bibliothek.gui.dock.facile.mode.LocationModeManager;
  *
  */
 public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablement{
+	/**
+	 * Name of an {@link ExtensionName} to add additional rules to this enablement. The extensions
+	 * are of type {@link ExtendedModeEnablementFactory}.
+	 */
+	public static final Path EXTENSION = new Path( "dock.DefaultExtendedModeEnablement" );
+	
 	/**
 	 * This factory creates new {@link DefaultExtendedModeEnablement}s.
 	 */
@@ -65,6 +76,16 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 		}
 	};
 	
+	/** a listener added to all {@link #extensions} */
+	private ExtendedModeEnablementListener extensionListener = new ExtendedModeEnablementListener(){
+		public void availabilityChanged( Dockable dockable, ExtendedMode mode, boolean available ){
+			fire( dockable, mode, isAvailable( dockable, mode ).isAvailable() );
+		}
+	};
+	
+	/** Additional rules loaded from the {@link ExtensionManager} */
+	private ExtendedModeEnablement[] extensions;
+	
 	/**
 	 * Creates a new enablement.
 	 * @param manager the manager to observe
@@ -72,6 +93,22 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 	public DefaultExtendedModeEnablement( LocationModeManager<?> manager ){
 		super( manager );
 		init();
+		List<ExtendedModeEnablementFactory> factories = manager.getController().getExtensions().load( new ExtensionName<ExtendedModeEnablementFactory>( EXTENSION, ExtendedModeEnablementFactory.class ));
+		extensions = new ExtendedModeEnablement[ factories.size() ];
+		int index = 0;
+		for( ExtendedModeEnablementFactory factory : factories ){
+			extensions[index] = factory.create( manager );
+			extensions[index].addListener( extensionListener );
+		}
+	}
+	
+	@Override
+	public void destroy(){
+		for( ExtendedModeEnablement extension : extensions ){
+			extension.removeListener( extensionListener );
+			extension.destroy();
+		}
+		super.destroy();
 	}
 	
 	@Override
@@ -89,6 +126,28 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 	}
 
 	public Availability isAvailable( Dockable dockable, ExtendedMode mode ){
+		Availability available = isModeAvailable( dockable, mode );
+		for( ExtendedModeEnablement extension : extensions ){
+			available = available.strongest( extension.isAvailable( dockable, mode ) );
+		}
+		return available;
+	}
+	
+	public Hidden isHidden( Dockable dockable, ExtendedMode mode ){
+		Hidden hidden = Hidden.WEAK_VISIBLE;
+		for( ExtendedModeEnablement extension : extensions ){
+			hidden = hidden.strongest( extension.isHidden( dockable, mode ) );
+		}
+		return hidden;
+	}
+	
+	/**
+	 * The actual implementation of {@link ExtendedModeEnablement#isAvailable(Dockable, ExtendedMode)}
+	 * @param dockable the item whose mode should be checked
+	 * @param mode the mode to check
+	 * @return whether <code>mode</code> is available or not
+	 */
+	protected Availability isModeAvailable( Dockable dockable, ExtendedMode mode ){
 		if( mode == ExtendedMode.NORMALIZED ){
 			return Availability.WEAK_AVAILABLE;
 		}
@@ -125,7 +184,7 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 		DockStation station = dockable.asDockStation();
 		if( station != null ){
 			for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
-				Availability result = isAvailable( station.getDockable( i ), mode );
+				Availability result = isModeAvailable( station.getDockable( i ), mode );
 				if( result != Availability.UNCERTAIN ){
 					return result;
 				}

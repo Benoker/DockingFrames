@@ -45,8 +45,6 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.BubbleTheme;
@@ -56,6 +54,8 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.station.stack.CombinedTab;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.dock.station.stack.StackDockComponentListener;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributor.Target;
 import bibliothek.gui.dock.station.stack.action.DockActionDistributorSource;
 import bibliothek.gui.dock.station.stack.tab.Tab;
@@ -117,7 +117,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
 	"stack.tab.border.disabled",
 	"stack.tab.foreground.disabled"
 })
-public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab, ChangeListener, Runnable, DockableFocusListener{
+public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab, StackDockComponentListener, Runnable, DockableFocusListener{
 	/** a label showing text and icon for this tab */
 	private OrientedLabel label = new OrientedLabel();
 	
@@ -604,10 +604,14 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 		label.removeMouseMotionListener( listener );
 	}
 
-	public void stateChanged( ChangeEvent e ){
+	public void selectionChanged( StackDockComponent stack ){
 		checkAnimation();
 	}
 
+	public void tabChanged( StackDockComponent stack, Dockable dockable ){
+		// ignore
+	}
+	
 	/**
 	 * Ensures that {@link #animation} uses the correct set of color pairs
 	 * and that the correct {@link FontModifier} is used.

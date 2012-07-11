@@ -368,7 +368,7 @@ public class ButtonContent {
      * @return <code>true</code> if the actions should be filtered by the current {@link ButtonContentFilter}
      */
     public boolean filterActions( Dockable dockable, boolean theme ){
-    	return actions.shouldShow( dockable, theme );
+    	return actions.shouldShow( dockable, theme ) && filterActions.shouldShow( dockable, theme );
     }
     
     /**

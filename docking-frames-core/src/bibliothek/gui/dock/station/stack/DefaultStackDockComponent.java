@@ -37,6 +37,8 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
@@ -71,6 +73,9 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	/** the tab to which mouse-events are currently redirected */
 	private Tab mouseTarget;
 	
+	/** listeners to be informed if the selection changes */
+	private List<StackDockComponentListener> listeners = new ArrayList<StackDockComponentListener>();
+	
 	/** keeps track of all tabs that need to be disabled */
 	private TabDisablingStrategyObserver tabDisabling = new TabDisablingStrategyObserver(){
 		@Override
@@ -91,8 +96,17 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
         Listener listener = new Listener();
         addMouseListener( listener );
         addMouseMotionListener( listener );
+        addChangeListener( listener );
         
         setOpaque( false );
+    }
+    
+    public void addStackDockComponentListener( StackDockComponentListener listener ){
+    	listeners.add( listener );
+    }
+    
+    public void removeStackDockComponentListener( StackDockComponentListener listener ){
+    	listeners.remove( listener );
     }
     
     public void setDockTabPlacement( TabPlacement tabSide ){
@@ -154,6 +168,16 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	
 	public Dockable getDockableAt( int index ){
 		return dockables.get( index ).getDockable();
+	}
+	
+	/**
+	 * The structure of the {@link JTabbedPane} does not allow its tabs to recognized as {@link DockElementRepresentative}, 
+	 * hence this method always returns <code>null</code>.
+	 * @param index ignored
+	 * @return <code>null</code>
+	 */
+	public DockElementRepresentative getTabAt( int index ){
+		return null;
 	}
 	
 	public void moveTab( int source, int destination ){
@@ -328,7 +352,13 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 	 * to do drag & drop operations.
 	 * @author Benjamin Sigg
 	 */
-	private class Listener extends MouseInputAdapter{
+	private class Listener extends MouseInputAdapter implements ChangeListener{
+		public void stateChanged( ChangeEvent e ){
+			for( StackDockComponentListener listener : listeners.toArray( new StackDockComponentListener[ listeners.size() ] )){
+				listener.selectionChanged( DefaultStackDockComponent.this );
+			}
+		}
+		
 		/**
 		 * Updates the value of {@link DefaultStackDockComponent#mouseTarget relocator}
 		 * @param x the x-coordinate of the mouse

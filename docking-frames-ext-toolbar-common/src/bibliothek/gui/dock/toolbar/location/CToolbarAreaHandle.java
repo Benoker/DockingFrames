@@ -116,7 +116,7 @@ public class CToolbarAreaHandle implements CToolbarModeArea{
 
 	@Override
 	public boolean isChild( Dockable dockable ){
-		return dockable.getDockParent() == station.getStation();
+		return dockable.asDockStation() != station.getStation() && DockUtilities.isAncestor( station.getStation(), dockable );
 	}
 
 	@Override

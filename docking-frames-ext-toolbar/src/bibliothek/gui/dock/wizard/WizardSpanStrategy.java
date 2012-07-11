@@ -163,6 +163,7 @@ public class WizardSpanStrategy {
 		else{
 			WizardNodeMap map = station.getWizardSplitLayoutManager().getMap();
 			SplitNode node = info.getNode();
+			node = traverseDown( node );
 			Column column = map.getColumn( node );
 			
 			Dimension size = info.getDockable().getComponent().getPreferredSize();
@@ -222,6 +223,26 @@ public class WizardSpanStrategy {
 			}
 			
 		}
+	}
+	
+	private SplitNode traverseDown( SplitNode node ){
+		while( node instanceof Node ){
+			Node n = (Node)node;
+			
+			boolean left = n.getLeft().isVisible();
+			boolean right = n.getRight().isVisible();
+			
+			if( !left && right ){
+				node = n.getRight();
+			}
+			else if( left && !right ){
+				node = n.getLeft();
+			}
+			else{
+				break;
+			}
+		}
+		return node;
 	}
 	
 	private void setPut( int column, int cell ){

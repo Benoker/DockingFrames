@@ -30,12 +30,21 @@
 
 package bibliothek.gui;
 
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
+
 /**
  * A marker interface used to specify which {@link DockStation} accept
  * {@link ToolbarElementInterface}
  * 
  * @author Herve Guillaume
+ * @deprecated marker interfaces should not be necessary, this interface will be removed
  */
+@Deprecated
+@Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+description="Remove this interface")
 public interface ToolbarInterface extends DockStation{
 
 }

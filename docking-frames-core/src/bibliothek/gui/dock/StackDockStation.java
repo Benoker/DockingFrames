@@ -44,8 +44,6 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
@@ -78,6 +76,7 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+import bibliothek.gui.dock.station.stack.StackDockComponentListener;
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
 import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
 import bibliothek.gui.dock.station.stack.StackDockProperty;
@@ -332,6 +331,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	public void discard( DockableDisplayer displayer ){
 	        	StackDockStation.this.discard( displayer );	
         	}
+        	public void moveableElementChanged( DockableDisplayer displayer ){
+        		// ignore
+        	}
         });
         
         background = createBackground();
@@ -358,7 +360,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         };
         
         stackComponent = createStackDockComponent();
-        stackComponent.addChangeListener( visibleListener );
+        stackComponent.addStackDockComponentListener( visibleListener );
         
         stackComponentRepresentative = new StackDockComponentRepresentative();
         stackComponentRepresentative.setComponent( stackComponent );
@@ -479,7 +481,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 }
                 
                 selected = this.stackComponent.getSelectedIndex();
-                this.stackComponent.removeChangeListener( visibleListener );
+                this.stackComponent.removeStackDockComponentListener( visibleListener );
                 this.stackComponent.removeAll();
             }
             
@@ -488,7 +490,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             stackComponentRepresentative.setComponent( stackComponent );
             
             if( getDockableCount() < 2 && !singleTabStackDockComponent() ){
-                stackComponent.addChangeListener( visibleListener );
+                stackComponent.addStackDockComponentListener( visibleListener );
             }
             else{
                 panel.removeAll();
@@ -503,7 +505,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 if( selected >= 0 && selected < stackComponent.getTabCount() )
                     stackComponent.setSelectedIndex( selected );
                 
-                stackComponent.addChangeListener( visibleListener );
+                stackComponent.removeStackDockComponentListener( visibleListener );
             }
             
             Component component = stackComponent.getComponent();
@@ -1167,14 +1169,17 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     protected Insert exactTabIndexAt( int x, int y ){
         Point point = SwingUtilities.convertPoint( panel, x, y, stackComponent.getComponent() );
         
-        for( int i = 0, n = dockables.dockables().size(); i<n; i++ ){
-            Rectangle bounds = stackComponent.getBoundsAt( i );
-            if( bounds != null && bounds.contains( point )){
-            	if( tabPlacement.getValue().isHorizontal() )
-            		return new Insert( i, bounds.x + bounds.width/2 < point.x );
-            	else
-            		return new Insert( i, bounds.y + bounds.height/2 < point.y );
-            }
+        int size = dockables.dockables().size();
+        if( size > 1 || singleTabStackDockComponent() ){
+	        for( int i = 0; i<size; i++ ){
+	            Rectangle bounds = stackComponent.getBoundsAt( i );
+	            if( bounds != null && bounds.contains( point )){
+	            	if( tabPlacement.getValue().isHorizontal() )
+	            		return new Insert( i, bounds.x + bounds.width/2 < point.x );
+	            	else
+	            		return new Insert( i, bounds.y + bounds.height/2 < point.y );
+	            }
+	        }
         }
                
         return null;
@@ -1537,13 +1542,13 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * of the station, and ensures that the visible child has the focus.
      * @author Benjamin Sigg
      */
-    private class VisibleListener extends DockStationAdapter implements ChangeListener{
+    private class VisibleListener extends DockStationAdapter implements StackDockComponentListener{
         @Override
         public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
             visibility.fire();
         }
         
-        public void stateChanged( ChangeEvent e ) {
+        public void selectionChanged( StackDockComponent stack ){
             DockController controller = getController();
             if( controller != null ){
                 Dockable selection = getFrontDockable();
@@ -1554,6 +1559,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
             
             visibility.fire();
+        }
+        
+        public void tabChanged( StackDockComponent stack, Dockable dockable ){
+        	// ignore
         }
     }
     

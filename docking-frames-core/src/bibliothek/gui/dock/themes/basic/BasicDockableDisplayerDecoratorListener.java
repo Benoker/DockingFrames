@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Herve Guillaume, Benjamin Sigg
+ * Copyright (C) 2012 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,29 +19,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  * 
- * Herve Guillaume
- * rvguillaume@hotmail.com
- * FR - France
- *
  * Benjamin Sigg
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
-package bibliothek.gui.dock.station.toolbar;
-
-import bibliothek.gui.dock.ToolbarActionDockable;
+package bibliothek.gui.dock.themes.basic;
 
 /**
- * A factory for reading and writing {@link ToolbarActionDockable}s.
+ * This listener is added to a {@link BasicDockableDisplayerDecorator} and is informed if some
+ * properties of the decorator change.
  * @author Benjamin Sigg
  */
-public class ToolbarActionDockableFactory extends DummyDockFactory<ToolbarActionDockable>{
-	/** unique unmodifiable identifier of this factory */
-	public static final String ID = "ToolbarActionDockableFactory";
-
-	@Override
-	public String getID(){
-		return ID;
-	}
+public interface BasicDockableDisplayerDecoratorListener {
+	/**
+	 * Called if the result of {@link BasicDockableDisplayerDecorator#getMoveableElement()} changed.
+	 * @param decorator the source of the event
+	 */
+	public void moveableElementChanged( BasicDockableDisplayerDecorator decorator );
 }

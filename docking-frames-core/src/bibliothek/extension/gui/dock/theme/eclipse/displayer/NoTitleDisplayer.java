@@ -45,6 +45,7 @@ import bibliothek.extension.gui.dock.util.ReverseCompoundBorder;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
@@ -337,8 +338,15 @@ public class NoTitleDisplayer extends ConfiguredBackgroundPanel implements Docka
 			dockable.configureDisplayerHints( hints );
 		}
 		
+		for( DockableDisplayerListener listener : listeners() ){
+			listener.moveableElementChanged( this );
+		}
 		updateFullBorder();
 		updateInvisibleTab();
+	}
+	
+	public DockElementRepresentative getMoveableElement(){
+		return getDockable();
 	}
 	
 	public void setStation( DockStation station ){

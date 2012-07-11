@@ -1,1 +1,1 @@
-java -jar bin\tutorial.jar
+java -jar bin\docking-frames-demo-tutorial.jar

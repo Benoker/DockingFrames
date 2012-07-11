@@ -31,7 +31,6 @@
 package bibliothek.gui.dock.toolbar;
 
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.AbstractCStation;
@@ -65,6 +64,11 @@ public class CToolbarArea extends AbstractCStation<CommonToolbarContainerDockSta
 	public CToolbarArea( String id, Orientation orientation ){
 		CLocation location = new CToolbarAreaLocation( this );
 		init( new CommonToolbarContainerDockStation( this, orientation ), id, location );
+	}
+	
+	@Override
+	public CToolbarAreaLocation getStationLocation(){
+		return (CToolbarAreaLocation)super.getStationLocation();
 	}
 	
 	@Override

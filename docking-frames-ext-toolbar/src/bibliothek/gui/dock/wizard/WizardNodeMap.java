@@ -31,6 +31,7 @@ package bibliothek.gui.dock.wizard;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +44,7 @@ import java.util.Set;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.split.Leaf;
 import bibliothek.gui.dock.station.split.Node;
 import bibliothek.gui.dock.station.split.Placeholder;
@@ -144,6 +146,14 @@ public abstract class WizardNodeMap {
 			buildColumns();
 		}
 		return columns;
+	}
+	
+	/**
+	 * Gets the number of columns.
+	 * @return the number of columns
+	 */
+	public int getColumnCount(){
+		return getColumns().size();
 	}
 	
 	/**
@@ -698,6 +708,10 @@ public abstract class WizardNodeMap {
 			return getMinimumSize( root );
 		}
 		
+		public Rectangle getBounds(){
+			return root.getBounds();
+		}
+		
 		public int getCellCount(){
 			return leafCells.size();
 		}
@@ -754,7 +768,10 @@ public abstract class WizardNodeMap {
 		public Dimension getPreferredSize(){
 			if( preferredSize == null ) {
 				if( node instanceof Leaf ) {
-					preferredSize = ((Leaf) node).getDisplayer().getComponent().getPreferredSize();
+					DockableDisplayer displayer = ((Leaf) node).getDisplayer();
+					if( displayer != null ){
+						preferredSize = displayer.getComponent().getPreferredSize();
+					}
 				}
 				if( node instanceof Node ) {
 					Dimension left = column.getPreferredSize( ((Node) node).getLeft() );
@@ -788,7 +805,10 @@ public abstract class WizardNodeMap {
 		public Dimension getMinimumSize(){
 			if( minimumSize == null ) {
 				if( node instanceof Leaf ) {
-					minimumSize = ((Leaf) node).getDisplayer().getComponent().getMinimumSize();
+					DockableDisplayer displayer = ((Leaf) node).getDisplayer();
+					if( displayer != null ){
+						minimumSize = displayer.getComponent().getMinimumSize();
+					}
 				}
 				if( node instanceof Node ) {
 					Dimension left = column.getMinimumSize( ((Node) node).getLeft() );

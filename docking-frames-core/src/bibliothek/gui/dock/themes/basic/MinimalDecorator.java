@@ -30,6 +30,7 @@ import java.awt.Insets;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockActionSource;
 
 /**
@@ -59,5 +60,17 @@ public class MinimalDecorator implements BasicDockableDisplayerDecorator{
 	
 	public Insets getDockableInsets(){
 		return new Insets( 0, 0, 0, 0 );
+	}
+	
+	public DockElementRepresentative getMoveableElement(){
+		return null;
+	}
+	
+	public void addDecoratorListener( BasicDockableDisplayerDecoratorListener listener ){
+		// ignored
+	}
+	
+	public void removeDecoratorListener( BasicDockableDisplayerDecoratorListener listener ){
+		// ignored	
 	}
 }

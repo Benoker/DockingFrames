@@ -82,6 +82,9 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		public void discard( DockableDisplayer displayer ){
 			discardDisplayer();
 		}
+		public void moveableElementChanged( DockableDisplayer displayer ){
+			// ignore
+		}
 	};
 
 	/** <code>true</code> if the mouse is currently pressed */

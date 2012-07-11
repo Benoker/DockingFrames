@@ -32,6 +32,7 @@ import java.awt.Insets;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.Enforcement;
@@ -128,6 +129,22 @@ public interface DockableDisplayer {
      * into the default-value
      */
     public void setTitleLocation( Location location );
+    
+    /**
+     * Gets a {@link DockElementRepresentative representation} of the {@link Dockable} that can
+     * be used for grabbing and moving around the displayer. The result of this method should be
+     * the first match of this list:
+     * <ol>
+     * 	<li>A {@link DockTitle}</li>
+     *  <li>Any kind of {@link DockElementRepresentative}</li>
+     *  <li>The {@link Dockable} itself</li>
+     *  <li> <code>null</code> </li>
+     * </ol>
+     * Changes of the result of this method should be communicated through the 
+     * {@link DockableDisplayerListener}s.
+     * @return an element for moving around this displayer, can be <code>null</code>
+     */
+    public DockElementRepresentative getMoveableElement();
     
     /**
      * Gets the title which is shown on this displayer.

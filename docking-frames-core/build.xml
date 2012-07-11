@@ -119,6 +119,9 @@
 		<property name="name.notes" value="docking-frames-demo-notes"/>
 		<property name="name.paint" value="docking-frames-demo-paint"/>
 		<property name="name.sizeAndColor" value="docking-frames-demo-size-and-color"/>
+		<property name="name.toolbar" value="docking-frames-ext-toolbar"/>
+		<property name="name.toolbar.common" value="docking-frames-ext-toolbar-common"/>
+		<property name="name.toolbar.tutorial" value="docking-frames-ext-toolbar-tutorial"/>
 
 		<property name="location.chess" value="docking-frames-demo-chess"/>
 		<property name="location.common" value="docking-frames-common"/>
@@ -221,7 +224,7 @@
 			<fileset dir="${source}/${name.tutorial}"/>
 			<manifest>
 				<attribute name="Main-Class" value="tutorial.TutorialMain"/>
-				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.core}.jar"/>
+				<attribute name="Class-Path" value="lib/${name.common}.jar lib/${name.core}.jar lib/${name.toolbar}.jar lib/${name.toolbar.common}.jar lib/${name.toolbar.tutorial}.jar" />
 			</manifest>
 		</jar>
 	</target>
@@ -252,7 +255,7 @@
 			<fileset dir="${source}/${name.tutorial}"/>
 			<manifest>
 				<attribute name="Main-Class" value="tutorial.TutorialMain"/>
-				<attribute name="Class-Path" value="${name.common}.jar ${name.core}.jar"/>
+				<attribute name="Class-Path" value="${name.common}.jar ${name.core}.jar ${name.toolbar}.jar ${name.toolbar.common}.jar ${name.toolbar.tutorial}.jar"/>
 			</manifest>
 		</jar>
 		<jar destfile="${bin}/${name.demonstration}.jar">

@@ -43,6 +43,7 @@ import javax.swing.border.Border;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
@@ -154,6 +155,14 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     /** decorates this displayer */
     private BasicDockableDisplayerDecorator decorator;
+    
+    /** a listener added to {@link #decorator} */
+    private BasicDockableDisplayerDecoratorListener decoratorListener = new BasicDockableDisplayerDecoratorListener(){
+		public void moveableElementChanged( BasicDockableDisplayerDecorator decorator ){
+			fireMoveableElementChanged();	
+		}
+	};
+    
     /** the result {@link SingleTabDecider#showSingleTab(DockStation, Dockable)} returned */
     private boolean singleTabShowing;
     /** whether an update of the decorator is pending */
@@ -264,8 +273,12 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	if( this.decorator != null ){
     		this.decorator.setDockable( null, null );
     		this.decorator.setController( null );
+    		this.decorator.removeDecoratorListener( decoratorListener );
     	}
     	this.decorator = decorator;
+    	if( this.decorator != null ){
+    		this.decorator.addDecoratorListener( decoratorListener );
+    	}
     	
     	decorator.setController( controller );
     	
@@ -275,6 +288,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     		title.changed( new ActionsDockTitleEvent( dockable, decorator.getActionSuggestion() ) );
     	}
     	
+    	fireMoveableElementChanged();
     	revalidate();
     	repaint();
     }
@@ -421,6 +435,16 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	return listeners.toArray( new DockableDisplayerListener[ listeners.size() ] );
     }
     
+    /**
+     * Calls {@link DockableDisplayerListener#moveableElementChanged(DockableDisplayer)} on any
+     * listener that is registered.
+     */
+    protected void fireMoveableElementChanged(){
+    	for( DockableDisplayerListener listener : listeners() ){
+    		listener.moveableElementChanged( this );
+    	}
+    }
+    
     public void setStation( DockStation station ) {
         this.station = station;
         updateDecorator();
@@ -543,7 +567,21 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
             }
         }
         
+        fireMoveableElementChanged();
         revalidate();
+    }
+    
+    public DockElementRepresentative getMoveableElement(){
+    	if( title != null ){
+    		return title;
+    	}
+    	if( decorator != null ){
+    		DockElementRepresentative result = decorator.getMoveableElement();
+    		if( result != null ){
+    			return result;
+    		}
+    	}
+    	return getDockable();
     }
     
     /**

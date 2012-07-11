@@ -283,7 +283,7 @@ public abstract class SplitNode{
      * @return the new leaf
      */
     public Leaf createLeaf( long id ){
-        return new Leaf( access, id );
+        return access.createLeaf( id );
     }
     
     /**
@@ -292,16 +292,16 @@ public abstract class SplitNode{
      * @return the new node
      */
     public Node createNode( long id ){
-        return new Node( access, id );
+    	return access.createNode( id );
     }
     
     /**
-     * Creates a new {@link Placeholder}.
+     * Creates a new {@link Placeholder} calling {@link SplitDockAccess#createPlaceholder(long)}
      * @param id the unique identifier of the new leaf, can be -1
      * @return the new leaf
      */
     public Placeholder createPlaceholder( long id ){
-    	return new Placeholder( access, id );
+    	return access.createPlaceholder( id );
     }
 
     /**

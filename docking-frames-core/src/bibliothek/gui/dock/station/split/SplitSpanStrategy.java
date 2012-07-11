@@ -131,7 +131,14 @@ public class SplitSpanStrategy {
 		}
 	}
 	
-	private int putToPosition( Put put ){
+	/**
+	 * Tells the index of the {@link Span} at side <code>put</code>.
+	 * @param put one of the non-combining puts
+	 * @return the index of the span
+	 * @throws IllegalArgumentException if <code>put</code> does not desribe one
+	 * of the sides of a {@link SplitNode}
+	 */
+	public int putToPosition( Put put ){
 		switch( put ){
 			case LEFT:
 				return LEFT;
@@ -146,7 +153,12 @@ public class SplitSpanStrategy {
 		}
 	}
 	
-	private Span[] getSpans( PutInfo put ){
+	/**
+	 * Gets the {@link Span}s that are used when <code>put</code> is active.
+	 * @param put the drag and drop operation which may be active
+	 * @return the {@link Span}s that would expand if <code>put</code> is active, can be <code>null</code>
+	 */
+	public Span[] getSpans( PutInfo put ){
 		SplitNode node = put.getNode();
 		if( node instanceof Leaf ){
 			return ((Leaf)node).getSpans();

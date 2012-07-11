@@ -146,7 +146,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 			if( dockable != null ){
 				M current = getCurrentMode( dockable );
 				ExtendedMode next = getDoubleClickStrategy().handleDoubleClick( dockable, current == null ? null : current.getExtendedMode(), enablement );
-				if( next != null && enablement.isAvailable( dockable, next ).isAvailable()){
+				if( next != null && isModeAvailable( dockable, next )){
 					setMode( dockable, next );
 					ensureValidLocation( dockable );
 					return true;
@@ -375,6 +375,21 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 			return false;
 		
 		return enablement.isAvailable( dockable, mode ).isAvailable();
+	}
+	
+	/**
+	 * Using the current {@link ExtendedModeEnablement} this method tells whether
+	 * mode <code>mode</code> is hidden from the user when looking at <code>dockable</code>. A hidden
+	 * mode 
+	 * @param dockable some element, not <code>null</code>
+	 * @param mode some mode, not <code>null</code>
+	 * @return the result of {@link ExtendedModeEnablement#isAvailable(Dockable, ExtendedMode)}
+	 */
+	public boolean isModeHidden( Dockable dockable, ExtendedMode mode ){
+		if( enablement == null )
+			return false;
+		
+		return enablement.isHidden( dockable, mode ).isHidden();
 	}
 	
 	/**

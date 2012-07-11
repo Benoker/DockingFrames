@@ -194,7 +194,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/**
 	 * Creates a new station
 	 * @param orientation the orientation of the content
-	 * @param maxNumberOfDockables the maximum number of children
+	 * @param maxNumberOfDockables the maximum number of children or -1
 	 */
 	public ToolbarContainerDockStation( Orientation orientation, int maxNumberOfDockables ){
 		this.orientation = orientation;
@@ -211,6 +211,10 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			@Override
 			public void discard( DockableDisplayer displayer ){
 				ToolbarContainerDockStation.this.discard( displayer );
+			}
+			@Override
+			public void moveableElementChanged( DockableDisplayer displayer ){
+				// ignore
 			}
 		};
 		displayer.addDockableDisplayerListener( listener );
@@ -435,7 +439,12 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	@Override
 	public DockStationDropLayer[] getLayers(){
 		return new DockStationDropLayer[]{
-				new DefaultDropLayer( this ),
+				new DefaultDropLayer( this ){
+					@Override
+					public Component getComponent(){
+						return ToolbarContainerDockStation.this.getComponent();
+					}
+				},
 				new ToolbarContainerDropLayer( this )
 		};
 	}
@@ -987,7 +996,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	/**
 	 * Add one dockable at the index position. The dockable can be a
-	 * {@link ComponentDockable}, {@link ToolbarDockStation} or a
+	 * {@link ToolbarItemDockable}, {@link ToolbarDockStation} or a
 	 * {@link ToolbarGroupDockStation} (see method accept()). All the
 	 * ComponentDockable extracted from the element are merged together and
 	 * wrapped in a {@link ToolbarDockStation} before to be added at index
@@ -1019,7 +1028,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			final DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking( this, dockable );
 			try {
 				listeners.fireDockableAdding( dockable );
-				dockable.setDockParent( this );
 				final DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables().dockables();
 				final StationChildHandle handle = new StationChildHandle( this, displayer, dockable, title );
 				if( placeholder != null ){
@@ -1030,6 +1038,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				}
 				handle.updateDisplayer();
 				insertAt( handle, index );
+				dockable.setDockParent( this );
 				listeners.fireDockableAdded( dockable );
 				fireDockablesRepositioned( index + 1 );
 			}

@@ -33,6 +33,10 @@ package bibliothek.gui.dock.station.toolbar;
 import java.awt.Component;
 
 import bibliothek.gui.dock.ComponentDockable;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A factory for reading and writing {@link ComponentDockable}s. Since there is
@@ -41,7 +45,11 @@ import bibliothek.gui.dock.ComponentDockable;
  * {@link ComponentDockable}s nor does it store any information.
  * 
  * @author Benjamin Sigg
+ * @deprecated will be removed
  */
+@Deprecated
+@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+description="to be removed")
 public class ToolbarPartDockFactory extends DummyDockFactory<ComponentDockable>{
 	/** unique unmodifiable identifier of this factory */
 	public static final String ID = "ToolbarPartDockFactory";

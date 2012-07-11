@@ -69,6 +69,9 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     	public void discard( DockableDisplayer displayer ){
 	    	discardDisplayer();	
     	}
+    	public void moveableElementChanged( DockableDisplayer displayer ){
+    		updateTitleMover();
+    	}
     };
     
     /** the controller in whose realm this window works */
@@ -255,9 +258,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         	DockableDisplayer displayer = handle.getDisplayer();
         	displayer.removeDockableDisplayerListener( displayerListener );
             handle.destroy();
-            if( titleMover != null ){
-            	titleMover.setElement( null );
-            }
+            updateTitleMover();
             handle = null;
         }
         
@@ -268,13 +269,14 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         	handle = new StationChildHandle( station, station.getDisplayers(), dockable, showTitle ? station.getTitleVersion() : null ){
         		@Override
         		protected void updateTitle( DockTitle title ){
-        			titleChanging( title );
         			super.updateTitle( title );
+        			updateTitleMover();
         		}
         	};
         	handle.updateDisplayer();
             displayer = handle.getDisplayer();
             displayer.addDockableDisplayerListener( displayerListener );
+            updateTitleMover();
         }
         
         showDisplayer( displayer );
@@ -289,12 +291,18 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
 	}
     
     /**
-     * Called if the currently shown {@link DockTitle} is about to change to <code>title</code>.
-     * @param title the new title, can be <code>null</code>
+     * If there is a {@link #titleMover}, then this method updates the element of the mover. It first
+     * tries to set a {@link DockTitle}, if not available the method tries to find other elements like
+     * a tab.
      */
-    protected void titleChanging( DockTitle title ){
+    private void updateTitleMover(){
     	if( titleMover != null ){
-    		titleMover.setElement( title );
+    		if( handle != null && handle.getDisplayer() != null ){
+    			titleMover.setElement( handle.getDisplayer().getMoveableElement() );
+    		}
+    		else{
+    			titleMover.setElement( null );
+    		}
     	}
     }
     

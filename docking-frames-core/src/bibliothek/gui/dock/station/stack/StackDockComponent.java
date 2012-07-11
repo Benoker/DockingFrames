@@ -30,7 +30,6 @@ import java.awt.Component;
 import java.awt.Rectangle;
 
 import javax.swing.Icon;
-import javax.swing.event.ChangeListener;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -55,19 +54,17 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
  * @see javax.swing.JTabbedPane
  */
 public interface StackDockComponent {
-
+	/**
+	 * Adds a listener to this component, it will be called if the selection changes.
+	 * @param listener the new listener, not <code>null</code>
+	 */
+    public void addStackDockComponentListener( StackDockComponentListener listener );
+    
     /**
-     * Adds a {@link ChangeListener} to this component. The listener will be
-     * called when the selected component changes.
-     * @param listener the new listener
-     */
-    public void addChangeListener(ChangeListener listener);
-
-    /**
-     * Removes a {@link ChangeListener} which was added earlier.
+     * Removes <code>listener</code> from this component.
      * @param listener the listener to remove
      */
-    public void removeChangeListener(ChangeListener listener);
+    public void removeStackDockComponentListener( StackDockComponentListener listener );
 
     /**
      * Gets the index of the currently selected dockable
@@ -114,7 +111,7 @@ public interface StackDockComponent {
      * @param dockable the Dockable for which the tab is used
      * @param index the index that the new child should have
      */
-    public void insertTab(String title, Icon icon, Component comp, Dockable dockable, int index);
+    public void insertTab( String title, Icon icon, Component comp, Dockable dockable, int index );
     
     /**
      * Gets the number of children that are added to this StackDockComponent.
@@ -128,6 +125,13 @@ public interface StackDockComponent {
      * @return the element
      */
     public Dockable getDockableAt( int index );
+    
+    /**
+     * Gets an element representing the tab of the {@link Dockable} at <code>index</code>.
+     * @param index the index of some child of this stack
+     * @return the tab or <code>null</code> if no tab exists or tabs cannot be used as {@link DockElementRepresentative}s
+     */
+    public DockElementRepresentative getTabAt( int index );
 
     /**
      * Removes all children from this component

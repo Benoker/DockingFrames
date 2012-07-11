@@ -19,6 +19,8 @@ package tutorial;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -70,11 +72,13 @@ public class TutorialMain extends JFrame{
 		currentCodeDockable.setLayout( new BorderLayout() );
 		currentCodeDockable.add( currentCode.toComponent(), BorderLayout.CENTER );
 		currentCodeDockable.setCloseable( false );
-		currentCodeDockable.addAction( new CopyCodeAction( currentCode ));
+		if( !control.getController().isRestrictedEnvironment() ){
+			currentCodeDockable.addAction( new CopyCodeAction( currentCode ));
+		}
 		layout.add( 30, 0, 70, 100, currentCodeDockable );
 		layout.select( 30, 0, 70, 100, currentSelectionDockable ); 
 	
-		final JTree tutorialsTree = new JTree( new TutorialTreeModel( RootSet.class ));
+		final JTree tutorialsTree = new JTree( new TutorialTreeModel( RootSet.class, loadExtensions() ));
 		tutorialsTree.getSelectionModel().setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
 		tutorialsTree.setShowsRootHandles( true );
 		tutorialsTree.setRootVisible( false );
@@ -97,6 +101,20 @@ public class TutorialMain extends JFrame{
 		layout.add( 0, 0, 30, 100, listDockable );
 		
 		control.getContentArea().deploy( layout );
+	}
+	
+	private Set<TutorialExtension> loadExtensions(){
+		Set<TutorialExtension> set = new HashSet<TutorialExtension>();
+		
+		try{
+			Class<?> clazz = Class.forName( "tutorial.toolbar.TutorialToolbarExtension" );
+			set.add( (TutorialExtension)clazz.newInstance() );
+		}
+		catch( Exception e ){
+			// ignore
+		}
+		
+		return set;
 	}
 	
 	private void select( TutorialTreeModel.Node node ){

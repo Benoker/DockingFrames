@@ -388,7 +388,6 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         		int iconHeight = icon.getIconHeight();
         		
         		icon.paintIcon( this, g, (width-iconWidth)/2, iconOffset );
-        		
         		int usedUp = iconHeight + iconOffset + iconTextDistance;
         		if( usedUp < height ){
 		            Graphics2D g2 = (Graphics2D)g.create( 0, usedUp, width, height-usedUp );
@@ -469,6 +468,6 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         if( isHorizontal() )
             label.setBounds( 0, 0, w+30, h );
         else
-            label.setBounds( 0, 0, h, w+30 );
+            label.setBounds( 0, 0, h+30, w );
     }
 }

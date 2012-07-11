@@ -37,14 +37,13 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
-import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.control.DockRegister;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRegisterListener;
 
 /**
  * The default implementation of an {@link ExpandableToolbarItemStrategy}
- * searches for {@link ToolbarDockStation}s.
+ * searches for {@link ExpandableToolbarItem}s.
  * 
  * @author Benjamin Sigg
  */

@@ -30,6 +30,7 @@ import java.awt.Insets;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.title.ActionsDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
@@ -40,6 +41,19 @@ import bibliothek.gui.dock.title.DockTitle;
  * @author Benjamin Sigg
  */
 public interface BasicDockableDisplayerDecorator {
+	/**
+	 * Adds the listener <code>listener</code> to this decorator, <code>listener</code> will
+	 * be informed if a property of this decorator changes.
+	 * @param listener the new listener, not <code>null</code>
+	 */
+	public void addDecoratorListener( BasicDockableDisplayerDecoratorListener listener );
+	
+	/**
+	 * Removes the listener <code>listener</code> from this decorator.
+	 * @param listener the listener to remove
+	 */
+	public void removeDecoratorListener( BasicDockableDisplayerDecoratorListener listener );
+	
 	/**
 	 * Sets the element to show on this decorator, can be <code>null</code>
 	 * @param component the component which represents <code>dockable</code>
@@ -76,4 +90,11 @@ public interface BasicDockableDisplayerDecorator {
 	 * @return an estimate of how much space is used by the border
 	 */
 	public Insets getDockableInsets();
+	
+	/**
+	 * Gets a {@link DockElementRepresentative} that can be used to move the entire displayer. This method
+	 * should not return the {@link Dockable} itself.
+	 * @return an element to move the displayer, can be <code>null</code>
+	 */
+	public DockElementRepresentative getMoveableElement();
 }

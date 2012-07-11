@@ -313,7 +313,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		if( mode == this ){
 			return null;
 		}
-		if( !isModeAvailable( dockable )){
+		if( !isModeAvailable( dockable ) || isModeHidden( dockable )){
 			return null;
 		}
 		DockableHandle handle = handles.get( dockable );
@@ -333,6 +333,20 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		if( manager == null )
 			return false;
 		return manager.isModeAvailable( dockable, getExtendedMode() );
+	}
+	
+	/**
+	 * Tells whether this mode is hidden for <code>dockable</code>. If the mode is hidden
+	 * then the actions of the {@link #setActionProvider(LocationModeActionProvider) action provider} 
+	 * do not show up.
+	 * @param dockable some element to check
+	 * @return <code>true</code> if this mode is available
+	 */
+	protected boolean isModeHidden( Dockable dockable ){
+		LocationModeManager<?> manager = getManager();
+		if( manager == null )
+			return false;
+		return manager.isModeHidden( dockable, getExtendedMode() );
 	}
 	
 	public boolean isRepresenting( DockStation station ){
