@@ -4,10 +4,32 @@
 <project name="toolbar" default="default" basedir="../">
 	<import file="../docking-frames-core/build.xml"/>
 	
-	<target name="default" depends="source, bin, doc">
+	<target name="default" depends="source, bin, doc, copy">
 		<delete>
 			<fileset dir="${toolbar.temp}"/>
 		</delete>
+	</target>
+	
+	<target name="copy" depends="source, bin, doc">
+		<copy todir="${doc}">
+			<fileset dir="${toolbar.doc}"/>
+		</copy>
+		
+		<copy todir="${source}">
+			<fileset dir="${toolbar.source}"/>
+		</copy>
+		
+		<copy todir="${bin}">
+			<fileset file="${toolbar.bin}/${name.toolbar}.jar"/>
+			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar"/>
+			<fileset file="${toolbar.bin}/${name.toolbar.tutorial}.jar"/>
+		</copy>
+		
+		<copy todir="${web.tutorial}/lib">
+			<fileset file="${toolbar.bin}/${name.toolbar.tutorial}.jar"/>
+			<fileset file="${toolbar.bin}/${name.toolbar}.jar"/>
+			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar"/>
+		</copy>
 	</target>
 
 	<target name="paths" depends="dock.paths">
@@ -23,8 +45,8 @@
 	</target>
 	
 	<target name="doc" depends="source, paths, dock.paths">
-		<mkdir dir="${toolbar.doc}/${name.toolbar}"/>
-		<javadoc destdir="${toolbar.doc}/${name.toolbar}" use="true" splitindex="true" useexternalfile="true">
+		<mkdir dir="${toolbar.doc}/${name.toolbar.common}"/>
+		<javadoc destdir="${toolbar.doc}/${name.toolbar.common}" use="true" splitindex="true" useexternalfile="true">
 			<fileset dir="${toolbar.source}/${name.toolbar}">
 				<include name="**/*.java"/>
 			</fileset>
@@ -53,18 +75,12 @@
 			</manifest>
 		</jar>
 		
-		<jar destfile="${bin}/${name.toolbar.tutorial}.jar">
+		<jar destfile="${toolbar.bin}/${name.toolbar.tutorial}.jar">
 			<fileset dir="${toolbar.temp}/${name.toolbar.tutorial}"/>
+			<fileset dir="${toolbar.source}/${name.toolbar.tutorial}">
+				<include name="**/*java"/>
+			</fileset>
 		</jar>
-		<copy todir="${bin}">
-			<fileset file="${toolbar.bin}/${name.toolbar}.jar"/>
-			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar"/>
-		</copy>
-		<copy todir="${web.tutorial}/lib">
-			<fileset file="${bin}/${name.toolbar.tutorial}.jar"/>
-			<fileset file="${toolbar.bin}/${name.toolbar}.jar"/>
-			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar"/>
-		</copy>
 	</target>
 
 	<!-- Compiling -->

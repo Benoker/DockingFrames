@@ -176,30 +176,32 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	public void revalidateOutside(){
 		if( !onRevalidating ){
 			revalidate();
-			EventQueue.invokeLater( new Runnable(){
-				@Override
-				public void run(){
-					if( getParent() instanceof JViewport ){
-						Container parent = getParent();
-						while( parent != null && !(parent instanceof JScrollPane)){
-							parent = parent.getParent();
-						}
-						if( parent != null ){
-							parent = parent.getParent();
-							if( parent != null && parent instanceof JComponent ){
-								((JComponent)parent).revalidate();
+			if( EventQueue.isDispatchThread() ){
+				EventQueue.invokeLater( new Runnable(){
+					@Override
+					public void run(){
+						if( getParent() instanceof JViewport ){
+							Container parent = getParent();
+							while( parent != null && !(parent instanceof JScrollPane)){
+								parent = parent.getParent();
+							}
+							if( parent != null ){
+								parent = parent.getParent();
+								if( parent != null && parent instanceof JComponent ){
+									((JComponent)parent).revalidate();
+								}
 							}
 						}
+						try{
+							onRevalidating = true;
+							updateBounds();
+						}
+						finally{
+							onRevalidating = false;
+						}
 					}
-					try{
-						onRevalidating = true;
-						updateBounds();
-					}
-					finally{
-						onRevalidating = false;
-					}
-				}
-			} );
+				} );
+			}
 		}
 	}
 	

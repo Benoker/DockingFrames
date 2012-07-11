@@ -526,7 +526,7 @@ public abstract class AbstractSplitDockGrid<D> {
 	
 	/**
 	 * Used by {@link #diff(SplitDockGrid.Node, SplitDockGrid.Node) diff}
-	 * to calculate add a penalty if a line hits a rectangle. 
+	 * to add a penalty if a line hits a rectangle. 
 	 * @param x the x-coordinate of the rectangle
 	 * @param y the y-coordinate of the rectangle
 	 * @param w the width of the rectangle
@@ -538,10 +538,10 @@ public abstract class AbstractSplitDockGrid<D> {
 		double max, min, diff;
 		
 		if( line.horizontal ){
-			if( y > line.alpha || y + h < line.alpha )
+			if( y >= line.alpha || y + h <= line.alpha )
 				return 0;
 			
-			if( x + w < line.betaMin || x > line.betaMax )
+			if( x + w <= line.betaMin || x >= line.betaMax )
 				return 0;
 			
 			min = Math.min( x, line.betaMin );
@@ -549,10 +549,10 @@ public abstract class AbstractSplitDockGrid<D> {
 			diff = max - min - Math.min( line.betaMax - line.betaMin, w );
 		}
 		else{
-			if( x > line.alpha || x + w < line.alpha )
+			if( x >= line.alpha || x + w <= line.alpha )
 				return 0;
 			
-			if( y + h < line.betaMin || y > line.betaMax )
+			if( y + h <= line.betaMin || y >= line.betaMax )
 				return 0;
 			
 			min = Math.min( y, line.betaMin );

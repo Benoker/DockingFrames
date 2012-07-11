@@ -8,6 +8,7 @@ public class CoreToolbarTutorials extends TutorialSet{
 	public CoreToolbarTutorials(){
 		super( ToolbarHelloWorld.class,
 				ToolbarCustomization.class,
-				ToolbarExpanding.class );
+				ToolbarExpanding.class,
+				WizardSplitDockStationTutorial.class );
 	}
 }
