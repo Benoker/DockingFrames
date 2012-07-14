@@ -62,7 +62,7 @@ public interface MovingImage {
     public void bind( boolean transparency );
     
     /**
-     * The reverse of {@link #bind()}. The image should remove any connections
+     * The reverse of {@link #bind(boolean)}. The image should remove any connections
      * to other objects.<br>
      * This method is never called twice in a row.
      */

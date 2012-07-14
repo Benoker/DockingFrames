@@ -68,7 +68,7 @@ public abstract class AbstractSplitDockGrid<D> {
      * <code>"\n"</code>. Every line represents a y-coordinate, the position
      * of a character in a line represents a x-coordinate. The minimal and 
      * the maximal x- and y-coordinates for a character is searched, and
-     * used to call {@link #addDockable(double, double, double, double, Dockable[]) addDockable},
+     * used to call {@link #addDockable(double, double, double, double, Object...) addDockable},
      * where the <code>Dockable</code>-array is taken from the {@link Map} 
      * <code>dockables</code>.
      * @param layout the layout, a string divided by newlines
@@ -240,7 +240,7 @@ public abstract class AbstractSplitDockGrid<D> {
 	/**
 	 * Marks <code>dockable</code> as selected in the stack of elements that
 	 * are on position <code>x, y, width, height</code>. This method requires
-	 * that {@link #addDockable(double, double, double, double, Dockable...) add}
+	 * that {@link #addDockable(double, double, double, double, Object...) add}
 	 * was called with the exact same coordinates and with <code>dockable</code>.
 	 * @param x the x coordinate
 	 * @param y the y coordinate
@@ -249,7 +249,7 @@ public abstract class AbstractSplitDockGrid<D> {
 	 * @param dockable the element to select, not <code>null</code>
 	 * @throws IllegalArgumentException if <code>width</code> or <code>height</code>
 	 * are below 0, if <code>dockable</code> is <code>null</code>, if 
-	 * {@link #addDockable(double, double, double, double, Dockable...) add}
+	 * {@link #addDockable(double, double, double, double, Object...) add}
 	 * was never called with the arguments
 	 */
 	public void setSelected( double x, double y, double width, double height, D dockable ){
@@ -525,7 +525,7 @@ public abstract class AbstractSplitDockGrid<D> {
 	}
 	
 	/**
-	 * Used by {@link #diff(SplitDockGrid.Node, SplitDockGrid.Node) diff}
+	 * Used by {@link #diff(Node, Node) diff}
 	 * to add a penalty if a line hits a rectangle. 
 	 * @param x the x-coordinate of the rectangle
 	 * @param y the y-coordinate of the rectangle

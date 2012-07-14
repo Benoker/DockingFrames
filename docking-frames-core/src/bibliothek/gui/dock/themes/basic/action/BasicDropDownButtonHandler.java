@@ -56,7 +56,7 @@ import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * A handler connecting a {@link DropDownAction} with a {@link BasicDropDownButtonModel}
- * and its view. Clients should call the method {@link #setModel(BasicDropDownButtonModel)} to
+ * and its view. Clients should call the method {@link #setModel(BasicButtonModel)} to
  * connect model and handler.
  * @author Benjamin Sigg
  */

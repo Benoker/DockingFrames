@@ -46,23 +46,23 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 public interface Inserter {
 	/**
 	 * This method is called if {@link DockStationDropLayer#contains(int, int)} confirmed that a point belongs
-	 * to the layer, but before {@link DockStation#prepareDrop(int, int, int, int, Dockable)} was invoked.
+	 * to the layer, but before {@link DockStation#prepareDrop(bibliothek.gui.dock.station.StationDropItem)} was invoked.
 	 * @param source information about the current position of the mouse, the invoked {@link DockElement}s and
 	 * other things related to a drag and drop operation.
 	 * @return a value of <code>null</code> if this {@link Inserter} is not interested in the event, a value
-	 * not <code>null</code> will override {@link DockStation#prepareDrop(int, int, int, int, Dockable)} (the
+	 * not <code>null</code> will override {@link DockStation#prepareDrop(bibliothek.gui.dock.station.StationDropItem)} (the
 	 * method will never be called), in this case {@link #after(InserterSource)} is not called either.
 	 */
 	public StationDropOperation before( InserterSource source );
 	
 	/**
-	 * This method is called after {@link DockStation#prepareDrop(int, int, int, int, Dockable)} was executed, the
+	 * This method is called after {@link DockStation#prepareDrop(bibliothek.gui.dock.station.StationDropItem)} was executed, the
 	 * method is called in any case independent of whether <code>prepareDrop</code> returned a {@link StationDropOperation}
 	 * or not.
 	 * @param source information about the current position of the mouse, the invoked {@link DockElement}s and
 	 * other things related to a drag and drop operation. 
 	 * @return a value of <code>null</code> if this {@link Inserter} is not interested in the event, a value
-	 * not <code>null</code> will override the result of {@link DockStation#prepareDrop(int, int, int, int, Dockable)}
+	 * not <code>null</code> will override the result of {@link DockStation#prepareDrop(bibliothek.gui.dock.station.StationDropItem)}
 	 */
 	public StationDropOperation after( InserterSource source );
 }

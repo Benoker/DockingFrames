@@ -151,7 +151,7 @@ public class DefaultSingleCDockable extends DefaultCDockable implements SingleCD
      * @param content a <code>Component</code> which will be shown in the middle
      * of this dockable, can be <code>null</code>.
      * @param permissions what actions the user is allowed to do, <code>null</code> will be
-     * replaced by {@link DefaultCDockable.Permissions#DEFAULT}.
+     * replaced by {@link bibliothek.gui.dock.common.intern.DefaultCDockable.Permissions#DEFAULT}.
      * @param actions the actions shown in the title, can be <code>null</code>.
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */
@@ -168,7 +168,7 @@ public class DefaultSingleCDockable extends DefaultCDockable implements SingleCD
      * @param content a <code>Component</code> which will be shown in the middle
      * of this dockable, can be <code>null</code>.
      * @param permissions what actions the user is allowed to do, <code>null</code> will be
-     * replaced by {@link DefaultCDockable.Permissions#DEFAULT}.
+     * replaced by {@link bibliothek.gui.dock.common.intern.DefaultCDockable.Permissions#DEFAULT}.
      * @param actions the actions shown in the title, can be <code>null</code>.
      * A separator is inserted for every entry that is <code>null</code> of this array.
      */

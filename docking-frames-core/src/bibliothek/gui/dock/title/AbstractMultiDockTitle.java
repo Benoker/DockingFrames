@@ -355,7 +355,7 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
     /**
      * Tells whether this title is disabled, a disabled title does not react to any user input.
      * @return whether the title is disabled
-     * @set {@link #setDisabled(boolean)}
+     * @see #setDisabled(boolean)
      */
     protected boolean isDisabled(){
     	return disabled;

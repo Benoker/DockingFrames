@@ -109,6 +109,7 @@ import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.StationCombinerValue;
+import bibliothek.gui.dock.themes.StationThemeItemValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -573,7 +574,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * Gets the {@link DisplayerFactory} that is used by this station
      * to create an underground for its children.
      * @return the factory
-     * @see DefaultDisplayerFactoryValue#setDelegate(DisplayerFactory)
+     * @see StationThemeItemValue#setDelegate(Object)
      */
     public DefaultDisplayerFactoryValue getDisplayerFactory() {
         return displayerFactory;
@@ -592,7 +593,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * Gets the {@link Combiner} that is used to merge two {@link Dockable Dockables}
      * on this station.
      * @return the combiner
-     * @see StationCombinerValue#setDelegate(Combiner)
+     * @see StationThemeItemValue#setDelegate(Object)
      */
     public StationCombinerValue getCombiner() {
         return combiner;
@@ -603,7 +604,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * paint information on this station, when a {@link Dockable} is dragged
      * or moved.
      * @return the paint
-     * @see DefaultStationPaintValue#setDelegate(StationPaint)
+     * @see StationThemeItemValue#setDelegate(Object)
      */
     public DefaultStationPaintValue getPaint() {
         return stationPaint;
@@ -1855,14 +1856,14 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /**
      * Called if {@link #getOwner()} changed. This method replaces existing {@link ScreenDockWindow}
-     * by new windows created by {@link ScreenDockWindowFactory#updateWindow(ScreenDockWindow, ScreenDockStation)}.
+     * by new windows created by {@link ScreenDockWindowFactory#updateWindow(ScreenDockWindow, WindowConfiguration, ScreenDockStation)}.
      */
     protected void updateWindows(){
     	updateWindows( false );
     }
     
     /**
-     * Update all windows either by calling {@link ScreenDockWindowFactory#updateWindow(ScreenDockWindow, ScreenDockStation)}
+     * Update all windows either by calling {@link ScreenDockWindowFactory#updateWindow(ScreenDockWindow, WindowConfiguration, ScreenDockStation)}
      * or by calling {@link ScreenDockWindowFactory#createWindow(ScreenDockStation, WindowConfiguration)}.
      * @param force if <code>true</code>, then {@link ScreenDockWindowFactory#createWindow(ScreenDockStation, WindowConfiguration) createWindow}
      * is used and all windows are replaced, if <code>false</code> the factory is allowed to do optimizations.

@@ -297,7 +297,7 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 	}
 
 	/**
-	 * Calls {@link StackDockComponentListener#tabChanged(StackDockComponent, int)} on all listeners that
+	 * Calls {@link StackDockComponentListener#tabChanged(StackDockComponent, Dockable)} on all listeners that
 	 * are currently registered.
 	 * @param dockable the element whose tab changed
 	 */

@@ -194,7 +194,7 @@ public class ThemeManager extends TypedUIProperties{
      * @param <V> the <code>type</code>
      * @param type the type of the entry
      * @param id the identifier of the entry to unlink
-     * @see #link(PropertyKey, Type, String)
+     * @see #link(PropertyKey, TypedUIProperties.Type, String)
      */
     public <V> void unlink( Type<V> type, String id ){
     	transfers.unlink( type, id );

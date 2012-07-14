@@ -372,7 +372,6 @@ public class StickMagnetGraph {
 	 * Starting at the root node, this method follows all {@link Edge}s going into direction <code>side</code>
 	 * and sets the hard flag on <code>side</code> and on {@link Side#opposite()} on all {@link Node#getConstraints()}s it encounters.
 	 * @param side the direction to travel
-	 * @param constraints the constraints to modify
 	 */
 	protected void hardPush( final Side side ){
 		getRoot().visit( new Visitor(){
@@ -419,7 +418,7 @@ public class StickMagnetGraph {
 	}
 	
 	/**
-	 * Ensures that if one side of an {@link Edge} is {@link StickMagnetGraphConstraint#isHard(Side) hard}, then
+	 * Ensures that if one side of an {@link Edge} is {@link StickMagnetGraphConstraint#isHard(MagnetRequest.Side) hard}, then
 	 * the other side is hard as well.
 	 */
 	protected void validateHardConstraints(){
@@ -449,7 +448,7 @@ public class StickMagnetGraph {
 	 * The default implementation tries to smooth out resizes by distributing the changes to many windows. Note that
 	 * truelly invalid boundaries will be catched and processed by the {@link BoundaryRestriction}, which cannot be
 	 * influenced by the {@link StickMagnetGraph}.<br>
-	 * Implementations should also pay attention to {@link StickMagnetGraphConstraint#isHard(Side)} and not modify
+	 * Implementations should also pay attention to {@link StickMagnetGraphConstraint#isHard(MagnetRequest.Side)} and not modify
 	 * hard sides.<br>
 	 * Note that while the root window has a {@link StickMagnetGraphConstraint}, that constraint is actually ignored. 
 	 */
@@ -504,8 +503,8 @@ public class StickMagnetGraph {
 	
 	/**
 	 * Starting from the resized node <code>node</code> this method distributes resizing over a chain of
-	 * nodes. All the affected sides are set to {@link StickMagnetGraphConstraint#setHard(Side, boolean) hard} to
-	 * prevent further modifications. Resizing stops at any {@link StickMagnetGraphConstraint#isHard(Side) hard} side.
+	 * nodes. All the affected sides are set to {@link StickMagnetGraphConstraint#setHard(MagnetRequest.Side, boolean) hard} to
+	 * prevent further modifications. Resizing stops at any {@link StickMagnetGraphConstraint#isHard(MagnetRequest.Side) hard} side.
 	 * @param node the node that was resized
 	 * @param topleft the direction into which the resize operation should ripple, the operation will also ripple in
 	 * the opposite direction
@@ -741,7 +740,7 @@ public class StickMagnetGraph {
 		 * @param node the node that is visited
 		 * @param revisit whether this node has already been visited 
 		 * @return <code>true</code> if the node should be visited, <code>false</code> if not. In the
-		 * later case {@link #endVisit(Edge)} is called immediatelly
+		 * later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediatelly
 		 */
 		public boolean beginVisit( Node node, boolean revisit );
 		
@@ -756,7 +755,7 @@ public class StickMagnetGraph {
 		 * {@link Edge#getSource() source} to {@link Edge#getTarget() target}.
 		 * @param edge the edge that is going to be visited
 		 * @return <code>true</code> if the visitor should follow the edge, <code>false</code> if not.
-		 * In the later case {@link #endVisit(Edge)} is called immediatelly
+		 * In the later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediatelly
 		 */
 		public boolean beginVisit( Edge edge );
 		

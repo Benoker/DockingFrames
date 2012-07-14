@@ -37,7 +37,7 @@ import bibliothek.gui.dock.station.StationDropOperation;
  */
 public interface InserterSource {
 	/**
-	 * Gets the {@link DockStation} which might be the next parent of {@link #getChild()}.
+	 * Gets the {@link DockStation} which might be the next parent of {@link #getItem()}.
 	 * @return the future parent, never <code>null</code>
 	 */
 	public DockStation getParent();
@@ -49,7 +49,7 @@ public interface InserterSource {
 	public StationDropItem getItem();
 	
 	/**
-	 * Gets the {@link StationDropOperation} that was created by {@link DockStation#prepareDrop(int, int, int, int, Dockable)},
+	 * Gets the {@link StationDropOperation} that was created by {@link DockStation#prepareDrop(StationDropItem)},
 	 * this might be <code>null</code> if the station was not yet asked or if the station does not
 	 * accept the new child.
 	 * @return the pending operation, can be <code>null</code>

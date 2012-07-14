@@ -72,7 +72,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     /**
-     * Creates a new layout for <code>station</code>. The default implementation just calls {@link #createLayout(Entry, int, boolean)}.
+     * Creates a new layout for <code>station</code>. The default implementation just calls {@link #createLayout(SplitDockStationLayout.Entry, int, boolean)}.
      * @param station the station for which the layout is requested
      * @param root the contents of the layout
      * @param fullscreen the index of the child that is maximized
@@ -84,7 +84,7 @@ public class SplitDockStationFactory implements DockFactory<SplitDockStation, Sp
     }
     
     /**
-     * Creates a new layout for <code>station</code>. The default implementation just calls {@link #createLayout(Entry, int, boolean)}.
+     * Creates a new layout for <code>station</code>. The default implementation just calls {@link #createLayout(SplitDockStationLayout.Entry, int, boolean)}.
      * @param station the station for which the layout is requested
      * @param root the contents of the layout
      * @param fullscreen the index of the child that is maximized

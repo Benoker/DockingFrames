@@ -51,7 +51,7 @@ public class SplitDockGrid extends AbstractSplitDockGrid<Dockable>{
      * <code>"\n"</code>. Every line represents a y-coordinate, the position
      * of a character in a line represents a x-coordinate. The minimal and 
      * the maximal x- and y-coordinates for a character is searched, and
-     * used to call {@link #addDockable(double, double, double, double, Dockable[]) addDockable},
+     * used to call {@link AbstractSplitDockGrid#addDockable(double, double, double, double, Object...) addDockable},
      * where the <code>Dockable</code>-array is taken from the {@link Map} 
      * <code>dockables</code>.
      * @param layout the layout, a string divided by newlines

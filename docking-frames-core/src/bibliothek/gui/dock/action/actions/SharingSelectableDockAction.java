@@ -58,7 +58,7 @@ public interface SharingSelectableDockAction extends SharingDropDownItemAction, 
      * Gets the icon that is shown when this action is selected.
      * @param modifier tells in which context the icon is used
      * @return The selected-icon, may be <code>null</code>
-     * @see #setSelectedIcon(Icon)
+     * @see #setSelectedIcon(ActionContentModifier, Icon)
      * @see #isSelected()
      */
     public Icon getSelectedIcon( ActionContentModifier modifier );

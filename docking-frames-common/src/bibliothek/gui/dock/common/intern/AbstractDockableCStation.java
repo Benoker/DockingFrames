@@ -25,7 +25,6 @@
  */
 package bibliothek.gui.dock.common.intern;
 
-import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
@@ -54,7 +53,7 @@ public abstract class AbstractDockableCStation<S extends CommonDockStation<?, ?>
     
     /**
      * Creates a new station but does not yet initialize its fields. Subclasses
-     * should call {@link #init(DockStation, String, CLocation, CommonDockable)}.
+     * should call {@link #init(CommonDockStation, String, CLocation, CommonDockable)}.
      */
     protected AbstractDockableCStation(){
     	// nothing

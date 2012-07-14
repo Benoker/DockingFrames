@@ -67,7 +67,7 @@ public interface CombinerTarget {
 	
 	/**
 	 * Some {@link Combiner}s may use the combining feature of {@link DockableDisplayer}s
-	 * ({@link DockableDisplayer#prepareCombination(bibliothek.gui.dock.station.support.CombinerSource, boolean)})
+	 * ({@link DockableDisplayer#prepareCombination(CombinerSource, Enforcement)})
 	 * to combine some {@link Dockable}s. This method returns the information that was provided by the displayer.
 	 * @return the information or <code>null</code>, <code>null</code> is always a valid result
 	 */

@@ -99,7 +99,7 @@ public class StickMagnetGraphConstraint {
 	}
 	
 	/**
-	 * Calls {@link #set(Side, int)}, {@link #setDirect(Side, boolean)} and {@link #setHard(Side, boolean)}.
+	 * Calls {@link #set(MagnetRequest.Side, int)}, {@link #setDirect(MagnetRequest.Side, boolean)} and {@link #setHard(MagnetRequest.Side, boolean)}.
 	 * @param side the side to change
 	 * @param delta the amount of pixels to move <code>side</code>
 	 * @param direct whether the side was calculated or just guessed
@@ -112,16 +112,16 @@ public class StickMagnetGraphConstraint {
 	}
 	
 	/**
-	 * Tells whether {@link #set(Side, int)} was called for <code>side</code>.
+	 * Tells whether {@link #set(MagnetRequest.Side, int)} was called for <code>side</code>.
 	 * @param side the side to check
-	 * @return <code>true</code> if {@link #set(Side, int)} was called at least once
+	 * @return <code>true</code> if {@link #set(MagnetRequest.Side, int)} was called at least once
 	 */
 	public boolean isSet( Side side ){
 		return deltas[ side.ordinal() ] != Integer.MIN_VALUE;
 	}
 	
 	/**
-	 * Gets the value that was {@link #set(Side, int) set} earlier for <code>side</code>. 
+	 * Gets the value that was {@link #set(MagnetRequest.Side, int) set} earlier for <code>side</code>. 
 	 * @param side the side to get
 	 * @return the amount of pixels to move this side
 	 * @throws IllegalArgumentException if <code>side</code> was not set

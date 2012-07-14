@@ -62,7 +62,7 @@ public interface StandardDockActionListener {
      * @param modifier the context in which the icon is used, can be <code>null</code> to indicate that all icons changed
      * @param dockables The {@link Dockable Dockables} for which the icon
      * was changed
-     * @see StandardDockAction#getIcon(Dockable)
+     * @see StandardDockAction#getIcon(Dockable, ActionContentModifier)
      */
     public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables );
     

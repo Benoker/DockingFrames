@@ -100,6 +100,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+import bibliothek.gui.dock.themes.StationThemeItemValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ControllerTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
@@ -618,7 +619,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     /**
      * Gets a {@link StationPaint} which is used to paint some lines onto
-     * this station. Use a {@link DefaultStationPaintValue#setDelegate(StationPaint) delegate}
+     * this station. Use a {@link StationThemeItemValue#setDelegate(Object) delegate}
      * to exchange the paint.
      * @return the paint
      */
@@ -629,7 +630,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     /**
      * Gets a {@link DisplayerFactory} which is used to create new
      * {@link DockableDisplayer} for this station. Use a 
-     * {@link DefaultDisplayerFactoryValue#setDelegate(DisplayerFactory) delegate}
+     * {@link StationThemeItemValue#setDelegate(Object) delegate}
      * to exchange the factory.
      * @return the factory
      */

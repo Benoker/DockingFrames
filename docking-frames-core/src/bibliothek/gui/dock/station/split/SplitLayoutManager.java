@@ -87,7 +87,7 @@ public interface SplitLayoutManager {
      * @param station the calling station
      * @param dockable the element that might be dropped
      * @return where to drop <code>dockable</code> or <code>null</code> if the element should not be dropped
-     * @see #prepareDrop(SplitDockStation, int, int, int, int, boolean, Dockable)
+     * @see #prepareDrop(SplitDockStation, StationDropItem)
      */
     public PutInfo prepareMove( SplitDockStation station, StationDropItem dockable );
     

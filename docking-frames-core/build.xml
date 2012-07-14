@@ -142,7 +142,7 @@
 			<fileset dir="${source}/${name.core}">
 				<include name="**/*.java"/>
 			</fileset>
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+			<link href="http://docs.oracle.com/javase/1.5.0/docs/api/"/>
 		</javadoc>
 
 		<mkdir dir="${doc}/${name.common}"/>
@@ -153,7 +153,7 @@
 			<fileset dir="${source}/${name.common}">
 				<include name="**/*.java"/>
 			</fileset>
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+			<link href="http://docs.oracle.com/javase/1.5.0/docs/api/"/>
 		</javadoc>
 	</target>
 

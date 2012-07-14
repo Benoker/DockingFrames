@@ -59,7 +59,7 @@ public interface StationDropOperation {
 	
 	/**
 	 * Executes this operation. There are no limitations of what the operation may do.
-	 * @throws IllegalStateException if this operation was {@link #destroy() destroied}, if the
+	 * @throws IllegalStateException if this operation was {@link #destroy(StationDropOperation) destroied}, if the
 	 * tree of {@link DockElement}s changed since creation, or if this method was already executed 
 	 */
 	public void execute();

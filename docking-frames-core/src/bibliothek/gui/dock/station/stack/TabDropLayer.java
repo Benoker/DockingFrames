@@ -31,7 +31,7 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.layer.LayerPriority;
 
 /**
- * A {@link DockStationDropLayer} with priority {@link LayerPriority#OVERRIDE_HIGH} representing the
+ * A {@link DockStationDropLayer} with priority {@link LayerPriority#OVERRIDE_PRECISE} representing the
  * tabs of a {@link StackDockStation}.
  * @author Benjamin Sigg
  */

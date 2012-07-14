@@ -31,7 +31,8 @@ import bibliothek.gui.dock.SplitDockStation.Orientation;
 
 /**
  * A {@link Divideable} offers the information needed to represent a dividier between two
- * {@link SplitNode}s. The {@link Divideable} may itself be a {@link SplitNode}.
+ * {@link SplitNode}s. The {@link Divideable} may itself be a {@link SplitNode}. The location of a dividier
+ * is encoded by a <code>double</code>, where <code>0</code> means top/left, and <code>1.0</code> means bottom/right. 
  * @author Benjamin Sigg
  */
 public interface Divideable {
@@ -73,12 +74,12 @@ public interface Divideable {
     /**
      * Sets the location of the divider. The area of the left child is the area
      * of the whole node multiplied with <code>divider</code>. 
-     * @param divider the divider
+     * @param divider the dividier
      */
-	public void setDivider( double dividier );
+	public void setDivider( double divider );
 	
 	/**
-	 * Validates a new <code>divider</code>.
+	 * Validates the new location <code>divider</code>.
 	 * @param divider the new divider
 	 * @return a valid version of <code>divider</code>
 	 */

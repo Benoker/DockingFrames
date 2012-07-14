@@ -50,7 +50,7 @@ public interface ScreenDockWindowFactory {
      * the {@link ScreenDockStation} has a new owner. This method may replace the existing <code>window</code>
      * with a new window if necessary.
      * @param window the currently shown window
-     * @param conifugration the configuration that was used to create <code>window</code>
+     * @param configuration the configuration that was used to create <code>window</code>
      * @param station the owner of the window
      * @return the replacement, a value of <code>null</code> or <code>window</code> means that nothing happens
      */

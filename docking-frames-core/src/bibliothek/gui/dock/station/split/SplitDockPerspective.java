@@ -154,7 +154,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	}
 	
 	/**
-	 * Calls {@link EntryListener#removed(Entry, Entry)} on all listeners that are currently
+	 * Calls {@link EntryListener#removed(SplitDockPerspective.Entry, SplitDockPerspective.Entry)} on all listeners that are currently
 	 * known to this perspective
 	 * @param parent the parent from which <code>child</code> was removed
 	 * @param child the child which was removed
@@ -166,7 +166,7 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
 	}
 	
 	/**
-	 * Calls {@link EntryListener#added(Entry, Entry)} on all listeners that are currently 
+	 * Calls {@link EntryListener#added(SplitDockPerspective.Entry, SplitDockPerspective.Entry)} on all listeners that are currently 
 	 * known to this perspective
 	 * @param parent the parent of the new element
 	 * @param child the child that was added

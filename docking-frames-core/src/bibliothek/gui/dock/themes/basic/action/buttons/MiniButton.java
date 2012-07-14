@@ -320,8 +320,8 @@ public class MiniButton<M extends BasicButtonModel> extends JComponent {
 	}
     
     /**
-     * Gets the key for modifying the border which was set by {@link #setNormalBorder(Border)}.
-     * @param borderKeyMousePressed the new key, not <code>null</code>
+     * Sets the key for modifying the border which was set by {@link #setNormalBorder(Border)}.
+     * @param borderKeyNormal the new key, not <code>null</code>
      */
     public void setBorderKeyNormal( String borderKeyNormal ){
     	if( borderKeyNormal == null ){

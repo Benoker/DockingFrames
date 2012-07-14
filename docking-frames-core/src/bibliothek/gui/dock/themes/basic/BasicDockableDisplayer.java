@@ -82,10 +82,8 @@ import bibliothek.gui.dock.util.UIValue;
  * the <code>Dockable</code> is shown.<br>
  * Clients using a displayer should try to set the {@link #setController(DockController) controller}
  * and the {@link #setStation(DockStation) station} property.<br>
- * Subclasses may override {@link #getComponent(Dockable)}, {@link #addDockable(Dockable, Component)},
- * {@link #removeDockable(Dockable, Component)}, {@link #getComponent(DockTitle)}, {@link #addTitle(Component)}
- * and/or {@link #removeTitle(Component)} if they want to introduce a completely
- * new layout needing more {@link Container Containers}.
+ * Subclasses may override {@link #getComponent(Dockable)} and/or {@link #getComponent(DockTitle)}
+ * if they want to introduce a completely new layout needing more {@link Container Containers}.
  * @see DisplayerCollection
  * @see DisplayerFactory
  * @author Benjamin Sigg

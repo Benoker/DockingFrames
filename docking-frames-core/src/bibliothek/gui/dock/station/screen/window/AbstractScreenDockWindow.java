@@ -69,7 +69,7 @@ import bibliothek.gui.dock.util.Transparency;
 /**
  * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
  * to show the {@link Dockable}. It can operate with any window. Clients need to
- * call {@link #init(Component, Container, boolean)} to put this object onto some
+ * call {@link #init(Component, Container, WindowConfiguration, boolean)} to put this object onto some
  * {@link Container}.
  * @author Benjamin Sigg
  */
@@ -143,7 +143,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 	};
 
     /**
-     * Creates a new window. Subclasses must call {@link #init(Component, Container, boolean)}
+     * Creates a new window. Subclasses must call {@link #init(Component, Container, WindowConfiguration, boolean)}
      * when using this constructor.
      * @param station the owner of this window
      * @param configuration the configuration to apply during creation of this window
@@ -158,8 +158,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      * @param configuration the configuration to apply during creation of this window
      * @param window the root component of this window
      * @param contentParent the container onto which the contents of this window will be put
-     * @param resizeable whether this window should create its own resizing system or not
-     * @see #init(Component, Container, boolean)
+     * @see #init(Component, Container, WindowConfiguration, boolean)
      */
     public AbstractScreenDockWindow( ScreenDockStation station, WindowConfiguration configuration, Component window, Container contentParent ){
         super( station, configuration );

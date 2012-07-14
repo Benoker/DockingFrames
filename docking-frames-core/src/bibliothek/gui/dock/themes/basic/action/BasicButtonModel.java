@@ -357,8 +357,7 @@ public class BasicButtonModel {
     }
     
     /**
-     * Removes any icon that was ever set by {@link #setIcon(ActionContentModifier, Icon)} or
-     * {@link #setSelectedIcon(ActionContentModifier, Icon)}
+     * Removes any icon that was ever set by {@link #setIcon(ActionContentModifier, Icon)}.
      */
     public void clearIcons(){
     	for( ActionContentModifier key : getIconContexts() ){

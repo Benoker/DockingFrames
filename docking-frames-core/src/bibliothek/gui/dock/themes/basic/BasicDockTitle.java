@@ -377,8 +377,8 @@ public class BasicDockTitle extends AbstractDockTitle {
      * @param disabledRightColor the color
      * @see #getDisabledRightTitleColor()
      */
-    public void setDisabledRightColor( Color disabledLeftColor ){
-		this.disabledRightColor.setValue( disabledLeftColor );
+    public void setDisabledRightColor( Color disabledRightColor ){
+		this.disabledRightColor.setValue( disabledRightColor );
 	}
     
     /**
