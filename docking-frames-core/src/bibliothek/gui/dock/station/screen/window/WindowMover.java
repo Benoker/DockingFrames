@@ -47,7 +47,7 @@ import bibliothek.gui.dock.station.screen.magnet.MagnetController;
 import bibliothek.gui.dock.station.screen.magnet.MagnetizedOperation;
 
 /**
- * the {@link WindowMover} can be used by any {@link ScreenDockWindow} showing a {@link DockElementRepresentative}. The
+ * The {@link WindowMover} can be used by any {@link ScreenDockWindow} showing a {@link DockElementRepresentative}. The
  * mover adds a listener to the element and moves the entire window if the element is dragged. The mover also
  * ensures that drag and drop still works.<br>
  * This class also supports {@link MagnetController magnetization}.

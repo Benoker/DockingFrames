@@ -31,9 +31,11 @@
 \newcommand{\extension}[3]{\item[#1] \mbox{ } \begin{description} \item[Name] #2 \item[Usage] #3  \end{description}}
 
 % thanks to http://www.alfredklomp.com/programming/tex/macros/
+
+\newbox\contentbox
+\newbox\bkgdbox
+
 \long\def\greybox#1#2#3{%
-    \newbox\contentbox%
-    \newbox\bkgdbox%
     \setbox\contentbox\hbox to \hsize{%
         \vtop{
             \kern\columnsep

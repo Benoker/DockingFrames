@@ -37,6 +37,7 @@ import bibliothek.gui.dock.station.stack.TabContentFilterListener;
  * filter gets not informed about the existence of the {@link StackDockComponent}. However some other
  * modules using a {@link StackDockComponent} may decide to register them directly.
  * @author Benjamin Sigg
+ * @see StackDockStation#TAB_CONTENT_FILTER
  */
 public interface TabContentFilter {
 	/**

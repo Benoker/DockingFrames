@@ -27,6 +27,7 @@ package bibliothek.gui.dock.station.stack.tab;
 
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
  * This factory creates {@link TabConfiguration}s, which can be used to fine tune the look
@@ -34,6 +35,7 @@ import bibliothek.gui.Dockable;
  * Please note that only a subset of tabs actually supports this configuration, some 
  * {@link DockTheme}s will simply ignore this factory.
  * @see TabConfiguration
+ * @see StackDockStation#TAB_CONFIGURATIONS
  * @author Benjamin Sigg
  */
 public interface TabConfigurations {

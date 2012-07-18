@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.color.ColorCodes;
  * A {@link Border} used by the {@link EclipseButtonTitle}.
  * @author Benjamin Sigg
  */
-@ColorCodes({"flap.button.border.edges"})
+@ColorCodes({"flap.button.border.edges", "flap.button.border.inner", "flap.button.border.outer"})
 public class EclipseButtonBorder extends AbstractEclipseBorder{
 	/**
 	 * Creates a new border

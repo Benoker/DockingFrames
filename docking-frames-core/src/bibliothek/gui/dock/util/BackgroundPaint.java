@@ -55,8 +55,8 @@ public interface BackgroundPaint {
 	/**
 	 * Paints the background <code>component</code> using the graphics context <code>g</code>. The
 	 * exact behavior of this method may depend on the type of <code>component</code>.<br>
-	 * This method should be aware of the methods {@link PaintableComponent#paintBackground(Graphics)} and
-	 * {@link PaintableComponent#paintForeground(Graphics)}:
+	 * This method should be aware of the different <code>paint</code>-methods of {@link PaintableComponent}, 
+	 * for example {@link PaintableComponent#paintBackground(Graphics)}:
 	 * <ul>
 	 * 	<li>If these methods are not called, then they will be executed automatically.</li>
 	 * 	<li>If these methods are called with an argument of <code>null</code> then they will neither paint nor be executed automatically.</li>
@@ -64,7 +64,8 @@ public interface BackgroundPaint {
 	 * </ul>
 	 * Further more implementations should follow these guide lines to prevent artifacts while painting:
 	 * <ul>
-	 * 	<li>If <code>paintable</code> is solid, then the entire background must be painted (every pixel must be filled).</li>
+	 * 	<li>If <code>paintable</code> is not {@link PaintableComponent#getTransparency() transparent},
+	 * then the entire background must be painted (every pixel must be filled).</li>
 	 *  <li>Painting over children ({@link Component}s) will almost certainly not work. The framework uses special transparent panels to do that.</li>
 	 *  <li>Painting semi-transparent children will almost certainly not work because the children may not be marked as transparent (see {@link JComponent#isOpaque()}.</li>
 	 *  <li>In general painting should not require much time (a few milliseconds at most) because painting can happen often.</li>

@@ -163,6 +163,11 @@ public class ActionContentModifier {
 	public int hashCode(){
 		return id.hashCode();
 	}
+	
+	@Override
+	public String toString(){
+		return id;
+	}
 
 	@Override
 	public boolean equals( Object obj ){

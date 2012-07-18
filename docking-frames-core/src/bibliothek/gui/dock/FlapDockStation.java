@@ -1312,9 +1312,12 @@ public class FlapDockStation extends AbstractDockableStation {
     	try{
     		if( controller != null ){
     			controller.freezeLayout();
+    			handles.setStrategy( null );
+				handles.unbind();
     		}
     		
-	    	DockablePlaceholderList<DockableHandle> next = new DockablePlaceholderList<DockableHandle>( map, new PlaceholderListItemAdapter<Dockable, DockableHandle>(){
+	    	handles = new DockablePlaceholderList<DockableHandle>();
+	    	handles.read( map, new PlaceholderListItemAdapter<Dockable, DockableHandle>(){
 	    		private DockHierarchyLock.Token token;
 	    		
 				@Override
@@ -1351,14 +1354,8 @@ public class FlapDockStation extends AbstractDockableStation {
 				}
 			});
 			if( getController() != null ){
-				handles.setStrategy( null );
-				handles.unbind();
-				handles = next;
 				handles.bind();
 				handles.setStrategy( getPlaceholderStrategy() );
-			}
-			else{
-				handles = next;
 			}
     	}
     	finally{

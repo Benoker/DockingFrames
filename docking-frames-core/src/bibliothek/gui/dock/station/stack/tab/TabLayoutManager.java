@@ -36,6 +36,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
  * of a {@link TabPane}. The manager can make use of {@link LayoutBlock}s to simplify
  * its algorithms.
  * @author Benjamin Sigg
+ * @see TabPane#LAYOUT_MANAGER
  */
 public interface TabLayoutManager {
 	/**
