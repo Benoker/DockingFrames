@@ -1,0 +1,276 @@
+<?xml version='1.0'?>
+<layout>
+	<current>
+		<roots>
+			<root name="screen">
+				<layout factory="predefined">
+					<replacement id="rootscreen"/>
+					<delegate id="delegate_screen dock">
+						<placeholders>
+							<version>0</version>
+							<format>dock.PlaceholderList</format>
+							<entry>
+								<key shared="false"/>
+								<item key="map" type="p">
+									<version>0</version>
+									<format>dock.PlaceholderList</format>
+								</item>
+								<item key="convert" type="b">true</item>
+								<item key="convert-keys" type="a">
+									<item type="s">fullscreen</item>
+									<item type="s">id</item>
+									<item type="s">height</item>
+									<item type="s">width</item>
+									<item type="s">y</item>
+									<item type="s">x</item>
+								</item>
+								<item key="dock.fullscreen" type="b">false</item>
+								<item key="dock.id" type="i">0</item>
+								<item key="dock.height" type="i">400</item>
+								<item key="dock.width" type="i">400</item>
+								<item key="dock.y" type="i">20</item>
+								<item key="dock.x" type="i">420</item>
+							</entry>
+						</placeholders>
+					</delegate>
+				</layout>
+				<children ignore="false">
+					<child>
+						<layout factory="delegate_StackDockStationFactory">
+							<selected>1</selected>
+							<placeholders>
+								<version>0</version>
+								<format>dock.PlaceholderList</format>
+								<entry>
+									<key shared="false"/>
+									<item key="convert" type="b">true</item>
+									<item key="convert-keys" type="a">
+										<item type="s">id</item>
+										<item type="s">index</item>
+									</item>
+									<item key="dock.id" type="i">0</item>
+									<item key="dock.index" type="i">0</item>
+								</entry>
+								<entry>
+									<key shared="false"/>
+									<item key="convert" type="b">true</item>
+									<item key="convert-keys" type="a">
+										<item type="s">id</item>
+										<item type="s">index</item>
+									</item>
+									<item key="dock.id" type="i">1</item>
+									<item key="dock.index" type="i">1</item>
+								</entry>
+							</placeholders>
+						</layout>
+						<children ignore="false">
+							<child>
+								<layout factory="delegate_StackDockStationFactory">
+									<selected>1</selected>
+									<placeholders>
+										<version>0</version>
+										<format>dock.PlaceholderList</format>
+										<entry>
+											<key shared="false"/>
+											<item key="convert" type="b">true</item>
+											<item key="convert-keys" type="a">
+												<item type="s">id</item>
+												<item type="s">index</item>
+											</item>
+											<item key="dock.id" type="i">0</item>
+											<item key="dock.index" type="i">0</item>
+										</entry>
+										<entry>
+											<key shared="false"/>
+											<item key="convert" type="b">true</item>
+											<item key="convert-keys" type="a">
+												<item type="s">id</item>
+												<item type="s">index</item>
+											</item>
+											<item key="dock.id" type="i">1</item>
+											<item key="dock.index" type="i">1</item>
+										</entry>
+									</placeholders>
+								</layout>
+								<children ignore="false">
+									<child>
+										<layout factory="delegate_StackDockStationFactory">
+											<selected>1</selected>
+											<placeholders>
+												<version>0</version>
+												<format>dock.PlaceholderList</format>
+												<entry>
+													<key shared="false"/>
+													<item key="convert" type="b">true</item>
+													<item key="convert-keys" type="a">
+														<item type="s">id</item>
+														<item type="s">index</item>
+													</item>
+													<item key="dock.id" type="i">0</item>
+													<item key="dock.index" type="i">0</item>
+												</entry>
+												<entry>
+													<key shared="false"/>
+													<item key="convert" type="b">true</item>
+													<item key="convert-keys" type="a">
+														<item type="s">id</item>
+														<item type="s">index</item>
+													</item>
+													<item key="dock.id" type="i">1</item>
+													<item key="dock.index" type="i">1</item>
+												</entry>
+											</placeholders>
+										</layout>
+										<children ignore="false">
+											<child>
+												<layout factory="delegate_StackDockStationFactory">
+													<selected>1</selected>
+													<placeholders>
+														<version>0</version>
+														<format>dock.PlaceholderList</format>
+														<entry>
+															<key shared="false"/>
+															<item key="convert" type="b">true</item>
+															<item key="convert-keys" type="a">
+																<item type="s">id</item>
+																<item type="s">index</item>
+															</item>
+															<item key="dock.id" type="i">0</item>
+															<item key="dock.index" type="i">0</item>
+														</entry>
+														<entry>
+															<key shared="false"/>
+															<item key="convert" type="b">true</item>
+															<item key="convert-keys" type="a">
+																<item type="s">id</item>
+																<item type="s">index</item>
+															</item>
+															<item key="dock.id" type="i">1</item>
+															<item key="dock.index" type="i">1</item>
+														</entry>
+													</placeholders>
+												</layout>
+												<children ignore="false">
+													<child>
+														<layout factory="delegate_StackDockStationFactory">
+															<selected>1</selected>
+															<placeholders>
+																<version>0</version>
+																<format>dock.PlaceholderList</format>
+																<entry>
+																	<key shared="false"/>
+																	<item key="convert" type="b">true</item>
+																	<item key="convert-keys" type="a">
+																		<item type="s">id</item>
+																		<item type="s">index</item>
+																	</item>
+																	<item key="dock.id" type="i">0</item>
+																	<item key="dock.index" type="i">0</item>
+																</entry>
+																<entry>
+																	<key shared="false"/>
+																	<item key="convert" type="b">true</item>
+																	<item key="convert-keys" type="a">
+																		<item type="s">id</item>
+																		<item type="s">index</item>
+																	</item>
+																	<item key="dock.id" type="i">1</item>
+																	<item key="dock.index" type="i">1</item>
+																</entry>
+															</placeholders>
+														</layout>
+														<children ignore="false">
+															<child>
+																<layout factory="predefined">
+																	<replacement id="dockableA"/>
+																	<delegate id="delegate_DefaultDockableFactory"/>
+																</layout>
+																<children ignore="false"/>
+															</child>
+															<child>
+																<layout factory="predefined">
+																	<replacement id="dockableB"/>
+																	<delegate id="delegate_DefaultDockableFactory"/>
+																</layout>
+																<children ignore="false"/>
+															</child>
+														</children>
+													</child>
+													<child>
+														<layout factory="predefined">
+															<replacement id="dockableC"/>
+															<delegate id="delegate_DefaultDockableFactory"/>
+														</layout>
+														<children ignore="false"/>
+													</child>
+												</children>
+											</child>
+											<child>
+												<layout factory="predefined">
+													<replacement id="dockableD"/>
+													<delegate id="delegate_DefaultDockableFactory"/>
+												</layout>
+												<children ignore="false"/>
+											</child>
+										</children>
+									</child>
+									<child>
+										<layout factory="predefined">
+											<replacement id="dockable300, 300"/>
+											<delegate id="delegate_DefaultDockableFactory"/>
+										</layout>
+										<children ignore="false"/>
+									</child>
+								</children>
+							</child>
+							<child>
+								<layout factory="predefined">
+									<replacement id="dockable400, 600 "/>
+									<delegate id="delegate_DefaultDockableFactory"/>
+								</layout>
+								<children ignore="false"/>
+							</child>
+						</children>
+					</child>
+				</children>
+			</root>
+			<root name="right">
+				<layout factory="predefined">
+					<replacement id="rootright"/>
+					<delegate id="delegate_WizardSplitDockStationFactory">
+						<split>
+							<fullscreen-action>true</fullscreen-action>
+							<node nodeId="1334067752235" orientation="VERTICAL" divider="0.46464646464646464">
+								<leaf id="0" nodeId="1334067745535"/>
+								<leaf id="1" nodeId="1334067752234"/>
+							</node>
+						</split>
+						<wizard>
+							<column size="281">
+								<cell key="0" size="44"/>
+								<cell key="1" size="51"/>
+							</column>
+						</wizard>
+					</delegate>
+				</layout>
+				<children ignore="false">
+					<child>
+						<layout factory="predefined">
+							<replacement id="dockableVery long long long long button"/>
+							<delegate id="delegate_DefaultDockableFactory"/>
+						</layout>
+						<children ignore="false"/>
+					</child>
+					<child>
+						<layout factory="predefined">
+							<replacement id="dockableG"/>
+							<delegate id="delegate_DefaultDockableFactory"/>
+						</layout>
+						<children ignore="false"/>
+					</child>
+				</children>
+			</root>
+		</roots>
+		<children/>
+	</current>
+</layout>

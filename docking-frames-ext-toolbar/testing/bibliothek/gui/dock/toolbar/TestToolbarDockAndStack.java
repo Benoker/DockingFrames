@@ -40,13 +40,13 @@ import javax.swing.border.EmptyBorder;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
@@ -85,19 +85,19 @@ public class TestToolbarDockAndStack{
 		final ToolbarDockStation group1 = new ToolbarDockStation();
 		JButton button = new JButton("One");
 		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
-		final ComponentDockable dockable1 = new ComponentDockable(button);
+		final ToolbarItemDockable dockable1 = new ToolbarItemDockable(button);
 		group1.drop(dockable1);
 		button = new JButton("One");
 		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
-		final ComponentDockable dockable2 = new ComponentDockable(button);
+		final ToolbarItemDockable dockable2 = new ToolbarItemDockable(button);
 		group1.drop(dockable2);
 		button = new JButton("One");
 		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
-		final ComponentDockable dockable3 = new ComponentDockable(button);
+		final ToolbarItemDockable dockable3 = new ToolbarItemDockable(button);
 		group1.drop(dockable3);
 		button = new JButton("One");
 		button.setBorder(new EmptyBorder(new Insets(5, 5, 5, 5)));
-		final ComponentDockable dockable4 = new ComponentDockable(button);
+		final ToolbarItemDockable dockable4 = new ToolbarItemDockable(button);
 		group1.drop(dockable4);
 
 		final ToolbarGroupDockStation toolbar1 = new ToolbarGroupDockStation();
@@ -105,17 +105,17 @@ public class TestToolbarDockAndStack{
 		toolbarStationWest.drop(toolbar1);
 
 		final ToolbarDockStation group2 = new ToolbarDockStation();
-		final ComponentDockable dockable5 = new ComponentDockable(new JButton(
+		final ToolbarItemDockable dockable5 = new ToolbarItemDockable(new JButton(
 				"One"));
 		group2.drop(dockable5);
-		final ComponentDockable dockable6 = new ComponentDockable(new JButton(
+		final ToolbarItemDockable dockable6 = new ToolbarItemDockable(new JButton(
 				"One"));
 		group2.drop(dockable6);
 		final ToolbarDockStation group3 = new ToolbarDockStation();
-		final ComponentDockable dockable7 = new ComponentDockable(new JButton(
+		final ToolbarItemDockable dockable7 = new ToolbarItemDockable(new JButton(
 				"One"));
 		group3.drop(dockable7);
-		final ComponentDockable dockable8 = new ComponentDockable(new JButton(
+		final ToolbarItemDockable dockable8 = new ToolbarItemDockable(new JButton(
 				"One"));
 		group3.drop(dockable8);
 

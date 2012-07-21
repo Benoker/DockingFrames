@@ -35,15 +35,15 @@ import java.awt.Component;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 
 public class ToolbarDockStationSample implements DropSample{
 	private ToolbarDockStation station;
-	private Dockable dockable = new ComponentDockable();
+	private Dockable dockable = new ToolbarItemDockable();
 	
 	public ToolbarDockStationSample(){
 		station = new ToolbarDockStation();

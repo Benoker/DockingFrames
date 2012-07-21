@@ -3,67 +3,187 @@ There are a number of interesting settings whose effects are deeply hidden withi
 
 \src{DockProperties} is nothing else than a map. Instances of \src{PropertyKey} are used as keys. The type of the value depends on the key and the map is typesafe. With the help of a \src{DockPropertyListener} any object can be informed immediately when a value changes.
 
-There are a number of keys and the remainder of this chapter will list all of the keys that are present in version 1.1.0. If not explicitly said otherwise, then any change in the properties will have an immediate effect.
+There are a number of keys and the remainder of this chapter will list all of the keys that are present in version 1.1.1. If not explicitly said otherwise, then any change in the properties will have an immediate effect. This list is only an overview, please have a look at the API documentation or the source code to find out about types and default values.
 
 \warningbox{Some of these properties are accessed and changed by \src{DockTheme}s. It is still possible to override these properties, but clients should be careful and ensure not to break the theme.}
 
 \subsection{Themes}
+These properties either are only used by some \src{DockTheme}s, or are changed by \src{DockTheme}s.
 \begin{description}
- \property{BasicTheme.BASIC\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{BasicColorScheme}}{The \src{ColorScheme} used by \src{BasicTheme}.}
- \property{BubbleTheme.BUBBLE\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{BubbleColorScheme}}{The \src{ColorScheme} used by \src{BubbleTheme}.}
- \property{FlatTheme.FLAT\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{FlatColorScheme}}{The \src{ColorScheme} used by \src{FlatTheme}.}
- \property{EclipseTheme.ECLIPSE\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{EclipseColorScheme}}{The \src{ColorScheme} used by \src{EclipseTheme}.}
- \property{EclipseTheme.PAINT\_ICONS\_WHEN\_DESELECTED}{Boolean}{\src{false}}{Whether to paint icons in tabs of \src{Dockable}s that are not selected. This setting might be ignored if a custom \src{TabPainter} is applied.}
- \property{EclipseTheme.TAB\_PAINTER}{TabPainter}{\src{ShapedGradientPainter.FACTORY}}{How to paint tabs in \src{EclipseTheme} for \src{Dockable}s.}
- \property{EclipseTheme.THEME\_CONNECTOR}{EclipseThemeConnector}{An instance of \src{DefaultEclipseThemeConnector}}{Tells how a lonly \src{Dockable} gets presented in \src{EclipseTheme}. \linebreak Whether it has a border and a title. Also tells which \src{DockAction}s are to be shown on tabs. Changing this entry will not affect decisions that were made by the previous connector.}
- \property{SingleTabDecider.SINGLE\_TAB\_DECIDER}{SingleTabDecider}{\src{SingleTabDecider.NONE}}{Tells whether a single tab should be painted for some \src{Dockable}s. This makes the \src{Dockable}s look as if they were a child of a \linebreak \src{StackDockStation} even if there is no such station around.}
- \property{DockTitle.ORIENTATION\_STRATEGY}{OrientationToRotationConverter}{\src{OrientationToRotationConverter.DEFAULT}}{Tells how to rotate text on a \src{DockTitle}.}
-
- \property{DockTheme.COMBINER}{Combiner}{An instance of \src{ThemeCombiner}}{The default value of the \src{Combiner}.}
- \property{DockTheme.DISPLAYER\_FACTORY}{DisplayerFactory}{An instance of \src{ThemeDisplayerFactory}}{The default value of the \src{DisplayerFactory}.}
- \property{DockTheme.DOCKABLE\_MOVING\_IMAGE\_FACTORY}{DockableMovingImageFactory}{An instance of \src{ThemeDockableMovingImageFactory}}{The defeault value of the \src{DockableMovingImageFactory}.}
- \src{DockTheme.DOCKABLE\_SELECTION}{DockableSelection}{An instance of \src{ThemeDockableSelection}}{The default value of the \src{DockableSelection}.}
-
+ \property{BasicTheme.BASIC\_COLOR\_SCHEME}{Colors of the \src{BasicTheme}}{Sets a strategy (acting like a map) that tells which \src{Color}s to use when the \src{BasicTheme} is selected.}
+ \property{BubbleTheme.BUBBLE\_COLOR\_SCHEME}{Colors of the \src{BubbleTheme}}{Sets a strategy (acting like a map) that tells which \src{Color}s to use when the \src{BubbleTheme} is selected.}
+ \property{BubbleTheme.ACTION\_DISTRIBUTOR}{Actions of the \src{BubbleTheme}}{Tells where a \src{DockAction} should appear: on a tab, on a info-component or on the titel of a \src{Dockable}}.
+ \property{DockTheme.COMBINER}{Stacking \src{Dockable}s}{The default strategy for merging two \src{Dockable}s into one, for example by putting them together on a \src{StackDockStation}.}
+ \property{DockTheme.DISPLAYER\_FACTORY}{\src{Dockable} decorations}{The displayer is a \src{Component} between a \src{Dockable} and its parent, the displayer adds some decorations, for example a border, to the \src{Dockable}.}
+ \property{DockTheme.DOCKABLE\_MOVING\_IMAGE\_FACTORY}{Drag indicator}{Tells what image to show when the user drags a \src{Dockable} around.}
+ \property{DockTheme.DOCKABLE\_SELECTION}{\src{Dockable} selection}{A \src{Component} which allows the user to select the focused \src{Dockable}.}
+ \property{DockableSelector.INIT\_SELECTION}{Start \src{Dockable} selection}{If the user hits this \src{KeyStroke} a window pops up, the user can select the new focused \src{Dockable} on that window.}
+ \property{DockTheme.BACKGROUND\_PAINT}{Background}{This strategy paints the background of various components, it may also make some component transparent.}
+ \property{DockTheme.BORDER\_MODIFIER}{Borders}{An adapter that receives a \src{Border}, the adapter may replace the original border with a custom border.}
+ \property{DockTheme.SPAN\_FACTORY}{Animations during drag and drop}{During drag and drop, the \src{Span}s are used for an animation where empty space seem to appear beneath the \src{Dockable}.}
+ \property{DockTheme.STATION\_PAINT}{Painting during drag and drop}{A strategy used to paint on \src{DockStation}s during a drag and drop operation.}
+ \property{DockTitle.ORIENTATION\_STRATEGY}{Text rotation on titles}{This strategy knows whether the orientation of a \src{DockTitle} is horizontal or vertical, it then tells how to rotate the text on the title.}
+ \property{EclipseTheme.ECLIPSE\_COLOR\_SCHEME}{Colors of the \src{EclipseTheme}}{Sets a strategy {acting like a map} that tells which \src{Color}s to use when the \src{EclipseTheme} is selected.}
+ \property{EclipseTheme.PAINT\_ICONS\_WHEN\_DESELECTED}{\src{EclipseTheme}: when to paint icons}{Tells whether icons should be painted on tabs when they are not selected.}
+ \property{EclipseTheme.TAB\_PAINTER}{\src{EclipseTheme}: how to paint tabs}{A factory and strategy that defines the look of the tabs used by the \src{EclipseTheme}.}
+ \property{EclipseTheme.THEME\_CONNECTOR}{\src{EclipseTheme}: tab configuration}{Tells where to paint tabs, and which \src{DockAction}s to show on these tabs.}
+ \property{FlatTheme.FLAT\_COLOR\_SCHEME}{Colors of the \src{FlatTheme}}{Sets a strategy (acting like a map) that tells which \src{Color}s to use when the \src{FlatTheme} is selected.}
+ \property{FlatTheme.ACTION\_DISTRIBUTOR}{Actions of the \src{FlatTheme}}{Tells where a \src{DockAction} should appear: on a tab, on a info-component or on the titel of a \src{Dockable}}.
+ \property{IconManager.MINIMUM\_ICON\_SIZE}{Size of icons}{Defines the minimum size of icons, any icon smaller than this size will be treated as if it would be bigger.}
 \end{description}
 
 \subsection{Stations}
+Properties related to \src{DockStation}s.
 \begin{description}
- \property{FlapDockStation.LAYOUT\_MANAGER}{FlapLayoutManager}{An instance of \src{DefaultFlapLayoutManager}}{Tells the initial size and whether to hold a \src{Dockable} in a \linebreak \src{FlapDockStation}. The default setting uses the same size for all \src{Dockable}s and forgets the hold-property as soon as a \src{Dockable} is removed from the station.}
- \property{FlapDockStation.BUTTON\_CONTENT}{ButtonContent}{\src{ButtonContent.THEME\_DEPENDENT}}{Tells which information to display on the buttons that represent \src{Dockable}s on a \src{FlapDockStation}. Any mix of icons, text and \src{DockAction}s is possible.}
- \property{FlapDockStation.BUTTON\_CONTENT\_FILTER}{ButtonContentFilter}{DefaultButtonContentFilter}{Tells which \src{DockAction}s should be shown on a button that represents a \src{Dockable} on a \src{FlapDockStation}.}
- \property{FlapDockStation.MINIMUM\_SIZE}{Dimension}{\src{10, 10}}{The minimal size of a \src{FlapDockStation} if it does not have any children.}
- \property{ScreenDockStation.BOUNDARY\_RESTRICTION}{BoundaryRestriction}{\src{BoundaryRestriction.FREE}}{Decides about the shape and location a \src{ScreenDockWindow} is allowed to have. E.g. \src{BoundaryRestriction} might force windows to be visible only on one of many screens.}
- \property{ScreenDockStation.WINDOW\_FACTORY}{ScreenDockWindowFactory}{An instance of \src{DefaultScreenDockWindowFactory}}{The factory used to create new windows for \src{ScreenDockStation}. Changing this property has no effect on existing windows. \linebreak \src{DefaultScreenDockWindowFactory} can be customized and should be preferred over newly written factories.}
- \property{ScreenDockStation.EXPAND\_ON\_DOUBLE\_CLICK}{Boolean}{\src{true}}{Whether a double click onto a title changes the fullscreen-mode of a child of a \src{ScreenDockStation}.}
- \property{ScreenDockStation.FULL\_SCREEN\_STRATEGY}{ScreenDockFullscreenStrategy}{An instance of \src{DefaultScreenDockFullscreenStrategy}}{Defines how a full-screen window looks like and how to switch between normal and full-screen mode.}
- \property{StackDockStation.COMPONENT\_FACTORY}{StackDockComponentFactory}{\src{null}}{Tells a \src{StackDockStation} how to arrange its children.}
- \property{StackDockStation.TAB\_CONTENT\_FILTER}{TabContentFilter}{\src{null}}{Allows to influence what content a tab on a \src{StackDockStation} contains. Does not apply on tabs that were created because of a \src{SingleTabDecider}.}
- \property{TabPane.LAYOUT\_MANAGER}{TabLayoutManager}{Depends on the current theme}{Tells how to order the tabs on a \src{StackDockStation}. Warning: some \src{StackDockComponent}s do not support all the features a layout manager may require.}
- \property{CombinedMenuContent.MENU\_CONTENT}{CombinedMenuContent}{an instanceof of \src{PopupCombinedMenuContent}}{Tells how to present the content of the \src{Dockable}-selection-menu that is used by a \src{StackDockStation} if not all tabs are visible.}
- \property{SplitDockStation.MAXIMIZE\_ACCELERATOR}{KeyStroke}{\src{ctrl+m}}{The keys that have to be pressed in order to maximize or normalize a child of \src{SplitDockStation}.}
- \property{SplitDockStation.LAYOUT\_MANAGER}{SplitLayoutManager}{An instance of \src{DefaultSplitLayoutManager}}{The \src{SplitLayoutManager} is responsible to handle most of the actions that can change the layout of a \src{SplitDockStation}}
- \property{PlaceholderStrategy.PLACEHOLDER\_STRATEGY}{PlaceholderStrategy}{\src{null}}{Maps \src{Dockable}s to placeholders allowing the layout to be much more stable when removing and adding \src{Dockable}s. Affects all stations.}
+ \property{FlapDockStation.BUTTON\_CONTENT}{\src{FlapDockStation}: button content}{Decides what content to show on the buttons, e.g. whether to show an icon or some text.}
+ \property{FlapDockStation.BUTTON\_CONTENT\_FILTER}{\src{FlapDockStation}: button actions}{Filters the \src{DockAction}s that are shown on the button.}
+ \property{FlapDockStation.LAYOUT\_MANAGER}{\src{FlapDockStation}: persistent layout}{Strategy to store and load properties, like the size, of \src{Dockable}s that are not necessarily known to the \src{FlapDockStation}.}
+ \property{FlapDockStation.MINIMUM\_SIZE}{\src{FlapDockStation}: minimum size}{The minimum size of the \src{FlapDockStation} itself, this is specially important when the station does not have any children.}
+ \property{FlapDockStation.WINDOW\_FACTORY}{\src{FlapDockStation}: windows}{A factory creating a \src{FlapWindow}s, this window is used to show one of the children of a \src{FlapDockStation}.}
+ \property{ScreenDockStation.ATTRACTOR\_STRATEGY}{\src{ScreenDockStation}: Attraction and stickiness}{Defines which two windows are attracted or sticked together.}
+ \property{ScreenDockStation.BOUNDARY\_RESTRICTION}{\src{ScreenDockStation}: Where the screen ends}{A definition of the boundaries of the screen, and how windows behave when they are pushed against the boundaries.}
+ \property{ScreenDockStation.DROP\_SIZE\_STRATEGY}{\src{ScreenDockStation}: Size of new windows}{Tells how big a window is when it is created.}
+ \property{ScreenDockStation.EXPAND\_ON\_DOUBLE\_CLICK}{\src{ScreenDockStation}: Fullscreen on mouse click}{Tells whether double clicking with the mouse can command a window to switch into the fullscreen mode.}
+ \property{ScreenDockStation.FULL\_SCREEN\_STRATEGY}{\src{ScreenDockStation}: Definition of ``fullscreen''}{Strategy deciding whether a window is in fullscreen mode or not.}
+ \property{ScreenDockStation.MAGNET\_STRATEGY}{\src{ScreenDockStation}: Implementation of stickiness}{An algorithm that implements magnetization, the algorithm is responsible for finding out which two windows are attract each other or stick together, and how to react when one of the windows is moved aorund.}
+ \property{ScreenDockStation.PREVENT\_FOCUS\_STEALING\_DELAY}{\src{ScreenDockStation}: Issues with focus}{A short delay in which a window cannot steal the focus if the owner window of the \linebreak \src{ScreenDockStation} changed.}
+ \property{ScreenDockStation.WINDOW\_CONFIGURATION}{\src{ScreenDockStation}: Configuration of windows}{A factory creating configurations for the windows, for example whether the window is resizeable.}
+ \property{ScreenDockStation.WINDOW\_FACTORY}{\src{ScreenDockStation}: Implementation of windows}{A factory creating new windows.}
+ \property{SplitDockStation.DIVIDER\_STRATEGY}{\src{SplitDockStation}: Moving the gaps}{This strategy is responsible for changing the location of the gaps when the user grabs them with the mouse.}
+ \property{SplitDockStation.LAYOUT\_MANAGER}{\src{SplitDockStation}: Handling the layout}{Decides about size and location of the children, about what happens if the size of the \src{SplitDockStation} changes, and which drop operations are possible.}
+ \property{SplitDockStation.MAXIMIZE\_ACCELERATOR}{\src{SplitDockStation}: Maximize a child}{Tells which keys the user has to hit to maximize a child.}
+ \property{StackDockStation.COMPONENT\_FACTORY}{\src{StackDockStation}: How the tabs look like}{A factory creating a \src{StackDockComponent}, this component is responsible for painting all the tabs.}
+ \property{StackDockStation.IMMUTABLE\_SELECTION\_INDEX}{\src{StackDockStation}: Reaction on dropping a \src{Dockable}}{Whether dropping a \src{Dockable} changes the selected \src{Dockable} or not.}
+ \property{StackDockStation.TAB\_CONTENT\_FILTER}{\src{StackDockStation}: The contents of the tabs}{An adapter telling what icon and text to show on the tabs.}
+ \property{StackDockStation.TAB\_CONFIGURATIONS}{\src{StackDockStation}: How a small tab looks like}{A configuration telling how the tabs behave if space is running out.}
+ \property{StackDockStation.TAB\_PLACEMENT}{\src{StackDockStation}: Where the tabs show up}{Tells on which side (left, top, right, bottom) the tabs appear.}
 \end{description}
 
-\subsection{Controlling}
+\subsection{Miscellaneous}
+Some properties that do not fit in any other category.
 \begin{description}
- \property{DockableSelector.INIT\_SELECTION}{KeyStroke}{\src{ctrl+shift+e}}{Hitting these keys will open a window where the user can select the focused \src{Dockable}.}
- \property{DockRelocatorMode.SCREEN\_MASK}{ModifierMask}{\src{shift}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.SCREEN\_ONLY} gets activated. This will \linebreak force the \src{Dockable} to be dropped onto a \src{ScreenDockStation}.}
- \property{DockRelocatorMode.NO\_COMBINATION\_MASK}{ModifierMask}{\src{alt}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.NO\_COMBINATION} gets activated. This will prevent the dropped \src{Dockable} from merging with another \src{Dockable}.}
- \property{DockFrontend.HIDE\_ACCELERATOR}{KeyStroke}{\src{ctrl+F4}}{If a \src{DockFrontend} is in use then hitting these keys will hide the currently focused \src{Dockable}.}
+ \property{DockController.RESTRICTED\_ENVIRONMENT}{Applets and webstart}{A Java application has limited rights when executed as applet or from webstart. The framework however needs some special rights, for example to monitor the position of the mouse. If these rights are not available, the framework activates some workarounds (which are not very efficient). In such cases the framework is called to \emph{be running in a restricted environment}. The property is set automatically, and usually clients need only read access. They can change the property, with the danger that the application no longer works afterwards.}
+ \property{DockAction.BUTTON\_CONTENT\_FILTER}{Show text on buttons}{\src{DockAction}s can be shown on buttons. Usually the button contains only the icon of the action, but this strategy allows to show the text (usually used in menus) of the actions as well.}
+ \property{DockActionImportanceOrder.ORDER}{Importance of actions}{Tells the order of importance of a set of \src{DockAction}s. In a situation where there is not enough space to show all actions, the least imporant actions will disappear first. Clients can also use the annotation \src{DockActionImportance} to mark the importance of actions.}
+ \property{TabPane.LAYOUT\_MANAGER}{Layout of tabs}{This strategy is used by \src{TabPane} to decide where to show tabs, menus or info-component.}
+ \property{SingleTabDecider.SINGLE\_TAB\_DECIDER}{Always show tabs}{Usually tabs only appear when some \src{Dockable}s are stacked. This strategy tells whether \src{Dockable}s that are not stacked should still feature a tab.}
+ \property{CombinedMenuContent.MENU\_CONTENT}{Drop down menu on stacks}{If there is not enough space to show all tabs on a \src{StackDockStation}, a menu appears where the user can see the missing tabs. How exactly this menu looks like and how it is implemented is defined by this property.}
+ \property{PlaceholderStrategy.PLACEHOLDER\_STRATEGY}{Keep track of \src{Dockable}s}{Tells the \emph{placeholder} of a \src{Dockable}. The placeholder is left behind if a \src{Dockable} is removed from a station, this way the framework still knows the old place of the item. Clients using \src{DockFrontend} or the Common project should not change this property.}
+ \property{DisablingStrategy.STRATEGY}{Disable items}{This strategy tells which items (\src{Dockable}s, titles, tabs, actions) are disabled. Items that are disabled have a different color and do not react to user input.}
+ \property{DockRelocatorMode.NO\_COMBINATION\_MASK}{No stacking during drag and drop}{If this \src{KeyStroke} is pressed during a drag and drop operation, the framework will not combine \src{Dockable}s. For example the framework will not create a new \src{StackDockStation}.}
+ \property{DockRelocatorMode.SCREEN\_MASK}{Forced floating during drag and drop}{If this \src{KeyStroke} is pressed during a drag and drop operation, the only valid target of the operation is a \src{ScreenDockStation}.}
+ \property{DockFrontend.HIDE\_ACCELERATOR}{Close \src{Dockable}s}{If this \src{KeyStroke} is hit, the currently focused \src{Dockable} is closed - assuming the \src{Dockable} can be closed in the first place.}
+ \property{AWTComponentCaptureStrategy.STRATEGY}{Dealing with AWT components}{Allows clients to implement code to take images from AWT components. There are some default strategies available, going from ``nice'' to ``ugly workaround''.}
+ \property{GlassedPane.TOOLTIP\_STRATEGY}{Tooltips in applets and on webstart}{In a restricted environment the framework will use an invisible \src{Component} to catch all \src{MouseEvent}s. This component is also responsible for showing tooltips. This strategy allows clients to modify the tooltip behavior: how they are created, and what they show.}
 \end{description}
- 
-\subsection{Legacy}
-\begin{description}
- \property{AWTComponentCaptureStrategy.STRATEGY}{AWTComponentCaptureStrategy}{\src{PAINT\_ALL\_STRATEGY}}{Tells how the framework can take a picture from a \src{Component} that is or contains an AWT-\src{Component}. Different strategies are available, some are more subtile but efficient, others are blunt but working under harsh conditions.}
-\end{description}
+
 
 \subsection{Gimmicks}
+These properties are not really necessary, they might be interesting for applications with a lot customization.
 \begin{description}
- \property{PropertyKey.DOCKABLE\_ICON}{Icon}{\src{null}}{This icon is shown for any \src{Dockable} that has no icon set.}
- \property{PropertyKey.DOCKABLE\_TITLE}{String}{\src{null}}{This text is shown for any \src{Dockable} that has no title set.}
- \property{PropertyKey.DOCKABLE\_TOOLTIP}{String}{\src{null}}{This text is shown for any \src{Dockable} for which no tooltip was set.}
- \property{PropertyKey.DOCK\_STATION\_ICON}{Icon}{\src{null}}{This icon is shown for any \src{DockStation} that has no icon set.}
- \property{PropertyKey.DOCK\_STATION\_TITLE}{String}{\src{null}}{This text is shown for any \src{DockStation} that has no title set.}
- \property{PropertyKey.DOCK\_STATION\_TOOLTIP}{String}{\src{null}}{This text is shown for any \src{DockStation} for which no tooltip was set. }
+ \property{PropertyKey.DOCK\_STATION\_ICON}{\src{DockStation}: default icon}{This icon is shown by a \src{DockStation} unless some other icon is set.}
+ \property{PropertyKey.DOCK\_STATION\_TITLE}{\src{DockStation}: default title}{This text is shown by a \src{DockStation} unless some other text is set.}
+ \property{PropertyKey.DOCK\_STATION\_TOOLTIP}{\src{DockStation}: default tooltip}{This tooltip is shown by a \src{DockStation} unless some other tooltip is set.}
+ \property{PropertyKey.DOCKABLE\_ICON}{\src{Dockable}: default icon}{This icon is shown by a \src{Dockable} unless some other icon is set.}
+ \property{PropertyKey.DOCKABLE\_TITLE}{\src{Dockable}: default title}{This text is shown by a \src{Dockable} unless some other text is set.}
+ \property{PropertyKey.DOCKABLE\_TOOLTIP}{\src{Dockable}: default tooltip}{This tooltip is shown by a \src{Dockable} unless some other tooltip is set.}
 \end{description}
+
+\subsection{Glass Extension}
+The Glass Extension provides some additional properties.
+\begin{description}
+ \property{EclipseThemeExtension.GLASS\_FACTORY}{Detailed configuration}{This factory creates the ``glass effect''.}
+ \property{CGlassExtension.SMALL\_TAB\_SIZE}{Size of tabs}{Allows to make tabs a little bit smaller.}
+\end{description}
+
+\subsection{Toolbar Extension}
+The Toolbar Extension provides some additional properties.
+\begin{description}
+ \property{ExpandableToolbarItemStrategy.STRATEGY}{Each toolbar-item can appear in three different sizes, this strategy tells which sizes are available for which items. Clients usually have no need to implement this interface, instead the \src{Dockable}s should implement \src{ExpandableToolbarItem}.}
+ \property{ToolbarGroupDockStation.DIVIDER\_STRATEGY\_FACTORY}{\src{ToolbarGroupDockStation}: Painting between \src{Dockable}s.}{This strategy allows the \src{ToolbarGroupDockStation} to paint some borders between its children.}
+ \property{ToolbarGroupDockStation.HEADER\_FACTORY}{\src{ToolbarGroupDockStation}: }
+ \property{ToolbarGroupDockStation.SCROLLBAR\_FACTORY}{\src{ToolbarGroupDockStation}: }
+ \property{ToolbarDockStation.GAP}{}
+ \property{ToolbarDockStation.SIDE\_GAP}{}
+ \property{ToolbarStrategy.STRATEGY}{}
+\end{description}
+
+CControl.CCONTROL
+LocationModeManager.MODE\_ENABLEMENT
+CControl.KEY\_CLOSE
+CControl.KEY\_GOTO\_EXTERNALIZED
+CControl.KEY\_GOTO\_MAXIMIZED
+CControl.KEY\_GOTO\_MINIMIZED
+CControl.KEY\_GOTO\_NORMALIZED
+CControl.KEY\_MAXIMIZE\_CHANGE
+LocationModeManager.DOUBLE\_CLICK\_STRATEGY
+CControl.RESIZE\_LOCK\_CONFLICT\_RESOLVER
+
+
+
+% \subsection{Themes}
+% \begin{description}
+%  \property{BasicTheme.BASIC\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{BasicColorScheme}}{The \src{ColorScheme} used by \src{BasicTheme}.}
+%  \property{BubbleTheme.BUBBLE\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{BubbleColorScheme}}{The \src{ColorScheme} used by \src{BubbleTheme}.}
+%  \property{FlatTheme.FLAT\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{FlatColorScheme}}{The \src{ColorScheme} used by \src{FlatTheme}.}
+%  \property{EclipseTheme.ECLIPSE\_COLOR\_SCHEME}{ColorScheme}{An instance of \src{EclipseColorScheme}}{The \src{ColorScheme} used by \src{EclipseTheme}.}
+%  \property{EclipseTheme.PAINT\_ICONS\_WHEN\_DESELECTED}{Boolean}{\src{false}}{Whether to paint icons in tabs of \src{Dockable}s that are not selected. This setting might be ignored if a custom \src{TabPainter} is applied.}
+%  \property{EclipseTheme.TAB\_PAINTER}{TabPainter}{\src{ShapedGradientPainter.FACTORY}}{How to paint tabs in \src{EclipseTheme} for \src{Dockable}s.}
+%  \property{EclipseTheme.THEME\_CONNECTOR}{EclipseThemeConnector}{An instance of \src{DefaultEclipseThemeConnector}}{Tells how a lonly \src{Dockable} gets presented in \src{EclipseTheme}. \linebreak Whether it has a border and a title. Also tells which \src{DockAction}s are to be shown on tabs. Changing this entry will not affect decisions that were made by the previous connector.}
+%  \property{SingleTabDecider.SINGLE\_TAB\_DECIDER}{SingleTabDecider}{\src{SingleTabDecider.NONE}}{Tells whether a single tab should be painted for some \src{Dockable}s. This makes the \src{Dockable}s look as if they were a child of a \linebreak \src{StackDockStation} even if there is no such station around.}
+%  \property{DockTitle.ORIENTATION\_STRATEGY}{OrientationToRotationConverter}{\src{OrientationToRotationConverter.DEFAULT}}{Tells how to rotate text on a \src{DockTitle}.}
+%  \property{DockTheme.COMBINER}{Combiner}{An instance of \src{ThemeCombiner}}{The default value of the \src{Combiner}.}
+%  \property{DockTheme.DISPLAYER\_FACTORY}{DisplayerFactory}{An instance of \src{ThemeDisplayerFactory}}{The default value of the \src{DisplayerFactory}.}
+%  \property{DockTheme.DOCKABLE\_MOVING\_IMAGE\_FACTORY}{DockableMovingImageFactory}{An instance of \src{ThemeDockableMovingImageFactory}}{The defeault value of the \src{DockableMovingImageFactory}.}
+%  \property{DockTheme.DOCKABLE\_SELECTION}{DockableSelection}{An instance of \src{ThemeDockableSelection}}{The default value of the \src{DockableSelection}.}
+%  \property{DockTheme.BACKGROUND\_PAINT}{BackgroundPaint}{\src{null}}{The default \src{BackgroundPaint}.}
+%  \property{DockTheme.BORDER\_MODIFIER}{BorderModifier}{\src{null}}{The default \src{BorderModifier}.}
+%  \property{DockTheme.STATION\_PAINT}{StationPaint}{An instance of \src{ThemeStationPaint}}{The default value of the \src{StationPaint}.}
+% \end{description}
+% 
+% \subsection{Stations}
+% \begin{description}
+%  \property{FlapDockStation.LAYOUT\_MANAGER}{FlapLayoutManager}{An instance of \src{DefaultFlapLayoutManager}}{Tells the initial size and whether to hold a \src{Dockable} in a \linebreak \src{FlapDockStation}. The default setting uses the same size for all \src{Dockable}s and forgets the hold-property as soon as a \src{Dockable} is removed from the station.}
+%  \property{FlapDockStation.BUTTON\_CONTENT}{ButtonContent}{\src{ButtonContent.THEME\_DEPENDENT}}{Tells which information to display on the buttons that represent \src{Dockable}s on a \src{FlapDockStation}. Any mix of icons, text and \src{DockAction}s is possible.}
+%  \property{FlapDockStation.BUTTON\_CONTENT\_FILTER}{ButtonContentFilter}{DefaultButtonContentFilter}{Tells which \src{DockAction}s should be shown on a button that represents a \src{Dockable} on a \src{FlapDockStation}.}
+%  \property{FlapDockStation.MINIMUM\_SIZE}{Dimension}{\src{10, 10}}{The minimal size of a \src{FlapDockStation} if it does not have any children.}
+%  \property{FlapDockStation.WINDOW\_FACTORY}{FlapWindowFactory}{An instance of \src{DefaultFlapWindowFactory}}{A factory that creates the windows used by the \src{FlapDockStation}}
+%  \property{ScreenDockStation.BOUNDARY\_RESTRICTION}{BoundaryRestriction}{\src{BoundaryRestriction.FREE}}{Decides about the shape and location a \src{ScreenDockWindow} is allowed to have. E.g. \src{BoundaryRestriction} might force windows to be visible only on one of many screens.}
+%  \property{ScreenDockStation.EXPAND\_ON\_DOUBLE\_CLICK}{Boolean}{\src{true}}{Whether fullscreen mode should be activated if the user double clicks on the title of a child of the \src{ScreenDockStation}.}
+%  \property{ScreenDockStation.FULL\_SCREEN\_STRATEGY}{ScreenDockFullscreenStrategy}{An instance of \src{DefaultScreenDockFullscreenStrategy}}{Defines to the \src{ScreenDockStation} what ``fullscreen'' means.}
+%  \property{ScreenDockStation.WINDOW\_FACTORY}{ScreenDockWindowFactory}{An instance of \src{DefaultScreenDockWindowFactory}}{The factory used to create new windows for \src{ScreenDockStation}. Changing this property has no effect on existing windows. \linebreak \src{DefaultScreenDockWindowFactory} can be customized and should be preferred over newly written factories.}
+%  \property{ScreenDockStation.EXPAND\_ON\_DOUBLE\_CLICK}{Boolean}{\src{true}}{Whether a double click onto a title changes the fullscreen-mode of a child of a \src{ScreenDockStation}.}
+%  \property{ScreenDockStation.FULL\_SCREEN\_STRATEGY}{ScreenDockFullscreenStrategy}{An instance of \src{DefaultScreenDockFullscreenStrategy}}{Defines how a full-screen window looks like and how to switch between normal and full-screen mode.}
+%  \property{StackDockStation.COMPONENT\_FACTORY}{StackDockComponentFactory}{\src{null}}{Tells a \src{StackDockStation} how to arrange its children.}
+%  \property{StackDockStation.TAB\_CONTENT\_FILTER}{TabContentFilter}{\src{null}}{Allows to influence what content a tab on a \src{StackDockStation} contains. Does not apply on tabs that were created because of a \src{SingleTabDecider}.}
+%  \property{TabPane.LAYOUT\_MANAGER}{TabLayoutManager}{Depends on the current theme}{Tells how to order the tabs on a \src{StackDockStation}. Warning: some \src{StackDockComponent}s do not support all the features a layout manager may require.}
+%  \property{CombinedMenuContent.MENU\_CONTENT}{CombinedMenuContent}{an instanceof of \src{PopupCombinedMenuContent}}{Tells how to present the content of the \src{Dockable}-selection-menu that is used by a \src{StackDockStation} if not all tabs are visible.}
+%  \property{SplitDockStation.MAXIMIZE\_ACCELERATOR}{KeyStroke}{\src{ctrl+m}}{The keys that have to be pressed in order to maximize or normalize a child of \src{SplitDockStation}.}
+%  \property{SplitDockStation.LAYOUT\_MANAGER}{SplitLayoutManager}{An instance of \src{DefaultSplitLayoutManager}}{The \src{SplitLayoutManager} is responsible to handle most of the actions that can change the layout of a \src{SplitDockStation}}
+%  \property{PlaceholderStrategy.PLACEHOLDER\_STRATEGY}{PlaceholderStrategy}{\src{null}}{Maps \src{Dockable}s to placeholders allowing the layout to be much more stable when removing and adding \src{Dockable}s. Affects all stations.}
+% \end{description}
+% 
+% \subsection{Controlling}
+% \begin{description}
+%  \property{DockController.RESTRICTED\_ENVIRONMENT}{Boolean}{depends on environment}{Tells whether the application runs in a restricted environment where global listening for \src{AWTEvent}s is not allowed.}
+%  \property{DockableSelector.INIT\_SELECTION}{KeyStroke}{\src{ctrl+shift+e}}{Hitting these keys will open a window where the user can select the focused \src{Dockable}.}
+%  \property{DockRelocatorMode.SCREEN\_MASK}{ModifierMask}{\src{shift}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.SCREEN\_ONLY} gets activated. This will \linebreak force the \src{Dockable} to be dropped onto a \src{ScreenDockStation}.}
+%  \property{DockRelocatorMode.NO\_COMBINATION\_MASK}{ModifierMask}{\src{alt}}{If these modifiers are pressed during a drag and drop operation then \src{DockRelocatorMode.NO\_COMBINATION} gets activated. This will prevent the dropped \src{Dockable} from merging with another \src{Dockable}.}
+%  \property{DockFrontend.HIDE\_ACCELERATOR}{KeyStroke}{\src{ctrl+F4}}{If a \src{DockFrontend} is in use then hitting these keys will hide the currently focused \src{Dockable}.}
+% \end{description}
+%  
+% \subsection{Legacy}
+% \begin{description}
+%  \property{AWTComponentCaptureStrategy.STRATEGY}{AWTComponentCaptureStrategy}{\src{PAINT\_ALL\_STRATEGY}}{Tells how the framework can take a picture from a \src{Component} that is or contains an AWT-\src{Component}. Different strategies are available, some are more subtile but efficient, others are blunt but working under harsh conditions.}
+% \end{description}
+% 
+% \subsection{Gimmicks}
+% \begin{description}
+%  \property{PropertyKey.DOCKABLE\_ICON}{Icon}{\src{null}}{This icon is shown for any \src{Dockable} that has no icon set.}
+%  \property{PropertyKey.DOCKABLE\_TITLE}{String}{\src{null}}{This text is shown for any \src{Dockable} that has no title set.}
+%  \property{PropertyKey.DOCKABLE\_TOOLTIP}{String}{\src{null}}{This text is shown for any \src{Dockable} for which no tooltip was set.}
+%  \property{PropertyKey.DOCK\_STATION\_ICON}{Icon}{\src{null}}{This icon is shown for any \src{DockStation} that has no icon set.}
+%  \property{PropertyKey.DOCK\_STATION\_TITLE}{String}{\src{null}}{This text is shown for any \src{DockStation} that has no title set.}
+%  \property{PropertyKey.DOCK\_STATION\_TOOLTIP}{String}{\src{null}}{This text is shown for any \src{DockStation} for which no tooltip was set. }
+%  \property{DockTitle.ORIENTATION\_STRATEGY}{OrientationToRotationStrategy}{\src{OrientationToRotationStrategy.DEFAULT}}{Tells \src{DockTitle}s how much they have to rotate their text depending on their orientation.}
+% \end{description}

@@ -95,7 +95,7 @@
 \contentsline {subsection}{\numberline {8.3}Deciding where to drop an element}{59}
 \contentsline {subsubsection}{\numberline {8.3.1}Search}{60}
 \contentsline {subsubsection}{\numberline {8.3.2}Drop}{60}
-\contentsline {subsection}{\numberline {8.4}Restricing}{61}
+\contentsline {subsection}{\numberline {8.4}Restrictions}{61}
 \contentsline {subsection}{\numberline {8.5}Modes}{62}
 \contentsline {subsection}{\numberline {8.6}Animations}{62}
 \contentsline {section}{\numberline {9}Preferences}{64}
@@ -110,10 +110,12 @@
 \contentsline {subsection}{\numberline {9.4}Lifecycle}{67}
 \contentsline {section}{\numberline {10}Extensions}{69}
 \contentsline {subsection}{\numberline {10.1}Extension Points}{69}
-\contentsline {subsection}{\numberline {10.2}Glass Extension}{69}
-\contentsline {section}{\numberline {11}Properties}{70}
-\contentsline {subsection}{\numberline {11.1}Themes}{70}
-\contentsline {subsection}{\numberline {11.2}Stations}{72}
-\contentsline {subsection}{\numberline {11.3}Controlling}{75}
-\contentsline {subsection}{\numberline {11.4}Legacy}{76}
-\contentsline {subsection}{\numberline {11.5}Gimmicks}{76}
+\contentsline {subsection}{\numberline {10.2}Glass Extension}{70}
+\contentsline {subsection}{\numberline {10.3}Toolbar Extension}{70}
+\contentsline {section}{\numberline {11}Properties}{71}
+\contentsline {subsection}{\numberline {11.1}Themes}{71}
+\contentsline {subsection}{\numberline {11.2}Stations}{73}
+\contentsline {subsection}{\numberline {11.3}Miscellaneous}{75}
+\contentsline {subsection}{\numberline {11.4}Gimmicks}{76}
+\contentsline {subsection}{\numberline {11.5}Glass Extension}{77}
+\contentsline {subsection}{\numberline {11.6}Toolbar Extension}{77}

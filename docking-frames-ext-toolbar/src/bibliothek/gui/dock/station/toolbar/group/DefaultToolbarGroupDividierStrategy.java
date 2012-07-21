@@ -29,7 +29,6 @@
  */
 package bibliothek.gui.dock.station.toolbar.group;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;

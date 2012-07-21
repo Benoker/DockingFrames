@@ -49,14 +49,14 @@ A relocator needs to find the one \src{DockStation} on which the \src{Dockable} 
 \subsubsection{Search}
 The \src{DefaultDockRelocator} searches the destination anew whenever the mouse is moved. A search consists of these steps::
 \begin{enumerate}
- \item An ordered list of all potential destinations is built. A \src{DockStation} is a potential destination if it is visible (\src{isStationVisible} of \src{DockStation}), not the dragged \src{Dockable} nor one of its children, and its boundaries contain the location of the mouse (\src{getStationBounds} of \src{DockStation}). The order depends on parent-child relations between the stations, between the \src{Window}s on which the stations are, and on custom conditions that every station can offer (\src{canCompare} and \src{compare} of \src{DockStation}).
- \item Then the method \src{prepareDrop} of \src{DockStation} is called. These methods check whether the station really is a good destination. They return \src{true} if so, \src{false} if not. The first station that returns \src{true} is the destination.
- \item The method \src{draw} of the new destination is called, the method \src{forget} on the old destination. The new destination will paint some markings to give a visual feedback to the user, the old destination will delete all the information about any drag and drop operation.
+ \item An ordered list of all potential destinations is built. A \src{DockStation} is a potential destination if it is visible (\src{isStationShowing} of \src{DockStation}), not the dragged \src{Dockable} nor one of its children. Each station offers a set of \src{DockStationDropLayer}s (\src{getLayers}), the layers decide whether the mouse is over a station or not. The order of the destinations depends on the priority of the layers, the parent-child relations between the stations and between the \src{Window}s on which the stations are.
+ \item Then the method \src{prepareDrop} of \src{DockStation} is called. This method checks whether the station really is a good destination, if so it returns a \src{StationDropOperation}. The first station returning an operation is the destination.
+ \item The method \src{draw} of the new operation is called, the method \src{destroy} on the old operation. The new operation will paint some markings to give a visual feedback to the user.
 \end{enumerate}
 
 \infobox{There is more information about the exact semantics in the API-documentation for \src{DockStation}.}
 
-\classbox{Most of the work for drag and drop is done by the \src{DockStation}s themselfs, the \src{DockRelocator} just connects them. In order complete the task the following methods and interfaces should be used:
+\classbox{Most of the work for drag and drop is done by the \src{DockStation}s themselfs, the \src{DockRelocator} just connects them. In order to complete the task the following methods and interfaces should be used:
 
 \begin{itemize}
  \item \src{DockStation.accept} and \src{Dockable.accept} tells the station whether a child-parent relation is possible.
@@ -66,7 +66,7 @@ The \src{DefaultDockRelocator} searches the destination anew whenever the mouse 
 }
 
 \subsubsection{Drop}
-Once the user releases the mouse, \src{Dockable} is dropped. The framework will call either the method \src{move} or \src{drop} of \src{DockStation}.
+Once the user releases the mouse, \src{Dockable} is dropped. The framework will call the method \src{execute} of \src{StationDropOperation}.
 
 \begin{itemize}
  \item The \src{Dockable} may just be dropped aside of all the other children of the station. All that happens is that the \src{DockStation} gets a new child.
@@ -76,7 +76,7 @@ Once the user releases the mouse, \src{Dockable} is dropped. The framework will 
 
 \warningbox{Exchanging a \src{Combiner} or the \src{Merger} does not affect any existing \src{Dockable} or \src{DockStation}, it will only affect the creation of new elements.}
 
-\subsection{Restricing}
+\subsection{Restrictions}
 Not every possible \src{DockStation} is a good or valid target for a dragged \src{Dockable}. The framework applies a set of restrictions to drag and drop operations, these restrictions are implemented by ``acceptance tests''. Each acceptance test can veto against some child parent relations. The usual reasons why clients would want to implement their own tests consist of:
 \begin{itemize}
  \item Some \src{Dockable} must always be visible.

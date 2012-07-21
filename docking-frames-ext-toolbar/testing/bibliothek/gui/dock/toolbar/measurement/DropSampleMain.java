@@ -33,7 +33,6 @@ package bibliothek.gui.dock.toolbar.measurement;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.PrintStream;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -41,10 +40,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
-import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 
 public class DropSampleMain {
 	public static void main( String[] args ){
@@ -67,9 +65,9 @@ public class DropSampleMain {
 			ToolbarDockStation[] children = new ToolbarDockStation[4];
 			for( int j = 0; j < children.length; j++ ){
 				children[j] = new ToolbarDockStation();
-				children[j].drop( new ComponentDockable( new JButton( "A" ) ) );
-				children[j].drop( new ComponentDockable( new JButton( "B" ) ) );
-				children[j].drop( new ComponentDockable( new JButton( "C" ) ) );
+				children[j].drop( new ToolbarItemDockable( new JButton( "A" ) ) );
+				children[j].drop( new ToolbarItemDockable( new JButton( "B" ) ) );
+				children[j].drop( new ToolbarItemDockable( new JButton( "C" ) ) );
 			}
 			
 			group.drop( children[0], 0 );
@@ -89,9 +87,9 @@ public class DropSampleMain {
 		ToolbarDockStation[] children = new ToolbarDockStation[4];
 		for( int i = 0; i < children.length; i++ ){
 			children[i] = new ToolbarDockStation();
-			children[i].drop( new ComponentDockable( new JButton( "A" ) ) );
-			children[i].drop( new ComponentDockable( new JButton( "B" ) ) );
-			children[i].drop( new ComponentDockable( new JButton( "C" ) ) );
+			children[i].drop( new ToolbarItemDockable( new JButton( "A" ) ) );
+			children[i].drop( new ToolbarItemDockable( new JButton( "B" ) ) );
+			children[i].drop( new ToolbarItemDockable( new JButton( "C" ) ) );
 		}
 		
 		sample.getStation().drop( children[0], 0 );
@@ -103,9 +101,9 @@ public class DropSampleMain {
 	
 	private static void toolbarDockStation(){
 		ToolbarDockStationSample sample = new ToolbarDockStationSample();
-		sample.getStation().drop( new ComponentDockable( new JButton( "a" )));
-		sample.getStation().drop( new ComponentDockable( new JButton( "b" )));
-		sample.getStation().drop( new ComponentDockable( new JButton( "c" )));
+		sample.getStation().drop( new ToolbarItemDockable( new JButton( "a" )));
+		sample.getStation().drop( new ToolbarItemDockable( new JButton( "b" )));
+		sample.getStation().drop( new ToolbarItemDockable( new JButton( "c" )));
 		start( sample );
 	}
 	

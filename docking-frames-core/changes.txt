@@ -771,6 +771,8 @@
 [v1.1.1p8b]
  - Bugfix: Icon of ButtonCombinedMenu did not show up when the mouse hovered over the button.
  - Bugfix: When changing the DockTheme, the "hold" (also known as "sticky") action of the FlapDockStation did disappear.
+ ! API: removed the deprecated ComponentDockable
+ - API: added MenuLineLayoutStrategy, allows clients to more easily fine tune the behavior of MenuLineLayout
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them

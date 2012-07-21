@@ -48,18 +48,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.station.toolbar.menu.CustomizationButton;
 import bibliothek.gui.dock.station.toolbar.menu.CustomizationMenuContentVerticalBox;
@@ -239,8 +237,8 @@ public class TestToolbarGroupDockStation{
 		return toolbar;
 	}
 
-	private static ComponentDockable createDockable( String small, String large ){
-		final ComponentDockable dockable = new ComponentDockable();
+	private static ToolbarItemDockable createDockable( String small, String large ){
+		final ToolbarItemDockable dockable = new ToolbarItemDockable();
 		dockable.setComponent(new JLabel(small), ExpandedState.SHRUNK);
 		dockable.setComponent(new JButton(large), ExpandedState.STRETCHED);
 		dockable.setComponent(new JScrollPane(new JTextArea(small + "\n\n"
@@ -248,11 +246,11 @@ public class TestToolbarGroupDockStation{
 		return dockable;
 	}
 
-	private static ComponentDockable createDockable( Icon icon,
+	private static ToolbarItemDockable createDockable( Icon icon,
 			boolean largeText ){
 		JButton button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		final ComponentDockable dockable = new ComponentDockable(button);
+		final ToolbarItemDockable dockable = new ToolbarItemDockable(button);
 		dockable.setTitleIcon(icon);
 		if (largeText){
 			dockable.setComponent(new JButton("a lot of text is written!!"),

@@ -40,9 +40,9 @@ import javax.swing.JTextArea;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 
 public class TestToolbarContainerDockStation{
@@ -79,7 +79,7 @@ public class TestToolbarContainerDockStation{
 				.println("##################  NEW COMPONENT  ############################");
 		System.out
 				.println("###############################################################");
-		final ComponentDockable dockable1 = createDockable("1", "One");
+		final ToolbarItemDockable dockable1 = createDockable("1", "One");
 		System.out
 				.println("###############################################################");
 		System.out
@@ -102,8 +102,8 @@ public class TestToolbarContainerDockStation{
 
 	}
 
-	private static ComponentDockable createDockable( String small, String large ){
-		final ComponentDockable dockable = new ComponentDockable();
+	private static ToolbarItemDockable createDockable( String small, String large ){
+		final ToolbarItemDockable dockable = new ToolbarItemDockable();
 		dockable.setComponent(new JLabel(small), ExpandedState.SHRUNK);
 		dockable.setComponent(new JButton(large), ExpandedState.STRETCHED);
 		dockable.setComponent(new JScrollPane(new JTextArea(small + "\n\n"

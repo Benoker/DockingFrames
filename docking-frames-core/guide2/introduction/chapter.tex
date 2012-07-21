@@ -1,9 +1,9 @@
 \section{Introduction}
 \src{DockingFrames} is an open source Java Swing framework published under the LGPL (lesser GNU public license). This means you are allowed to use \linebreak \src{DockingFrames} in any way you like. However if you modify the framework you are required to distribute the modified source code together with your new library.
 
-\src{DockingFrames} consists of two projects, \src{Core} and \src{Common} (the libraries \src{dockingFramesCore.jar} and \src{dockingFramesCommon.jar}). \src{Core} provides the basic functionality of the framework while \src{Common} adds features to make the life of developers and users easier. It is possible to use \src{Core} alone, but in most cases you are better of using both projects together.
+\src{DockingFrames} consists of two projects, \src{Core} and \src{Common} (the libraries \src{docking-frames-core.jar} and \src{docking-frames-common.jar}). \src{Core} provides the basic functionality of the framework while \src{Common} adds features to make the life of developers and users easier. It is possible to use \src{Core} alone, but in most cases you are better of using both projects together.
 
-This document introduces you to the basic concepts of \src{Core}. Naturally it cannot cover all the details, you should also have a look into the API documentation \linebreak \src{http://dock.javaforge.com/doc.html}, the tutorial project and the forum on \linebreak \src{http://forum.byte-welt.net/}.
+This document introduces you to the basic concepts of \src{Core}. Naturally it cannot cover all the details, you should also have a look into the API documentation \src{http://dock.javaforge.com/doc.html}, the tutorial project and the forum on \src{http://forum.byte-welt.net/}.
 
 \subsection{Use cases}
 What does the framework do? \src{DockingFrames} manages the layout of your graphical user interface. It allows the user to rearrange your user interface in the way he or she likes it. All you need to do is to group your controles in small panels (called \src{Dockables}).
@@ -53,7 +53,7 @@ In order to understand \src{Core} it helps to know what the basic design is. The
 \end{itemize}
 
 \subsection{Numbers}
-In \src{Core}, there are about 50'000 lines of code, distributed in over 1200 classes and interfaces. You don't need to know all of them to get your first application to run. Ordered by their semantics, the classes can be collected in groups:
+In \src{Core}, there are about 80'000 lines of code, distributed in over 1700 classes and interfaces. You don't need to know all of them to get your first application to run. Ordered by their semantics, the classes can be collected in groups:
 
 \begin{description}
  \item[Control group] Long living objects which control the behavior of the user interface. For example the object handling drag \& drop is created once and remains until the application shuts down.

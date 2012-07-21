@@ -34,10 +34,10 @@ import javax.swing.JFrame;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.control.SingleParentRemover;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 
@@ -62,7 +62,7 @@ public class TestLayouting{
 		final ScreenDockProperty initial = new ScreenDockProperty(20, 20, 200,
 				20);
 
-		final ComponentDockable dockable = new ComponentDockable(new JButton(
+		final ToolbarItemDockable dockable = new ToolbarItemDockable(new JButton(
 				"hello"));
 
 		final ToolbarDockStation group = new ToolbarDockStation(){

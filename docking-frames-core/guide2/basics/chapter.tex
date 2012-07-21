@@ -93,7 +93,7 @@ Some observations: \src{StackDockStation} is a \src{Dockable} as well, in line \
 
 \warningbox{\src{DockStation}s are the most complex classes within the framework, they are also among the most important classes. It is very uncommon to subclass them or to write new ones. If you think you need to subclass a \src{DockStation}, be sure to have explored all other options.}
 
-\src{Core} offers a collection four different stations. These are listed in the remainder of this section.
+\src{Core} offers a collection four different stations. These are listed in the remainder of this section. Additional details can be found in chapter \ref{sec:stations}.
 
 \subsubsection{StackDockStation}
 This station is organized like a \src{JTabbedPane}. Only one child is visible, but another can be made visible by clicking some button. The framework will automatically create new \src{StackDockStation}s when a \src{Dockable} is dragged over another. Also \src{StackDockStation}s with only one child get automatically replaced by this child.

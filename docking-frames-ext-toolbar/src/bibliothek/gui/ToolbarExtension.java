@@ -84,7 +84,6 @@ import bibliothek.gui.dock.station.screen.ToolbarScreenDockStationExtension;
 import bibliothek.gui.dock.station.screen.ToolbarWindowConfiguration;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfiguration;
-import bibliothek.gui.dock.station.toolbar.ToolbarItemDockableFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarAttractorStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarContainerPropertyFactory;
@@ -94,8 +93,8 @@ import bibliothek.gui.dock.station.toolbar.ToolbarDockableDisplayer;
 import bibliothek.gui.dock.station.toolbar.ToolbarFullscreenFilter;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationMerger;
+import bibliothek.gui.dock.station.toolbar.ToolbarItemDockableFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarMovingImageFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarPartDockFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarPropertyFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStationPaint;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupPropertyFactory;
@@ -359,7 +358,6 @@ public class ToolbarExtension implements Extension {
 
 	protected Collection<DockFactory<?, ?, ?>> createDockFactories(){
 		final List<DockFactory<?, ?, ?>> result = new ArrayList<DockFactory<?, ?, ?>>();
-		result.add( new ToolbarPartDockFactory() );
 		result.add( new ToolbarGroupDockStationFactory() );
 		result.add( new ToolbarDockStationFactory() );
 		result.add( new ToolbarContainerDockStationFactory() );

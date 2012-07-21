@@ -32,7 +32,6 @@ package bibliothek.gui.dock.toolbar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
-import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -47,11 +46,11 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
@@ -68,7 +67,7 @@ public class TestPersistentLayout{
 		toolBar.setOrientation(SwingConstants.VERTICAL);
 		ImageIcon icon = new ImageIcon(
 				TestPersistentLayout.class.getResource("/resources/film.png"));
-		final ComponentDockable button00 = new ComponentDockable(new JButton(
+		final ToolbarItemDockable button00 = new ToolbarItemDockable(new JButton(
 				icon));
 		final JButton button0 = new JButton(icon);
 		toolBar.add(button00.getComponent());
@@ -108,22 +107,22 @@ public class TestPersistentLayout{
 				TestPersistentLayout.class.getResource("/resources/film.png"));
 		JButton button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		final ComponentDockable button1 = new ComponentDockable(button);
+		final ToolbarItemDockable button1 = new ToolbarItemDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		final ComponentDockable button2 = new ComponentDockable(button);
+		final ToolbarItemDockable button2 = new ToolbarItemDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		final ComponentDockable button3 = new ComponentDockable(button);
+		final ToolbarItemDockable button3 = new ToolbarItemDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		final ComponentDockable button4 = new ComponentDockable(button);
+		final ToolbarItemDockable button4 = new ToolbarItemDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		final ComponentDockable button5 = new ComponentDockable(button);
+		final ToolbarItemDockable button5 = new ToolbarItemDockable(button);
 		button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
-		final ComponentDockable button6 = new ComponentDockable(button);
+		final ToolbarItemDockable button6 = new ToolbarItemDockable(button);
 		final ToolbarContainerDockStation rootWest = new ToolbarContainerDockStation(
 				Orientation.VERTICAL);
 		rootWest.setDockablesMaxNumber(1);

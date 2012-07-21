@@ -16,11 +16,11 @@ import javax.swing.border.EmptyBorder;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.action.actions.SeparatorAction;
@@ -123,10 +123,10 @@ public class TestCloseButton {
 		return toolbar;
 	}
 
-	private static ComponentDockable createDockable( Icon icon, boolean largeText, DockFrontend frontend ){
+	private static ToolbarItemDockable createDockable( Icon icon, boolean largeText, DockFrontend frontend ){
 		JButton button = new JButton( icon );
 		button.setBorder( new EmptyBorder( new Insets( 4, 4, 4, 4 ) ) );
-		final ComponentDockable dockable = new ComponentDockable( button );
+		final ToolbarItemDockable dockable = new ToolbarItemDockable( button );
 		if (largeText) {
 			dockable.setComponent( new JButton( "a lot of text is written!!" ), ExpandedState.STRETCHED );
 		} else {

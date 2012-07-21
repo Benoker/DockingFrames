@@ -68,4 +68,4 @@
 \contentsline {subsection}{\numberline {9.2}Of the developers}{41}
 \contentsline {section}{\numberline {A}Properties}{43}
 \contentsline {subsection}{\numberline {A.1}Client specific properties}{43}
-\contentsline {subsection}{\numberline {A.2}Advanced properties}{44}
+\contentsline {subsection}{\numberline {A.2}Advanced properties}{43}

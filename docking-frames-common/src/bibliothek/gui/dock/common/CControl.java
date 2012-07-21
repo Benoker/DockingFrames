@@ -199,11 +199,18 @@ import bibliothek.util.xml.XIO;
 /**
  * Manages the interaction between {@link SingleCDockable}, {@link MultipleCDockable}
  * and {@link CStation}s.<br>
- * Clients should call <code>read</code> and <code>write</code> of the
- * {@link ApplicationResourceManager}, accessible through {@link #getResources()}, 
- * to store or load the configuration.<br>
  * Clients which do no longer need a {@link CControl} can call {@link #destroy()}
- * to free resources.
+ * to free resources.<br>
+ * A <code>CControl</code> is an interface between the application and the framework. The task of
+ * <code>CControl</code> is to provide access for actions that affect the entire realm. Such
+ * actions may include:
+ * <ul>
+ *  <li>add/remove a global listener.</li>
+ *  <li>add/remove/access {@link CDockable}s, {@link CStation}s and {@link CStationContainer}s.</li>
+ *  <li>add/remove/access factories for {@link CDockable}s.</li>
+ *  <li>read/write/apply the layout, this includes reading/writing from files.</li>
+ *  <li>store properties, like for example the {@link #setTheme(String) theme}.</li>
+ * </ul>
  * @author Benjamin Sigg
  *
  */
@@ -1534,7 +1541,7 @@ public class CControl {
      *  <tr><td>{@link BubbleTheme#BUBBLE_COLOR_SCHEME} </td><td>The {@link ColorScheme} to use if the {@link BubbleTheme} is installed.</td></tr>
      *  <tr><td>{@link FlapDockStation#BUTTON_CONTENT} </td><td>Tells what content should be on the buttons that represent minimized {@link Dockable}s.</td></tr>
      * 	<tr><td>{@link FlapDockStation#BUTTON_CONTENT_FILTER} </td><td>Tells which {@link DockAction}s should be shown on a button representing a minimized {@link Dockable}.</td></tr>
-     *  <tr><td>*&nbps;{@link CControl#CCONTROL} </td><td>The {@link CControl} in whose realm the property is read, is a read-only property.</td></tr>
+     *  <tr><td>*&nbsp;{@link CControl#CCONTROL} </td><td>The {@link CControl} in whose realm the property is read, is a read-only property.</td></tr>
      *  <tr><td>{@link DockTheme#COMBINER} </td><td>Default value of the {@link Combiner}.</td></tr>
      *  <tr><td>{@link StackDockStation#COMPONENT_FACTORY} </td><td>The factory creating the "tabbed panes" of the {@link StackDockStation}.</td></tr>
      *  <tr><td>{@link DockTheme#DISPLAYER_FACTORY} </td><td>Default value of the {@link DisplayerFactory}.</td></tr>
@@ -1548,10 +1555,10 @@ public class CControl {
      *  <tr><td>{@link PropertyKey#DOCKABLE_TOOLTIP} </td><td>The default tooltip of {@link Dockable}s.</td></tr>
      *  <tr><td>{@link LocationModeManager#DOUBLE_CLICK_STRATEGY} </td><td>Tells what happens if the user double clicks on a {@link DockTitle} or a {@link Dockable}.</td></tr>
      *  <tr><td>{@link EclipseTheme#ECLIPSE_COLOR_SCHEME} </td><td>The {@link ColorScheme} to use if the {@link EclipseTheme} is installed.</td></tr>
-     *  <tr><td>*&nbps;{@link ScreenDockStation#EXPAND_ON_DOUBLE_CLICK} </td><td>Whether a double click on a child of a {@link ScreenDockStation} should maximize the child.</td></tr>
+     *  <tr><td>*&nbsp;{@link ScreenDockStation#EXPAND_ON_DOUBLE_CLICK} </td><td>Whether a double click on a child of a {@link ScreenDockStation} should maximize the child.</td></tr>
      *  <tr><td>{@link FlatTheme#FLAT_COLOR_SCHEME} </td><td>The {@link ColorScheme} to use if the {@link FlatTheme} is installed.</td></tr>
      *  <tr><td>{@link ScreenDockStation#FULL_SCREEN_STRATEGY} </td><td>Defines when a floating {@link Dockable} is considered to be in fullscreen mode.</td></tr>
-     *  <tr><td>*&nbps;{@link DockFrontend#HIDE_ACCELERATOR} </td><td>The {@link KeyStroke} that will call {@link DockFrontend#hide(Dockable)}</td></tr>
+     *  <tr><td>*&nbsp;{@link DockFrontend#HIDE_ACCELERATOR} </td><td>The {@link KeyStroke} that will call {@link DockFrontend#hide(Dockable)}</td></tr>
      *  <tr><td>{@link DockableSelector#INIT_SELECTION} </td><td>The {@link KeyStroke} that opens a window where the user can select a new {@link Dockable}.</td></tr>
      *  <tr><td>{@link StackDockStation#IMMUTABLE_SELECTION_INDEX} </td><td>Prevents the {@link StackDockStation} from switching the selected index on a drop operation (but does not prevent the {@link FocusManager} from switching the focus!).</td></tr>
      *  <tr><td>{@link CControl#KEY_CLOSE} </td><td>The {@link KeyStroke} that closes a {@link CDockable}.</td></tr>
@@ -1563,11 +1570,11 @@ public class CControl {
      *  <tr><td>{@link FlapDockStation#LAYOUT_MANAGER} </td><td>Tells the {@link FlapDockStation} the size and the hold property of its children.</td></tr>
      *  <tr><td>{@link SplitDockStation#LAYOUT_MANAGER} </td><td>Logic of all {@link SplitDockStation}s, used when dropping a {@link Dockable} or resizing the station.</td></tr>
      *  <tr><td>{@link TabPane#LAYOUT_MANAGER} </td><td>Defines the size and location of tabs of a stack.</td></tr>
-     *  <tr><td>*&nbps;{@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStroke} that maximizes a child of a {@link SplitDockStation}.</td></tr>
+     *  <tr><td>*&nbsp;{@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStroke} that maximizes a child of a {@link SplitDockStation}.</td></tr>
      *  <tr><td>{@link CombinedMenuContent#MENU_CONTENT} </td><td>The menu that shows overflowing {@link Dockable}s on a stack.</td></tr>
      *  <tr><td>{@link IconManager#MINIMUM_ICON_SIZE}</td><td>The expected minimal size of all icons. </td></tr>
      *  <tr><td>{@link FlapDockStation#MINIMUM_SIZE} </td><td>The mimimum size of the {@link Component} that represents the {@link FlapDockStation}.</td></tr>
-     *  <tr><td>*&nbps;{@link LocationModeManager#MODE_ENABLEMENT} </td><td>Tells which {@link CDockable} is allowed to have which {@link ExtendedMode}.</td></tr>
+     *  <tr><td>*&nbsp;{@link LocationModeManager#MODE_ENABLEMENT} </td><td>Tells which {@link CDockable} is allowed to have which {@link ExtendedMode}.</td></tr>
      *  <tr><td>{@link DockRelocatorMode#NO_COMBINATION_MASK} </td><td>What keys the user has to press during a drag and drop operation to prevent the framework from combining {@link Dockable}s.</td></tr>
      *  <tr><td>{@link DockTitle#ORIENTATION_STRATEGY} </td><td>Tells how to rotate text on a {@link DockTitle}.</td></tr>
      *  <tr><td>{@link EclipseTheme#PAINT_ICONS_WHEN_DESELECTED} </td><td>Whether to paint icons on unselected tabs if using the {@link EclipseTheme}.</td></tr>
@@ -2178,12 +2185,6 @@ public class CControl {
     		}
     		
     		key = access.getUniqueId();
-//    		
-//    		if( key == null ){
-//    			return null;
-//    		}
-//    		
-//    		key = register.toMultiId( key );
     	}
     	
     	if( shouldStore( key )){

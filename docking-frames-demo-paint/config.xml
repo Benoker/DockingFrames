@@ -2412,19 +2412,25 @@
 										<root>true</root>
 										<content delegate="SplitDockStationFactory">
 											<fullscreen-action>false</fullscreen-action>
-											<node nodeId="1331109464489" orientation="VERTICAL" divider="0.6883115968092254">
-												<leaf id="0" nodeId="1265545542869">
+											<node nodeId="1331109464489" orientation="VERTICAL" divider="0.7040265289359215">
+												<node nodeId="1342778044739" orientation="HORIZONTAL" divider="0.24742268041237114">
+													<leaf id="1" nodeId="1342778044737">
+														<placeholders>
+															<placeholder>dock.single.PictureListDockable</placeholder>
+														</placeholders>
+													</leaf>
+													<leaf id="0" nodeId="1265545542869">
+														<placeholders>
+															<placeholder>dock.single.picture\ area</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.SplitDockStation</format>
+														</placeholder-map>
+													</leaf>
+												</node>
+												<leaf id="2" nodeId="1293532777226">
 													<placeholders>
-														<placeholder>dock.single.picture\ area</placeholder>
-													</placeholders>
-													<placeholder-map>
-														<version>0</version>
-														<format>dock.SplitDockStation</format>
-													</placeholder-map>
-												</leaf>
-												<leaf id="-1" nodeId="1293532777226">
-													<placeholders>
-														<placeholder>dock.single.PictureListDockable</placeholder>
 														<placeholder>dock.single.ColorDockable</placeholder>
 													</placeholders>
 													<placeholder-map>
@@ -2450,18 +2456,17 @@
 												<root>true</root>
 												<content delegate="SplitDockStationFactory">
 													<fullscreen-action>false</fullscreen-action>
-													<node nodeId="1342601941713" orientation="VERTICAL" divider="0.5">
-														<leaf id="-1" nodeId="1342601941712">
-															<placeholders>
-																<placeholder>dock.multi.\0\ page</placeholder>
-															</placeholders>
-														</leaf>
-														<leaf id="-1" nodeId="1293532773896">
-															<placeholders>
-																<placeholder>dock.multi.\1\ page</placeholder>
-															</placeholders>
-														</leaf>
-													</node>
+													<leaf id="0" nodeId="1293532773896">
+														<placeholders>
+															<placeholder>dock.multi.\0\ page</placeholder>
+															<placeholder>dock.multi.\2\ page</placeholder>
+															<placeholder>dock.multi.\1\ page</placeholder>
+														</placeholders>
+														<placeholder-map>
+															<version>0</version>
+															<format>dock.PlaceholderList</format>
+														</placeholder-map>
+													</leaf>
 												</content>
 											</delegate>
 										</layout>
@@ -2470,6 +2475,35 @@
 												<type>dock.CWorkingArea</type>
 											</layout>
 										</adjacent>
+										<children ignore="false">
+											<child>
+												<layout factory="delegate_page" placeholder="dock.multi.\1\ page">
+													<id>1 page</id>
+													<area>picture area</area>
+													<multiple>Face</multiple>
+												</layout>
+												<children ignore="false"/>
+											</child>
+										</children>
+									</child>
+									<child>
+										<layout factory="predefined" placeholder="dock.single.PictureListDockable">
+											<replacement id="dockablesingle PictureListDockable"/>
+											<delegate id="delegate_ccontrol backup factory id">
+												<id>PictureListDockable</id>
+												<area/>
+											</delegate>
+										</layout>
+										<children ignore="false"/>
+									</child>
+									<child>
+										<layout factory="predefined" placeholder="dock.single.ColorDockable">
+											<replacement id="dockablesingle ColorDockable"/>
+											<delegate id="delegate_ccontrol backup factory id">
+												<id>ColorDockable</id>
+												<area/>
+											</delegate>
+										</layout>
 										<children ignore="false"/>
 									</child>
 								</children>
@@ -2526,35 +2560,25 @@
 														<placeholder>dock.single.PictureListDockable</placeholder>
 														<placeholder>dock.single.ColorDockable</placeholder>
 													</key>
-													<item key="convert" type="b">true</item>
-													<item key="convert-keys" type="a">
-														<item type="s">id</item>
-														<item type="s">index</item>
-														<item type="s">hold</item>
-														<item type="s">size</item>
+													<item key="map" type="p">
+														<version>0</version>
+														<format>dock.PlaceholderList</format>
+														<entry>
+															<key shared="false">
+																<placeholder>dock.single.ColorDockable</placeholder>
+															</key>
+														</entry>
+														<entry>
+															<key shared="false">
+																<placeholder>dock.single.PictureListDockable</placeholder>
+															</key>
+														</entry>
 													</item>
-													<item key="dock.id" type="i">0</item>
-													<item key="dock.index" type="i">0</item>
-													<item key="dock.hold" type="b">false</item>
-													<item key="dock.size" type="i">400</item>
 												</entry>
 												<entry>
 													<key shared="false">
-														<placeholder>dock.multi.\0\ page</placeholder>
+														<placeholder>dock.multi.\1\ page</placeholder>
 													</key>
-													<item key="convert" type="b">true</item>
-													<item key="convert-keys" type="a">
-														<item type="s">id</item>
-														<item type="s">index</item>
-														<item type="s">placeholder</item>
-														<item type="s">hold</item>
-														<item type="s">size</item>
-													</item>
-													<item key="dock.id" type="i">1</item>
-													<item key="dock.index" type="i">1</item>
-													<item key="dock.placeholder" type="s">dock.multi.\0\ page</item>
-													<item key="dock.hold" type="b">false</item>
-													<item key="dock.size" type="i">400</item>
 												</entry>
 											</placeholders>
 										</content>
@@ -2565,75 +2589,7 @@
 										<type>dock.CContentArea.minimize</type>
 									</layout>
 								</adjacent>
-								<children ignore="false">
-									<child>
-										<layout factory="delegate_StackDockStationFactory">
-											<selected>1</selected>
-											<placeholders>
-												<version>0</version>
-												<format>dock.PlaceholderList</format>
-												<entry>
-													<key shared="false">
-														<placeholder>dock.single.ColorDockable</placeholder>
-													</key>
-													<item key="convert" type="b">true</item>
-													<item key="convert-keys" type="a">
-														<item type="s">id</item>
-														<item type="s">index</item>
-														<item type="s">placeholder</item>
-													</item>
-													<item key="dock.id" type="i">0</item>
-													<item key="dock.index" type="i">0</item>
-													<item key="dock.placeholder" type="s">dock.single.ColorDockable</item>
-												</entry>
-												<entry>
-													<key shared="false">
-														<placeholder>dock.single.PictureListDockable</placeholder>
-													</key>
-													<item key="convert" type="b">true</item>
-													<item key="convert-keys" type="a">
-														<item type="s">id</item>
-														<item type="s">index</item>
-														<item type="s">placeholder</item>
-													</item>
-													<item key="dock.id" type="i">1</item>
-													<item key="dock.index" type="i">1</item>
-													<item key="dock.placeholder" type="s">dock.single.PictureListDockable</item>
-												</entry>
-											</placeholders>
-										</layout>
-										<children ignore="false">
-											<child>
-												<layout factory="predefined" placeholder="dock.single.ColorDockable">
-													<replacement id="dockablesingle ColorDockable"/>
-													<delegate id="delegate_ccontrol backup factory id">
-														<id>ColorDockable</id>
-														<area/>
-													</delegate>
-												</layout>
-												<children ignore="false"/>
-											</child>
-											<child>
-												<layout factory="predefined" placeholder="dock.single.PictureListDockable">
-													<replacement id="dockablesingle PictureListDockable"/>
-													<delegate id="delegate_ccontrol backup factory id">
-														<id>PictureListDockable</id>
-														<area/>
-													</delegate>
-												</layout>
-												<children ignore="false"/>
-											</child>
-										</children>
-									</child>
-									<child>
-										<layout factory="delegate_page" placeholder="dock.multi.\0\ page">
-											<id>0 page</id>
-											<area>picture area</area>
-											<multiple>Face</multiple>
-										</layout>
-										<children ignore="false"/>
-									</child>
-								</children>
+								<children ignore="false"/>
 							</root>
 							<root name="ccontrol south">
 								<layout factory="predefined">
@@ -2727,12 +2683,12 @@
 					</base>
 					<modes>
 						<dockables>
-							<entry id="single PictureListDockable" current="dock.mode.minimized">
+							<entry id="single PictureListDockable" current="dock.mode.normal">
 								<history>
 									<mode>dock.mode.externalized</mode>
 									<mode>dock.mode.maximized</mode>
-									<mode>dock.mode.normal</mode>
 									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.normal</mode>
 								</history>
 								<properties>
 									<property id="dock.mode.externalized">
@@ -2760,7 +2716,7 @@
 											<property factory="SplitDockPlaceholderProperty">
 												<placeholder>dock.single.PictureListDockable</placeholder>
 												<backup-path>
-													<node location="BOTTOM" size="0.3116884031907746" id="1331109464489"/>
+													<node location="BOTTOM" size="0.2958535615618153" id="1331109464489"/>
 													<leaf id="1293532777226"/>
 												</backup-path>
 											</property>
@@ -2793,12 +2749,45 @@
 									</property>
 								</properties>
 							</entry>
-							<entry id="single ColorDockable" current="dock.mode.minimized">
+							<entry id="multi 1 page" current="dock.mode.normal">
+								<history>
+									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.normal</mode>
+								</history>
+								<properties>
+									<property id="dock.mode.normal">
+										<mode>dock.mode.normal</mode>
+										<root>picture area</root>
+										<location>
+											<property factory="SplitDockPlaceholderProperty">
+												<placeholder>dock.multi.\1\ page</placeholder>
+												<backup-path>
+													<node location="BOTTOM" size="0.5" id="1342601941713"/>
+													<leaf id="1293532773896"/>
+												</backup-path>
+											</property>
+										</location>
+									</property>
+									<property id="dock.mode.minimized">
+										<mode>dock.mode.minimized</mode>
+										<root>ccontrol north</root>
+										<location>
+											<property factory="flap dock">
+												<index>1</index>
+												<holding>false</holding>
+												<size>400</size>
+												<placeholder>dock.multi.\1\ page</placeholder>
+											</property>
+										</location>
+									</property>
+								</properties>
+							</entry>
+							<entry id="single ColorDockable" current="dock.mode.normal">
 								<history>
 									<mode>dock.mode.maximized</mode>
 									<mode>dock.mode.externalized</mode>
-									<mode>dock.mode.normal</mode>
 									<mode>dock.mode.minimized</mode>
+									<mode>dock.mode.normal</mode>
 								</history>
 								<properties>
 									<property id="dock.mode.externalized">
@@ -2879,39 +2868,6 @@
 									</property>
 								</properties>
 							</entry>
-							<entry id="multi 0 page" current="dock.mode.minimized">
-								<history>
-									<mode>dock.mode.normal</mode>
-									<mode>dock.mode.minimized</mode>
-								</history>
-								<properties>
-									<property id="dock.mode.normal">
-										<mode>dock.mode.normal</mode>
-										<root>picture area</root>
-										<location>
-											<property factory="SplitDockPlaceholderProperty">
-												<placeholder>dock.multi.\0\ page</placeholder>
-												<backup-path>
-													<node location="TOP" size="0.5" id="1342601941713"/>
-													<leaf id="1342601941712"/>
-												</backup-path>
-											</property>
-										</location>
-									</property>
-									<property id="dock.mode.minimized">
-										<mode>dock.mode.minimized</mode>
-										<root>ccontrol north</root>
-										<location>
-											<property factory="flap dock">
-												<index>0</index>
-												<holding>false</holding>
-												<size>400</size>
-												<placeholder>dock.multi.\0\ page</placeholder>
-											</property>
-										</location>
-									</property>
-								</properties>
-							</entry>
 						</dockables>
 						<modes>
 							<entry id="dock.mode.maximized"/>
@@ -2919,7 +2875,7 @@
 					</modes>
 					<multi-factories>
 						<factory id="page">
-							<dockable id="0 page"/>
+							<dockable id="1 page"/>
 						</factory>
 					</multi-factories>
 				</current>
@@ -3004,7 +2960,7 @@
 			</child>
 		</resource>
 		<resource name="dock.ui.ThemeMap">
-			<key>basic</key>
+			<key>eclipse</key>
 		</resource>
 	</resources>
 </config>

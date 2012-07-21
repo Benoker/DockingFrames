@@ -55,7 +55,7 @@ import bibliothek.util.Todo.Version;
  * The default {@link CustomizationMenu} makes use of a {@link JDialog} to show its contents.
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_1, priority=Priority.MINOR,
+@Todo( compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_2, priority=Priority.MINOR,
 	description="This class is almost identical with 'DialogWindow' from Common, maybe these two classes can be merged?")
 public class DefaultCustomizationMenu extends AbstractCustomizationMenu{
 	/** the dialog that is this menu */

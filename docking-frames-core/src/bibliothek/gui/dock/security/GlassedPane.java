@@ -67,7 +67,7 @@ import bibliothek.util.Workarounds;
  * them, and then forward the events to the "content pane".
  * @author Benjamin Sigg
  */
-@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_1,
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, target=Version.VERSION_1_1_2,
 	description="In Java 1.7 if a mouse-dragged is followed by a mouse-exit, and the mouse is over another GlassedPane, then this GlassedPane no longer receives events that it received in Java 1.6")
 public class GlassedPane extends JPanel{
 	/** the strategy used by a {@link GlassedPane} to manage its tooltips */

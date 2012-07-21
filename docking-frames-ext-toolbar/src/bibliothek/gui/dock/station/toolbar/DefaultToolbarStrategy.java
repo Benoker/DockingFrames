@@ -33,7 +33,6 @@ package bibliothek.gui.dock.station.toolbar;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
@@ -100,7 +99,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 	public boolean isToolbarGroupPartParent( DockStation parent,
 			Dockable child, boolean strong ){
 		if (strong){
-			if (child instanceof ComponentDockable || child instanceof ToolbarItemDockable){
+			if (child instanceof ToolbarItemDockable){
 				return (parent instanceof ToolbarDockStation);
 			}
 
@@ -122,13 +121,13 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			}
 
 			// ?? policy
-			if ((child instanceof ComponentDockable || child instanceof ToolbarItemDockable)
+			if ((child instanceof ToolbarItemDockable)
 					&& (parent instanceof ToolbarTabDockStation)){
 				return true;
 			}
 			// docking and merging policy
 			if (parent instanceof ToolbarInterface){
-				if ((child instanceof ComponentDockable || child instanceof ToolbarItemDockable)
+				if ((child instanceof ToolbarItemDockable)
 						|| (child instanceof ToolbarDockStation)){
 					return true;
 				} else if ((child instanceof ToolbarGroupDockStation)
@@ -145,7 +144,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 
 	@Override
 	public boolean isToolbarGroupPart( Dockable dockable ){
-		return (dockable instanceof ComponentDockable || dockable instanceof ToolbarItemDockable)
+		return dockable instanceof ToolbarItemDockable
 				|| (dockable instanceof ToolbarDockStation);
 	}
 

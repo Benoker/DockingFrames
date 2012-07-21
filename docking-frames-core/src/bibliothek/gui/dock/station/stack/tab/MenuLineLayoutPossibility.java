@@ -37,10 +37,6 @@ import bibliothek.gui.dock.station.stack.tab.layouting.MenuLayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabsLayoutBlock;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A possibility for a layout of tabs, menus and actions as described by the {@link MenuLineLayout}.
@@ -79,25 +75,8 @@ public class MenuLineLayoutPossibility {
 	 * show anything has a score of <code>0.0</code>.
 	 * @return the score of this layout
 	 */
-	@Todo( compatibility=Compatibility.COMPATIBLE, target=Version.VERSION_1_1_1, priority=Priority.MINOR, 
-			description="Make this property easy modifiable by the clients")
 	public double getScore(){
-		double result = 0;
-		if( menuSize == null ){
-			result += 1;
-		}
-		else{
-			result += menuSize.getScore();
-		}
-		
-		if( infoSize != null ){
-			result += 10*infoSize.getScore();
-		}
-		
-		if( tabSize != null ){
-			result += 4*tabSize.getScore();
-		}
-		return result / 15.0; 
+		return pane.getLayout().getStrategy().getScore( this, menuSize, infoSize, tabSize );
 	}
 	
 	/**

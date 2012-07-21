@@ -3,21 +3,36 @@ Extensions allow libraries to add new code to the framework, this code will be t
 
 \src{Extension}s are collected by the \src{ExtensionManager}. Any module can call \src{load} to load extensions that match some \src{ExtensionName}. 
 
-\designbox{Extensions were introduced in 1.0.8 to allow the usage of the glass-components. The glass-components could not be added directly to the framework due to licencing issues.} 
+\designbox{Extensions were introduced in 1.0.8 to allow the usage of the glass-components. The glass-components could not be added directly to the framework due to licencing issues.
+
+In version 1.1.1 a number of new extension points were added in order to support the new Toolbar Extension.} 
 
 \subsection{Extension Points}
 A number of extensions exists. The following list only includes the extensions of the \src{Core} library.
 
 \begin{description}
- \extension{ChoiceExtension}{ChoiceExtension.CHOICE\_EXTENSION}{Allows to add additional entries to a \src{Choice}. A \src{Choice} is a preference allowing the user to pick one of many items.}
- \extension{DockThemeExtension}{DockThemeExtension.DOCK\_THEME\_EXTENSION}{Allows to modify a \src{DockTheme} during the installation process.}
- \extension{ColorScheme}{ColorScheme.EXTENSION\_NAME}{Allows to extend or override the contents of a \src{ColorScheme}.}
+ \extension{ChoiceExtension.CHOICE\_EXTENSION}{New choices in the preferences}{Allows to add additional entries to a \src{Choice}. A \src{Choice} is a preference allowing the user to pick one of many items.}
+ \extension{DockThemeExtension.DOCK\_THEME\_EXTENSION}{Extending a \src{DockTheme}}{Allows to modify a \linebreak \src{DockTheme} during the installation process.}
+ \extension{ColorScheme.EXTENSION\_NAME}{Additional colors}{Allows to extend or override the contents of a \src{ColorScheme}.}
+ \extension{PropertyTransformer.FACTORY\_EXTENSION}{New \src{DockableProperty}}{Adds new factories to the default list of \src{DockablePropertyFactory}.}
+ \extension{DefaultDockRelocator.MERGE\_EXTENSION}{Merging \src{Dockable}s}{Adds new \src{Merger}s to the \linebreak \src{DockRelocator}, these \src{Merger}s are executed after the default \src{Merger}s.}
+ \extension{DefaultDockRelocator.INSERTER\_EXTENSION}{Modify drag and drop}{Allows an extension to completely override the default drag and drop behavior.}
+ \extension{ScreenDockStation.ATTRACTOR\_STRATEGY\_EXTENSION}{Attraction of floating \src{Dockable}s}{Installs additional rules to find out whether to windows of a \src{ScreenDockStation} attract each other or stick together.}
+ \extension{DockSituation.DOCK\_FACTORY\_EXTENSION}{Persistent storage}{Adds new factories for persistently storing the layout of \src{DockStation}s and \src{Dockable}s.}
+ \extension{DockTitleVersion.DOCK\_TITLE\_VERSION\_EXTENSION}{Modify titles}{Extends the mechanism that creates new \src{DockTitle}s, the extension can inject new types of titles.}
+ \extension{DisplayerFactory.DISPLAYER\_EXTENSION}{Modify displayers}{Injects additional factories for creating \src{DockableDisplayer}s, these factories have a higher priority than the default factories.}
+ \extension{TextManager.TEXT\_EXTENSION}{Additional text}{Adds more language files to the \linebreak \src{TextManager}.}
+ \extension{DefaultScreenDockWindowConfiguration.CONFIGURATION\_EXTENSION}{Modify the window configuration}{\\Modifies the default configuration of the windows of a \src{ScreenDockStation}.}
+ \extension{DefaultDockableMovingImageFactory.FACTORY\_EXTENSION}{Images during drag and drop}{Modifies the image that is shown beneath the mouse during a drag and drop operation.}
+ \extension{ScreenDockStation.STATION\_EXTENSION}{Modifying \src{ScreenDockStation}}{Installs an algorithm that modifies the behavior of a \src{ScreenDockStation} when dropping a \src{Dockable}.}
 \end{description}
 
 \subsection{Glass Extension}
-The glass-extension adds new icons and a new way to paint tabs to the \linebreak \src{EclipseTheme}. Clients only need to ensure that the libraries \linebreak \src{extensionGlass.jar} and \src{glasslib.jar} are part of the classpath. The \linebreak \src{ExtensionManager} will then automatically load this extension.
+The glass-extension adds new icons and a new way to paint tabs to the \linebreak \src{EclipseTheme}. Clients only need to ensure that the libraries \linebreak \src{docking-frames-ext-glass.jar} and \src{glasslib.jar} are part of the classpath. The \src{ExtensionManager} will then automatically load this extension.
 
-\warningbox{The Glass Extension is licensed by a modified version of the LGPL. You are prohibited to use the library if your application provides ``pornography, racialistics, violence, or the like material''. 
+\warningbox{The Glass Extension is licensed by a modified version of the LGPL. You are prohibited to use the library if your application provides ``pornography, racialistics, violence, or the like material''. }
 
-(A note by the author of this document: This licence may prohibit a photo-editing tool, an email-client used by atheists, or any software used by the police.)
-}
+\subsection{Toolbar Extension}
+The Toolbar-extension adds toolbars, a set of new \src{DockStation}s and \src{Dockable}s, to the framework. Clients need to ensure that the library \linebreak \src{docking-frames-ext-toolbar.jar} is part of the classpath, the \linebreak \src{ExtensionManager} will then load and install the extension automatically.
+
+\codebox{There are several examples included in the tutorial, these examples are stored in folders called ``Toolbar''.}

@@ -37,11 +37,11 @@ import javax.swing.JTextArea;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 
@@ -77,9 +77,9 @@ public class TestToolbarDockStation{
 				.println("##################  NEW COMPONENT  ############################");
 		System.out
 				.println("###############################################################");
-		final ComponentDockable dockable1 = createDockable("1", "One");
-		final ComponentDockable dockable2 = createDockable("2", "Two");
-		final ComponentDockable dockable3 = createDockable("3", "Three");
+		final ToolbarItemDockable dockable1 = createDockable("1", "One");
+		final ToolbarItemDockable dockable2 = createDockable("2", "Two");
+		final ToolbarItemDockable dockable3 = createDockable("3", "Three");
 		System.out
 				.println("###############################################################");
 		System.out
@@ -149,8 +149,8 @@ public class TestToolbarDockStation{
 
 	}
 
-	private static ComponentDockable createDockable( String small, String large ){
-		final ComponentDockable dockable = new ComponentDockable();
+	private static ToolbarItemDockable createDockable( String small, String large ){
+		final ToolbarItemDockable dockable = new ToolbarItemDockable();
 		dockable.setComponent(new JLabel(small), ExpandedState.SHRUNK);
 		dockable.setComponent(new JButton(large), ExpandedState.STRETCHED);
 		dockable.setComponent(new JScrollPane(new JTextArea(small + "\n\n"

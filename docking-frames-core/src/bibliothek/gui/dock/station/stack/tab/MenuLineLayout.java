@@ -41,6 +41,9 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayoutPane>
 	/** this factory creates various items that are required by this {@link MenuLineLayout} */
 	private MenuLineLayoutFactory factory = new DefaultMenuLineLayoutFactory();
 	
+	/** customizeable algorithms  */
+	private MenuLineLayoutStrategy strategy = new DefaultMenuLineLayoutStrategy();
+	
 	/**
 	 * Sets a factory to create items that are required by this {@link MenuLineLayout}.
 	 * @param factory the new factory, not <code>null</code>
@@ -58,6 +61,27 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayoutPane>
 	 */
 	public MenuLineLayoutFactory getFactory(){
 		return factory;
+	}
+	
+	/**
+	 * Sets a strategy offering customized algorithms. These algorithms are used
+	 * to fine tune the behavior of this {@link MenuLineLayout}.
+	 * @param strategy the strategy, not <code>null</code>
+	 */
+	public void setStrategy( MenuLineLayoutStrategy strategy ){
+		if( strategy == null ){
+			throw new IllegalArgumentException( "strategy must not be null" );
+		}
+		this.strategy = strategy;
+	}
+	
+	/**
+	 * Gets the strategy with the customized algorithms.
+	 * @return the strategy
+	 * @see #setStrategy(MenuLineLayoutStrategy)
+	 */
+	public MenuLineLayoutStrategy getStrategy(){
+		return strategy;
 	}
 	
 	@Override

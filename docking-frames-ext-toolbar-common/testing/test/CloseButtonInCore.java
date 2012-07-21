@@ -50,13 +50,13 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.ComponentDockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.ToolbarItemDockable;
 import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.ActionGuard;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
@@ -109,10 +109,10 @@ public class CloseButtonInCore {
 		pane.add( toolbarStationWest.getComponent(), BorderLayout.WEST );
 		pane.add( toolbarStationNorth.getComponent(), BorderLayout.NORTH );
 
-		final ComponentDockable dockable1 = createDockable( "1", "One" );
-		final ComponentDockable dockable2 = createDockable( "2", "Two" );
-		final ComponentDockable dockable3 = createDockable( "3", "Three" );
-		final ComponentDockable dockable4 = createDockable( "4", "Four" );
+		final ToolbarItemDockable dockable1 = createDockable( "1", "One" );
+		final ToolbarItemDockable dockable2 = createDockable( "2", "Two" );
+		final ToolbarItemDockable dockable3 = createDockable( "3", "Three" );
+		final ToolbarItemDockable dockable4 = createDockable( "4", "Four" );
 
 		/*
 		 * This is how a PlaceholderStrategy would look like. It just needs a method that takes a Dockable,
@@ -245,8 +245,8 @@ public class CloseButtonInCore {
 		return item;
 	}
 	
-	private static ComponentDockable createDockable( final String small, String large ){
-		final ComponentDockable dockable = new ComponentDockable();
+	private static ToolbarItemDockable createDockable( final String small, String large ){
+		final ToolbarItemDockable dockable = new ToolbarItemDockable();
 		dockable.setComponent( new JButton( new ButtonIcon() ), ExpandedState.SHRUNK );
 		dockable.setComponent( new JButton( large ), ExpandedState.STRETCHED );
 
