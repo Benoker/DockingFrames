@@ -47,7 +47,7 @@ MultipleCDockableFactory<MyDockable, MyLayoutInformation> = new ...
 control.addMultipleDockableFactory( "unique id", factory );
 
 MyDockable dockable = new ...
-control.add( dockable );
+control.addDockable( dockable );
 \end{lstlisting}
 Notice that in line \src{4} a unique identifier needs to be assigned to the factory.
 
@@ -72,7 +72,7 @@ A \src{dockable} is (logical) visible if it is either a child of a visible root-
  \item The user may close a dockable by clicking onto a special close-button. Clients may call \src{setCloseable} to allow or deny a user closing the dockable.
 \end{itemize}
 
-There are two listeners to monitor the visibility-state of dockables. Both can either be added to a \src{CDockable} or to a \src{CControl}. In the laster case all known \src{dockable}s are monitored at the same time.
+There are two listeners to monitor the visibility-state of dockables. Both can either be added to a \src{CDockable} or to a \src{CControl}. In the later case all known \src{dockable}s are monitored at the same time.
 
 The first listener is the \src{CDockableStateListener}, it has a method \linebreak \src{visibilityChanged} which will be called whenever the visibility changes.
 
@@ -85,7 +85,7 @@ The second listener is the \src{CVetoClosingListener}. It receives a \linebreak 
 \infobox{If the method \src{setLocation} of \src{AbstractCDockable} is called before the \src{dockable} is made visible, then the \src{dockable} is made visible at the supplied location. Read more about locations in chapter \ref{sec:location}.}
 
 \paragraph{True visibility}
-A \src{dockable} is truelly visible if the user can actually see the element on the screen. Clients can use the method \src{isDockableVisible} of \src{CDockable} to find out whether a \src{dockable} is truelly visible. Also the \src{CDockableLocationListener} can help clients to keep track of the true visibility.
+A \src{dockable} is truelly visible if the user can actually see the element on the screen. Clients can use the method \src{isShowing} of \src{CDockable} to find out whether a \src{dockable} is truelly visible. Also the \linebreak \src{CDockableLocationListener} can help clients to keep track of the true visibility.
 
 It should be noted that logical visibility is required for the framework to acknowledge true visibility. Also the framework will not take things like ``is the main-frame minimized'' into account.
 
@@ -136,7 +136,7 @@ CContentArea area = control.getContentArea();
 frame.add( area );
 \end{lstlisting}
 
-If more than one content-area is needed then clients can use \linebreak \src{createContentArea} of \src{CControl} to create additional areas. These additional areas can later be removed through \src{removeContentArea}. The default content-area cannot be removed.
+If more than one content-area is needed then clients can use \linebreak \src{createContentArea} of \src{CControl} to create additional areas. These additional areas can later be removed through \src{removeStationContainer}. The default content-area cannot be removed.
 
 \infobox{The default content-area is created lazily. There is no obligation to use or create it, clients can as well directly call \src{createContentArea} or not use them at all.}
 

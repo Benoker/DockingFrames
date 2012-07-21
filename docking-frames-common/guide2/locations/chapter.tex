@@ -58,7 +58,7 @@ Boundaries are relative to each other, there is no minimal or maximal value for 
 
 \warningbox{Make sure not to add a \src{dockable} twice to a \src{CControl}. If using a \src{CGrid} the \src{add} method of \src{CControl} must not be called. 
 
-Also note that there is a second constructor for \src{CGrid} that does not have any argument. If that second constructor is used, then the \src{CGrid} will not add \src{dockable}s to any \src{CControl}.}
+Also note that if the constructor of \src{CGrid} is called with \src{null}, then the \src{CGrid} will not add \src{dockable}s to any \src{CControl}.}
 
 \infobox{Dockables can also be grouped in a stack by \src{CGrid}. Any two \src{dockable}s with the same boundaries are grouped. The \src{add} method uses a vararg-argument, more than just one \src{dockable} can be placed with the same boundaries this way.}
 

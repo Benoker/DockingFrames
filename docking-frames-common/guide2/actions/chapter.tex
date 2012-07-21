@@ -95,5 +95,5 @@ In this example whenever the maximize-action of \src{dockable} should be visible
 \classbox{The class \src{CCloseAction} is an action that closes any \src{dockable} on which it is shown. The subclasses of \src{CExtendedModeAction} change the extended-mode of their \src{dockable}s.}
 
 \subsection{Custom Actions}
-Clients are free to write their custom actions. They need to implement a new \src{DockAction} and a subclass of \src{CAction}. The subclass can give its super-class an instance of the custom \src{DockAction} or call \src{init} to set the action. Please refere to the guide for \src{Core} to find out how to implement a \src{DockAction}.
+Clients are free to write their custom actions. They need to implement a new \src{CommonDockAction} and a subclass of \src{CAction}. The subclass can give its super-class an instance of the custom \src{DockAction} or call \src{init} to set the action. Please refere to the guide for \src{Core} to find out how to implement a \src{DockAction}.
  

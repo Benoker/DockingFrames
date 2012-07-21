@@ -66,8 +66,8 @@ Some of the issues of 1.0.7 have been addressed. Mostly the \src{StateManager} g
 \end{itemize}
 
 
-\section{Version 1.1.0}
-\subsection{Of the people using the framework}
+\subsection{Version 1.1.0}
+\subsubsection{Of the people using the framework}
 This time there is no question that is asked by many people. Almost all questions are about little things. So the list below contains only some example questions.
 \begin{itemize}
  \qa{When will the framework be bugfree?}{Never. But the number of bugs is slowly decreasing. Your questions and bug reports can help speeding up that process. Always include the stacktrace (yes, really, you might not have guessed but they so much help finding bugs...)} and/or a description how to reproduce the bug.
@@ -75,7 +75,7 @@ This time there is no question that is asked by many people. Almost all question
  \qa{How does the \src{CGrid} work, how do I add or remove \src{Dockable}s from a \src{CControl}.}{There is still much confusion about the \src{CGrid}. \src{CGrid} can be used one time to setup the initial layout, afterwards the method \linebreak \src{setVisible} of \src{CDockable} has to be used to make new \src{Dockable}s visible. You need to add (\src{addDockable}) any \src{Dockable} to the \src{CControl} unless you added it through the \src{CGrid}.}
 \end{itemize}
 
-\subsection{Of the developers}
+\subsubsection{Of the developers}
 With version 1.1.0 the framework moves from ``beta'' to ``release''. There were many small enhancements, notably the complete elimination of the ``secure'' packages and the introduction of perspectives.
 \begin{itemize}
  \item Customization is now much easier due to existence of the \src{ThemeManager} and the various subclasses of \src{UIProperties}. What remains missing are some examples how to use the new features, this will be addressed in version 1.1.1.
@@ -86,9 +86,19 @@ With version 1.1.0 the framework moves from ``beta'' to ``release''. There were 
   \item An editor to inspect and modify the perspectives of an application might also be a handy tool. At the moment this is more science fiction than reality.
  \end{enumerate}
 \end{itemize}
- 
 
-
-
-
-
+\subsection{Version 1.1.1}
+\subsubsection{Of the people using the framework}
+In the year of working on 1.1.1, there were a lot questions that could be answered without the need of modifying the framework. Many people reported bugs, and they were fixed whenever possible. As good as all feature requests could be implemented. Below are the three most prominent open questions:
+\begin{itemize}
+ \qa{There seems to be some issues with focus.}{Yes, the focus system still has issues. Some code has been replaced during development of 1.1.1, a few border cases have been resolved. And the new \src{FocusStrategy} tracks the last focused child \src{Component} of each \src{Dockable}. But all in all the focus system still does not work fully satisfying, this construction site will remain open for a long time.}
+ \qa{How well is fullscreen support?}{It's a lot better than in earlier versions, some issues may still appear. For example a maximized \src{ScreenDockWindow} may cover the taskbar. It is not yet clear how to fix these issues.}
+ \qa{What is with the Eclipse 4.x theme?}{The original plan was to include a theme looking like Eclipse 4.x in version 1.1.1, but instead the Toolbar Extension got included. The theme is now scheduled to appear in 1.1.2.}
+\end{itemize}
+\subsubsection{Of the developers}
+The unexpected introduction of the Toolbar Extension created a lot of work. As a result the core of \src{DockingFrames} did not get as much love as in previous versions. But then looking at the feedback from other developers, most issues nowadays fall in the area of ``minor annoyances''. Sure, there are still bugs, but they do no longer stop entire applications from working.
+\begin{itemize}
+ \item New features, like the animations during drag and drop, have purely asthetic value. They do make the framework ``better'', but they don't add anything that is critical. Future versions will have even more maintenance, and less new features.
+ \item Streamlining various interfaces was a good thing, it adds more flexibility and less possibilities for errors in how to implement some modules like the \src{DockStation}s.
+ \item The big new thing of course is the Toolbar Extension. Many modifications, for example the configuration of \src{ScreenDockWindow}s, are a direct result of supporting the extension. The extension itself is not yet finished, new bugs and missing features will certainly provide work for a long time.
+\end{itemize}
