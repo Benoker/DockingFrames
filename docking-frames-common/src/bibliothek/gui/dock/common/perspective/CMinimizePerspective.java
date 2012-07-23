@@ -91,6 +91,10 @@ public class CMinimizePerspective implements CStationPerspective{
 			mode.add( this.mode );
 		}
 	}
+	
+	public CPerspective getPerspective(){
+		return perspective;
+	}
 
 	public Path getTypeId(){
 		return typeId;

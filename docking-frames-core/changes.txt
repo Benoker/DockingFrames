@@ -773,6 +773,9 @@
  - Bugfix: When changing the DockTheme, the "hold" (also known as "sticky") action of the FlapDockStation did disappear.
  ! API: removed the deprecated ComponentDockable
  - API: added MenuLineLayoutStrategy, allows clients to more easily fine tune the behavior of MenuLineLayout
+ - Bugfix: If the Toolbar Extension is installed, creating perspectives did throw an exception. Instead a warning is now printed.
+ - API: CPerspective now also stores invisible children
+ - API: AbstractCDockablePerspective offers method "remove", which stores the location of the dockable and then removes it from its parent.
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them

@@ -117,7 +117,7 @@ public abstract class MenuPiece {
     
     /**
      * This method is called if there is a possibility for the user to see this menu. The menu
-     * shoudl register listeners, update its text etc. to be ready for that event. This method 
+     * should register listeners, update its text etc. to be ready for that event. This method 
      * must never be called twice in a row.
      * @see #unbind()
      */

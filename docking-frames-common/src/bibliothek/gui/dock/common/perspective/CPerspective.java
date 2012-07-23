@@ -37,12 +37,14 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.mode.LocationModeManagerPerspective;
+import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
@@ -61,27 +63,41 @@ import bibliothek.util.Todo.Version;
  * </ul> 
  * @author Benjamin Sigg
  */
+@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.MAJOR, description="remove the warning about modes without perspective" )
 public class CPerspective {
 	/** All the stations of this perspective */
 	private Map<String, CStationPerspective> stations = new HashMap<String, CStationPerspective>();
 	
+	/** All the dockables known to this perspective, only updated on a call to {@link #storeLocations()} */
+	private Map<String, CDockablePerspective> dockables = new HashMap<String, CDockablePerspective>();
+	
 	/** a manager for finding the location of {@link CDockablePerspective}s */
 	private LocationModeManagerPerspective locationModeManager;
+	
+	/** information about the {@link CControl} in whose realm this perspective is used */
+	private CControlAccess control;
 	
 	/**
 	 * Creates a new perspective
 	 * @param control the owner of this perspective
 	 */
 	public CPerspective( CControlAccess control ){
-		initLocations( control );
+		this.control = control;
+		initLocations();
 	}
 	
-	private void initLocations( CControlAccess control ){
+	private void initLocations(){
 		locationModeManager = new LocationModeManagerPerspective( this, control );
 		CLocationModeManager manager = control.getLocationManager();
 		
 		for( CLocationMode mode : manager.modes() ){
-			locationModeManager.addMode( mode.createPerspective() );
+			LocationModePerspective perspective = mode.createPerspective();
+			if( perspective != null ){
+				locationModeManager.addMode( perspective );
+			}
+			else{
+				System.err.println( "warning: mode " + mode.getClass() + " does not provide perspective" );
+			}
 		}
 	}
 	
@@ -117,7 +133,9 @@ public class CPerspective {
 	 * Determines the current location of <code>dockable</code> and stores that location
 	 * in a map using the {@link ExtendedMode} of the {@link Location} as key. If the
 	 * user later clicks on one of the buttons like "minimize" or "externalize" this 
-	 * location information is read and applied.
+	 * location information is read and applied.<br>
+	 * Also stores the dockables itself, if they are removed from their parents the perspective
+	 * still knows of their existence
 	 * @param dockable the element whose location should be stored
 	 * @return the location that was stored or <code>null</code> if the location of
 	 * <code>dockable</code> could not be determined
@@ -126,6 +144,23 @@ public class CPerspective {
 	    Location location = getLocationManager().getLocation( dockable );
 	    if( location != null ){
 	    	dockable.getLocationHistory().add( getLocationManager().getMode( location.getMode() ), location );
+
+	    	String id = null;
+	    	if( dockable instanceof SingleCDockablePerspective ){
+	    		id = ((SingleCDockablePerspective)dockable).getUniqueId();
+	    		if( id != null ){
+	    			id = control.getRegister().toSingleId( id );
+	    		}
+	    	}
+	    	else if( dockable instanceof MultipleCDockablePerspective ){
+	    		id = ((MultipleCDockablePerspective)dockable).getUniqueId();
+	    		if( id != null ){
+	    			control.getRegister().toMultiId( id );
+	    		}
+	    	}
+	    	if( id != null ){
+	    		dockables.put( id, dockable );
+	    	}
 	    }
 	    return location;
 	}
@@ -176,6 +211,39 @@ public class CPerspective {
 	 */
 	public CStationPerspective getStation( String id ){
 		return stations.get( id );
+	}
+	
+	/**
+	 * Searches for the {@link SingleCDockablePerspective} or {@link MultipleCDockablePerspective} whose
+	 * unique identifier is <code>id</code>. This method requires a call to {@link #storeLocations()}
+	 * before it will return any results.
+	 * @param id the unique identifier of a dockable, after {@link CControlRegister#toSingleId(String)}
+	 * or {@link CControlRegister#toMultiId(String)} has been applied.
+	 * @return the stored dockable, <code>null</code> if <code>id</code> is unknown or if 
+	 * {@link #storeLocations()} was not executed
+	 */
+	public CDockablePerspective getDockable( String id ){
+		return dockables.get( id );
+	}
+	
+	/**
+	 * Gets all the unique keys for {@link SingleCDockablePerspective}s and {@link MultipleCDockablePerspective}s.
+	 * For this method to return the correct keys, {@link #storeLocations()} must have been executed.
+	 * @return the keys of all the dockables that are currently known
+	 */
+	public String[] getDockableKeys(){
+		return dockables.keySet().toArray( new String[ dockables.size() ] );
+	}
+	
+	/**
+	 * Removes the dockable with unique key <code>key</code> from the list of known dockables. If the
+	 * dockable is still part of the tree, and {@link #storeLocations()} is called, then the dockable
+	 * is reinserted into the list.
+	 * @param key the unique identifier of the element to remove
+	 * @return the element that was removed
+	 */
+	public CDockablePerspective removeDockable( String key ){
+		return dockables.remove( key );
 	}
 	
 	/**

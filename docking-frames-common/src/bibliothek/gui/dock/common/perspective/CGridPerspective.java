@@ -200,6 +200,10 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 			((CMaximizedModePerspective) this.perspective.getLocationManager().getMode( ExtendedMode.MAXIMIZED )).add( maximalMode );
 		}
 	}
+	
+	public CPerspective getPerspective(){
+		return perspective;
+	}
 
 	/**
 	 * Calls {@link #gridDeploy()}, but only if {@link #isAutoDeploy()} returns <code>true</code> and

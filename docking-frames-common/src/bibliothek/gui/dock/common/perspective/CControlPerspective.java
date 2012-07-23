@@ -424,6 +424,19 @@ public class CControlPerspective {
     		}
     	}
     	
+    	for( String key : perspective.getDockableKeys() ){
+    		CDockablePerspective dockable = perspective.getDockable( key );
+    		if( dockable.getParent() == null ){
+    			LocationHistory history = dockable.getLocationHistory();
+    			List<Path> order = history.getOrder();
+    			if( !order.isEmpty() ){
+    				Path mode = order.get( order.size()-1 );
+    				Location location = history.getLocations().get( mode );
+    				setting.addInvisible( key, location.getRoot(), null, location.getLocation() );
+    			}
+    		}
+    	}
+    	
     	// modes
     	setting.setModes( perspective.getLocationManager().writeModes( control ) );
     	

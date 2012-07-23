@@ -92,6 +92,12 @@ public class CToolbarAreaPerspective implements CStationPerspective{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public CPerspective getPerspective(){
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public boolean isWorkingArea(){

@@ -70,4 +70,25 @@ public abstract class AbstractCDockablePerspective implements CDockablePerspecti
 	public LocationHistory getLocationHistory(){
 		return history;
 	}
+
+	/**
+	 * Removes this dockable from its parent (if there is a parent). This method
+	 * tries to call {@link CPerspective#storeLocation(CDockablePerspective)} which will
+	 * allow the dockable to store its last location, leave a placeholder, and make the
+	 * perspective remember that there is an invisible dockable.  
+	 */
+	public void remove(){
+		CStationPerspective parentStation = getParent();
+		if( parentStation != null ){
+			CPerspective perspective = parentStation.getPerspective();
+			if( perspective != null ){
+				perspective.storeLocation( this );
+			}
+		}
+		
+		PerspectiveStation parent = intern().asDockable().getParent();
+		if( parent != null ){
+			parent.remove( intern().asDockable() );
+		}
+	}
 }

@@ -55,6 +55,12 @@ public interface CStationPerspective extends CElementPerspective{
 	 */
 	@FrameworkOnly
 	public void setPerspective( CPerspective perspective );
+	
+	/**
+	 * Gets the perspective which presents this station.
+	 * @return the owner of this station, can be <code>null</code>
+	 */
+	public CPerspective getPerspective();
 
 	/**
 	 * Tells whether this station will act as a {@link CStation#isWorkingArea() working area}.

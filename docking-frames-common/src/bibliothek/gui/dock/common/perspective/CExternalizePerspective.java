@@ -137,6 +137,9 @@ public class CExternalizePerspective implements CStationPerspective{
 		}
 	}
 	
+	public CPerspective getPerspective(){
+		return perspective;
+	}
 	
 	/**
 	 * Adds <code>dockable</code> width boundaries <code>bounds</code> to this area.
