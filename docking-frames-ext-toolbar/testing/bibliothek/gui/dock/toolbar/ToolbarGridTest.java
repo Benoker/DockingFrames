@@ -279,28 +279,28 @@ public class ToolbarGridTest {
 		assertEquals( itemsA.hasNext(), itemsB.hasNext() );
 	}
 
-	private class TestStory implements ToolbarColumnModelListener<TestItem>, ToolbarColumnListener<TestItem> {
+	private class TestStory implements ToolbarColumnModelListener<Dockable,TestItem>, ToolbarColumnListener<Dockable,TestItem> {
 		private TestGrid grid = new TestGrid();
 		private List<Dockable> dockables = new ArrayList<Dockable>();
 
-		private List<ToolbarColumn<TestItem>> columns = new ArrayList<ToolbarColumn<TestItem>>();
+		private List<ToolbarColumn<Dockable,TestItem>> columns = new ArrayList<ToolbarColumn<Dockable,TestItem>>();
 		private List<List<TestItem>> items = new ArrayList<List<TestItem>>();
 
 		public TestStory(){
 			grid.setStrategy( new TestPlaceholderStrategy() );
-			ToolbarColumnModel<TestItem> model = grid.getModel();
+			ToolbarColumnModel<Dockable,TestItem> model = grid.getModel();
 			model.addListener( this );
 		}
 
 		@Override
-		public void inserted( ToolbarColumnModel<TestItem> model, ToolbarColumn<TestItem> column, int index ){
+		public void inserted( ToolbarColumnModel<Dockable,TestItem> model, ToolbarColumn<Dockable,TestItem> column, int index ){
 			column.addListener( this );
 			columns.add( index, column );
 			items.add( index, new ArrayList<TestItem>() );
 		}
 
 		@Override
-		public void removed( ToolbarColumnModel<TestItem> model, ToolbarColumn<TestItem> column, int index ){
+		public void removed( ToolbarColumnModel<Dockable,TestItem> model, ToolbarColumn<Dockable,TestItem> column, int index ){
 			column.removeListener( this );
 			columns.remove( index );
 			List<TestItem> list = items.remove( index );
@@ -308,14 +308,14 @@ public class ToolbarGridTest {
 		}
 
 		@Override
-		public void inserted( ToolbarColumn<TestItem> column, TestItem item, Dockable dockable, int index ){
+		public void inserted( ToolbarColumn<Dockable,TestItem> column, TestItem item, Dockable dockable, int index ){
 			int columnIndex = columns.indexOf( column );
 			assertTrue( columnIndex >= 0 );
 			items.get( columnIndex ).add( index, item );
 		}
 
 		@Override
-		public void removed( ToolbarColumn<TestItem> column, TestItem item, Dockable dockable, int index ){
+		public void removed( ToolbarColumn<Dockable,TestItem> column, TestItem item, Dockable dockable, int index ){
 			int columnIndex = columns.indexOf( column );
 			assertTrue( columnIndex >= 0 );
 			assertSame( item, items.get( columnIndex ).remove( index ) );
@@ -337,7 +337,7 @@ public class ToolbarGridTest {
 		}
 
 		public void remove( int column, int row ){
-			ToolbarColumnModel<TestItem> model = grid.getModel();
+			ToolbarColumnModel<Dockable,TestItem> model = grid.getModel();
 			TestItem item = model.getColumn( column ).getItem( row );
 			grid.remove( item );
 			check();
@@ -349,10 +349,10 @@ public class ToolbarGridTest {
 		}
 
 		private void assertModel(){
-			ToolbarColumnModel<TestItem> model = grid.getModel();
+			ToolbarColumnModel<Dockable,TestItem> model = grid.getModel();
 			assertEquals( model.getColumnCount(), items.size() );
 			for( int i = 0, n = model.getColumnCount(); i < n; i++ ) {
-				ToolbarColumn<TestItem> column = model.getColumn( i );
+				ToolbarColumn<Dockable,TestItem> column = model.getColumn( i );
 				List<TestItem> list = items.get( i );
 
 				assertEquals( list.size(), column.getDockableCount() );
@@ -363,7 +363,7 @@ public class ToolbarGridTest {
 		}
 
 		public void assertCell( int column, int row, String placeholder ){
-			ToolbarColumnModel<TestItem> model = grid.getModel();
+			ToolbarColumnModel<Dockable,TestItem> model = grid.getModel();
 			TestItem item = model.getColumn( column ).getItem( row );
 			TestDockable dockable = (TestDockable) item.asDockable();
 			assertNotNull( dockable );

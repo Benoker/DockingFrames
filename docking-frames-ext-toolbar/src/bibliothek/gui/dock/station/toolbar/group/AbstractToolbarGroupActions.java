@@ -57,7 +57,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 	/**
 	 * The model that is currently observed 
 	 */
-	private ToolbarColumnModel<P> model;
+	private ToolbarColumnModel<Dockable,P> model;
 
 	/**
 	 * All the columns that are currently used
@@ -73,9 +73,9 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 	/**
 	 * This listener is added to the current {@link #model}
 	 */
-	private ToolbarColumnModelListener<P> modelListener = new ToolbarColumnModelListener<P>(){
+	private ToolbarColumnModelListener<Dockable,P> modelListener = new ToolbarColumnModelListener<Dockable,P>(){
 		@Override
-		public void removed( ToolbarColumnModel<P> model, ToolbarColumn<P> column, int index ){
+		public void removed( ToolbarColumnModel<Dockable,P> model, ToolbarColumn<Dockable,P> column, int index ){
 			Column col = columns.remove( index );
 			for( ColumnDockActionSourceListener listener : listeners() ){
 				listener.removed( AbstractToolbarGroupActions.this, col.getSource(), index );
@@ -84,7 +84,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 		}
 
 		@Override
-		public void inserted( ToolbarColumnModel<P> model, ToolbarColumn<P> column, int index ){
+		public void inserted( ToolbarColumnModel<Dockable,P> model, ToolbarColumn<Dockable,P> column, int index ){
 			C col = createColumn( column );
 			columns.add( index, col );
 
@@ -161,7 +161,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 	 * will be removed by this method.
 	 * @param model the new model or <code>null</code>
 	 */
-	public void setModel( ToolbarColumnModel<P> model ){
+	public void setModel( ToolbarColumnModel<Dockable,P> model ){
 		if( this.model != model ) {
 			if( this.model != null ) {
 				this.model.removeListener( modelListener );
@@ -186,7 +186,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 	 * Gets the model which is currently observed by this object
 	 * @return the mode, can be <code>null</code>
 	 */
-	public ToolbarColumnModel<P> getModel(){
+	public ToolbarColumnModel<Dockable,P> getModel(){
 		return model;
 	}
 
@@ -277,7 +277,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 	 * @param column the column that is represented by the new object
 	 * @return the new column, must not be <code>null</code>
 	 */
-	protected abstract C createColumn( ToolbarColumn<P> column );
+	protected abstract C createColumn( ToolbarColumn<Dockable,P> column );
 	
 	/**
 	 * Gets the bounds of the {@link Component} <code>item</code>.
@@ -306,16 +306,16 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 	 * @author Benjamin Sigg
 	 */
 	protected abstract class Column {
-		private ToolbarColumn<P> column;
+		private ToolbarColumn<Dockable,P> column;
 		private boolean created = false;
 		private DockActionSource source;
 		
 		private List<P> items = new ArrayList<P>();
 		private List<Dockable> dockables = new ArrayList<Dockable>();
 
-		private ToolbarColumnListener<P> listener = new ToolbarColumnListener<P>(){
+		private ToolbarColumnListener<Dockable,P> listener = new ToolbarColumnListener<Dockable,P>(){
 			@Override
-			public void removed( ToolbarColumn<P> column, P item, Dockable dockable, int index ){
+			public void removed( ToolbarColumn<Dockable,P> column, P item, Dockable dockable, int index ){
 				items.remove( index );
 				dockables.remove( index );
 				uninstallListener( item, componentListener );
@@ -323,7 +323,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 			}
 
 			@Override
-			public void inserted( ToolbarColumn<P> column, P item, Dockable dockable, int index ){
+			public void inserted( ToolbarColumn<Dockable,P> column, P item, Dockable dockable, int index ){
 				items.add( index, item );
 				dockables.add( index, dockable );
 				installListener( item, componentListener );
@@ -336,7 +336,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 		 * @param column the column that is represented by this object. Subclasses can
 		 * set this argument to <code>null</code>, but have to call {@link #init(ToolbarColumn)} later.
 		 */
-		public Column( ToolbarColumn<P> column ){
+		public Column( ToolbarColumn<Dockable,P> column ){
 			if( column != null ){
 				init( column );
 			}
@@ -346,7 +346,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 		 * Initializes all fields of this object
 		 * @param column the column that is represented by this object, not <code>null</code>
 		 */
-		protected void init( ToolbarColumn<P> column ){
+		protected void init( ToolbarColumn<Dockable,P> column ){
 			this.column = column;
 			this.column.addListener( listener );
 			for( int i = 0, n = column.getDockableCount(); i<n; i++ ){
@@ -386,7 +386,7 @@ public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGr
 		 * Gets the column which is represented by this object
 		 * @return the underlying data structure
 		 */
-		public ToolbarColumn<P> getColumn(){
+		public ToolbarColumn<Dockable,P> getColumn(){
 			return column;
 		}
 		

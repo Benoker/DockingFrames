@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.frontend;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.DockFrontend;
@@ -44,6 +45,8 @@ import bibliothek.gui.dock.station.flap.FlapDockPerspective;
 import bibliothek.gui.dock.station.screen.ScreenDockPerspective;
 import bibliothek.gui.dock.station.split.SplitDockPerspective;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
+import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 
 /**
  * This default implementation of a {@link FrontendPerspectiveCache} assumes that the information clients
@@ -62,10 +65,16 @@ import bibliothek.gui.dock.station.stack.StackDockPerspective;
  * @author Benjamin Sigg
  */
 public class DefaultFrontendPerspectiveCache implements FrontendPerspectiveCache{
+	/** Unique identifier to load extensions of type {@link FrontendPerspectiveCacheExtension} */
+	public static final Path CACHE_EXTENSION = new Path( "dock.defaultFrontendPerspectiveCache" );
+	
 	private Map<PerspectiveElement, String> identifiers = new HashMap<PerspectiveElement, String>();
 	
 	/** the frontend to query for information */
 	private DockFrontend frontend;
+	
+	/** additional types */
+	private List<FrontendPerspectiveCacheExtension> extensions;
 	
 	/**
 	 * Creates a new cache
@@ -76,27 +85,37 @@ public class DefaultFrontendPerspectiveCache implements FrontendPerspectiveCache
 			throw new IllegalArgumentException( "frontend must not be null" );
 		}
 		this.frontend = frontend;
+		extensions = frontend.getController().getExtensions().load( new ExtensionName<FrontendPerspectiveCacheExtension>( CACHE_EXTENSION, FrontendPerspectiveCacheExtension.class ) );
 	}
 	
 	public PerspectiveElement get( String id, DockElement element, boolean isRootStation ){
 		PerspectiveElement result = null;
 		
-		if( element instanceof StackDockStation ){
-			result = new StackDockPerspective();
+		for( FrontendPerspectiveCacheExtension extension : extensions ){
+			result = extension.get( id, element, isRootStation );
+			if( result != null ){
+				break;
+			}
 		}
-		if( element instanceof FlapDockStation ){
-			result = new FlapDockPerspective();
-		}
-		if( element instanceof SplitDockStation ){
-			SplitDockPerspective split = new SplitDockPerspective();
-			split.setHasFullscreenAction( ((SplitDockStation)element).hasFullScreenAction() );
-			result = split;
-		}
-		if( element instanceof ScreenDockStation ){
-			result = new ScreenDockPerspective();
-		}
-		if( element instanceof DefaultDockable ){
-			result = new FrontendDockablePerspective( id );
+		
+		if( result == null ){
+			if( element instanceof StackDockStation ){
+				result = new StackDockPerspective();
+			}
+			if( element instanceof FlapDockStation ){
+				result = new FlapDockPerspective();
+			}
+			if( element instanceof SplitDockStation ){
+				SplitDockPerspective split = new SplitDockPerspective();
+				split.setHasFullscreenAction( ((SplitDockStation)element).hasFullScreenAction() );
+				result = split;
+			}
+			if( element instanceof ScreenDockStation ){
+				result = new ScreenDockPerspective();
+			}
+			if( element instanceof DefaultDockable ){
+				result = new FrontendDockablePerspective( id );
+			}
 		}
 
 		if( result == null ){
@@ -133,6 +152,13 @@ public class DefaultFrontendPerspectiveCache implements FrontendPerspectiveCache
 	}
 
 	public String get( PerspectiveElement element ){
+		for( FrontendPerspectiveCacheExtension extension : extensions ){
+			String result = extension.get( element );
+			if( result != null ){
+				return result;
+			}
+		}
+		
 		if( element instanceof FrontendDockablePerspective ){
 			return ((FrontendDockablePerspective) element).getId();
 		}

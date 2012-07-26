@@ -76,6 +76,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationLayout;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBar;
 import bibliothek.gui.dock.station.toolbar.group.ColumnScrollBarFactory;
@@ -292,7 +293,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * 
 	 * @return a model describing all the columns that are shown on this station
 	 */
-	public ToolbarColumnModel<StationChildHandle> getColumnModel(){
+	public ToolbarColumnModel<Dockable,StationChildHandle> getColumnModel(){
 		return dockables.getModel();
 	}
 
@@ -368,11 +369,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return the item or <code>null</code> if the indices are out of bounds
 	 */
 	public StationChildHandle getHandle( int columnIndex, int line ){
-		ToolbarColumnModel<StationChildHandle> model = getColumnModel();
+		ToolbarColumnModel<Dockable,StationChildHandle> model = getColumnModel();
 		if( columnIndex < 0 || columnIndex >= model.getColumnCount() ) {
 			return null;
 		}
-		ToolbarColumn<StationChildHandle> column = model.getColumn( columnIndex );
+		ToolbarColumn<Dockable,StationChildHandle> column = model.getColumn( columnIndex );
 		if( line < 0 || line >= column.getDockableCount() ) {
 			return null;
 		}
@@ -385,7 +386,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * @return the handle showing <code>dockable</code> or <code>null</code> if not found
 	 */
 	public StationChildHandle getHandle( Dockable dockable ){
-		ToolbarColumn<StationChildHandle> column = getColumnModel().getColumn( dockable );
+		ToolbarColumn<Dockable,StationChildHandle> column = getColumnModel().getColumn( dockable );
 		if( column == null ) {
 			return null;
 		}
@@ -1443,25 +1444,13 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	}
 
 	private void writeLayoutArguments( PlaceholderMap map ){
-		PlaceholderMap.Key key = map.newKey( "group" );
-		switch( getOrientation() ){
-			case HORIZONTAL:
-				map.putString( key, "orientation", "horizontal" );
-				break;
-			case VERTICAL:
-				map.putString( key, "orientation", "vertical" );
-				break;
-		}
+		ToolbarGroupDockStationLayout.writeOrientation( map, getOrientation() );
 	}
 
 	private void readLayoutArguments( PlaceholderMap map ){
-		PlaceholderMap.Key key = map.newKey( "group" );
-		String orientation = map.getString( key, "orientation" );
-		if( "horizontal".equals( orientation ) ) {
-			setOrientation( Orientation.HORIZONTAL );
-		}
-		else if( "vertical".equals( orientation ) ) {
-			setOrientation( Orientation.VERTICAL );
+		Orientation orientation = ToolbarGroupDockStationLayout.readOrientation( map );
+		if( orientation != null ){
+			setOrientation( orientation );
 		}
 	}
 

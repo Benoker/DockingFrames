@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.24)  21 JUL 2012 15:16
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.24)  26 JUL 2012 12:26
 entering extended mode
  %&-line parsing enabled.
 **guide2.tex
@@ -997,37 +997,37 @@ ls an al-go-rithm that mod-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 31--32
+Underfull \hbox (badness 10000) in paragraph at lines 32--33
 \OT1/cmtt/m/n/10 EclipseTheme\OT1/cmr/m/n/10 . Clients only need to en-sure tha
 t the li-braries
  []
 
 File: stop.png Graphic file (type png)
 <use stop.png>
-Overfull \hbox (0.22173pt too wide) in paragraph at lines 36--37
+Overfull \hbox (0.22173pt too wide) in paragraph at lines 37--38
 \OT1/cmr/m/n/10 The Toolbar-extension adds tool-bars, a set of new \OT1/cmtt/m/
 n/10 DockStation\OT1/cmr/m/n/10 s and \OT1/cmtt/m/n/10 Dockable\OT1/cmr/m/n/10 
 s,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
+Underfull \hbox (badness 10000) in paragraph at lines 37--38
 \OT1/cmr/m/n/10 to the frame-work. Clients need to en-sure that the li-brary
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
+Underfull \hbox (badness 10000) in paragraph at lines 37--38
 \OT1/cmtt/m/n/10 docking-frames-ext-toolbar.jar \OT1/cmr/m/n/10 is part of the 
 class-path, the
  []
 
 File: code.png Graphic file (type png)
-<use code.png>) [70]
+<use code.png>) [70] [71]
 \openout2 = `properties/chapter.aux'.
 
  (./properties/chapter.tex
 File: stop.png Graphic file (type png)
- <use stop.png> [71
+ <use stop.png> [72
 
 
 ]
@@ -1036,7 +1036,7 @@ Overfull \hbox (4.46335pt too wide) in paragraph at lines 27--28
 Tells whether icons should
  []
 
-[72]
+[73]
 Overfull \hbox (1.65521pt too wide) in paragraph at lines 39--40
 \OT1/cmtt/m/it/10 FlapDockStation.BUTTON[]CONTENT[]FILTER\OT1/cmr/m/n/10 : Fil-
 ters the \OT1/cmtt/m/n/10 DockAction\OT1/cmr/m/n/10 s that
@@ -1054,7 +1054,7 @@ Overfull \hbox (6.01889pt too wide) in paragraph at lines 46--47
 Tells whether dou-ble click-
  []
 
-[73]
+[74]
 Underfull \hbox (badness 10000) in paragraph at lines 55--56
 \OT1/cmtt/m/it/10 StackDockStation.COMPONENT[]FACTORY\OT1/cmr/m/n/10 : A fac-to
 ry cre-at-ing a
@@ -1066,7 +1066,7 @@ Overfull \hbox (1.2637pt too wide) in paragraph at lines 58--59
 ig-u-ra-tion telling how the
  []
 
-[74]
+[75]
 Overfull \hbox (0.51657pt too wide) in paragraph at lines 66--67
 \OT1/cmtt/m/it/10 DockAction.BUTTON[]CONTENT[]FILTER\OT1/cmr/m/n/10 : \OT1/cmtt
 /m/n/10 DockAction\OT1/cmr/m/n/10 s can be shown on but-
@@ -1078,13 +1078,13 @@ Underfull \hbox (badness 2205) in paragraph at lines 73--74
 ot cre-ate a new
  []
 
-[75]
+[76]
 Underfull \hbox (badness 3417) in paragraph at lines 86--87
 \OT1/cmtt/m/it/10 PropertyKey.DOCK[]STATION[]TOOLTIP\OT1/cmr/m/n/10 : This tool
 tip is shown by a
  []
 
-[76]
+[77]
 Overfull \hbox (7.6006pt too wide) in paragraph at lines 96--97
 \OT1/cmtt/m/it/10 CGlassExtension.SMALL[]TAB[]SIZE\OT1/cmr/m/n/10 : Al-lows to 
 make tabs a lit-tle bit smaller. 
@@ -1108,7 +1108,7 @@ Overfull \hbox (2.9874pt too wide) in paragraph at lines 107--108
 lling how much space should
  []
 
-) [77] (./guide2.aux (./introduction/chapter.aux) (./basics/chapter.aux)
+) [78] (./guide2.aux (./introduction/chapter.aux) (./basics/chapter.aux)
 (./layouts/chapter.aux) (./actions/chapter.aux) (./titles/chapter.aux)
 (./themes/chapter.aux) (./stations/chapter.aux) (./dragNdrop/chapter.aux)
 (./preferences/chapter.aux) (./extensions/chapter.aux)
@@ -1135,9 +1135,9 @@ xlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/
 type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/publi
 c/amsfonts/cm/cmti7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
 m/cmtt10.pfb>
-Output written on guide2.pdf (77 pages, 957546 bytes).
+Output written on guide2.pdf (78 pages, 958500 bytes).
 PDF statistics:
- 357 PDF objects out of 1000 (max. 8388607)
+ 360 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  126 words of extra memory for PDF output out of 10000 (max. 10000000)
 

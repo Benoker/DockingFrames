@@ -69,6 +69,8 @@ import bibliothek.gui.dock.dockable.AncestorMovingImageFactory;
 import bibliothek.gui.dock.dockable.DefaultDockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
+import bibliothek.gui.dock.frontend.DefaultFrontendPerspectiveCache;
+import bibliothek.gui.dock.frontend.FrontendPerspectiveCacheExtension;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PropertyTransformer;
@@ -112,6 +114,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.NullTitleFactory;
 import bibliothek.gui.dock.toolbar.expand.ExpandManager;
 import bibliothek.gui.dock.toolbar.item.DockActionItem;
+import bibliothek.gui.dock.toolbar.perspective.ToolbarFrontendPerspectiveCacheExtension;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockPropertyListener;
 import bibliothek.gui.dock.util.IconManager;
@@ -325,6 +328,9 @@ public class ToolbarExtension implements Extension {
 		if( extension.getName().equals( ScreenDockStation.STATION_EXTENSION ) ) {
 			return (Collection<E>) createScreenDockStationExtension( controller );
 		}
+		if( extension.getName().equals( DefaultFrontendPerspectiveCache.CACHE_EXTENSION )){
+			return (Collection<E>) createPerspectiveCacheExtensions();
+		}
 
 		return null;
 	}
@@ -451,6 +457,12 @@ public class ToolbarExtension implements Extension {
 	protected Collection<ScreenDockStationExtension> createScreenDockStationExtension( DockController controller ){
 		List<ScreenDockStationExtension> result = new ArrayList<ScreenDockStationExtension>();
 		result.add( new ToolbarScreenDockStationExtension( controller ) );
+		return result;
+	}
+	
+	protected Collection<FrontendPerspectiveCacheExtension> createPerspectiveCacheExtensions(){
+		List<FrontendPerspectiveCacheExtension> result = new ArrayList<FrontendPerspectiveCacheExtension>();
+		result.add( new ToolbarFrontendPerspectiveCacheExtension() );
 		return result;
 	}
 }

@@ -116,7 +116,7 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 	}
 
 	@Override
-	protected ExpandColumn createColumn( ToolbarColumn<P> column ){
+	protected ExpandColumn createColumn( ToolbarColumn<Dockable,P> column ){
 		return new ExpandColumn( column );
 	}
 
@@ -142,7 +142,7 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 	protected class ExpandColumn extends AbstractToolbarGroupActions<P, ExpandColumn>.Column {
 		private ExpandSource source;
 
-		public ExpandColumn( ToolbarColumn<P> column ){
+		public ExpandColumn( ToolbarColumn<Dockable,P> column ){
 			super( null );
 			source = new ExpandSource( this );
 			init( column );
@@ -229,7 +229,7 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 		 * @return the current state, not <code>null</code>
 		 */
 		public ExpandedState getState(){
-			ToolbarColumn<P> column = getColumn();
+			ToolbarColumn<Dockable,P> column = getColumn();
 			ExpandedState result = null;
 			if( column.getDockableCount() > 0 ){
 				ExpandableToolbarItemStrategy strategy = getStrategy();

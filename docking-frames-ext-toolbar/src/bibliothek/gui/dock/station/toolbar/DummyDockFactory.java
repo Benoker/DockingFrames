@@ -59,8 +59,7 @@ public abstract class DummyDockFactory<D extends Dockable> implements DockFactor
 	}
 
 	@Override
-	public Object getPerspectiveLayout( PerspectiveElement element,
-			Map<PerspectiveDockable, Integer> children ){
+	public Object getPerspectiveLayout( PerspectiveElement element, Map<PerspectiveDockable, Integer> children ){
 		return DUMMY;
 	}
 
@@ -85,8 +84,7 @@ public abstract class DummyDockFactory<D extends Dockable> implements DockFactor
 	}
 
 	@Override
-	public Object read( DataInputStream in, PlaceholderStrategy placeholders )
-			throws IOException{
+	public Object read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
 		return DUMMY;
 	}
 

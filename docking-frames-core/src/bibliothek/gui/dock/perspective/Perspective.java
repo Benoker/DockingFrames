@@ -149,6 +149,10 @@ public abstract class Perspective {
 	 */
 	@SuppressWarnings("unchecked")
 	public DockLayoutComposition convert( PerspectiveElement element ){
+		if( element == null ){
+			throw new IllegalArgumentException( "element must not be null" );
+		}
+		
 		DockSituationIgnore ignore = situation.getIgnore();
 		if( ignore != null && ignore.ignoreElement( element )){
 			return null;
@@ -220,7 +224,7 @@ public abstract class Perspective {
 			return null;
 
 		DockLayout<Object> layout = (DockLayout<Object>)info.getDataLayout();
-		if( layout == null )
+		if( layout == null || layout.getData() == null )
 			return null;
 
 		DockFactory<DockElement, PerspectiveElement, Object> factory = (DockFactory<DockElement, PerspectiveElement, Object>)getFactory( layout.getFactoryID() );

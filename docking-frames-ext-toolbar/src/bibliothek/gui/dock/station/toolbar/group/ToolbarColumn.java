@@ -38,10 +38,11 @@ import bibliothek.util.FrameworkOnly;
  * Represents one column of a {@link ToolbarGroupDockStation}. This interface
  * is not intended for subclassing.
  * @author Benjamin Sigg
+ * @param <D> the dockable class itself
  * @param <P> the kind of object used to describe a {@link Dockable}
  */
 @FrameworkOnly
-public interface ToolbarColumn<P> {
+public interface ToolbarColumn<D,P> {
 	/**
 	 * Tells how many {@link Dockable}s are shown in this column.
 	 * @return the total number of {@link Dockable}s, at least <code>0</code>.
@@ -54,7 +55,7 @@ public interface ToolbarColumn<P> {
 	 * @return the element at <code>index</code>, never <code>null</code>
 	 * @throws IllegalArgumentException if <code>index</code> is out of bounds
 	 */
-	public Dockable getDockable( int index );
+	public D getDockable( int index );
 	
 	/**
 	 * Gets the index of <code>dockable</code>.
@@ -80,11 +81,11 @@ public interface ToolbarColumn<P> {
 	 * Adds the new observer <code>listener</code> to this column.
 	 * @param listener the new observer
 	 */
-	public void addListener( ToolbarColumnListener<P> listener );
+	public void addListener( ToolbarColumnListener<D,P> listener );
 	
 	/**
 	 * Removes the observer <code>listener</code> from this column.
 	 * @param listener the listener to remove
 	 */
-	public void removeListener( ToolbarColumnListener<P> listener );
+	public void removeListener( ToolbarColumnListener<D,P> listener );
 }

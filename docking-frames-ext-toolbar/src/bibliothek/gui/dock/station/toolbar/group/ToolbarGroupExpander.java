@@ -85,14 +85,14 @@ public class ToolbarGroupExpander {
 	public ToolbarGroupExpander( ToolbarGroupDockStation station ){
 		this.station = station;
 		setController( station.getController() );
-		station.getColumnModel().addListener( new ToolbarColumnModelListener<StationChildHandle>(){
+		station.getColumnModel().addListener( new ToolbarColumnModelListener<Dockable,StationChildHandle>(){
 			@Override
-			public void removed( ToolbarColumnModel<StationChildHandle> model, ToolbarColumn<StationChildHandle> column, int index ){
+			public void removed( ToolbarColumnModel<Dockable,StationChildHandle> model, ToolbarColumn<Dockable,StationChildHandle> column, int index ){
 				column.removeListener( columnHandler );
 			}
 
 			@Override
-			public void inserted( ToolbarColumnModel<StationChildHandle> model, ToolbarColumn<StationChildHandle> column, int index ){
+			public void inserted( ToolbarColumnModel<Dockable,StationChildHandle> model, ToolbarColumn<Dockable,StationChildHandle> column, int index ){
 				column.addListener( columnHandler );
 			}
 		} );
@@ -134,7 +134,7 @@ public class ToolbarGroupExpander {
 	private class StrategyHandler implements ExpandableToolbarItemStrategyListener {
 		@Override
 		public void enablementChanged( Dockable item, ExpandedState state, boolean enabled ){
-			ToolbarColumn<StationChildHandle> column = station.getColumnModel().getColumn( item );
+			ToolbarColumn<Dockable,StationChildHandle> column = station.getColumnModel().getColumn( item );
 			if( column != null ) {
 				columnHandler.validate( column );
 			}
@@ -159,9 +159,9 @@ public class ToolbarGroupExpander {
 	/**
 	 * Ensures that all the items of a column have the same {@link ExpandedState}.
 	 */
-	private class ColumnHandler implements ToolbarColumnListener<StationChildHandle> {
+	private class ColumnHandler implements ToolbarColumnListener<Dockable,StationChildHandle> {
 		@Override
-		public void inserted( ToolbarColumn<StationChildHandle> column, StationChildHandle item, final Dockable dockable, int index ){
+		public void inserted( ToolbarColumn<Dockable,StationChildHandle> column, StationChildHandle item, final Dockable dockable, int index ){
 			final ExpandableToolbarItemStrategy strategy = getStrategy();
 			if( strategy != null ) {
 				int count = 0;
@@ -195,12 +195,12 @@ public class ToolbarGroupExpander {
 		}
 
 		@Override
-		public void removed( ToolbarColumn<StationChildHandle> column, StationChildHandle item, Dockable dockable, int index ){
+		public void removed( ToolbarColumn<Dockable,StationChildHandle> column, StationChildHandle item, Dockable dockable, int index ){
 			// ignore
 		}
 
 		public void validateAll(){
-			ToolbarColumnModel<StationChildHandle> model = station.getColumnModel();
+			ToolbarColumnModel<Dockable,StationChildHandle> model = station.getColumnModel();
 			for( int i = 0, n = model.getColumnCount(); i < n; i++ ) {
 				validate( model.getColumn( i ) );
 			}
@@ -211,7 +211,7 @@ public class ToolbarGroupExpander {
 		 * {@link ExpandedState} of the first item.
 		 * @param column the column to validate
 		 */
-		public void validate( ToolbarColumn<StationChildHandle> column ){
+		public void validate( ToolbarColumn<Dockable,StationChildHandle> column ){
 			ExpandableToolbarItemStrategy strategy = getStrategy();
 			if( strategy != null ) {
 				int index = 0;

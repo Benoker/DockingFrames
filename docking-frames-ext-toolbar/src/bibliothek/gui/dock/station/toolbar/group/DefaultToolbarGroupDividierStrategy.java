@@ -84,9 +84,9 @@ public class DefaultToolbarGroupDividierStrategy implements ToolbarGroupDividerS
 		g.setColor( parent.getForeground() );
 		
 		Orientation orientation = station.getOrientation();
-		ToolbarColumnModel<?> model = station.getColumnModel();
+		ToolbarColumnModel<Dockable,?> model = station.getColumnModel();
 		for( int i = 0, n = model.getColumnCount(); i<n; i++ ){
-			ToolbarColumn<?> column = model.getColumn( i );
+			ToolbarColumn<Dockable,?> column = model.getColumn( i );
 			for( int j = 0, m = column.getDockableCount(); j<m; j++ ){
 				Rectangle bounds = layoutManager.getBounds( i, j );
 				if( j == 0 ){

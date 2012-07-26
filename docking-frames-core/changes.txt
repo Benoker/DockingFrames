@@ -777,5 +777,8 @@
  - API: CPerspective now also stores invisible children
  - API: AbstractCDockablePerspective offers method "remove", which stores the location of the dockable and then removes it from its parent.
   
+[v1.1.1p8c]
+ - API: Added support for the perspective API to the Toolbar Extension
+  
 [Todo]
 - Drop StackDockStation over Dockable and merge them

@@ -27,54 +27,45 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
+package bibliothek.gui.dock.station.toolbar.layout;
 
-package bibliothek.gui.dock.station.toolbar;
-
-import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
-import bibliothek.gui.dock.toolbar.expand.ExpandedState;
+import bibliothek.util.Path;
 
 /**
- * Describes the layout of a {@link ToolbarDockStation}.
- * 
+ * Represents a list of lists of {@link PerspectiveDockable}s and placeholders.
  * @author Benjamin Sigg
  */
-public class ToolbarDockStationLayout {
-	/** the encoded layout of the {@link ToolbarDockStation} */
-	private final PlaceholderMap placeholders;
-
-	/** whether the children are big or small */
-	private final ExpandedState state;
-
-	/**
-	 * Creates a new layout object.
-	 * 
-	 * @param placeholders
-	 *            the encoded layout of the {@link ToolbarDockStation}, not
-	 *            <code>null</code>
-	 * @param state
-	 *            whether the children are big or small
-	 */
-	public ToolbarDockStationLayout( PlaceholderMap placeholders, ExpandedState state ){
-		this.placeholders = placeholders;
-		this.state = state;
+public class PerspectiveGridPlaceholderList extends GridPlaceholderList<PerspectiveDockable, PerspectiveStation, PerspectiveDockable>{
+	@Override
+	protected PerspectiveStation itemToStation( PerspectiveDockable dockable ){
+		return dockable.asStation();
 	}
 
-	/**
-	 * Gets the encoded layout.
-	 * 
-	 * @return the encoded layout, not <code>null</code>
-	 */
-	public PlaceholderMap getPlaceholders(){
-		return placeholders;
+	@Override
+	protected PerspectiveDockable[] getItemChildren( PerspectiveStation station ){
+		int count = station.getDockableCount();
+		PerspectiveDockable[] result = new PerspectiveDockable[ count ];
+		for( int i = 0; i < count; i++ ){
+			result[i] = station.getDockable( i );
+		}
+		return result;
 	}
 
-	/**
-	 * Tells whether the children are big or small.
-	 * 
-	 * @return the size of the children
-	 */
-	public ExpandedState getState(){
-		return state;
+	@Override
+	protected Path getItemPlaceholder( PerspectiveDockable dockable ){
+		return dockable.getPlaceholder();
+	}
+
+	@Override
+	protected PlaceholderMap getItemPlaceholders( PerspectiveStation station ){
+		return station.getPlaceholders();
+	}
+
+	@Override
+	protected void setItemPlaceholders( PerspectiveStation station, PlaceholderMap map ){
+		station.setPlaceholders( map );
 	}
 }

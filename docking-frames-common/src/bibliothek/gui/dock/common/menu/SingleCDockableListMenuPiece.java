@@ -37,7 +37,9 @@ import bibliothek.gui.dock.facile.menu.CloseableDockableMenuPiece;
 /**
  * A piece of a menu that adds an item for each closeable {@link CDockable}
  * that can be found in a {@link CControl}. The user can show or hide
- * {@link CDockable}s by clicking onto these items.
+ * {@link CDockable}s by clicking onto these items.<br>
+ * <b>Please note: </b> this menu shows only {@link CDockable}s that really do exist,
+ * if a dockable is loaded lazy, then this menu does not show the element!
  * @author Benjamin Sigg
  */
 public class SingleCDockableListMenuPiece extends CloseableDockableMenuPiece {

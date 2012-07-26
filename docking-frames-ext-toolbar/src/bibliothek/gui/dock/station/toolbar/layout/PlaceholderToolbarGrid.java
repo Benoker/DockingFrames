@@ -52,16 +52,12 @@ import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList.ColumnItem
 import bibliothek.util.Path;
 
 /**
- * A {@link PlaceholderToolbarGrid} behaves like a list of
- * {@link PlaceholderList}s.
+ * A {@link PlaceholderToolbarGrid} behaves like a list of {@link PlaceholderList}s.
  * 
  * @author Benjamin Sigg
- * @param <D>
- *            the kind of object that should be treated as {@link Dockable}
- * @param <S>
- *            the kind of object that should be treated as {@link DockStation}
- * @param <P>
- *            the type of item which represents a {@link Dockable}
+ * @param <D> the kind of object that should be treated as {@link Dockable}
+ * @param <S> the kind of object that should be treated as {@link DockStation}
+ * @param <P> the type of item which represents a {@link Dockable}
  */
 public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem<D>> {
 	/** defines the order of all columns (visible and invisible columns) */
@@ -472,11 +468,11 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	/**
 	 * Removes <code>item</code> from this grid, but leaves a placeholder for
 	 * the item.
-	 * 
-	 * @param item
-	 *            the item to remove
+	 * @param item the item to remove
+	 * @return <code>true</code> if <code>item</code> was found and removed
 	 */
-	public void remove( P item ){
+	public boolean remove( P item ){
+		boolean result = false;
 		int columnIndex = -1;
 		for( final Column<D, S, P> column : columns.dockables() ) {
 			columnIndex++;
@@ -484,9 +480,11 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			if( index >= 0 ){
 				column.getList().remove( item );
 				onRemoved( column.getList(), columnIndex, item, index );
+				result = true;
 			}
 		}
 		purge();
+		return result;
 	}
 
 	private void ensureRemoved( PlaceholderList<D, S, P> ignore, P item ){
@@ -995,7 +993,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	}
 	
 	/**
-	 * Informs this grid that it is actually used and that it should is allowed
+	 * Informs this grid that it is actually used and that it should be allowed
 	 * to add observers to various resources.
 	 */
 	public void bind(){

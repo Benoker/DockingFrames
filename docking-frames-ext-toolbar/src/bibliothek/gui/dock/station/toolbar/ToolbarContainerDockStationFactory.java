@@ -40,7 +40,6 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
-import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.Version;
@@ -53,9 +52,7 @@ import bibliothek.util.xml.XElement;
  * @author Benjamin Sigg
  * @author Herve Guillaume
  */
-public class ToolbarContainerDockStationFactory
-		implements
-		DockFactory<ToolbarContainerDockStation, PerspectiveElement, ToolbarContainerDockStationLayout>{
+public class ToolbarContainerDockStationFactory implements DockFactory<ToolbarContainerDockStation, ToolbarContainerDockPerspective, ToolbarContainerDockStationLayout> {
 	/** the unique, unmodifiable identifier of this factory */
 	public static final String ID = "ToolbarContainerDockStationFactory";
 
@@ -64,105 +61,92 @@ public class ToolbarContainerDockStationFactory
 		return ID;
 	}
 
+	/**
+	 * Creates a {@link ToolbarContainerConverter} which will be used for one call.
+	 * @return the new converter, not <code>null</code>
+	 */
+	protected ToolbarContainerConverter createConverter(){
+		return new DefaultToolbarContainerConverter();
+	}
+	
 	@Override
-	public ToolbarContainerDockStationLayout getLayout(
-			ToolbarContainerDockStation element, Map<Dockable, Integer> children ){
-		return new ToolbarContainerDockStationLayout(
-				element.getPlaceholders(children));
+	public ToolbarContainerDockStationLayout getLayout( ToolbarContainerDockStation element, Map<Dockable, Integer> children ){
+		return new ToolbarContainerDockStationLayout( element.getPlaceholders( children ) );
 	}
 
 	@Override
-	public ToolbarContainerDockStationLayout getPerspectiveLayout(
-			PerspectiveElement element,
-			Map<PerspectiveDockable, Integer> children ){
-		return null;
+	public ToolbarContainerDockStationLayout getPerspectiveLayout( ToolbarContainerDockPerspective element, Map<PerspectiveDockable, Integer> children ){
+		PlaceholderMap map = createConverter().getPlaceholders( element, children );
+		return new ToolbarContainerDockStationLayout( map );
 	}
 
 	@Override
-	public void setLayout( ToolbarContainerDockStation element,
-			ToolbarContainerDockStationLayout layout,
-			Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
-		element.setPlaceholders(layout.getPlaceholders(), children);
+	public void setLayout( ToolbarContainerDockStation element, ToolbarContainerDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+		element.setPlaceholders( layout.getPlaceholders(), children );
 	}
 
 	@Override
-	public void setLayout( ToolbarContainerDockStation element,
-			ToolbarContainerDockStationLayout layout,
-			PlaceholderStrategy placeholders ){
+	public void setLayout( ToolbarContainerDockStation element, ToolbarContainerDockStationLayout layout, PlaceholderStrategy placeholders ){
 		// nothing to do
 	}
 
 	@Override
-	public void write( ToolbarContainerDockStationLayout layout,
-			DataOutputStream out ) throws IOException{
-		Version.write(out, Version.VERSION_1_1_1);
-		layout.getPlaceholders().write(out);
+	public void write( ToolbarContainerDockStationLayout layout, DataOutputStream out ) throws IOException{
+		Version.write( out, Version.VERSION_1_1_1 );
+		layout.getPlaceholders().write( out );
 	}
 
 	@Override
-	public void write( ToolbarContainerDockStationLayout layout,
-			XElement element ){
-		layout.getPlaceholders().write(element.addElement("placeholders"));
+	public void write( ToolbarContainerDockStationLayout layout, XElement element ){
+		layout.getPlaceholders().write( element.addElement( "placeholders" ) );
 	}
 
 	@Override
-	public ToolbarContainerDockStationLayout read( DataInputStream in,
-			PlaceholderStrategy placeholders ) throws IOException{
-		final Version version = Version.read(in);
+	public ToolbarContainerDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
+		final Version version = Version.read( in );
 		version.checkCurrent();
 
-		final PlaceholderMap map = new PlaceholderMap(in, placeholders);
-		map.setPlaceholderStrategy(null);
-		return new ToolbarContainerDockStationLayout(map);
+		final PlaceholderMap map = new PlaceholderMap( in, placeholders );
+		map.setPlaceholderStrategy( null );
+		return new ToolbarContainerDockStationLayout( map );
 	}
 
 	@Override
-	public ToolbarContainerDockStationLayout read( XElement element,
-			PlaceholderStrategy placeholders ){
-		final XElement xplaceholders = element.getElement("placeholders");
+	public ToolbarContainerDockStationLayout read( XElement element, PlaceholderStrategy placeholders ){
+		final XElement xplaceholders = element.getElement( "placeholders" );
 
-		final PlaceholderMap map = new PlaceholderMap(xplaceholders,
-				placeholders);
-		map.setPlaceholderStrategy(null);
-		return new ToolbarContainerDockStationLayout(map);
+		final PlaceholderMap map = new PlaceholderMap( xplaceholders, placeholders );
+		map.setPlaceholderStrategy( null );
+		return new ToolbarContainerDockStationLayout( map );
 	}
 
 	@Override
-	public void estimateLocations( ToolbarContainerDockStationLayout layout,
-			LocationEstimationMap children ){
+	public void estimateLocations( ToolbarContainerDockStationLayout layout, LocationEstimationMap children ){
 		// TODO pending
 	}
 
 	@Override
-	public ToolbarContainerDockStation layout(
-			ToolbarContainerDockStationLayout layout,
-			Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
+	public ToolbarContainerDockStation layout( ToolbarContainerDockStationLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
 		final ToolbarContainerDockStation station = createStation();
-		setLayout(station, layout, children, placeholders);
+		setLayout( station, layout, children, placeholders );
 		return station;
 	}
 
 	@Override
-	public ToolbarContainerDockStation layout(
-			ToolbarContainerDockStationLayout layout,
-			PlaceholderStrategy placeholders ){
+	public ToolbarContainerDockStation layout( ToolbarContainerDockStationLayout layout, PlaceholderStrategy placeholders ){
 		final ToolbarContainerDockStation station = createStation();
-		setLayout(station, layout, placeholders);
+		setLayout( station, layout, placeholders );
 		return station;
 	}
 
 	@Override
-	public PerspectiveElement layoutPerspective(
-			ToolbarContainerDockStationLayout layout,
-			Map<Integer, PerspectiveDockable> children ){
-		return null;
+	public ToolbarContainerDockPerspective layoutPerspective( ToolbarContainerDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		return new ToolbarContainerDockPerspective( layout, children );
 	}
 
 	@Override
-	public void layoutPerspective( PerspectiveElement perspective,
-			ToolbarContainerDockStationLayout layout,
-			Map<Integer, PerspectiveDockable> children ){
-
+	public void layoutPerspective( ToolbarContainerDockPerspective perspective, ToolbarContainerDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
+		perspective.read( layout, children );
 	}
 
 	/**
@@ -171,7 +155,6 @@ public class ToolbarContainerDockStationFactory
 	 * @return the new station, not <code>null</code>
 	 */
 	protected ToolbarContainerDockStation createStation(){
-		return new ToolbarContainerDockStation(
-				ToolbarContainerDockStation.DEFAULT_ORIENTATION);
+		return new ToolbarContainerDockStation( ToolbarContainerDockStation.DEFAULT_ORIENTATION );
 	}
 }

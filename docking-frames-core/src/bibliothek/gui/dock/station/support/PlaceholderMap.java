@@ -872,7 +872,7 @@ public class PlaceholderMap {
 			return (String)data;
 		}
 		else{
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException( "\"" + key + "\" is not a string" );
 		}
 	}
 

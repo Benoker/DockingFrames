@@ -34,6 +34,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 
 /**
@@ -43,7 +44,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
  * @author Benjamin Sigg
  * @author Herve Guillaume
  */
-public interface ToolbarContainerConverter{
+public interface ToolbarContainerConverter {
 	/**
 	 * Called by {@link ToolbarContainerDockStation#getPlaceholders()}
 	 * 
@@ -55,16 +56,20 @@ public interface ToolbarContainerConverter{
 
 	/**
 	 * Called by {@link ToolbarContainerDockStation#getPlaceholders(Map)}
-	 * 
-	 * @param station
-	 *            the calling station
-	 * @param children
-	 *            identifiers for the children of the station
+	 * @param station the calling station
+	 * @param children identifiers for the children of the station
 	 * @return the placeholders
 	 */
-	public PlaceholderMap getPlaceholders( ToolbarContainerDockStation station,
-			Map<Dockable, Integer> children );
+	public PlaceholderMap getPlaceholders( ToolbarContainerDockStation station, Map<Dockable, Integer> children );
 
+	/**
+	 * Called by {@link ToolbarDockStationFactory#getPerspectiveLayout(bibliothek.gui.dock.perspective.PerspectiveElement, Map)}
+	 * @param station the calling station
+	 * @param children identifiers for the children of the station
+	 * @return the placeholders
+	 */
+	public PlaceholderMap getPlaceholders( ToolbarContainerDockPerspective station, Map<PerspectiveDockable, Integer> children );
+	
 	/**
 	 * Called by
 	 * {@link ToolbarContainerDockStation#setPlaceholders(PlaceholderMap)}
@@ -74,8 +79,7 @@ public interface ToolbarContainerConverter{
 	 * @param map
 	 *            the placeholders to read
 	 */
-	public void setPlaceholders( ToolbarContainerDockStation station,
-			PlaceholderMap map );
+	public void setPlaceholders( ToolbarContainerDockStation station, PlaceholderMap map );
 
 	/**
 	 * Called by
@@ -90,7 +94,5 @@ public interface ToolbarContainerConverter{
 	 * @param map
 	 *            the placeholders to read
 	 */
-	public void setPlaceholders( ToolbarContainerDockStation station,
-			ToolbarContainerConverterCallback callback, PlaceholderMap map,
-			Map<Integer, Dockable> children );
+	public void setPlaceholders( ToolbarContainerDockStation station, ToolbarContainerConverterCallback callback, PlaceholderMap map, Map<Integer, Dockable> children );
 }

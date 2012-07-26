@@ -214,7 +214,10 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 	}
 
 	public CommonDockStationPerspective layoutPerspective( CommonDockStationLayout layout, Map<Integer, PerspectiveDockable> children ){
-		CommonDockStationPerspective element = (CommonDockStationPerspective)cache.get( layout.getId(), layout.isRoot() );
+		CommonDockStationPerspective element = null;
+		if( cache != null ){
+			element = (CommonDockStationPerspective)cache.get( layout.getId(), layout.isRoot() );
+		}
 		if( element == null ){
 			return null;
 		}
@@ -276,9 +279,6 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 			}
 			content = new XElement("content");
 			factory.write( data.getData(), content );
-		}
-		if( content == null ){
-			throw new XException( "unable to write layout, it could not be converted into byte-array format" );
 		}
 		
 		String id = layout.getId();

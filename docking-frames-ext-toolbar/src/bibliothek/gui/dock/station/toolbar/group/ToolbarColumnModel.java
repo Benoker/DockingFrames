@@ -43,10 +43,11 @@ import bibliothek.util.FrameworkOnly;
  * but it offers an API to register observers and be notified about changes within the columns.<br>
  * Clients should not implement this interface.
  * @author Benjamin Sigg
+ * @param <D> the dockable class itself
  * @param <P> the wrapper used to describe a {@link Dockable}
  */
 @FrameworkOnly
-public interface ToolbarColumnModel<P> {
+public interface ToolbarColumnModel<D,P> {
 	/**
 	 * Gets the total number of columns that are currently available.
 	 * @return the total number of columns
@@ -59,24 +60,24 @@ public interface ToolbarColumnModel<P> {
 	 * @return the column, not <code>null</code>
 	 * @throws IllegalArgumentException if <code>index</code> is not within the boundaries
 	 */
-	public ToolbarColumn<P> getColumn( int index );
+	public ToolbarColumn<D,P> getColumn( int index );
 	
 	/**
 	 * Searches the column which contains <code>dockable</code>.
 	 * @param dockable the item to search
 	 * @return the column containing <code>dockable</code> or <code>null</code> if not found
 	 */
-	public ToolbarColumn<P> getColumn( Dockable dockable );
+	public ToolbarColumn<D,P> getColumn( Dockable dockable );
 	
 	/**
 	 * Adds the observer <code>listener</code> to this model.
 	 * @param listener the new observer, not <code>null</code>
 	 */
-	public void addListener( ToolbarColumnModelListener<P> listener );
+	public void addListener( ToolbarColumnModelListener<D,P> listener );
 	
 	/**
 	 * Removes the observer <code>listener</code> from this model.
 	 * @param listener the observer to remove
 	 */
-	public void removeListener( ToolbarColumnModelListener<P> listener );
+	public void removeListener( ToolbarColumnModelListener<D,P> listener );
 }
