@@ -177,7 +177,7 @@ public class PlaceholderMap {
 	 * @throws IOException in case of an I/O error
 	 */
 	public void write( DataOutputStream out ) throws IOException{
-		Version.write( out, Version.VERSION_1_1_0a );
+		Version.write( out, Version.VERSION_1_1_1a );
 		out.writeInt( version );
 		out.writeUTF( format.toString() );
 		

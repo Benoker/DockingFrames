@@ -779,6 +779,7 @@
   
 [v1.1.1p8c]
  - API: Added support for the perspective API to the Toolbar Extension
+ - Bugfix: Binary format for permanent layout storage has been broken
   
 [Todo]
 - Drop StackDockStation over Dockable and merge them
