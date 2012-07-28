@@ -199,10 +199,6 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 	 * @return the size of the gap
 	 */
 	public int getLine( int column, int index ){
-		Span[] temp = lineSpans[ column ];
-		Span t = temp[ index ];
-		t.getSize();
-		
 		return Math.max( lineSpans[ column ][ index ].getSize(), dividers.getLine( column, index ));
 	}
 	
