@@ -37,7 +37,7 @@ import bibliothek.gui.dock.perspective.PerspectiveElement;
 public interface FrontendPerspectiveCacheExtension {
 	/**
 	 * Converts <code>element</code> into a {@link PerspectiveElement}.
-	 * @param the unique identifier of the element, may be <code>null</code>
+	 * @param id the unique identifier of the element, may be <code>null</code>
 	 * @param element the element to convert
 	 * @param isRootStation whether <code>element</code> is used as a root station
 	 * @return the converted element or <code>null</code> if this extension does not know how to

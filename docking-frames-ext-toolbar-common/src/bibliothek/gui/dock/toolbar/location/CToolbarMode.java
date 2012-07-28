@@ -70,7 +70,7 @@ public class CToolbarMode extends ToolbarMode<CToolbarModeArea> implements CLoca
 
 	@Override
 	public boolean isBasicMode(){
-		return false;
+		return true;
 	}
 
 	@Override

@@ -766,18 +766,10 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			private final Iterator<GridPlaceholderList.Column<D, S, P>> items = columns.dockables().iterator();
 			private PlaceholderList<D, S, P> current;
 			private int currentIndex = -1;
-			private boolean requiresPurge = false;
 			
 			@Override
 			public boolean hasNext(){
-				boolean result = items.hasNext();
-				if( !result ){
-					if( requiresPurge ){
-						purge();
-						requiresPurge = false;
-					}
-				}
-				return result;
+				return items.hasNext();
 			};
 
 			@Override

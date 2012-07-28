@@ -780,6 +780,10 @@
 [v1.1.1p8c]
  - API: Added support for the perspective API to the Toolbar Extension
  - Bugfix: Binary format for permanent layout storage has been broken
-  
+
+[v1.1.1p8d]
+ - Bugfix: CToolbarMode is now considered to be a "basic mode".
+ - Bugfix: ToolbarGridLayoutManager could throw exception because its cached data was outdated
+   
 [Todo]
 - Drop StackDockStation over Dockable and merge them

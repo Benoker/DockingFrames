@@ -212,6 +212,20 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 */
 	@SuppressWarnings("unchecked")
 	protected Wrapper[][] layout(){
+		if( cachedComponents != null ){
+			// check cache still valid, delete if not
+			if( cachedComponents.length != grid.getColumnCount() ){
+				cachedComponents = null;
+			}
+			else{
+				for( int i = 0, n = cachedComponents.length; i<n && cachedComponents != null; i++ ){
+					if( cachedComponents[i].length != grid.getColumn( i ).dockables().size() ){
+						cachedComponents = null;
+					}
+				}
+			}
+		}
+		
 		if( cachedComponents == null ){
 			Wrapper[][] components = new ToolbarGridLayoutManager.Wrapper[grid.getColumnCount()][];
 			for( int i = 0; i < components.length; i++ ) {
@@ -229,17 +243,17 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 	@Override
 	public void addLayoutComponent( String name, Component comp ){
-		// nothing to do
+		cachedComponents = null;
 	}
 
 	@Override
 	public void removeLayoutComponent( Component comp ){
-		// nothing to do
+		cachedComponents = null;
 	}
 
 	@Override
 	public void addLayoutComponent( Component comp, Object constraints ){
-		// nothing to do
+		cachedComponents = null;
 	}
 
 	/**
