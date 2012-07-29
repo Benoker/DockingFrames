@@ -784,6 +784,9 @@
 [v1.1.1p8d]
  - Bugfix: CToolbarMode is now considered to be a "basic mode".
  - Bugfix: ToolbarGridLayoutManager could throw exception because its cached data was outdated
+
+[v1.1.1p8e]
+ - API: Added support for perspectives in Common for toolbars
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

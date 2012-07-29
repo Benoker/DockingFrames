@@ -86,7 +86,16 @@ public class CToolbarContentArea extends CContentArea{
 	 * @return the unique identifier
 	 */
 	public String getEastToolbarIdentifier(){
-		return getUniqueId() + " toolbar east";
+		return getEastToolbarIdentifier( getUniqueId() );
+	}
+
+	/**
+	 * Gets the unique identifier that is used for the {@link CToolbarArea} at the east side.
+	 * @param uniqueId the unique identifier of the {@link CToolbarContentArea}
+	 * @return the unique identifier
+	 */
+	public static String getEastToolbarIdentifier( String uniqueId ){
+		return uniqueId + " toolbar east";
 	}
 	
 	/**
@@ -102,7 +111,16 @@ public class CToolbarContentArea extends CContentArea{
 	 * @return the unique identifier
 	 */
 	public String getWestToolbarIdentifier(){
-		return getUniqueId() + " toolbar west";
+		return getWestToolbarIdentifier( getUniqueId() );
+	}
+	
+	/**
+	 * Gets the unique identifier that is used for the {@link CToolbarArea} at the west side.
+	 * @param uniqueId the unique identifier of the {@link CToolbarContentArea}
+	 * @return the unique identifier
+	 */
+	public static String getWestToolbarIdentifier( String uniqueId ){
+		return uniqueId + " toolbar west";
 	}
 
 	/**
@@ -118,7 +136,16 @@ public class CToolbarContentArea extends CContentArea{
 	 * @return the unique identifier
 	 */
 	public String getSouthToolbarIdentifier(){
-		return getUniqueId() + " toolbar south";
+		return getSouthToolbarIdentifier( getUniqueId() );
+	}
+	
+	/**
+	 * Gets the unique identifier that is used for the {@link CToolbarArea} at the south side.
+	 * @param uniqueId the unique identifier of the {@link CToolbarContentArea}
+	 * @return the unique identifier
+	 */
+	public static String getSouthToolbarIdentifier( String uniqueId ){
+		return uniqueId + " toolbar south";
 	}
 	
 	/**
@@ -134,7 +161,16 @@ public class CToolbarContentArea extends CContentArea{
 	 * @return the unique identifier
 	 */
 	public String getNorthToolbarIdentifier(){
-		return getUniqueId() + " toolbar north";
+		return getNorthToolbarIdentifier( getUniqueId() );
+	}
+	
+	/**
+	 * Gets the unique identifier that is used for the {@link CToolbarArea} at the north side.
+	 * @param uniqueId the unique identifier of the {@link CToolbarContentArea}
+	 * @return the unique identifier
+	 */
+	public static String getNorthToolbarIdentifier( String uniqueId ){
+		return uniqueId + " toolbar north";
 	}
 	
 	/**

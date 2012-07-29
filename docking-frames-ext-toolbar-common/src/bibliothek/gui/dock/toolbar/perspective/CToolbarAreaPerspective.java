@@ -33,23 +33,21 @@ package bibliothek.gui.dock.toolbar.perspective;
 import bibliothek.gui.dock.common.perspective.CDockablePerspective;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
-import bibliothek.gui.dock.common.perspective.CommonElementPerspective;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockPerspective;
+import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.toolbar.CToolbarArea;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * Represents a {@link CToolbarArea} as perspective.
  * @author Benjamin Sigg
  */
-@Todo( priority=Priority.MAJOR, target=Version.VERSION_1_1_1, compatibility=Compatibility.COMPATIBLE,
-	description="implement this class")
 public class CToolbarAreaPerspective implements CStationPerspective{
 	private boolean root = true;
 	private String id;
+	private CommonToolbarContainerDockPerspective delegate;
+	private CPerspective perspective;
 	
 	/**
 	 * Creates a new perspective.
@@ -57,24 +55,81 @@ public class CToolbarAreaPerspective implements CStationPerspective{
 	 */
 	public CToolbarAreaPerspective( String id ){
 		this.id = id;
+		delegate = new CommonToolbarContainerDockPerspective( this );
+	}
+	
+	/**
+	 * Gets the number of {@link CToolbarGroupPerspective groups} this station currently has. This method
+	 * assumes that the client did not modify the {@link ToolbarStrategy}.
+	 * @return the number of groups
+	 */
+	public int getGroupCount(){
+		return delegate.getDockableCount();
+	}
+	
+	/**
+	 * Gets or creates a group of toolbars at location <code>index</code>.
+	 * @param index the index of an existing group, <code>-1</code> or {@link #getGroupCount()}
+	 * @return the group at <code>index</code> or <code>null</code> if the child at <code>index</code> has
+	 * the wrong type. A result of <code>null</code> can only happen if the client modified the {@link ToolbarStrategy}.
+	 */
+	public CToolbarGroupPerspective group( int index ){
+		if( index < 0 ){
+			return insert( 0 );
+		}
+		else if( index >= getGroupCount() ){
+			return insert( getGroupCount() );
+		}
+		
+		PerspectiveElement child = delegate.getDockable( index );
+		if( child instanceof ToolbarGroupDockPerspective ){
+			return new CToolbarGroupPerspective( (ToolbarGroupDockPerspective)child );
+		}
+		else{
+			return null;
+		}
+	}
+	
+	/**
+	 * Creates a new {@link CToolbarGroupPerspective} and inserts the new group at <code>index</code>.
+	 * @param index the location of the new group
+	 * @return the new group
+	 */
+	public CToolbarGroupPerspective insert( int index ){
+		ToolbarGroupDockPerspective group = new ToolbarGroupDockPerspective();
+		delegate.add( index, group );
+		return new CToolbarGroupPerspective( group );
+	}
+	
+	/**
+	 * Removes the group at location <code>index</code> from this station.
+	 * @param index the index of the group to remove
+	 */
+	public void remove( int index ){
+		delegate.remove( index );
+	}
+	
+	/**
+	 * Removes <code>group</code> from this station.
+	 * @param group the group to remove, not <code>null</code>
+	 */
+	public void remove( CToolbarGroupPerspective group ){
+		delegate.remove( group.getDelegate() );
 	}
 	
 	@Override
-	public CommonElementPerspective intern(){
-		// TODO Auto-generated method stub
-		return null;
+	public CommonToolbarContainerDockPerspective intern(){
+		return delegate;
 	}
 
 	@Override
 	public CDockablePerspective asDockable(){
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CStationPerspective asStation(){
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	@Override
@@ -89,14 +144,12 @@ public class CToolbarAreaPerspective implements CStationPerspective{
 
 	@Override
 	public void setPerspective( CPerspective perspective ){
-		// TODO Auto-generated method stub
-		
+		this.perspective = perspective;
 	}
 	
 	@Override
 	public CPerspective getPerspective(){
-		// TODO Auto-generated method stub
-		return null;
+		return perspective;
 	}
 
 	@Override

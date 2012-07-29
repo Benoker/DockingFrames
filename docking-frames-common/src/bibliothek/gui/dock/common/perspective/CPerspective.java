@@ -284,33 +284,6 @@ public class CPerspective {
 	 * @return the area
 	 */
 	public CContentPerspective getContentArea( String id ){
-		String center = CContentArea.getCenterIdentifier( id );
-		String north = CContentArea.getNorthIdentifier( id );
-		String south = CContentArea.getSouthIdentifier( id );
-		String east = CContentArea.getEastIdentifier( id );
-		String west = CContentArea.getWestIdentifier( id );
-		
-		ensureType( center, CGridPerspective.class );
-		ensureType( north, CMinimizePerspective.class );
-		ensureType( south, CMinimizePerspective.class );
-		ensureType( east, CMinimizePerspective.class );
-		ensureType( west, CMinimizePerspective.class );
-		
-		if( getStation( center ) == null ){
-			addStation( new CGridPerspective( center, CContentArea.TYPE_ID_CENTER, false ));
-		}
-		if( getStation( north ) == null ){
-			addStation( new CMinimizePerspective( north, CContentArea.TYPE_ID_MINIMIZE ));
-		}
-		if( getStation( south ) == null ){
-			addStation( new CMinimizePerspective( south, CContentArea.TYPE_ID_MINIMIZE ));
-		}
-		if( getStation( east ) == null ){
-			addStation( new CMinimizePerspective( east, CContentArea.TYPE_ID_MINIMIZE ));
-		}
-		if( getStation( west ) == null ){
-			addStation( new CMinimizePerspective( west, CContentArea.TYPE_ID_MINIMIZE ));
-		}
 		return new CContentPerspective( this, id );
 	}
 	
@@ -324,13 +297,6 @@ public class CPerspective {
 	 */
 	public CExternalizePerspective getScreenStation(){
 		return (CExternalizePerspective) getStation( CControl.EXTERNALIZED_STATION_ID );
-	}
-	
-	private void ensureType( String id, Class<?> type ){
-		CStationPerspective station = getStation( id );
-		if( station != null && station.getClass() != type ){
-			throw new IllegalStateException( "present root station '" + id + "' is of type '" + station.getClass() + "' but should be of type '" + type + "'" );
-		}
 	}
 	
 	/**

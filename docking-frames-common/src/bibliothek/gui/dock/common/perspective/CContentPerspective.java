@@ -56,6 +56,48 @@ public class CContentPerspective {
 		
 		this.perspective = perspective;
 		this.id = id;
+		
+		String center = CContentArea.getCenterIdentifier( id );
+		String north = CContentArea.getNorthIdentifier( id );
+		String south = CContentArea.getSouthIdentifier( id );
+		String east = CContentArea.getEastIdentifier( id );
+		String west = CContentArea.getWestIdentifier( id );
+		
+		ensureType( center, CGridPerspective.class );
+		ensureType( north, CMinimizePerspective.class );
+		ensureType( south, CMinimizePerspective.class );
+		ensureType( east, CMinimizePerspective.class );
+		ensureType( west, CMinimizePerspective.class );
+		
+		if( perspective.getStation( center ) == null ){
+			perspective.addStation( new CGridPerspective( center, CContentArea.TYPE_ID_CENTER, false ));
+		}
+		if( perspective.getStation( north ) == null ){
+			perspective.addStation( new CMinimizePerspective( north, CContentArea.TYPE_ID_MINIMIZE ));
+		}
+		if( perspective.getStation( south ) == null ){
+			perspective.addStation( new CMinimizePerspective( south, CContentArea.TYPE_ID_MINIMIZE ));
+		}
+		if( perspective.getStation( east ) == null ){
+			perspective.addStation( new CMinimizePerspective( east, CContentArea.TYPE_ID_MINIMIZE ));
+		}
+		if( perspective.getStation( west ) == null ){
+			perspective.addStation( new CMinimizePerspective( west, CContentArea.TYPE_ID_MINIMIZE ));
+		}
+	}
+	
+	/**
+	 * Searches the {@link CStationPerspective} with unique identifier <code>id</code> and makes sure the
+	 * station is either <code>null</code> or of type <code>type</code>.
+	 * @param id the unique identifier of the station
+	 * @param type the type of the station
+	 * @throws IllegalStateException if the station has the wrong type
+	 */
+	protected void ensureType( String id, Class<?> type ){
+		CStationPerspective station = perspective.getStation( id );
+		if( station != null && station.getClass() != type ){
+			throw new IllegalStateException( "present root station '" + id + "' is of type '" + station.getClass() + "' but should be of type '" + type + "'" );
+		}
 	}
 
 	/**
@@ -64,6 +106,14 @@ public class CContentPerspective {
 	 */
 	public String getId(){
 		return id;
+	}
+	
+	/**
+	 * Gets the {@link CPerspective} in whose realm this {@link CContentPerspective} works.
+	 * @return the perspective, not <code>null</code>
+	 */
+	public CPerspective getPerspective(){
+		return perspective;
 	}
 	
 	/**

@@ -99,36 +99,6 @@ public class PerspectivePlaceholderToolbarGrid extends ModeledPlaceholderToolbar
 	}
 
 	@Override
-	protected void onInserted( PlaceholderList<PerspectiveDockable, PerspectiveStation, PerspectiveDockable> column, int columnIndex, PerspectiveDockable item, int itemIndex ){
-		// ignore
-	}
-
-	@Override
-	protected void onRemoved( PlaceholderList<PerspectiveDockable, PerspectiveStation, PerspectiveDockable> column, int columnIndex, PerspectiveDockable item, int itemIndex ){
-		// ignore	
-	}
-
-	@Override
-	protected void onInserted( PlaceholderList<PerspectiveDockable, PerspectiveStation, PerspectiveDockable> column, int index ){
-		// ignore
-	}
-
-	@Override
-	protected void onRemoved( PlaceholderList<PerspectiveDockable, PerspectiveStation, PerspectiveDockable> column, int index ){
-		// ignore
-	}
-
-	@Override
-	protected void onInserted(){
-		// ignore
-	}
-
-	@Override
-	protected void onRemoved(){
-		// ignore
-	}
-
-	@Override
 	protected void fill( PerspectiveDockable dockable, ConvertedPlaceholderListItem item ){
 		Path placeholder = dockable.getPlaceholder();
 		if( placeholder != null ) {

@@ -67,7 +67,7 @@ public interface ToolbarColumnModel<D,P> {
 	 * @param dockable the item to search
 	 * @return the column containing <code>dockable</code> or <code>null</code> if not found
 	 */
-	public ToolbarColumn<D,P> getColumn( Dockable dockable );
+	public ToolbarColumn<D,P> getColumn( D dockable );
 	
 	/**
 	 * Adds the observer <code>listener</code> to this model.

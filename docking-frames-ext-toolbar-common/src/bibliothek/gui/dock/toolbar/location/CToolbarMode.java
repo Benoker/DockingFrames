@@ -37,7 +37,7 @@ import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.perspective.mode.LocationModePerspective;
 import bibliothek.gui.dock.facile.mode.Location;
-import bibliothek.util.Todo;
+import bibliothek.gui.dock.toolbar.perspective.CToolbarModePerspective;
 
 /**
  * This {@link CLocationMode} describes the areas that are part of a toolbar.
@@ -79,8 +79,7 @@ public class CToolbarMode extends ToolbarMode<CToolbarModeArea> implements CLoca
 	}
 
 	@Override
-	@Todo
 	public LocationModePerspective createPerspective(){
-		return null; // TODO
+		return new CToolbarModePerspective();
 	}
 }

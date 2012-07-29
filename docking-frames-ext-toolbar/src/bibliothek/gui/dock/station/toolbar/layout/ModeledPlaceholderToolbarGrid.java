@@ -149,7 +149,7 @@ public abstract class ModeledPlaceholderToolbarGrid <D, S, P extends Placeholder
 		}
 		
 		@Override
-		public Column getColumn( Dockable dockable ){
+		public Column getColumn( D dockable ){
 			for( Column column : columns ){
 				if( column.contains( dockable )){
 					return column;
@@ -206,7 +206,7 @@ public abstract class ModeledPlaceholderToolbarGrid <D, S, P extends Placeholder
 		 * @param dockable the item to search
 		 * @return <code>true</code> if <code>dockable</code> was found
 		 */
-		public boolean contains( Dockable dockable ){
+		public boolean contains( D dockable ){
 			for( P item : items ){
 				if( item.asDockable() == dockable ){
 					return true;

@@ -200,7 +200,13 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 	
 	@SuppressWarnings("unchecked")
 	public void estimateLocations( CommonDockStationLayout layout, LocationEstimationMap children ){
-		String factoryId = layout.getFactoryId();
+		String factoryId = null;
+		if( layout != null ){
+			factoryId = layout.getFactoryId();
+		}
+		if( factoryId == null ){
+			return;
+		}
 		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
 		if( factory == null ){
 			return;

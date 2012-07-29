@@ -70,6 +70,7 @@ import bibliothek.gui.dock.dockable.DefaultDockableMovingImageFactory;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.frontend.DefaultFrontendPerspectiveCache;
+import bibliothek.gui.dock.frontend.DockFrontendExtension;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCacheExtension;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
@@ -112,6 +113,7 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.title.NullTitleFactory;
+import bibliothek.gui.dock.toolbar.ToolbarDockFrontendExtension;
 import bibliothek.gui.dock.toolbar.expand.ExpandManager;
 import bibliothek.gui.dock.toolbar.item.DockActionItem;
 import bibliothek.gui.dock.toolbar.perspective.ToolbarFrontendPerspectiveCacheExtension;
@@ -331,7 +333,10 @@ public class ToolbarExtension implements Extension {
 		if( extension.getName().equals( DefaultFrontendPerspectiveCache.CACHE_EXTENSION )){
 			return (Collection<E>) createPerspectiveCacheExtensions();
 		}
-
+		if( extension.getName().equals( DockFrontend.FRONTEND_EXTENSION )){
+			return (Collection<E>) createFrontendExtensions();
+		}
+		
 		return null;
 	}
 
@@ -463,6 +468,12 @@ public class ToolbarExtension implements Extension {
 	protected Collection<FrontendPerspectiveCacheExtension> createPerspectiveCacheExtensions(){
 		List<FrontendPerspectiveCacheExtension> result = new ArrayList<FrontendPerspectiveCacheExtension>();
 		result.add( new ToolbarFrontendPerspectiveCacheExtension() );
+		return result;
+	}
+	
+	protected Collection<DockFrontendExtension> createFrontendExtensions(){
+		List<DockFrontendExtension> result = new ArrayList<DockFrontendExtension>();
+		result.add( new ToolbarDockFrontendExtension() );
 		return result;
 	}
 }

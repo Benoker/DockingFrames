@@ -111,7 +111,7 @@
 \contentsline {section}{\numberline {10}Extensions}{69}
 \contentsline {subsection}{\numberline {10.1}Extension Points}{69}
 \contentsline {subsection}{\numberline {10.2}Glass Extension}{70}
-\contentsline {subsection}{\numberline {10.3}Toolbar Extension}{70}
+\contentsline {subsection}{\numberline {10.3}Toolbar Extension}{71}
 \contentsline {section}{\numberline {11}Properties}{72}
 \contentsline {subsection}{\numberline {11.1}Themes}{72}
 \contentsline {subsection}{\numberline {11.2}Stations}{74}

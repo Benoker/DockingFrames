@@ -63,6 +63,7 @@ import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.VetoableDockFrontendListener;
 import bibliothek.gui.dock.frontend.DefaultFrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.DefaultLayoutChangeStrategy;
+import bibliothek.gui.dock.frontend.DockFrontendExtension;
 import bibliothek.gui.dock.frontend.DockFrontendInternals;
 import bibliothek.gui.dock.frontend.DockFrontendPerspective;
 import bibliothek.gui.dock.frontend.FrontendEntry;
@@ -97,6 +98,8 @@ import bibliothek.gui.dock.util.NullWindowProvider;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
+import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -145,6 +148,12 @@ public class DockFrontend {
     
     /** prefix used for {@link DockStation root}s when creating a new {@link PredefinedDockSituation} */
     public static final String ROOT_KEY_PREFIX = "root";
+    
+    /** Name of an {@link DockFrontendExtension} for the {@link DockFrontend} */
+    public static final Path FRONTEND_EXTENSION = new Path( "dock", "DockFrontendExtension" );
+    
+    /** All the extensions of this frontend */
+    private List<DockFrontendExtension> extensions;
     
 	/** The controller where roots are added */
     private DockController controller;
@@ -323,6 +332,11 @@ public class DockFrontend {
                 }
             }
         });
+        
+        extensions = controller.getExtensions().load( new ExtensionName<DockFrontendExtension>( FRONTEND_EXTENSION, DockFrontendExtension.class ) );
+        for( DockFrontendExtension extension : extensions ){
+        	extension.install( this );
+        }
     }
     
     /**
@@ -358,6 +372,10 @@ public class DockFrontend {
      */
     public void kill(){
     	controller.kill();
+    	
+    	for( DockFrontendExtension extension : extensions ){
+    		extension.uninstall( this );
+    	}
     }
     
     /**

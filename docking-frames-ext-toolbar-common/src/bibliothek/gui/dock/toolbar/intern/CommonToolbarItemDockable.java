@@ -35,6 +35,7 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.toolbar.CToolbarItem;
 
@@ -78,4 +79,8 @@ public class CommonToolbarItemDockable extends ToolbarItemDockable implements Co
 		return new DockActionSource[]{};
 	}
 
+	@Override
+	public String getFactoryID(){
+		return CommonSingleDockableFactory.BACKUP_FACTORY_ID;
+	}
 }
