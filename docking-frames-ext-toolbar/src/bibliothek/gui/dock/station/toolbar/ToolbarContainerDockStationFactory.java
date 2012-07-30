@@ -38,10 +38,15 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -121,8 +126,31 @@ public class ToolbarContainerDockStationFactory implements DockFactory<ToolbarCo
 	}
 
 	@Override
-	public void estimateLocations( ToolbarContainerDockStationLayout layout, LocationEstimationMap children ){
-		// TODO pending
+	public void estimateLocations( ToolbarContainerDockStationLayout layout, final LocationEstimationMap children ){
+		PlaceholderMap map = layout.getPlaceholders();
+		
+		if( !map.getFormat().equals( new Path("dock.ToolbarContainerStation") )){
+			throw new IllegalArgumentException( "unknown type: " + map.getFormat() );
+		}
+		
+		PlaceholderMap list = map.getMap( map.newKey( "content" ), "list" );
+		DockablePlaceholderList.simulatedRead( list, new PlaceholderListItemAdapter<Dockable, Dockable>(){
+			@Override
+			public Dockable convert( ConvertedPlaceholderListItem item ){
+				int id = item.getInt( "id" );
+				int index = item.getInt( "index" );
+				Path placeholder = null;
+				if( item.contains( "placeholder" )){
+					placeholder = new Path( item.getString( "placeholder" ) );
+				}
+				children.setLocation( id, new ToolbarContainerProperty( index, placeholder ) );
+				for( int i = 0, n = children.getSubChildCount( id ); i<n; i++ ){
+					DockLayoutInfo info = children.getSubChild( id, i );
+					info.setLocation( new ToolbarContainerProperty( index, info.getPlaceholder() ) );
+				}
+				return null;
+			}
+		});
 	}
 
 	@Override

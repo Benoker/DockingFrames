@@ -38,11 +38,16 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ToolbarDockStation;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
+import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -127,9 +132,24 @@ public class ToolbarDockStationFactory implements DockFactory<ToolbarDockStation
 	}
 
 	@Override
-	public void estimateLocations( ToolbarDockStationLayout layout, LocationEstimationMap children ){
-		// TODO Auto-generated method stub
-
+	public void estimateLocations( ToolbarDockStationLayout layout, final LocationEstimationMap children ){
+		DockablePlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<Dockable, Dockable>(){
+			@Override
+			public Dockable convert( ConvertedPlaceholderListItem item ){
+				int id = item.getInt( "id" );
+				int index = item.getInt( "index" );
+				Path placeholder = null;
+				if( item.contains( "placeholder" )){
+					placeholder = new Path( item.getString( "placeholder" ) );
+				}
+				children.setLocation( id, new ToolbarProperty( index, placeholder ) );
+				for( int i = 0, n = children.getSubChildCount( id ); i<n; i++ ){
+					DockLayoutInfo info = children.getSubChild( id, i );
+					info.setLocation( new ToolbarProperty( index, info.getPlaceholder() ) );
+				}
+				return null;
+			}
+		});
 	}
 
 	@Override

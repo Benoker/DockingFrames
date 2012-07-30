@@ -91,6 +91,11 @@ public class SplitDockPlaceholderProperty extends AbstractDockableProperty {
 		this.backup = backup;
 	}
 	
+	@Override
+	public String toString(){
+		return getClass().getSimpleName() + "[placeholder=" + getPlaceholder() + ", backup=" + getBackup() + ", successor=" + getSuccessor() + "]";
+	}
+	
 	/**
 	 * Gets the placeholder this property references to.
 	 * @return the placeholder, not <code>null</code>

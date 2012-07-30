@@ -82,6 +82,11 @@ public class StackDockProperty extends AbstractDockableProperty {
     public StackDockProperty(){
     	// do nothing
     }
+    
+    @Override
+    public String toString(){
+	    return getClass().getSimpleName() + "[index=" + index + ", placeholder=" + placeholder + ", successor=" + getSuccessor() + "]";
+    }
 
     public DockableProperty copy() {
         StackDockProperty copy = new StackDockProperty( index );

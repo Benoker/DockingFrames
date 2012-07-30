@@ -75,6 +75,11 @@ public class ToolbarProperty extends AbstractDockableProperty{
 		this.index = index;
 		this.placeholder = placeholder;
 	}
+	
+	@Override
+	public String toString(){
+		return getClass().getSimpleName() + "[index=" + index + ", placeholder=" + placeholder + ", successor=" + getSuccessor() + "]";
+	}
 
 	@Override
 	public DockableProperty copy(){

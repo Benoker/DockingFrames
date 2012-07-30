@@ -111,6 +111,11 @@ public class ToolbarContainerProperty extends AbstractDockableProperty{
 	}
 
 	@Override
+	public String toString(){
+		return getClass().getSimpleName() + "[index=" + index + ", placeholder=" + placeholder + ", successor=" + getSuccessor() + "]";
+	}
+	
+	@Override
 	public void store( DataOutputStream out ) throws IOException{
 		Version.write(out, Version.VERSION_1_1_1);
 		out.writeInt(index);

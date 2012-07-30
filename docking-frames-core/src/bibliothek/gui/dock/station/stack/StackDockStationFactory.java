@@ -102,7 +102,7 @@ public class StackDockStationFactory implements DockFactory<StackDockStation, St
     				
     				for( int i = 0, n = children.getSubChildCount( id ); i<n; i++ ){
     					DockLayoutInfo info = children.getSubChild( id, i );
-    					info.setLocation( new StackDockProperty( id, info.getPlaceholder() ) );
+    					info.setLocation( new StackDockProperty( index, info.getPlaceholder() ) );
     				}
     				return null;
     			}

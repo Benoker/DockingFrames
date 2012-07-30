@@ -1161,7 +1161,6 @@ public class DockSituation {
     public void estimateLocations( DockLayoutComposition composition, DockableProperty location ){
     	DefaultLocationEstimationMap map = new DefaultLocationEstimationMap( composition );
     	estimateLocations( map );
-    	map.finish();
     	if( location != null ){
     		appendFirstOnEstimate( composition, location );
     	}
@@ -1204,12 +1203,12 @@ public class DockSituation {
     	}
     	
     	for( int i = 0, n = map.getChildCount(); i<n; i++ ){
-    		DefaultLocationEstimationMap subMap = map.subMap( i );
-    		estimateLocations( subMap );
-    		subMap.finish();
+    		estimateLocations( map.subMap( i ) );
     	}
     	
+    	map.prepare();
     	factory.estimateLocations( layout.getData(), map );
+    	map.finish();
     }
 
     /**

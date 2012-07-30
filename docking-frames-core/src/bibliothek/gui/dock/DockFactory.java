@@ -56,7 +56,7 @@ public interface DockFactory<D extends DockElement, P extends PerspectiveElement
 	 * Tries to estimate the {@link DockableProperty}s of the children of the
 	 * station which is represented by <code>layout</code>.<br>
 	 * 
-	 * The children of this station accessible through <code>children.getChild( ... )</code>, this
+	 * The children of this station are accessible through <code>children.getChild( ... )</code>, this
 	 * factory may also access the leafs in the tree of {@link Dockable}s through
 	 * <code>children.getSubChild(...)</code>.<br>
 	 * Note: this method must not set the successor of any {@link DockableProperty},

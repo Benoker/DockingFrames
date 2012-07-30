@@ -104,6 +104,11 @@ public class ToolbarGroupProperty extends AbstractDockableProperty{
 	public Path getPlaceholder(){
 		return placeholder;
 	}
+	
+	@Override
+	public String toString(){
+		return getClass().getSimpleName() + "[column=" + getColumn() + ", line=" + getLine() + ", placeholder=" + getPlaceholder() + ", successor=" + getSuccessor() + "]";
+	}
 
 	@Override
 	public DockableProperty copy(){

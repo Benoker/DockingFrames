@@ -54,6 +54,13 @@ public class DefaultLocationEstimationMap implements LocationEstimationMap {
 	
 	private DefaultLocationEstimationMap( Node root ){
 		this.root = root;
+	}
+	
+	/**
+	 * Prepares this map for estimating locations. Preparation of the map means that all current locations
+	 * are stored and can be used for comparison when calling {@link #finish()}.
+	 */
+	public void prepare(){
 		root.prepare();
 	}
 	
@@ -78,6 +85,7 @@ public class DefaultLocationEstimationMap implements LocationEstimationMap {
 	 * Closes up this node. If the location of a leaf changed, its previous location is set as successor. 
 	 * Otherwise if the location of a child changed, set the new location and use the old location as successor.
 	 * Otherwise invalidate the leaf as its location will never be completed.
+	 * @see #prepare()
 	 */
 	public void finish(){
 		/*
@@ -88,17 +96,10 @@ public class DefaultLocationEstimationMap implements LocationEstimationMap {
 		for( Node child : root.children ){
 			DockableProperty newParentLocation = child.validLocation();
 			for( Node leaf : child.leafs ){
-				DockableProperty newLeafLocation = leaf.validLocation();
-				if( newLeafLocation == null && newParentLocation != null ){
-					newLeafLocation = newParentLocation.copy();
-				}
-				if( newLeafLocation != null ){
-					newLeafLocation.setSuccessor( leaf.oldLocation );
-					leaf.composition.getLayout().setLocation( newLeafLocation );
-				}
-				else{
-					leaf.invalidate();
-				}
+				leaf.finish( newParentLocation );
+			}
+			for( Node grandchild : child.children ){
+				grandchild.finish( newParentLocation );
 			}
 		}
 	}
@@ -180,6 +181,22 @@ public class DefaultLocationEstimationMap implements LocationEstimationMap {
 				oldLocation = composition.getLayout().getLocation();
 				for( Node child : children ){
 					child.prepare();
+				}
+			}
+		}
+		
+		public void finish( DockableProperty newParentLocation ){
+			if( valid ){
+				DockableProperty newLeafLocation = validLocation();
+				if( newLeafLocation == null && newParentLocation != null ){
+					newLeafLocation = newParentLocation.copy();
+				}
+				if( newLeafLocation != null ){
+					newLeafLocation.setSuccessor( oldLocation );
+					composition.getLayout().setLocation( newLeafLocation );
+				}
+				else{
+					invalidate();
 				}
 			}
 		}

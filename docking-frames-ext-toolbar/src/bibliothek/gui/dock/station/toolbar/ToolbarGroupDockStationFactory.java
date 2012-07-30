@@ -38,11 +38,17 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
+import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
@@ -126,9 +132,32 @@ public class ToolbarGroupDockStationFactory implements DockFactory<ToolbarGroupD
 	}
 
 	@Override
-	public void estimateLocations( ToolbarGroupDockStationLayout layout, LocationEstimationMap children ){
-		// TODO Auto-generated method stub
-
+	public void estimateLocations( ToolbarGroupDockStationLayout layout, final LocationEstimationMap children ){
+		DockablePlaceholderList.simulatedRead( layout.getPlaceholders(), new PlaceholderListItemAdapter<Dockable, Dockable>(){
+			@Override
+			public Dockable convert( ConvertedPlaceholderListItem item ){
+				final int column = item.getInt( "index" );
+			
+				DockablePlaceholderList.simulatedRead( item.getPlaceholderMap(), new PlaceholderListItemAdapter<Dockable, Dockable>(){
+					@Override
+					public Dockable convert( ConvertedPlaceholderListItem item ){
+						int id = item.getInt( "id" );
+						int line = item.getInt( "index" );
+						Path placeholder = null;
+						if( item.contains( "placeholder" )){
+							placeholder = new Path( item.getString( "placeholder" ) );
+						}
+						children.setLocation( id, new ToolbarGroupProperty( column, line, placeholder ) );
+						for( int i = 0, n = children.getSubChildCount( id ); i<n; i++ ){
+							DockLayoutInfo info = children.getSubChild( id, i );
+							info.setLocation( new ToolbarGroupProperty( column, line, info.getPlaceholder() ) );
+						}
+						return null;
+					}
+				});
+				return null;
+			}
+		});
 	}
 
 	@Override

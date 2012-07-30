@@ -787,6 +787,8 @@
 
 [v1.1.1p8e]
  - API: Added support for perspectives in Common for toolbars
+ - API: Toolbar factories can now estimate the location of the Dockables
+ - Bugfix: Estimation of location of Dockables was missing parts when analyzing deeply nested stations/dockables.  
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

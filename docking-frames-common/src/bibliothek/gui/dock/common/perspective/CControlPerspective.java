@@ -213,11 +213,7 @@ public class CControlPerspective {
      * (<code>includeWorkingAreas = true</code>) or not (<code>includeWorkingAreas = false</code>)
      */
     public void writeXML( XElement root, CPerspective perspective, boolean includeWorkingAreas ){
-    	Perspective conversion = wrap( perspective, includeWorkingAreas );
-    	
-    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
-    		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
-    	}
+    	Perspective conversion = conversion( perspective, includeWorkingAreas );
     	
     	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
     	for( String key : perspective.getStationKeys() ){
@@ -258,11 +254,7 @@ public class CControlPerspective {
     public void write( DataOutputStream out, CPerspective perspective, boolean includeWorkingAreas ) throws IOException{
     	Version.write( out, Version.VERSION_1_1_1 );
     	
-    	Perspective conversion = wrap( perspective, includeWorkingAreas );
-    	
-    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
-    		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
-    	}
+    	Perspective conversion = conversion( perspective, includeWorkingAreas );
     	
     	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
     	for( String key : perspective.getStationKeys() ){
@@ -411,11 +403,7 @@ public class CControlPerspective {
     	CSetting setting = new CSetting();
     	
     	// layout
-    	Perspective conversion = wrap( perspective, includeWorkingAreas );
-    	
-    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
-    		conversion.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, perspective ) );
-    	}
+    	Perspective conversion = conversion( perspective, includeWorkingAreas );
     	
     	for( String key : perspective.getStationKeys() ){
     		CStationPerspective station = perspective.getStation( key );
@@ -445,11 +433,7 @@ public class CControlPerspective {
     
     private CPerspective convert( CSetting setting, boolean includeWorkingAreas ){
     	CPerspective cperspective = createEmptyPerspective();
-    	Perspective perspective = wrap( cperspective, includeWorkingAreas );
-    	
-    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> entry : control.getRegister().getFactories().entrySet() ){
-    		perspective.getSituation().add( new CommonMultipleDockableFactory( entry.getKey(), entry.getValue(), control, cperspective ) );
-    	}
+    	Perspective perspective = conversion( cperspective, includeWorkingAreas );
     	
     	// layout
     	for( String key : setting.getRootKeys() ){
@@ -462,6 +446,26 @@ public class CControlPerspective {
     	return cperspective;
     }
 
+    /**
+     * Creates a new {@link Perspective} which uses the settings from <code>perspective</code> to read
+     * and write layouts. This method adds {@link CommonSingleDockableFactory}, {@link CommonMultipleDockableFactory} and
+     * {@link CommonDockStationFactory} to the perspective.<br>
+     * Clients usually have no need to call this method.
+     * @param perspective the perspective whose settings should be used for reading or writing a layout
+     * @param includeWorkingAreas whether the contents of {@link CStation#isWorkingArea() working areas}
+     * should be included in the layout or not
+     * @return the new builder
+     */
+    public Perspective conversion( CPerspective perspective, boolean includeWorkingAreas ){
+    	Perspective conversion = wrap( perspective, includeWorkingAreas );
+    	
+    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
+    	}
+    	
+    	return conversion;
+    }
+    
     private Perspective wrap( CPerspective perspective, boolean includeWorkingAreas ){
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
     	return wrap( perspective, includeWorkingAreas, factory );

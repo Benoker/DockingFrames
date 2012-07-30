@@ -51,14 +51,16 @@ public interface LocationEstimationMap{
 	public DockLayoutInfo getChild( int childIndex );
 	
 	/**
-	 * Gets the number of children the item <code>childIndex</code> has.
+	 * Gets the number of children the item <code>childIndex</code> has. This includes direct
+	 * children and grand-children.
 	 * @param childIndex the key of some element
 	 * @return the number of children of <code>childIndex</code>
 	 */
 	public int getSubChildCount( int childIndex );
 	
 	/**
-	 * Gets the <code>subChildIndex</code>'th child of <code>childIndex</code>.
+	 * Gets the <code>subChildIndex</code>'th child of <code>childIndex</code>. This includes direct
+	 * children and grand-children.
 	 * @param childIndex the key to some child
 	 * @param subChildIndex the index of some child of <code>childIndex</code>
 	 * @return the info, not <code>null</code>
