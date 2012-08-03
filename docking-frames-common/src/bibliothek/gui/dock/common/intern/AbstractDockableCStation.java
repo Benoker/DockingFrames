@@ -84,6 +84,11 @@ public abstract class AbstractDockableCStation<S extends CommonDockStation<?, ?>
     }
     
     @Override
+    public String toString(){
+	    return getClass().getSimpleName() + "[id=" + getUniqueId() + "]";
+    }
+    
+    @Override
     protected CommonDockable createCommonDockable(){
 	    throw new IllegalStateException( "common-dockable should have been set by the constructor" );
     }

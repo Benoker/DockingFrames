@@ -132,6 +132,14 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	/**
 	 * Creates a new, empty perspective.
 	 * @param id the unique identifier of this perspective
+	 */
+	public CGridPerspective( String id ){
+		this( id, null );
+	}
+	
+	/**
+	 * Creates a new, empty perspective.
+	 * @param id the unique identifier of this perspective
 	 * @param typeId the type of this station, can be <code>null</code>
 	 */
 	public CGridPerspective( String id, Path typeId ){
@@ -150,6 +158,9 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		delegate.setHasFullscreenAction( false );
 		setWorkingArea( workingArea );
 		gridClear();
+		if( typeId == null ){
+			typeId = CGridArea.TYPE_ID;
+		}
 		this.typeId = typeId;
 	}
 	

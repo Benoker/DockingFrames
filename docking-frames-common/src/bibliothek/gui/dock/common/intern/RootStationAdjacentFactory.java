@@ -99,11 +99,22 @@ public class RootStationAdjacentFactory implements AdjacentDockFactory<Path>{
 	}
 
 	public void setLayout( DockElement element, Path layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ){
-		// nothing to do
+		if( !(element instanceof CommonDockStation<?, ?>)){
+			throw new IllegalArgumentException( "expected the 'element' to be a '" + CommonDockStation.class.getSimpleName() + "', but instead it was a '" + element.getClass().getName() + "'.\n" + 
+					"The reason for this exception may be be:\n - a DockElement that was registered with the wrong unique identifier\n - the type of a DockElement was changed\n - a SingleCDockableFactory creating the wrong type of items.\n"+
+					"Type and toString of 'element': " + element.getClass().getName() + ",\n" + element);
+		}
+		CStation<?> station = ((CommonDockStation<?, ?>)element).getStation();
+		Path typeId = station.getTypeId();
+		if( typeId != null && !typeId.equals( layout )){
+			throw new IllegalArgumentException( "expected the 'element' to have type id '" + layout + "', but instead it was '" + typeId + "'.\n" +
+					"The reason for this exception may be be:\n - a DockElement that was registered with the wrong unique identifier\n - the type of a DockElement was changed\n - a SingleCDockableFactory creating the wrong type of items.\n"+
+					"Type and toString of 'element': " + station.getClass().getName() + ",\n" + station);
+		}
 	}
 
 	public void setLayout( DockElement element, Path layout, PlaceholderStrategy placeholders ){
-		// nothing to do
+		setLayout( element, layout, null, placeholders );
 	}
 
 	public void write( Path layout, DataOutputStream out ) throws IOException{

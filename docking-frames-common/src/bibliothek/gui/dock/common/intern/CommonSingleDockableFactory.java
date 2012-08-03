@@ -222,6 +222,12 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         if( dockable == null )
             return null;
         
+        String factoryId = dockable.intern().getFactoryID();
+        if( !factoryId.equals( getID() )){
+        	throw new IllegalArgumentException( "Wrong type of dockable for unique id '" + layout.getId() + "': The backup factory created a dockable which expects a factory with type-id '" + factoryId + 
+        			"',  but the call was done from a factory with type-id '" + getID() + "'" );
+        }
+        
         control.addDockable( dockable );
         if( layout.isAreaSet()){
         	if( layout.getArea() != null ){

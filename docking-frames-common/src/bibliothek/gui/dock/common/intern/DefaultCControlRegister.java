@@ -285,7 +285,7 @@ public class DefaultCControlRegister implements MutableCControlRegister {
 
     public void addStation( CStation<?> station ) {
     	if( !settingDefaultStations ){
-    		checkStationIdentifierUniqueness( station.getUniqueId() );
+    		checkStationIdentifierUniqueness( station.getUniqueId(), station );
     	}
     	
         stations.add( station );
@@ -295,8 +295,9 @@ public class DefaultCControlRegister implements MutableCControlRegister {
      * Ensures the uniqueness of the identifier <code>uniqueId</code>. Throws
      * various exceptions if the id is not unique.
      * @param uniqueId the id that might be unique
+     * @param adding the station that is about to be added
      */
-    private void checkStationIdentifierUniqueness( String uniqueId ){
+    private void checkStationIdentifierUniqueness( String uniqueId, CStation<?> adding ){
         if( uniqueId == null )
             throw new NullPointerException( "uniqueId must not be null" );
 
@@ -313,6 +314,10 @@ public class DefaultCControlRegister implements MutableCControlRegister {
 
         for( CStation<?> station : stations ){
             if( station.getUniqueId().equals( uniqueId )){
+            	if( station == adding ){
+            		throw new IllegalArgumentException( "The station has already been registered" );
+            	}
+            	
                 throw new IllegalArgumentException( "There exists already a station with id: " + uniqueId );    
             }
         }

@@ -789,6 +789,9 @@
  - API: Added support for perspectives in Common for toolbars
  - API: Toolbar factories can now estimate the location of the Dockables
  - Bugfix: Estimation of location of Dockables was missing parts when analyzing deeply nested stations/dockables.  
+ - Bugfix: CommonDockStationFactory does not add a CStation that is already registered
+ ! API: new constructors for CGridPerspective and CWorkingPerspective
+ ! API: more strict type checks when reading a layout, reading wrong types (like a CWorkingArea where a CGridArea was previously) will throw an exception.
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

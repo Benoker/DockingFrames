@@ -110,6 +110,12 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
     		return null;
     	}
     	
+        String factoryId = dockable.intern().getFactoryID();
+        if( !factoryId.equals( getID() )){
+        	throw new IllegalArgumentException( "Wrong type of dockable for unique id '" + id + "': The backup factory created a dockable which expects a factory of type '" + factoryId + 
+        			"',  but the call was done from a factory of type '" + getID() + "'" );
+        }
+        
     	CStation<?> station = dockable.asStation();
     	if( station == null ){
     		System.err.println( "unique identifier '" + id + "' was supposed to be a CStation, but factory created a dockable" );
@@ -125,7 +131,9 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 	 * @param root whether to set the root flag or not
 	 */
 	protected void registerStation( CStation<?> station, boolean root ){
-		control.addStation( station, root );
+		if( control.getStation( station.getUniqueId() ) != station ){
+			control.addStation( station, root );
+		}
 	}
 
 	public String getID(){

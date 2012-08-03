@@ -65,6 +65,14 @@ public class CMinimizePerspective implements CStationPerspective{
 			return dockable.getParent() == intern();
 		}
 	};
+
+	/**
+	 * Creates a new, empty perspective.
+	 * @param id the unique identifier of this perspective
+	 */
+	public CMinimizePerspective( String id ){
+		this( id, null );
+	}
 	
 	/**
 	 * Creates a new, empty perspective.
@@ -76,6 +84,9 @@ public class CMinimizePerspective implements CStationPerspective{
 			throw new IllegalArgumentException( "id is null" );
 		}
 		this.id = id;
+		if( typeId == null ){
+			typeId = CMinimizeArea.TYPE_ID;
+		}
 		this.typeId = typeId;
 		delegate = new CommonFlapDockPerspective();
 	}

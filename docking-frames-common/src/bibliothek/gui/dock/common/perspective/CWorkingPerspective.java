@@ -58,10 +58,18 @@ public class CWorkingPerspective extends CGridPerspective{
 	/**
 	 * Creates a new working area.
 	 * @param id the unique identifier of this area
+	 */
+	public CWorkingPerspective( String id ){
+		this( id, null );
+	}
+	
+	/**
+	 * Creates a new working area.
+	 * @param id the unique identifier of this area
 	 * @param typeId the type of this station, can be <code>null</code>
 	 */
 	public CWorkingPerspective( String id, Path typeId ){
-		super( id, typeId, true );
+		super( id, typeId == null ? CWorkingArea.TYPE_ID : typeId, true );
 	}
 	
 	/**
