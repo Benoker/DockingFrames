@@ -792,6 +792,7 @@
  - Bugfix: CommonDockStationFactory does not add a CStation that is already registered
  ! API: new constructors for CGridPerspective and CWorkingPerspective
  ! API: more strict type checks when reading a layout, reading wrong types (like a CWorkingArea where a CGridArea was previously) will throw an exception.
+ - Bugfix: divider on SplitDockStation could not be grabbed if the divider location was invalid (too big or too small).
    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

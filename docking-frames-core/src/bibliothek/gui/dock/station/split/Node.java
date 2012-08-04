@@ -410,8 +410,9 @@ public class Node extends VisibleSplitNode implements Divideable{
         boolean rightVisible = right == null || right.isVisible();
         
         if( leftVisible && rightVisible ){
+        	double divider = getAccess().validateDivider( this.divider, this );
         	int dividerSize = getAccess().getOwner().getDividerSize();
-
+        	
         	if( orientation == Orientation.HORIZONTAL ){
         		// Components are left and right
         		double dividerWidth = factorW > 0 ? Math.max( 0, dividerSize / factorW) : 0.0;

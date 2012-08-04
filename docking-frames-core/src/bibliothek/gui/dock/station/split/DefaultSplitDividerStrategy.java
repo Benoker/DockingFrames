@@ -324,6 +324,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 					mouseMoved( e );
 					if( current != null ) {
 						divider = current.getDividerAt( e.getX() + deltaX, e.getY() + deltaY );
+						divider = current.validateDivider( divider );
 						repaint( bounds.x, bounds.y, bounds.width, bounds.height );
 						bounds = current.getDividerBounds( divider, bounds );
 						repaint( bounds.x, bounds.y, bounds.width, bounds.height );
