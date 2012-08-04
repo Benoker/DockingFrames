@@ -32,7 +32,7 @@ package bibliothek.gui.dock.station.toolbar;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.ToolbarInterface;
+import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
@@ -67,27 +67,28 @@ import bibliothek.gui.dock.station.ToolbarTabDockStation;
  * @author Benjamin Sigg
  * @author Herve Guillaume
  */
-public class DefaultToolbarStrategy implements ToolbarStrategy{
+public class DefaultToolbarStrategy implements ToolbarStrategy {
 
 	@Override
 	public Dockable ensureToolbarLayer( DockStation station, Dockable dockable ){
-		if (station instanceof ToolbarDockStation ){
+		if( station instanceof ToolbarDockStation ) {
 			return dockable;
 		}
 
-		if (station instanceof ToolbarGroupDockStation){
-			if (dockable instanceof ToolbarDockStation){
+		if( station instanceof ToolbarGroupDockStation ) {
+			if( dockable instanceof ToolbarDockStation ) {
 				return dockable;
-			} else{
+			}
+			else {
 				return new ToolbarDockStation();
 			}
 		}
 
-		if ((station instanceof ToolbarContainerDockStation)
-				|| (station instanceof ScreenDockStation)){
-			if (dockable instanceof ToolbarGroupDockStation){
+		if( (station instanceof ToolbarContainerDockStation) || (station instanceof ScreenDockStation) ) {
+			if( dockable instanceof ToolbarGroupDockStation ) {
 				return dockable;
-			} else{
+			}
+			else {
 				return new ToolbarGroupDockStation();
 			}
 		}
@@ -96,61 +97,61 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 	}
 
 	@Override
-	public boolean isToolbarGroupPartParent( DockStation parent,
-			Dockable child, boolean strong ){
-		if (strong){
-			if (child instanceof ToolbarItemDockable){
+	public boolean isToolbarGroupPartParent( DockStation parent, Dockable child, boolean strong ){
+		if( strong ) {
+			if( child instanceof ToolbarItemDockable ) {
 				return (parent instanceof ToolbarDockStation);
 			}
 
-			if (child instanceof ToolbarDockStation){
+			if( child instanceof ToolbarDockStation ) {
 				return parent instanceof ToolbarGroupDockStation;
 			}
 
-			if (child instanceof ToolbarGroupDockStation){
-				return (parent instanceof ToolbarContainerDockStation)
-						|| (parent instanceof ScreenDockStation);
+			if( child instanceof ToolbarGroupDockStation ) {
+				return (parent instanceof ToolbarContainerDockStation) || (parent instanceof ScreenDockStation);
 			}
 
 			return false;
-		} else{
+		}
+		else {
 			// floating policy
-			if ((parent instanceof ScreenDockStation)
-					&& (child instanceof ToolbarGroupDockStation)){
+			if( (parent instanceof ScreenDockStation) && (child instanceof ToolbarGroupDockStation) ) {
 				return true;
 			}
 
 			// ?? policy
-			if ((child instanceof ToolbarItemDockable)
-					&& (parent instanceof ToolbarTabDockStation)){
+			if( (child instanceof ToolbarItemDockable) && (parent instanceof ToolbarTabDockStation) ) {
 				return true;
 			}
 			// docking and merging policy
-			if (parent instanceof ToolbarInterface){
-				if ((child instanceof ToolbarItemDockable)
-						|| (child instanceof ToolbarDockStation)){
+			if( isToolbarParent( parent ) ) {
+				if( (child instanceof ToolbarItemDockable) || (child instanceof ToolbarDockStation) ) {
 					return true;
-				} else if ((child instanceof ToolbarGroupDockStation)
-						&& ((parent instanceof ToolbarGroupDockStation) || (parent instanceof ToolbarContainerDockStation))){
+				}
+				else if( (child instanceof ToolbarGroupDockStation) && ((parent instanceof ToolbarGroupDockStation) || (parent instanceof ToolbarContainerDockStation)) ) {
 					return true;
-				} else{
+				}
+				else {
 					return false;
 				}
-			} else{
+			}
+			else {
 				return false;
 			}
 		}
 	}
 
+	private boolean isToolbarParent( DockStation station ){
+		return station instanceof AbstractToolbarDockStation || station instanceof ToolbarContainerDockStation; 
+	}
+	
 	@Override
 	public boolean isToolbarGroupPart( Dockable dockable ){
-		return dockable instanceof ToolbarItemDockable
-				|| (dockable instanceof ToolbarDockStation);
+		return dockable instanceof ToolbarItemDockable || (dockable instanceof ToolbarDockStation);
 	}
 
 	@Override
 	public boolean isToolbarPart( Dockable dockable ){
-		return (dockable instanceof ToolbarGroupDockStation)
-				|| isToolbarGroupPart(dockable);
+		return (dockable instanceof ToolbarGroupDockStation) || isToolbarGroupPart( dockable );
 	}
 }

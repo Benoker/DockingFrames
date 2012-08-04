@@ -57,8 +57,6 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.ToolbarElementInterface;
-import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.security.SecureContainer;

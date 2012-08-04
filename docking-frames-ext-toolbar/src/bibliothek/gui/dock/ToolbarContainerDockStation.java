@@ -52,8 +52,6 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
-import bibliothek.gui.ToolbarElementInterface;
-import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.AbstractDockableStation;
@@ -111,7 +109,7 @@ import bibliothek.util.Path;
  * 
  * @author Herve Guillaume
  */
-public class ToolbarContainerDockStation extends AbstractDockableStation implements ToolbarInterface, OrientingDockStation, OrientedDockStation {
+public class ToolbarContainerDockStation extends AbstractDockableStation implements OrientingDockStation, OrientedDockStation {
 
 	/** the id of the {@link DockTitleFactory} used with this station */
 	public static final String TITLE_ID = "toolbar.container";

@@ -37,8 +37,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.ToolbarElementInterface;
-import bibliothek.gui.ToolbarInterface;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -69,8 +67,7 @@ import bibliothek.util.FrameworkOnly;
  * @author Herve Guillaume
  */
 public abstract class AbstractToolbarDockStation extends
-		AbstractDockableStation implements OrientedDockStation,
-		ToolbarInterface, ToolbarElementInterface, ExpandableToolbarItem{
+		AbstractDockableStation implements OrientedDockStation, ExpandableToolbarItem{
 
 	/**
 	 * a helper class ensuring that all properties of the
