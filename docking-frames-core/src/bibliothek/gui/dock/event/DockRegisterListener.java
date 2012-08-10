@@ -41,6 +41,21 @@ import bibliothek.gui.dock.control.DockRelocator;
  *
  */
 public interface DockRegisterListener {
+	/**
+	 * Called if the {@link DockRegister} from <code>controller</code> has been
+	 * {@link DockRegister#isStalled() stalled}.
+	 * @param controller the controller whose register is stalled
+	 */
+	public void registerStalled( DockController controller );
+	
+	/**
+	 * Called if the {@link DockRegister} from <code>controller</code> is no
+	 * longer {@link DockRegister#isStalled() stalled}, this method is called
+	 * before the pending events are fired.
+	 * @param controller the controller whose register is no longer stalled
+	 */
+	public void registerUnstalled( DockController controller );
+	
     /**
      * Invoked right before the <code>dockable</code> is registered in the
      * <code>controller</code>.

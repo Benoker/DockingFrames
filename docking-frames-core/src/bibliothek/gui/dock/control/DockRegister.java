@@ -479,6 +479,26 @@ public class DockRegister {
     }
     
     /**
+     * Informs all {@link DockRegisterListener} that this {@link DockRegister} is
+     * stalled.
+     */
+    protected void fireStalled(){
+    	for( DockRegisterListener listener : listDockRegisterListeners() ){
+    		listener.registerStalled( controller );
+    	}
+    }
+    
+    /**
+     * Informs all {@link DockRegisterListener}s that this {@link DockRegister} is
+     * no longer stalled.
+     */
+    protected void fireUnstalled(){
+    	for( DockRegisterListener listener : listDockRegisterListeners() ){
+    		listener.registerUnstalled( controller );
+    	}
+    }
+    
+    /**
      * Sets whether the listener to all {@link DockStation} should forward changes
      * of the tree to the <code>un-/register</code>-methods or not. If the
      * register was stalled and now the argument is <code>false</code>, then
@@ -491,10 +511,19 @@ public class DockRegister {
      * immediately
      */
     public void setStalled( boolean stalled ){
-		if( stalled )
-		    this.stalled++;
-		else
-		    this.stalled--;
+		if( stalled ){
+		    boolean wasStalled = isStalled();
+			this.stalled++;
+			if( !wasStalled ){
+				fireStalled();
+			}
+		}
+		else{
+			this.stalled--;
+			if( !isStalled() ){
+				fireUnstalled();
+			}
+		}
 		
 		// recover from too many false-stalled calls
 		if( this.stalled < 0 )

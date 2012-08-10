@@ -136,13 +136,6 @@ public interface CControlAccess {
 	public MutableCControlRegister getRegister();
 	
 	/**
-	 * Fills the property {@link CSetting#putMultipleFactoryDockables(String, java.util.List) multiple factory dockables}
-	 * in <code>setting</code>.
-	 * @param setting the setting to fill
-	 */
-	public void fillMultiFactories( CSetting setting );
-	
-	/**
 	 * Gets the default result for {@link CDockable#getAutoBaseLocation(boolean)}.
 	 * @param dockable the element whose location is searched
 	 * @param noBackwardTransformation if <code>true</code>, then no {@link DockableProperty} should be converted to a {@link CLocation}

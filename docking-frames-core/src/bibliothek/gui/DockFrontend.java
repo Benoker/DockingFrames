@@ -71,6 +71,7 @@ import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.LayoutChangeStrategy;
 import bibliothek.gui.dock.frontend.MissingDockableStrategy;
 import bibliothek.gui.dock.frontend.Setting;
+import bibliothek.gui.dock.frontend.SettingsBlop;
 import bibliothek.gui.dock.frontend.VetoManager;
 import bibliothek.gui.dock.layout.AdjacentDockFactory;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
@@ -1819,8 +1820,18 @@ public class DockFrontend {
      * @throws IOException if there are any problems
      */
     public void write( DataOutputStream out ) throws IOException{
-        Version.write( out, Version.VERSION_1_0_4 );
-        
+        writeBlop( writeBlop(), out );
+    }
+    
+    /**
+     * Writes the contents of <code>blop</code> into <code>out</code>.
+     * @param blop the {@link Setting}s to write
+     * @param out the stream to write into
+     * @throws IOException if there are any problems
+     */
+    public void writeBlop( SettingsBlop blop, DataOutputStream out ) throws IOException{
+    	String currentSetting = blop.getCurrentName();
+    	
         if( currentSetting == null )
             out.writeBoolean( false );
         else{
@@ -1828,13 +1839,14 @@ public class DockFrontend {
             out.writeUTF( currentSetting );
         }
         
-        out.writeInt( settings.size() );
-        for( Map.Entry<String, Setting> setting : settings.entrySet() ){
-            out.writeUTF( setting.getKey() );
-            write( setting.getValue(), true, out );
+        String[] names = blop.getNames();
+        out.writeInt( names.length );
+        for( String name : names ){
+            out.writeUTF( name );
+            write( blop.getSetting( name ), true, out );
         }
         
-        write( getSetting( false ), false, out );
+        write( blop.getCurrentSetting(), false, out );
     }
     
     /**
@@ -1872,26 +1884,36 @@ public class DockFrontend {
      * @throws IOException if there are any problems
      */
     public void read( DataInputStream in, boolean keepExistingSettings ) throws IOException{
-	    if( !keepExistingSettings ){
-			deleteAll();
-		}
-        Version version = Version.read( in );
+	    readBlop( readBlop( in ), keepExistingSettings );
+    }
+    
+    /**
+     * Reads the contents of <code>in</code> using all the factories that are currently installed
+     * on this {@link DockFrontend}, this method does not change any properties of the frontend.
+     * @param in the stream to read from
+     * @return the {@link Setting}s that were read
+     * @throws IOException if <code>in</code> cannot be read properbly
+     */
+    public SettingsBlop readBlop( DataInputStream in ) throws IOException{
+    	SettingsBlop blop = new SettingsBlop();
+    	
+    	Version version = Version.read( in );
         version.checkCurrent();
+        
+        String currentSetting = null;
         
         if( in.readBoolean() )
             currentSetting = in.readUTF();
-        else
-            currentSetting = null;
         
         int count = in.readInt();
         for( int i = 0; i < count; i++ ){
             String key = in.readUTF();
             Setting setting = read( true, in );
-            settings.put( key, setting );
-            fireRead( key );
+            blop.put( key, setting );
         }
         
-        setSetting( read( false, in ), false );
+        blop.setCurrent( currentSetting, read( false, in ) );
+        return blop;
     }
     
     /**
@@ -1919,20 +1941,35 @@ public class DockFrontend {
      * change the attributes of <code>element</code>
      */
     public void writeXML( XElement element ){
-        if( !settings.isEmpty() ){
+    	writeBlopXML( writeBlop(), element );
+    }
+    
+    /**
+     * Writes all the {@link Setting}s of <code>blop</code> into <code>element</code>, this
+     * method does use the factories installed on this {@link DockFrontend}, but does not
+     * change any properties of the frontend.
+     * @param blop the settings to write
+     * @param element the element to write into, this method will not
+     * change the attributes of <code>element</code>
+     */
+    public void writeBlopXML( SettingsBlop blop, XElement element ){
+    	String[] names = blop.getNames();
+    	
+    	if( names.length > 0 ){
             XElement xsettings = element.addElement( "settings" );
-            for( Map.Entry<String, Setting> setting : settings.entrySet() ){
-                XElement xsetting = xsettings.addElement( "setting" );
-                xsetting.addString( "name", setting.getKey() );
-                writeXML( setting.getValue(), true, xsetting );
+            for( String name : names ){
+            	XElement xsetting = xsettings.addElement( "setting" );
+                xsetting.addString( "name", name );
+                writeXML( blop.getSetting( name ), true, xsetting );
             }
         }
         
         XElement xcurrent = element.addElement( "current" );
-        if( currentSetting != null )
-            xcurrent.addString( "name", currentSetting );
+        String current = blop.getCurrentName();
+        if( current != null )
+            xcurrent.addString( "name", current );
         
-        writeXML( getSetting( false ), false, xcurrent );
+        writeXML( blop.getCurrentSetting(), false, xcurrent );
     }
     
     /**
@@ -1966,28 +2003,38 @@ public class DockFrontend {
      * existing settings.
      */
     public void readXML( XElement element, boolean keepExistingSettings ){
-    	if( !keepExistingSettings ){
-    		deleteAll();
-    	}
+    	readBlop( readBlopXML( element ), keepExistingSettings );
+    }
+    
+    /**
+     * Reads the contents of <code>element</code> using all the facotries installed on this
+     * {@link DockFrontend}, without actually changing any property of this frontend.
+     * @param element the element to read
+     * @return all the layouts stored in <code>element</code>
+     */
+    public SettingsBlop readBlopXML( XElement element ){
+    	SettingsBlop blop = new SettingsBlop();
     	
         XElement xsettings = element.getElement( "settings" );
         if( xsettings != null ){
             for( XElement xsetting : xsettings.getElements( "setting" )){
                 String key = xsetting.getString( "name" );
                 Setting setting = readXML( true, xsetting );
-                settings.put( key, setting );
-                fireRead( key );
+                blop.put( key, setting );
             }
         }
         
         XElement xcurrent = element.getElement( "current" );
         if( xcurrent != null ){
             XAttribute xname = xcurrent.getAttribute( "name" );
-            if( xname != null )
-                currentSetting = xname.getString();
+            String name = null;
+            if( xname != null ){
+            	name = xname.getString();
+            }
             
-            setSetting( readXML( false, xcurrent), false );
+            blop.setCurrent( name, readXML( false, xcurrent) );
         }
+        return blop;
     }
     
     /**
@@ -2006,6 +2053,38 @@ public class DockFrontend {
         PropertyTransformer properties = layoutChangeStrategy.createTransformer( internals );
         setting.readXML( situation, properties, entry, element );
         return setting;
+    }
+    
+    /**
+     * Stores all the current {@link Setting}s of this {@link DockFrontend} in a new {@link SettingsBlop}.
+     * @return the blop that contains all the settings of this frontend
+     */
+    public SettingsBlop writeBlop(){
+    	SettingsBlop blop = new SettingsBlop();
+    	for( Map.Entry<String, Setting> entry : settings.entrySet() ){
+    		blop.put( entry.getKey(), entry.getValue() );
+    	}
+    	blop.setCurrent( currentSetting, getSetting( false ) );
+    	return blop;
+    }
+    
+    /**
+     * Reads and applies the {@link Setting}s stored in <code>blop</code>.
+     * @param blop the settings to read
+     * @param keepExistingSettings whether {@link #deleteAll()} should be called, which would
+     * result in deleting all existing {@link Setting}s, a value of <code>false</code> will
+     * call {@link #deleteAll()}
+     */
+    public void readBlop( SettingsBlop blop, boolean keepExistingSettings ){
+    	if( !keepExistingSettings ){
+    		deleteAll();
+    	}
+    	for( String name : blop.getNames() ){
+    		settings.put( name, blop.getSetting( name ) );
+    		fireRead( name );
+    	}
+    	currentSetting = blop.getCurrentName();
+    	setSetting( blop.getCurrentSetting(), false );
     }
     
     /**

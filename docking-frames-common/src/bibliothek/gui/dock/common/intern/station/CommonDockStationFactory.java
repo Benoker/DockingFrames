@@ -134,6 +134,15 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 		if( control.getStation( station.getUniqueId() ) != station ){
 			control.addStation( station, root );
 		}
+		CDockable dockable = station.asDockable();
+		if( dockable != null ){
+			if( dockable instanceof SingleCDockable ){
+				SingleCDockable single = (SingleCDockable)dockable;
+				if( control.getSingleDockable( single.getUniqueId() ) != single ){
+					control.addDockable( single );
+				}
+			}
+		}
 	}
 
 	public String getID(){

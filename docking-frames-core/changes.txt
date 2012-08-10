@@ -794,6 +794,14 @@
  ! API: more strict type checks when reading a layout, reading wrong types (like a CWorkingArea where a CGridArea was previously) will throw an exception.
  - Bugfix: divider on SplitDockStation could not be grabbed if the divider location was invalid (too big or too small).
  ! API: removed obsolete interfaces ToolbarInterface and ToolbarElementInterface
-   
+
+[v1.1.1p8f]
+ - API: DockFrontend can now read and store its settings as a SettingsBlop
+ ! API: DockRegisterListener is now informed if the DockRegister is stalled
+ - API: Removed obsolete code from CControl which stored the working area of SingleCDockables. This data is already stored by CommonSingleDockableLayout
+ - Bugfix: The working-area of SingleCDockables was not set if the working are was created lazily while reading a layout
+ - API: The new CControlPerspectiveBlop allows clients to read and write entire layout files without the need of creating any CDockables
+ ! API: Removed the mapping between factories and MultipleCDockables that was stored in CSetting, but that was not accessed anywhere
+    
 [Todo]
 - Drop StackDockStation over Dockable and merge them

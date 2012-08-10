@@ -28,7 +28,7 @@ public class PlaceholderExample {
 	/* Placeholders allow the framework to mark the location of a Dockable even if the Dockable is not
 	 * known to a DockController.
 	 * 
-	 * In this example shows how a primitive mechanism to close and reopen Dockables can be implemented using
+	 * This example shows how a primitive mechanism to close and reopen Dockables can be implemented using
 	 * a PlaceholderStrategy and using local layout data (in form of a DockableProperty).
 	 */
 	public static void main( String[] args ){

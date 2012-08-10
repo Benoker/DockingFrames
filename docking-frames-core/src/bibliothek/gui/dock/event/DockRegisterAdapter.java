@@ -34,6 +34,14 @@ import bibliothek.gui.Dockable;
  * @author Benjamin Sigg
  */
 public class DockRegisterAdapter implements DockRegisterListener{
+	public void registerStalled( DockController controller ){
+		// do nothing
+	}
+	
+	public void registerUnstalled( DockController controller ){
+		// do nothing	
+	}
+	
     public void dockStationRegistered( DockController controller, DockStation station ) {
         // do nothing
     }

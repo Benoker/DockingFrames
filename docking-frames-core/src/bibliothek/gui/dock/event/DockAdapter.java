@@ -37,6 +37,14 @@ import bibliothek.gui.Dockable;
  */
 @Deprecated
 public class DockAdapter implements DockListener {
+	public void registerStalled( DockController controller ){
+		// do nothing
+	}
+	
+	public void registerUnstalled( DockController controller ){
+		// do nothing
+	}
+	
     public void dockableFocused( DockableFocusEvent event ) {
         // do nothing
     }

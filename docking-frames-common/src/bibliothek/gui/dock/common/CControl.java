@@ -90,7 +90,6 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CDockableAccess;
 import bibliothek.gui.dock.common.intern.CListenerCollection;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
-import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableLayout;
@@ -869,22 +868,21 @@ public class CControl {
         	
             resources.put( "ccontrol.frontend", new ApplicationResource(){
                 public void write( DataOutputStream out ) throws IOException {
-                    Version.write( out, Version.VERSION_1_0_4 );
-                    writeWorkingAreas( out );
+                    Version.write( out, Version.VERSION_1_1_1 );
                     frontend.write( out );
                 }
                 public void read( DataInputStream in ) throws IOException {
                     Version version = Version.read( in );
                     version.checkCurrent();
-                    readWorkingAreas( in );
+                    if( Version.VERSION_1_0_4.compareTo( version ) <= 0 ){
+                    	readWorkingAreas( in );
+                    }
                     frontend.read( in );
                 }
                 public void writeXML( XElement element ) {
-                    writeWorkingAreasXML( element.addElement( "areas" ) );
                     frontend.writeXML( element.addElement( "frontend" ) );
                 }
                 public void readXML( XElement element ) {
-                    readWorkingAreasXML( element.getElement( "areas" ) );
                     frontend.readXML( element.getElement( "frontend" ) );
                 }
             });
@@ -937,26 +935,6 @@ public class CControl {
         }
     }
     
-    /**
-     * Stores the mapping of {@link MultipleCDockableFactory} and 
-     * {@link MultipleCDockable}s in <code>setting</code>.
-     * @param setting the setting to fill
-     */
-    private void fillMultiFactories( CSetting setting ){
-        for( String id : register.listMultipleDockableFactories() ){
-            MultipleCDockableFactory<?, ?> factory = register.getFactory( id );
-            List<MultipleCDockable> dockables = register.listMultipleDockables( factory );
-            if( !dockables.isEmpty() ){
-                List<String> ids = new ArrayList<String>( dockables.size() );
-                for( MultipleCDockable dockable : dockables ){
-                    String uniqueId = accesses.get( dockable ).getUniqueId();
-                    ids.add( register.multiToNormalId( uniqueId ) );
-                }
-                setting.putMultipleFactoryDockables( id, ids );
-            }
-        }
-    }
-
     /**
      * Adds a listener to this control.
      * @param listener the new listener
@@ -1203,103 +1181,17 @@ public class CControl {
     }
     
     /**
-     * Writes a map using the unique identifiers of each {@link SingleCDockable} to
-     * tell to which {@link CWorkingArea} it belongs.
-     * @param out the stream to write into
-     * @throws IOException if an I/O error occurs
-     */
-    private void writeWorkingAreas( DataOutputStream out ) throws IOException{
-        Map<String,String> map = new HashMap<String, String>();
-
-        for( SingleCDockable dockable : register.getSingleDockables() ){
-            CStation<?> area = dockable.getWorkingArea();
-            if( area != null ){
-                map.put( dockable.getUniqueId(), area.getUniqueId() );
-            }
-        }
-
-        out.writeInt( map.size() );
-        for( Map.Entry<String, String> entry : map.entrySet() ){
-            out.writeUTF( entry.getKey() );
-            out.writeUTF( entry.getValue() );
-        }
-    }
-
-    /**
-     * Writes a map of all {@link SingleCDockable}s and their {@link CWorkingArea}.
-     * @param element the element to write into
-     */
-    private void writeWorkingAreasXML( XElement element ){
-        for( SingleCDockable dockable : register.getSingleDockables() ){
-            CStation<?> area = dockable.getWorkingArea();
-            if( area != null ){
-                XElement xarea = element.addElement( "area" );
-                xarea.addString( "id", area.getUniqueId() );
-                xarea.addString( "child", dockable.getUniqueId() );
-            }
-        }
-    }
-
-    /**
      * Reads a map telling for each {@link SingleCDockable} to which {@link CWorkingArea}
-     * it belongs.
+     * it belongs.<br>
+     * This method only remains for backwards compatibility, it does not do anything but
+     * reading some obsolete data from <code>in</code>
      * @param in the stream to read from
      * @throws IOException if an I/O error occurs
      */
     private void readWorkingAreas( DataInputStream in ) throws IOException{
-        Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
-        Map<String, CStation<?>> areas = new HashMap<String, CStation<?>>();
-
-        for( CStation<?> station : register.getStations() ){
-            if( station.isWorkingArea() ){
-                areas.put( station.getUniqueId(), station );
-            }
-        }
-
-        for( SingleCDockable dockable : register.getSingleDockables() ){
-            dockables.put( dockable.getUniqueId(), dockable );
-        }
-
         for( int i = 0, n = in.readInt(); i<n; i++ ){
-            String key = in.readUTF();
-            String value = in.readUTF();
-
-            CDockable dockable = dockables.get( key );
-            if( dockable != null ){
-                CStation<?> area = areas.get( value );
-                dockable.setWorkingArea( area );
-            }
-        }
-    }
-
-    /**
-     * Reads a map telling for each {@link SingleCDockable} to which {@link CWorkingArea}
-     * it belongs.
-     * @param element the xml element to read from
-     */
-    private void readWorkingAreasXML( XElement element ){
-        Map<String, SingleCDockable> dockables = new HashMap<String, SingleCDockable>();
-        Map<String, CStation<?>> areas = new HashMap<String, CStation<?>>();
-
-        for( CStation<?> station : register.getStations() ){
-            if( station.isWorkingArea() ){
-                areas.put( station.getUniqueId(), station );
-            }
-        }
-
-        for( SingleCDockable dockable : register.getSingleDockables() ){
-            dockables.put( dockable.getUniqueId(), dockable );
-        }
-
-        for( XElement xarea : element.getElements( "area" )){
-            String key = xarea.getString( "child" );
-            String value = xarea.getString( "id" );
-
-            CDockable dockable = dockables.get( key );
-            if( dockable != null ){
-                CStation<?> area = areas.get( value );
-                dockable.setWorkingArea( area );
-            }
+            in.readUTF(); // key
+            in.readUTF(); // value
         }
     }
 
@@ -2961,10 +2853,6 @@ public class CControl {
         
         public String shouldStore( CDockable dockable ) {
             return CControl.this.shouldStore( dockable );
-        }
-
-        public void fillMultiFactories( CSetting setting ) {
-            CControl.this.fillMultiFactories( setting );
         }
     }
 }

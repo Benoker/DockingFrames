@@ -39,6 +39,7 @@ import java.util.Set;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.common.SingleCDockableFactory;
 import bibliothek.gui.dock.common.perspective.CPerspective;
@@ -231,7 +232,14 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
         control.addDockable( dockable );
         if( layout.isAreaSet()){
         	if( layout.getArea() != null ){
-        		dockable.setWorkingArea( control.getStation( layout.getArea() ) );
+        		CStation<?> station = control.getStation( layout.getArea() );
+        		if( station == null ){
+        			DelayedWorkingAreaSetter setter = new DelayedWorkingAreaSetter( layout.getArea(), dockable, control );
+        			setter.install();
+        		}
+        		else {
+        			dockable.setWorkingArea( station );
+        		}
         	}
         	else{
         		dockable.setWorkingArea( null );

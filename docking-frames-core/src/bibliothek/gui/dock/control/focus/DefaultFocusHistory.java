@@ -31,7 +31,7 @@ import java.util.List;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -90,7 +90,7 @@ public class DefaultFocusHistory implements FocusHistory{
 	 * focus, and which {@link Dockable}s are to be removed.
 	 * @author Benjamin Sigg
 	 */
-	private class Listener implements DockRegisterListener, DockableFocusListener{
+	private class Listener extends DockRegisterAdapter implements DockableFocusListener{
 		public void dockableUnregistered( DockController controller, Dockable dockable ){
 			history.remove( dockable );
 		}
@@ -101,30 +101,6 @@ public class DefaultFocusHistory implements FocusHistory{
 				history.remove( owner );
 				history.add( 0, owner );
 			}
-		}
-		
-		public void dockableRegistering( DockController controller, Dockable dockable ){
-			// ignore
-		}
-
-		public void dockStationRegistering( DockController controller, DockStation station ){
-			// ignore
-		}
-
-		public void dockableRegistered( DockController controller, Dockable dockable ){
-			// ignore
-		}
-
-		public void dockStationRegistered( DockController controller, DockStation station ){
-			// ignore
-		}
-
-		public void dockStationUnregistered( DockController controller, DockStation station ){
-			// ignore
-		}
-
-		public void dockableCycledRegister( DockController controller, Dockable dockable ){
-			// ignore
 		}
 	}
 }

@@ -28,7 +28,7 @@ package bibliothek.gui.dock.control;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.event.DockRegisterListener;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockStationAdapter;
 
 /**
@@ -36,7 +36,7 @@ import bibliothek.gui.dock.event.DockStationAdapter;
  * a visible {@link Dockable} has the focus.
  * @author Benjamin Sigg
  */
-public class VisibilityFocusObserver implements DockRegisterListener{
+public class VisibilityFocusObserver extends DockRegisterAdapter {
 	/** a listener added to every {@link DockStation} */
 	private StationListener listener = new StationListener();
 	/** the controller whose focused {@link Dockable} might be exchanged */
@@ -54,35 +54,22 @@ public class VisibilityFocusObserver implements DockRegisterListener{
 		this.controller = controller;
 	}
 	
+	@Override
 	public void dockStationRegistered( DockController controller, DockStation station ){
 		station.addDockStationListener( listener );
 	}
 	
+	@Override
 	public void dockStationUnregistered( DockController controller, DockStation station ){
 		station.removeDockStationListener( listener );
 	}
 	
+	@Override
 	public void dockableUnregistered( DockController controller, Dockable dockable ){
 		if( dockable == controller.getFocusedDockable() )
 			controller.setFocusedDockable( null, null, false );
 	}
-	
-	public void dockStationRegistering( DockController controller, DockStation station ){
-		// do nothing
-	}
-
-	public void dockableRegistered( DockController controller, Dockable dockable ){
-		// do nothing
-	}
-
-	public void dockableRegistering( DockController controller, Dockable dockable ){
-		// do nothing
-	}
-	
-	public void dockableCycledRegister( DockController controller, Dockable dockable ) {
-	    // do nothing
-	}
-	
+		
     /**
      * A listener observing all stations and changing the focused {@link Dockable}
      * when necessary.

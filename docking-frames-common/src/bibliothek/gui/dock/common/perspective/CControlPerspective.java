@@ -39,6 +39,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.CWorkingArea;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.SingleCDockable;
@@ -90,6 +91,13 @@ public class CControlPerspective {
 		this.control = control;
 	}
 	
+	/**
+	 * Gets the {@link CControl} in whose realm this {@link CControlPerspective} operates.
+	 * @return the owner of this perspective
+	 */
+	public CControl getControl(){
+		return control.getOwner();
+	}
     
     /**
      * Creates a new {@link CPerspective} that is set up with all the stations of the {@link CControl}. 
@@ -264,10 +272,43 @@ public class CControlPerspective {
     	
     	conversion.getSituation().writeCompositions( stations, out );
     	
-    	
     	ModeSettings<Location, ?> settings = perspective.getLocationManager().writeModes( control );
     	
     	settings.write( out );
+    }
+    
+    /**
+     * Converts <code>perspective</code> into a {@link CSetting}.
+     * @param perspective the perspective to convert
+     * @param includeWorkingAreas whether the children of {@link CWorkingArea}s should be stored as well
+     * @return the converted perspective
+     */
+    public CSetting write( CPerspective perspective, boolean includeWorkingAreas ){
+    	Perspective conversion = conversion( perspective, includeWorkingAreas );
+    	CSetting setting = new CSetting();
+    	
+    	for( String key : perspective.getStationKeys() ){
+    		CStationPerspective station = perspective.getStation( key );
+    		DockLayoutComposition composition = conversion.convert( station.intern() );
+    		setting.putRoot( key, composition );
+    	}
+    	
+    	ModeSettings<Location, Location> settings = perspective.getLocationManager().writeModes( control );
+    	setting.setModes( settings );
+    	return setting;
+    }
+    
+    /**
+     * Emulates a call to {@link CControl#readXML(XElement)} and returns all the layouts that are stored
+     * within <code>root</code>.
+     * @param root the root xml element of a file
+     * @return all the layouts and settings stored in <code>root</code>
+     * @throws XException if <code>root</code> is not well formed
+     */
+    public CControlPerspectiveBlop readAllXML( XElement root ) throws XException{
+    	CControlPerspectiveBlop blop = new CControlPerspectiveBlop( this );
+    	blop.readXML( root );
+    	return blop;
     }
     
     /**
@@ -338,6 +379,19 @@ public class CControlPerspective {
     }
 
     /**
+     * Emulates a call to {@link CControl#read(DataInputStream)} and returns all the layouts that are stored
+     * in the stream <code>in</code>.
+     * @param in the bytes of some layout file
+     * @return all the layouts and settings that can be read from <code>in</code>
+     * @throws IOException if there is a problem reading <code>in</code> or if <code>in</code> is not well formed
+     */
+    public CControlPerspectiveBlop readAll( DataInputStream in ) throws IOException{
+    	CControlPerspectiveBlop blop = new CControlPerspectiveBlop( this );
+    	blop.read( in );
+    	return blop;
+    }
+    
+    /**
      * Creates a new {@link CPerspective} using the information stored in <code>in</code>. While this method
      * uses the factories provided by this {@link CControlPerspective}, the new {@link CPerspective} is not registered
      * anywhere. It is the clients responsibility to call {@link #setPerspective(String, CPerspective)} or
@@ -393,6 +447,46 @@ public class CControlPerspective {
     	ModeSettingsConverter<Location, Location> converter = new LocationSettingConverter( control.getOwner().getController() );
     	ModeSettings<Location, Location> modes = control.getOwner().getLocationManager().createModeSettings( converter );
     	modes.read( in );
+    	
+    	perspective.getLocationManager().readModes( modes, perspective, control );
+    	
+    	return perspective;
+    }
+    
+    /**
+     * Creates a new {@link CPerspective} and fills it using the information from <code>setting</code>.
+     * @param setting the layout to convert
+     * @param includeWorkingAreas whether the layout contains information about children of {@link CWorkingArea}s 
+     * @return the layout of <code>setting</code>
+     */
+    public CPerspective read( CSetting setting, boolean includeWorkingAreas ){
+    	CPerspective perspective = createEmptyPerspective();
+    	
+    	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
+    	Perspective conversion = wrap( perspective, includeWorkingAreas, factory );
+    	
+    	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
+    	}
+    	
+    	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
+    	for( String root : setting.getRootKeys() ){
+    		stations.put( root, setting.getRoot( root ) );
+    	}
+    	
+    	factory.setStations( stations );
+    	
+    	for( DockLayoutComposition composition : stations.values() ){
+    		PerspectiveElement station = conversion.convert( composition );
+    		if( station instanceof CommonElementPerspective ){
+    			CStationPerspective stationPerspective = ((CommonElementPerspective)station).getElement().asStation();
+    			if( stationPerspective != null ){
+    				perspective.addStation( stationPerspective );
+    			}
+    		}
+    	}
+    	
+    	ModeSettings<Location, Location> modes = setting.getModes();
     	
     	perspective.getLocationManager().readModes( modes, perspective, control );
     	

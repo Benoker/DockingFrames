@@ -199,8 +199,8 @@ public class LocationModeManagerPerspective {
 	 * @param control access to factories that may be used for writing the contents
 	 * @return the contents of this object
 	 */
-	public ModeSettings<Location, ?> writeModes( CControlAccess control ){
-		ModeSettings<Location, ?> modes = new CLocationModeSettings<Location>( new LocationSettingConverter( control.getOwner().getController() ) );
+	public ModeSettings<Location, Location> writeModes( CControlAccess control ){
+		ModeSettings<Location, Location> modes = new CLocationModeSettings<Location>( new LocationSettingConverter( control.getOwner().getController() ) );
     	
     	LocationModeManagerPerspective manager = perspective.getLocationManager();
     	
@@ -284,7 +284,10 @@ public class LocationModeManagerPerspective {
     							if( mode == null ){
     								throw new IllegalStateException( "unknown ExtendedMode with id='" + item + "'" );
     							}
-    							history.add( mode, locations.get( item ) );
+    							Location location = locations.get( item );
+    							if( location != null ){
+    								history.add( mode, location );
+    							}
     						}
     					}
     				}

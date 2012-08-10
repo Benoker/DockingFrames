@@ -51,6 +51,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
 import bibliothek.gui.dock.ToolbarItemDockable;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicStationPaint;
@@ -140,7 +141,7 @@ public class TestPersistentLayout{
 		frontend.addRoot("rootnorth", rootNorth);
 
 		frontend.getController().getRegister()
-				.addDockRegisterListener(new DockRegisterListener(){
+				.addDockRegisterListener(new DockRegisterAdapter(){
 					@Override
 					public void dockableUnregistered(
 							DockController controller, Dockable dockable ){
