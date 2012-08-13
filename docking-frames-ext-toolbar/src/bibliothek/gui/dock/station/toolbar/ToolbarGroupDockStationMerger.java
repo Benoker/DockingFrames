@@ -66,10 +66,20 @@ public class ToolbarGroupDockStationMerger extends AbstractToolbarMerger{
 		for (int i = 0; i < count; i++){
 			insertDockables.add(child.getDockable(i));
 		}
-		
-		int dropIndex = groupInfo.getColumn();
-		for (int i = 0; i < count; i++){
-			station.drop(insertDockables.get(i), dropIndex++);
+
+		int dropColumnIndex = groupInfo.getColumn();
+		int dropLineIndex = groupInfo.getLine();
+		if (dropLineIndex == -1){
+			// a new column has to be created
+			for (int i = 0; i < count; i++){
+				station.drop(insertDockables.get(i), dropColumnIndex);
+			}
+		} else{
+			for (int i = 0; i < count; i++){
+				station.drop(insertDockables.get(i), dropColumnIndex,
+						dropLineIndex);
+			}
 		}
+
 	}
 }
