@@ -37,6 +37,28 @@ import java.lang.reflect.Method;
  * @author Benjamin Sigg
  */
 public class Java6Workaround implements Workaround{
+	/** whether to print any warnings */
+	private static boolean printWarnings = false;
+	
+	/**
+	 * Sets whether the methods of the {@link Java6Workaround} can print warnings or not. Calling this method
+	 * affects <b>all</b> workarounds. The default behavior is <b>not</b> to print warnings.
+	 * @param printWarnings whether to print warnings
+	 */
+	public static void setPrintWarnings( boolean printWarnings ){
+		Java6Workaround.printWarnings = printWarnings;
+	}
+	
+	/**
+	 * Tells whether all {@link Java6Workaround}s are allowed to print warnings.
+	 * @return whether to print warnings
+	 * @see #setPrintWarnings(boolean)
+	 */
+	public static boolean isPrintWarnings(){
+		return printWarnings;
+	}
+	
+	/** ensures the warning message is printed out at most once */
 	private boolean invocationTargetException = false;
 	
 	public void markAsGlassPane( Component component ){
@@ -82,7 +104,7 @@ public class Java6Workaround implements Workaround{
 			// ignore
 		}
 		catch( InvocationTargetException ex ){
-			if( !invocationTargetException ){
+			if( printWarnings && !invocationTargetException ){
 				invocationTargetException = true;
 				ex.printStackTrace();
 			}
