@@ -78,12 +78,22 @@ public class CControlPerspectiveBlop {
 	}
 	
 	/**
+	 * Gets the raw data about the layout that is stored using <code>name</code> as key.
+	 * @param name the key of the layout
+	 * @return the raw data or <code>null</code> if <code>name</code> was not found
+	 * @see #getPerspective(String)
+	 */
+	public CSetting getSetting( String name ){
+		return (CSetting)resource.getSettings().getSetting( name );
+	}
+	
+	/**
 	 * Gets the perspective which was stored using <code>name</code> as key.
 	 * @param name the key of the layout
 	 * @return the perspective or <code>null</code> if <code>name</code> was not found
 	 */
 	public CPerspective getPerspective( String name ){
-		CSetting setting = (CSetting)resource.getSettings().getSetting( name );
+		CSetting setting = getSetting( name ); 
 		if( setting == null ){
 			return null;
 		}
@@ -103,6 +113,16 @@ public class CControlPerspectiveBlop {
 			throw new IllegalArgumentException( "perspective must not be null" );
 		}
 		CSetting setting = control.write( perspective, false );
+		putSetting( name, setting );
+	}
+	
+	/**
+	 * Stores raw data of a layout with name <code>name</code>.
+	 * @param name the name of the layout, not <code>null</code>
+	 * @param setting the new layout, not <code>null</code>
+	 * @see #putPerspective(String, CPerspective)
+	 */
+	public void putSetting( String name, CSetting setting ){
 		resource.getSettings().put( name, setting );
 	}
 	
@@ -136,11 +156,19 @@ public class CControlPerspectiveBlop {
 	 * @return the currently applied layout, may be <code>null</code>
 	 */
 	public CPerspective getPerspective(){
-		CSetting setting = (CSetting)resource.getSettings().getCurrentSetting();
+		CSetting setting = getSetting();
 		if( setting == null ){
 			return null;
 		}
 		return control.read( setting, true );
+	}
+	
+	/**
+	 * Gets the raw data of the current layout.
+	 * @return the raw data
+	 */
+	public CSetting getSetting(){
+		return (CSetting)resource.getSettings().getCurrentSetting();
 	}
 	
 	/**
@@ -149,6 +177,14 @@ public class CControlPerspectiveBlop {
 	 */
 	public void setPerspective( CPerspective perspective ){
 		CSetting setting = control.write( perspective, true );
+		setSetting( setting );
+	}
+	
+	/**
+	 * Sets the raw data of the layout that should be loaded.
+	 * @param setting the new layout, not <code>null</code>
+	 */
+	public void setSetting( CSetting setting ){
 		SettingsBlop blop = resource.getSettings();
 		blop.setCurrent( blop.getCurrentName(), setting );
 	}
