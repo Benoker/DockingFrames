@@ -802,6 +802,7 @@
  - Bugfix: The working-area of SingleCDockables was not set if the working are was created lazily while reading a layout
  - API: The new CControlPerspectiveBlop allows clients to read and write entire layout files without the need of creating any CDockables
  ! API: Removed the mapping between factories and MultipleCDockables that was stored in CSetting, but that was not accessed anywhere
+ - Bugfix: CombinedStackDockContentPane.getMinimumSize returned a value about twice as big as necessary 
     
 [Todo]
 - Drop StackDockStation over Dockable and merge them

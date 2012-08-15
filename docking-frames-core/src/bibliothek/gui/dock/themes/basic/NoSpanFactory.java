@@ -38,6 +38,8 @@ import bibliothek.gui.dock.station.span.SpanUsage;
 public class NoSpanFactory implements SpanFactory{
 	public Span create( final SpanCallback callback ){
 		return new Span(){
+			private int size = 0;
+			
 			public void set( SpanMode mode ){
 				// ignore	
 			}
@@ -50,11 +52,14 @@ public class NoSpanFactory implements SpanFactory{
 				if( callback.getUsage() == SpanUsage.HIDING ){
 					return 5;
 				}
-				return 0;
+				return size;
 			}
 			
 			public void configureSize( SpanMode mode, int size ){
-				// ignore
+				if( mode == SpanMode.OFF ){
+					this.size = size;
+					callback.resized();
+				}
 			}
 		};
 	}

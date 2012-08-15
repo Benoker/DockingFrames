@@ -38,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -60,6 +61,8 @@ public class WizardSplitDockStationTest {
 
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
+		
+		controller.setTheme( new EclipseTheme() );
 		
 		controller.getProperties().set( ScreenDockStation.DROP_SIZE_STRATEGY, ScreenDropSizeStrategy.PREFERRED_SIZE );
 
