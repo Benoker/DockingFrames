@@ -308,8 +308,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        		cancel();
 	        		return null;
 	        	}
-
-	        	return result;
+	        	if( result != null ){
+	        		return result;
+	        	}
         	}
         }
         
