@@ -805,6 +805,7 @@
  - Bugfix: CombinedStackDockContentPane.getMinimumSize returned a value about twice as big as necessary 
  - Bugfix: CPerspective, the invisible dockables are now stored when writing to/reading from a file
  - Bugfix: When converting a CPerspective to a CSetting, visible items must store their location as well, in case they are not loaded properly
+ - Bugfix: calling "DefaultDockRelocatorEvent.forbid" on a "search", did not result in the search continuing with another station
     
 [Todo]
 - Drop StackDockStation over Dockable and merge them
