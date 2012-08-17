@@ -39,7 +39,10 @@ import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.MultipleCDockableFactory;
+import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.intern.CControlAccess;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -84,6 +87,20 @@ public class CPerspective {
 	public CPerspective( CControlAccess control ){
 		this.control = control;
 		initLocations();
+	}
+	
+	/**
+	 * Creates a new {@link MultipleCDockablePerspective}. This method converts <code>uniqueId</code> into a "multi id",
+	 * and then calls {@link MultipleCDockablePerspective#MultipleCDockablePerspective(String, String, MultipleCDockableLayout)}.
+	 * @param factoryId the unique identifier of a {@link MultipleCDockableFactory}
+	 * @param uniqueId the unique identifier of the new dockable 
+	 * @param layout a description of the content of the new dockable
+	 * @return the new dockable
+	 * @see MultipleCDockablePerspective#MultipleCDockablePerspective(String, String, MultipleCDockableLayout)
+	 */
+	public MultipleCDockablePerspective createMultipleCDockable( String factoryId, String uniqueId, MultipleCDockableLayout layout ){
+		String id = control.getRegister().toMultiId( uniqueId );
+		return new MultipleCDockablePerspective( factoryId, id, layout );
 	}
 	
 	private void initLocations(){
@@ -145,24 +162,30 @@ public class CPerspective {
 	    if( location != null ){
 	    	dockable.getLocationHistory().add( getLocationManager().getMode( location.getMode() ), location );
 
-	    	String id = null;
-	    	if( dockable instanceof SingleCDockablePerspective ){
-	    		id = ((SingleCDockablePerspective)dockable).getUniqueId();
-	    		if( id != null ){
-	    			id = control.getRegister().toSingleId( id );
-	    		}
-	    	}
-	    	else if( dockable instanceof MultipleCDockablePerspective ){
-	    		id = ((MultipleCDockablePerspective)dockable).getUniqueId();
-	    		if( id != null ){
-	    			control.getRegister().toMultiId( id );
-	    		}
-	    	}
+	    	String id = getId( dockable );
+	    	
 	    	if( id != null ){
 	    		dockables.put( id, dockable );
 	    	}
 	    }
 	    return location;
+	}
+	
+	private String getId( CDockablePerspective dockable ){
+		String id = null;
+		if( dockable instanceof SingleCDockablePerspective ){
+    		id = ((SingleCDockablePerspective)dockable).getUniqueId();
+    		if( id != null ){
+    			id = control.getRegister().toSingleId( id );
+    		}
+    	}
+    	else if( dockable instanceof MultipleCDockablePerspective ){
+    		id = ((MultipleCDockablePerspective)dockable).getUniqueId();
+    		if( id != null ){
+    			control.getRegister().toMultiId( id );
+    		}
+    	}
+		return id;
 	}
 	
 	/**
@@ -244,6 +267,22 @@ public class CPerspective {
 	 */
 	public CDockablePerspective removeDockable( String key ){
 		return dockables.remove( key );
+	}
+	
+	/**
+	 * Stores <code>dockable</code> in the list of known dockables. This allows
+	 * clients to add "invisible" dockables: {@link CDockable}s which are not yet visible
+	 * but which already have some location information stored.
+	 * @param dockable the new element, not <code>null</code>
+	 */
+	public void putDockable( CDockablePerspective dockable ){
+		if( dockable == null ){
+			throw new IllegalArgumentException( "dockable must not be null" );
+		}
+		String id = getId( dockable );
+		if( id != null ){
+			dockables.put( id, dockable );
+		}
 	}
 	
 	/**

@@ -636,6 +636,15 @@ public class DockFrontend {
 	}
     
     /**
+     * Creates a new {@link PropertyTransformer} that can be used to read and write
+     * {@link DockableProperty}s that are associated with this {@link DockFrontend}.
+     * @return the new transformer, created by the current {@link #setLayoutChangeStrategy(LayoutChangeStrategy) LayoutChangeStrategy}
+     */
+    public PropertyTransformer createPropertyTransformer(){
+    	return layoutChangeStrategy.createTransformer( new Internals() );
+    }
+    
+    /**
      * Gets an independent map containing all Dockables registered to this
      * frontend.
      * @return the map of Dockables

@@ -803,6 +803,8 @@
  - API: The new CControlPerspectiveBlop allows clients to read and write entire layout files without the need of creating any CDockables
  ! API: Removed the mapping between factories and MultipleCDockables that was stored in CSetting, but that was not accessed anywhere
  - Bugfix: CombinedStackDockContentPane.getMinimumSize returned a value about twice as big as necessary 
+ - Bugfix: CPerspective, the invisible dockables are now stored when writing to/reading from a file
+ - Bugfix: When converting a CPerspective to a CSetting, visible items must store their location as well, in case they are not loaded properly
     
 [Todo]
 - Drop StackDockStation over Dockable and merge them

@@ -3,6 +3,7 @@ package test;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.common.perspective.SingleCDockablePerspective;
+import bibliothek.gui.dock.frontend.DockFrontendPerspective;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.perspective.Perspective;
@@ -29,11 +30,11 @@ public class LocationEstimationTest {
 		content.getCenter().gridAdd( 0, 0, 1, 1, new SingleCDockablePerspective("a"), new SingleCDockablePerspective( "b" ) );
 		content.getCenter().gridDeploy();
 		
-		Perspective conversion = control.getPerspectives().conversion( perspective, true );
-		DockLayoutComposition north = conversion.convert( content.getNorthToolbar().intern() );
+		DockFrontendPerspective conversion = control.getPerspectives().conversion( perspective, true );
+		DockLayoutComposition north = conversion.getPerspective().convert( content.getNorthToolbar().intern() );
 		// DockLayoutComposition north = conversion.convert( content.getCenter().intern() );
 		
-		conversion.getSituation().estimateLocations( north );
+		conversion.getPerspective().getSituation().estimateLocations( north );
 		
 		print( north );
 	}

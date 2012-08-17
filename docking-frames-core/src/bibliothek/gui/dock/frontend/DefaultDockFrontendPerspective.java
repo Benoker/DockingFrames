@@ -27,6 +27,7 @@ package bibliothek.gui.dock.frontend;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
+import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.perspective.PredefinedPerspective;
@@ -53,6 +54,10 @@ public class DefaultDockFrontendPerspective implements DockFrontendPerspective{
 		}
 		this.frontend = frontend;
 		this.perspective = perspective;
+	}
+	
+	public PropertyTransformer getPropertyTransformer(){
+		return frontend.createPropertyTransformer();
 	}
 	
 	public PredefinedPerspective getPerspective(){

@@ -117,6 +117,18 @@ public class LocationHistory {
 	}
 	
 	/**
+	 * Gets the newest entry of this history.
+	 * @return the newest mode or <code>null</code>
+	 */
+	public ExtendedMode getLastMode(){
+		int size = getSize();
+		if( size == 0 ){
+			return null;
+		}
+		return getMode( size-1 );
+	}
+	
+	/**
 	 * Gets all the identifiers of the ordered {@link ExtendedMode}s.
 	 * @return the order of modes
 	 */

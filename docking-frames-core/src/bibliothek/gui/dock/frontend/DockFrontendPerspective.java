@@ -27,6 +27,8 @@ package bibliothek.gui.dock.frontend;
 
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 
@@ -45,6 +47,13 @@ public interface DockFrontendPerspective {
 	 * @return the internal representation
 	 */
 	public Perspective getPerspective();
+	
+	/**
+	 * Gets a {@link PropertyTransformer} which is used to read and write
+	 * {@link DockableProperty}s.
+	 * @return the transformer
+	 */
+	public PropertyTransformer getPropertyTransformer();
 	
 	/**
 	 * Allows access to the root {@link DockStation} named <code>root</code>.

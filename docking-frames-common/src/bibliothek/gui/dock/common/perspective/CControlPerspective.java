@@ -52,19 +52,24 @@ import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
 import bibliothek.gui.dock.common.intern.RootStationAdjacentFactory;
 import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
+import bibliothek.gui.dock.frontend.DockFrontendPerspective;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockSituation;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.util.ClientOnly;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
@@ -221,7 +226,10 @@ public class CControlPerspective {
      * (<code>includeWorkingAreas = true</code>) or not (<code>includeWorkingAreas = false</code>)
      */
     public void writeXML( XElement root, CPerspective perspective, boolean includeWorkingAreas ){
-    	Perspective conversion = conversion( perspective, includeWorkingAreas );
+    	perspective.storeLocations();
+    	
+    	DockFrontendPerspective frontend = conversion( perspective, includeWorkingAreas );
+    	Perspective conversion = frontend.getPerspective();
     	
     	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
     	for( String key : perspective.getStationKeys() ){
@@ -233,7 +241,29 @@ public class CControlPerspective {
     	
     	conversion.getSituation().writeCompositionsXML( stations, root.addElement( "stations" ) );
     	
+    	// Store the last location of all known elements
+    	XElement xinvisible = root.addElement( "invisible" );
+    	PropertyTransformer transformer = frontend.getPropertyTransformer();
+    	for( String key : perspective.getDockableKeys() ){
+    		CDockablePerspective dockable = perspective.getDockable( key );
+    		Location location = getInvisibleLocation( dockable );
+    		
+    		if( location != null ){
+	    		XElement xdockable = xinvisible.addElement( "dockable" );
+				xdockable.addString( "key", key );
+				
+	    		if( dockable.getParent() == null ){
+		    		conversion.getSituation().writeCompositionXML( conversion.convert( dockable.intern() ), xdockable.addElement( "content" ) );
+	    		}
+	    		
+	    		XElement xlocation = xdockable.addElement( "location" );
+	    		xlocation.addString( "root", location.getRoot() );
+	    		xlocation.addString( "mode", dockable.getLocationHistory().getLastMode().getModeIdentifier().toString() );
+	    		transformer.writeXML( location.getLocation(), xlocation );
+    		}
+    	}
     	
+    	// store more location information
     	ModeSettings<Location, ?> settings = perspective.getLocationManager().writeModes( control );
     	
     	settings.writeXML( root.addElement( "modes" ) );
@@ -260,9 +290,11 @@ public class CControlPerspective {
      * @throws IOException if <code>out</code> is not writeable
      */
     public void write( DataOutputStream out, CPerspective perspective, boolean includeWorkingAreas ) throws IOException{
-    	Version.write( out, Version.VERSION_1_1_1 );
+    	perspective.storeLocations();
+    	Version.write( out, Version.VERSION_1_1_1a );
     	
-    	Perspective conversion = conversion( perspective, includeWorkingAreas );
+    	DockFrontendPerspective frontend = conversion( perspective, includeWorkingAreas );
+    	Perspective conversion = frontend.getPerspective();
     	
     	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
     	for( String key : perspective.getStationKeys() ){
@@ -272,6 +304,38 @@ public class CControlPerspective {
     	
     	conversion.getSituation().writeCompositions( stations, out );
     	
+    	// Store the last location of all known elements
+    	String[] keys = perspective.getDockableKeys();
+    	out.writeInt( keys.length );
+    	PropertyTransformer transformer = frontend.getPropertyTransformer();
+    	
+    	for( String key : keys ){
+    		CDockablePerspective dockable = perspective.getDockable( key );
+    		Location location = getInvisibleLocation( dockable );
+    		
+    		if( location != null ){
+    			out.writeBoolean( true );
+    			out.writeUTF( key );
+    			
+	    		if( dockable.getParent() == null ){
+	    			out.writeBoolean( true );
+	    			conversion.getSituation().writeComposition( conversion.convert( dockable.intern() ), out );
+	    		}
+	    		else{
+	    			out.writeBoolean( false );
+	    		}
+	    		
+	    		out.writeUTF( location.getRoot() );
+	    		out.writeUTF( dockable.getLocationHistory().getLastMode().getModeIdentifier().toString() );
+	    		transformer.write( location.getLocation(), out );
+    		}
+    		else{
+    			out.writeBoolean( false );
+    		}
+    	}
+    	
+    	
+    	// write more location information
     	ModeSettings<Location, ?> settings = perspective.getLocationManager().writeModes( control );
     	
     	settings.write( out );
@@ -284,18 +348,7 @@ public class CControlPerspective {
      * @return the converted perspective
      */
     public CSetting write( CPerspective perspective, boolean includeWorkingAreas ){
-    	Perspective conversion = conversion( perspective, includeWorkingAreas );
-    	CSetting setting = new CSetting();
-    	
-    	for( String key : perspective.getStationKeys() ){
-    		CStationPerspective station = perspective.getStation( key );
-    		DockLayoutComposition composition = conversion.convert( station.intern() );
-    		setting.putRoot( key, composition );
-    	}
-    	
-    	ModeSettings<Location, Location> settings = perspective.getLocationManager().writeModes( control );
-    	setting.setModes( settings );
-    	return setting;
+    	return convert( perspective, includeWorkingAreas );
     }
     
     /**
@@ -340,7 +393,8 @@ public class CControlPerspective {
     	CPerspective perspective = createEmptyPerspective();
     	
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
-    	Perspective conversion = wrap( perspective, includeWorkingAreas, factory );
+    	DockFrontendPerspective frontend = wrap( perspective, includeWorkingAreas, factory );
+    	Perspective conversion = frontend.getPerspective();
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
     		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
@@ -363,6 +417,42 @@ public class CControlPerspective {
     			}
     		}
     	}
+    	
+    	perspective.storeLocations();
+    	
+    	// read the last known location of all elements
+    	XElement xinvisible = root.getElement( "invisible" );
+    	if( xinvisible != null ){
+    		PropertyTransformer transformer = frontend.getPropertyTransformer();
+    		for( XElement xdockable : xinvisible.getElements( "dockable" )){
+    			String key = xdockable.getString( "key" );
+    			CDockablePerspective dockable = perspective.getDockable( key );
+    			if( dockable == null ){
+    				XElement xcontent = xdockable.getElement( "content" );
+    				if( xcontent != null ){
+    					PerspectiveElement element = conversion.convert( conversion.getSituation().readCompositionXML( xcontent ) );
+    	    			if( element instanceof CommonElementPerspective ){
+    	    				dockable = ((CommonElementPerspective)element).getElement().asDockable();
+    	    				if( dockable != null ){
+    	    					perspective.putDockable( dockable );
+    	    				}
+    	    			}		
+    				}
+    			}
+    			if( dockable != null ){
+    				XElement xlocation = xdockable.getElement( "location" );
+    				String locationRoot = xlocation.getString( "root" );
+    				DockableProperty location = transformer.readXML( xlocation );
+    				Path mode = new Path( xlocation.getString( "mode" ));
+    				
+    				ExtendedMode extendedMode = perspective.getLocationManager().getMode( mode );
+    				if( extendedMode != null ){
+    					dockable.getLocationHistory().add( extendedMode, new Location( mode, locationRoot, location ) );
+    				}
+    			}
+    		}
+    	}
+    	
     	
     	XElement xmodes = root.getElement( "modes" );
     	if( xmodes == null ){
@@ -418,14 +508,19 @@ public class CControlPerspective {
      */
     public CPerspective read( DataInputStream in, boolean includeWorkingAreas ) throws IOException{
     	Version version = Version.read( in );
-    	if( !version.equals( Version.VERSION_1_1_1 )){
+    	
+    	boolean version111 = version.equals( Version.VERSION_1_1_1 );
+    	boolean version111a = version.equals( Version.VERSION_1_1_1a );
+    	
+    	if( !version111 && !version111a ){
     		throw new IOException( "unknown version: " + version );
     	}
     	
     	CPerspective perspective = createEmptyPerspective();
     	
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
-    	Perspective conversion = wrap( perspective, includeWorkingAreas, factory );
+    	DockFrontendPerspective frontend = wrap( perspective, includeWorkingAreas, factory );
+    	Perspective conversion = frontend.getPerspective();
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
     		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
@@ -441,6 +536,44 @@ public class CControlPerspective {
     			if( stationPerspective != null ){
     				perspective.addStation( stationPerspective );
     			}
+    		}
+    	}
+    	
+    	if( version111a ){
+    		perspective.storeLocations();
+    		PropertyTransformer transformer = frontend.getPropertyTransformer();
+    		for( int i = 0, n = in.readInt(); i<n; i++ ){
+    			if( in.readBoolean() ){
+    				String key = in.readUTF();
+    				DockLayoutComposition composition = null;
+    				if( in.readBoolean() ){
+    					 composition = conversion.getSituation().readComposition( in );
+    				}
+    				
+	    			CDockablePerspective dockable = perspective.getDockable( key );
+	    			if( dockable == null && composition != null ){
+	    				PerspectiveElement element = conversion.convert( composition );
+	    	    		if( element instanceof CommonElementPerspective ){
+	    	    			dockable = ((CommonElementPerspective)element).getElement().asDockable();
+	    	    			if( dockable != null ){
+	    	    				perspective.putDockable( dockable );
+	    	    			}
+	    	    		}		
+	    			}
+	    			
+	    			String locationRoot = in.readUTF();
+	    			String modeId = in.readUTF();
+	    			DockableProperty location = transformer.read( in );
+	    			
+	    			if( dockable != null ){
+	    				Path mode = new Path( modeId );
+	    				
+	    				ExtendedMode extendedMode = perspective.getLocationManager().getMode( mode );
+	    				if( extendedMode != null ){
+	    					dockable.getLocationHistory().add( extendedMode, new Location( mode, locationRoot, location ) );
+	    				}
+	    			}
+	    		}
     		}
     	}
     	
@@ -460,13 +593,47 @@ public class CControlPerspective {
      * @return the layout of <code>setting</code>
      */
     public CPerspective read( CSetting setting, boolean includeWorkingAreas ){
-    	CPerspective perspective = createEmptyPerspective();
+    	return convert( setting, includeWorkingAreas );
+    }
+    
+    private CSetting convert( CPerspective perspective, boolean includeWorkingAreas ){
+    	perspective.storeLocations();
     	
-    	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
-    	Perspective conversion = wrap( perspective, includeWorkingAreas, factory );
+    	DockFrontendPerspective frontend = conversion( perspective, includeWorkingAreas );
+    	Perspective conversion = frontend.getPerspective();
+    	CSetting setting = new CSetting();
+    	
+    	// layout
+    	for( String key : perspective.getStationKeys() ){
+    		CStationPerspective station = perspective.getStation( key );
+    		if( station.asDockable() == null || station.asDockable().getParent() == null ){
+    			setting.putRoot( key, conversion.convert( station.intern() ) );
+    		}
+    	}
+    	
+    	// invisible items (storing location of visible items as well)
+    	for( String key : perspective.getDockableKeys() ){
+    		CDockablePerspective dockable = perspective.getDockable( key );
+    		Location location = getInvisibleLocation( dockable );
+	    	if( location != null ){
+	    		setting.addInvisible( key, location.getRoot(), null, location.getLocation() );
+	    	}
+    	}
+    	
+    	ModeSettings<Location, Location> settings = perspective.getLocationManager().writeModes( control );
+    	setting.setModes( settings );
+    	return setting;
+    }
+    
+    private CPerspective convert( CSetting setting, boolean includeWorkingAreas ){
+    	CPerspective cperspective = createEmptyPerspective();
+    	
+    	PerspectiveElementFactory factory = new PerspectiveElementFactory( cperspective );
+    	DockFrontendPerspective frontend = wrap( cperspective, includeWorkingAreas, factory );
+    	Perspective conversion = frontend.getPerspective();
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
-    		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
+    		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, cperspective ) );
     	}
     	
     	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
@@ -481,67 +648,31 @@ public class CControlPerspective {
     		if( station instanceof CommonElementPerspective ){
     			CStationPerspective stationPerspective = ((CommonElementPerspective)station).getElement().asStation();
     			if( stationPerspective != null ){
-    				perspective.addStation( stationPerspective );
+    				cperspective.addStation( stationPerspective );
     			}
     		}
     	}
     	
     	ModeSettings<Location, Location> modes = setting.getModes();
     	
-    	perspective.getLocationManager().readModes( modes, perspective, control );
+    	cperspective.getLocationManager().readModes( modes, cperspective, control );
     	
-    	return perspective;
+    	return cperspective;    	
     }
     
-    private Setting convert( CPerspective perspective, boolean includeWorkingAreas ){
-    	CSetting setting = new CSetting();
-    	
-    	// layout
-    	Perspective conversion = conversion( perspective, includeWorkingAreas );
-    	
-    	for( String key : perspective.getStationKeys() ){
-    		CStationPerspective station = perspective.getStation( key );
-    		if( station.asDockable() == null || station.asDockable().getParent() == null ){
-    			setting.putRoot( key, conversion.convert( station.intern() ) );
-    		}
-    	}
-    	
-    	for( String key : perspective.getDockableKeys() ){
-    		CDockablePerspective dockable = perspective.getDockable( key );
-    		if( dockable.getParent() == null ){
-    			LocationHistory history = dockable.getLocationHistory();
-    			List<Path> order = history.getOrder();
-    			if( !order.isEmpty() ){
-    				Path mode = order.get( order.size()-1 );
-    				Location location = history.getLocations().get( mode );
-    				setting.addInvisible( key, location.getRoot(), null, location.getLocation() );
-    			}
-    		}
-    	}
-    	
-    	// modes
-    	setting.setModes( perspective.getLocationManager().writeModes( control ) );
-    	
-    	return setting;
-    }
-    
-    private CPerspective convert( CSetting setting, boolean includeWorkingAreas ){
-    	CPerspective cperspective = createEmptyPerspective();
-    	Perspective perspective = conversion( cperspective, includeWorkingAreas );
-    	
-    	// layout
-    	for( String key : setting.getRootKeys() ){
-    		perspective.convert( setting.getRoot( key ) );
-    	}
-    	
-    	// modes
-    	cperspective.getLocationManager().readModes( setting.getModes(), cperspective, control );
-    	
-    	return cperspective;
+    private Location getInvisibleLocation( CDockablePerspective dockable ){
+		LocationHistory history = dockable.getLocationHistory();
+		List<Path> order = history.getOrder();
+		if( !order.isEmpty() ){
+			Path mode = order.get( order.size()-1 );
+			Location location = history.getLocations().get( mode );
+			return location;
+		}
+		return null;
     }
 
     /**
-     * Creates a new {@link Perspective} which uses the settings from <code>perspective</code> to read
+     * Creates a new {@link DockFrontendPerspective} which uses the settings from <code>perspective</code> to read
      * and write layouts. This method adds {@link CommonSingleDockableFactory}, {@link CommonMultipleDockableFactory} and
      * {@link CommonDockStationFactory} to the perspective.<br>
      * Clients usually have no need to call this method.
@@ -550,30 +681,34 @@ public class CControlPerspective {
      * should be included in the layout or not
      * @return the new builder
      */
-    public Perspective conversion( CPerspective perspective, boolean includeWorkingAreas ){
-    	Perspective conversion = wrap( perspective, includeWorkingAreas );
+    @FrameworkOnly
+    public DockFrontendPerspective conversion( CPerspective perspective, boolean includeWorkingAreas ){
+    	DockFrontendPerspective conversion = wrap( perspective, includeWorkingAreas );
+    	DockSituation situation = conversion.getPerspective().getSituation();
     	
     	for( Map.Entry<String, MultipleCDockableFactory<?, ?>> item : control.getRegister().getFactories().entrySet() ){
-    		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
+    		situation.add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, perspective ) );
     	}
     	
     	return conversion;
     }
     
-    private Perspective wrap( CPerspective perspective, boolean includeWorkingAreas ){
+    private DockFrontendPerspective wrap( CPerspective perspective, boolean includeWorkingAreas ){
     	PerspectiveElementFactory factory = new PerspectiveElementFactory( perspective );
     	return wrap( perspective, includeWorkingAreas, factory );
     }
     
-    private Perspective wrap( CPerspective perspective, boolean includeWorkingAreas, PerspectiveElementFactory factory ){
-    	Perspective result = control.getOwner().intern().getPerspective( !includeWorkingAreas, factory ).getPerspective();
-    	factory.setBasePerspective( result );
+    private DockFrontendPerspective wrap( CPerspective perspective, boolean includeWorkingAreas, PerspectiveElementFactory factory ){
+    	DockFrontendPerspective frontend = control.getOwner().intern().getPerspective( !includeWorkingAreas, factory );
+    	Perspective inner = frontend.getPerspective();
+    	
+    	factory.setBasePerspective( inner );
     	
     	CommonSingleDockableFactory singleDockableFactory = new CommonSingleDockableFactory( control.getOwner(), perspective );
-    	result.getSituation().add( singleDockableFactory );
-    	result.getSituation().add( new CommonDockStationFactory( control.getOwner(), factory, singleDockableFactory ) );
+    	inner.getSituation().add( singleDockableFactory );
+    	inner.getSituation().add( new CommonDockStationFactory( control.getOwner(), factory, singleDockableFactory ) );
     	
-    	return result;
+    	return frontend;
     }
     
     /**
