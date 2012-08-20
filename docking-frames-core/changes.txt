@@ -806,6 +806,11 @@
  - Bugfix: CPerspective, the invisible dockables are now stored when writing to/reading from a file
  - Bugfix: When converting a CPerspective to a CSetting, visible items must store their location as well, in case they are not loaded properly
  - Bugfix: calling "DefaultDockRelocatorEvent.forbid" on a "search", did not result in the search continuing with another station
+
+[v1.1.1p8g]
+ - Bugfix: Moving one Dockable of a maximized stack in the minimized area did throw an exception
+ - Bugfix: Moving a maximized Dockable with a working-area to the minimized area did store an invalid location of the dockable
+ - API: CGridArea/CWorkingArea will not replace a maximized dockable by another dockable in any case
     
 [Todo]
 - Drop StackDockStation over Dockable and merge them

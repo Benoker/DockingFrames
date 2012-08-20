@@ -28,6 +28,8 @@ package bibliothek.gui.dock.facile.mode;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +110,9 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	
 	/** the action that is currently executing */
 	private List<CGroupMovement> currentAction = new ArrayList<CGroupMovement>();
+	
+	/** the list of {@link Dockable}s for which {@link #refresh(Dockable, boolean)} has to be called */
+	private LinkedHashSet<Dockable> pendingRefreshs = new LinkedHashSet<Dockable>();
 	
 	/** the current {@link ExtendedModeEnablementFactory} */
 	private PropertyValue<ExtendedModeEnablementFactory> extendedModeFactory = new PropertyValue<ExtendedModeEnablementFactory>( MODE_ENABLEMENT ) {
@@ -593,6 +598,20 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 	}
 
 	/**
+	 * If the {@link DockRegister} is currently stalled, then a call to {@link LocationModeManager#refresh(Dockable, boolean)}
+	 * is scheduled, otherwise the call is performed directly.
+	 * @param dockable the dockable which should be forwarded to {@link LocationModeManager#refresh(Dockable, boolean)}
+	 */
+	public void delayedRefresh( Dockable dockable ){
+		if( getController().getRegister().isStalled() ){
+			pendingRefreshs.add( dockable );
+		}
+		else{
+			refresh( dockable, true );
+		}
+	}
+	
+	/**
 	 * This listener registers when {@link Dockable}s enter and leave and adds or
 	 * removes a {@link DockHierarchyListener}. 
 	 * @author Benjamin Sigg
@@ -629,11 +648,21 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		public void dockableUnregistered( DockController controller, Dockable dockable ){
 			dockable.removeDockHierarchyListener( hierarchyListener );
 		}
+		
+		@Override
+		public void registerUnstalled( DockController controller ){
+			while( pendingRefreshs.size() > 0 && !controller.getRegister().isStalled() ){
+				Iterator<Dockable> iter = pendingRefreshs.iterator();
+				Dockable next = iter.next();
+				iter.remove();
+				refresh( next, true );
+			}
+		}
 	}
 	
 	/**
 	 * Reacts on dockables that are changing their position by calling
-	 * {@link LocationModeManager#rebuild(Dockable)}.
+	 * {@link LocationModeManager#refresh(Dockable, boolean)}.
 	 * @author Benjamin Sigg
 	 */
 	private class HierarchyListener implements DockHierarchyListener{
@@ -643,7 +672,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 
 		public void hierarchyChanged( DockHierarchyEvent event ){
             if( !isOnTransaction() ){
-                refresh( event.getDockable(), true );
+            	delayedRefresh( event.getDockable() );
             }	
 		}		
 	}

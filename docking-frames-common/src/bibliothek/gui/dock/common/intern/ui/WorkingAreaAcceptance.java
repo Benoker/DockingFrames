@@ -25,9 +25,6 @@
  */
 package bibliothek.gui.dock.common.intern.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
@@ -38,6 +35,7 @@ import bibliothek.gui.dock.common.group.CGroupMovement;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CommonDockable;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -101,20 +99,13 @@ public class WorkingAreaAcceptance implements DockAcceptance {
      * <code>element</code> to the root and which is a working area
      */
     private CStation<?> searchArea( DockElement element ){
-        Map<DockStation, CStation<?>> stations = new HashMap<DockStation, CStation<?>>();
-        for( CStation<?> station : control.getOwner().getStations() ){
-            if( station.isWorkingArea() ){
-                stations.put( station.getStation(), station );
-            }
-        }
-        
         DockStation station = element.asDockStation();
         Dockable dockable = element.asDockable();
         
         while( dockable != null || station != null ){
-            if( station != null ){
-                CStation<?> cstation = stations.get( station );
-                if( cstation != null )
+            if( station != null && station instanceof CommonDockStation<?, ?>){
+            	CStation<?> cstation = ((CommonDockStation<?,?>)station).getStation();
+                if( cstation.isWorkingArea() )
                     return cstation;
             }
             

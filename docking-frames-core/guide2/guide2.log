@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.24)  29 JUL 2012 14:57
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.24)  18 AUG 2012 11:20
 entering extended mode
  %&-line parsing enabled.
 **guide2.tex
@@ -215,41 +215,53 @@ LaTeX Font Info:    External font `cmex10' loaded for size
  [4]
 \openout2 = `introduction/chapter.aux'.
 
- (./introduction/chapter.tex [5
-
-]
-<info.png, id=24, 102.784pt x 102.784pt>
+ (./introduction/chapter.tex <info.png, id=19, 102.784pt x 102.784pt>
 File: info.png Graphic file (type png)
- <use info.png>
-<stop.png, id=26, 102.784pt x 102.784pt>
+
+<use info.png>
+Underfull \hbox (badness 1939) in paragraph at lines 21--21
+[]\OT1/cmr/m/n/10 Clients should make use of the \OT1/cmtt/m/n/10 Common \OT1/c
+mr/m/n/10 project. In or-
+ []
+
+
+Underfull \hbox (badness 2229) in paragraph at lines 21--21
+\OT1/cmr/m/n/10 der to do so the li-braries \OT1/cmtt/m/n/10 docking-frames-cor
+e.jar \OT1/cmr/m/n/10 and
+ []
+
+[5
+
+
+
+pdfTeX warning: /usr/bin/pdflatex: pop empty color page stack 0
+
+
+pdfTeX warning: /usr/bin/pdflatex: pop empty color page stack 0
+ <./info.png>]
+File: info.png Graphic file (type png)
+ <use info.png> <stop.png, id=28, 102.784pt x 102.784pt>
 File: stop.png Graphic file (type png)
- <use stop.png>
-<class.png, id=27, 102.784pt x 102.784pt>
+
+<use stop.png> [6] <class.png, id=32, 102.784pt x 102.784pt>
 File: class.png Graphic file (type png)
  <use class.png>
-<design.png, id=28, 102.784pt x 102.784pt>
+<design.png, id=33, 102.784pt x 102.784pt>
 File: design.png Graphic file (type png)
  <use design.png>
-<code.png, id=29, 102.784pt x 102.784pt>
+<code.png, id=34, 102.784pt x 102.784pt>
 File: code.png Graphic file (type png)
- <use code.png> [6
-
-pdfTeX warning: /usr/bin/pdflatex: pop empty color page stack 0
-
-
-pdfTeX warning: /usr/bin/pdflatex: pop empty color page stack 0
- <./info.png> <./stop.png> <./class.png> <./design.png> <./code.png>]
+ <use code.png> [7 <./stop.png> <./class.png> <./design.png> <./code.png>]
 File: info.png Graphic file (type png)
-
-<use info.png>) [7] [8]
+ <use info.png>) [8]
 \openout2 = `basics/chapter.aux'.
 
  (./basics/chapter.tex
 File: class.png Graphic file (type png)
- <use class.png>
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 16.
 
-(/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
+<use class.png>
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 16.
+ (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <7> not available
@@ -1142,7 +1154,7 @@ xlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/
 type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/publi
 c/amsfonts/cm/cmti7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
 m/cmtt10.pfb>
-Output written on guide2.pdf (78 pages, 958791 bytes).
+Output written on guide2.pdf (78 pages, 960705 bytes).
 PDF statistics:
  360 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

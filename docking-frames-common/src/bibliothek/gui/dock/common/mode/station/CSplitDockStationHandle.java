@@ -13,7 +13,9 @@ import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.group.CGroupMovement;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.station.CSplitDockStation;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.location.CMaximizedLocation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -233,7 +235,44 @@ public class CSplitDockStationHandle{
 		}
 		
 		public boolean isNormalModeChild( Dockable dockable ){
-			return isChild( dockable ) && getStation().getFullScreen() != dockable;
+			if( !isChild( dockable )){
+				return false;
+			}
+			if( getStation().getFullScreen() == dockable){
+				return false;
+			}
+			if( !isWorkingAreaValid( dockable )){
+				return false;
+			}
+			return true;
+		}
+		
+		private boolean isWorkingAreaValid( Dockable dockable ){
+			if( dockable instanceof CommonDockable ){
+				CStation<?> workingArea = ((CommonDockable)dockable).getDockable().getWorkingArea();
+				if( workingArea == null ){
+					return getFirstWorkingArea() == null;
+				}
+				else{
+					return getFirstWorkingArea() == workingArea;
+				}
+			}
+			return true;
+		}
+		
+		private CStation<?> getFirstWorkingArea(){
+			DockStation parent = station.getStation();
+			while( parent != null ){
+				if( parent instanceof CommonDockStation<?, ?> ){
+					CStation<?> cstation = ((CommonDockStation<?, ?>)parent).getStation();
+					if( cstation.isWorkingArea() ){
+						return cstation;
+					}
+				}
+				Dockable child = parent.asDockable();
+				parent = child == null ? null : child.getDockParent();
+			}
+			return null;
 		}
 
 		public DockableProperty getLocation( Dockable child ){

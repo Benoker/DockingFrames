@@ -32,6 +32,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CGrid;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.ColorMap;
@@ -332,8 +333,12 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     /**
-     * Tries to focus this dockable. There are no guarantees that this dockabe
-     * really gets focused.
+     * Tries to focus this dockable. In order to gain focus this dockable must at least be visible, additional
+     * restrictions exist, like gaining focus takes some time during which no other dockable must ask for the
+     * focus. This method is best used to highlight existing dockables, but not while building 
+     * a new layout (look at methods like {@link CGrid#select(double, double, double, double, CDockable) CGrid.select} 
+     * to select a dockable in a stack while building a layout).<br>
+     * There is no guarantee of success, this methods fails silently if the focus cannot be gained.
      */
     public void toFront(){
         if( isVisible() ){

@@ -39,8 +39,6 @@ import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.CStation;
-import bibliothek.gui.dock.common.MultipleCDockableFactory;
-import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.CLocationMode;
@@ -87,20 +85,6 @@ public class CPerspective {
 	public CPerspective( CControlAccess control ){
 		this.control = control;
 		initLocations();
-	}
-	
-	/**
-	 * Creates a new {@link MultipleCDockablePerspective}. This method converts <code>uniqueId</code> into a "multi id",
-	 * and then calls {@link MultipleCDockablePerspective#MultipleCDockablePerspective(String, String, MultipleCDockableLayout)}.
-	 * @param factoryId the unique identifier of a {@link MultipleCDockableFactory}
-	 * @param uniqueId the unique identifier of the new dockable 
-	 * @param layout a description of the content of the new dockable
-	 * @return the new dockable
-	 * @see MultipleCDockablePerspective#MultipleCDockablePerspective(String, String, MultipleCDockableLayout)
-	 */
-	public MultipleCDockablePerspective createMultipleCDockable( String factoryId, String uniqueId, MultipleCDockableLayout layout ){
-		String id = control.getRegister().toMultiId( uniqueId );
-		return new MultipleCDockablePerspective( factoryId, id, layout );
 	}
 	
 	private void initLocations(){
@@ -182,7 +166,7 @@ public class CPerspective {
     	else if( dockable instanceof MultipleCDockablePerspective ){
     		id = ((MultipleCDockablePerspective)dockable).getUniqueId();
     		if( id != null ){
-    			control.getRegister().toMultiId( id );
+    			id = control.getRegister().toMultiId( id );
     		}
     	}
 		return id;

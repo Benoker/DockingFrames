@@ -26,14 +26,12 @@
 package bibliothek.gui.dock.common.perspective;
 
 import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.MultipleCDockable;
 import bibliothek.gui.dock.common.MultipleCDockableFactory;
 import bibliothek.gui.dock.common.MultipleCDockableLayout;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
-import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 
 /**
@@ -61,15 +59,12 @@ public class MultipleCDockablePerspective extends AbstractCDockablePerspective{
 	/**
 	 * Creates a new representation. The identifier of the factory must match an identifier of a 
 	 * {@link MultipleCDockableFactory} that is registered at a {@link CControl} through the method
-	 * {@link CControl#addMultipleDockableFactory(String, MultipleCDockableFactory)}.<br>
-	 * Clients should not call this constructor directly, instead they should call {@link CPerspective#createMultipleCDockable(String, String, MultipleCDockableLayout)}
+	 * {@link CControl#addMultipleDockableFactory(String, MultipleCDockableFactory)}.
 	 * @param factoryId the unique identifier of a {@link MultipleCDockableFactory}, not <code>null</code>
-	 * @param uniqueId a unique identifier for this dockable, can be <code>null</code>, please read more about this 
-	 * property here: {@link #setUniqueId(String)}
+	 * @param uniqueId a unique identifier for this dockable, can be <code>null</code>
 	 * @param layout description of the content of this dockable, will be given to the {@link MultipleCDockableFactory}
 	 * that is accessed through <code>factoryId</code>
 	 */
-	@FrameworkOnly
 	public MultipleCDockablePerspective( String factoryId, String uniqueId, MultipleCDockableLayout layout ){
 		if( factoryId == null ){
 			throw new IllegalArgumentException( "factoryId must not be null" );
@@ -84,14 +79,10 @@ public class MultipleCDockablePerspective extends AbstractCDockablePerspective{
 	}
 	
 	/**
-	 * Sets the unique identifier of this element. The identifier must be a "multi identifier", as is produced
-	 * by {@link CControlRegister#toMultiId(String)}. Clients should set the identifier by calling
-	 * {@link CPerspective#createMultipleCDockable(String, String, MultipleCDockableLayout)}.
-	 * The identifier can be used to replace an  existing {@link MultipleCDockable} with the dockable that is represented 
-	 * by this. If no identifier is set, then a random identifier will be set when the {@link CPerspective} is applied.
+	 * Sets the unique identifier of this element. The identifier can be used to replace an  existing {@link MultipleCDockable} 
+	 * with the dockable that is represented by this. If no identifier is set, then a random identifier will be set when the {@link CPerspective} is applied.
 	 * @param uniqueId the unique id or <code>null</code>
 	 */
-	@FrameworkOnly
 	public void setUniqueId( String uniqueId ){
 		this.uniqueId = uniqueId;
 	}

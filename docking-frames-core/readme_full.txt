@@ -7,8 +7,9 @@
 * 1 * Writing new applications *
 ********************************
 
-The easiest way to write new applications is to use the common-project. For
-that you should perform these steps:
+The easiest way to write new applications is to use the common-project (if you
+want to know why, please read the introduction of "core.pdf"). To use the
+common-project you should perform these steps:
 
 - include "bin/docking-frames-core.jar" into your class-path.
 - include "bin/docking-frames-common.jar" into your class-path.

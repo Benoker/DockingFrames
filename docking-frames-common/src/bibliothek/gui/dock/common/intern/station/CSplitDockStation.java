@@ -90,6 +90,11 @@ public class CSplitDockStation extends SplitDockStation implements CommonDockSta
 	protected ListeningDockAction createFullScreenAction() {
 		return null;
 	}
+	
+	@Override
+	public void setNextFullScreen(){
+		setFullScreen( null );
+	}
 
 	@Override
 	public void setFrontDockable( Dockable dockable ) {

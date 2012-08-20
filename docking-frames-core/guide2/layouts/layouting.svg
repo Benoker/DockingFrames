@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="layouting.svg">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2828"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2850"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2850-9"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2893"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2922"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2922-7"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2953"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2982"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3004"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3033"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3938"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3938-1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3987"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4012"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4012-6"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4043"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4043-1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4043-5"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4043-4"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4043-58"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4043-6"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4124"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4124-5"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4124-4"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4124-0"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4124-6"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4124-00"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4124-1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="308.18055"
+     inkscape:cy="531.41684"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="1031"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#666666;fill-opacity:1;stroke:#000000;stroke-width:1.53949594;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 183.21687,238.58858 c -7.24367,0 -13.11371,6.19388 -13.11371,13.83718 0,0.15923 0.0199,0.31648 0.025,0.47442 l -0.025,0 0,441.57754 c -0.0849,0.63658 -0.14988,1.28904 -0.14988,1.95038 0,7.64329 5.89503,13.83718 13.1387,13.83718 7.24366,0 13.11369,-6.19389 13.11369,-13.83718 0,-0.053 5.8e-4,-0.10537 0,-0.15814 l 0.14988,0 0,-443.36978 -0.0499,0 c 0.004,-0.15805 0.0249,-0.31508 0.0249,-0.47442 0,-7.6433 -5.87004,-13.83718 -13.1137,-13.83718 z"
+       id="rect2816"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffcc00;fill-opacity:1;stroke:#000000;stroke-width:1.44282889;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 283.06773,263.25479 c -6.98726,0 -12.69316,5.77832 -13.08873,13.0465 l -0.0999,0 0,386.59778 c -0.0555,0.51725 -0.0748,1.04846 -0.0748,1.58139 0,7.6433 5.87004,13.83719 13.11371,13.83719 7.24367,0 13.1137,-6.19389 13.1137,-13.83719 0,-0.0353 2.5e-4,-0.0702 0,-0.10542 l 0.19983,0 0,-388.07375 -0.0999,0 c -0.39556,-7.26818 -6.0765,-13.0465 -13.06376,-13.0465 z"
+       id="rect2816-8"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#2a7fff;fill-opacity:1;stroke:#000000;stroke-width:1.28308833;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 369.85013,304.23169 c -7.24367,0 -13.13868,6.19389 -13.13868,13.83719 0,0.10632 0.0227,0.21053 0.025,0.31628 l -0.14988,0 0,305.10334 c -5.9e-4,0.0539 0,0.10415 0,0.15815 0,7.6433 5.87005,13.83719 13.11371,13.83719 7.24366,0 13.1137,-6.19389 13.1137,-13.83719 0,-0.054 5.8e-4,-0.10439 0,-0.15815 l 0.27476,0 0,-305.10334 -0.14987,0 c 0.003,-0.10575 0.0251,-0.20996 0.0251,-0.31628 0,-7.6433 -5.87005,-13.83719 -13.11371,-13.83719 z"
+       id="rect2816-9-9"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#2a7fff;fill-opacity:1;stroke:#000000;stroke-width:1.28308833;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 428.01629,304.16063 c -7.24366,0 -13.13868,6.1939 -13.13868,13.83719 0,0.10632 0.0227,0.21053 0.0249,0.31628 l -0.14988,0 0,305.10336 c -5.8e-4,0.054 0,0.10414 0,0.15814 0,7.64329 5.87003,13.83718 13.11371,13.83718 7.24367,0 13.1137,-6.19389 13.1137,-13.83718 0,-0.0539 5.8e-4,-0.10438 0,-0.15814 l 0.27477,0 0,-305.10336 -0.14988,0 c 0.003,-0.10575 0.0249,-0.20996 0.0249,-0.31628 0,-7.64329 -5.87004,-13.83719 -13.11371,-13.83719 z"
+       id="rect2816-9-9-4"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#2a7fff;fill-opacity:1;stroke:#000000;stroke-width:1.28308833;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 483.39716,304.16063 c -7.24366,0 -13.13868,6.1939 -13.13868,13.83719 0,0.10632 0.0227,0.21053 0.0249,0.31628 l -0.14988,0 0,305.10335 c -5.8e-4,0.0539 0,0.10414 0,0.15814 0,7.64329 5.87004,13.83719 13.11371,13.83719 7.24367,0 13.11371,-6.1939 13.11371,-13.83719 0,-0.0539 5.8e-4,-0.10437 0,-0.15814 l 0.27476,0 0,-305.10335 -0.14987,0 c 0.003,-0.10575 0.0249,-0.20996 0.0249,-0.31628 0,-7.64329 -5.87002,-13.83719 -13.11369,-13.83719 z"
+       id="rect2816-9-9-6"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#2a7fff;fill-opacity:1;stroke:#000000;stroke-width:0.81855291;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 541.05682,303.6785 c -7.24367,0 -13.11371,6.19389 -13.11371,13.83719 0,0.027 -1.4e-4,0.0522 0,0.079 l -0.3497,0 0,122.08351 0.39967,0 c -0.12317,0.76168 -0.19984,1.54703 -0.19984,2.34574 0,7.64329 5.89502,13.83719 13.13869,13.83719 7.24366,0 13.11371,-6.1939 13.11371,-13.83719 0,-0.79871 -0.0768,-1.58406 -0.19983,-2.34574 l 0.69939,0 0,-122.08351 -0.37467,0 c 1.4e-4,-0.027 0,-0.0521 0,-0.079 0,-7.6433 -5.87004,-13.83719 -13.11371,-13.83719 z"
+       id="rect2816-9-1"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#2a7fff;fill-opacity:1;stroke:#000000;stroke-width:0.90115547;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 542.47079,457.62327 c -7.24367,0 -13.1137,6.19389 -13.1137,13.83718 0,0.0442 -3.9e-4,0.0877 0,0.13178 l -0.3497,0 0,148.4137 0.24978,0 c -0.0131,0.25799 -0.0499,0.50278 -0.0499,0.76435 0,7.64329 5.87004,13.86354 13.11371,13.86354 7.24366,0 13.11369,-6.22025 13.11369,-13.86354 0,-0.26157 -0.0364,-0.50636 -0.0499,-0.76435 l 0.52454,0 0,-148.4137 -0.32471,0 c 3.9e-4,-0.044 0,-0.0877 0,-0.13178 0,-7.64329 -5.87006,-13.83718 -13.11371,-13.83718 z"
+       id="rect2816-9-3"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#37c871;fill-opacity:1;stroke:#000000;stroke-width:1.28308833;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 657.71153,297.09518 c -7.24367,0 -13.13868,6.19389 -13.13868,13.83718 0,0.10632 0.0227,0.21053 0.0249,0.31628 l -0.14988,0 0,305.10335 c -5.6e-4,0.0539 0,0.10414 0,0.15814 0,7.6433 5.87006,13.83719 13.11372,13.83719 7.24366,0 13.11371,-6.19389 13.11371,-13.83719 0,-0.0539 5.9e-4,-0.10437 0,-0.15814 l 0.27475,0 0,-305.10335 -0.14985,0 c 0.003,-0.10575 0.0249,-0.20996 0.0249,-0.31628 0,-7.64329 -5.87006,-13.83718 -13.11372,-13.83718 z"
+       id="rect2816-9-9-9"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#5b5b5b;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="118.07957"
+       y="212.31699"
+       id="text3047"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3049"
+         x="118.07957"
+         y="212.31699">Filesystem</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#7c7f00;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="249.27402"
+       y="240.43008"
+       id="text3051"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3053"
+         x="249.27402"
+         y="240.43008">Application</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#5b5bfd;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="349.79962"
+       y="288.98907"
+       id="text3055"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="349.79962"
+         y="288.98907"
+         id="tspan3067">Intermediate layouts</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#00a009;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="585.7793"
+       y="283.02573"
+       id="text3061"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3063"
+         x="585.7793"
+         y="283.02573">Actual layout</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="100.22624"
+       y="279.55734"
+       id="text3071"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3073"
+         x="100.22624"
+         y="279.55734">Start</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="40.555573"
+       y="711.53741"
+       id="text3075"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3077"
+         x="40.555573"
+         y="711.53741">Shutdown</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="11.432337"
+       y="328.05563"
+       id="text3079"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3081"
+         x="11.432337"
+         y="328.05563">read/readXML</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="-5.4476776"
+       y="679.16479"
+       id="text3083"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3085"
+         x="-5.4476776"
+         y="679.16479">write/writeXML</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="680.33344"
+       y="520.34491"
+       id="text3087"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3089"
+         x="680.33344"
+         y="520.34491">load</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20.2403965px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="683.14502"
+       y="479.43817"
+       id="text3091"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan3093"
+         x="683.14502"
+         y="479.43817">save</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.73101234;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-6"
+       width="132.2182"
+       height="4.8136525"
+       x="201.10901"
+       y="316.20374"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-9"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(0.84334987,0,0,0.84334987,-131.59474,226.02578)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.85971546;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1"
+       width="148.9565"
+       height="4.6849499"
+       x="487.52521"
+       y="509.7139"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(0.84334987,0,0,0.84334987,171.62413,419.47162)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.74249268;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-6-1"
+       width="44.654987"
+       height="5.8021727"
+       x="203.02432"
+       y="274.7468"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-9-2"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(0.84334987,0,0,0.84334987,-217.7369,185.06308)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#2a7fff;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path2818-04-1"
+       sodipodi:cx="123.92857"
+       sodipodi:cy="192.18361"
+       sodipodi:rx="16.071428"
+       sodipodi:ry="16.071428"
+       d="m 140,192.18361 a 16.071428,16.071428 0 1 1 -32.14285,0 16.071428,16.071428 0 1 1 32.14285,0 z"
+       transform="matrix(0.86105803,0,0,0.86105803,495.56524,152.8956)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#2a7fff;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path2818-04-9"
+       sodipodi:cx="123.92857"
+       sodipodi:cy="192.18361"
+       sodipodi:rx="16.071428"
+       sodipodi:ry="16.071428"
+       d="m 140,192.18361 a 16.071428,16.071428 0 1 1 -32.14285,0 16.071428,16.071428 0 1 1 32.14285,0 z"
+       transform="matrix(0.86105803,0,0,0.86105803,485.32456,453.48959)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 400.26251,304.57403 0,10.46281 -32.25813,0 0,5.95616 32.25813,0 0,8.77611 10.91084,-6.29877 10.93719,-6.29877 -10.93719,-6.29877 -10.91084,-6.29877 z"
+       id="rect3095-1-2"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-8"
+       width="35.780304"
+       height="5.9633842"
+       x="430.04578"
+       y="315.02646"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-3"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(0.84334987,0,0,0.84334987,0.32927497,225.42339)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-1"
+       width="35.780304"
+       height="5.9633842"
+       x="488.47791"
+       y="314.42407"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-5"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(0.84334987,0,0,0.84334987,58.76137,224.82099)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-7"
+       width="35.780304"
+       height="5.9633842"
+       x="547.51239"
+       y="312.61691"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-6"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(0.84334987,0,0,0.84334987,117.79587,223.01382)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-24"
+       width="35.780304"
+       height="5.9633842"
+       x="606.54688"
+       y="313.2193"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-62"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(0.84334987,0,0,0.84334987,176.83036,223.61621)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.35956001;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0"
+       width="91.626945"
+       height="5.1851048"
+       x="-651.82922"
+       y="-475.5506"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,1025.31,565.54284)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0-1"
+       width="35.780304"
+       height="5.9633842"
+       x="-651.01355"
+       y="-620.51398"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1-9"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,1080.7301,710.11711)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0-5"
+       width="35.780304"
+       height="5.9633842"
+       x="-594.99103"
+       y="-621.11639"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1-5"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,1024.7075,710.7195)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0-2"
+       width="35.780304"
+       height="5.9633842"
+       x="-537.76373"
+       y="-622.32117"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1-2"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,967.4803,711.92428)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0-4"
+       width="35.780304"
+       height="5.9633842"
+       x="-479.33154"
+       y="-622.32117"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1-3"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,909.04816,711.92428)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.58128107;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0-22"
+       width="35.780304"
+       height="5.9633842"
+       x="-419.09232"
+       y="-623.52594"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1-0"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,848.80885,713.12906)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.7967968;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0-6"
+       width="140.58592"
+       height="4.7478685"
+       x="-358.24527"
+       y="-624.72534"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1-26"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,682.54844,714.93625)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.76242363;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3095-1-0-41"
+       width="45.83984"
+       height="5.7822413"
+       x="-262.98199"
+       y="-668.01239"
+       transform="scale(-1,-1)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.875;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3097-1-6"
+       sodipodi:sides="3"
+       sodipodi:cx="556.42859"
+       sodipodi:cy="108.79075"
+       sodipodi:r1="17.261494"
+       sodipodi:r2="8.6307478"
+       sodipodi:arg1="2.0943951"
+       sodipodi:arg2="3.1415927"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 547.79784,123.73964 0,-14.94889 0,-14.948893 12.94612,7.474443 12.94612,7.47445 -12.94612,7.47445 -12.94612,7.47444 z"
+       transform="matrix(-0.84334987,0,0,-0.84334987,682.54844,757.70614)"
+       inkscape:export-filename="/home/beni/Desktop/docking/layouting.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>
