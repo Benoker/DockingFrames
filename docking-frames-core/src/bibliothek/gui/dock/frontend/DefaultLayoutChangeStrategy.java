@@ -141,12 +141,25 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
                     if( dockable != null ){
                         DockInfo info = frontend.getInfo( dockable );
                         if( info != null ){
-                            info.isEntryLayout();
+                            return info.isEntryLayout();
                         }
                     }
                 }
-                
                 return true;
+            }
+            
+            @Override
+            protected boolean shouldLayout( PerspectiveElement element, PredefinedPerspective perspective ) {
+            	if( entry ){
+            		String key = perspective.get( element );
+            		if( key != null ){
+            			DockInfo info = frontend.getInfo( key );
+            			if( info != null ){
+            				return info.isEntryLayout();
+            			}
+            		}
+            	}
+            	return true;
             }
         };
         
