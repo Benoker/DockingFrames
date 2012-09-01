@@ -467,7 +467,7 @@ public class CControlPerspective {
     	
     	return perspective;
     }
-
+    
     /**
      * Emulates a call to {@link CControl#read(DataInputStream)} and returns all the layouts that are stored
      * in the stream <code>in</code>.
@@ -636,6 +636,7 @@ public class CControlPerspective {
     		conversion.getSituation().add( new CommonMultipleDockableFactory( item.getKey(), item.getValue(), control, cperspective ) );
     	}
     	
+    	// registered dockables
     	Map<String, DockLayoutComposition> stations = new HashMap<String, DockLayoutComposition>();
     	for( String root : setting.getRootKeys() ){
     		stations.put( root, setting.getRoot( root ) );
@@ -653,6 +654,29 @@ public class CControlPerspective {
     		}
     	}
     	
+    	// invisible dockables
+    	for( int i = 0, n = setting.getInvisibleCount(); i < n; i++ ){
+    		DockLayoutComposition composition = setting.getInvisibleLayout( i );
+    		if( composition != null ){
+    			PerspectiveElement element = conversion.convert( composition );
+    			if( element instanceof CommonElementPerspective ){
+    				CDockablePerspective dockable = ((CommonElementPerspective)element).getElement().asDockable();
+    				if( dockable != null ){
+	    				DockableProperty location = setting.getInvisibleLocation( i );
+			    		String root = setting.getInvisibleRoot( i );
+			    		
+			    		ExtendedMode mode = cperspective.getLocationManager().getMode( root, location );
+			    		if( mode != null ){
+			    			dockable.getLocationHistory().add( mode, new Location( mode.getModeIdentifier(), root, location ) );
+			    		}
+			    		
+			    		cperspective.putDockable( dockable );
+    				}
+    			}
+    		}
+    	}
+    	
+    	// location information 
     	ModeSettings<Location, Location> modes = setting.getModes();
     	
     	cperspective.getLocationManager().readModes( modes, cperspective, control );

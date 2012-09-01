@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -136,6 +137,21 @@ public class LocationModeManagerPerspective {
 			}
 			PerspectiveStation parent = dockable.getParent();
 			dockable = parent == null ? null : parent.asDockable();
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the mode which could have a child in the given location.
+	 * @param root the identifier of the root {@link DockStation}
+	 * @param location the location of some dockable
+	 * @return the matching mode or <code>null</code> if not found
+	 */
+	public ExtendedMode getMode( String root, DockableProperty location ){
+		for( LocationModePerspective mode : modes.values() ){
+			if( mode.isCurrentMode( root, location )){
+				return mode.getIdentifier();
+			}
 		}
 		return null;
 	}

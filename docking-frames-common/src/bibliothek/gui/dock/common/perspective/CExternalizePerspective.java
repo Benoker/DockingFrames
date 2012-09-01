@@ -35,8 +35,10 @@ import bibliothek.gui.dock.common.perspective.mode.CMaximizedModeAreaPerspective
 import bibliothek.gui.dock.common.perspective.mode.CMaximizedModePerspective;
 import bibliothek.gui.dock.common.perspective.mode.CModeAreaPerspective;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.screen.ScreenDockPerspective;
+import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
@@ -71,6 +73,12 @@ public class CExternalizePerspective implements CStationPerspective{
 			}
 			return false;
 		}
+		public boolean isChildLocation( DockableProperty location ){
+			if( location instanceof ScreenDockProperty ){
+				return ((ScreenDockProperty)location).isFullscreen();
+			}
+			return false;
+		}
 	};
 	
 	/** identifies children that are in maximized mode */
@@ -84,6 +92,14 @@ public class CExternalizePerspective implements CStationPerspective{
 			}
 			return false;
 		}
+		
+		public boolean isChildLocation( DockableProperty location ){
+			if( location instanceof ScreenDockProperty ){
+				return !((ScreenDockProperty)location).isFullscreen();
+			}
+			return false;
+		}
+		
 		public void setUnmaximize( Path mode, Location location ){
 			// ignore	
 		}

@@ -811,6 +811,9 @@
  - Bugfix: Moving one Dockable of a maximized stack in the minimized area did throw an exception
  - Bugfix: Moving a maximized Dockable with a working-area to the minimized area did store an invalid location of the dockable
  - API: CGridArea/CWorkingArea will not replace a maximized dockable by another dockable in any case
+
+[v1.1.1p8h]
+ - Bugfix: in the conversion from CSetting to CPerspective the location of invisible CDockables was ignored
     
 [Todo]
 - Drop StackDockStation over Dockable and merge them

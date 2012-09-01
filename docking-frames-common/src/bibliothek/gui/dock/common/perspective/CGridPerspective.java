@@ -39,10 +39,15 @@ import bibliothek.gui.dock.common.perspective.mode.CModeAreaPerspective;
 import bibliothek.gui.dock.common.perspective.mode.CNormalModePerspective;
 import bibliothek.gui.dock.common.perspective.mode.LocationModeManagerPerspective;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.split.PerspectiveSplitDockGrid;
 import bibliothek.gui.dock.station.split.PerspectiveSplitDockTree;
+import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
+import bibliothek.gui.dock.station.split.SplitDockPathProperty;
 import bibliothek.gui.dock.station.split.SplitDockPerspective;
+import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
+import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Entry;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Node;
 import bibliothek.gui.dock.station.split.SplitDockPerspective.Root;
@@ -100,6 +105,12 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 			}
 			return false;
 		}
+		
+		public boolean isChildLocation( DockableProperty location ){
+			return location instanceof SplitDockProperty 
+					|| location instanceof SplitDockPathProperty
+					|| location instanceof SplitDockPlaceholderProperty;
+		}
 	};
 
 	/** identifies children that are in maximized mode */
@@ -126,6 +137,10 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 
 		public Path getUnmaximizeMode(){
 			return unmaximizeMode;
+		}
+		
+		public boolean isChildLocation( DockableProperty location ){
+			return location instanceof SplitDockFullScreenProperty;
 		}
 	};
 	

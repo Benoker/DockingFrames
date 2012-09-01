@@ -25,10 +25,12 @@
  */
 package bibliothek.gui.dock.common.perspective.mode;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 
@@ -55,6 +57,15 @@ public interface LocationModePerspective {
 	 * @return <code>true</code> if this mode describes the situation of <code>dockable</code>
 	 */
 	public boolean isCurrentMode( PerspectiveDockable dockable );
+	
+	/**
+	 * Checks whether the dockable at location <code>root</code>/<code>location</code>
+	 * should be in the mode represented by <code>this</code>.
+	 * @param root the unique identifer of the root {@link DockStation}
+	 * @param location the location on the root station
+	 * @return whether a dockable in this mode can have the described location 
+	 */
+	public boolean isCurrentMode( String root, DockableProperty location );
 	
 	/**
 	 * Reads settings belonging to this mode from <code>setting</code>.

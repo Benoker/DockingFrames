@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common.perspective.mode;
 
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 
 /**
@@ -49,4 +50,12 @@ public interface CModeAreaPerspective {
 	 * object 
 	 */
 	public boolean isChild( PerspectiveDockable dockable );
+	
+	/**
+	 * Tells whether <code>location</code> could be the location of a child dockable of 
+	 * this area.
+	 * @param location the location of some dockable
+	 * @return whether <code>location</code> describes a valid location on this area
+	 */
+	public boolean isChildLocation( DockableProperty location );
 }

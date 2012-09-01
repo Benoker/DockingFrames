@@ -30,9 +30,11 @@ import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.perspective.mode.CMinimizedModePerspective;
 import bibliothek.gui.dock.common.perspective.mode.CModeAreaPerspective;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.flap.FlapDockPerspective;
+import bibliothek.gui.dock.station.flap.FlapDockProperty;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
@@ -63,6 +65,9 @@ public class CMinimizePerspective implements CStationPerspective{
 		}
 		public boolean isChild( PerspectiveDockable dockable ){
 			return dockable.getParent() == intern();
+		}
+		public boolean isChildLocation( DockableProperty location ){
+			return location instanceof FlapDockProperty;
 		}
 	};
 

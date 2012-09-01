@@ -31,6 +31,7 @@ import java.util.List;
 import bibliothek.gui.dock.common.perspective.CDockablePerspective;
 import bibliothek.gui.dock.common.perspective.CPerspective;
 import bibliothek.gui.dock.facile.mode.Location;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.support.mode.ModeSetting;
 
@@ -100,6 +101,17 @@ public abstract class AbstractModePerspective<A extends CModeAreaPerspective> im
 		for( CModeAreaPerspective location : locations ){
 			if( location.isChild( dockable )){
 				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isCurrentMode( String root, DockableProperty location ){
+		for( CModeAreaPerspective area : locations ){
+			if( area.getUniqueId().equals( root )){
+				if( area.isChildLocation( location )){
+					return true;
+				}
 			}
 		}
 		return false;
