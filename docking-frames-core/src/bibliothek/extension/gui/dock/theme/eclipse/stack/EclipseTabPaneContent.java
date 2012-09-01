@@ -62,7 +62,7 @@ public class EclipseTabPaneContent extends CombinedStackDockContentPane{
 	public void paintBorder( Graphics g ){
 		// ignore
 	}
-	
+
 	@Override
 	public void paintOverlay( Graphics g ){
 		TabPanePainter painter = getPane().getPainter();

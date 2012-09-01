@@ -812,8 +812,10 @@
  - Bugfix: Moving a maximized Dockable with a working-area to the minimized area did store an invalid location of the dockable
  - API: CGridArea/CWorkingArea will not replace a maximized dockable by another dockable in any case
 
-[v1.1.1p8h]
+[v1.1.1]
  - Bugfix: in the conversion from CSetting to CPerspective the location of invisible CDockables was ignored
+ - API: VetoableDockRelocatorEvent now also tells the location of the mouse
+ - API: WizardSplitDockStation can now show a gap on the side where it is moveable, the default size of the gap is set to 3
     
 [Todo]
 - Drop StackDockStation over Dockable and merge them

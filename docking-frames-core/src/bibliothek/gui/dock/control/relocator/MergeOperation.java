@@ -25,9 +25,12 @@
  */
 package bibliothek.gui.dock.control.relocator;
 
+import java.awt.Point;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 
 /**
@@ -39,6 +42,7 @@ public class MergeOperation implements RelocateOperation{
 	private Merger merger;
 	private DockStation station;
 	private StationDropOperation operation;
+	private StationDropItem item;
 	
 	/**
 	 * Creates a new operation.
@@ -46,12 +50,14 @@ public class MergeOperation implements RelocateOperation{
 	 * @param merger the merger that will be used to merge the stations
 	 * @param station the target of this operation
 	 * @param operation the operation that would be executed by the station
+	 * @param item information about the source of the operation
 	 */
-	public MergeOperation( DockController controller, Merger merger, DockStation station, StationDropOperation operation ){
+	public MergeOperation( DockController controller, Merger merger, DockStation station, StationDropOperation operation, StationDropItem item ){
 		this.controller = controller;
 		this.merger = merger;
 		this.station = station;
 		this.operation = operation;
+		this.item = item;
 	}
 	
 	public DockStation getStation(){
@@ -87,7 +93,8 @@ public class MergeOperation implements RelocateOperation{
 		Dockable[] children = getImplicit( selection );
 		
 		if( parent != null && parent != station ){
-			DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, children, station );
+			Point mouse = new Point( item.getMouseX(), item.getMouseY() );
+			DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, children, station, mouse );
 			listener.dragging( event );
 			if( event.isCanceled() || event.isForbidden() ){
 				return false;

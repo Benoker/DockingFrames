@@ -29,7 +29,6 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.focus.DockFocusTraversalPolicy;
 import bibliothek.gui.dock.station.stack.tab.TabLayoutManager;
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;

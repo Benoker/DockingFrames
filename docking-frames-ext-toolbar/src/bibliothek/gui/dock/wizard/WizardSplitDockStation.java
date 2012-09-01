@@ -114,6 +114,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	private WizardSpanStrategy wizardSpanStrategy;
 	private Side side;
 	private boolean onRevalidating = false;
+	private int sideGap = 3;
 	
 	/**
 	 * Creates a new station.
@@ -244,6 +245,26 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	@Override
 	protected void unsetPut(){
 		wizardSpanStrategy.unsetPut();
+	}
+	
+	/**
+	 * Gets the size of the empty space at the moveable side of this station.
+	 * @return the empty space at the side
+	 */
+	public int getSideGap(){
+		return sideGap;
+	}
+	
+	/**
+	 * Sets an empty space at the moveable side of this station.
+	 * @param sideGap the size of the gap, should be at least <code>0</code>
+	 */
+	public void setSideGap( int sideGap ){
+		if( sideGap < 0 ){
+			throw new IllegalArgumentException( "sideGap must be at least 0: " + sideGap );
+		}
+		this.sideGap = sideGap;
+		revalidate();
 	}
 	
 	/**

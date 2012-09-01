@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.control.relocator;
 
+import java.awt.Point;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -42,6 +44,7 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	private Dockable dockable;
 	private Dockable[] implicit;
 	private DockStation target;
+	private Point mouse;
 	
 	/**
 	 * Creates a new event.
@@ -49,12 +52,14 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	 * @param dockable the element that is moved around
 	 * @param implicit the elements that change their position too
 	 * @param target the potential parent of <code>dockable</code>
+	 * @param mouse the location of the mouse on the screen or <code>null</code>
 	 */
-	public DefaultDockRelocatorEvent( DockController controller, Dockable dockable, Dockable[] implicit, DockStation target ){
+	public DefaultDockRelocatorEvent( DockController controller, Dockable dockable, Dockable[] implicit, DockStation target, Point mouse ){
 		this.implicit = implicit;
 		this.controller = controller;
 		this.dockable = dockable;
 		this.target = target;
+		this.mouse = mouse;
 	}
 	
 	public void cancel(){
@@ -87,6 +92,13 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 
 	public DockStation getTarget(){
 		return target;
+	}
+	
+	public Point getMouseLocation(){
+		if( mouse == null ){
+			return null;
+		}
+		return new Point( mouse );
 	}
 
 	public boolean isCanceled(){

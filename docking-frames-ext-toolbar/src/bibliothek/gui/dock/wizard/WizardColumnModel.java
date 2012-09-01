@@ -170,7 +170,10 @@ public class WizardColumnModel {
 			cellMax = Math.max( cellMax, cellSize );
 		}
 		
-		size += gap( columns.length );		
+		size += gap( columns.length );
+		if( station.getDockableCount() > 0 ){
+			size += station.getSideGap();
+		}
 		
 		Dimension result;
 		
@@ -186,6 +189,7 @@ public class WizardColumnModel {
 			result.width += insets.left + insets.right;
 			result.height += insets.top + insets.bottom;
 		}
+		
 		return result;
 	}
 	
@@ -419,6 +423,20 @@ public class WizardColumnModel {
 			if( columns > 0 ){
 				h -= gap( columns ) / factorH;
 			}
+		}
+		
+		int sideGap = station.getSideGap();
+		switch( station.getSide() ){
+			case RIGHT:
+				x += sideGap / factorW;
+			case LEFT:
+				w -= sideGap / factorW;
+				break;
+			case BOTTOM:
+				y += sideGap / factorH;
+			case TOP:
+				h -= sideGap / factorH;
+				break;
 		}
 		
 		Root root = station.getRoot();

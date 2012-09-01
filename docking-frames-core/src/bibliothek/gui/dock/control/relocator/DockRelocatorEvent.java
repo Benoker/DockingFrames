@@ -25,10 +25,14 @@
  */
 package bibliothek.gui.dock.control.relocator;
 
+import java.awt.Point;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.DirectRemoteRelocator;
 import bibliothek.gui.dock.control.DockRelocator;
+import bibliothek.gui.dock.control.RemoteRelocator;
 
 /**
  * An event created by the {@link DockRelocator} and forwarded to the {@link VetoableDockRelocatorListener}. This event
@@ -73,6 +77,15 @@ public interface DockRelocatorEvent {
 	 * not yet started or if there is no target selected
 	 */
 	public DockStation getTarget();
+	
+	/**
+	 * Gets the location of the mouse on the screen. This includes imaginary points created by calls
+	 * to a {@link DirectRemoteRelocator} or a {@link RemoteRelocator}. The property may not be
+	 * set if either the location of the mouse is not important for the current event, or simply
+	 * if the location of the mouse is not known.
+	 * @return the location of the mouse, may be <code>null</code>
+	 */
+	public Point getMouseLocation();
 	
 	/**
 	 * Cancels the entire operation, the {@link Dockable} remains at its current place and
