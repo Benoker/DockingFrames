@@ -160,7 +160,6 @@
 	<target name="text" depends="source, paths">
 		<copy tofile="${base}/common.pdf" file="${location.common}/guide2/guide2.pdf"/>
 		<copy tofile="${base}/core.pdf" file="${location.core}/guide2/guide2.pdf"/>
-		<copy tofile="${base}/transition.pdf" file="${location.common}/guide/Transition.pdf"/>
 		<copy todir="${base}" file="${location.core}/license.txt"/>
 		<copy todir="${base}" file="${location.core}/changes.txt"/>
 		<copy tofile="${base}/readme.txt" file="${location.core}/readme_full.txt"/>
