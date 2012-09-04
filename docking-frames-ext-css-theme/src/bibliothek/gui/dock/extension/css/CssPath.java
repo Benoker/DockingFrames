@@ -25,39 +25,40 @@
  */
 package bibliothek.gui.dock.extension.css;
 
+import bibliothek.gui.dock.extension.css.path.CssPathListener;
 
 /**
- * Represents the path of a {@link CssItem}.
+ * Represents the path of a {@link CssItem}. {@link CssPath} are mutable and should
+ * be monitored with a {@link CssPathListener}. Each {@link CssPath} is only a list
+ * of {@link CssNode}. Changes in the {@link CssNode}s should be forwarded to the
+ * {@link CssPathListener}s.<br>
+ * In general paths have to be optimized for use with attached {@link CssPathListener}s.
  * @author Benjamin Sigg
  */
-public class CssPath {
-	private CssPathNode[] nodes;
+public interface CssPath {
+	/**
+	 * Gets the number of {@link CssNode}s of this path.
+	 * @return the number of nodes, should be at least 1, but a path without
+	 * nodes is considered valid as well
+	 */
+	public int getSize();
 	
 	/**
-	 * Creates a new path
-	 * @param nodes the elements of the path
+	 * Gets the <code>index</code>'th node of this path.
+	 * @param index the index of the node
+ 	 * @return the node
 	 */
-	public CssPath( CssPathNode[] nodes ){
-		if( nodes == null || nodes.length == 0 ){
-			throw new IllegalArgumentException( "nodes must not be null and contain at least one item" );
-		}
-		this.nodes = nodes;
-	}
+	public CssNode getNode( int index );
 	
 	/**
-	 * Gets the number of elements in this path.
-	 * @return the number of elements
+	 * Adds the observer <code>listener</code> to this path.
+	 * @param listener the new observer, not <code>null</code>
 	 */
-	public int getSize(){
-		return nodes.length;
-	}
+	public void addPathListener( CssPathListener listener );
 	
 	/**
-	 * Gets the <code>index</code>'th element on this path.
-	 * @param index the index of the element
-	 * @return the element
+	 * Removes the observer <code>listener</code> from this path.
+	 * @param listener the listener to remove
 	 */
-	public CssPathNode getNode( int index ){
-		return nodes[ index ];
-	}
+	public void removePathListener( CssPathListener listener );
 }

@@ -103,10 +103,16 @@ public class WizardSplitDockStationTest {
 		
 		WizardSplitDockStation station = new WizardSplitDockStation( Side.RIGHT );
 		WizardSplitDockStation stationBottom = new WizardSplitDockStation( Side.BOTTOM );
+		WizardSplitDockStation stationTop = new WizardSplitDockStation( Side.TOP );
+		WizardSplitDockStation stationLeft = new WizardSplitDockStation( Side.LEFT );
 		
 		controller.add( station );
 		controller.add( stationBottom );
+		controller.add( stationTop );
+		controller.add( stationLeft );
 		borderPanel.add( new JScrollPane( station.getComponent() ), BorderLayout.EAST);
+		borderPanel.add( new JScrollPane( stationLeft.getComponent() ), BorderLayout.WEST);
+		borderPanel.add( new JScrollPane( stationTop.getComponent() ), BorderLayout.NORTH);
 		borderPanel.add( stationBottom.getComponent(), BorderLayout.SOUTH);
 
 		ScreenDockStation screen = new ScreenDockStation( frame );

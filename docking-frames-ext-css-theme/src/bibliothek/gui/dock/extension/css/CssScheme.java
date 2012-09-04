@@ -33,6 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.dock.extension.css.path.CssPathListener;
+import bibliothek.gui.dock.extension.css.tree.CssTree;
+
 /**
  * Represents the contents of some css files. It is a map allowing 
  * the framework to access values read from a css file.
@@ -46,6 +49,8 @@ public class CssScheme {
 	private boolean rulesAreSorted = false;
 	private boolean rematchPending = false;
 	
+	private CssTree tree;
+	
 	private CssRuleListener selectorChangedListener = new CssRuleListener(){
 		@Override
 		public void selectorChanged( CssRule source ){
@@ -58,6 +63,26 @@ public class CssScheme {
 			// ignore
 		}
 	};
+	
+	/**
+	 * Creates a new scheme
+	 * @param tree the document for which this scheme will be used
+	 */
+	public CssScheme( CssTree tree ){
+		if( tree == null ){
+			throw new IllegalArgumentException( "tree must not be null" );
+		}
+		this.tree = tree;
+	}
+	
+	/**
+	 * Gets the document (internal cache and factory of paths) for which this scheme
+	 * is used.
+	 * @return the document, not <code>null</code>
+	 */
+	public CssTree getTree(){
+		return tree;
+	}
 	
 	/**
 	 * Adds <code>item</code> as observer to this map of properties. The properties of
@@ -185,9 +210,10 @@ public class CssScheme {
 	 * class ensures the transfer of the values from the rule ot the item.
 	 * @author Benjamin Sigg
 	 */
-	private class Match implements CssItemListener, CssRuleListener{
+	private class Match implements CssItemListener, CssPathListener, CssRuleListener{
 		private CssRule rule;
 		private CssItem item;
+		private CssPath path;
 		
 		/**
 		 * Creates a new match
@@ -196,10 +222,13 @@ public class CssScheme {
 		public Match( CssItem item ){
 			this.item = item;
 			item.addItemListener( this );
+			path = item.getPath();
+			path.addPathListener( this );
 		}
 		
 		public void destroy(){
 			item.removeItemListener( this );
+			item.getPath().removePathListener( this );
 			if( rule != null ){
 				rule.removeRuleListener( this );
 			}
@@ -250,7 +279,15 @@ public class CssScheme {
 		
 		@Override
 		public void pathChanged( CssItem source ){
+			path.removePathListener( this );
+			path = item.getPath();
+			path.addPathListener( this );
 			searchRule();
+		}
+		
+		@Override
+		public void pathChanged( CssPath path ){
+			searchRule();	
 		}
 		
 		@Override

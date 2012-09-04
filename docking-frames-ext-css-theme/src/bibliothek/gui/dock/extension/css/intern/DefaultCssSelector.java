@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import bibliothek.gui.dock.extension.css.CssPath;
-import bibliothek.gui.dock.extension.css.CssPathNode;
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssSpecificity;
 
