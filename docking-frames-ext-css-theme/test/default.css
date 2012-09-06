@@ -8,7 +8,18 @@ title:selected {
 	background-color: red;
 }
 
+title[vertical] {
+	background: solid;
+	background-color: white;
+}
+
+title[vertical]:selected {
+	background: solid;
+	background-color: gray;
+}
+
 stack title {
 	background: solid;
 	background-color: green;
+	shape: oval;
 }

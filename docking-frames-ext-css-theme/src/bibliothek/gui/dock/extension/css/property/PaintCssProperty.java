@@ -25,9 +25,6 @@
  */
 package bibliothek.gui.dock.extension.css.property;
 
-import bibliothek.gui.dock.extension.css.CssProperty;
-import bibliothek.gui.dock.extension.css.CssPropertyContainer;
-import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
@@ -36,81 +33,10 @@ import bibliothek.gui.dock.extension.css.paint.CssPaint;
  * Allows access to a {@link CssPaint}.
  * @author Benjamin Sigg
  */
-public abstract class PaintCssProperty extends AbstractCssPropertyContainer implements CssProperty<CssPaint>{
-	private CssPaint paint;
-	private CssPropertyContainerListener paintListener = new CssPropertyContainerListener(){
-		@Override
-		public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property ){
-			firePropertyRemoved( key, property );
-		}
-		
-		@Override
-		public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property ){
-			firePropertyAdded( key, property );
-		}
-	};
-	
-	@Override
-	public String[] getPropertyKeys(){
-		if( paint == null ){
-			return new String[]{};
-		}
-		else{
-			return paint.getPropertyKeys();
-		}
-	}
-
-	@Override
-	public CssProperty<?> getProperty( String key ){
-		if( paint == null ){
-			return null;
-		}
-		else{
-			return paint.getProperty( key );
-		}
-	}
-
-	@Override
-	public final void set( CssPaint value ){
-		if( this.paint != value ){
-			if( isBound() && this.paint != null ){
-				for( String key : getPropertyKeys() ){
-					firePropertyRemoved( key, getProperty( key ) );
-				}
-			}
-			this.paint = value;
-			if( isBound() && this.paint != null ){
-				for( String key : getPropertyKeys() ){
-					firePropertyAdded( key, getProperty( key ) );
-				}
-			}
-			paintChanged( this.paint );
-		}
-	}
-	
-	/**
-	 * Called if the paint algorithm changed.
-	 * @param paint the new paint algorithm, can be <code>null</code>
-	 */
-	protected abstract void paintChanged( CssPaint paint );
-
+public abstract class PaintCssProperty extends AbstractContainerCssProperty<CssPaint> {
 	@Override
 	public CssType<CssPaint> getType( CssScheme scheme ){
 		return scheme.getConverter( CssPaint.class );
-	}
-	
-	@Override
-	protected void bind(){
-		if( paint != null ){
-			paint.addPropertyContainerListener( paintListener );
-		}
-	}
-
-	@Override
-	protected void unbind(){
-		if( paint != null ){
-			paint.removePropertyContainerListener( paintListener );
-		}
 	}
 }
 

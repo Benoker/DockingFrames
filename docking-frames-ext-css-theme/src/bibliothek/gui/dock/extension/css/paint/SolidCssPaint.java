@@ -28,6 +28,8 @@ package bibliothek.gui.dock.extension.css.paint;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
@@ -79,7 +81,21 @@ public class SolidCssPaint implements CssPaint{
 		else{
 			g.setColor( color );
 		}
-		g.fillRect( 0, 0, c.getWidth(), c.getHeight() );
+		
+		Shape clip = null;
+		
+		if( shape != null ){
+			shape.setSize( c.getWidth(), c.getHeight() );
+			clip = shape.toShape();
+		}
+		
+		if( clip != null ){
+			Graphics2D g2 = (Graphics2D)g;
+			g2.fill( clip );
+		}
+		else{
+			g.fillRect( 0, 0, c.getWidth(), c.getHeight() );
+		}
 	}
 
 	@Override

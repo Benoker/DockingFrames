@@ -38,6 +38,8 @@ import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
 import bibliothek.gui.dock.extension.css.path.MultiCssPath;
 import bibliothek.gui.dock.extension.css.property.PaintCssProperty;
+import bibliothek.gui.dock.extension.css.property.ShapeCssProperty;
+import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -54,6 +56,7 @@ public class CssDockTitle extends AbstractDockTitle{
 	private DefaultCssItem item;
 	
 	private CssPaint background;
+	private CssShape shape;
 	
 	/**
 	 * Creates a new title
@@ -77,18 +80,25 @@ public class CssDockTitle extends AbstractDockTitle{
 		item = new DefaultCssItem( selfPath );
 		item.putProperty( "background", new PaintCssProperty(){
 			@Override
-			protected void paintChanged( CssPaint paint ){
-				background = paint;
+			protected void propertyChanged( CssPaint value ){
+				background = value;
 				repaint();
 			}
 		});
+		item.putProperty( "shape", new ShapeCssProperty(){
+			@Override
+			protected void propertyChanged( CssShape value ){
+				shape = value;
+				repaint();
+			}
+		} );
 		css.add( item );
 	}
 	
     @Override
     protected void paintBackground( Graphics g, JComponent component ) {
     	if( background != null ){
-    		background.paintArea( g, component, null );
+    		background.paintArea( g, component, shape );
     	}
     }
 	    
@@ -105,6 +115,12 @@ public class CssDockTitle extends AbstractDockTitle{
 		updateSelf();
 	}
 	
+	@Override
+	public void setOrientation( Orientation orientation ){
+		super.setOrientation( orientation );
+		updateSelf();
+	}
+	
 	private void updateSelf(){
 		if( self != null ){
 			if( isActive() ){
@@ -112,6 +128,46 @@ public class CssDockTitle extends AbstractDockTitle{
 			}
 			else{
 				self.removePseudoClass( "selected" );
+			}
+			
+			String side = null;
+			boolean horizontal = false;
+			
+			switch( getOrientation() ){
+				case EAST_SIDED:
+					side = "east";
+					horizontal = false;
+					break;
+				case FREE_HORIZONTAL:
+					side = "free";
+					horizontal = true;
+					break;
+				case FREE_VERTICAL:
+					side = "free";
+					horizontal = false;
+					break;
+				case NORTH_SIDED:
+					side = "north";
+					horizontal = true;
+					break;
+				case SOUTH_SIDED:
+					side = "south";
+					horizontal = true;
+					break;
+				case WEST_SIDED:
+					side = "west";
+					horizontal = false;
+					break;
+			}
+			
+			self.putProperty( "side", side );
+			if( horizontal ){
+				self.putProperty( "horizontal", "true" );
+				self.putProperty( "vertical", null );
+			}
+			else{
+				self.putProperty( "horizontal", null );
+				self.putProperty( "vertical", "true" );
 			}
 		}
 	}	

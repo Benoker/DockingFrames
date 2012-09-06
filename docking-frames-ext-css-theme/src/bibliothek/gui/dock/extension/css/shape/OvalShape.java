@@ -23,23 +23,37 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.property;
+package bibliothek.gui.dock.extension.css.shape;
 
-import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 
-import bibliothek.gui.dock.extension.css.CssProperty;
-import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.type.ColorType;
+import bibliothek.gui.dock.extension.css.property.SimpleCssPropertyContainer;
 
 /**
- * A {@link CssProperty} for setting {@link Color}s, uses the {@link ColorType}
- * for conversion.
+ * An {@link OvalShape} is an oval touching the borders of the available space.
  * @author Benjamin Sigg
  */
-public abstract class ColorCssProperty extends SimpleCssPropertyContainer implements CssProperty<Color>{
+public class OvalShape extends SimpleCssPropertyContainer implements CssShape{
+	private Ellipse2D shape;
+	
 	@Override
-	public CssType<Color> getType( CssScheme scheme ){
-		return scheme.getConverter( Color.class );
+	public void setSize( int width, int height ){
+		if( shape == null || shape.getWidth() != width || shape.getHeight() != height ){
+			shape = new Ellipse2D.Double( 0, 0, width, height );
+		}
+	}
+
+	@Override
+	public boolean contains( int x, int y ){
+		if( shape == null ){
+			return false;
+		}
+		return shape.contains( x, y );
+	}
+
+	@Override
+	public Shape toShape(){
+		return shape;
 	}
 }

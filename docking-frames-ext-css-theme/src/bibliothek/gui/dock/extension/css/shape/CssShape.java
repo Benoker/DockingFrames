@@ -25,6 +25,37 @@
  */
 package bibliothek.gui.dock.extension.css.shape;
 
-public interface CssShape {
+import java.awt.Graphics2D;
+import java.awt.Shape;
 
+import bibliothek.gui.dock.extension.css.CssPropertyContainer;
+
+/**
+ * A {@link CssShape} describes some area, only content within that area is considered
+ * to be part of the item that is using this area. One shape can only be used by one 
+ * item at a time.
+ * @author Benjamin Sigg
+ */
+public interface CssShape extends CssPropertyContainer{
+	/**
+	 * Informs this shape what size the underlying item has. This method may be called often.
+	 * @param width the maximum width of this shape
+	 * @param height the maximum height of this shape
+	 */
+	public void setSize( int width, int height );
+	
+	/**
+	 * Tells whether the point <code>x/y</code> is within this shape.
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return whether <code>x/y</code> is within this shape
+	 */
+	public boolean contains( int x, int y );
+	
+	/**
+	 * Converts this shape into a form that can be used for painting. The new {@link Shape}
+	 * should support {@link Graphics2D#setClip(Shape)}.
+	 * @return the shape for painting, or <code>null</code>
+	 */
+	public Shape toShape();
 }

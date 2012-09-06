@@ -23,32 +23,22 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.property;
+package bibliothek.gui.dock.extension.css.type;
 
-import bibliothek.gui.dock.extension.css.CssProperty;
-import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
+import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.shape.OvalShape;
 
 /**
- * This simple {@link CssProperty} does not have sub-properties.
+ * A type creating new {@link CssShape}s.
  * @author Benjamin Sigg
- * @param <T> the type of object this property requires
  */
-public abstract class SimpleCssProperty<T> implements CssProperty<T>{
+public class CssShapeType implements CssType<CssShape>{
 	@Override
-	public void addPropertyContainerListener( CssPropertyContainerListener listener ){
-		// ignore
-	}
-	
-	public void removePropertyContainerListener( CssPropertyContainerListener listener ){
-		// ignore
-	}
-	
-	@Override
-	public CssProperty<?> getProperty( String key ){
+	public CssShape convert( String value ){
+		if( "oval".equals( value )){
+			return new OvalShape();
+		}
 		return null;
-	}
-	
-	public String[] getPropertyKeys(){
-		return new String[]{};
 	}
 }

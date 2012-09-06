@@ -25,21 +25,17 @@
  */
 package bibliothek.gui.dock.extension.css.property;
 
-import java.awt.Color;
-
-import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.type.ColorType;
+import bibliothek.gui.dock.extension.css.shape.CssShape;
 
 /**
- * A {@link CssProperty} for setting {@link Color}s, uses the {@link ColorType}
- * for conversion.
+ * Allows access to a {@link CssShape}.
  * @author Benjamin Sigg
  */
-public abstract class ColorCssProperty extends SimpleCssPropertyContainer implements CssProperty<Color>{
+public abstract class ShapeCssProperty extends AbstractContainerCssProperty<CssShape>{
 	@Override
-	public CssType<Color> getType( CssScheme scheme ){
-		return scheme.getConverter( Color.class );
+	public CssType<CssShape> getType( CssScheme scheme ){
+		return scheme.getConverter( CssShape.class );
 	}
 }

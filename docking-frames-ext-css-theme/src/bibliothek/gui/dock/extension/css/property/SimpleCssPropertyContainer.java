@@ -25,21 +25,30 @@
  */
 package bibliothek.gui.dock.extension.css.property;
 
-import java.awt.Color;
-
 import bibliothek.gui.dock.extension.css.CssProperty;
-import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.type.ColorType;
+import bibliothek.gui.dock.extension.css.CssPropertyContainer;
+import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
 
 /**
- * A {@link CssProperty} for setting {@link Color}s, uses the {@link ColorType}
- * for conversion.
+ * This simple {@link CssPropertyContainer} that does not have sub-properties.
  * @author Benjamin Sigg
  */
-public abstract class ColorCssProperty extends SimpleCssPropertyContainer implements CssProperty<Color>{
+public abstract class SimpleCssPropertyContainer implements CssPropertyContainer{
 	@Override
-	public CssType<Color> getType( CssScheme scheme ){
-		return scheme.getConverter( Color.class );
+	public void addPropertyContainerListener( CssPropertyContainerListener listener ){
+		// ignore
+	}
+	
+	public void removePropertyContainerListener( CssPropertyContainerListener listener ){
+		// ignore
+	}
+	
+	@Override
+	public CssProperty<?> getProperty( String key ){
+		return null;
+	}
+	
+	public String[] getPropertyKeys(){
+		return new String[]{};
 	}
 }

@@ -37,9 +37,11 @@ import java.util.Map;
 
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.CssPathListener;
+import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
 import bibliothek.gui.dock.extension.css.type.ColorType;
 import bibliothek.gui.dock.extension.css.type.CssPaintType;
+import bibliothek.gui.dock.extension.css.type.CssShapeType;
 
 /**
  * Represents the contents of some css files. It is a map allowing 
@@ -83,6 +85,7 @@ public class CssScheme {
 	private void initDefaultTypes(){
 		setConverter( Color.class, new ColorType() );
 		setConverter( CssPaint.class, new CssPaintType() );
+		setConverter( CssShape.class, new CssShapeType() );
 	}
 	
 	/**
