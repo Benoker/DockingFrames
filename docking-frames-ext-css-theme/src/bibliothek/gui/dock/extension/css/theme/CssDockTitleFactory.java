@@ -23,31 +23,42 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css;
+package bibliothek.gui.dock.extension.css.theme;
+
+import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssScheme;
+import bibliothek.gui.dock.title.DockTitleFactory;
+import bibliothek.gui.dock.title.DockTitleRequest;
 
 /**
- * A {@link CssProperty} is one property of a {@link CssItem}. A {@link CssProperty} itself
- * can have sub-properties, they are only active as long as this {@link CssProperty} is
- * attached to a {@link CssItem}.<br>
- * In nested properties, if the parent property has the key "x" and the child property has the
- * key "y", then inside the css file a property called "x-y" is searched.
- * 
- * @author Benajmin Sigg
- *
- * @param <T> the type of this property
+ * A factory to create new {@link CssDockTitle}s.
+ * @author Benjamin Sigg
  */
-public interface CssProperty<T> extends CssPropertyContainer {
-	/**
-	 * Sets the value of this property.
-	 * @param value the new value, can be <code>null</code>
-	 */
-	public void set( T value );
+public class CssDockTitleFactory implements DockTitleFactory{
+	private CssScheme scheme;
 	
 	/**
-	 * Gest the type of this property.
-	 * @param scheme the scheme in whose realm this property will be used
-	 * @return the type, can be used to convert a {@link String} to
-	 * a <code>T</code>
+	 * Creates a new factory.
+	 * @param scheme the set of {@link CssRule}s
 	 */
-	public CssType<T> getType( CssScheme scheme );
+	public CssDockTitleFactory( CssScheme scheme ){
+		this.scheme = scheme;
+	}
+	
+	@Override
+	public void request( DockTitleRequest request ){
+		CssDockTitle title = new CssDockTitle( scheme, request.getTarget(), request.getVersion() );
+		request.answer( title );
+	}
+	
+	@Override
+	public void install( DockTitleRequest request ){
+		// ignore
+	}
+
+	@Override
+	public void uninstall( DockTitleRequest request ){
+		// ignore
+	}
+
 }

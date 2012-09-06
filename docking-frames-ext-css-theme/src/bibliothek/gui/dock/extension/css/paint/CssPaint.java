@@ -23,31 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css;
+package bibliothek.gui.dock.extension.css.paint;
+
+import java.awt.Component;
+import java.awt.Graphics;
+
+import bibliothek.gui.dock.extension.css.CssPropertyContainer;
+import bibliothek.gui.dock.extension.css.shape.CssShape;
 
 /**
- * A {@link CssProperty} is one property of a {@link CssItem}. A {@link CssProperty} itself
- * can have sub-properties, they are only active as long as this {@link CssProperty} is
- * attached to a {@link CssItem}.<br>
- * In nested properties, if the parent property has the key "x" and the child property has the
- * key "y", then inside the css file a property called "x-y" is searched.
- * 
- * @author Benajmin Sigg
- *
- * @param <T> the type of this property
+ * An algorithm used to paint an area or border.
+ * @author Benjamin Sigg
  */
-public interface CssProperty<T> extends CssPropertyContainer {
+public interface CssPaint extends CssPropertyContainer{
 	/**
-	 * Sets the value of this property.
-	 * @param value the new value, can be <code>null</code>
+	 * Paints the area inside of <code>shape</code>.
+	 * @param g the graphics context to use
+	 * @param c the {@link Component} on which this paint is painting
+	 * @param shape the shape of the area to paint, can be <code>null</code>
 	 */
-	public void set( T value );
+	public void paintArea( Graphics g, Component c, CssShape shape );
 	
 	/**
-	 * Gest the type of this property.
-	 * @param scheme the scheme in whose realm this property will be used
-	 * @return the type, can be used to convert a {@link String} to
-	 * a <code>T</code>
+	 * Paints the border of <code>shape</code>.
+	 * @param g the graphics context to use
+	 * @param c the {@link Component} on which this paint is painting
+	 * @param shape the shape of the area whose border is painted, can be <code>null</code>
 	 */
-	public CssType<T> getType( CssScheme scheme );
+	public void paintBorder( Graphics g, Component c, CssShape shape );
 }

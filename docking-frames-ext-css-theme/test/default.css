@@ -1,0 +1,14 @@
+title {
+	background: solid;
+	background-color: SteelBlue;
+}
+
+title:selected {
+	background: solid;
+	background-color: red;
+}
+
+stack title {
+	background: solid;
+	background-color: green;
+}

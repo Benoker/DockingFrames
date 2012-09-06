@@ -23,31 +23,23 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css;
+package bibliothek.gui.dock.extension.css.property;
+
+import java.awt.Color;
+
+import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssScheme;
+import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.type.ColorType;
 
 /**
- * A {@link CssProperty} is one property of a {@link CssItem}. A {@link CssProperty} itself
- * can have sub-properties, they are only active as long as this {@link CssProperty} is
- * attached to a {@link CssItem}.<br>
- * In nested properties, if the parent property has the key "x" and the child property has the
- * key "y", then inside the css file a property called "x-y" is searched.
- * 
- * @author Benajmin Sigg
- *
- * @param <T> the type of this property
+ * A {@link CssProperty} for setting {@link Color}s, uses the {@link ColorType}
+ * for conversion.
+ * @author Benjamin Sigg
  */
-public interface CssProperty<T> extends CssPropertyContainer {
-	/**
-	 * Sets the value of this property.
-	 * @param value the new value, can be <code>null</code>
-	 */
-	public void set( T value );
-	
-	/**
-	 * Gest the type of this property.
-	 * @param scheme the scheme in whose realm this property will be used
-	 * @return the type, can be used to convert a {@link String} to
-	 * a <code>T</code>
-	 */
-	public CssType<T> getType( CssScheme scheme );
+public abstract class ColorCssProperty extends SimpleCssProperty<Color>{
+	@Override
+	public CssType<Color> getType( CssScheme scheme ){
+		return scheme.getConverter( Color.class );
+	}
 }

@@ -53,31 +53,31 @@ public class CssSpecificity implements Comparable<CssSpecificity>{
 	@Override
 	public int compareTo( CssSpecificity o ){
 		if( o.style > style ){
-			return -1;
+			return 1;
 		}
 		else if( o.style < style ){
-			return 1;
+			return -1;
 		}
 		
 		if( o.numberOfIds > numberOfIds ){
-			return -1;
+			return 1;
 		}
 		else if( o.numberOfIds < numberOfIds ){
-			return 1;
+			return -1;
 		}
 		
 		if( o.numberOfAttributes > numberOfAttributes ){
-			return -1;
+			return 1;
 		}
 		else if( o.numberOfAttributes < numberOfAttributes ){
-			return 1;
-		}
-		
-		if( o.numberOfElements < numberOfElements ){
 			return -1;
 		}
-		else if( o.numberOfElements > numberOfAttributes ){
+		
+		if( o.numberOfElements > numberOfElements ){
 			return 1;
+		}
+		else if( o.numberOfElements < numberOfAttributes ){
+			return -1;
 		}
 		
 		return 0;

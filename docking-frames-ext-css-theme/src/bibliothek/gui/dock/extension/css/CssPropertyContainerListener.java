@@ -26,28 +26,24 @@
 package bibliothek.gui.dock.extension.css;
 
 /**
- * A {@link CssProperty} is one property of a {@link CssItem}. A {@link CssProperty} itself
- * can have sub-properties, they are only active as long as this {@link CssProperty} is
- * attached to a {@link CssItem}.<br>
- * In nested properties, if the parent property has the key "x" and the child property has the
- * key "y", then inside the css file a property called "x-y" is searched.
- * 
- * @author Benajmin Sigg
- *
- * @param <T> the type of this property
+ * This listener is added to a {@link CssPropertyContainer} and is informed if
+ * sub-properties are added or removed.
+ * @author Benjamin Sigg
  */
-public interface CssProperty<T> extends CssPropertyContainer {
+public interface CssPropertyContainerListener {
 	/**
-	 * Sets the value of this property.
-	 * @param value the new value, can be <code>null</code>
+	 * Called if a property has been added to <code>source</code>.
+	 * @param source the source of the event
+	 * @param key the key of the new property
+	 * @param property the property that has been added
 	 */
-	public void set( T value );
+	public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property );
 	
 	/**
-	 * Gest the type of this property.
-	 * @param scheme the scheme in whose realm this property will be used
-	 * @return the type, can be used to convert a {@link String} to
-	 * a <code>T</code>
+	 * Called if a property has been removed from <code>source</code>.
+	 * @param source the source of the event
+	 * @param key the key of the removed property
+	 * @param property the property that has been removed
 	 */
-	public CssType<T> getType( CssScheme scheme );
+	public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property );
 }

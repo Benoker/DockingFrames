@@ -50,9 +50,9 @@ public class MultiCssPath extends AbstractCssPath{
 	private CssPathListener partListener = new CssPathListener(){
 		@Override
 		public void pathChanged( CssPath path ){
-			firePathChanged();
 			size = calculateSize();
 			offsets = calculateOffsets( offsets );
+			firePathChanged();
 		}
 	};
 	
@@ -71,6 +71,8 @@ public class MultiCssPath extends AbstractCssPath{
 		for( CssPath part : parts ){	
 			part.addPathListener( partListener );
 		}
+		size = calculateSize();
+		offsets = calculateOffsets( offsets );
 	}
 	
 	@Override
@@ -78,6 +80,7 @@ public class MultiCssPath extends AbstractCssPath{
 		for( CssPath part : parts ){
 			part.removePathListener( partListener );
 		}
+		offsets = null;
 	}
 	
 	@Override

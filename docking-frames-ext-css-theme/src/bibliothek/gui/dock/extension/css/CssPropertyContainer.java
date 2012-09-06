@@ -25,30 +25,39 @@
  */
 package bibliothek.gui.dock.extension.css;
 
-import bibliothek.gui.dock.title.DockTitle;
-
 /**
- * An item represents a set of properties, accessible by some {@link #getPath() key}. For example
- * a {@link DockTitle} could get its properties from a {@link CssItem}.
+ * A map of {@link CssProperty}s, can modify itself and needs to be monitored
+ * with some {@link CssPropertyContainerListener}s.
  * @author Benjamin Sigg
  */
-public interface CssItem extends CssPropertyContainer{
+public interface CssPropertyContainer {
+
 	/**
-	 * Gets the key to this item. Note that more than one item may have the same path.
-	 * @return the location of this node in the tree of items
+	 * Gets a list of all the keys that can be used for {@link #getProperty(String)}.
+	 * @return the list of all currently available values
 	 */
-	public CssPath getPath();
+	public String[] getPropertyKeys();
 	
 	/**
-	 * Adds a listener to this item, the listener will be informed when properties of this
-	 * item are changed.
-	 * @param listener the new listener, not <code>null</code>
+	 * Gets a changeable property of this container. Each property has a type, only properties
+	 * that have any meaning to this container can be set, others will be ignored (the result
+	 * of this method is <code>null</code> for them).
+	 * @param key the key of the property
+	 * @return the property or <code>null</code> if not existing
 	 */
-	public void addItemListener( CssItemListener listener );
+	public CssProperty<?> getProperty( String key );
 	
 	/**
-	 * Removes <code>listener</code> from this item.
+	 * Adds a listener to this property, will be informed if a sub-property is
+	 * added or removed.
+	 * @param listener the observer to add, not <code>null</code>
+	 */
+	public void addPropertyContainerListener( CssPropertyContainerListener listener );
+	
+	/**
+	 * Removes a listener from this property.
 	 * @param listener the listener to remove
 	 */
-	public void removeItemListener( CssItemListener listener );
+	public void removePropertyContainerListener( CssPropertyContainerListener listener );
+
 }

@@ -399,7 +399,7 @@ public class BasicTheme implements DockTheme{
     }
 
     /**
-     * Sets the {@link DockTitleFactory} of this station. The factory is
+     * Sets the {@link DockTitleFactory} of this theme. The factory is
      * used to create {@link DockTitle DockTitles} for some Dockables.
      * @param titleFactory the factory
      */

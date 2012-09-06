@@ -25,12 +25,19 @@
  */
 package bibliothek.gui.dock.extension.css.theme;
 
+import java.awt.Graphics;
+
+import javax.swing.JComponent;
+
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.extension.css.CssPath;
 import bibliothek.gui.dock.extension.css.CssScheme;
+import bibliothek.gui.dock.extension.css.DefaultCssItem;
+import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
 import bibliothek.gui.dock.extension.css.path.MultiCssPath;
+import bibliothek.gui.dock.extension.css.property.PaintCssProperty;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -44,6 +51,10 @@ public class CssDockTitle extends AbstractDockTitle{
 	private DefaultCssNode self;
 	private CssPath selfPath;
 	
+	private DefaultCssItem item;
+	
+	private CssPaint background;
+	
 	/**
 	 * Creates a new title
 	 * @param css access to all the css data
@@ -54,6 +65,7 @@ public class CssDockTitle extends AbstractDockTitle{
 		super( dockable, origin, true );
 		this.css = css;
 		self = new DefaultCssNode( "title" );
+		updateSelf();
 	}
 	
 	@Override
@@ -61,22 +73,46 @@ public class CssDockTitle extends AbstractDockTitle{
 		super.bind();
 		CssPath elementPath = css.getTree().getPathFor( getElement() );
 		selfPath = new MultiCssPath( elementPath, new DefaultCssPath( self ) );
+		
+		item = new DefaultCssItem( selfPath );
+		item.putProperty( "background", new PaintCssProperty(){
+			@Override
+			protected void paintChanged( CssPaint paint ){
+				background = paint;
+				repaint();
+			}
+		});
+		css.add( item );
 	}
 	
+    @Override
+    protected void paintBackground( Graphics g, JComponent component ) {
+    	if( background != null ){
+    		background.paintArea( g, component, null );
+    	}
+    }
+	    
 	@Override
 	public void unbind(){
 		super.unbind();
+		css.remove( item );
+		item = null;
 	}
 	
 	@Override
 	public void setActive( boolean active ){
 		super.setActive( active );
-		if( active ){
-			self.addPseudoClass( "selected" );
-		}
-		else{
-			self.removePseudoClass( "selected" );
+		updateSelf();
+	}
+	
+	private void updateSelf(){
+		if( self != null ){
+			if( isActive() ){
+				self.addPseudoClass( "selected" );
+			}
+			else{
+				self.removePseudoClass( "selected" );
+			}
 		}
 	}	
-	
 }

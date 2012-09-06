@@ -141,7 +141,11 @@ public class DockElementPath extends AbstractCssPath{
 		}
 		
 		if( parent != null ){
-			index -= parent.getSize();
+			int parentSize = parent.getSize();
+			if( index < parentSize ){
+				return parent.getNode( index );
+			}
+			index -= parentSize;
 		}
 		
 		if( isBound() ){
@@ -168,7 +172,7 @@ public class DockElementPath extends AbstractCssPath{
 			}
 			if( index == 1 ){
 				if( relationNode != null ){
-					return relationNode;
+					return getSelfNode();
 				}
 			}
 		}
@@ -178,6 +182,10 @@ public class DockElementPath extends AbstractCssPath{
 	private CssPath getParent(){
 		Dockable dockable = element.asDockable();
 		if( dockable == null ){
+			return null;
+		}
+		DockStation parent = dockable.getDockParent();
+		if( parent == null ){
 			return null;
 		}
 		return tree.getPathFor( dockable.getDockParent() );

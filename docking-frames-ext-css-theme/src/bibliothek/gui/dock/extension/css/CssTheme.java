@@ -25,6 +25,87 @@
  */
 package bibliothek.gui.dock.extension.css;
 
-public class CssTheme {
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.List;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.extension.css.intern.CssParser;
+import bibliothek.gui.dock.extension.css.theme.CssDockTitleFactory;
+import bibliothek.gui.dock.extension.css.tree.CssTree;
+import bibliothek.gui.dock.themes.BasicTheme;
+
+/**
+ * The {@link CssTheme} makes use of files with a CSS-like syntax for defining how the different
+ * elements of the framework look like.
+ * @author Benjamin Sigg
+ */
+public class CssTheme extends BasicTheme{
+	private CssTree tree;
+	private CssScheme scheme = new CssScheme();
+	
+	/**
+	 * Sets up a new theme
+	 */
+	public CssTheme(){
+		setTitleFactory( new CssDockTitleFactory( scheme ) );
+	}
+	
+	/**
+	 * Gets the set of {@link CssRule}s that are currently used.
+	 * @return the set of rules, not <code>null</code>
+	 */
+	public CssScheme getScheme(){
+		return scheme;
+	}
+	
+	@Override
+	protected void install( DockController controller ){
+		if( getController() != null ){
+			throw new IllegalStateException( "Theme is already in use" );
+		}
+		tree = new CssTree( controller );
+		scheme.setTree( tree );
+		super.install( controller );
+	}
+	
+	@Override
+	public void uninstall( DockController controller ){
+		super.uninstall( controller );
+		scheme.setTree( null );
+	}
+	
+	/**
+	 * Reads a css-file, any existing {@link CssRule}s are deleted.
+	 * @param file the file to read
+	 * @throws IOException if the file cannot be read
+	 */
+	public void read( File file ) throws IOException{
+		FileReader reader = new FileReader( file );
+		try{
+			read( reader, true );
+		}
+		finally{
+			reader.close();
+		}
+	}
+	
+	/**
+	 * Reads a css-file.
+	 * @param reader the file to read
+	 * @param discard whether existing {@link CssRule}s are to be deleted
+	 * @throws IOException if the file cannot be read
+	 */
+	public void read( Reader reader, boolean discard ) throws IOException{
+		CssParser parser = new CssParser();
+		List<CssRule> rules = parser.parse( reader );
+		if( discard ){
+			scheme.setRules( rules );
+		}
+		else{
+			scheme.addRules( rules );
+		}
+	}
 }

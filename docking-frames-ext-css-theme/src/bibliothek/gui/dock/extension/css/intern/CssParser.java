@@ -123,14 +123,17 @@ public class CssParser {
 	}
 	
 	private void parseProperty( int line, String property, Collector collector ) throws IOException{
-		int assignment = property.indexOf( ':' );
-		if( assignment >= 0 ){
-			String key = property.substring( 0, assignment ).trim();
-			String value = property.substring( assignment+1 ).trim();
-			collector.propertyRead( key, value );
-		}
-		else{
-			throw new IOException( "Line " + line + ": cannot read property '" + property + "'" );
+		property = property.trim();
+		if( property.length() > 0 ){
+			int assignment = property.indexOf( ':' );
+			if( assignment >= 0 ){
+				String key = property.substring( 0, assignment ).trim();
+				String value = property.substring( assignment+1 ).trim();
+				collector.propertyRead( key, value );
+			}
+			else{
+				throw new IOException( "Line " + line + ": cannot read property '" + property + "'" );
+			}
 		}
 	}
 	

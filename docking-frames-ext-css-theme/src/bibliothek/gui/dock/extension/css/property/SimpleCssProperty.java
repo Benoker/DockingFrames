@@ -23,31 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css;
+package bibliothek.gui.dock.extension.css.property;
+
+import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
 
 /**
- * A {@link CssProperty} is one property of a {@link CssItem}. A {@link CssProperty} itself
- * can have sub-properties, they are only active as long as this {@link CssProperty} is
- * attached to a {@link CssItem}.<br>
- * In nested properties, if the parent property has the key "x" and the child property has the
- * key "y", then inside the css file a property called "x-y" is searched.
- * 
- * @author Benajmin Sigg
- *
- * @param <T> the type of this property
+ * This simple {@link CssProperty} does not have sub-properties.
+ * @author Benjamin Sigg
+ * @param <T> the type of object this property requires
  */
-public interface CssProperty<T> extends CssPropertyContainer {
-	/**
-	 * Sets the value of this property.
-	 * @param value the new value, can be <code>null</code>
-	 */
-	public void set( T value );
+public abstract class SimpleCssProperty<T> implements CssProperty<T>{
+	@Override
+	public void addPropertyContainerListener( CssPropertyContainerListener listener ){
+		// ignore
+	}
 	
-	/**
-	 * Gest the type of this property.
-	 * @param scheme the scheme in whose realm this property will be used
-	 * @return the type, can be used to convert a {@link String} to
-	 * a <code>T</code>
-	 */
-	public CssType<T> getType( CssScheme scheme );
+	public void removePropertyContainerListener( CssPropertyContainerListener listener ){
+		// ignore
+	}
+	
+	@Override
+	public CssProperty<?> getProperty( String key ){
+		return null;
+	}
+	
+	public String[] getPropertyKeys(){
+		return new String[]{};
+	}
 }

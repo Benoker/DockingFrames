@@ -35,19 +35,4 @@ public interface CssItemListener {
 	 * @param source the source of the event
 	 */
 	public void pathChanged( CssItem source );
-	
-	/**
-	 * Called if a new {@link CssItem#getProperty(String) property} has
-	 * been added.
-	 * @param source the source of the event
-	 * @param key the name of the property
-	 */
-	public void valueAdded( CssItem source, String key );
-	
-	/**
-	 * Called if a {@link CssItem#getProperty(String) property} has been removed.
-	 * @param source the source of the event
-	 * @param key the name of the property
-	 */
-	public void valueRemoved( CssItem source, String key );
 }

@@ -97,7 +97,7 @@ public class DefaultCssSelector implements CssSelector{
 		if( next.length == 0 ){
 			return false;
 		}
-		if( pathOffset+1 == steps.length ){
+		if( stepOffset+1 == steps.length ){
 			return next.length > 0;
 		}
 		for( int offset : next ){

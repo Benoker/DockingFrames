@@ -25,16 +25,21 @@
  */
 package bibliothek.gui.dock.extension.css;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.CssPathListener;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
+import bibliothek.gui.dock.extension.css.type.ColorType;
+import bibliothek.gui.dock.extension.css.type.CssPaintType;
 
 /**
  * Represents the contents of some css files. It is a map allowing 
@@ -42,9 +47,13 @@ import bibliothek.gui.dock.extension.css.tree.CssTree;
  * @author Benjamin Sigg
  */
 public class CssScheme {
+	/** The separator to combine keys of {@link CssProperty}s to longer keys */
+	private static final String SEPARATOR = "-";
+	
 	private List<CssRule> rules = new ArrayList<CssRule>();
 	
 	private Map<CssItem, Match> items = new HashMap<CssItem, CssScheme.Match>();
+	private Map<Class<?>, CssType<?>> types = new HashMap<Class<?>, CssType<?>>();
 	
 	private boolean rulesAreSorted = false;
 	private boolean rematchPending = false;
@@ -66,22 +75,61 @@ public class CssScheme {
 	
 	/**
 	 * Creates a new scheme
-	 * @param tree the document for which this scheme will be used
 	 */
-	public CssScheme( CssTree tree ){
-		if( tree == null ){
-			throw new IllegalArgumentException( "tree must not be null" );
-		}
+	public CssScheme(){
+		initDefaultTypes();
+	}
+	
+	private void initDefaultTypes(){
+		setConverter( Color.class, new ColorType() );
+		setConverter( CssPaint.class, new CssPaintType() );
+	}
+	
+	/**
+	 * Sets the document.
+	 * @param tree the elements for which this scheme is used
+	 */
+	public void setTree( CssTree tree ){
 		this.tree = tree;
 	}
 	
 	/**
 	 * Gets the document (internal cache and factory of paths) for which this scheme
 	 * is used.
-	 * @return the document, not <code>null</code>
+	 * @return the document, can be <code>null</code>
 	 */
 	public CssTree getTree(){
 		return tree;
+	}
+	
+	/**
+	 * Stores a converter for converting {@link String}s into {@link Object}s of
+	 * type <code>type</code>. 
+	 * @param type the type of the created objects
+	 * @param converter the converter to use
+	 */
+	public <T> void setConverter( Class<T> type, CssType<T> converter ){
+		if( converter == null ){
+			types.remove( type );
+		}
+		else{
+			types.put( type, converter );
+		}
+	}
+	
+	/**
+	 * Gets a converter for creating {@link Object}s of type <code>type</code>
+	 * @param type the type of the created objects
+	 * @return the converter, not <code>null</code>
+	 * @throws IllegalStateException if there is no converter registered for <code>type</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> CssType<T> getConverter( Class<T> type ){
+		CssType<T> result = (CssType<T>)types.get( type );
+		if( result == null ){
+			throw new IllegalStateException( "missing converter for type: " + type );
+		}
+		return result;
 	}
 	
 	/**
@@ -120,6 +168,7 @@ public class CssScheme {
 	 * @return the rule or <code>null</code> if nothing was found
 	 */
 	public CssRule search( CssItem item ){
+		ensureRulesSorted();
 		for( CssRule rule : rules ){
 			if( rule.getSelector().matches( item.getPath() )){
 				return rule;
@@ -156,6 +205,31 @@ public class CssScheme {
 	}
 	
 	/**
+	 * Replaces all the current rules with the {@link CssRule}s from <code>rules</code>.
+	 * @param rules the new set of {@link CssRule}s
+	 */
+	public void setRules( Collection<CssRule> rules ){
+		for( CssRule rule : this.rules ){
+			rule.removeRuleListener( selectorChangedListener );
+		}
+		this.rules.clear();
+		addRules( rules );
+	}
+	
+	/**
+	 * Adds all the {@link CssRule}s from <code>rules</code> to this scheme.
+	 * @param rules a new set of {@link CssRule}s
+	 */
+	public void addRules( Collection<CssRule> rules ){
+		for( CssRule rule : rules ){
+			this.rules.add( rule );
+			rule.addRuleListener( selectorChangedListener );
+		}
+		rulesAreSorted = false;
+		rematch();
+	}
+	
+	/**
 	 * Schedules a call to {@link #match()}, the call will be executed later in the EDT.
 	 */
 	public void rematch(){
@@ -175,7 +249,14 @@ public class CssScheme {
 	 */
 	public void match(){
 		rematchPending = false;
+		ensureRulesSorted();
 		
+		for( Match match : items.values() ){
+			match.searchRule();
+		}
+	}
+	
+	private void ensureRulesSorted(){
 		if( !rulesAreSorted ){
 			Collections.sort( rules, new Comparator<CssRule>(){
 				public int compare( CssRule a, CssRule b){
@@ -184,10 +265,6 @@ public class CssScheme {
 			} );
 			rulesAreSorted = true;
 		}
-		
-		for( Match match : items.values() ){
-			match.searchRule();
-		}
 	}
 	
 	private <T> void write( String value, CssProperty<T> property ){
@@ -195,9 +272,9 @@ public class CssScheme {
 			property.set( null );
 		}
 		else{
-			T converted = property.getType().convert( value );
+			T converted = property.getType( this ).convert( value );
 			if( converted == null ){
-				throw new IllegalArgumentException( "'" + value + "' cannot be converted to '" + property.getType() + "'" );
+				throw new IllegalArgumentException( "'" + value + "' cannot be converted" );
 			}
 			else{
 				property.set( converted );
@@ -210,10 +287,11 @@ public class CssScheme {
 	 * class ensures the transfer of the values from the rule ot the item.
 	 * @author Benjamin Sigg
 	 */
-	private class Match implements CssItemListener, CssPathListener, CssRuleListener{
+	private class Match implements CssItemListener, CssPathListener, CssRuleListener, CssPropertyContainerListener{
 		private CssRule rule;
 		private CssItem item;
 		private CssPath path;
+		private Map<String, CssProperty<?>> properties = new HashMap<String, CssProperty<?>>();
 		
 		/**
 		 * Creates a new match
@@ -233,7 +311,7 @@ public class CssScheme {
 				rule.removeRuleListener( this );
 			}
 			for( String key : item.getPropertyKeys()){
-				item.getProperty( key ).set( null );
+				propertyRemoved( item, key, item.getProperty( key ) );
 			}
 		}
 		
@@ -244,20 +322,18 @@ public class CssScheme {
 		private void setRule( CssRule nextRule ){
 			if( nextRule != rule ){
 				if( rule != null ){
+					item.removePropertyContainerListener( this );
 					rule.removeRuleListener( this );
-					for( String key : item.getPropertyKeys() ){
-						item.getProperty( key ).set( null );
+					for( String key : item.getPropertyKeys()){
+						propertyRemoved( key, item.getProperty( key ) );
 					}
 				}
 				rule = nextRule;
 				if( rule != null ){
+					item.addPropertyContainerListener( this );
 					rule.addRuleListener( this );
-					for( String key : item.getPropertyKeys() ){
-						String value = rule.getProperty( key );
-						if( value != null ){
-							CssProperty<?> sink = item.getProperty( key );
-							write( value, sink );
-						}
+					for( String key : item.getPropertyKeys()){
+						propertyAdded( key, item.getProperty( key ) );
 					}
 				}
 			}
@@ -265,10 +341,15 @@ public class CssScheme {
 		
 		@Override
 		public void propertyChanged( CssRule source, String key ){
-			CssProperty<?> sink = item.getProperty( key );
-			String value = rule.getProperty( key );
-			if( value != null && sink != null ){
-				write( value, sink );
+			CssProperty<?> sink = properties.get( key );
+			if( sink != null ){
+				String value = rule.getProperty( key );
+				if( value != null ){
+					write( value, sink );
+				}
+				else{
+					sink.set( null );
+				}
 			}
 		}
 		
@@ -290,17 +371,53 @@ public class CssScheme {
 			searchRule();	
 		}
 		
+		private String combinedKey( CssPropertyContainer container, String key ){
+			for( Map.Entry<String, CssProperty<?>> entry : properties.entrySet() ){
+				if( entry.getValue() == container ){
+					return entry.getKey() + SEPARATOR + key;
+				}
+			}
+			return key;
+		}
+		
 		@Override
-		public void valueAdded( CssItem source, String key ){
-			CssProperty<?> sink = item.getProperty( key );
-			String value = rule.getProperty( key );
-			if( value != null ){
-				write( value, sink );
+		public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property ){
+			if( rule != null ){
+				key = combinedKey( source, key );
+				propertyAdded( key, property );
 			}
 		}
+		
+		private void propertyAdded( String key, CssProperty<?> property ){
+			String value = rule.getProperty( key );
+			if( value != null ){
+				write( value, property );
+			}
+			if( properties.containsKey( key )){
+				throw new IllegalStateException( "property with name '" + key + "' already exists" );
+			}
+			properties.put( key, property );
+			property.addPropertyContainerListener( this );
+			for( String name : property.getPropertyKeys() ){
+				propertyAdded( key + SEPARATOR + name, property.getProperty( name ) );
+			}
+		}
+		
 		@Override
-		public void valueRemoved( CssItem source, String key ){
-			// ignore
+		public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property ){
+			if( rule != null ){
+				key = combinedKey( source, key );
+				propertyRemoved( key, property );
+			}
+		}
+		
+		private void propertyRemoved( String key, CssProperty<?> property ){
+			property.removePropertyContainerListener( this );
+			for( String name : property.getPropertyKeys() ){
+				propertyRemoved( key + SEPARATOR + name, property.getProperty( name ) );
+			}
+			properties.remove( key );
+			property.set( null );
 		}
 	}
 }

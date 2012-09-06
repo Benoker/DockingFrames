@@ -28,6 +28,7 @@ package bibliothek.gui.dock.extension.css.path;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.dock.extension.css.CssNode;
 import bibliothek.gui.dock.extension.css.CssPath;
 
 /**
@@ -81,5 +82,23 @@ public abstract class AbstractCssPath implements CssPath{
 	 */
 	protected boolean isBound(){
 		return !listeners.isEmpty();
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		
+		for( int i = 0, n = getSize(); i<n; i++ ){
+			CssNode node = getNode( i );
+			if( builder.length() > 0 ){
+				builder.append( ", " );
+			}
+			builder.append( node.getName() );
+			if( node.getIdentifier() != null ){
+				builder.append( "#" ).append( node.getIdentifier() );
+			}
+		}
+		
+		return builder.toString();
 	}
 }
