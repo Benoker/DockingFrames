@@ -83,9 +83,11 @@ import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.Path;
@@ -176,8 +178,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		init();
 	}
 
-	@Override
 	protected void init(){
+		super.init( ThemeManager.BACKGROUND_PAINT + ".station.toolbar" );
 		mainPanel = new OverpaintablePanelBase();
 		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar", this );
 		setOrientation( getOrientation() );
@@ -749,7 +751,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		 * 
 		 */
 		@SuppressWarnings("serial")
-		private class SizeFixedPanel extends JPanel {
+		private class SizeFixedPanel extends ConfiguredBackgroundPanel {
+			public SizeFixedPanel(){
+				super( Transparency.TRANSPARENT );
+				setBackground( ToolbarDockStation.this.getBackgroundAlgorithm() );
+			}
+			
 			@Override
 			public Dimension getPreferredSize(){
 				final Dimension pref = super.getPreferredSize();
@@ -782,7 +789,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		public OverpaintablePanelBase(){
 			setBasePane( dockablePane );
 			setSolid( true );
-			dockablePane.setOpaque( false );
 			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this, dockablePane ){
 				@Override
 				protected void revalidate(){

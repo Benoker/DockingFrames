@@ -30,8 +30,11 @@
 
 package bibliothek.gui.dock;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JPanel;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -45,6 +48,7 @@ import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
+import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.ToolbarTabDockStation;
@@ -58,9 +62,13 @@ import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemStrategyListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundComponent;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.FrameworkOnly;
 
@@ -138,6 +146,8 @@ public abstract class AbstractToolbarDockStation extends
 	/** the Dockable that is currently removed */
 	private Dockable removal;
 	
+	private Background background;
+	
 	// ########################################################
 	// ############ Initialization Managing ###################
 	// ########################################################
@@ -173,12 +183,35 @@ public abstract class AbstractToolbarDockStation extends
 		super.setController( controller );
 		expandableStategy.setProperties( controller );
 		onConflictEnable.setProperties( controller );
+		background.setController( controller );
 	}
 
 	/**
-	 * Init the class and especially should ini the main panel.
+	 * Initializes the properties that depend on the subclasses
+	 * @param backgroundId the identifier used for registering a {@link BackgroundComponent}
 	 */
-	protected abstract void init();
+	protected void init( String backgroundId ){
+		background = new Background( backgroundId );
+	}
+	
+	/**
+	 * Creates a new {@link JPanel} which uses the {@link #getBackgroundAlgorithm() background algorithm} to
+	 * paint its content.
+	 * @return the new panel
+	 */
+	protected JPanel createBackgroundPanel(){
+		ConfiguredBackgroundPanel panel = new ConfiguredBackgroundPanel( Transparency.DEFAULT );
+		panel.setBackground( background );
+		return panel;
+	}
+	
+	/**
+	 * Gets the algorithm which should be used to paint this station.
+	 * @return the background algorithm, <code>null</code> until {@link #init(String)} was called
+	 */
+	protected BackgroundAlgorithm getBackgroundAlgorithm(){
+		return background;
+	}
 
 	// ########################################################
 	// ############ General DockStation Managing ##############
@@ -561,6 +594,26 @@ public abstract class AbstractToolbarDockStation extends
 	 *             if <code>displayer</code> is not a child of this station
 	 */
 	protected abstract void discard( DockableDisplayer displayer );
+	
+	/**
+	 * The background algorithm of this {@link ToolbarContainerDockStation}.
+	 * @author Benjamin Sigg
+	 */
+	private class Background  extends BackgroundAlgorithm implements StationBackgroundComponent{
+		public Background( String backgroundId ){
+			super( StationBackgroundComponent.KIND, backgroundId );
+		}
+		
+		@Override
+		public Component getComponent(){
+			return AbstractToolbarDockStation.this.getComponent();
+		}
+		
+		@Override
+		public DockStation getStation(){
+			return AbstractToolbarDockStation.this;
+		}
+	} 
 
 	private class ExpandableListener implements ExpandableToolbarItemStrategyListener{
 		@Override

@@ -65,6 +65,7 @@ import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
@@ -93,9 +94,12 @@ import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
@@ -129,6 +133,10 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	/** The containerPane */
 	private JPanel containerPanel;
+	
+	/** The background of {@link #containerPanel} and in return of this entire station */
+	private Background background = new Background();
+	
 	/**
 	 * The graphical representation of this station: the pane which contains
 	 * toolbars
@@ -247,9 +255,8 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * Create a pane for this dock station
 	 */
 	private JPanel createPanel(){
-		final JPanel panel = new JPanel();
-
-		panel.setOpaque( false );
+		ConfiguredBackgroundPanel panel = new ConfiguredBackgroundPanel( Transparency.DEFAULT );
+		panel.setBackground( background );
 		
 		layoutManager = new ToolbarContainerLayoutManager( panel, ToolbarContainerDockStation.this );
 		panel.setLayout( layoutManager );
@@ -1215,6 +1222,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 			displayerFactory.setController( controller );
 			layoutManager.setController( controller );
+			background.setController( controller );
 
 			if( controller == null ) {
 				title = null;
@@ -1245,6 +1253,26 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		list.bind();
 		for( final StationChildHandle handle : list.dockables() ) {
 			handle.setTitleRequest( title, true );
+		}
+	}
+	
+	/**
+	 * The background algorithm of this {@link ToolbarContainerDockStation}.
+	 * @author Benjamin Sigg
+	 */
+	private class Background extends BackgroundAlgorithm implements StationBackgroundComponent{
+		public Background(){
+			super( StationBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".station.toolbar.container" );
+		}
+		
+		@Override
+		public Component getComponent(){
+			return ToolbarContainerDockStation.this.getComponent();
+		}
+		
+		@Override
+		public DockStation getStation(){
+			return ToolbarContainerDockStation.this;
 		}
 	}
 	

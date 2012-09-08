@@ -259,10 +259,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		init();
 	}
 
-	@Override
 	protected void init(){
+		init( ThemeManager.BACKGROUND_PAINT + ".station.toolbar.group" );
 		mainPanel = new OverpaintablePanelBase();
-		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar", this );
+		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar.group", this );
 		setOrientation( getOrientation() );
 		displayerFactory = createDisplayerFactory();
 		displayers = new DisplayerCollection( this, displayerFactory, getDisplayerId() );
@@ -1169,7 +1169,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		 * The parent of {@link #dockablePane}, adds insets, borders and other
 		 * decorations.
 		 */
-		private JPanel decorationPane = new JPanel();
+		private JPanel decorationPane = createBackgroundPanel();
 
 		/**
 		 * Creates a new panel
