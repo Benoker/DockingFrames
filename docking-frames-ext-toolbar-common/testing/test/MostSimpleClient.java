@@ -33,11 +33,13 @@ package test;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.SingleCDockable;
 import bibliothek.gui.dock.toolbar.CToolbarContentArea;
 import bibliothek.gui.dock.toolbar.CToolbarItem;
+import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.toolbar.location.CToolbarAreaLocation;
 
@@ -47,7 +49,9 @@ public class MostSimpleClient {
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
 		CControl control = new CControl( frame );
-
+		control.putProperty( ExpandableToolbarItemStrategy.STRATEGY, new DefaultExpandableToolbarItemStrategy());
+		// control.putProperty( AbstractToolbarDockStation.ON_CONFLICT_ENABLE, false );
+		
 		CToolbarContentArea area = new CToolbarContentArea( control, "base" );
 		control.addStationContainer( area );
 
@@ -82,7 +86,10 @@ public class MostSimpleClient {
 
 	private static void add( CControl control, String id, CLocation location ){
 		CToolbarItem item = new CToolbarItem( id );
-		item.intern().setComponent( new JButton( id ), ExpandedState.SHRUNK );
+		item.setItem( new JButton( id ), ExpandedState.SHRUNK );
+		if( !("A".equals( id ) || "B".equals( id ) || "C".equals( id ))){
+			item.setItem( new JButton( id + id + id ), ExpandedState.STRETCHED );	
+		}		
 		item.setLocation( location );
 		control.addDockable( item );
 		item.setVisible( true );

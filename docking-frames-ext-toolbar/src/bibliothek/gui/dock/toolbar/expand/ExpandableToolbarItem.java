@@ -41,31 +41,33 @@ import bibliothek.gui.Dockable;
 public interface ExpandableToolbarItem extends Dockable{
 	/**
 	 * Adds the observer <code>listener</code> to this item.
-	 * 
-	 * @param listener
-	 *            the new listener, not <code>null</code>
+	 * @param listener the new listener, not <code>null</code>
 	 */
 	public void addExpandableListener( ExpandableToolbarItemListener listener );
 
 	/**
 	 * Removes the observer <code>listener</code> from this item.
-	 * 
-	 * @param listener
-	 *            the listener to remove
+	 * @param listener the listener to remove
 	 */
 	public void removeExpandableListener( ExpandableToolbarItemListener listener );
 
 	/**
-	 * Changes the state of this item to <code>state</code>.
-	 * 
-	 * @param state
-	 *            the new state
+	 * Tells whether this {@link ExpandableToolbarItem} likes to be in state <code>state</code>.
+	 * @param state a possible state
+	 * @return whether <code>this</code> item likes to be in <code>state</code>
+	 */
+	public boolean isEnabled( ExpandedState state );
+	
+	/**
+	 * Changes the state of this item to <code>state</code>. Note that <code>state</code>
+	 * can be any state, including those for which {@link #isEnabled(ExpandedState)} returned
+	 * <code>false</code>.
+	 * @param state the new state
 	 */
 	public void setExpandedState( ExpandedState state );
 
 	/**
 	 * Gets the current state of this item.
-	 * 
 	 * @return the current state
 	 */
 	public ExpandedState getExpandedState();

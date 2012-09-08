@@ -30,25 +30,28 @@
 
 package bibliothek.gui.dock.toolbar.expand;
 
-import bibliothek.gui.dock.AbstractToolbarDockStation;
 
 /**
- * A listener that can be added to an {@link AbstractToolbarDockStation}.
- * 
+ * A listener that can be added to an {@link ExpandableToolbarItem}, it will be informed
+ * if the {@link ExpandedState}s change.
  * @author Benjamin Sigg
  */
 public interface ExpandableToolbarItemListener{
 	/**
+	 * Called if the result of {@link ExpandableToolbarItem#isEnabled(ExpandedState)} changed
+	 * for <code>item</code> and <code>state</code> to <code>enabled</code>.
+	 * @param item the source of the event
+	 * @param state the state which was changed
+	 * @param enabled whether <code>state</code> is now enabled or not
+	 */
+	public void enablementChanged( ExpandableToolbarItem item, ExpandedState state, boolean enabled );
+	
+	/**
 	 * Called if the state of <code>item</code> changed from
 	 * <code>oldState</code> to <code>newState</code>.
-	 * 
-	 * @param item
-	 *            the source of the event
-	 * @param oldState
-	 *            the old state of <code>item</code>
-	 * @param newState
-	 *            the new state of <code>item</code>
+	 * @param item the source of the event
+	 * @param oldState the old state of <code>item</code>
+	 * @param newState the new state of <code>item</code>
 	 */
-	public void changed( ExpandableToolbarItem item, ExpandedState oldState,
-			ExpandedState newState );
+	public void changed( ExpandableToolbarItem item, ExpandedState oldState, ExpandedState newState );
 }

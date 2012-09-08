@@ -62,8 +62,18 @@ public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarIt
 		}
 
 		@Override
+		public void dockableRegistered( DockController controller, Dockable dockable ){
+			handleAdd( dockable );
+		}
+		
+		@Override
 		public void dockStationUnregistered( DockController controller, DockStation station ){
 			handleRemove( station );
+		}
+		
+		@Override
+		public void dockableUnregistered( DockController controller, Dockable dockable ){
+			handleRemove( dockable );
 		}
 	};
 
@@ -73,29 +83,66 @@ public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarIt
 	private final ExpandableToolbarItemListener expandableListener = new ExpandableToolbarItemListener(){
 		@Override
 		public void changed( ExpandableToolbarItem item, ExpandedState oldState, ExpandedState newState ){
-			switch( newState ){
-				case EXPANDED:
-					for( final ExpandableToolbarItemStrategyListener listener : listeners() ) {
-						listener.expanded( item );
-					}
-					break;
-				case SHRUNK:
-					for( final ExpandableToolbarItemStrategyListener listener : listeners() ) {
-						listener.shrunk( item );
-					}
-					break;
-				case STRETCHED:
-					for( final ExpandableToolbarItemStrategyListener listener : listeners() ) {
-						listener.stretched( item );
-					}
-					break;
+			fire( item, newState );
+		}
+		
+		@Override
+		public void enablementChanged( ExpandableToolbarItem item, ExpandedState state, boolean enabled ){
+			for( ExpandableToolbarItemStrategyListener listener : listeners() ){
+				listener.enablementChanged( item, state, enabled );
 			}
 		}
 	};
+	
+	protected void handleAdd( Dockable dockable ){
+		if( dockable.asDockStation() == null && dockable instanceof ExpandableToolbarItem ){
+			ExpandableToolbarItem item = (ExpandableToolbarItem)dockable;
+			item.addExpandableListener( expandableListener );
+			fire( item );
+		}
+	}
 
 	protected void handleAdd( DockStation station ){
 		if( station instanceof ExpandableToolbarItem ) {
-			((ExpandableToolbarItem) station).addExpandableListener( expandableListener );
+			ExpandableToolbarItem item = (ExpandableToolbarItem)station;
+			item.addExpandableListener( expandableListener );
+			fire( item );
+		}
+	}
+	
+	private void fire( ExpandableToolbarItem item ){
+		fire(  item, getState( item ) );
+		for( ExpandedState state : ExpandedState.values() ){
+			boolean enabled = isEnabled( item, state );
+			for( ExpandableToolbarItemStrategyListener listener : listeners() ){
+				listener.enablementChanged( item, state, enabled );
+			}
+		}
+	}
+	
+	private void fire( ExpandableToolbarItem item, ExpandedState state ){
+		switch( state ){
+			case EXPANDED:
+				for( final ExpandableToolbarItemStrategyListener listener : listeners() ) {
+					listener.expanded( item );
+				}
+				break;
+			case SHRUNK:
+				for( final ExpandableToolbarItemStrategyListener listener : listeners() ) {
+					listener.shrunk( item );
+				}
+				break;
+			case STRETCHED:
+				for( final ExpandableToolbarItemStrategyListener listener : listeners() ) {
+					listener.stretched( item );
+				}
+				break;
+		}
+	}
+	
+	protected void handleRemove( Dockable dockable ){
+		if( dockable.asDockStation() == null && dockable instanceof ExpandableToolbarItem ){
+			((ExpandableToolbarItem) dockable).removeExpandableListener( expandableListener );
 		}
 	}
 
@@ -134,7 +181,10 @@ public class DefaultExpandableToolbarItemStrategy implements ExpandableToolbarIt
 
 	@Override
 	public boolean isEnabled( Dockable item, ExpandedState state ){
-		return item instanceof ExpandableToolbarItem;
+		if( item instanceof ExpandableToolbarItem ){
+			return ((ExpandableToolbarItem)item).isEnabled( state );
+		}
+		return false;
 	}
 
 	@Override

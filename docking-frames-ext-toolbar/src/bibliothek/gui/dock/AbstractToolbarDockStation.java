@@ -37,6 +37,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
+import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -55,8 +56,12 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
+import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemStrategyListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -68,6 +73,13 @@ import bibliothek.util.FrameworkOnly;
  */
 public abstract class AbstractToolbarDockStation extends
 		AbstractDockableStation implements OrientedDockStation, ExpandableToolbarItem{
+	
+	/**
+	 * If it is not clear whether an {@link ExpandedState} is enabled, because the involved {@link Dockable}s offer different
+	 * enabled-states, then the value of this <code>boolean</code> is the result of the operation.
+	 */
+	public static final PropertyKey<Boolean> ON_CONFLICT_ENABLE = new PropertyKey<Boolean>( "ExpandableToolbarGroupActions.on_conflict_enable", 
+			new ConstantPropertyFactory<Boolean>( Boolean.TRUE ), true );
 
 	/**
 	 * a helper class ensuring that all properties of the
@@ -95,6 +107,34 @@ public abstract class AbstractToolbarDockStation extends
 	/** the current behavior of this station */
 	private ExpandedState state = ExpandedState.SHRUNK;
 
+	/** added to the current {@link #expandableStategy} */
+	private ExpandableListener expandableListener = new ExpandableListener();
+	
+	/** the current strategy to handle {@link ExpandableToolbarItem}s  */ 
+	private PropertyValue<ExpandableToolbarItemStrategy> expandableStategy = new PropertyValue<ExpandableToolbarItemStrategy>( ExpandableToolbarItemStrategy.STRATEGY ){
+		@Override
+		protected void valueChanged( ExpandableToolbarItemStrategy oldValue, ExpandableToolbarItemStrategy newValue ){
+			if( oldValue != null ){
+				oldValue.removeExpandedListener( expandableListener );
+			}
+			if( newValue != null ){
+				newValue.addExpandedListener( expandableListener );
+			}
+			fireEnablementChanged();
+		}
+	};
+	
+	/** tells what happens when there are conflicts in the enabled state of {@link ExpandedState} */
+	private PropertyValue<Boolean> onConflictEnable = new PropertyValue<Boolean>( ON_CONFLICT_ENABLE ){
+		@Override
+		protected void valueChanged( Boolean oldValue, Boolean newValue ){
+			fireEnablementChanged();
+		}
+	};
+
+
+	private boolean[] expandedEnablementStateCache = new boolean[ ExpandedState.values().length ];
+	
 	/** the Dockable that is currently removed */
 	private Dockable removal;
 	
@@ -115,6 +155,24 @@ public abstract class AbstractToolbarDockStation extends
 				}
 			}
 		};
+		addDockStationListener( new DockStationAdapter(){
+			@Override
+			public void dockableAdded( DockStation station, Dockable dockable ){
+				fireEnablementChanged();
+			}
+			
+			@Override
+			public void dockableRemoved( DockStation station, Dockable dockable ){
+				fireEnablementChanged();
+			}
+		});
+	}
+	
+	@Override
+	public void setController( DockController controller ){
+		super.setController( controller );
+		expandableStategy.setProperties( controller );
+		onConflictEnable.setProperties( controller );
 	}
 
 	/**
@@ -263,6 +321,24 @@ public abstract class AbstractToolbarDockStation extends
 		}
 	}
 
+	@Override
+	public boolean isEnabled( ExpandedState state ){
+		ExpandableToolbarItemStrategy strategy = expandableStategy.getValue();
+		if( strategy == null ){
+			return false;
+		}
+		
+		boolean onConflict = onConflictEnable.getValue();
+		
+		for( int i = 0, n = getDockableCount(); i<n; i++ ){
+			if( onConflict == strategy.isEnabled( getDockable( i ), state )){
+				return onConflict;
+			}
+		}
+		
+		return !onConflict;
+	}
+	
 	private void expand(){
 		// state is "shrunk"
 
@@ -345,6 +421,22 @@ public abstract class AbstractToolbarDockStation extends
 		return expandableListeners
 				.toArray(new ExpandableToolbarItemListener[expandableListeners
 						.size()]);
+	}
+	
+	private void fireEnablementChanged(){
+		for( ExpandedState state : ExpandedState.values() ){
+			fireEnablementChanged( state );
+		}
+	}
+	
+	private void fireEnablementChanged( ExpandedState state ){
+		boolean enabled = isEnabled( state );
+		if( enabled != expandedEnablementStateCache[ state.ordinal() ]){
+			expandedEnablementStateCache[ state.ordinal() ] = enabled;
+			for( ExpandableToolbarItemListener listener : expandableListeners() ){
+				listener.enablementChanged( this, state, enabled );
+			}
+		}
 	}
 
 	// ########################################################
@@ -470,4 +562,27 @@ public abstract class AbstractToolbarDockStation extends
 	 */
 	protected abstract void discard( DockableDisplayer displayer );
 
+	private class ExpandableListener implements ExpandableToolbarItemStrategyListener{
+		@Override
+		public void expanded( Dockable item ){
+			// ignore
+		}
+
+		@Override
+		public void stretched( Dockable item ){
+			// ignore
+		}
+
+		@Override
+		public void shrunk( Dockable item ){
+			// ignore
+		}
+
+		@Override
+		public void enablementChanged( Dockable item, ExpandedState state, boolean enabled ){
+			if( item.getDockParent() == AbstractToolbarDockStation.this ){
+				fireEnablementChanged( state );
+			}
+		}
+	}
 }

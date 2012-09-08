@@ -83,7 +83,8 @@ public interface ExpandableToolbarItemStrategy {
 	public ExpandedState getState( Dockable item );
 
 	/**
-	 * Changes the state of <code>item</code> to <code>state</code>.
+	 * Changes the state of <code>item</code> to <code>state</code>. The strategy may refuse to do anything or
+	 * replace <code>state</code> if <code>state</code> is not enabled for <code>item</code>.
 	 * @param item the item whose state is changed
 	 * @param state the new state, this is a state which is {@link #isEnabled(Dockable, ExpandedState) enabled}
 	 */

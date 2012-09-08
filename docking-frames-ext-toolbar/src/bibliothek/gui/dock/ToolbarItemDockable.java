@@ -401,6 +401,7 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 		}
 		
 		ToolbarItem previous = items[state.ordinal()];
+		boolean enabled = isEnabled( state );
 		
 		if( previous != item ){
 			if( item != null ){
@@ -450,6 +451,13 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 			}
 			if( previous != null ){
 				previous.setDockable( null );
+			}
+		}
+		
+		boolean newEnabled = isEnabled( state );
+		if( newEnabled != enabled ){
+			for( ExpandableToolbarItemListener listener : expandableListeners.toArray( new ExpandableToolbarItemListener[expandableListeners.size()] ) ) {
+				listener.enablementChanged( this, state, newEnabled );
 			}
 		}
 	}
@@ -532,7 +540,7 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 		}
 		content.revalidate();
 		if( oldState != state ){
-			for( final ExpandableToolbarItemListener listener : expandableListeners.toArray( new ExpandableToolbarItemListener[expandableListeners.size()] ) ) {
+			for( ExpandableToolbarItemListener listener : expandableListeners.toArray( new ExpandableToolbarItemListener[expandableListeners.size()] ) ) {
 				listener.changed( this, oldState, state );
 			}
 		}
@@ -546,6 +554,11 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 		return getNearestComponent( state );
 	}
 
+	@Override
+	public boolean isEnabled( ExpandedState state ){
+		return items[ state.ordinal() ] != null;
+	}
+	
 	@Override
 	public ExpandedState getExpandedState(){
 		return state;

@@ -36,6 +36,7 @@ import java.util.Iterator;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.ExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
 import bibliothek.gui.dock.action.AbstractDockActionSource;
@@ -68,6 +69,15 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 			}
 			if( newValue != null ) {
 				newValue.addExpandedListener( listener );
+			}
+		}
+	};
+	
+	private PropertyValue<Boolean> onConflictEnable = new PropertyValue<Boolean>( AbstractToolbarDockStation.ON_CONFLICT_ENABLE ){
+		@Override
+		protected void valueChanged( Boolean oldValue, Boolean newValue ){
+			for( int i = 0, n = getColumnCount(); i < n; i++ ){
+				getColumn( i ).source.update();
 			}
 		}
 	};
@@ -109,10 +119,13 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 		super( station );
 		this.controller = controller;
 		strategy.setProperties( controller );
+		onConflictEnable.setProperties( controller );
+		
 	}
 
 	public void destroy(){
 		strategy.setProperties( (DockController) null );
+		onConflictEnable.setProperties( (DockController)null );
 	}
 
 	@Override
@@ -252,16 +265,18 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 		 */
 		public boolean[] getEnabledStates(){
 			boolean[] canPerform = new boolean[ExpandedState.values().length];
+			boolean onConflict = onConflictEnable.getValue();
+			
 			for( int i = 0; i < canPerform.length; i++ ) {
-				canPerform[i] = true;
+				canPerform[i] = !onConflict;
 			}
 
 			ExpandableToolbarItemStrategy strategy = getStrategy();
 			if( strategy != null ) {
 				for( Dockable dockable : getDockables() ) {
 					for( ExpandedState state : ExpandedState.values() ) {
-						if( !strategy.isEnabled( dockable, state ) ) {
-							canPerform[state.ordinal()] = false;
+						if( onConflict == strategy.isEnabled( dockable, state ) ) {
+							canPerform[state.ordinal()] = onConflict;
 						}
 					}
 				}

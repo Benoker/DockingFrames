@@ -816,6 +816,10 @@
  - Bugfix: in the conversion from CSetting to CPerspective the location of invisible CDockables was ignored
  - API: VetoableDockRelocatorEvent now also tells the location of the mouse
  - API: WizardSplitDockStation can now show a gap on the side where it is moveable, the default size of the gap is set to 3
+
+[v1.1.2p1]
+ ! API: Added method "isEnabled" to ExpandableToolbarItem and all associated listeners.
+ - API: ToolbarItemDockable.isEnabled now returns false if there is no ToolbarItem to show in some state
     
 [Todo]
 - Drop StackDockStation over Dockable and merge them
