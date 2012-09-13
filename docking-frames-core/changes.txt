@@ -821,6 +821,7 @@
  ! API: Added method "isEnabled" to ExpandableToolbarItem and all associated listeners.
  - API: ToolbarItemDockable.isEnabled now returns false if there is no ToolbarItem to show in some state
  - API: Toolbar/ToolbarContainer/ToolbarGroupDockStation now all support custom background painting (with keys ThemeManager.BACKGROUND_PAINT + ".station.toolbar"/".station.toolbar.container"/".station.toolbar.group")
+ - Bugfix: Sometimes a child of a ScreenDockStation could not be moved by the WindowMover because the DockRelocator consumed the MouseEvents.
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

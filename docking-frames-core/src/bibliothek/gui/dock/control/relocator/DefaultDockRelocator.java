@@ -502,7 +502,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             event.cancel();
             fireCanceled( event );
             
-            return Reaction.BREAK_CONSUMED;
+            return onBreak( event );
         }
         return Reaction.BREAK;
     }
@@ -580,13 +580,13 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             if( !forceDrag && parent != null && !parent.canDrag( dockable )){
                 titleDragCancel();
                 disableAllModes();
-                return Reaction.BREAK_CONSUMED;
+                return Reaction.BREAK;
             }
             
             int distance = Math.abs( x - pressPointScreen.x ) + Math.abs( y - pressPointScreen.y );
             if( always || distance >= getDragDistance() ){
             	Reaction result = initiateOperation( dockable, title, mouse, showMovingImage );
-            	if( result != null ){
+            	if( !onMove && result != null ){
             		return result;
             	}
             }
@@ -598,7 +598,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             }
         }
         
-        return Reaction.CONTINUE_CONSUMED;
+        return Reaction.CONTINUE;
     }
     
     private Reaction initiateOperation( Dockable dockable, DockTitle title, Point mouse, boolean showMovingImage ){
@@ -612,11 +612,14 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     	Dockable[] implicit = new Dockable[]{};
     	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse );
     	fireGrabbing( event );
+    	if( event.isIgnored() ){
+    		return Reaction.CONTINUE;
+    	}
     	if( event.isCanceled() ){
     		event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse );
     		event.cancel();
     		fireCanceled( event );
-    		return Reaction.BREAK_CONSUMED;
+    		return onBreak( event );
     	}
     	if( !event.isForbidden() ){
     		if( showMovingImage ){
@@ -642,8 +645,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             fireGrabbed( event );
             if( event.isCanceled() || event.isForbidden() ){
             	cancel( dockable );
-        		return Reaction.BREAK_CONSUMED;
+            	return Reaction.BREAK_CONSUMED;
             }
+            return onContinue( event );
     	}
     	return null;
     }
@@ -664,10 +668,13 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     	fireDragged( event );
     	if( event.isCanceled() ){
     		cancel( dockable );
-    		return Reaction.BREAK_CONSUMED;
+    		return onBreak( event );
     	}
     	else if( event.isForbidden() ){
     		next = null;
+    	}
+    	else if( event.isIgnored() ){
+    		return Reaction.CONTINUE;
     	}
         
         if( next != null ){
@@ -688,7 +695,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             	next.getOperation().draw();
             }
         }
-        return null;
+        return Reaction.CONTINUE_CONSUMED;
     }
     
     /**
@@ -802,6 +809,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                     	if( event.isCanceled() || event.isForbidden() ){
                     		next = null;
                     	}
+                    	else if( event.isIgnored() ){
+                    		return Reaction.CONTINUE;
+                    	}
                     }
 
                     if( operation != null && (next == null || operation.getStation() != next.getStation() )){
@@ -820,10 +830,12 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 		operation.destroy( null );
                 		operation = null;
                 	}
+                	else if( event.isIgnored() ){
+                		return Reaction.CONTINUE;
+                	}
                 }
                 
                 if( operation != null ){
-                	consume = true;
                 	Dockable[] implicit = operation.getImplicit( dockable );
                     boolean canceled = !executeOperation( dockable, operation );
                     operation.destroy( null );
@@ -835,6 +847,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                     	fireCanceled( dropped );
                     	dropped = null;
                     }
+                    consume = true;
                 }
                 else{
                 	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, mouse );
@@ -868,6 +881,20 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         }
         else
             return consume ? Reaction.CONTINUE_CONSUMED : Reaction.CONTINUE;
+    }
+    
+    private Reaction onBreak( DefaultDockRelocatorEvent event ){
+    	if( event.isIgnored() ){
+    		return Reaction.BREAK;
+    	}
+    	return Reaction.BREAK_CONSUMED;
+    }
+    
+    private Reaction onContinue( DefaultDockRelocatorEvent event ){
+    	if( event.isIgnored() ){
+    		return Reaction.CONTINUE;
+    	}
+    	return Reaction.CONTINUE_CONSUMED;
     }
     
     public void cancel(){

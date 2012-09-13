@@ -40,6 +40,7 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	private boolean cancel;
 	private boolean drop;
 	private boolean forbid;
+	private boolean ignore;
 	private DockController controller;
 	private Dockable dockable;
 	private Dockable[] implicit;
@@ -113,4 +114,11 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 		return forbid;
 	}
 	
+	public void ignore(){
+		ignore = true;	
+	}
+	
+	public boolean isIgnored(){
+		return ignore;
+	}
 }

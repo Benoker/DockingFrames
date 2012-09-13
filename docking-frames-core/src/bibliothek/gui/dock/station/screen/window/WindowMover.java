@@ -39,8 +39,12 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.control.DockRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
+import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
+import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.screen.magnet.MagnetController;
@@ -75,6 +79,12 @@ public class WindowMover {
 	/** the currently applied {@link DragAcceptance} */
 	private DragAcceptance acceptance;
 	
+	/** prevents the current {@link DockRelocator} from moving around the {@link Dockable} on its own */
+	private VetoListener veto;
+	
+	/** whether this {@link WindowMover} is performing an operation based on a {@link MouseEvent} right now */
+	private boolean onMouseEvent = false;
+	
 	/**
 	 * Creates a new mover
 	 * @param window the window which is to be moved, must not be <code>null</code>
@@ -96,6 +106,7 @@ public class WindowMover {
 		}
 		this.element = element;
 		uninstallDragAcceptance();
+		uninstallVeto();
 		if( this.element != null ){
 			this.element.addMouseInputListener( listener );
 		}
@@ -106,10 +117,23 @@ public class WindowMover {
 		acceptance = new DragAcceptance( window.getStation().getController() );
 	}
 	
+	
 	private void uninstallDragAcceptance(){
 		if( acceptance != null ){
 			acceptance.destroy();
 			acceptance = null;
+		}
+	}
+	
+	private void installVeto(){
+		uninstallVeto();
+		veto = new VetoListener( window.getStation().getController() );
+	}
+	
+	private void uninstallVeto(){
+		if( veto != null ){
+			veto.destroy();
+			veto = null;
 		}
 	}
 	
@@ -188,6 +212,52 @@ public class WindowMover {
 	}
 	
 	/**
+	 * This {@link VetoableDockRelocatorListener} prevents the {@link DockRelocator} from moving around the
+	 * {@link Dockable} on its own
+	 * @author Benjamin Sigg
+	 *
+	 */
+	private class VetoListener extends VetoableDockRelocatorAdapter{
+		private DockRelocator relocator;
+		
+		/**
+		 * Creates a new veto listener
+		 * @param controller the controller in whose {@link DockRelocator} this listener should add itself.
+		 */
+		public VetoListener( DockController controller ){
+			relocator = controller.getRelocator();
+			relocator.addVetoableDockRelocatorListener( this );
+		}
+		
+		/**
+		 * Removes this listener from its {@link DockRelocator}.
+		 */
+		public void destroy(){
+			relocator.removeVetoableDockRelocatorListener( this );
+		}
+
+		public void grabbing( DockRelocatorEvent event ){
+			if( !onMouseEvent ){
+				event.ignore();
+			}
+		}
+		
+		@Override
+		public void dragged( DockRelocatorEvent event ){
+			if( !onMouseEvent ){
+				event.ignore();
+			}
+		}
+		
+		@Override
+		public void canceled( DockRelocatorEvent event ){
+			if( !onMouseEvent ){
+				event.ignore();
+			}
+		}
+	}
+	
+	/**
 	 * This listener is added to the {@link DockElementRepresentative} which is monitored by this {@link WindowMover}
 	 * @author Benjamin Sigg
 	 */
@@ -198,6 +268,16 @@ public class WindowMover {
 		private RemoteRelocator relocator;
 		
 		public void mousePressed( MouseEvent e ){
+			try{
+				onMouseEvent = true;
+				handleMousePressed( e );
+			}
+			finally{
+				onMouseEvent = false;
+			}
+		}
+		
+		private void handleMousePressed( MouseEvent e ){
 			if( !e.isConsumed() && !window.isFullscreen() ){
 				int buttons = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
 				buttons &= e.getModifiersEx();
@@ -210,6 +290,8 @@ public class WindowMover {
 					
 					magnet = window.getStation().getMagnetController().start( window );
 				}
+				
+				installVeto();
 				
 				if( allowDragAndDrop ){
 					DockController controller = window.getStation().getController();
@@ -239,8 +321,18 @@ public class WindowMover {
 		}
 		
 		public void mouseDragged( MouseEvent e ){
+			try{
+				onMouseEvent = true;
+				handleMouseDragged( e );
+			}
+			finally{
+				onMouseEvent = false;
+			}
+		}
+		
+		private void handleMouseDragged( MouseEvent e ){
 			if( !e.isConsumed() ){
-				Point current = e.getPoint();
+ 				Point current = e.getPoint();
 				convertPointToScreen( current, e.getComponent() );
 				
 				if( relocator != null ){
@@ -284,6 +376,16 @@ public class WindowMover {
 		}
 		
 		public void mouseReleased( MouseEvent e ){
+			try{
+				onMouseEvent = true;
+				handleMouseReleased( e );
+			}
+			finally{
+				onMouseEvent = false;
+			}
+		}
+		
+		private void handleMouseReleased( MouseEvent e ){
 			if( !e.isConsumed() ){
 				e.consume();
 				
@@ -297,10 +399,12 @@ public class WindowMover {
 						case BREAK:
 							relocator = null;
 							uninstallDragAcceptance();
+							uninstallVeto();
 							break;
 						case BREAK_CONSUMED:
 							relocator = null;
 							uninstallDragAcceptance();
+							uninstallVeto();
 							e.consume();
 							break;
 						case CONTINUE_CONSUMED:
@@ -316,6 +420,7 @@ public class WindowMover {
 					startPoint = null;
 					startBoundaries = null;
 					uninstallDragAcceptance();
+					uninstallVeto();
 				}
 			}
 		}

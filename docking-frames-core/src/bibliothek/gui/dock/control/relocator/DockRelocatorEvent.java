@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.control.relocator;
 
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -132,4 +133,18 @@ public interface DockRelocatorEvent {
 	 * @see #drop()
 	 */
 	public boolean isDropping();
+	
+	/**
+	 * The {@link DockRelocator} is to behave as if this event never happened. Usually this means that
+	 * the {@link MouseEvent} is not {@link MouseEvent#consume() consumed} and that no action takes place.
+	 * Note however that some events cannot be ignored, for example if the operation is 
+	 * {@link #isCanceled() canceled}.
+	 */
+	public void ignore();
+	
+	/**
+	 * Tells whether the {@link DockRelocator} behaves as if an event did not happen.
+	 * @return whether to ignore the event
+	 */
+	public boolean isIgnored();
 }
