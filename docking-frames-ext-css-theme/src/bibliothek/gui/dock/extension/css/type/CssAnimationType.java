@@ -27,24 +27,24 @@ package bibliothek.gui.dock.extension.css.type;
 
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
-import bibliothek.gui.dock.extension.css.shape.OvalShape;
+import bibliothek.gui.dock.extension.css.animation.CssAnimation;
+import bibliothek.gui.dock.extension.css.animation.types.LinearCssAnimation;
 
 /**
- * A type creating new {@link CssShape}s.
+ * A type creating new {@link CssAnimation}s.
  * @author Benjamin Sigg
  */
-public class CssShapeType implements CssType<CssShape>{
+public class CssAnimationType implements CssType<CssAnimation<?>>{
 	@Override
-	public CssShape convert( String value ){
-		if( "oval".equals( value )){
-			return new OvalShape();
+	public CssAnimation<?> convert( String value ){
+		if( "linear".equals( value )){
+			return new LinearCssAnimation<Object>();
 		}
 		return null;
 	}
 	
 	@Override
-	public AnimatedCssProperty<CssShape> createAnimation(){
+	public AnimatedCssProperty<CssAnimation<?>> createAnimation(){
 		return null;
 	}
 }

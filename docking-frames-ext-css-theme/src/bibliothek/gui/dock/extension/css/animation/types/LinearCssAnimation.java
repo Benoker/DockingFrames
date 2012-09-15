@@ -23,28 +23,36 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.animation.types;
 
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.animation.AbstractCssAnimation;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
-import bibliothek.gui.dock.extension.css.shape.OvalShape;
+import bibliothek.gui.dock.extension.css.paint.CssPaint;
 
 /**
- * A type creating new {@link CssShape}s.
+ * An animation property fading one {@link CssPaint} into another.
  * @author Benjamin Sigg
+ * @param <T> the type of value this animation will handle
  */
-public class CssShapeType implements CssType<CssShape>{
+public class LinearCssAnimation<T> extends AbstractCssAnimation<T>{
 	@Override
-	public CssShape convert( String value ){
-		if( "oval".equals( value )){
-			return new OvalShape();
-		}
+	protected AnimatedCssProperty<T> createProperty( CssType<T> type, String key ){
+		return type.createAnimation();
+	}
+
+	@Override
+	protected <S> AnimatedCssProperty<S> createSubProperty( CssType<S> type, String key ){
 		return null;
 	}
-	
+
 	@Override
-	public AnimatedCssProperty<CssShape> createAnimation(){
-		return null;
+	protected void bind(){
+		// ignore
+	}
+
+	@Override
+	protected void unbind(){
+		// ignore
 	}
 }

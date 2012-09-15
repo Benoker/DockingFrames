@@ -3,6 +3,11 @@ title {
 	background-color: SteelBlue;
 }
 
+title:hover {
+	background: solid;
+	background-color: blue;
+}
+
 title:selected {
 	background: solid;
 	background-color: red;

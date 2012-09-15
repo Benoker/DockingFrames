@@ -23,28 +23,45 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.intern;
 
+import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleListener;
+import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
-import bibliothek.gui.dock.extension.css.shape.OvalShape;
 
 /**
- * A type creating new {@link CssShape}s.
+ * The {@link EmptyCssRule} does never offer any {@link CssProperty}s. 
  * @author Benjamin Sigg
  */
-public class CssShapeType implements CssType<CssShape>{
-	@Override
-	public CssShape convert( String value ){
-		if( "oval".equals( value )){
-			return new OvalShape();
+public class EmptyCssRule implements CssRule{
+	private CssSelector selector;
+	
+	public EmptyCssRule( CssSelector selector ){
+		if( selector == null ){
+			throw new IllegalArgumentException( "selector must not be null" );
 		}
-		return null;
+		this.selector = selector;
 	}
 	
 	@Override
-	public AnimatedCssProperty<CssShape> createAnimation(){
+	public CssSelector getSelector(){
+		return selector;
+	}
+
+	@Override
+	public <T> T getProperty( CssType<T> type, String property ){
 		return null;
+	}
+
+	@Override
+	public void addRuleListener( CssRuleListener listener ){
+		// ignore
+	}
+
+	@Override
+	public void removeRuleListener( CssRuleListener listener ){
+		// ignore
 	}
 }

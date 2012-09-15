@@ -33,13 +33,14 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.extension.css.CssPath;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.DefaultCssItem;
+import bibliothek.gui.dock.extension.css.animation.CssPaintAnimationProperty;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
 import bibliothek.gui.dock.extension.css.path.MultiCssPath;
-import bibliothek.gui.dock.extension.css.property.PaintCssProperty;
 import bibliothek.gui.dock.extension.css.property.ShapeCssProperty;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.util.CssMouseAdapter;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 
@@ -69,6 +70,17 @@ public class CssDockTitle extends AbstractDockTitle{
 		this.css = css;
 		self = new DefaultCssNode( "title" );
 		updateSelf();
+		CssMouseAdapter adapter = new CssMouseAdapter(){
+			@Override
+			protected void added( String pseudoClass ){
+				self.addPseudoClass( pseudoClass );
+			}
+			@Override
+			protected void removed( String pseudoClass ){
+				self.removePseudoClass( pseudoClass );
+			}
+		};
+		addMouseInputListener( adapter );
 	}
 	
 	@Override
@@ -78,13 +90,15 @@ public class CssDockTitle extends AbstractDockTitle{
 		selfPath = new MultiCssPath( elementPath, new DefaultCssPath( self ) );
 		
 		item = new DefaultCssItem( selfPath );
-		item.putProperty( "background", new PaintCssProperty(){
+		
+		item.putProperty( "background", new CssPaintAnimationProperty( css, item, "background" ){
 			@Override
-			protected void propertyChanged( CssPaint value ){
+			public void set( CssPaint value ){
 				background = value;
 				repaint();
 			}
 		});
+		
 		item.putProperty( "shape", new ShapeCssProperty(){
 			@Override
 			protected void propertyChanged( CssShape value ){
@@ -94,14 +108,7 @@ public class CssDockTitle extends AbstractDockTitle{
 		} );
 		css.add( item );
 	}
-	
-    @Override
-    protected void paintBackground( Graphics g, JComponent component ) {
-    	if( background != null ){
-    		background.paintArea( g, component, shape );
-    	}
-    }
-	    
+    
 	@Override
 	public void unbind(){
 		super.unbind();
@@ -109,6 +116,25 @@ public class CssDockTitle extends AbstractDockTitle{
 		item = null;
 	}
 	
+    @Override
+    protected void paintBackground( Graphics g, JComponent component ) {
+    	if( background != null ){
+    		background.paintArea( g, component, shape );
+    	}
+    }
+    
+    @Override
+    public boolean contains( int x, int y ){
+    	if( !super.contains( x, y )){
+    		return false;
+    	}
+		if( shape != null ){
+			shape.setSize( getWidth(), getHeight() );
+			return shape.contains( x, y );
+		}
+    	return true;
+    }
+    
 	@Override
 	public void setActive( boolean active ){
 		super.setActive( active );

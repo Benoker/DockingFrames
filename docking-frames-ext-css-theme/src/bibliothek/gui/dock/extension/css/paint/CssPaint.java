@@ -37,6 +37,12 @@ import bibliothek.gui.dock.extension.css.shape.CssShape;
  */
 public interface CssPaint extends CssPropertyContainer{
 	/**
+	 * Informs this paint about the {@link Component} it will paint.
+	 * @param component the owner of this paint
+	 */
+	public void init( Component component );
+	
+	/**
 	 * Paints the area inside of <code>shape</code>.
 	 * @param g the graphics context to use
 	 * @param c the {@link Component} on which this paint is painting

@@ -35,11 +35,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssRule;
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssRuleChain;
+import bibliothek.gui.dock.extension.css.animation.CssAnimation;
+import bibliothek.gui.dock.extension.css.animation.DefaultAnimatedCssRuleChain;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.CssPathListener;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
 import bibliothek.gui.dock.extension.css.type.ColorType;
+import bibliothek.gui.dock.extension.css.type.CssAnimationType;
 import bibliothek.gui.dock.extension.css.type.CssPaintType;
 import bibliothek.gui.dock.extension.css.type.CssShapeType;
 
@@ -86,6 +91,7 @@ public class CssScheme {
 		setConverter( Color.class, new ColorType() );
 		setConverter( CssPaint.class, new CssPaintType() );
 		setConverter( CssShape.class, new CssShapeType() );
+		types.put( CssAnimation.class, new CssAnimationType() );
 	}
 	
 	/**
@@ -269,20 +275,35 @@ public class CssScheme {
 			rulesAreSorted = true;
 		}
 	}
+		
+	/**
+	 * Creates a new {@link AnimatedCssRuleChain} which will animate the properties of <code>item</code>.
+	 * @param item the item to animate
+	 * @return the new set of animations
+	 */
+	protected AnimatedCssRuleChain createAnimation( CssItem item ){
+		return new DefaultAnimatedCssRuleChain( this, item );
+	}
 	
-	private <T> void write( String value, CssProperty<T> property ){
-		if( "null".equals( value )){
-			property.set( null );
+	/**
+	 * Starts a new animation on top of the current animations of <code>item</code>.
+	 * @param item the item to animate
+	 * @param animation the additional animation, will run alongside other currently
+	 * running animation
+	 * @throws IllegalArgumentException if <code>item</code> cannot be found, or
+	 * if <code>animation</code> is <code>null</code>
+	 */
+	public void animate( CssItem item, CssAnimation<?> animation ){
+		if( animation == null ){
+			throw new IllegalArgumentException( "animation must not be null" );
 		}
-		else{
-			T converted = property.getType( this ).convert( value );
-			if( converted == null ){
-				throw new IllegalArgumentException( "'" + value + "' cannot be converted" );
-			}
-			else{
-				property.set( converted );
-			}
+		
+		Match match = items.get( item );
+		if( match == null ){
+			throw new IllegalArgumentException( "item not found" );
 		}
+		
+		match.animate( animation );
 	}
 	
 	/**
@@ -291,7 +312,8 @@ public class CssScheme {
 	 * @author Benjamin Sigg
 	 */
 	private class Match implements CssItemListener, CssPathListener, CssRuleListener, CssPropertyContainerListener{
-		private CssRule rule;
+		private AnimatedCssRuleChain chain;
+		private AnimatedCssRule rule;
 		private CssItem item;
 		private CssPath path;
 		private Map<String, CssProperty<?>> properties = new HashMap<String, CssProperty<?>>();
@@ -305,6 +327,7 @@ public class CssScheme {
 			item.addItemListener( this );
 			path = item.getPath();
 			path.addPathListener( this );
+			chain = createAnimation( item );
 		}
 		
 		public void destroy(){
@@ -322,38 +345,49 @@ public class CssScheme {
 			setRule( search( item ) );
 		}
 		
+		private void animate( CssAnimation<?> animation ){
+			uninstall();
+			rule = chain.animate( animation );
+			install();
+		}
+		
 		private void setRule( CssRule nextRule ){
-			if( nextRule != rule ){
-				if( rule != null ){
-					item.removePropertyContainerListener( this );
-					rule.removeRuleListener( this );
-					for( String key : item.getPropertyKeys()){
-						propertyRemoved( key, item.getProperty( key ) );
-					}
-				}
-				rule = nextRule;
-				if( rule != null ){
-					item.addPropertyContainerListener( this );
-					rule.addRuleListener( this );
-					for( String key : item.getPropertyKeys()){
-						propertyAdded( key, item.getProperty( key ) );
-					}
-				}
+			if( rule == null || nextRule != rule.getRoot() ){
+				uninstall();
+				rule = chain.transition( nextRule );
+				install();
 			}
+		}
+		
+		private void uninstall(){
+			item.removePropertyContainerListener( this );
+			if( rule != null ){
+				rule.removeRuleListener( this );
+			}
+			for( String key : item.getPropertyKeys()){
+				propertyRemoved( key, item.getProperty( key ) );
+			}
+		}
+		
+		private void install(){
+			item.addPropertyContainerListener( this );
+			rule.addRuleListener( this );
+			for( String key : item.getPropertyKeys()){
+				propertyAdded( key, item.getProperty( key ) );
+			}			
 		}
 		
 		@Override
 		public void propertyChanged( CssRule source, String key ){
 			CssProperty<?> sink = properties.get( key );
 			if( sink != null ){
-				String value = rule.getProperty( key );
-				if( value != null ){
-					write( value, sink );
-				}
-				else{
-					sink.set( null );
-				}
+				resetProperty( sink, key );
 			}
+		}
+		
+		private <T> void resetProperty( CssProperty<T> property, String key ){
+			T value = rule.getProperty( property.getType( CssScheme.this ), key );
+			property.set( value );
 		}
 		
 		@Override
@@ -391,10 +425,10 @@ public class CssScheme {
 			}
 		}
 		
-		private void propertyAdded( String key, CssProperty<?> property ){
-			String value = rule.getProperty( key );
+		private <T> void propertyAdded( String key, CssProperty<T> property ){
+			T value = rule.getProperty( property.getType( CssScheme.this ), key );
 			if( value != null ){
-				write( value, property );
+				property.set( value );
 			}
 			if( properties.containsKey( key )){
 				throw new IllegalStateException( "property with name '" + key + "' already exists" );

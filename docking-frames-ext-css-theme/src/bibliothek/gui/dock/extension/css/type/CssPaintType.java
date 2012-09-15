@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.extension.css.type;
 
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
 
@@ -41,4 +42,9 @@ public class CssPaintType implements CssType<CssPaint>{
 		}
 		return null;
 	}	
+	
+	@Override
+	public AnimatedCssProperty<CssPaint> createAnimation(){
+		return null;
+	}
 }

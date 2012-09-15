@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
+import bibliothek.gui.dock.extension.css.animation.types.AnimatedColorProperty;
 
 /**
  * A converted to create {@link Color} objects.
@@ -59,6 +61,11 @@ public class ColorType implements CssType<Color>{
 			return new Color( red, green, blue );
 		}
 		return null;
+	}
+	
+	@Override
+	public AnimatedCssProperty<Color> createAnimation(){
+		return new AnimatedColorProperty();
 	}
 	
 	/**

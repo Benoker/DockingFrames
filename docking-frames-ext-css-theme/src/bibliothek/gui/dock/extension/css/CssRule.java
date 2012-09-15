@@ -39,10 +39,12 @@ public interface CssRule {
 	
 	/**
 	 * Gets one of the properties of this rule.
+	 * @param type the type which the property is supposed to have 
 	 * @param property the name of the property to read
 	 * @return the property or <code>null</code> if not present
+	 * @throws IllegalArgumentException if the property cannot be understood as <code>type</code>
 	 */
-	public String getProperty( String property );
+	public <T> T getProperty( CssType<T> type, String property );
 	
 	/**
 	 * Adds <code>listener</code> to this rule, <code>listener</code> will be informed if

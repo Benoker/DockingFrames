@@ -23,28 +23,40 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.animation;
 
+import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
-import bibliothek.gui.dock.extension.css.shape.OvalShape;
+import bibliothek.gui.dock.extension.css.paint.CssPaint;
 
 /**
- * A type creating new {@link CssShape}s.
+ * A property for handling a {@link CssPaint} with an animation
  * @author Benjamin Sigg
  */
-public class CssShapeType implements CssType<CssShape>{
-	@Override
-	public CssShape convert( String value ){
-		if( "oval".equals( value )){
-			return new OvalShape();
-		}
-		return null;
+public abstract class CssPaintAnimationProperty extends CssAnimationProperty<CssPaint>{
+	/**
+	 * Creates the new property.
+	 * @param scheme the scheme in whose realm this property will work
+	 * @param item the item to which this property belongs
+	 * @param propertyKey the name of this property
+	 */
+	public CssPaintAnimationProperty( CssScheme scheme, CssItem item, String propertyKey ){
+		super( scheme, item, propertyKey );
 	}
-	
+
 	@Override
-	public AnimatedCssProperty<CssShape> createAnimation(){
-		return null;
+	public CssType<CssPaint> getType( CssScheme scheme ){
+		return scheme.getConverter( CssPaint.class );
+	}
+
+	@Override
+	protected void bind(){
+		// ignore
+	}
+
+	@Override
+	protected void unbind(){
+		// ignore
 	}
 }

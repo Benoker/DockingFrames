@@ -23,28 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.animation;
 
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
-import bibliothek.gui.dock.extension.css.shape.OvalShape;
 
 /**
- * A type creating new {@link CssShape}s.
+ * A {@link AnimatedCssProperty} that does not perform any kind of animation.
  * @author Benjamin Sigg
+ * @param <T> the type of value "animated" by this "animation"
  */
-public class CssShapeType implements CssType<CssShape>{
-	@Override
-	public CssShape convert( String value ){
-		if( "oval".equals( value )){
-			return new OvalShape();
-		}
-		return null;
-	}
+public class NotAnimatedCssProperty<T> implements AnimatedCssProperty<T>{
+	private AnimatedCssPropertyCallback<T> callback;
 	
 	@Override
-	public AnimatedCssProperty<CssShape> createAnimation(){
-		return null;
+	public void setCallback( AnimatedCssPropertyCallback<T> callback ){
+		this.callback = callback;
+	}
+
+	@Override
+	public void setSource( T source ){
+		callback.set( source );
+	}
+
+	@Override
+	public void setTarget( T target ){
+		// ignore
+	}
+
+	@Override
+	public void setTransition( double transition ){
+		// ignore
+	}
+
+	@Override
+	public void step(){
+		// ignore
 	}
 }

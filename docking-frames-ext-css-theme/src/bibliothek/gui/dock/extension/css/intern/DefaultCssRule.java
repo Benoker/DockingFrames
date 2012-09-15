@@ -34,6 +34,7 @@ import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssSelector;
+import bibliothek.gui.dock.extension.css.CssType;
 
 /**
  * The default {@link CssRule} is just a {@link Map} of properties.
@@ -77,8 +78,12 @@ public class DefaultCssRule implements CssRule{
 	}
 
 	@Override
-	public String getProperty( String property ){
-		return properties.get( property );
+	public <T> T getProperty( CssType<T> type, String property ){
+		String value = properties.get( property );
+		if( "null".equals( value ) || value == null ){
+			return null;
+		}
+		return type.convert( properties.get( property ) );
 	}
 	
 	/**

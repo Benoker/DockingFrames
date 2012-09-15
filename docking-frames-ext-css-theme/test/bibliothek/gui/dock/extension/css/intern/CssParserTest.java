@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssSelector;
+import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
 
 public class CssParserTest {
 	private CssParser parser;
@@ -17,6 +19,20 @@ public class CssParserTest {
 	@Before
 	public void setup(){
 		parser = new CssParser();
+	}
+	
+	private CssType<String> string(){
+		return new CssType<String>(){
+			@Override
+			public String convert( String value ){
+				return value;
+			}
+
+			@Override
+			public AnimatedCssProperty<String> createAnimation(){
+				return null;
+			}
+		};
 	}
 	
 	@Test
@@ -28,7 +44,7 @@ public class CssParserTest {
 		CssSelector selector = rule.getSelector();
 		
 		assertEquals( DefaultCssSelector.selector().element( "a" ).build(), selector );
-		assertEquals( "y", rule.getProperty( "x" ) );
+		assertEquals( "y", rule.getProperty( string(), "x" ) );
 	}
 	
 	@Test
@@ -40,7 +56,7 @@ public class CssParserTest {
 		CssSelector selector = rule.getSelector();
 		
 		assertEquals( DefaultCssSelector.selector().element( "a" ).identifier( "id" ).build(), selector );
-		assertEquals( "y", rule.getProperty( "x" ) );		
+		assertEquals( "y", rule.getProperty( string(), "x" ) );		
 	}
 	
 	@Test
@@ -52,7 +68,7 @@ public class CssParserTest {
 		CssSelector selector = rule.getSelector();
 		
 		assertEquals( DefaultCssSelector.selector().element( "a" ).clazz( "id" ).build(), selector );
-		assertEquals( "y", rule.getProperty( "x" ) );
+		assertEquals( "y", rule.getProperty( string(), "x" ) );
 	}
 	
 	@Test
@@ -64,7 +80,7 @@ public class CssParserTest {
 		CssSelector selector = rule.getSelector();
 		
 		assertEquals( DefaultCssSelector.selector().element( "a" ).pseudo( "id" ).build(), selector );
-		assertEquals( "y", rule.getProperty( "x" ) );
+		assertEquals( "y", rule.getProperty( string(), "x" ) );
 	}
 	
 	@Test
@@ -76,7 +92,7 @@ public class CssParserTest {
 		CssSelector selector = rule.getSelector();
 		
 		assertEquals( DefaultCssSelector.selector().element( "a" ).attribute( "b" ).build(), selector );
-		assertEquals( "y", rule.getProperty( "x" ) );
+		assertEquals( "y", rule.getProperty( string(), "x" ) );
 	}
 	
 	@Test
@@ -88,7 +104,7 @@ public class CssParserTest {
 		CssSelector selector = rule.getSelector();
 		
 		assertEquals( DefaultCssSelector.selector().element( "a" ).attribute( "b", "c" ).build(), selector );
-		assertEquals( "y", rule.getProperty( "x" ) );
+		assertEquals( "y", rule.getProperty( string(), "x" ) );
 	}
 	
 	@Test
@@ -108,7 +124,7 @@ public class CssParserTest {
 				.element( "d" )
 				.identifier( "bla" )
 				.build(), selector );
-		assertEquals( "y", rule.getProperty( "x" ) );
+		assertEquals( "y", rule.getProperty( string(), "x" ) );
 	}
 	
 	@Test
@@ -129,8 +145,8 @@ public class CssParserTest {
 		CssSelector selector = rule.getSelector();
 		
 		assertEquals( DefaultCssSelector.selector().element( "a" ).build(), selector );
-		assertEquals( "b", rule.getProperty( "a" ) );
-		assertEquals( "d", rule.getProperty( "c" ) );
-		assertEquals( "f", rule.getProperty( "e" ) );
+		assertEquals( "b", rule.getProperty( string(), "a" ) );
+		assertEquals( "d", rule.getProperty( string(), "c" ) );
+		assertEquals( "f", rule.getProperty( string(), "e" ) );
 	}
 }

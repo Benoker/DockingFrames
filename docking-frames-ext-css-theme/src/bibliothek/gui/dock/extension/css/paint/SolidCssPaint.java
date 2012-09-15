@@ -42,13 +42,22 @@ import bibliothek.gui.dock.extension.css.shape.CssShape;
  */
 public class SolidCssPaint implements CssPaint{
 	private Color color;
+	private Component component;
 	
 	private ColorCssProperty colorProperty = new ColorCssProperty(){
 		@Override
 		public void set( Color value ){
 			color = value;
+			if( component != null ){
+				component.repaint();
+			}
 		}
 	};
+	
+	@Override
+	public void init( Component component ){
+		this.component = component;
+	}
 	
 	@Override
 	public String[] getPropertyKeys(){
