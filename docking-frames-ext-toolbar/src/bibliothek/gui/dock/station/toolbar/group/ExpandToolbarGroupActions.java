@@ -265,24 +265,31 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 		 */
 		public boolean[] getEnabledStates(){
 			boolean[] canPerform = new boolean[ExpandedState.values().length];
-			boolean onConflict = onConflictEnable.getValue();
 			
-			for( int i = 0; i < canPerform.length; i++ ) {
-				canPerform[i] = !onConflict;
+			for( ExpandedState state : ExpandedState.values() ){
+				canPerform[state.ordinal()] = isEnabled( state );
 			}
-
+			return canPerform;
+		}
+		
+		private boolean isEnabled( ExpandedState state ){
+			boolean hasEnabled = false;
+			boolean hasDisabled = false;
 			ExpandableToolbarItemStrategy strategy = getStrategy();
-			if( strategy != null ) {
-				for( Dockable dockable : getDockables() ) {
-					for( ExpandedState state : ExpandedState.values() ) {
-						if( onConflict == strategy.isEnabled( dockable, state ) ) {
-							canPerform[state.ordinal()] = onConflict;
-						}
+			if( strategy != null ){
+				for( Dockable dockable : getDockables() ){
+					if( strategy.isEnabled( dockable, state )){
+						hasEnabled = true;
+					}
+					else{
+						hasDisabled = true;
 					}
 				}
 			}
-
-			return canPerform;
+			if( hasEnabled && hasDisabled ){
+				return onConflictEnable.getValue();
+			}
+			return hasEnabled;
 		}
 	}
 

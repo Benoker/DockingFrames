@@ -33,11 +33,11 @@ package bibliothek.gui.dock;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.toolbar.expand.DefaultExpandableToolbarItemStrategy;
-import bibliothek.gui.dock.toolbar.expand.DisabledExpandableToolbarItemStrategy;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemStrategyListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
+import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
-import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
  * An {@link ExpandableToolbarItemStrategy} is a strategy that allows to expand
@@ -51,7 +51,12 @@ public interface ExpandableToolbarItemStrategy {
 	 * @see DefaultExpandableToolbarItemStrategy
 	 */
 	public static final PropertyKey<ExpandableToolbarItemStrategy> STRATEGY = new PropertyKey<ExpandableToolbarItemStrategy>( 
-			"expandable toolbar item strategy", new ConstantPropertyFactory<ExpandableToolbarItemStrategy>( new DisabledExpandableToolbarItemStrategy() ), true );
+			"expandable toolbar item strategy", new DynamicPropertyFactory<ExpandableToolbarItemStrategy>(){
+				@Override
+				public ExpandableToolbarItemStrategy getDefault( PropertyKey<ExpandableToolbarItemStrategy> key, DockProperties properties ){
+					return new DefaultExpandableToolbarItemStrategy();
+				}
+			}, true );
 
 	/**
 	 * Called if this strategy is used by <code>controller</code>.

@@ -361,15 +361,22 @@ public abstract class AbstractToolbarDockStation extends
 			return false;
 		}
 		
-		boolean onConflict = onConflictEnable.getValue();
+		
+		boolean hasEnabled = false;
+		boolean hasDisabled = false;
 		
 		for( int i = 0, n = getDockableCount(); i<n; i++ ){
-			if( onConflict == strategy.isEnabled( getDockable( i ), state )){
-				return onConflict;
+			if( strategy.isEnabled( getDockable( i ), state )){
+				hasEnabled = true;
+			}
+			else{
+				hasDisabled = true;
 			}
 		}
-		
-		return !onConflict;
+		if( hasEnabled && hasDisabled ){
+			onConflictEnable.getValue();
+		}
+		return hasEnabled;
 	}
 	
 	private void expand(){

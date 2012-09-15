@@ -104,6 +104,9 @@ public class ExpandableStateController {
 	 *            the item to observe
 	 */
 	public ExpandableStateController( ExpandableToolbarItem item ){
+		if( item == null ){
+			throw new IllegalArgumentException( "item must not be null" );
+		}
 		this.item = item;
 
 		item.addDockHierarchyListener( new DockHierarchyListener(){
@@ -138,24 +141,26 @@ public class ExpandableStateController {
 	 * state as its parent.
 	 */
 	public void refresh(){
-		DockStation station = item.getDockParent();
-		if( station != null ){
-			Dockable current = station.asDockable();
-			final ExpandableToolbarItemStrategy strategy = this.strategy.getValue();
-			if( strategy != null ) {
-				while( current != null ) {
-					final ExpandedState state = strategy.getState( current );
-					if( state != null ) {
-						item.setExpandedState( state );
-						return;
-					}
-	
-					station = current.getDockParent();
-					if( station != null ) {
-						current = station.asDockable();
-					}
-					else {
-						current = null;
+		if( item != null ){
+			DockStation station = item.getDockParent();
+			if( station != null ){
+				Dockable current = station.asDockable();
+				final ExpandableToolbarItemStrategy strategy = this.strategy.getValue();
+				if( strategy != null ) {
+					while( current != null ) {
+						final ExpandedState state = strategy.getState( current );
+						if( state != null ) {
+							item.setExpandedState( state );
+							return;
+						}
+		
+						station = current.getDockParent();
+						if( station != null ) {
+							current = station.asDockable();
+						}
+						else {
+							current = null;
+						}
 					}
 				}
 			}

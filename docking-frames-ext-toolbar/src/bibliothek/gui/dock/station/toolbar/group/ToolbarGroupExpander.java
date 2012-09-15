@@ -188,7 +188,6 @@ public class ToolbarGroupExpander {
 					}
 					else {
 						set( strategy, dockable, state );
-						actions.update( dockable );
 					}
 				}
 			}
