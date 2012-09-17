@@ -44,6 +44,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDropSizeStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -61,6 +63,14 @@ public class WizardSplitDockStationTest {
 
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
+		
+		controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
+			public void dockStationRegistering( DockController controller, DockStation station ){
+				if( station instanceof StackDockStation ){
+					((StackDockStation)station).setSmallMinimumSize( false );
+				}
+			}
+		} );
 		
 		controller.setTheme( new EclipseTheme() );
 		

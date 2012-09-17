@@ -827,6 +827,7 @@
 [v1.1.2p1a]
  - API: WizardSplitDockStation has a new property "resizeOnRemove", if set the size of a column is automatically reset if one of its children is removed
  - Bugfix: WizardSplitDockStation sometimes did not allow moving the divider if the internal tree of Dockables had placeholders at the wrong locations
+ - API: AbstractScreenDockWindow will call checkWindowBounds if the minimum size of its content changes.
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

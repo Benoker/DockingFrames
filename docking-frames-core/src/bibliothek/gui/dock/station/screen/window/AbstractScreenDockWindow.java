@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -585,7 +586,19 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         	panel.setSolid( false );
         }
         panel.setContentPane( contentBackground );
-        panel.getBasePane().setLayout( new BorderLayout() );
+        panel.getBasePane().setLayout( new BorderLayout(){
+        	private Dimension lastMinimumSize;
+        	
+        	@Override
+        	public void layoutContainer( Container target ){
+        		Dimension minimumSize = minimumLayoutSize( target );
+        		if( lastMinimumSize == null || !lastMinimumSize.equals( minimumSize )){
+        			lastMinimumSize = minimumSize;
+        			checkWindowBounds();
+        		}
+        		super.layoutContainer( target );
+        	}
+        } );
         panel.getBasePane().add( contentBackground, BorderLayout.CENTER );
 
         return panel;
