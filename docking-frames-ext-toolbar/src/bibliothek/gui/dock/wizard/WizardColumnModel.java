@@ -317,6 +317,15 @@ public class WizardColumnModel {
 	}
 	
 	/**
+	 * Updates the size of the <code>index</code>'th column such that it has its preferred size.
+	 * @param index the index of the column to update
+	 */
+	public void resetToPreferredSize( int index ){
+		PersistentColumn column = getMap().getPersistentColumn( index );
+		column.setSize( column.getPreferredSize() );
+	}
+	
+	/**
 	 * Updates the dividers of all {@link Node}s such that the actual size of the columns and cells results. 
 	 * @param map information about the layout of the station
 	 * @param revalidate if <code>true</code>, a call to {@link JComponent#revalidate()} is made

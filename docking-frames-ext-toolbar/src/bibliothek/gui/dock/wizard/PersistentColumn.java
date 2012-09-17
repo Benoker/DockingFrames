@@ -32,6 +32,7 @@ package bibliothek.gui.dock.wizard;
 import java.util.Map;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.wizard.WizardNodeMap.Column;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -43,15 +44,21 @@ import bibliothek.util.FrameworkOnly;
 public class PersistentColumn{
 	private int size;
 	private int preferred;
+	private Column source;
 	private Map<Dockable, PersistentCell> cells;
 	
-	public PersistentColumn( int size, int preferred, Map<Dockable, PersistentCell> cells ){
+	public PersistentColumn( int size, int preferred, Column source, Map<Dockable, PersistentCell> cells ){
 		this.size = size;
 		this.preferred = preferred;
 		if( size <= 0 ){
 			this.size = preferred;
 		}
+		this.source = source;
 		this.cells = cells;
+	}
+	
+	public Column getSource(){
+		return source;
 	}
 	
 	public void setSize( int size ){

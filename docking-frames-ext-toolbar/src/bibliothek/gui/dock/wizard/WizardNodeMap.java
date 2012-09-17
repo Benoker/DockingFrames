@@ -157,6 +157,21 @@ public abstract class WizardNodeMap {
 	}
 	
 	/**
+	 * Gets the <code>index</code>'th column.
+	 * @param index the index of the column
+	 * @return the column
+	 * @throws IndexOutOfBoundsException if <code>index</code> does not point to a column
+	 */
+	public Column getColumn( int index ){
+		for( Column column : getColumns().values() ){
+			if( column.index == index ){
+				return column;
+			}
+		}
+		throw new IndexOutOfBoundsException( "index: " + index );
+	}
+	
+	/**
 	 * Gets all the columns sorted by their {@link Column#getIndex() index}.
 	 * @return the ordered columns
 	 */
@@ -279,7 +294,13 @@ public abstract class WizardNodeMap {
 				return column;
 			}
 			if( node instanceof Node ){
-				if( side() == Side.RIGHT || side() == Side.BOTTOM ){
+				if( ((Node) node).getLeft() == null || !((Node)node).getLeft().isVisible() ){
+					node = ((Node) node).getRight();
+				}
+				else if( ((Node) node).getRight() == null || !((Node)node).getRight().isVisible() ){
+					node = ((Node) node).getLeft();
+				}
+				else if( side() == Side.RIGHT || side() == Side.BOTTOM ){
 					node = ((Node)node).getLeft();
 				}
 				else{
@@ -381,6 +402,20 @@ public abstract class WizardNodeMap {
 	}
 	
 	/**
+	 * Gets the column which contains <code>dockable</code>.
+	 * @param dockable the element to search
+	 * @return the column containing <code>dockable</code>
+	 */
+	public Column getColumn( Dockable dockable ){
+		for( Column column : getColumns().values() ){
+			if( column.getLeafs().containsKey( dockable )){
+				return column;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Goes through all {@link Column}s all collects the last cell of these columns.
 	 * @return the last cell of each {@link Column}
 	 */
@@ -393,6 +428,20 @@ public abstract class WizardNodeMap {
 			}
 		}
 		return result.toArray( new Leaf[ result.size() ] );
+	}
+	
+	/**
+	 * Searches the {@link PersistentColumn} of the <code>index</code>'th {@link Column}.
+	 * @param index the index of the column
+	 * @return the persistent column or <code>null</code> if not found
+	 */
+	public PersistentColumn getPersistentColumn( int index ){
+		for( PersistentColumn column : getPersistentColumns() ){
+			if( column.getSource().index == index ){
+				return column;
+			}
+		}
+		return null;
 	}
 	
 	public PersistentColumn[] getPersistentColumns(){
@@ -581,7 +630,7 @@ public abstract class WizardNodeMap {
 				size = root.getSize().height;
 				preferred = getPreferredSize().height;
 			}
-			return new PersistentColumn( size, preferred, leafs );
+			return new PersistentColumn( size, preferred, this, leafs );
 		}
 		
 		/**
@@ -624,18 +673,20 @@ public abstract class WizardNodeMap {
 				
 				@Override
 				public void handleLeaf( Leaf leaf ){
-					int size;
-					int preferred;
-					
-					if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
-						size = leaf.getSize().height;
-						preferred = getPreferredSize( leaf ).height;
+					Dimension preferredSize = getPreferredSize( leaf );
+					if( preferredSize != null ){
+						int size;
+						int preferred;
+						if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
+							size = leaf.getSize().height;
+							preferred = preferredSize.height;
+						}
+						else{
+							size = leaf.getSize().width;
+							preferred = preferredSize.width;
+						}
+						leafs.put( leaf.getDockable(), new PersistentCell( size, preferred ));
 					}
-					else{
-						size = leaf.getSize().width;
-						preferred = getPreferredSize( leaf ).width;
-					}
-					leafs.put( leaf.getDockable(), new PersistentCell( size, preferred ));
 				}
 			} );
 			return leafs;

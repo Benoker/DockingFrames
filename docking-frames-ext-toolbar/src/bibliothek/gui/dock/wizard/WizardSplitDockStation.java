@@ -115,6 +115,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	private Side side;
 	private boolean onRevalidating = false;
 	private int sideGap = 3;
+	private boolean resizeOnRemove = false;
 	
 	/**
 	 * Creates a new station.
@@ -134,6 +135,8 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		getSpanStrategy().getFactory().setDelegate( new NoSpanFactory() );
 		
 		addDockStationListener( new DockStationListener(){
+			private Column columnToResize = null;
+			
 			@Override
 			public void dockablesRepositioned( DockStation station, Dockable[] dockables ){
 				revalidateOutside();
@@ -151,11 +154,20 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 			
 			@Override
 			public void dockableRemoving( DockStation station, Dockable dockable ){
-				// ignore
+				if( resizeOnRemove ){
+					columnToResize = layoutManager.getMap().getColumn( dockable );
+				}
+				else{
+					columnToResize = null;
+				}
 			}
 			
 			@Override
 			public void dockableRemoved( DockStation station, Dockable dockable ){
+				if( columnToResize != null ){
+					layoutManager.model.resetToPreferredSize( columnToResize.getIndex() );
+					columnToResize = null;
+				}
 				revalidateOutside();
 			}
 			
@@ -229,6 +241,23 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		if( wizardSpanStrategy != null ){
 			wizardSpanStrategy.reset();
 		}
+	}
+	
+	/**
+	 * If a {@link Dockable} is removed from this {@link WizardSplitDockStation}, then the column of the
+	 * {@link Dockable} is resized such that it has again its preferred size.
+	 * @param resizeOnRemove whether to automatically resize the columnss
+	 */
+	public void setResizeOnRemove( boolean resizeOnRemove ){
+		this.resizeOnRemove = resizeOnRemove;
+	}
+	
+	/**
+	 * Tells whether the column of a removed {@link Dockable} is automatically resized.
+	 * @return whether to automatically resize a column if one of its elements is removed
+	 */
+	public boolean isResizeOnRemove(){
+		return resizeOnRemove;
 	}
 	
 	@Override
