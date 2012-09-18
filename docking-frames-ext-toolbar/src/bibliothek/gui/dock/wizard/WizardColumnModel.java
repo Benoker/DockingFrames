@@ -329,12 +329,14 @@ public class WizardColumnModel {
 	 * Updates the dividers of all {@link Node}s such that the actual size of the columns and cells results. 
 	 * @param map information about the layout of the station
 	 * @param revalidate if <code>true</code>, a call to {@link JComponent#revalidate()} is made
+	 * @return the number of pixels required to show all columns
 	 */
-	protected void applyPersistentSizes( WizardNodeMap map, boolean revalidate ){
-		applyPersistentSizes( station.getRoot(), map );
+	protected int applyPersistentSizes( WizardNodeMap map, boolean revalidate ){
+		int result = applyPersistentSizes( station.getRoot(), map );
 		if( revalidate ){
 			station.revalidateOutside();
 		}
+		return result;
 	}
 	
 	/**
@@ -450,7 +452,14 @@ public class WizardColumnModel {
 		
 		Root root = station.getRoot();
 		root.updateBounds( x, y, w, h, factorW, factorH, false );
-		applyPersistentSizes( map, false );
+		int pixels = applyPersistentSizes( map, false );
+		
+		if( station.getSide().getHeaderOrientation() == Orientation.HORIZONTAL ){
+			w = pixels / factorW;
+		}
+		else{
+			h = pixels / factorH;
+		}
 		
 		updateBounds( station.getRoot(), x, y, w, h, map );
 	}

@@ -499,11 +499,11 @@ public abstract class WizardNodeMap {
 			
 			if( sources.size() == 1 ){
 				PersistentColumn source = sources.iterator().next();
-				if( source.getCells().keySet().equals( column.getCells().keySet() )){
+				if( source.getCells().keySet().containsAll( column.getCells().keySet() )){
 					column.setSize( source.getSize() );
 				}
 				else{
-					column.setSize( Math.max( column.getSize(), column.getPreferredSize() ));
+					column.setSize( Math.max( source.getSize(), column.getPreferredSize() ));
 				}
 			}
 			else if( sources.size() > 0 ){

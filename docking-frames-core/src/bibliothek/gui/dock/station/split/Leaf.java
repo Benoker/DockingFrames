@@ -653,6 +653,8 @@ public class Leaf extends SpanSplitNode{
         out.append( "}, " );
         out.append( "id=" );
         out.append( getId() );
+        out.append( ", bounds=" );
+        out.append( getBounds() );
         out.append( " ]" );
     }
 }

@@ -41,15 +41,15 @@ import javax.swing.JScrollPane;
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
+import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.StackDockStation;
-import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDropSizeStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
+import bibliothek.gui.dock.themes.basic.BasicSpanFactory;
 import bibliothek.gui.dock.wizard.WizardSplitDockStation;
 import bibliothek.gui.dock.wizard.WizardSplitDockStation.Side;
 import bibliothek.util.Path;
@@ -64,13 +64,7 @@ public class WizardSplitDockStationTest {
 		DockController controller = new DockController();
 		controller.setRootWindow( frame );
 		
-		controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
-			public void dockStationRegistering( DockController controller, DockStation station ){
-				if( station instanceof StackDockStation ){
-					((StackDockStation)station).setSmallMinimumSize( false );
-				}
-			}
-		} );
+		controller.getProperties().set( DockTheme.SPAN_FACTORY, new BasicSpanFactory( 500, 20) );
 		
 		controller.setTheme( new EclipseTheme() );
 		
@@ -115,6 +109,8 @@ public class WizardSplitDockStationTest {
 		WizardSplitDockStation stationBottom = new WizardSplitDockStation( Side.BOTTOM );
 		WizardSplitDockStation stationTop = new WizardSplitDockStation( Side.TOP );
 		WizardSplitDockStation stationLeft = new WizardSplitDockStation( Side.LEFT );
+		
+		station.setResizeOnRemove( true );
 		
 		controller.add( station );
 		controller.add( stationBottom );

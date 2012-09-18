@@ -301,7 +301,7 @@ public class WizardSpanStrategy {
 				return station.getDividerSize();
 			}
 			else{
-				return columnSpans[selectedColumn].getSize();
+				return getSize( columnSpans[selectedColumn] );
 			}
 		}
 		if( selectedColumn >= cellSpans.length ){
@@ -311,7 +311,7 @@ public class WizardSpanStrategy {
 		if( selectedCell >= array.length ){
 			return station.getDividerSize();
 		}
-		return array[selectedCell].getSize();
+		return getSize( array[selectedCell] );
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public class WizardSpanStrategy {
 		if( column >= columnSpans.length ){
 			return 0;
 		}
-		return columnSpans[column].getSize();
+		return getSize( columnSpans[column] );
 	}
 	
 	/**
@@ -339,7 +339,17 @@ public class WizardSpanStrategy {
 		if( cell >= cellSpans[column].length ){
 			return 0;
 		}
-		return cellSpans[column][cell].getSize();
+		return getSize( cellSpans[column][cell] );
+	}
+	
+	/**
+	 * Gets the current size of <code>span</code>. May be overriden by subclasses to influence the
+	 * size of a span.
+	 * @param span the size of <code>span</code>
+	 * @return the size of the span
+	 */
+	protected int getSize( Span span ){
+		return span.getSize();
 	}
 	
 	/**

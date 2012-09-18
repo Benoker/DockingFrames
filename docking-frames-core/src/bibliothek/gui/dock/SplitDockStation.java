@@ -2844,6 +2844,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 	
 	/**
+	 * Allows subclasses access to the internal working of this {@link SplitDockStation}. Subclasses
+	 * should be very careful when invoking methods of {@link Access}.
+	 * @return the internal API of this station
+	 */
+	protected Access getAccess(){
+		return access;
+	}
+	
+	/**
 	 * The background algorithm of this {@link SplitDockStation}.
 	 * @author Benjamin Sigg
 	 */
@@ -3168,7 +3177,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Access to this {@link SplitDockStation}.
 	 * @author Benjamin Sigg
 	 */
-	private class Access implements SplitDockAccess{
+	protected class Access implements SplitDockAccess{
 		private long lastUniqueId = -1;
 		private int repositionedArm = 0;
 		private Set<Dockable> repositioned = new HashSet<Dockable>();
@@ -3237,6 +3246,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			finally{
 				fire();
 			}
+		}
+		
+		/**
+		 * Tells whether this {@link Access} currently is withholding events.
+		 * @return whether events are currently disabled
+		 */
+		public boolean isArmed(){
+			return repositionedArm > 0;
 		}
 		
 		public void dockableSelected( Dockable dockable ){

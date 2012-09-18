@@ -47,7 +47,9 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.DockHierarchyLock.Token;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.split.DefaultSplitDividerStrategy;
@@ -63,6 +65,7 @@ import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitLayoutManager;
 import bibliothek.gui.dock.station.split.SplitNode;
 import bibliothek.gui.dock.station.split.SplitNodeVisitor;
+import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.basic.NoSpanFactory;
@@ -116,6 +119,8 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	private boolean onRevalidating = false;
 	private int sideGap = 3;
 	private boolean resizeOnRemove = false;
+	private Column columnToResize = null;
+	private Dockable dockableCausingResize = null;
 	
 	/**
 	 * Creates a new station.
@@ -128,15 +133,12 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		wizardSpanStrategy = new WizardSpanStrategy( this );
 		setSplitLayoutManager( layoutManager );
 		setDividerStrategy( new WizardDividerStrategy() );
-		// getContentPane().setBorder( BorderFactory.createEmptyBorder( 2, 2, 2, 2 ) );
 		setAllowSideSnap( true );
 		
 		// disable the standard mechanism for showing spans
 		getSpanStrategy().getFactory().setDelegate( new NoSpanFactory() );
 		
 		addDockStationListener( new DockStationListener(){
-			private Column columnToResize = null;
-			
 			@Override
 			public void dockablesRepositioned( DockStation station, Dockable[] dockables ){
 				revalidateOutside();
@@ -154,21 +156,12 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 			
 			@Override
 			public void dockableRemoving( DockStation station, Dockable dockable ){
-				if( resizeOnRemove ){
-					columnToResize = layoutManager.getMap().getColumn( dockable );
-				}
-				else{
-					columnToResize = null;
-				}
+				storeColumnToResize( dockable );
 			}
 			
 			@Override
 			public void dockableRemoved( DockStation station, Dockable dockable ){
-				if( columnToResize != null ){
-					layoutManager.model.resetToPreferredSize( columnToResize.getIndex() );
-					columnToResize = null;
-				}
-				revalidateOutside();
+				resizeStoredColumn();
 			}
 			
 			@Override
@@ -269,11 +262,88 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	@Override
 	protected void setPut( PutInfo info ){
 		wizardSpanStrategy.setPut( info );
+		if( info != null ){
+			storeColumnToResize( info.getDockable() );
+		}
 	}
 	
 	@Override
 	protected void unsetPut(){
 		wizardSpanStrategy.unsetPut();
+	}
+	
+	@Override
+	protected boolean dropAside( SplitNode neighbor, Put put, Dockable dockable, Leaf leaf, double divider, Token token ){
+		if( super.dropAside( neighbor, put, dockable, leaf, divider, token ) ){
+			resizeStoredColumn();
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	protected boolean dropOver( Leaf leaf, Dockable dockable, DockableProperty property, CombinerSource source, CombinerTarget target ){
+		if( super.dropOver( leaf, dockable, property, source, target ) ){
+			resizeStoredColumn();
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks in which {@link Column} <code>dockable</code> is stored, and remembers that
+	 * column for later resizing.
+	 * @param dockable the element whose column should be stored
+	 */
+	private void storeColumnToResize( Dockable dockable ){
+		if( resizeOnRemove && dockable.getDockParent() == this ){
+			columnToResize = layoutManager.getMap().getColumn( dockable );
+			
+			// if the column will disappear, do not resize
+			if( columnToResize != null && columnToResize.getCellCount() == 1 ){
+				columnToResize = null;
+			}
+			else{
+				dockableCausingResize = dockable;
+			}
+		}
+		else{
+			columnToResize = null;
+		}
+	}
+	
+	/**
+	 * Resizes the column stored by {@link #storeColumnToResize(Dockable)}.
+	 */
+	private void resizeStoredColumn(){
+		if( columnToResize != null ){
+			WizardNodeMap map = layoutManager.getMap();
+			
+			Column newColumn = map.getColumn( dockableCausingResize );
+			
+			PersistentColumn column = null;
+			
+			if( newColumn == null || newColumn.getIndex() > columnToResize.getIndex() ){
+				// item was removed or moved to the right side
+				column = map.getPersistentColumn( columnToResize.getIndex() );	
+			}
+			else if( newColumn.getCellCount() == 1 ){
+				// a new column was created
+				column = map.getPersistentColumn( columnToResize.getIndex()+1 );
+			}
+			else if( newColumn.getIndex() != columnToResize.getIndex() ){
+				// item was moved to an existing column 
+				column = map.getPersistentColumn( columnToResize.getIndex() );
+			}
+			
+			if( column != null ){
+				column.setSize( column.getPreferredSize() );
+			}
+			
+			columnToResize = null;
+			dockableCausingResize = null;
+		}
+		revalidateOutside();
 	}
 	
 	/**
