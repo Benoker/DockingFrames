@@ -40,6 +40,7 @@ public interface CssProperty<T> extends CssPropertyContainer {
 	/**
 	 * Sets the value of this property.
 	 * @param value the new value, can be <code>null</code>
+	 * @see #isHidden()
 	 */
 	public void set( T value );
 	

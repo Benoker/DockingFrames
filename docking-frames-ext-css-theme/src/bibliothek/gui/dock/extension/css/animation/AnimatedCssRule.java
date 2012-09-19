@@ -70,7 +70,7 @@ public interface AnimatedCssRule extends CssRule{
 	 * then {@link CssAnimation#transition(CssRule)} should be called as well.
 	 * @param animation the new animation, not <code>null</code>
 	 */
-	public void animate( CssAnimation animation );
+	public void animate( CssAnimation<?> animation );
 	
 	/**
 	 * Starts a transition on this rule. {@link CssAnimation#transition(CssRule)} should be called

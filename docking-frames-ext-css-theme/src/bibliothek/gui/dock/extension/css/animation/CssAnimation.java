@@ -75,19 +75,21 @@ public interface CssAnimation<T> extends CssPropertyContainer{
 	
 	/**
 	 * Initializes this animation.
-	 * @param current the {@link CssRule} which was applied when this animation was created. This may be a wrapper
-	 * around another {@link CssRule} on which another animation currently takes place.
+	 * @param source a rule representing the properties before the animation started
 	 * @param callback information about the properties and utility methods
 	 */
-	public void init( CssRule current, CssAnimationCallback callback );
+	public void init( CssRule source, CssAnimationCallback callback );
 	
 	/**
 	 * Called asynchronously if {@link CssAnimationCallback#step()} is called, or if one of the underlying {@link CssRule}
 	 * changed a property. This method is always executed in the EDT.<br>
 	 * This method should recalculate all the properties affected by this animation and transfer the new values
 	 * to the {@link CssAnimationCallback}.
+	 * @param delay the amount of milliseconds that passed since the last call of this method, or <code>-1</code>
+	 * if the call to this method is out of order. This argument will always be <code>-1</code> if
+	 * this animation does not call {@link CssAnimationCallback#step()} during execution of this method.
 	 */
-	public void step();
+	public void step( int delay );
 	
 	/**
 	 * Called if this animation is about to become obsolete. The animation should gracefully transform the properties

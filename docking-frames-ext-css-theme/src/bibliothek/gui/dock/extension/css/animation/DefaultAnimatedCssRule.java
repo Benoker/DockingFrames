@@ -25,20 +25,18 @@
  */
 package bibliothek.gui.dock.extension.css.animation;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.Timer;
 
 import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationSchedulable;
+import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationScheduler;
 
 /**
  * The defeault implementation of {@link AnimatedCssRule} makes use of one {@link CssRule} and a list
@@ -47,6 +45,7 @@ import bibliothek.gui.dock.extension.css.CssType;
  */
 public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	private CssRule root;
+	private WrappedCssRule source;
 	private List<Animation> animations = new ArrayList<Animation>();
 	
 	private CssRule nextRoot;
@@ -58,13 +57,25 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	 */
 	public DefaultAnimatedCssRule( CssRule root ){
 		this.root = root;
+		source = new WrappedCssRule( root );
 	}
 	
 	@Override
-	public void animate( CssAnimation animation ){
+	protected void setPrevious( AnimatedCssRule previous ){
+		super.setPrevious( previous );
+		if( previous == null ){
+			source.setRule( root );
+		}
+		else{
+			source.setRule( previous );
+		}
+	}
+	
+	@Override
+	public void animate( CssAnimation<?> animation ){
 		Animation callback = new Animation( animation );
-		animation.init( root, callback );
 		animations.add( callback );
+		animation.init( source, callback );
 		if( transition ){
 			animation.transition( nextRoot );
 		}
@@ -142,11 +153,11 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		}
 	}
 	
-	private class Animation implements CssAnimationCallback, ActionListener{
-		private CssAnimation animation;
+	private class Animation implements CssAnimationCallback, AnimationSchedulable{
+		private CssAnimation<?> animation;
 		private Map<String, AnimatedProperty<?>> overridenProperties = new HashMap<String, AnimatedProperty<?>>();
 		
-		public Animation( CssAnimation animation ){
+		public Animation( CssAnimation<?> animation ){
 			this.animation = animation;
 		}
 		
@@ -160,10 +171,10 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		}
 
 		@Override
-		public void actionPerformed( ActionEvent e ){
-			if( animation != null ){
-				animation.step();
-			}	
+		public void step( AnimationScheduler scheduler, int delay ){
+			if( animation != null ){	
+				animation.step( delay );
+			}
 		}
 		
 		@Override
@@ -196,14 +207,12 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 
 		@Override
 		public void step(){
-			step( 20 );
+			getLink().getChain().getScheme().getScheduler().step( this );
 		}
 
 		@Override
 		public void step( int delay ){
-			Timer timer = new Timer( delay, this );
-			timer.setRepeats( false );
-			timer.start();
+			getLink().getChain().getScheme().getScheduler().step( this, delay );
 		}
 		
 		@Override

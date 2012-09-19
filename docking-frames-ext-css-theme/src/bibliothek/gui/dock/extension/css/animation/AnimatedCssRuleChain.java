@@ -35,7 +35,6 @@ import bibliothek.gui.dock.extension.css.CssScheme;
  * @author Benjamin Sigg
  */
 public interface AnimatedCssRuleChain {
-	
 	/**
 	 * Initializes <code>animation</code> and will use it the next time {@link #transition(CssRule)} is called. 
 	 * Multiple animations may be initialized before a call to {@link #transition(CssRule)}.
@@ -43,7 +42,7 @@ public interface AnimatedCssRuleChain {
 	 * @return the rule that represents the current configuration of this chain, the same object may be used
 	 * all the time, or a new object may be created when necessary
 	 */
-	public AnimatedCssRule animate( CssAnimation animation );
+	public AnimatedCssRule animate( CssAnimation<?> animation );
 
 	/**
 	 * Starts an animation for a transition of {@link #getRoot()} to <code>next</code>.
@@ -63,5 +62,5 @@ public interface AnimatedCssRuleChain {
 	 * Gets the scheme in whose realm this chain works.
 	 * @return the scheme, not <code>null</code>
 	 */
-	public CssScheme getScheme();
+	public CssScheme getScheme();	
 }

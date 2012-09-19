@@ -23,29 +23,31 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css;
+package bibliothek.gui.dock.extension.css.animation;
+
+import java.awt.Color;
+
+import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssScheme;
+import bibliothek.gui.dock.extension.css.CssType;
 
 /**
- * This observer is added to a {@link CssRule}.
+ * A property for handing a {@link Color} with an animation.
  * @author Benjamin Sigg
  */
-public interface CssRuleListener {
+public abstract class ColorAnimationProperty extends CssAnimationProperty<Color>{
 	/**
-	 * Called if {@link CssRule#getSelector()} changed.
-	 * @param source the source of the event
+	 * Creates the new property.
+	 * @param scheme the scheme in whose realm this property will work
+	 * @param item the item to which this property belongs
+	 * @param propertyKey the name of this property
 	 */
-	public void selectorChanged( CssRule source );
-	
-	/**
-	 * Called if {@link CssRule#getProperty(String)} changed.
-	 * @param source the source of the event
-	 * @param key the name of the property that changed
-	 */
-	public void propertyChanged( CssRule source, String key );
-	
-	/**
-	 * Called if all {@link CssRule#getProperty(CssType, String) properties} changed.
-	 * @param source the source of the event
-	 */
-	public void propertiesChanged( CssRule source );
+	public ColorAnimationProperty( CssScheme scheme, CssItem item, String propertyKey ){
+		super( scheme, item, propertyKey );
+	}
+
+	@Override
+	public CssType<Color> getType( CssScheme scheme ){
+		return scheme.getConverter( Color.class );
+	}	
 }

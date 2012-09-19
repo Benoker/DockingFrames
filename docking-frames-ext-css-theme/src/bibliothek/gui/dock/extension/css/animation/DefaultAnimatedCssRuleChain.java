@@ -50,6 +50,7 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 	 * Creates the new chain.
 	 * @param scheme the scheme in whose realm this chain is used
 	 * @param item the item which is animated by this chain
+	 * @param scheduler responsible for executing animations asynchronously
 	 */
 	public DefaultAnimatedCssRuleChain( CssScheme scheme, CssItem item ){
 		this.scheme = scheme;
@@ -60,7 +61,7 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 	}
 
 	@Override
-	public AnimatedCssRule animate( CssAnimation animation ){
+	public AnimatedCssRule animate( CssAnimation<?> animation ){
 		AnimatedCssRule rule = tail.getRule();
 		rule.animate( animation );
 		return rule;
@@ -68,10 +69,15 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 
 	@Override
 	public AnimatedCssRule transition( CssRule next ){
+		AnimatedCssRule oldRule = tail.getRule();
+		
 		Link link = new Link( next );
 		tail.setNext( link );
 		link.setPrevious( tail );
 		tail = link;
+		
+		oldRule.transition( next );
+		
 		return link.getRule();
 	}
 
@@ -102,6 +108,7 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 		
 		public Link( CssRule root ){
 			rule = createRule( root );
+			rule.inserted( this );
 		}
 		
 		@Override

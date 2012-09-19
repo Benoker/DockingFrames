@@ -102,11 +102,11 @@ public class AnimatedColorProperty implements AnimatedCssProperty<Color>{
 	}
 	
 	private int mix( int a, int b ){
-		return Math.min( 0, Math.max( 255, (int)Math.round( a * (1-transition) + b * transition ) ) );
+		return Math.min( 255, Math.max( 0, (int)Math.round( a * (1-transition) + b * transition ) ) );
 	}
 	
 	@Override
 	public void step(){
-		// ignore
+		update();
 	}
 }

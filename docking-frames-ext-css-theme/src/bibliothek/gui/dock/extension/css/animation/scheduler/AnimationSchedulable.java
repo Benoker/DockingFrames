@@ -23,29 +23,19 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css;
+package bibliothek.gui.dock.extension.css.animation.scheduler;
 
 /**
- * This observer is added to a {@link CssRule}.
+ * Some kind of animation that can be triggered by the {@link AnimationScheduler}.
  * @author Benjamin Sigg
  */
-public interface CssRuleListener {
+public interface AnimationSchedulable {
 	/**
-	 * Called if {@link CssRule#getSelector()} changed.
-	 * @param source the source of the event
+	 * Called with some delay, usually in the EDT, from <code>scheduler</code>.
+	 * @param scheduler the scheduler, may be used to schedule a follow up event
+	 * @param delay the amount of milliseconds passed since the last call to
+	 * {@link AnimationScheduler#step(AnimationSchedulable)} from within this method,
+	 * or <code>-1</code> if <code>step</code> was not called by this method
 	 */
-	public void selectorChanged( CssRule source );
-	
-	/**
-	 * Called if {@link CssRule#getProperty(String)} changed.
-	 * @param source the source of the event
-	 * @param key the name of the property that changed
-	 */
-	public void propertyChanged( CssRule source, String key );
-	
-	/**
-	 * Called if all {@link CssRule#getProperty(CssType, String) properties} changed.
-	 * @param source the source of the event
-	 */
-	public void propertiesChanged( CssRule source );
+	public void step( AnimationScheduler scheduler, int delay );
 }

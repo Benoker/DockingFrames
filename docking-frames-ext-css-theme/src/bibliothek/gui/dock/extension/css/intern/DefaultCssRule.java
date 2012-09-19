@@ -76,7 +76,7 @@ public class DefaultCssRule implements CssRule{
 			listener.selectorChanged( this );
 		}
 	}
-
+	
 	@Override
 	public <T> T getProperty( CssType<T> type, String property ){
 		String value = properties.get( property );

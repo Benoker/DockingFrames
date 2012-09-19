@@ -39,6 +39,8 @@ import bibliothek.gui.dock.extension.css.animation.AnimatedCssRule;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssRuleChain;
 import bibliothek.gui.dock.extension.css.animation.CssAnimation;
 import bibliothek.gui.dock.extension.css.animation.DefaultAnimatedCssRuleChain;
+import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationScheduler;
+import bibliothek.gui.dock.extension.css.animation.scheduler.DefaultAnimationScheduler;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.CssPathListener;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
@@ -66,6 +68,7 @@ public class CssScheme {
 	private boolean rematchPending = false;
 	
 	private CssTree tree;
+	private AnimationScheduler scheduler = new DefaultAnimationScheduler();
 	
 	private CssRuleListener selectorChangedListener = new CssRuleListener(){
 		@Override
@@ -77,6 +80,11 @@ public class CssScheme {
 		@Override
 		public void propertyChanged( CssRule source, String key ){
 			// ignore
+		}
+		
+		@Override
+		public void propertiesChanged( CssRule source ){
+			// ignore	
 		}
 	};
 	
@@ -153,9 +161,10 @@ public class CssScheme {
 		}
 		
 		Match match = new Match( item );
-		match.searchRule();
-		
 		items.put( item, match );
+		
+		match.install();
+		match.searchRule();
 	}
 	
 	/**
@@ -275,6 +284,25 @@ public class CssScheme {
 			rulesAreSorted = true;
 		}
 	}
+	
+	/**
+	 * Gets the {@link AnimationScheduler} which is responsible for asynchronous calls to the animations. 
+	 * @return the scheduler, not <code>null</code>
+	 */
+	public AnimationScheduler getScheduler(){
+		return scheduler;
+	}
+	
+	/**
+	 * Sets the scheduler for asynchronous execution of animations.
+	 * @param scheduler the scheduler, not <code>null</code>
+	 */
+	public void setScheduler( AnimationScheduler scheduler ){
+		if( scheduler == null ){
+			throw new IllegalArgumentException( "scheduler must not be null" );
+		}
+		this.scheduler = scheduler;
+	}
 		
 	/**
 	 * Creates a new {@link AnimatedCssRuleChain} which will animate the properties of <code>item</code>.
@@ -333,12 +361,7 @@ public class CssScheme {
 		public void destroy(){
 			item.removeItemListener( this );
 			item.getPath().removePathListener( this );
-			if( rule != null ){
-				rule.removeRuleListener( this );
-			}
-			for( String key : item.getPropertyKeys()){
-				propertyRemoved( item, key, item.getProperty( key ) );
-			}
+			uninstall();
 		}
 		
 		private void searchRule(){
@@ -346,16 +369,36 @@ public class CssScheme {
 		}
 		
 		private void animate( CssAnimation<?> animation ){
-			uninstall();
-			rule = chain.animate( animation );
-			install();
+			AnimatedCssRule nextRule = chain.animate( animation );
+			if( nextRule != rule ){
+				replaceRule( nextRule );
+			}
 		}
 		
 		private void setRule( CssRule nextRule ){
 			if( rule == null || nextRule != rule.getRoot() ){
-				uninstall();
-				rule = chain.transition( nextRule );
-				install();
+				AnimatedCssRule nextAnimatedRule = chain.transition( nextRule );
+				if( nextAnimatedRule != rule ){
+					replaceRule( nextAnimatedRule );
+				}
+			}
+		}
+		
+		private void replaceRule( AnimatedCssRule nextRule ){
+			if( rule != null ){
+				rule.removeRuleListener( this );
+			}
+			rule = nextRule;
+			if( rule != null ){
+				rule.addRuleListener( this );
+			}
+			
+			String[] keys = properties.keySet().toArray( new String[ properties.size() ] );
+			for( String key : keys ){
+				CssProperty<?> property = properties.get( key );
+				if( property != null ){
+					resetProperty( property, key );
+				}
 			}
 		}
 		
@@ -371,7 +414,9 @@ public class CssScheme {
 		
 		private void install(){
 			item.addPropertyContainerListener( this );
-			rule.addRuleListener( this );
+			if( rule != null ){
+				rule.addRuleListener( this );
+			}
 			for( String key : item.getPropertyKeys()){
 				propertyAdded( key, item.getProperty( key ) );
 			}			
@@ -385,8 +430,21 @@ public class CssScheme {
 			}
 		}
 		
+		@Override
+		public void propertiesChanged( CssRule source ){
+			for( Map.Entry<String, CssProperty<?>> entry : properties.entrySet() ){
+				resetProperty( entry.getValue(), entry.getKey() );
+			}
+		}
+		
 		private <T> void resetProperty( CssProperty<T> property, String key ){
-			T value = rule.getProperty( property.getType( CssScheme.this ), key );
+			T value;
+			if( rule == null ){
+				value = null;
+			}
+			else{
+				value = rule.getProperty( property.getType( CssScheme.this ), key );
+			}
 			property.set( value );
 		}
 		
@@ -426,9 +484,11 @@ public class CssScheme {
 		}
 		
 		private <T> void propertyAdded( String key, CssProperty<T> property ){
-			T value = rule.getProperty( property.getType( CssScheme.this ), key );
-			if( value != null ){
-				property.set( value );
+			if( rule != null ){
+				T value = rule.getProperty( property.getType( CssScheme.this ), key );
+				if( value != null ){
+					property.set( value );
+				}
 			}
 			if( properties.containsKey( key )){
 				throw new IllegalStateException( "property with name '" + key + "' already exists" );

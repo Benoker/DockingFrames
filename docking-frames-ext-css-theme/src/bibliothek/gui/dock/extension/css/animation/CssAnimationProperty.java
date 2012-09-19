@@ -42,6 +42,7 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 	private CssScheme scheme;
 	private CssItem item;
 	private String propertyKey;
+	private CssAnimation<T> currentAnimation;
 	
 	private AbstractContainerCssProperty<CssAnimation<T>> animation = new AbstractContainerCssProperty<CssAnimation<T>>(){
 		@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -53,11 +54,12 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 		
 		@Override
 		protected void propertyChanged( CssAnimation<T> value ){
-			if( value != null ){
+			if( value != null && value != currentAnimation ){
 				value.setType( CssAnimationProperty.this.getType( scheme ) );
 				value.setPropertyFilter( new PresetFilter<String>( propertyKey ) );
 				scheme.animate( item, value );
 			}
+			currentAnimation = value;
 		}
 	};
 	
@@ -84,5 +86,15 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 			return animation;
 		}
 		return null;
+	}
+	
+	@Override
+	protected void bind(){
+		// ignore
+	}
+	
+	@Override
+	protected void unbind(){
+		// ignore	
 	}
 }

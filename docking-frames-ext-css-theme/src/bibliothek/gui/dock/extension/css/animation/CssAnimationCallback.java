@@ -81,8 +81,8 @@ public interface CssAnimationCallback {
 	public <T> void setProperty( CssType<T> type, String key, T value );
 	
 	/**
-	 * Gets the value of some property, this is either the value of the last call to
-	 * {@link #setProperty(CssType, String, Object)} or the value from the root {@link CssRule}.
+	 * Gets the value of some property, the value from the last call to {@link #setProperty(CssType, String, Object)}
+	 * or from the root {@link CssRule} is returned.
 	 * @param type the expected type of the value
 	 * @param key the name of the property
 	 * @return the value of the property

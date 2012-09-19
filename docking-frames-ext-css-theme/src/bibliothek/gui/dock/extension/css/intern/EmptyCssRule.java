@@ -49,7 +49,7 @@ public class EmptyCssRule implements CssRule{
 	public CssSelector getSelector(){
 		return selector;
 	}
-
+	
 	@Override
 	public <T> T getProperty( CssType<T> type, String property ){
 		return null;

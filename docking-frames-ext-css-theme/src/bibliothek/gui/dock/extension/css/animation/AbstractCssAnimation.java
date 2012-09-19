@@ -70,6 +70,13 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		}
 		
 		@Override
+		public void propertiesChanged( CssRule source ){
+			for( AnimatedProperty<?> property : properties.values() ){
+				property.updateValues();
+			}
+		}
+		
+		@Override
 		public void propertyChanged( CssRule source, String key ){
 			AnimatedProperty<?> property = properties.get( key );
 			if( property != null ){
@@ -109,14 +116,19 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		String[] keys = callback.getPropertiesOfType( type );
 		for( String key : keys ){
 			if( propertyFilter == null || propertyFilter.includes( key )){
-				properties.put( key, new AnimatedProperty<T>( key, createProperty( type, key ), type ));
+				AnimatedProperty<T> property = new AnimatedProperty<T>( key, createProperty( type, key ), type );
+				properties.put( key, property );
+				property.stepNow();
+				
 			}
 		}
 	}
 	
 	@Override
-	public void step(){
-		time += 20;
+	public void step( int delay ){
+		if( delay != -1 ){
+			time += delay;
+		}
 		if( time > duration ){
 			for( AnimatedProperty<?> next : properties()){
 				next.end();
@@ -127,7 +139,7 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 			for( AnimatedProperty<?> next : properties()){
 				next.updateProgress( progress );
 			}
-			callback.step( 20 );
+			callback.step();
 		}
 	}
 	
@@ -137,8 +149,10 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 			Set<AnimatedProperty<?>> roots = new HashSet<AnimatedProperty<?>>();
 			roots.addAll( properties.values() );
 			for( AnimatedProperty<?> property : properties.values() ){
-				for( AnimatedProperty<?> next : property.observers.values() ){
-					roots.remove( next );
+				if( property.observers != null ){
+					for( AnimatedProperty<?> next : property.observers.values() ){
+						roots.remove( next );
+					}
 				}
 			}
 			Set<AnimatedProperty<?>> visited = new HashSet<AnimatedProperty<?>>();
@@ -147,9 +161,11 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 			while( !queue.isEmpty() ){
 				AnimatedProperty<?> head = queue.poll();
 				ordered.add( head );
-				for( AnimatedProperty<?> next : head.observers.values() ){
-					if( visited.add( next )){
-						queue.add( next );
+				if( head.observers != null ){
+					for( AnimatedProperty<?> next : head.observers.values() ){
+						if( visited.add( next )){
+							queue.add( next );
+						}
 					}
 				}
 			}
@@ -167,7 +183,7 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 			property.updateValues();
 		}
 		
-		callback.step( 20 );
+		callback.step();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -214,6 +230,7 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 			this.key = key;
 			this.property = property;
 			this.type = type;
+			property.setCallback( this );
 		}
 		
 		@Override
@@ -227,7 +244,9 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		
 		public void updateValues(){
 			property.setSource( source.getProperty( type, key ) );
-			property.setTarget( target.getProperty( type, key ) );
+			if( target != null ){
+				property.setTarget( target.getProperty( type, key ) );
+			}
 		}
 		
 		public void updateProgress( double progress ){
@@ -270,8 +289,10 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		@Override
 		public void set( S value ){
 			callback.setProperty( type, key, value );
-			for( AnimatedProperty<?> next : observers.values() ){
-				next.stepNow();
+			if( observers != null ){
+				for( AnimatedProperty<?> next : observers.values() ){
+					next.stepNow();
+				}
 			}
 		}
 
