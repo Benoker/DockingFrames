@@ -129,7 +129,7 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	}
 
 	@Override
-	public void step(){
+	public void step( int delay ){
 		update();
 	}
 	

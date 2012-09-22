@@ -106,7 +106,7 @@ public class AnimatedColorProperty implements AnimatedCssProperty<Color>{
 	}
 	
 	@Override
-	public void step(){
+	public void step( int delay ){
 		update();
 	}
 }

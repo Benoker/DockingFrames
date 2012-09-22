@@ -25,6 +25,11 @@
  */
 package bibliothek.gui.dock.extension.css;
 
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
+
 /**
  * A {@link CssProperty} is one property of a {@link CssItem}. A {@link CssProperty} itself
  * can have sub-properties, they are only active as long as this {@link CssProperty} is
@@ -40,7 +45,6 @@ public interface CssProperty<T> extends CssPropertyContainer {
 	/**
 	 * Sets the value of this property.
 	 * @param value the new value, can be <code>null</code>
-	 * @see #isHidden()
 	 */
 	public void set( T value );
 	
@@ -51,4 +55,29 @@ public interface CssProperty<T> extends CssPropertyContainer {
 	 * a <code>T</code>
 	 */
 	public CssType<T> getType( CssScheme scheme );
+	
+	/**
+	 * Tells whether the existence of this {@link CssProperty} depends on the value of the parent
+	 * {@link CssProperty}. A property is either static or dynamic, the difference comes
+	 * into play when an animation is active:
+	 * <ul>
+	 * 	<li>static: the value of the property directly depends on the current {@link CssRule}, and only
+	 *  the current {@link CssRule}.</li>
+	 *  <li>dynamic: if the {@link CssRule} changes this {@link CssProperty} gets removed, but while an
+	 *  animation is still running, the value of this property actually remains non-<code>null</code>
+	 *  and may even be changed according to the outdated {@link CssRule}.</li>
+	 * </ul> 
+	 * @return whether this property is replaced when the value of the parent {@link CssProperty} changes
+	 */
+	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+			description="Can this method be removed? Can it be replaced?")
+	public boolean isDynamic();
+	
+	/**
+	 * Called by <code>scheme</code> once it starts or stops monitoring this property.
+	 * @param scheme the scheme which is responsible for setting the value of this property, or <code>null</code>
+	 * @param key the key with which <code>scheme</code> will search for the value of this property, or <code>null</code>
+	 * @throws IllegalStateException if this method is called twice in a row with non-<code>null</code> arguments
+	 */
+	public void setScheme( CssScheme scheme, String key );
 }

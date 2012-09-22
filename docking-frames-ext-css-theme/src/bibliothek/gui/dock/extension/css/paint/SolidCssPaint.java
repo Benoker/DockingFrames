@@ -52,6 +52,11 @@ public class SolidCssPaint implements CssPaint{
 				component.repaint();
 			}
 		}
+		
+		@Override
+		public boolean isDynamic(){
+			return true;
+		}
 	};
 	
 	@Override

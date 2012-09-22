@@ -39,11 +39,51 @@ public class AnimationsTest {
 		scheme.add( item );
 		Assert.assertEquals( Color.BLACK, item.getColor() );
 		item.toWhite();
-		scheme.runAnimations( 500 );
+		scheme.runAnimations( 5000 );
 		Assert.assertFalse( Color.BLACK.equals( item.getColor() ) );
 		Assert.assertFalse( Color.WHITE.equals( item.getColor() ) );
-		scheme.runAnimations( 500 );
+		scheme.runAnimations( 5050 );
 		Assert.assertEquals( Color.WHITE, item.getColor() );
+	}
+	
+	@Test
+	public void overlappingAnimations(){
+		TestCssScheme scheme = TestCssRules.getAnimatedColorScheme();
+		TestItem item = new TestItem( scheme );
+		item.addAnimatedColorProperty();
+		item.toRed();
+		Assert.assertNull( item.getColor() );
+		scheme.add( item );
+		Assert.assertEquals( Color.RED, item.getColor() );
+		
+		item.toGreen();
+		scheme.runAnimations( 3000 );
+		
+		assertBetween( 150, 200, item.getColor().getRed() );
+		assertBetween( 50, 150, item.getColor().getGreen() );
+		Assert.assertEquals( 0, item.getColor().getBlue() );
+		
+		item.toBlue();
+		scheme.runAnimations( 3000 );
+		
+		assertBetween( 50, 200, item.getColor().getRed() );
+		assertBetween( 50, 200, item.getColor().getGreen() );
+		assertBetween( 50, 150, item.getColor().getBlue() );
+		
+		scheme.runAnimations( 4000 );
+		
+		Assert.assertEquals( 0, item.getColor().getRed() );
+		assertBetween( 50, 150, item.getColor().getGreen() );
+		assertBetween( 100, 200, item.getColor().getBlue() );
+		
+		scheme.runAnimations( 3100 );
+		
+		Assert.assertEquals( Color.BLUE, item.getColor() );
+	}
+	
+	private void assertBetween( int min, int max, int actual ){
+		Assert.assertTrue( min + " <= " + actual,  min <= actual );
+		Assert.assertTrue( max + " >= " + actual, max >= actual );
 	}
 	
 	private class TestItem extends DefaultCssItem{
@@ -56,14 +96,28 @@ public class AnimationsTest {
 		} 
 		
 		public void toWhite(){
-			DefaultCssNode node =  new DefaultCssNode( "base" );
-			node.setIdentifier( "white" );
-			setPath( new DefaultCssPath( node ) );
+			to( "white" );
 		}
 		
 		public void toBlack(){
+			to( "black" );
+		}
+		
+		public void toRed(){
+			to( "red" );
+		}
+		
+		public void toGreen(){
+			to( "green" );
+		}
+		
+		public void toBlue(){
+			to( "blue" );
+		}
+		
+		private void to( String color ){
 			DefaultCssNode node =  new DefaultCssNode( "base" );
-			node.setIdentifier( "black" );
+			node.setIdentifier( color );
 			setPath( new DefaultCssPath( node ) );
 		}
 		
@@ -72,7 +126,7 @@ public class AnimationsTest {
 		}
 		
 		public void addAnimatedColorProperty(){
-			putProperty( "color", new ColorAnimationProperty( scheme, this, "color" ){
+			putProperty( "color", new ColorAnimationProperty( scheme, this ){
 				@Override
 				public void set( Color value ){
 					System.out.println( "color: " + value.getRed() + " " + value.getGreen() + " " + value.getBlue());

@@ -39,7 +39,10 @@ import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationSchedulable;
+import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationScheduler;
 import bibliothek.gui.dock.extension.css.property.AbstractCssPropertyContainer;
+import bibliothek.gui.dock.extension.css.property.IntegerCssProperty;
 import bibliothek.util.Filter;
 
 /**
@@ -55,13 +58,30 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 	private CssRule target;
 	private Filter<String> propertyFilter;
 	
-	private int duration = 1000;
+	private int duration = 500;
 	private int time = 0;
 	
 	private Map<String, AnimatedProperty<?>> properties = new HashMap<String, AnimatedProperty<?>>();
 	private List<AnimatedProperty<?>> ordered = null;
 	
 	private CssType<T> type;
+	
+	private IntegerCssProperty durationProperty = new IntegerCssProperty(){
+		@Override
+		public void set( Integer value ){
+			if( value == null ){
+				duration = 500;
+			}
+			else{
+				duration = value;
+			}
+		}
+		
+		@Override
+		public boolean isDynamic(){
+			return true;
+		}
+	};
 	
 	private CssRuleListener listener = new CssRuleListener(){
 		@Override
@@ -95,11 +115,16 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 	
 	@Override
 	public String[] getPropertyKeys(){
-		return new String[]{};
+		return new String[]{
+				"duration"
+		};
 	}
 
 	@Override
 	public CssProperty<?> getProperty( String key ){
+		if( "duration".equals( key )){
+			return durationProperty;
+		}
 		return null;
 	}
 	
@@ -119,7 +144,6 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 				AnimatedProperty<T> property = new AnimatedProperty<T>( key, createProperty( type, key ), type );
 				properties.put( key, property );
 				property.stepNow();
-				
 			}
 		}
 	}
@@ -217,7 +241,14 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 	 */
 	protected abstract <S> AnimatedCssProperty<S> createSubProperty( CssType<S> type, String key );
 	
-	private class AnimatedProperty<S> implements AnimatedCssPropertyCallback<S>{
+	/**
+	 * A wrapper around an {@link AnimatedCssProperty}, knows which other properties are required
+	 * for the {@link AnimatedCssProperty} (the dependencies), and automatically updates the
+	 * list of dependencies by creating sub- {@link AnimatedProperty}s.
+	 * @author Benjamin Sigg
+	 * @param <S> the kind of object handled by the wrapped {@link AnimatedCssProperty} 
+	 */
+	private class AnimatedProperty<S> implements AnimatedCssPropertyCallback<S>, AnimationSchedulable{
 		private AnimatedCssProperty<S> property;
 		
 		private Map<String, AnimatedProperty<?>> observers;
@@ -334,20 +365,23 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 			}
 		}
 		
+		@Override
+		public void step( AnimationScheduler scheduler, int delay ){
+			property.step( delay );
+		}
+		
 		private void stepNow(){
-			property.step();
+			property.step( -1 );
 		}
 
 		@Override
 		public void step(){
-			// TODO Auto-generated method stub
-			
+			getScheme().getScheduler().step( this );
 		}
 
 		@Override
 		public void step( int delay ){
-			// TODO Auto-generated method stub
-			
+			getScheme().getScheduler().step( this, delay );
 		}
 	}
 }

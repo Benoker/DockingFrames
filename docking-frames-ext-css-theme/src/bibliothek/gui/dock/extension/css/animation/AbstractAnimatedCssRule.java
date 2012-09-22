@@ -48,6 +48,9 @@ public abstract class AbstractAnimatedCssRule implements AnimatedCssRule{
 	/** the predecessor animation */
 	private AnimatedCssRule previous;
 	
+	/** jobs to execute on destruction */
+	private List<Runnable> jobs = new ArrayList<Runnable>();
+	
 	@Override
 	public void inserted( RuleChainLink link ){
 		if( this.link != null ){
@@ -114,11 +117,22 @@ public abstract class AbstractAnimatedCssRule implements AnimatedCssRule{
 		}
 	}
 	
+	@Override
+	public void onDestroyed( Runnable job ){
+		if( job == null ){
+			throw new IllegalArgumentException( "job must not be null" );
+		}
+		jobs.add( job );	
+	}
+	
 	private class Listener implements RuleChainLinkListener{
 		@Override
 		public void removed( RuleChainLink source ){
 			link.removeListener( this );
 			setPrevious( null );
+			for( Runnable job : jobs ){
+				job.run();
+			}
 		}
 		
 		@Override

@@ -23,39 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.animation;
+package bibliothek.gui.dock.extension.css.type;
 
+import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
+import bibliothek.gui.dock.extension.css.animation.types.AnimatedIntegerProperty;
 
 /**
- * A {@link AnimatedCssProperty} that does not perform any kind of animation.
+ * Converter for reading {@link String}s and creating {@link Integer}s.
  * @author Benjamin Sigg
- * @param <T> the type of value "animated" by this "animation"
  */
-public class NotAnimatedCssProperty<T> implements AnimatedCssProperty<T>{
-	private AnimatedCssPropertyCallback<T> callback;
-	
+public class IntegerType implements CssType<Integer>{
 	@Override
-	public void setCallback( AnimatedCssPropertyCallback<T> callback ){
-		this.callback = callback;
+	public Integer convert( String value ){
+		try{
+			return Integer.valueOf( value );
+		}
+		catch( NumberFormatException ex ){
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
-	public void setSource( T source ){
-		callback.set( source );
-	}
-
-	@Override
-	public void setTarget( T target ){
-		// ignore
-	}
-
-	@Override
-	public void setTransition( double transition ){
-		// ignore
-	}
-
-	@Override
-	public void step( int delay ){
-		// ignore
+	public AnimatedCssProperty<Integer> createAnimation(){
+		return new AnimatedIntegerProperty();
 	}
 }

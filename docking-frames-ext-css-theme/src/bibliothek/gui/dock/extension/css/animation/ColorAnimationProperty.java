@@ -40,10 +40,9 @@ public abstract class ColorAnimationProperty extends CssAnimationProperty<Color>
 	 * Creates the new property.
 	 * @param scheme the scheme in whose realm this property will work
 	 * @param item the item to which this property belongs
-	 * @param propertyKey the name of this property
 	 */
-	public ColorAnimationProperty( CssScheme scheme, CssItem item, String propertyKey ){
-		super( scheme, item, propertyKey );
+	public ColorAnimationProperty( CssScheme scheme, CssItem item ){
+		super( scheme, item );
 	}
 
 	@Override

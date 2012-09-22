@@ -23,39 +23,60 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.animation;
+package bibliothek.gui.dock.extension.css.animation.types;
 
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
+import bibliothek.gui.dock.extension.css.animation.AnimatedCssPropertyCallback;
 
 /**
- * A {@link AnimatedCssProperty} that does not perform any kind of animation.
+ * Animated property blending one {@link Integer} into another {@link Integer}.
  * @author Benjamin Sigg
- * @param <T> the type of value "animated" by this "animation"
  */
-public class NotAnimatedCssProperty<T> implements AnimatedCssProperty<T>{
-	private AnimatedCssPropertyCallback<T> callback;
+public class AnimatedIntegerProperty implements AnimatedCssProperty<Integer>{
+	private int source = 0;
+	private int target = 0;
+	private double transition;
+	private AnimatedCssPropertyCallback<Integer> callback;
 	
 	@Override
-	public void setCallback( AnimatedCssPropertyCallback<T> callback ){
+	public void setCallback( AnimatedCssPropertyCallback<Integer> callback ){
 		this.callback = callback;
 	}
 
 	@Override
-	public void setSource( T source ){
-		callback.set( source );
+	public void setSource( Integer source ){
+		if( source == null ){
+			this.source = 0;
+		}
+		else{
+			this.source = source;
+		}
+		update();
 	}
 
 	@Override
-	public void setTarget( T target ){
-		// ignore
+	public void setTarget( Integer target ){
+		if( target == null ){
+			this.target = 0;
+		}
+		else{
+			this.target = target;
+		}
+		update();
 	}
 
 	@Override
 	public void setTransition( double transition ){
-		// ignore
+		this.transition = transition;
+		update();
 	}
 
 	@Override
 	public void step( int delay ){
-		// ignore
+		update();
+	}
+
+	private void update(){
+		callback.set( (int)( source * (1-transition) + target * transition ) );
 	}
 }

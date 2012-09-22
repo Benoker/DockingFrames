@@ -53,7 +53,21 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 		}
 		
 		@Override
+		public void setScheme( CssScheme scheme, String key ){
+			// ignore
+		}
+		
+		@Override
+		public boolean isDynamic(){
+			return CssAnimationProperty.this.isDynamic();
+		}
+		
+		@Override
 		protected void propertyChanged( CssAnimation<T> value ){
+			if( propertyKey == null && value != null ){
+				throw new IllegalStateException( "the value of this property is set, but the property is not yet in use" );
+			}
+			
 			if( value != null && value != currentAnimation ){
 				value.setType( CssAnimationProperty.this.getType( scheme ) );
 				value.setPropertyFilter( new PresetFilter<String>( propertyKey ) );
@@ -67,12 +81,23 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 	 * Creates a new animation property
 	 * @param scheme the scheme which managed the animations
 	 * @param item the item that is animated
-	 * @param propertyKey the name of the property that should be animated
 	 */
-	public CssAnimationProperty( CssScheme scheme, CssItem item, String propertyKey ){
+	public CssAnimationProperty( CssScheme scheme, CssItem item ){
 		this.scheme = scheme;
 		this.item = item;
-		this.propertyKey = propertyKey;
+	}
+	
+	@Override
+	public void setScheme( CssScheme scheme, String key ){
+		if( propertyKey != null && key != null ){	
+			throw new IllegalStateException( "this property is already in use, it cannot be used at two places at the same time" );
+		}
+		this.propertyKey = key;
+	}
+	
+	@Override
+	public boolean isDynamic(){
+		return false;
 	}
 	
 	@Override

@@ -38,4 +38,14 @@ public abstract class ShapeCssProperty extends AbstractContainerCssProperty<CssS
 	public CssType<CssShape> getType( CssScheme scheme ){
 		return scheme.getConverter( CssShape.class );
 	}
+	
+	@Override
+	public void setScheme( CssScheme scheme, String key ){
+		// ignore
+	}
+	
+	@Override
+	public boolean isDynamic(){
+		return false;
+	}
 }

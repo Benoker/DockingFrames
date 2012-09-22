@@ -23,39 +23,24 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.animation;
+package bibliothek.gui.dock.extension.css.property;
 
+import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssScheme;
+import bibliothek.gui.dock.extension.css.CssType;
 
 /**
- * A {@link AnimatedCssProperty} that does not perform any kind of animation.
+ * A property for reading {@link Integer}s.
  * @author Benjamin Sigg
- * @param <T> the type of value "animated" by this "animation"
  */
-public class NotAnimatedCssProperty<T> implements AnimatedCssProperty<T>{
-	private AnimatedCssPropertyCallback<T> callback;
-	
+public abstract class IntegerCssProperty extends SimpleCssPropertyContainer implements CssProperty<Integer>{
 	@Override
-	public void setCallback( AnimatedCssPropertyCallback<T> callback ){
-		this.callback = callback;
+	public CssType<Integer> getType( CssScheme scheme ){
+		return scheme.getConverter( Integer.class );
 	}
 
 	@Override
-	public void setSource( T source ){
-		callback.set( source );
-	}
-
-	@Override
-	public void setTarget( T target ){
-		// ignore
-	}
-
-	@Override
-	public void setTransition( double transition ){
-		// ignore
-	}
-
-	@Override
-	public void step( int delay ){
+	public void setScheme( CssScheme scheme, String key ){
 		// ignore
 	}
 }

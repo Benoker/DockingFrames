@@ -43,12 +43,14 @@ import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationScheduler;
 import bibliothek.gui.dock.extension.css.animation.scheduler.DefaultAnimationScheduler;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.CssPathListener;
+import bibliothek.gui.dock.extension.css.scheme.MatchedCssRule;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
 import bibliothek.gui.dock.extension.css.type.ColorType;
 import bibliothek.gui.dock.extension.css.type.CssAnimationType;
 import bibliothek.gui.dock.extension.css.type.CssPaintType;
 import bibliothek.gui.dock.extension.css.type.CssShapeType;
+import bibliothek.gui.dock.extension.css.type.IntegerType;
 
 /**
  * Represents the contents of some css files. It is a map allowing 
@@ -56,8 +58,7 @@ import bibliothek.gui.dock.extension.css.type.CssShapeType;
  * @author Benjamin Sigg
  */
 public class CssScheme {
-	/** The separator to combine keys of {@link CssProperty}s to longer keys */
-	private static final String SEPARATOR = "-";
+	private final Object RULES_LOCK = new Object();
 	
 	private List<CssRule> rules = new ArrayList<CssRule>();
 	
@@ -99,6 +100,7 @@ public class CssScheme {
 		setConverter( Color.class, new ColorType() );
 		setConverter( CssPaint.class, new CssPaintType() );
 		setConverter( CssShape.class, new CssShapeType() );
+		setConverter( Integer.class, new IntegerType() );
 		types.put( CssAnimation.class, new CssAnimationType() );
 	}
 	
@@ -163,7 +165,6 @@ public class CssScheme {
 		Match match = new Match( item );
 		items.put( item, match );
 		
-		match.install();
 		match.searchRule();
 	}
 	
@@ -186,13 +187,15 @@ public class CssScheme {
 	 * @return the rule or <code>null</code> if nothing was found
 	 */
 	public CssRule search( CssItem item ){
-		ensureRulesSorted();
-		for( CssRule rule : rules ){
-			if( rule.getSelector().matches( item.getPath() )){
-				return rule;
+		synchronized( RULES_LOCK ){
+			ensureRulesSorted();
+			for( CssRule rule : rules ){
+				if( rule.getSelector().matches( item.getPath() )){
+					return rule;
+				}
 			}
+			return null;
 		}
-		return null;
 	}
 	
 	/**
@@ -204,7 +207,9 @@ public class CssScheme {
 		if( rule == null ){
 			throw new IllegalArgumentException( "rule must not be null" );
 		}
-		rules.add( rule );
+		synchronized( RULES_LOCK ){
+			rules.add( rule );
+		}
 		rulesAreSorted = false;
 		rule.addRuleListener( selectorChangedListener );
 		rematch();
@@ -216,7 +221,9 @@ public class CssScheme {
 	 * @param rule the rule to remove
 	 */
 	public void removeRule( CssRule rule ){
-		rules.remove( rule );
+		synchronized( RULES_LOCK ){
+			rules.remove( rule );
+		}
 		rule.removeRuleListener( selectorChangedListener );
 		rulesAreSorted = false;
 		rematch();
@@ -230,7 +237,9 @@ public class CssScheme {
 		for( CssRule rule : this.rules ){
 			rule.removeRuleListener( selectorChangedListener );
 		}
-		this.rules.clear();
+		synchronized( RULES_LOCK ){
+			this.rules.clear();
+		}
 		addRules( rules );
 	}
 	
@@ -240,7 +249,9 @@ public class CssScheme {
 	 */
 	public void addRules( Collection<CssRule> rules ){
 		for( CssRule rule : rules ){
-			this.rules.add( rule );
+			synchronized( RULES_LOCK ){
+				this.rules.add( rule );
+			}
 			rule.addRuleListener( selectorChangedListener );
 		}
 		rulesAreSorted = false;
@@ -276,11 +287,13 @@ public class CssScheme {
 	
 	private void ensureRulesSorted(){
 		if( !rulesAreSorted ){
-			Collections.sort( rules, new Comparator<CssRule>(){
-				public int compare( CssRule a, CssRule b){
-					return a.getSelector().getSpecificity().compareTo( b.getSelector().getSpecificity() );
-				}
-			} );
+			synchronized( RULES_LOCK ){
+				Collections.sort( rules, new Comparator<CssRule>(){
+					public int compare( CssRule a, CssRule b){
+						return a.getSelector().getSpecificity().compareTo( b.getSelector().getSpecificity() );
+					}
+				} );
+			}
 			rulesAreSorted = true;
 		}
 	}
@@ -339,12 +352,13 @@ public class CssScheme {
 	 * class ensures the transfer of the values from the rule ot the item.
 	 * @author Benjamin Sigg
 	 */
-	private class Match implements CssItemListener, CssPathListener, CssRuleListener, CssPropertyContainerListener{
+	private class Match implements CssItemListener, CssPathListener{
 		private AnimatedCssRuleChain chain;
 		private AnimatedCssRule rule;
 		private CssItem item;
 		private CssPath path;
-		private Map<String, CssProperty<?>> properties = new HashMap<String, CssProperty<?>>();
+		
+		private MatchedCssRule currentMatch;
 		
 		/**
 		 * Creates a new match
@@ -361,7 +375,7 @@ public class CssScheme {
 		public void destroy(){
 			item.removeItemListener( this );
 			item.getPath().removePathListener( this );
-			uninstall();
+			chain.destroy();
 		}
 		
 		private void searchRule(){
@@ -385,72 +399,16 @@ public class CssScheme {
 		}
 		
 		private void replaceRule( AnimatedCssRule nextRule ){
-			if( rule != null ){
-				rule.removeRuleListener( this );
+			boolean firstRule = currentMatch == null;
+			
+			if( currentMatch != null ){
+				currentMatch.outdate();
 			}
 			rule = nextRule;
-			if( rule != null ){
-				rule.addRuleListener( this );
-			}
 			
-			String[] keys = properties.keySet().toArray( new String[ properties.size() ] );
-			for( String key : keys ){
-				CssProperty<?> property = properties.get( key );
-				if( property != null ){
-					resetProperty( property, key );
-				}
-			}
-		}
-		
-		private void uninstall(){
-			item.removePropertyContainerListener( this );
-			if( rule != null ){
-				rule.removeRuleListener( this );
-			}
-			for( String key : item.getPropertyKeys()){
-				propertyRemoved( key, item.getProperty( key ) );
-			}
-		}
-		
-		private void install(){
-			item.addPropertyContainerListener( this );
-			if( rule != null ){
-				rule.addRuleListener( this );
-			}
-			for( String key : item.getPropertyKeys()){
-				propertyAdded( key, item.getProperty( key ) );
-			}			
-		}
-		
-		@Override
-		public void propertyChanged( CssRule source, String key ){
-			CssProperty<?> sink = properties.get( key );
-			if( sink != null ){
-				resetProperty( sink, key );
-			}
-		}
-		
-		@Override
-		public void propertiesChanged( CssRule source ){
-			for( Map.Entry<String, CssProperty<?>> entry : properties.entrySet() ){
-				resetProperty( entry.getValue(), entry.getKey() );
-			}
-		}
-		
-		private <T> void resetProperty( CssProperty<T> property, String key ){
-			T value;
-			if( rule == null ){
-				value = null;
-			}
-			else{
-				value = rule.getProperty( property.getType( CssScheme.this ), key );
-			}
-			property.set( value );
-		}
-		
-		@Override
-		public void selectorChanged( CssRule source ){
-			// ignore	
+			currentMatch = new MatchedCssRule( CssScheme.this, item, nextRule );
+			rule.onDestroyed( new Destroy( currentMatch ) );
+			currentMatch.install( firstRule );
 		}
 		
 		@Override
@@ -465,56 +423,18 @@ public class CssScheme {
 		public void pathChanged( CssPath path ){
 			searchRule();	
 		}
+	}
+	
+	private static class Destroy implements Runnable{
+		private MatchedCssRule rule;
 		
-		private String combinedKey( CssPropertyContainer container, String key ){
-			for( Map.Entry<String, CssProperty<?>> entry : properties.entrySet() ){
-				if( entry.getValue() == container ){
-					return entry.getKey() + SEPARATOR + key;
-				}
-			}
-			return key;
+		public Destroy( MatchedCssRule rule ){
+			this.rule = rule;
 		}
 		
 		@Override
-		public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property ){
-			if( rule != null ){
-				key = combinedKey( source, key );
-				propertyAdded( key, property );
-			}
-		}
-		
-		private <T> void propertyAdded( String key, CssProperty<T> property ){
-			if( rule != null ){
-				T value = rule.getProperty( property.getType( CssScheme.this ), key );
-				if( value != null ){
-					property.set( value );
-				}
-			}
-			if( properties.containsKey( key )){
-				throw new IllegalStateException( "property with name '" + key + "' already exists" );
-			}
-			properties.put( key, property );
-			property.addPropertyContainerListener( this );
-			for( String name : property.getPropertyKeys() ){
-				propertyAdded( key + SEPARATOR + name, property.getProperty( name ) );
-			}
-		}
-		
-		@Override
-		public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property ){
-			if( rule != null ){
-				key = combinedKey( source, key );
-				propertyRemoved( key, property );
-			}
-		}
-		
-		private void propertyRemoved( String key, CssProperty<?> property ){
-			property.removePropertyContainerListener( this );
-			for( String name : property.getPropertyKeys() ){
-				propertyRemoved( key + SEPARATOR + name, property.getProperty( name ) );
-			}
-			properties.remove( key );
-			property.set( null );
+		public void run(){
+			rule.destroy();
 		}
 	}
 }

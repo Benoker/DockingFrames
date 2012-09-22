@@ -61,6 +61,8 @@ public interface AnimatedCssProperty<T> {
 	/**
 	 * Tells this property to check its value, and maybe call {@link AnimatedCssPropertyCallback#set(Object)}
 	 * if the value changed.
+	 * @param delay the delay since the last call to this method or <code>-1</code> if the call is either out of
+	 * order or the call was not scheduled
 	 */
-	public void step();
+	public void step( int delay );
 }

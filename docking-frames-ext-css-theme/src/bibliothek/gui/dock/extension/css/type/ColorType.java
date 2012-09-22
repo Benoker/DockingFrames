@@ -63,6 +63,24 @@ public class ColorType implements CssType<Color>{
 		return null;
 	}
 	
+	/**
+	 * The reverse operation of {@link #convert(String)} creates a value- {@link String} out
+	 * of a {@link Color}.
+	 * @param color the color to convert
+	 * @return the value string matching to <code>color</code>
+	 */
+	public static String convert( Color color ){
+		return "#" + toHex( color.getRed() ) + toHex( color.getGreen() ) + toHex( color.getBlue() );
+	}
+	
+	private static String toHex( int value ){
+		String result = Integer.toHexString( value );
+		if( result.length() == 1 ){
+			result = "0" + result;
+		}
+		return result;
+	}
+	
 	@Override
 	public AnimatedCssProperty<Color> createAnimation(){
 		return new AnimatedColorProperty();

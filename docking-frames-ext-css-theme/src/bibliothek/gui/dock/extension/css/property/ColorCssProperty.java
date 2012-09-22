@@ -42,4 +42,14 @@ public abstract class ColorCssProperty extends SimpleCssPropertyContainer implem
 	public CssType<Color> getType( CssScheme scheme ){
 		return scheme.getConverter( Color.class );
 	}
+	
+	@Override
+	public void setScheme( CssScheme scheme, String key ){
+		// ignore	
+	}
+	
+	@Override
+	public boolean isDynamic(){
+		return false;
+	}
 }

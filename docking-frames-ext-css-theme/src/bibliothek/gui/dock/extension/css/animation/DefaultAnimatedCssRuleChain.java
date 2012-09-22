@@ -90,6 +90,15 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 	public CssScheme getScheme(){
 		return scheme;
 	}
+	
+	@Override
+	public void destroy(){
+		Link link = head;
+		while( link != null ){
+			link.destroy();
+			link = link.getNext();
+		}
+	}
 
 	/**
 	 * Creates a new {@link AnimatedCssRule} which takes its default properties from <code>root</code>.
@@ -117,7 +126,7 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 		}
 
 		@Override
-		public RuleChainLink getPrevious(){
+		public Link getPrevious(){
 			return previous;
 		}
 		
@@ -130,7 +139,7 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 		}
 
 		@Override
-		public RuleChainLink getNext(){
+		public Link getNext(){
 			return next;
 		}
 		
@@ -154,7 +163,13 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 				// if there is a transition there are at least two links in the chain.
 				throw new IllegalStateException( "the only link in the chain cannot remove itself" );
 			}
-			
+			destroy();
+		}
+		
+		/**
+		 * Removes this link from the chain without any further validity checks.
+		 */
+		public void destroy(){
 			if( next != null ){
 				next.setPrevious( previous );
 			}

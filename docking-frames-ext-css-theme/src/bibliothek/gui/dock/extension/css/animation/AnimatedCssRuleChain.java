@@ -62,5 +62,10 @@ public interface AnimatedCssRuleChain {
 	 * Gets the scheme in whose realm this chain works.
 	 * @return the scheme, not <code>null</code>
 	 */
-	public CssScheme getScheme();	
+	public CssScheme getScheme();
+	
+	/**
+	 * Releases all resources this chain acquired and stops any animation right now.
+	 */
+	public void destroy();
 }

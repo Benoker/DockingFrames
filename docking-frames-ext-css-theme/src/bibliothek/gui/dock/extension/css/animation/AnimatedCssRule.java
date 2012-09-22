@@ -79,4 +79,10 @@ public interface AnimatedCssRule extends CssRule{
 	 * @param root the next root rule, may be <code>null</code>
 	 */
 	public void transition( CssRule root );
+	
+	/**
+	 * Executes <code>job</code> once this {@link AnimatedCssRule} no longer is active.
+	 * @param job the job to execute, not <code>null</code>
+	 */
+	public void onDestroyed( Runnable job );
 }

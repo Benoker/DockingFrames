@@ -91,7 +91,7 @@ public class CssDockTitle extends AbstractDockTitle{
 		
 		item = new DefaultCssItem( selfPath );
 		
-		item.putProperty( "background", new CssPaintAnimationProperty( css, item, "background" ){
+		item.putProperty( "background", new CssPaintAnimationProperty( css, item ){
 			@Override
 			public void set( CssPaint value ){
 				background = value;
