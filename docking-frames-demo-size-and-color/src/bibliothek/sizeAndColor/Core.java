@@ -57,7 +57,7 @@ import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
  */
 public class Core implements Demonstration{
     public static void main( String[] args ) {
-        Core core = new Core();
+    	Core core = new Core();
         core.startup( null );
     }
     

@@ -831,6 +831,7 @@
  - Bugfix: When removing a Dockable from a column of a WizardSplitDockStation, the column kept its current size *including* the size of the Span
  - Bugfix: Moving a Dockable from one column of a WizardSplitDockStation to another now updates the size of the column from which the Dockable was removed.
  - Bugfix: Layout of ToolbarGroupDockStation could not be properly saved. 
+ - Bugfix: GlassedPane does no longer re-send a MouseEvent that it already has sent. This could happen if a MouseListener was added to a JFrame, but the MouseListener did not consume the MouseEvent.
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

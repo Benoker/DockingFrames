@@ -46,10 +46,6 @@ import javax.swing.SwingUtilities;
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
@@ -80,6 +76,9 @@ public class GlassedPane extends JPanel{
     private JComponent glassPane = new GlassPane();
     /** A controller which will be informed about every click of the mouse */
     private DockController controller;
+    
+    /** whether a {@link MouseEvent} is forwarded right now */
+    private boolean onSending = false;
     
     /** the strategy used to manage tooltips */
     private PropertyValue<TooltipStrategy> tooltips = new PropertyValue<TooltipStrategy>( TOOLTIP_STRATEGY ){
@@ -192,7 +191,7 @@ public class GlassedPane extends JPanel{
         private Component over;
         /** the number of pressed buttons */
         private int downCount = 0;
-
+        
         /** callback forwarded to the current {@link TooltipStrategy} of {@link GlassedPane#tooltips} */
         private TooltipStrategyCallback callback = new TooltipStrategyCallback(){
 			public void setToolTipText( String text ){
@@ -286,6 +285,18 @@ public class GlassedPane extends JPanel{
          * @param id the type of the event
          */
         private void send( MouseEvent e, int id ){
+        	if( !onSending ){
+        		try{
+        			onSending = true;
+        			sendNow( e, id );
+        		}
+        		finally{
+        			onSending = false;
+        		}
+        	}
+        }
+        
+        private void sendNow( MouseEvent e, int id ){
         	if( contentPane == null ){
         		return;
         	}
@@ -336,18 +347,20 @@ public class GlassedPane extends JPanel{
                 if( over != component ){
                 	overNewComponent = true;
                     if( over != null ){
+                    	Point overMouse = SwingUtilities.convertPoint( component, mouse, over );
                         over.dispatchEvent( new MouseEvent( 
                                 over, MouseEvent.MOUSE_EXITED, e.getWhen(), e.getModifiers(), 
-                                mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
+                                overMouse.x, overMouse.y, e.getClickCount(), e.isPopupTrigger(), 
                                 e.getButton() ));
                     }
 
                     over = component;
 
                     if( over != null ){
+                    	Point overMouse = SwingUtilities.convertPoint( component, mouse, over );
                         over.dispatchEvent( new MouseEvent( 
                                 over, MouseEvent.MOUSE_ENTERED, e.getWhen(), e.getModifiers(), 
-                                mouse.x, mouse.y, e.getClickCount(), e.isPopupTrigger(), 
+                                overMouse.x, overMouse.y, e.getClickCount(), e.isPopupTrigger(), 
                                 e.getButton() ));
                     }
                 }
