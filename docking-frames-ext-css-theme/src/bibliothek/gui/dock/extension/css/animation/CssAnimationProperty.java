@@ -27,6 +27,7 @@ package bibliothek.gui.dock.extension.css.animation;
 
 import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.property.AbstractContainerCssProperty;
@@ -41,7 +42,7 @@ import bibliothek.util.filter.PresetFilter;
 public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContainer implements CssProperty<T>{
 	private CssScheme scheme;
 	private CssItem item;
-	private String propertyKey;
+	private CssPropertyKey propertyKey;
 	private CssAnimation<T> currentAnimation;
 	
 	private AbstractContainerCssProperty<CssAnimation<T>> animation = new AbstractContainerCssProperty<CssAnimation<T>>(){
@@ -53,13 +54,8 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 		}
 		
 		@Override
-		public void setScheme( CssScheme scheme, String key ){
+		public void setScheme( CssScheme scheme, CssPropertyKey key ){
 			// ignore
-		}
-		
-		@Override
-		public boolean isDynamic(){
-			return CssAnimationProperty.this.isDynamic();
 		}
 		
 		@Override
@@ -70,7 +66,7 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 			
 			if( value != null && value != currentAnimation ){
 				value.setType( CssAnimationProperty.this.getType( scheme ) );
-				value.setPropertyFilter( new PresetFilter<String>( propertyKey ) );
+				value.setPropertyFilter( new PresetFilter<CssPropertyKey>( propertyKey ) );
 				scheme.animate( item, value );
 			}
 			currentAnimation = value;
@@ -88,16 +84,11 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 	}
 	
 	@Override
-	public void setScheme( CssScheme scheme, String key ){
+	public void setScheme( CssScheme scheme, CssPropertyKey key ){
 		if( propertyKey != null && key != null ){	
 			throw new IllegalStateException( "this property is already in use, it cannot be used at two places at the same time" );
 		}
 		this.propertyKey = key;
-	}
-	
-	@Override
-	public boolean isDynamic(){
-		return false;
 	}
 	
 	@Override

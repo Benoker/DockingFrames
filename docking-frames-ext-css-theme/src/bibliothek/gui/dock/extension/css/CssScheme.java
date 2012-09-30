@@ -79,7 +79,7 @@ public class CssScheme {
 		}
 		
 		@Override
-		public void propertyChanged( CssRule source, String key ){
+		public void propertyChanged( CssRule source, CssPropertyKey key ){
 			// ignore
 		}
 		

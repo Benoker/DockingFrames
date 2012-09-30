@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.extension.css.animation;
 
+import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 
 /**
@@ -62,7 +64,16 @@ public interface AnimatedCssRule extends CssRule{
 	 * @param property the name of a property
 	 * @return whether <code>property</code> is animated.
 	 */
-	public boolean isAnimated( String property );
+	public boolean isAnimated( CssPropertyKey property );
+	
+	/**
+	 * Tells whether the property with name <code>property</code> is required as input value for the animations. 
+	 * {@link CssProperty}s matching this method are not removed when the {@link CssRule} changes, instead they
+	 * continue to be used until the animations end.
+	 * @param property the name of a property
+	 * @return whehter <code>property</code> declares an input value
+	 */
+	public boolean isInput( CssPropertyKey property );
 	
 	/**
 	 * Starts an additional animation on this rule. {@link CssAnimation#init(CssRule, CssAnimationCallback)} should

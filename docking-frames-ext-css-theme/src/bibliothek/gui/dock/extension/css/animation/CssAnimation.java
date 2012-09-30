@@ -25,7 +25,9 @@
  */
 package bibliothek.gui.dock.extension.css.animation;
 
+import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.util.Filter;
@@ -65,13 +67,22 @@ public interface CssAnimation<T> extends CssPropertyContainer{
 	 * Sets a filter telling this animation which properties should actually be animated, and which not. 
 	 * @param propertyFilter the filter, only properties passing the filter should be animated, can be <code>null</code>
 	 */
-	public void setPropertyFilter( Filter<String> propertyFilter );
+	public void setPropertyFilter( Filter<CssPropertyKey> propertyFilter );
 	
 	/**
 	 * Informs this animation about the type of the properties is should handle.
 	 * @param type the type of the properties
 	 */
 	public void setType( CssType<T> type );
+	
+	/**
+	 * Tells whether <code>property</code> is declaring input values for the animation. The 
+	 * <code>property</code> may be a child of this {@link CssPropertyContainer}, or a child of one
+	 * of the {@link CssProperty}s returned by this container.
+	 * @param property the name of the property to check
+	 * @return whether this animation depends on <code>property</code>
+	 */
+	public boolean isInput( CssPropertyKey property );
 	
 	/**
 	 * Initializes this animation.

@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.extension.css.intern;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssSelector;
@@ -51,7 +52,7 @@ public class EmptyCssRule implements CssRule{
 	}
 	
 	@Override
-	public <T> T getProperty( CssType<T> type, String property ){
+	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
 		return null;
 	}
 

@@ -11,6 +11,8 @@ import org.junit.Test;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.DefaultCssItem;
 import bibliothek.gui.dock.extension.css.animation.ColorAnimationProperty;
+import bibliothek.gui.dock.extension.css.intern.range.Range;
+import bibliothek.gui.dock.extension.css.intern.range.RangeAnimationProperty;
 import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
 import bibliothek.gui.dock.extension.css.property.ColorCssProperty;
@@ -81,6 +83,25 @@ public class AnimationsTest {
 		Assert.assertEquals( Color.BLUE, item.getColor() );
 	}
 	
+	@Test
+	public void dependingProperties(){
+		TestCssScheme scheme = TestCssRules.getAnimatedRangeScheme();
+		TestItem item = new TestItem( scheme );
+		item.addAnimatedRangeProperty();
+		item.to( "alpha" );
+		Assert.assertNull( item.getRange() );
+		scheme.add( item );
+		Assert.assertEquals( new Range( "alpha", 0, 0 ), item.getRange() );
+		
+		item.to( "delta" );
+		scheme.runAnimations( 5000 );
+		assertBetween( 450, 550, item.getRange().getMin() );
+		assertBetween( 450, 550, item.getRange().getMax() );
+		
+		scheme.runAnimations( 5050 );
+		Assert.assertEquals( new Range( "delta", 100, 100 ), item.getRange() );
+	}
+	
 	private void assertBetween( int min, int max, int actual ){
 		Assert.assertTrue( min + " <= " + actual,  min <= actual );
 		Assert.assertTrue( max + " >= " + actual, max >= actual );
@@ -115,7 +136,7 @@ public class AnimationsTest {
 			to( "blue" );
 		}
 		
-		private void to( String color ){
+		public void to( String color ){
 			DefaultCssNode node =  new DefaultCssNode( "base" );
 			node.setIdentifier( color );
 			setPath( new DefaultCssPath( node ) );
@@ -123,6 +144,10 @@ public class AnimationsTest {
 		
 		public Color getColor(){
 			return (Color)values.get( "color" );
+		}
+		
+		public Range getRange(){
+			return (Range)values.get( "range" );
 		}
 		
 		public void addAnimatedColorProperty(){
@@ -133,6 +158,16 @@ public class AnimationsTest {
 					values.put( "color", value );
 				}
 			});
+		}
+		
+		public void addAnimatedRangeProperty(){
+			putProperty( "range", new RangeAnimationProperty( scheme, this ){
+				@Override
+				public void set( Range value ){
+					System.out.println( "range: " + value.getMin() + " " + value.getMax() );
+					values.put( "range", value );
+				}
+			} );
 		}
 		
 		public void addColorProperty(){

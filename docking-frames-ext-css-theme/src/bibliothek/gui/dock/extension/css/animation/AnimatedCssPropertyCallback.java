@@ -25,8 +25,8 @@
  */
 package bibliothek.gui.dock.extension.css.animation;
 
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.CssType;
 
 /**
  * A callback given to an {@link AnimatedCssProperty}.
@@ -47,30 +47,6 @@ public interface AnimatedCssPropertyCallback<T> {
 	public void set( T value );
 	
 	/**
-	 * Can be used by the property to query other properties. Access to animated properties is
-	 * only granted if{@link #addProperty(String, AnimatedCssProperty)} was called.
-	 * @param type the expected type of the result
-	 * @param key the key of the other property
-	 * @return the value of the property <code>key</code>
-	 */
-	public <S> S get( CssType<S> type, String key );
-	
-	/**
-	 * To be called if the property <code>key</code> needs to be animated as well. Only if this
-	 * method is called {@link #get(String, CssType)} will return animated values. Circular
-	 * dependencies will result in unspecified behavior.
-	 * @param type the type of the property 
-	 * @param key the name of a property that is animated as well
-	 */
-	public void addProperty( CssType<?> type, String key );
-	
-	/**
-	 * To be called if the property <code>key</code> needs no longer to be animated.
-	 * @param key the name of the property that is no longer animted
-	 */
-	public void removeProperty( String key );
-	
-	/**
 	 * Triggers a call to {@link AnimatedCssProperty#step()} in the near future.
 	 */
 	public void step();
@@ -81,4 +57,18 @@ public interface AnimatedCssPropertyCallback<T> {
 	 * @param delay the expected delay until <code>step</code> is called
 	 */
 	public void step( int delay );
+	
+	/**
+	 * Informs the callback that the property depends on another property with name <code>key</code>.
+	 * @param key the key of the sub-property, relative to the parent property (the name of the parent is not included
+	 * in the key)
+	 */
+	public void addDependency( CssPropertyKey key );
+	
+	/**
+	 * Informs this callback that the property does no longer depend on the property <code>key</code>.
+	 * @param key the key of the sub-property, relative to the parent property (the name of the parent is not included
+	 * in the key)
+	 */
+	public void removeDependency( CssPropertyKey key );
 }

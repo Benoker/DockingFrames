@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.extension.css.animation.types;
 
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.animation.AbstractCssAnimation;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
@@ -37,13 +38,8 @@ import bibliothek.gui.dock.extension.css.paint.CssPaint;
  */
 public class LinearCssAnimation<T> extends AbstractCssAnimation<T>{
 	@Override
-	protected AnimatedCssProperty<T> createProperty( CssType<T> type, String key ){
+	protected AnimatedCssProperty<T> createProperty( CssType<T> type, CssPropertyKey key ){
 		return type.createAnimation();
-	}
-
-	@Override
-	protected <S> AnimatedCssProperty<S> createSubProperty( CssType<S> type, String key ){
-		return null;
 	}
 
 	@Override

@@ -28,6 +28,7 @@ package bibliothek.gui.dock.extension.css.animation;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssSelector;
@@ -52,7 +53,7 @@ public class WrappedCssRule implements CssRule{
 		}
 		
 		@Override
-		public void propertyChanged( CssRule source, String key ){
+		public void propertyChanged( CssRule source, CssPropertyKey key ){
 			for( CssRuleListener listener : listeners() ){
 				listener.propertyChanged( WrappedCssRule.this, key );
 			}
@@ -101,7 +102,7 @@ public class WrappedCssRule implements CssRule{
 	}
 
 	@Override
-	public <T> T getProperty( CssType<T> type, String property ){
+	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
 		if( rule == null ){
 			return null;
 		}

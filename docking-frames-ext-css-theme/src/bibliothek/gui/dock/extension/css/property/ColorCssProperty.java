@@ -28,6 +28,7 @@ package bibliothek.gui.dock.extension.css.property;
 import java.awt.Color;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.type.ColorType;
@@ -44,12 +45,7 @@ public abstract class ColorCssProperty extends SimpleCssPropertyContainer implem
 	}
 	
 	@Override
-	public void setScheme( CssScheme scheme, String key ){
+	public void setScheme( CssScheme scheme, CssPropertyKey key ){
 		// ignore	
-	}
-	
-	@Override
-	public boolean isDynamic(){
-		return false;
 	}
 }

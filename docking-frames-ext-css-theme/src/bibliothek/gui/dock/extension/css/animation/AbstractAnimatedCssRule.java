@@ -28,6 +28,7 @@ package bibliothek.gui.dock.extension.css.animation;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 
 /**
@@ -101,7 +102,7 @@ public abstract class AbstractAnimatedCssRule implements AnimatedCssRule{
 	 * Fires an event informing all {@link CssRuleListener}s that property <code>key</code> changed.
 	 * @param key the key of the changed property
 	 */
-	protected void fireChanged( String key ){
+	protected void fireChanged( CssPropertyKey key ){
 		for( CssRuleListener listener : listeners.toArray( new CssRuleListener[ listeners.size()] )){
 			listener.propertyChanged( this, key );
 		}

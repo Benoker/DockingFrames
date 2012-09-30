@@ -44,7 +44,7 @@ public interface CssRule {
 	 * @return the property or <code>null</code> if not present
 	 * @throws IllegalArgumentException if the property cannot be understood as <code>type</code>
 	 */
-	public <T> T getProperty( CssType<T> type, String property );
+	public <T> T getProperty( CssType<T> type, CssPropertyKey property );
 	
 	/**
 	 * Adds <code>listener</code> to this rule, <code>listener</code> will be informed if

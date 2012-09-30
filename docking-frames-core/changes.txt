@@ -830,6 +830,7 @@
  - API: AbstractScreenDockWindow will call checkWindowBounds if the minimum size of its content changes.
  - Bugfix: When removing a Dockable from a column of a WizardSplitDockStation, the column kept its current size *including* the size of the Span
  - Bugfix: Moving a Dockable from one column of a WizardSplitDockStation to another now updates the size of the column from which the Dockable was removed.
+ - Bugfix: Layout of ToolbarGroupDockStation could not be properly saved. 
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

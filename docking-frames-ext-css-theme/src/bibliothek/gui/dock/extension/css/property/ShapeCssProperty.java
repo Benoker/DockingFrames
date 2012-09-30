@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.extension.css.property;
 
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
@@ -40,12 +41,7 @@ public abstract class ShapeCssProperty extends AbstractContainerCssProperty<CssS
 	}
 	
 	@Override
-	public void setScheme( CssScheme scheme, String key ){
+	public void setScheme( CssScheme scheme, CssPropertyKey key ){
 		// ignore
-	}
-	
-	@Override
-	public boolean isDynamic(){
-		return false;
 	}
 }

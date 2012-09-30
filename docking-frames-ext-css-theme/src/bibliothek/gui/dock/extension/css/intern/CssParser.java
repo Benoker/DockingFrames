@@ -31,6 +31,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssSelector;
 
@@ -407,7 +408,7 @@ public class CssParser {
 		
 		public void propertyRead( String key, String value ){
 			for( DefaultCssRule rule : currentRules ){
-				rule.setProperty( key, value );
+				rule.setProperty( CssPropertyKey.parse( key ), value );
 			}
 		}
 		

@@ -41,7 +41,7 @@ public interface CssRuleListener {
 	 * @param source the source of the event
 	 * @param key the name of the property that changed
 	 */
-	public void propertyChanged( CssRule source, String key );
+	public void propertyChanged( CssRule source, CssPropertyKey key );
 	
 	/**
 	 * Called if all {@link CssRule#getProperty(CssType, String) properties} changed.

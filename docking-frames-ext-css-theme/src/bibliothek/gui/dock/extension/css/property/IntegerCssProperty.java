@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.extension.css.property;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 
@@ -40,7 +41,7 @@ public abstract class IntegerCssProperty extends SimpleCssPropertyContainer impl
 	}
 
 	@Override
-	public void setScheme( CssScheme scheme, String key ){
+	public void setScheme( CssScheme scheme, CssPropertyKey key ){
 		// ignore
 	}
 }

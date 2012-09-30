@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssSelector;
@@ -96,7 +97,17 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	}
 	
 	@Override
-	public boolean isAnimated( String property ){
+	public boolean isInput( CssPropertyKey property ){
+		for( Animation animation : animations ){
+			if( animation.animation.isInput( property )){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isAnimated( CssPropertyKey property ){
 		for( Animation animation : animations ){
 			if( animation.overridenProperties.containsKey( property )){
 				return true;
@@ -121,7 +132,7 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getProperty( CssType<T> type, String property ){
+	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
 		AnimatedProperty<?> animated = null;
 		for( Animation animation : animations ){
 			animated = animation.overridenProperties.get( property );
@@ -155,7 +166,7 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	
 	private class Animation implements CssAnimationCallback, AnimationSchedulable{
 		private CssAnimation<?> animation;
-		private Map<String, AnimatedProperty<?>> overridenProperties = new HashMap<String, AnimatedProperty<?>>();
+		private Map<CssPropertyKey, AnimatedProperty<?>> overridenProperties = new HashMap<CssPropertyKey, AnimatedProperty<?>>();
 		
 		public Animation( CssAnimation<?> animation ){
 			this.animation = animation;
@@ -178,30 +189,25 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		}
 		
 		@Override
-		public <T> String[] getPropertiesOfType( CssType<T> type ){
+		public <T> CssPropertyKey[] getPropertiesOfType( CssType<T> type ){
 			CssItem item = getItem();
-			List<String> result = new ArrayList<String>();
+			List<CssPropertyKey> result = new ArrayList<CssPropertyKey>();
 			for( String key : item.getPropertyKeys() ){
 				if( item.getProperty( key ).getType( getScheme() ).equals( type )){
-					result.add( key );
+					result.add( new CssPropertyKey( key ));
 				}
 			}
-			return result.toArray( new String[ result.size() ] );
+			return result.toArray( new CssPropertyKey[ result.size() ] );
 		}
 
 		@Override
-		public <T> void setProperty( CssType<T> type, String key, T value ){
-			if( value == null ){
-				overridenProperties.remove( key );
-			}
-			else{
-				overridenProperties.put( key, new AnimatedProperty<T>( type, value ) );
-			}
+		public <T> void setProperty( CssType<T> type, CssPropertyKey key, T value ){
+			overridenProperties.put( key, new AnimatedProperty<T>( type, value ) );
 			fireChanged( key );
 		}
 		
 		@Override
-		public <T> T getProperty( CssType<T> type, String key ){
+		public <T> T getProperty( CssType<T> type, CssPropertyKey key ){
 			return DefaultAnimatedCssRule.this.getProperty( type, key );
 		}
 
@@ -219,7 +225,7 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		public void destroyed(){
 			animations.remove( this );
 			animation = null;
-			for( String key : overridenProperties.keySet() ){
+			for( CssPropertyKey key : overridenProperties.keySet() ){
 				fireChanged( key );
 			}
 			if( animations.isEmpty() ){

@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.extension.css.animation;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
@@ -68,7 +69,7 @@ public interface CssAnimationCallback {
 	 * @return the unique identifiers of all properties using <code>type</code>
 	 * @see CssProperty#getType(CssScheme)
 	 */
-	public <T> String[] getPropertiesOfType( CssType<T> type );
+	public <T> CssPropertyKey[] getPropertiesOfType( CssType<T> type );
 	
 	/**
 	 * Sets the value of some property. If using the wrong type an exception is thrown.
@@ -78,7 +79,7 @@ public interface CssAnimationCallback {
 	 * @throws IllegalArgumentException if <code>type</code> does not match the type of the property, or if
 	 * <code>key</code> does not point to a property at all
 	 */
-	public <T> void setProperty( CssType<T> type, String key, T value );
+	public <T> void setProperty( CssType<T> type, CssPropertyKey key, T value );
 	
 	/**
 	 * Gets the value of some property, the value from the last call to {@link #setProperty(CssType, String, Object)}
@@ -87,5 +88,5 @@ public interface CssAnimationCallback {
 	 * @param key the name of the property
 	 * @return the value of the property
 	 */
-	public <T> T getProperty( CssType<T> type, String key );
+	public <T> T getProperty( CssType<T> type, CssPropertyKey key );
 }

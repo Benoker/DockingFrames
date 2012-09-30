@@ -32,6 +32,7 @@ import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssScheme;
@@ -45,15 +46,12 @@ import bibliothek.gui.dock.extension.css.animation.AnimatedCssRule;
  * @author Benjamin Sigg
  */
 public class MatchedCssRule {
-	/** The separator to combine keys of {@link CssProperty}s to longer keys */
-	private static final String SEPARATOR = "-";
-	
 	private static enum Mode{
 		NEW, HEAD, OUTDATED, DESTROYED
 	}
 	
 	/** all the properties that are currently monitored */
-	private Map<String, CssProperty<?>> properties = new HashMap<String, CssProperty<?>>();
+	private Map<CssPropertyKey, CssProperty<?>> properties = new HashMap<CssPropertyKey, CssProperty<?>>();
 	
 	/** the owner of this rule */
 	private CssScheme scheme;
@@ -96,8 +94,15 @@ public class MatchedCssRule {
 		mode = Mode.HEAD;
 		
 		for( String key : item.getPropertyKeys() ){
-			addProperty( key, item.getProperty( key ), firstRule );
+			addProperty( new CssPropertyKey( key ), item.getProperty( key ), firstRule );
 		}
+	}
+	
+	private boolean isInput( CssPropertyKey key ){
+		if( rule == null ){
+			return false;
+		}
+		return rule.isInput( key );
 	}
 	
 	/**
@@ -111,10 +116,10 @@ public class MatchedCssRule {
 				// remove all static properties, keep dynamic properties until destruction
 				item.removePropertyContainerListener( listener );
 				
-				String[] keys = properties.keySet().toArray( new String[ properties.size() ] );
-				for( String key : keys ){
+				CssPropertyKey[] keys = properties.keySet().toArray( new CssPropertyKey[ properties.size() ] );
+				for( CssPropertyKey key : keys ){
 					CssProperty<?> property = properties.get( key );
-					if( !property.isDynamic() ){
+					if( !isInput(key) ){
 						removeProperty( key, property, false );
 					}
 				}
@@ -149,20 +154,20 @@ public class MatchedCssRule {
 		}
 	}
 
-	private String combinedKey( CssPropertyContainer container, String key ){
-		for( Map.Entry<String, CssProperty<?>> entry : properties.entrySet() ){
+	private CssPropertyKey combinedKey( CssPropertyContainer container, String key ){
+		for( Map.Entry<CssPropertyKey, CssProperty<?>> entry : properties.entrySet() ){
 			if( entry.getValue() == container ){
-				return entry.getKey() + SEPARATOR + key;
+				return entry.getKey().append( key );
 			}
 		}
-		return key;
+		return new CssPropertyKey( key );
 	}
 
-	private void removeProperty( String key, CssProperty<?> property, boolean fullRemoval ){
+	private void removeProperty( CssPropertyKey key, CssProperty<?> property, boolean fullRemoval ){
 		property.removePropertyContainerListener( listener );
 		if( fullRemoval ){
 			for( String name : property.getPropertyKeys() ){
-				removeProperty( key + SEPARATOR + name, property.getProperty( name ), fullRemoval );
+				removeProperty( key.append( name ), property.getProperty( name ), fullRemoval );
 			}
 		}
 		properties.remove( key );
@@ -172,11 +177,11 @@ public class MatchedCssRule {
 		}
 	}
 
-	private <T> void addProperty( String key, CssProperty<T> property, boolean firstRule ){
+	private <T> void addProperty( CssPropertyKey key, CssProperty<T> property, boolean firstRule ){
 		if( properties.containsKey( key )){
 			throw new IllegalStateException( "property with name '" + key + "' already exists" );
 		}
-		if( mode == Mode.OUTDATED && !property.isDynamic() ){
+		if( mode == Mode.OUTDATED && !isInput(key) ){
 			throw new IllegalStateException( "attempt to register a static property after rule has been outdated" );
 		}
 		
@@ -191,7 +196,7 @@ public class MatchedCssRule {
 		}
 		properties.put( key, property );
 		for( String name : property.getPropertyKeys() ){
-			addProperty( key + SEPARATOR + name, property.getProperty( name ), true );
+			addProperty( key.append( name ), property.getProperty( name ), true );
 		}
 		property.addPropertyContainerListener( listener );
 	}
@@ -204,7 +209,7 @@ public class MatchedCssRule {
 		}
 		
 		@Override
-		public void propertyChanged( CssRule source, String key ){
+		public void propertyChanged( CssRule source, CssPropertyKey key ){
 			CssProperty<?> sink = properties.get( key );
 			if( sink != null ){
 				resetProperty( sink, key );
@@ -213,12 +218,12 @@ public class MatchedCssRule {
 		
 		@Override
 		public void propertiesChanged( CssRule source ){
-			for( Map.Entry<String, CssProperty<?>> entry : properties.entrySet() ){
+			for( Map.Entry<CssPropertyKey, CssProperty<?>> entry : properties.entrySet() ){
 				resetProperty( entry.getValue(), entry.getKey() );
 			}
 		}
 		
-		private <T> void resetProperty( CssProperty<T> property, String key ){
+		private <T> void resetProperty( CssProperty<T> property, CssPropertyKey key ){
 			T value;
 			if( rule == null ){
 				value = null;
@@ -232,15 +237,15 @@ public class MatchedCssRule {
 		@Override
 		public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property ){
 			if( rule != null ){
-				key = combinedKey( source, key );
-				addProperty( key, property, true );
+				CssPropertyKey cssKey = combinedKey( source, key );
+				addProperty( cssKey, property, true );
 			}
 		}
 		@Override
 		public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property ){
 			if( rule != null ){
-				key = combinedKey( source, key );
-				removeProperty( key, property, true );
+				CssPropertyKey cssKey = combinedKey( source, key );
+				removeProperty( cssKey, property, true );
 			}
 		}
 	}

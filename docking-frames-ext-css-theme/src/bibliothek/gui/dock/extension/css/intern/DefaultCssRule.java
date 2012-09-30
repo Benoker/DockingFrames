@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssSelector;
@@ -48,7 +49,7 @@ public class DefaultCssRule implements CssRule{
 	private List<CssRuleListener> listeners = new ArrayList<CssRuleListener>( 2 );
 	
 	/** all the properties of this rule */
-	private Map<String, String> properties = new HashMap<String, String>( 5 );
+	private Map<CssPropertyKey, String> properties = new HashMap<CssPropertyKey, String>( 5 );
 	
 	/**
 	 * Creates a new rule
@@ -78,12 +79,22 @@ public class DefaultCssRule implements CssRule{
 	}
 	
 	@Override
-	public <T> T getProperty( CssType<T> type, String property ){
+	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
 		String value = properties.get( property );
 		if( "null".equals( value ) || value == null ){
 			return null;
 		}
 		return type.convert( properties.get( property ) );
+	}
+
+	/**
+	 * Sets or removes a property of this rule.
+	 * @param key the name of the property to set, will be forwarded to {@link CssPropertyKey#parse(String)} to 
+	 * convert into a real key
+	 * @param value the value of the property or <code>null</code>
+	 */
+	public void setProperty( String key, String value ){
+		setProperty( CssPropertyKey.parse( key ), value );
 	}
 	
 	/**
@@ -91,7 +102,7 @@ public class DefaultCssRule implements CssRule{
 	 * @param key the name of the property to set
 	 * @param value the value of the property or <code>null</code>
 	 */
-	public void setProperty( String key, String value ){
+	public void setProperty( CssPropertyKey key, String value ){
 		if( value == null ){
 			properties.remove( key );
 		}

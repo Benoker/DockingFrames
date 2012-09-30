@@ -72,7 +72,6 @@ import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationLayout;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
@@ -453,7 +452,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 	@Override
 	public String getFactoryID(){
-		return ToolbarDockStationFactory.ID;
+		return ToolbarGroupDockStationFactory.ID;
 	}
 
 	/**

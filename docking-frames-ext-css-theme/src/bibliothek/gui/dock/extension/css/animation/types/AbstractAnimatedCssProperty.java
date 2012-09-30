@@ -27,9 +27,10 @@ package bibliothek.gui.dock.extension.css.animation.types;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
-import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssPropertyCallback;
+import bibliothek.gui.dock.extension.css.util.CssPropertyTreeObserver;
 
 /**
  * This {@link AnimatedCssProperty} handles objects of type {@link CssPropertyContainer}, it automatically requests and
@@ -45,7 +46,7 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	
 	private double transition = 0;
 	
-	private Listener listener = new Listener();
+	private Listener listener;
 	
 	@Override
 	public void setCallback( AnimatedCssPropertyCallback<T> callback ){
@@ -63,11 +64,13 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	@Override
 	public void setSource( T source ){
 		if( this.source != null ){
-			uninstall( this.source );
+			listener.setListening( false );
+			listener = null;
 		}
 		this.source = source;
 		if( source != null ){
-			install( source );
+			listener = new Listener( source );
+			listener.setListening( true );
 		}
 		update();
 	}
@@ -82,13 +85,7 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	
 	@Override
 	public void setTarget( T target ){
-		if( this.target != null ){
-			uninstall( this.target );
-		}
 		this.target = target;
-		if( target != null ){
-			install( target );
-		}
 		update();
 	}
 	
@@ -100,20 +97,6 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 		return target;
 	}
 	
-	private void uninstall( T item ){
-		item.removePropertyContainerListener( listener );
-		for( String key : item.getPropertyKeys() ){
-			listener.propertyRemoved( item, key, item.getProperty( key ) );
-		}
-	}
-	
-	private void install( T item ){
-		item.addPropertyContainerListener( listener );
-		for( String key : item.getPropertyKeys() ){
-			listener.propertyAdded( item, key, item.getProperty( key ) );
-		}
-	}
-
 	@Override
 	public void setTransition( double transition ){
 		this.transition = transition;
@@ -137,24 +120,21 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	 * Called every time one of the properties of this {@link AbstractAnimatedCssProperty} is changed.
 	 */
 	protected abstract void update();
+	
 
-	private class Listener implements CssPropertyContainerListener{
+	private class Listener extends CssPropertyTreeObserver{
+		public Listener( CssPropertyContainer root ){
+			super( root );
+		}
+
 		@Override
-		public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property ){
-			callback.addProperty( property.getType( callback.getScheme() ), key );
-			property.addPropertyContainerListener( this );
-			for( String next : property.getPropertyKeys() ){
-				propertyAdded( property, next, property.getProperty( next ) );
-			}
+		protected void onAdded( CssPropertyKey key, CssProperty<?> property ){
+			callback.addDependency( key );	
 		}
 		
 		@Override
-		public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property ){
-			callback.removeProperty( key );
-			property.removePropertyContainerListener( this );
-			for( String next : property.getPropertyKeys() ){
-				propertyRemoved( property, next, property.getProperty( next ) );
-			}
+		protected void onRemoved( CssPropertyKey key ){
+			callback.removeDependency( key );
 		}
 	}
 }
