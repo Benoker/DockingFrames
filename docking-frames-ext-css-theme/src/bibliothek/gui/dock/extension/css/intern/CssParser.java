@@ -107,13 +107,11 @@ public class CssParser {
 					if( !inString ){
 						inCharacter = !inCharacter;
 					}
-					storeCharacter = false;
 					break;
 				case '"':
 					if( !inCharacter ){
 						inString = !inString;
 					}
-					storeCharacter = false;
 					break;
 			}
 			
@@ -130,6 +128,9 @@ public class CssParser {
 			if( assignment >= 0 ){
 				String key = property.substring( 0, assignment ).trim();
 				String value = property.substring( assignment+1 ).trim();
+				if( (value.startsWith( "'" ) && value.endsWith( "'" )) || (value.startsWith( "\"" ) && value.endsWith( "\"" ))){
+					value = value.substring( 1, value.length()-1 );
+				}
 				collector.propertyRead( key, value );
 			}
 			else{
