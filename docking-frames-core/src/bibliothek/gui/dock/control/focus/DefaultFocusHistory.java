@@ -77,7 +77,7 @@ public class DefaultFocusHistory implements FocusHistory{
 	public Dockable getNewestOn( DockStation... parents ){
 		for( Dockable item : history ){
 			for( DockStation station : parents ){
-				if( DockUtilities.isAncestor( station, item )){
+				if( item != station && DockUtilities.isAncestor( station, item )){
 					return item;
 				}
 			}

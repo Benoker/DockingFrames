@@ -1425,10 +1425,13 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         StationChildHandle handle = dockables.dockables().get( index );
         Dockable dockable = handle.getDockable();
         
+        boolean removingSelection = false;
+        
         DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
         try{
 	       	listeners.fireDockableRemoving( dockable );
-	        
+	        visibleListener.ignoreSelectionChanges = true;
+	       	
 	        if( dockables.dockables().size() == 1 ){
 	        	if( singleTabStackDockComponent() ){
 	        		stackComponent.remove( 0 );
@@ -1446,23 +1449,42 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	            panel.add( dockables.dockables().get( 0 ).getDisplayer().getComponent() );
 	        }
 	        else{
+	        	removingSelection = index == stackComponent.getSelectedIndex();
 	        	dockables.remove( index );
 	        	stackComponent.remove( index );
 	        }
 	
 	        handle.destroy();
-	        
 	        dockable.removeDockableListener( listener );
+	        dockable.setDockParent( null );
+	        
+	        visibleListener.ignoreSelectionChanges = false;
+	        focusAfterRemoving( removingSelection );
+	        
 	        panel.revalidate();
 	        
-	        dockable.setDockParent( null );
 	       	listeners.fireDockableRemoved( dockable );
         }
         finally{
+        	visibleListener.ignoreSelectionChanges = false;
         	token.release();
         }
         fireDockablesRepositioned( index );
         fireDockableSelected();
+    }
+    
+    private void focusAfterRemoving( boolean removedSelectedDockable ){
+    	if( removedSelectedDockable ){
+	    	DockController controller = getController();
+	        if( controller != null && dockables.dockables().size() > 1 ){
+	        	Dockable next = controller.getFocusHistory().getNewestOn( this );
+	        	if( next != null && next.getDockParent() == this ){
+	        		stackComponent.setSelectedIndex( indexOf( next ) );
+	        		return;
+	        	}
+	        }
+    	}
+        visibleListener.selectionChanged( stackComponent );
     }
 
     public Component getComponent() {
@@ -1544,22 +1566,26 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      * @author Benjamin Sigg
      */
     private class VisibleListener extends DockStationAdapter implements StackDockComponentListener{
+    	private boolean ignoreSelectionChanges = false;
+    	
         @Override
         public void dockableShowingChanged( DockStation station, Dockable dockable, boolean visible ) {
             visibility.fire();
         }
         
         public void selectionChanged( StackDockComponent stack ){
-            DockController controller = getController();
-            if( controller != null ){
-                Dockable selection = getFrontDockable();
-                if( selection != null )
-                    controller.setFocusedDockable( selection, null, false );
-                
-                fireDockableSelected();
-            }
-            
-            visibility.fire();
+        	if( !ignoreSelectionChanges ){
+	            DockController controller = getController();
+	            if( controller != null ){
+	                Dockable selection = getFrontDockable();
+	                if( selection != null )
+	                    controller.setFocusedDockable( selection, null, false );
+	                
+	                fireDockableSelected();
+	            }
+	            
+	            visibility.fire();
+        	}
         }
         
         public void tabChanged( StackDockComponent stack, Dockable dockable ){
