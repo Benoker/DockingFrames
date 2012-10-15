@@ -225,6 +225,10 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	 */
 	protected abstract void setPlaceholders( S station, PlaceholderMap map );
 
+	private boolean hasChildren( S station ){
+		return getChildren( station ).length > 0;
+	}
+	
 	/**
 	 * Gets all the children of <code>station</code>.
 	 * @param station some station whose children are searched
@@ -646,7 +650,8 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	 * it with <code>dockable</code>. If there is already another dockable stored at that
 	 * location, then the other dockable is replaced silently. If <code>dockable</code> is a 
 	 * {@link DockStation} and a {@link PlaceholderMap} is set, then this map is transfered to 
-	 * <code>dockable</code> and removed from this list.<br>
+	 * <code>dockable</code> and removed from this list, but only if the {@link DockStation} does not
+	 * already have children.<br>
 	 * This method also removes all occurrences of <code>placeholder</code> and the placeholder that is assigned
 	 * by the current {@link PlaceholderStrategy} from this list.
 	 * @param placeholder the placeholder to search, not <code>null</code>
@@ -666,7 +671,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		entry.set( new Item( dockable, entry.item.getPlaceholderSet(), entry.item.getPlaceholderMap() ) );
 		S station = toStation( dockable.asDockable() );
 		PlaceholderMap map = entry.item.getPlaceholderMap();
-		if( station != null && map != null ) {
+		if( station != null && map != null && !hasChildren( station )) {
 			entry.item.setPlaceholderMap( null );
 			setPlaceholders( station, map );
 		}
