@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssScheme;
 
@@ -61,9 +62,9 @@ public class DefaultAnimatedCssRuleChain implements AnimatedCssRuleChain{
 	}
 
 	@Override
-	public AnimatedCssRule animate( CssAnimation<?> animation ){
+	public AnimatedCssRule animate( CssPropertyKey animationKey, CssAnimation<?> animation ){
 		AnimatedCssRule rule = tail.getRule();
-		rule.animate( animation );
+		rule.animate( animationKey, animation );
 		return rule;
 	}
 

@@ -25,7 +25,7 @@
  */
 package bibliothek.gui.dock.extension.css.animation;
 
-import bibliothek.gui.dock.extension.css.CssPropertyKey;
+import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssScheme;
 
 /**
@@ -41,7 +41,8 @@ public interface AnimatedCssPropertyCallback<T> {
 	public CssScheme getScheme();
 	
 	/**
-	 * To be called if the value of the property changed.
+	 * To be called if the value of the property changed.<br>
+	 * Please read about the behavior of animated properties with sub-properties in {@link AnimatedCssProperty}.
 	 * @param value the new value
 	 */
 	public void set( T value );
@@ -59,16 +60,38 @@ public interface AnimatedCssPropertyCallback<T> {
 	public void step( int delay );
 	
 	/**
-	 * Informs the callback that the property depends on another property with name <code>key</code>.
+	 * Informs the callback that the source property depends on another property with name <code>key</code>. This
+	 * method will ensure that {@link CssProperty#set(Object) the value} of <code>property</code> is set
+	 * and updated.<br>
+	 * Please note that no two animations may depend on the same properties.
 	 * @param key the key of the sub-property, relative to the parent property (the name of the parent is not included
 	 * in the key)
+	 * @param property the sub-property itself, it's value will be update automatically
 	 */
-	public void addDependency( CssPropertyKey key );
+	public void addSourceDependency( String key, CssProperty<?> property );
 	
 	/**
-	 * Informs this callback that the property does no longer depend on the property <code>key</code>.
+	 * Informs this callback that the source property does no longer depend on the property <code>key</code>.
 	 * @param key the key of the sub-property, relative to the parent property (the name of the parent is not included
 	 * in the key)
 	 */
-	public void removeDependency( CssPropertyKey key );
+	public void removeSourceDependency( String key );
+	
+	/**
+	 * Informs the callback that the target property depends on another property with name <code>key</code>. This
+	 * method will ensure that {@link CssProperty#set(Object) the value} of <code>property</code> is set
+	 * and updated.<br>
+	 * Please note that no two animations may depend on the same properties.
+	 * @param key the key of the sub-property, relative to the parent property (the name of the parent is not included
+	 * in the key)
+	 * @param property the sub-property itself, it's value will be update automatically
+	 */
+	public void addTargetDependency( String key, CssProperty<?> property );
+	
+	/**
+	 * Informs this callback that the target property does no longer depend on the property <code>key</code>.
+	 * @param key the key of the sub-property, relative to the parent property (the name of the parent is not included
+	 * in the key)
+	 */
+	public void removeTargetDependency( String key );
 }

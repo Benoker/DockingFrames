@@ -27,10 +27,9 @@ package bibliothek.gui.dock.extension.css.animation.types;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
-import bibliothek.gui.dock.extension.css.CssPropertyKey;
+import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
 import bibliothek.gui.dock.extension.css.animation.AnimatedCssPropertyCallback;
-import bibliothek.gui.dock.extension.css.util.CssPropertyTreeObserver;
 
 /**
  * This {@link AnimatedCssProperty} handles objects of type {@link CssPropertyContainer}, it automatically requests and
@@ -46,7 +45,8 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	
 	private double transition = 0;
 	
-	private Listener listener;
+	private SourceListener sourceListener;
+	private TargetListener targetListener;
 	
 	@Override
 	public void setCallback( AnimatedCssPropertyCallback<T> callback ){
@@ -64,13 +64,15 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	@Override
 	public void setSource( T source ){
 		if( this.source != null ){
-			listener.setListening( false );
-			listener = null;
+			source.removePropertyContainerListener( sourceListener );
+			sourceListener.removeAll();
+			sourceListener = null;
 		}
 		this.source = source;
 		if( source != null ){
-			listener = new Listener( source );
-			listener.setListening( true );
+			sourceListener = new SourceListener();
+			source.addPropertyContainerListener( sourceListener );
+			sourceListener.addAll();
 		}
 		update();
 	}
@@ -85,7 +87,17 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	
 	@Override
 	public void setTarget( T target ){
+		if( this.target != null ){
+			target.removePropertyContainerListener( targetListener );
+			targetListener.removeAll();
+			targetListener = null;
+		}
 		this.target = target;
+		if( target != null ){
+			targetListener = new TargetListener();
+			target.addPropertyContainerListener( targetListener );
+			targetListener.addAll();
+		}
 		update();
 	}
 	
@@ -122,19 +134,61 @@ public abstract class AbstractAnimatedCssProperty<T extends CssPropertyContainer
 	protected abstract void update();
 	
 
-	private class Listener extends CssPropertyTreeObserver{
-		public Listener( CssPropertyContainer root ){
-			super( root );
-		}
-
+	/**
+	 * Ensures that all the sub-{@link CssProperty}s of {@link AbstractAnimatedCssProperty#source} are
+	 * recognized as dependency.
+	 * @author Benjamin Sigg
+	 */
+	private class SourceListener implements CssPropertyContainerListener{
 		@Override
-		protected void onAdded( CssPropertyKey key, CssProperty<?> property ){
-			callback.addDependency( key );	
+		public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property ){
+			callback.addSourceDependency( key, property );
 		}
 		
 		@Override
-		protected void onRemoved( CssPropertyKey key ){
-			callback.removeDependency( key );
+		public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property ){
+			callback.removeSourceDependency( key );
 		}
+		
+		private void addAll(){
+			for( String key : source.getPropertyKeys() ){
+				propertyAdded( source, key, source.getProperty( key ) );
+			}
+		}
+		
+		private void removeAll(){
+			for( String key : source.getPropertyKeys() ){
+				propertyRemoved( source, key, source.getProperty( key ) );
+			}
+		}
+	}
+
+	/**
+	 * Ensures that all the sub-{@link CssProperty}s of {@link AbstractAnimatedCssProperty#target} are
+	 * considered part of this animation.
+	 * @author Benjamin Sigg
+	 */
+	private class TargetListener implements CssPropertyContainerListener{
+		@Override
+		public void propertyAdded( CssPropertyContainer source, String key, CssProperty<?> property ){
+			callback.addTargetDependency( key, property );
+		}
+		
+		@Override
+		public void propertyRemoved( CssPropertyContainer source, String key, CssProperty<?> property ){
+			callback.removeTargetDependency( key );
+		}
+		
+		private void addAll(){
+			for( String key : target.getPropertyKeys() ){
+				propertyAdded( target, key, target.getProperty( key ) );
+			}
+		}
+		
+		private void removeAll(){
+			for( String key : target.getPropertyKeys() ){
+				propertyRemoved( target, key, target.getProperty( key ) );
+			}
+		}		
 	}
 }

@@ -79,9 +79,10 @@ public interface AnimatedCssRule extends CssRule{
 	 * Starts an additional animation on this rule. {@link CssAnimation#init(CssRule, CssAnimationCallback)} should
 	 * be called on <code>animation</code>. If the {@link #transition(CssRule) transition} already started
 	 * then {@link CssAnimation#transition(CssRule)} should be called as well.
+	 * @param animationKey the key of the {@link CssProperty} describing <code>animation</code>
 	 * @param animation the new animation, not <code>null</code>
 	 */
-	public void animate( CssAnimation<?> animation );
+	public void animate( CssPropertyKey animationKey, CssAnimation<?> animation );
 	
 	/**
 	 * Starts a transition on this rule. {@link CssAnimation#transition(CssRule)} should be called

@@ -26,6 +26,8 @@
 package bibliothek.gui.dock.extension.css.animation;
 
 import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
+import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssScheme;
 
@@ -38,11 +40,12 @@ public interface AnimatedCssRuleChain {
 	/**
 	 * Initializes <code>animation</code> and will use it the next time {@link #transition(CssRule)} is called. 
 	 * Multiple animations may be initialized before a call to {@link #transition(CssRule)}.
+	 * @param animationKey the key of the {@link CssProperty} describing <code>animation</code>
 	 * @param animation the additional animation to handle
 	 * @return the rule that represents the current configuration of this chain, the same object may be used
 	 * all the time, or a new object may be created when necessary
 	 */
-	public AnimatedCssRule animate( CssAnimation<?> animation );
+	public AnimatedCssRule animate( CssPropertyKey animationKey, CssAnimation<?> animation );
 
 	/**
 	 * Starts an animation for a transition of {@link #getRoot()} to <code>next</code>.

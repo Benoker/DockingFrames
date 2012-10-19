@@ -88,18 +88,22 @@ public class AnimationsTest {
 		TestCssScheme scheme = TestCssRules.getAnimatedRangeScheme();
 		TestItem item = new TestItem( scheme );
 		item.addAnimatedRangeProperty();
-		item.to( "alpha" );
+		item.to( "delta" );
 		Assert.assertNull( item.getRange() );
 		scheme.add( item );
-		Assert.assertEquals( new Range( "alpha", 0, 0 ), item.getRange() );
+		Assert.assertEquals( "delta", item.getRange().getName() );
+		Assert.assertEquals( 1000, item.getRange().getMin() );
+		Assert.assertEquals( 1000, item.getRange().getMax() );
 		
-		item.to( "delta" );
+		item.to( "beta" );
 		scheme.runAnimations( 5000 );
-		assertBetween( 450, 550, item.getRange().getMin() );
+		Assert.assertEquals( 1000, item.getRange().getMin() );
 		assertBetween( 450, 550, item.getRange().getMax() );
 		
 		scheme.runAnimations( 5050 );
-		Assert.assertEquals( new Range( "delta", 100, 100 ), item.getRange() );
+		Assert.assertEquals( "beta", item.getRange().getName() );
+		Assert.assertEquals( 1000, item.getRange().getMin() );
+		Assert.assertEquals( 0, item.getRange().getMax() );
 	}
 	
 	private void assertBetween( int min, int max, int actual ){
@@ -164,7 +168,8 @@ public class AnimationsTest {
 			putProperty( "range", new RangeAnimationProperty( scheme, this ){
 				@Override
 				public void set( Range value ){
-					System.out.println( "range: " + value.getMin() + " " + value.getMax() );
+					super.set( value );
+					System.out.println( value.getClass().getSimpleName() + ": " + value.getName() + " " + value.getMin() + " " + value.getMax() );
 					values.put( "range", value );
 				}
 			} );

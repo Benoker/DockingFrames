@@ -89,4 +89,35 @@ public interface CssAnimationCallback {
 	 * @return the value of the property
 	 */
 	public <T> T getProperty( CssType<T> type, CssPropertyKey key );
+	
+	/**
+	 * Adds <code>property</code> as dependency, the property will behave as if it would be long to the
+	 * parent of the {@link CssAnimation}. As source dependency the value of the property will be set using
+	 * the old (source) {@link CssRule}.
+	 * @param key the key of the property
+	 * @param property the property to automatically set
+	 */
+	public void addSourceDependency( String key, CssProperty<?> property );
+	
+	/**
+	 * Removes the source depdendency <code>key</code>.
+	 * @param key the name of the property to remove
+	 */
+	public void removeSourceDependency( String key );
+	
+
+	/**
+	 * Adds <code>property</code> as dependency, the property will behave as if it would be long to the
+	 * parent of the {@link CssAnimation}. As target dependency the value of the property will be set using
+	 * the new (target) {@link CssRule}.
+	 * @param key the key of the property
+	 * @param property the property to automatically set
+	 */
+	public void addTargetDependency( String key, CssProperty<?> property );
+	
+	/**
+	 * Removes the target depdendency <code>key</code>.
+	 * @param key the name of the property to remove
+	 */
+	public void removeTargetDependency( String key );
 }

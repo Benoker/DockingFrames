@@ -26,10 +26,18 @@
 package bibliothek.gui.dock.extension.css.animation;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssRule;
 
 /**
- * Represents one {@link CssProperty} whose value is animated.
+ * Represents one {@link CssProperty} whose value is animated.<br>
+ * Things get interesting if <code>T</code> is a {@link CssPropertyContainer}:
+ * <ul>
+ * 	<li>In oder for the created <code>T</code>, that is given to {@link AnimatedCssPropertyCallback#set(Object)}, the
+ * clients needs access the property with a {@link CssContainerAnimationProperty}.</li>
+ *  <li>Values that are calculated should not show up as {@link CssProperty}, otherwise they will be overriden
+ *  by the values defined in the current, leading {@link CssRule} (negating the effects of the animation).</li> 
+ * </ul>
  * @author Benjamin Sigg
  * @param <T> the type of value handled by this property
  */

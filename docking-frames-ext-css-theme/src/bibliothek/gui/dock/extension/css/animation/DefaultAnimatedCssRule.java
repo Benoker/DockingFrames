@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssScheme;
@@ -38,9 +40,11 @@ import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationSchedulable;
 import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationScheduler;
+import bibliothek.gui.dock.extension.css.property.AbstractCssPropertyContainer;
+import bibliothek.gui.dock.extension.css.scheme.PropertyForwarder;
 
 /**
- * The defeault implementation of {@link AnimatedCssRule} makes use of one {@link CssRule} and a list
+ * The default implementation of {@link AnimatedCssRule} makes use of one {@link CssRule} and a list
  * of {@link CssAnimation}s to perform animations. 
  * @author Benjamin Sigg
  */
@@ -49,7 +53,7 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	private WrappedCssRule source;
 	private List<Animation> animations = new ArrayList<Animation>();
 	
-	private CssRule nextRoot;
+	private WrappedCssRule target;
 	private boolean transition = false;
 	
 	/**
@@ -59,6 +63,7 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	public DefaultAnimatedCssRule( CssRule root ){
 		this.root = root;
 		source = new WrappedCssRule( root );
+		target = new WrappedCssRule( null );
 	}
 	
 	@Override
@@ -73,18 +78,18 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 	}
 	
 	@Override
-	public void animate( CssAnimation<?> animation ){
-		Animation callback = new Animation( animation );
+	public void animate( CssPropertyKey animationKey, CssAnimation<?> animation ){
+		Animation callback = new Animation( animationKey, animation );
 		animations.add( callback );
 		animation.init( source, callback );
 		if( transition ){
-			animation.transition( nextRoot );
+			animation.transition( target );
 		}
 	}
 	
 	@Override
 	public void transition( CssRule root ){
-		nextRoot = root;
+		target.setRule( root );
 		transition = true;
 		if( animations.isEmpty() ){
 			getLink().remove();
@@ -130,6 +135,11 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		return root.getSelector();
 	}
 	
+	@Override
+	public String toString(){
+		return "animated: " + root.toString();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
@@ -164,12 +174,86 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		}
 	}
 	
-	private class Animation implements CssAnimationCallback, AnimationSchedulable{
+	private class TargetDependencies extends AbstractCssPropertyContainer{
+		private Map<String, CssProperty<?>> dependencies = new HashMap<String, CssProperty<?>>();
+		private PropertyForwarder targetForwarder;
+		
+		private TargetDependencies( final Animation animation ){
+			targetForwarder = new PropertyForwarder( target, this, animation.getScheme() ){
+				@Override
+				protected CssPropertyKey combinedKey( CssPropertyContainer container, String key ){
+					CssPropertyKey result = super.combinedKey( container, key );
+					if( result.length() == 1 ){
+						result = animation.animationKey.append( key );
+					}
+					return result;
+				}
+			};
+		}
+		
+		@Override
+		public String[] getPropertyKeys(){
+			return dependencies.keySet().toArray( new String[ dependencies.size() ] );
+		}
+
+		@Override
+		public CssProperty<?> getProperty( String key ){
+			return dependencies.get( key );
+		}
+		
+		public void addTargetDependency( String key, CssProperty<?> property ){
+			if( dependencies.containsKey( key )){
+				throw new IllegalArgumentException( "key '" + key + "' is already asigned to another property" );
+			}
+			dependencies.put( key, property );
+			firePropertyAdded( key, property );
+		}
+		
+		public void removeTargetDependency( String key ){
+			CssProperty<?> property = dependencies.remove( key );
+			if( property != null ){
+				firePropertyRemoved( key, property );
+			}
+		}
+		
+		public void destroy(){
+			targetForwarder.destroy();
+		}
+
+		@Override
+		protected void bind(){
+			// ignore
+		}
+
+		@Override
+		protected void unbind(){
+			// ignore
+		}
+	}
+	
+	private class Animation extends AbstractCssPropertyContainer implements CssAnimationCallback, AnimationSchedulable{
+		private CssPropertyKey animationKey;
 		private CssAnimation<?> animation;
 		private Map<CssPropertyKey, AnimatedProperty<?>> overridenProperties = new HashMap<CssPropertyKey, AnimatedProperty<?>>();
+		private Map<String, CssProperty<?>> sourceDependencies = new HashMap<String, CssProperty<?>>();
+		private TargetDependencies targetDependencies;
 		
-		public Animation( CssAnimation<?> animation ){
+		private PropertyForwarder sourceForwarder;
+		
+		public Animation( CssPropertyKey animationKey, CssAnimation<?> animation ){
+			this.animationKey = animationKey;
 			this.animation = animation;
+			targetDependencies = new TargetDependencies( this );
+			sourceForwarder = new PropertyForwarder( DefaultAnimatedCssRule.this, this, getScheme() ){
+				@Override
+				protected CssPropertyKey combinedKey( CssPropertyContainer container, String key ){
+					CssPropertyKey result = super.combinedKey( container, key );
+					if( result.length() == 1 ){
+						result = Animation.this.animationKey.append( key );
+					}
+					return result;
+				}
+			};
 		}
 		
 		@Override
@@ -210,7 +294,56 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		public <T> T getProperty( CssType<T> type, CssPropertyKey key ){
 			return DefaultAnimatedCssRule.this.getProperty( type, key );
 		}
+		
+		@Override
+		public void addSourceDependency( String key, CssProperty<?> property ){
+			if( sourceDependencies.containsKey( key )){
+				throw new IllegalArgumentException( "key '" + key + "' is already asigned to another property" );
+			}
+			sourceDependencies.put( key, property );
+			firePropertyAdded( key, property );
+		}
+		
+		@Override
+		public void removeSourceDependency( String key ){
+			CssProperty<?> property = sourceDependencies.remove( key );
+			if( property != null ){
+				firePropertyRemoved( key, property );
+			}
+		}
+		
+		@Override
+		public void addTargetDependency( String key, CssProperty<?> property ){
+			targetDependencies.addTargetDependency( key, property );	
+		}
+		
+		@Override
+		public void removeTargetDependency( String key ){
+			targetDependencies.removeTargetDependency( key );	
+		}
+		
+		@Override
+		public String[] getPropertyKeys(){
+			return sourceDependencies.keySet().toArray( new String[ sourceDependencies.size() ] );
+		}
+		
+		@Override
+		public CssProperty<?> getProperty( String key ){
+			return sourceDependencies.get( key );
+		}
 
+		@Override
+		protected void bind(){
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		protected void unbind(){
+				// TODO Auto-generated method stub
+				
+		}
+		
 		@Override
 		public void step(){
 			getLink().getChain().getScheme().getScheduler().step( this );
@@ -223,6 +356,8 @@ public class DefaultAnimatedCssRule extends AbstractAnimatedCssRule {
 		
 		@Override
 		public void destroyed(){
+			sourceForwarder.destroy();
+			targetDependencies.destroy();
 			animations.remove( this );
 			animation = null;
 			for( CssPropertyKey key : overridenProperties.keySet() ){

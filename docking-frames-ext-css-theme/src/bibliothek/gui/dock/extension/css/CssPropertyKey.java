@@ -99,6 +99,14 @@ public class CssPropertyKey {
 		return builder.toString();
 	}
 	
+	/**
+	 * Gets the number of segments of this path.
+	 * @return the number of segments
+	 */
+	public int length(){
+		return path.length;
+	}
+	
 	@Override
 	public String toString(){
 		return toPropertyName();

@@ -67,7 +67,7 @@ public abstract class CssAnimationProperty<T> extends AbstractCssPropertyContain
 			if( value != null && value != currentAnimation ){
 				value.setType( CssAnimationProperty.this.getType( scheme ) );
 				value.setPropertyFilter( new PresetFilter<CssPropertyKey>( propertyKey ) );
-				scheme.animate( item, value );
+				scheme.animate( item, propertyKey, value );
 			}
 			currentAnimation = value;
 		}

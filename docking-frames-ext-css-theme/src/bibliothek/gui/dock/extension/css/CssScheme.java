@@ -329,12 +329,13 @@ public class CssScheme {
 	/**
 	 * Starts a new animation on top of the current animations of <code>item</code>.
 	 * @param item the item to animate
+	 * @param animationKey the name of the {@link CssProperty} describing <code>animation</code>
 	 * @param animation the additional animation, will run alongside other currently
 	 * running animation
 	 * @throws IllegalArgumentException if <code>item</code> cannot be found, or
 	 * if <code>animation</code> is <code>null</code>
 	 */
-	public void animate( CssItem item, CssAnimation<?> animation ){
+	public void animate( CssItem item, CssPropertyKey animationKey, CssAnimation<?> animation ){
 		if( animation == null ){
 			throw new IllegalArgumentException( "animation must not be null" );
 		}
@@ -344,7 +345,7 @@ public class CssScheme {
 			throw new IllegalArgumentException( "item not found" );
 		}
 		
-		match.animate( animation );
+		match.animate( animationKey, animation );
 	}
 	
 	/**
@@ -382,8 +383,8 @@ public class CssScheme {
 			setRule( search( item ) );
 		}
 		
-		private void animate( CssAnimation<?> animation ){
-			AnimatedCssRule nextRule = chain.animate( animation );
+		private void animate( CssPropertyKey animationKey, CssAnimation<?> animation ){
+			AnimatedCssRule nextRule = chain.animate( animationKey, animation );
 			if( nextRule != rule ){
 				replaceRule( nextRule );
 			}

@@ -126,4 +126,17 @@ public class DefaultCssRule implements CssRule{
 	public void removeRuleListener( CssRuleListener listener ){
 		listeners.remove( listener );
 	}
+	
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append( selector );
+		builder.append( "{" );
+		for( Map.Entry<CssPropertyKey, String> entry : properties.entrySet() ){
+			builder.append( "\n" );
+			builder.append( entry.getKey() ).append( ": " ).append( entry.getValue() );
+		}
+		builder.append( "\n}" );
+		return builder.toString();
+	}
 }

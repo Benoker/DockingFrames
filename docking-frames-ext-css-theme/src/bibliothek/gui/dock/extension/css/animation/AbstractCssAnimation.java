@@ -26,9 +26,7 @@
 package bibliothek.gui.dock.extension.css.animation;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
@@ -96,9 +94,9 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		
 		@Override
 		public void propertyChanged( CssRule source, CssPropertyKey key ){
-			AnimatedProperty<?> property = properties.get( key );
-			if( property != null ){
-				property.updateValues();
+			AnimatedProperty<?> animatedProperty = properties.get( key );
+			if( animatedProperty != null ){
+				animatedProperty.updateValues();
 			}
 		}
 	};
@@ -121,7 +119,7 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 			return true;
 		}
 		for( AnimatedProperty<?> value : properties.values() ){
-			if( value.dependencies.contains( key )){
+			if( value.dependencies.containsKey( key )){
 				return true;
 			}
 		}
@@ -214,7 +212,7 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		private CssPropertyKey key;
 		private CssType<S> type;
 		
-		private Set<CssPropertyKey> dependencies = new HashSet<CssPropertyKey>();
+		private Map<CssPropertyKey, CssProperty<?>> dependencies = new HashMap<CssPropertyKey,CssProperty<?>>();
 		
 		public AnimatedProperty( CssPropertyKey key, AnimatedCssProperty<S> property, CssType<S> type ){
 			this.key = key;
@@ -224,13 +222,25 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		}
 		
 		@Override
-		public void addDependency( CssPropertyKey key ){
-			dependencies.add( this.key.append( key ) );
+		public void addSourceDependency( String key, CssProperty<?> property ){
+			callback.addSourceDependency( key, property );
+			dependencies.put( this.key.append( key ), property );
 		}
 		
 		@Override
-		public void removeDependency( CssPropertyKey key ){
-			dependencies.remove( this.key.append( key ) );	
+		public void removeSourceDependency( String key ){
+			dependencies.remove( this.key.append( key ) );
+			callback.removeSourceDependency( key );
+		}
+		
+		@Override
+		public void addTargetDependency( String key, CssProperty<?> property ){
+			callback.addTargetDependency( key, property );	
+		}
+		
+		@Override
+		public void removeTargetDependency( String key ){
+			callback.removeTargetDependency( key );	
 		}
 		
 		@Override
