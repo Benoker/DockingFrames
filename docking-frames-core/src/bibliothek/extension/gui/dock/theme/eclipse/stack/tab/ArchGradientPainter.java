@@ -272,7 +272,7 @@ public class ArchGradientPainter extends BaseTabComponent {
 		repaint();
 	}
 	
-	private Arch arch( int width, int height ){
+	protected Arch arch( int width, int height ){
 		if( arch == null || arch.getWidth() != width || arch.getHeight() != height )
 			arch = new Arch( width, height );
 		return arch;
@@ -448,7 +448,6 @@ public class ArchGradientPainter extends BaseTabComponent {
 		}
 		
 		right = rightSide( x, y, w, h );
-		
 		g2d.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF );
 		
 		// draw shadow
@@ -540,6 +539,19 @@ public class ArchGradientPainter extends BaseTabComponent {
 		g.setColor( lineColor );
 		g.drawPolyline( left.xpoints, left.ypoints, left.npoints-1 );
 		g.drawPolyline( right.xpoints, right.ypoints, right.npoints-1 );
+		
+		switch( getOrientation() ){
+			case TOP_OF_DOCKABLE:
+			case LEFT_OF_DOCKABLE:
+				g.drawRect( x+w-1, y+h-1, 0, 0 );
+				break;
+			case RIGHT_OF_DOCKABLE:
+				g.drawRect( x, y+h-1, 0, 0 );
+				break;
+			case BOTTOM_OF_DOCKABLE:
+				g.drawRect( x+w-1, y, 0, 0 );
+				break;
+		}
 		
 		
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);

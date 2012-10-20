@@ -25,6 +25,7 @@
  */
 package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 
+import java.awt.Dimension;
 import java.util.Arrays;
 
 /**
@@ -88,34 +89,45 @@ public class Arch {
 	}
 	
 	private void calculate(){
-		int lineWidth = lineH( width );
-		int lineHeight = lineV( height );
+		int lineWidth = lineWidth( width );
+		int lineHeight = lineHeight( height );
 		
-		int archWidth = (width - lineWidth) / 2;
-		int archHeight = (height - lineHeight) / 2;
+		Dimension line = findGoodSlope( lineWidth, lineHeight );
+		lineWidth = line.width;
+		lineHeight = line.height;
+		
+		int topArchWidth = (width - lineWidth) / 2;
+		int topArchHeight = (height - lineHeight) / 2;
+		
+		int bottomArchWidth = width - topArchWidth - lineWidth;
+		int bottomArchHeight = height - topArchHeight - lineHeight;
 		
 		Arrays.fill( values, -1 );
 		
 		// arches
-		double[] sample = arch( 0, 0, archWidth, archHeight, lineHeight / (double)lineWidth );
-		for( int x = 0; x < archWidth; x++ ){
-			int y = (int)(sample[x]+0.5 );
-			
+		double[] topArch = arch( 0, 0, topArchWidth, topArchHeight, lineHeight / (double)lineWidth );
+		double[] bottomArch = arch( 0, 0, bottomArchWidth, bottomArchHeight, lineHeight / (double)lineWidth );
+		
+		for( int x = 0; x < topArchWidth; x++ ){
+			int y = (int)(topArch[x]+0.5 );
 			values[x] = y;
-			values[width-1-x] = height-1-y;
 		}
 		
-		// line (painted in two halfes to ensure symmetry)
-		sample = line( archWidth, archHeight, archWidth+lineWidth/2-1, archHeight+lineHeight/2-1 );
+		for( int x = 0; x < bottomArchWidth; x++ ){
+			int y = (int)(bottomArch[x] + 0.5);
+			values[width-x-1] = height-y-1;
+		}
+		
+		// line
+		// double[] sample = line( topArchWidth-1, values[topArchWidth-1], width - bottomArchWidth, values[width - bottomArchWidth] );
+		double[] sample = line( topArchWidth, topArchHeight, width - bottomArchWidth, height - bottomArchHeight );
 		for( int x = 0; x < sample.length; x++ ){
 			int y = (int)(sample[x]+0.5 );
 		
-			values[x+archWidth] = y;
-			values[width-1-x-archWidth] = height-1-y;
+			values[x+topArchWidth] = y;
 		}
 		
 		// fill lines without blips
-		
 		if( values[0] == -1 ){
 			values[0] = 0;
 			values[values.length-1] = height-1;
@@ -134,10 +146,11 @@ public class Arch {
 		
 		for( int t = 0; t < sample.length; t++ ){
 			for( int t2 = 0; t2 < 10; t2++ ){
-				double value = (10*t + t2)/10.0/sample.length;
+				double xvalue = (10*t + t2)/10.0/(sample.length);
+				double yvalue = (10*t + t2)/10.0/(sample.length+1);
 				
-				double bx = x1 + (value)*(x2-x1+1);
-				double by = y1 + (value)*(y2-y1+1);
+				double bx = x1 + (xvalue)*(x2-x1+1);
+				double by = y1 + (yvalue)*(y2-y1+1);
 				
 				sample[ (int)bx - x1 ] += 0.1 * by;
 			}
@@ -151,15 +164,16 @@ public class Arch {
 		double cutX = cutWithZero( x+width, y+height, slope, cutLine );
 		double cutY = cutLine;
 		
-		double cutM = Math.tan( Math.PI - Math.atan( slope ) / 2.0 );
-		double cutC = cutY - cutM*cutX;
-		
-		double cutDelta = -0.6;
-		
-		cutX += cutDelta;
-		cutY = cutM * cutX + cutC;
+//		double cutM = Math.tan( Math.PI - Math.atan( slope ) / 2.0 );
+//		double cutC = cutY - cutM*cutX;
+//		
+//		double cutDelta = -0.6;
+//		
+//		cutX += cutDelta;
+//		cutY = cutM * cutX + cutC;
 		
 		double[] sample = new double[ width ];
+		int[] sampleCount = new int[ width ];
 		
 		for( int t = 0; t < width; t++ ){
 			for( int t2 = 0; t2 < 10; t2++ ){
@@ -168,7 +182,11 @@ public class Arch {
 				double bx = bezier( value, x, cutX, x+width );
 				double by = bezier( value, y, cutY, y+height );
 				
-				sample[ (int)bx - x ] += 0.1 * by;
+				int index = (int)bx - x;
+				int count = sampleCount[ index ];
+					
+				sampleCount[ index ]++;
+				sample[ index ] = (count * sample[ index ] + by) / (count+1);
 			}
 		}
 		return sample;
@@ -183,7 +201,7 @@ public class Arch {
 		return (line-c) / m;
 	}
 	
-	private int lineH( int width ){
+	private int lineWidth( int width ){
 		int line = width / 3;
 		
 		int mod = width % 3;
@@ -194,12 +212,30 @@ public class Arch {
 		return line;
 	}
 	
-	private int lineV( int height ){
+	private int lineHeight( int height ){
 		int line = height / 2;
 		if( (height-line) % 2 == 1 )
 			line++;
 		
 		return line;
+	}
+	
+	private Dimension findGoodSlope( int lineWidth, int lineHeight ){
+		Dimension result = new Dimension( lineWidth, lineHeight );
+		if( lineHeight > 0 ){
+			double ratio = lineWidth / (double)lineHeight;
+			double nearest = neareastRatio( ratio );
+			result.width = (int)(nearest * lineHeight );
+		}
+		return result;
+	}
+	
+	private double neareastRatio(double ratio){
+		if( ratio > 1 ){
+			return (double)Math.round( ratio );
+		} else {
+			return 1 / (double)Math.round( 1 / ratio );
+		}
 	}
 
 	@Override
