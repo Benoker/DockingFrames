@@ -3,13 +3,13 @@ package bibliothek.gui.dock.extension.css.intern;
 import java.util.PriorityQueue;
 
 import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationSchedulable;
-import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationScheduler;
+import bibliothek.gui.dock.extension.css.transition.scheduler.CssSchedulable;
+import bibliothek.gui.dock.extension.css.transition.scheduler.CssScheduler;
 
 /**
  * This {@link CssScheme} uses specialized code allowing it to run in JUnit tests:
  * <ul>
- * 	<li>The specialized {@link AnimationScheduler} must be started from outside and does execute the animations
+ * 	<li>The specialized {@link CssScheduler} must be started from outside and does execute the animations
  * synchronously </li>
  * </ul>
  * @author Benjamin Sigg
@@ -25,18 +25,18 @@ public class TestCssScheme extends CssScheme{
 		scheduler.run( deltaMilliseconds );
 	}
 	
-	private class TestScheduler implements AnimationScheduler{
+	private class TestScheduler implements CssScheduler{
 		private int timeGone = 0;
 		private PriorityQueue<Job> jobs = new PriorityQueue<Job>();
 		private Job executing;
 		
 		@Override
-		public void step( AnimationSchedulable job ){
+		public void step( CssSchedulable job ){
 			step( job, 20 );
 		}
 
 		@Override
-		public void step( AnimationSchedulable job, int delay ){
+		public void step( CssSchedulable job, int delay ){
 			jobs.add( new Job( job, delay ) );
 		}
 		
@@ -63,12 +63,12 @@ public class TestCssScheme extends CssScheme{
 		}
 		
 		private class Job implements Comparable<Job>{
-			private AnimationSchedulable job;
+			private CssSchedulable job;
 			private int time;
 			private int delay;
 			private boolean repeat;
 			
-			public Job( AnimationSchedulable job, int delay ){
+			public Job( CssSchedulable job, int delay ){
 				this.job = job;
 				this.time = delay + timeGone;
 				this.delay = delay;

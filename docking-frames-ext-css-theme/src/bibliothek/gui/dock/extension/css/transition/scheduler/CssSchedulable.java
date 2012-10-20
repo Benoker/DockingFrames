@@ -23,28 +23,19 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
-
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
-import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
+package bibliothek.gui.dock.extension.css.transition.scheduler;
 
 /**
- * A type creating new {@link CssPaint}s.
+ * Some kind of animation that can be triggered by the {@link CssScheduler}.
  * @author Benjamin Sigg
  */
-public class CssPaintType implements CssType<CssPaint>{
-	@Override
-	public CssPaint convert( String value ){
-		if( "solid".equals( value )){
-			return new SolidCssPaint();
-		}
-		return null;
-	}	
-	
-	@Override
-	public TransitionalCssProperty<CssPaint> createTransition(){
-		return null;
-	}
+public interface CssSchedulable {
+	/**
+	 * Called with some delay, usually in the EDT, from <code>scheduler</code>.
+	 * @param scheduler the scheduler, may be used to schedule a follow up event
+	 * @param delay the amount of milliseconds passed since the last call to
+	 * {@link CssScheduler#step(CssSchedulable)} from within this method,
+	 * or <code>-1</code> if <code>step</code> was not called by this method
+	 */
+	public void step( CssScheduler scheduler, int delay );
 }

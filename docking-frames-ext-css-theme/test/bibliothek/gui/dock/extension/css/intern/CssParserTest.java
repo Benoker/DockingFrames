@@ -12,7 +12,7 @@ import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 public class CssParserTest {
 	private CssParser parser;
@@ -30,7 +30,7 @@ public class CssParserTest {
 			}
 
 			@Override
-			public AnimatedCssProperty<String> createAnimation(){
+			public TransitionalCssProperty<String> createTransition(){
 				return null;
 			}
 		};

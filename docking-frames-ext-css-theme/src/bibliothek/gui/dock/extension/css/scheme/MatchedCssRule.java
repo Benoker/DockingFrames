@@ -31,15 +31,15 @@ import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssRule;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssRule;
 
 /**
  * A {@link MatchedCssRule} is responsible for reading the properties of one {@link CssRule}
- * and forward them to a {@link CssItem}. Due to animations several {@link CssRule}s may be active
+ * and forward them to a {@link CssItem}. Due to transitions several {@link CssRule}s may be active
  * at the same time, in this case this {@link MatchedCssRule} is marked as {@link #outdate()}. Only
  * {@link CssProperty}s which are considered {@link #isInput(CssPropertyKey) input properties} remain
  * active. Input properties usually are attached to a {@link CssPropertyContainer} which got involved
- * in an animation, yet itself is not a {@link CssProperty} nor a {@link CssItem}.
+ * in an transition, yet itself is not a {@link CssProperty} nor a {@link CssItem}.
  * @author Benjamin Sigg
  */
 public class MatchedCssRule {
@@ -48,7 +48,7 @@ public class MatchedCssRule {
 	}
 	
 	/** the values of all the properties */
-	private AnimatedCssRule rule;
+	private TransitionalCssRule rule;
 	
 	/** the behavior of this {@link MatchedCssRule} */
 	private Mode mode = Mode.NEW;
@@ -61,7 +61,7 @@ public class MatchedCssRule {
 	 * @param item the item whose properties are set
 	 * @param rule the rule from which to read properties, can be <code>null</code>
 	 */
-	public MatchedCssRule( CssScheme scheme, CssItem item, AnimatedCssRule rule ){
+	public MatchedCssRule( CssScheme scheme, CssItem item, TransitionalCssRule rule ){
 		this.rule = rule;
 		forwarder = new Forwarder( rule, item, scheme );
 	}

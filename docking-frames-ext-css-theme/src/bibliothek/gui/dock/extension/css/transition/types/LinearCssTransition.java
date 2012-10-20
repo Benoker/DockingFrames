@@ -23,28 +23,32 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.transition.types;
 
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
+import bibliothek.gui.dock.extension.css.transition.AbstractCssTransition;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
- * A type creating new {@link CssPaint}s.
+ * An transition property fading one {@link CssPaint} into another.
  * @author Benjamin Sigg
+ * @param <T> the type of value this transition will handle
  */
-public class CssPaintType implements CssType<CssPaint>{
+public class LinearCssTransition<T> extends AbstractCssTransition<T>{
 	@Override
-	public CssPaint convert( String value ){
-		if( "solid".equals( value )){
-			return new SolidCssPaint();
-		}
-		return null;
-	}	
-	
+	protected TransitionalCssProperty<T> createProperty( CssType<T> type, CssPropertyKey key ){
+		return type.createTransition();
+	}
+
 	@Override
-	public TransitionalCssProperty<CssPaint> createTransition(){
-		return null;
+	protected void bind(){
+		// ignore
+	}
+
+	@Override
+	protected void unbind(){
+		// ignore
 	}
 }

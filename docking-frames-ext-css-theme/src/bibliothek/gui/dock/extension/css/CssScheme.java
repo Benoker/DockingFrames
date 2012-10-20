@@ -35,19 +35,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssRule;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssRuleChain;
-import bibliothek.gui.dock.extension.css.animation.CssAnimation;
-import bibliothek.gui.dock.extension.css.animation.DefaultAnimatedCssRuleChain;
-import bibliothek.gui.dock.extension.css.animation.scheduler.AnimationScheduler;
-import bibliothek.gui.dock.extension.css.animation.scheduler.DefaultAnimationScheduler;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.CssPathListener;
 import bibliothek.gui.dock.extension.css.scheme.MatchedCssRule;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.transition.CssTransition;
+import bibliothek.gui.dock.extension.css.transition.DefaultAnimatedCssRuleChain;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssRule;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssRuleChain;
+import bibliothek.gui.dock.extension.css.transition.scheduler.CssScheduler;
+import bibliothek.gui.dock.extension.css.transition.scheduler.DefaultCssScheduler;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
 import bibliothek.gui.dock.extension.css.type.ColorType;
-import bibliothek.gui.dock.extension.css.type.CssAnimationType;
+import bibliothek.gui.dock.extension.css.type.CssTransitionType;
 import bibliothek.gui.dock.extension.css.type.CssPaintType;
 import bibliothek.gui.dock.extension.css.type.CssShapeType;
 import bibliothek.gui.dock.extension.css.type.IntegerType;
@@ -69,7 +69,7 @@ public class CssScheme {
 	private boolean rematchPending = false;
 	
 	private CssTree tree;
-	private AnimationScheduler scheduler = new DefaultAnimationScheduler();
+	private CssScheduler scheduler = new DefaultCssScheduler();
 	
 	private CssRuleListener selectorChangedListener = new CssRuleListener(){
 		@Override
@@ -101,7 +101,7 @@ public class CssScheme {
 		setConverter( CssPaint.class, new CssPaintType() );
 		setConverter( CssShape.class, new CssShapeType() );
 		setConverter( Integer.class, new IntegerType() );
-		types.put( CssAnimation.class, new CssAnimationType() );
+		types.put( CssTransition.class, new CssTransitionType() );
 	}
 	
 	/**
@@ -299,18 +299,18 @@ public class CssScheme {
 	}
 	
 	/**
-	 * Gets the {@link AnimationScheduler} which is responsible for asynchronous calls to the animations. 
+	 * Gets the {@link CssScheduler} which is responsible for asynchronous calls to the transitions. 
 	 * @return the scheduler, not <code>null</code>
 	 */
-	public AnimationScheduler getScheduler(){
+	public CssScheduler getScheduler(){
 		return scheduler;
 	}
 	
 	/**
-	 * Sets the scheduler for asynchronous execution of animations.
+	 * Sets the scheduler for asynchronous execution of transitions.
 	 * @param scheduler the scheduler, not <code>null</code>
 	 */
-	public void setScheduler( AnimationScheduler scheduler ){
+	public void setScheduler( CssScheduler scheduler ){
 		if( scheduler == null ){
 			throw new IllegalArgumentException( "scheduler must not be null" );
 		}
@@ -318,26 +318,26 @@ public class CssScheme {
 	}
 		
 	/**
-	 * Creates a new {@link AnimatedCssRuleChain} which will animate the properties of <code>item</code>.
+	 * Creates a new {@link TransitionalCssRuleChain} which will animate the properties of <code>item</code>.
 	 * @param item the item to animate
-	 * @return the new set of animations
+	 * @return the new set of transitions
 	 */
-	protected AnimatedCssRuleChain createAnimation( CssItem item ){
+	protected TransitionalCssRuleChain createTransition( CssItem item ){
 		return new DefaultAnimatedCssRuleChain( this, item );
 	}
 	
 	/**
-	 * Starts a new animation on top of the current animations of <code>item</code>.
+	 * Starts a new transition on top of the current transitions of <code>item</code>.
 	 * @param item the item to animate
-	 * @param animationKey the name of the {@link CssProperty} describing <code>animation</code>
-	 * @param animation the additional animation, will run alongside other currently
-	 * running animation
+	 * @param transitionKey the name of the {@link CssProperty} describing <code>transition</code>
+	 * @param transition the additional transition, will run alongside other currently
+	 * running transition
 	 * @throws IllegalArgumentException if <code>item</code> cannot be found, or
-	 * if <code>animation</code> is <code>null</code>
+	 * if <code>transition</code> is <code>null</code>
 	 */
-	public void animate( CssItem item, CssPropertyKey animationKey, CssAnimation<?> animation ){
-		if( animation == null ){
-			throw new IllegalArgumentException( "animation must not be null" );
+	public void animate( CssItem item, CssPropertyKey transitionKey, CssTransition<?> transition ){
+		if( transition == null ){
+			throw new IllegalArgumentException( "transition must not be null" );
 		}
 		
 		Match match = items.get( item );
@@ -345,7 +345,7 @@ public class CssScheme {
 			throw new IllegalArgumentException( "item not found" );
 		}
 		
-		match.animate( animationKey, animation );
+		match.animate( transitionKey, transition );
 	}
 	
 	/**
@@ -354,8 +354,8 @@ public class CssScheme {
 	 * @author Benjamin Sigg
 	 */
 	private class Match implements CssItemListener, CssPathListener{
-		private AnimatedCssRuleChain chain;
-		private AnimatedCssRule rule;
+		private TransitionalCssRuleChain chain;
+		private TransitionalCssRule rule;
 		private CssItem item;
 		private CssPath path;
 		
@@ -370,7 +370,7 @@ public class CssScheme {
 			item.addItemListener( this );
 			path = item.getPath();
 			path.addPathListener( this );
-			chain = createAnimation( item );
+			chain = createTransition( item );
 		}
 		
 		public void destroy(){
@@ -383,8 +383,8 @@ public class CssScheme {
 			setRule( search( item ) );
 		}
 		
-		private void animate( CssPropertyKey animationKey, CssAnimation<?> animation ){
-			AnimatedCssRule nextRule = chain.animate( animationKey, animation );
+		private void animate( CssPropertyKey transitionKey, CssTransition<?> transition ){
+			TransitionalCssRule nextRule = chain.animate( transitionKey, transition );
 			if( nextRule != rule ){
 				replaceRule( nextRule );
 			}
@@ -392,14 +392,14 @@ public class CssScheme {
 		
 		private void setRule( CssRule nextRule ){
 			if( rule == null || nextRule != rule.getRoot() ){
-				AnimatedCssRule nextAnimatedRule = chain.transition( nextRule );
+				TransitionalCssRule nextAnimatedRule = chain.transition( nextRule );
 				if( nextAnimatedRule != rule ){
 					replaceRule( nextAnimatedRule );
 				}
 			}
 		}
 		
-		private void replaceRule( AnimatedCssRule nextRule ){
+		private void replaceRule( TransitionalCssRule nextRule ){
 			boolean firstRule = currentMatch == null;
 			
 			if( currentMatch != null ){

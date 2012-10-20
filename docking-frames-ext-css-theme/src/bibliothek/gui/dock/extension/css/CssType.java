@@ -27,12 +27,12 @@ package bibliothek.gui.dock.extension.css;
 
 import java.awt.Color;
 
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
  * A {@link CssType} describes the type of the value part of a statement like "tab.shape = value". A type represents
  * some kind of {@link Object}, like a {@link Color}, and offers methods to convert the text from a css file to that
- * specific type of object. The type also offers the default animation algorithm for converting one <code>T</code> 
+ * specific type of object. The type also offers the default transition algorithm for converting one <code>T</code> 
  * into another <code>T</code>.
  * 
  * @author Benjamin Sigg
@@ -51,8 +51,8 @@ public interface CssType<T> {
 	public T convert( String value );
 	
 	/**
-	 * Creates the default animation used to merge two objects of type <code>T</code> together.
-	 * @return the new default animation, can be <code>null</code>
+	 * Creates the default transition used to merge two objects of type <code>T</code> together.
+	 * @return the new default transition, can be <code>null</code>
 	 */
-	public AnimatedCssProperty<T> createAnimation();
+	public TransitionalCssProperty<T> createTransition();
 }

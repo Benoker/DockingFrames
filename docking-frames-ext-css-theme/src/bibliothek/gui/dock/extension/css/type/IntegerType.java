@@ -26,8 +26,8 @@
 package bibliothek.gui.dock.extension.css.type;
 
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
-import bibliothek.gui.dock.extension.css.animation.types.AnimatedIntegerProperty;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
+import bibliothek.gui.dock.extension.css.transition.types.TransitionalIntegerProperty;
 
 /**
  * Converter for reading {@link String}s and creating {@link Integer}s.
@@ -46,7 +46,7 @@ public class IntegerType implements CssType<Integer>{
 	}
 
 	@Override
-	public AnimatedCssProperty<Integer> createAnimation(){
-		return new AnimatedIntegerProperty();
+	public TransitionalCssProperty<Integer> createTransition(){
+		return new TransitionalIntegerProperty();
 	}
 }

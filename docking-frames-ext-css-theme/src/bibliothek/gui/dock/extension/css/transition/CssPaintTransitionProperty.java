@@ -23,28 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.transition;
 
+import bibliothek.gui.dock.extension.css.CssItem;
+import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
-import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
- * A type creating new {@link CssPaint}s.
+ * A property for handling a {@link CssPaint} with a transition.
  * @author Benjamin Sigg
  */
-public class CssPaintType implements CssType<CssPaint>{
+public abstract class CssPaintTransitionProperty extends CssTransitionProperty<CssPaint>{
+	/**
+	 * Creates the new property.
+	 * @param scheme the scheme in whose realm this property will work
+	 * @param item the item to which this property belongs
+	 */
+	public CssPaintTransitionProperty( CssScheme scheme, CssItem item ){
+		super( scheme, item );
+	}
+
 	@Override
-	public CssPaint convert( String value ){
-		if( "solid".equals( value )){
-			return new SolidCssPaint();
-		}
-		return null;
-	}	
-	
+	public CssType<CssPaint> getType( CssScheme scheme ){
+		return scheme.getConverter( CssPaint.class );
+	}
+
 	@Override
-	public TransitionalCssProperty<CssPaint> createTransition(){
-		return null;
+	protected void bind(){
+		// ignore
+	}
+
+	@Override
+	protected void unbind(){
+		// ignore
 	}
 }

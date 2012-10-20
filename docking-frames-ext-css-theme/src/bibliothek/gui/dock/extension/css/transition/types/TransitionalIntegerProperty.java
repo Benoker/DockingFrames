@@ -23,28 +23,60 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.transition.types;
 
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssPropertyCallback;
 
 /**
- * A type creating new {@link CssPaint}s.
+ * Animated property blending one {@link Integer} into another {@link Integer}.
  * @author Benjamin Sigg
  */
-public class CssPaintType implements CssType<CssPaint>{
-	@Override
-	public CssPaint convert( String value ){
-		if( "solid".equals( value )){
-			return new SolidCssPaint();
-		}
-		return null;
-	}	
+public class TransitionalIntegerProperty implements TransitionalCssProperty<Integer>{
+	private int source = 0;
+	private int target = 0;
+	private double transition;
+	private TransitionalCssPropertyCallback<Integer> callback;
 	
 	@Override
-	public TransitionalCssProperty<CssPaint> createTransition(){
-		return null;
+	public void setCallback( TransitionalCssPropertyCallback<Integer> callback ){
+		this.callback = callback;
+	}
+
+	@Override
+	public void setSource( Integer source ){
+		if( source == null ){
+			this.source = 0;
+		}
+		else{
+			this.source = source;
+		}
+		update();
+	}
+
+	@Override
+	public void setTarget( Integer target ){
+		if( target == null ){
+			this.target = 0;
+		}
+		else{
+			this.target = target;
+		}
+		update();
+	}
+
+	@Override
+	public void setTransition( double transition ){
+		this.transition = transition;
+		update();
+	}
+
+	@Override
+	public void step( int delay ){
+		update();
+	}
+
+	private void update(){
+		callback.set( (int)( source * (1-transition) + target * transition ) );
 	}
 }

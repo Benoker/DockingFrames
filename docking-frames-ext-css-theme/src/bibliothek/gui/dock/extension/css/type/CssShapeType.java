@@ -26,9 +26,9 @@
 package bibliothek.gui.dock.extension.css.type;
 
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.animation.AnimatedCssProperty;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.extension.css.shape.OvalShape;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
  * A type creating new {@link CssShape}s.
@@ -44,7 +44,7 @@ public class CssShapeType implements CssType<CssShape>{
 	}
 	
 	@Override
-	public AnimatedCssProperty<CssShape> createAnimation(){
+	public TransitionalCssProperty<CssShape> createTransition(){
 		return null;
 	}
 }

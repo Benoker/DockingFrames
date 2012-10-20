@@ -47,8 +47,8 @@ public class TestCssRules {
 	private static DefaultCssRule getAnimatedColor( String color, Color value ){
 		DefaultCssRule rule = new DefaultCssRule( selector( color ) );
 		rule.setProperty( "color", ColorType.convert( value ) );
-		rule.setProperty( "color-animation", "linear" );
-		rule.setProperty( "color-animation-duration", "10000" );
+		rule.setProperty( "color-transition", "linear" );
+		rule.setProperty( "color-transition-duration", "10000" );
 		return rule;
 	}
 	
@@ -57,8 +57,8 @@ public class TestCssRules {
 		rule.setProperty( "range", name );
 		rule.setProperty( "range-min", String.valueOf( min ) );
 		rule.setProperty( "range-max", String.valueOf( max ) );
-		rule.setProperty( "range-animation", "linear" );
-		rule.setProperty( "range-animation-duration", "10000" );
+		rule.setProperty( "range-transition", "linear" );
+		rule.setProperty( "range-transition-duration", "10000" );
 		return rule;
 	}
 }

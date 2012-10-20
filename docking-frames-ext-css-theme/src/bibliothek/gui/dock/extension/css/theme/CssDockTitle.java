@@ -33,13 +33,13 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.extension.css.CssPath;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.DefaultCssItem;
-import bibliothek.gui.dock.extension.css.animation.CssPaintAnimationProperty;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
 import bibliothek.gui.dock.extension.css.path.MultiCssPath;
 import bibliothek.gui.dock.extension.css.property.ShapeCssProperty;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.transition.CssPaintTransitionProperty;
 import bibliothek.gui.dock.extension.css.util.CssMouseAdapter;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -91,7 +91,7 @@ public class CssDockTitle extends AbstractDockTitle{
 		
 		item = new DefaultCssItem( selfPath );
 		
-		item.putProperty( "background", new CssPaintAnimationProperty( css, item ){
+		item.putProperty( "background", new CssPaintTransitionProperty( css, item ){
 			@Override
 			public void set( CssPaint value ){
 				background = value;

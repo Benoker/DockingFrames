@@ -23,28 +23,39 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.transition;
 
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
-import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
- * A type creating new {@link CssPaint}s.
+ * A {@link TransitionalCssProperty} that does not perform any kind of transition.
  * @author Benjamin Sigg
+ * @param <T> the type of value "animated" by this "transition"
  */
-public class CssPaintType implements CssType<CssPaint>{
-	@Override
-	public CssPaint convert( String value ){
-		if( "solid".equals( value )){
-			return new SolidCssPaint();
-		}
-		return null;
-	}	
+public class NotTransitionalCssProperty<T> implements TransitionalCssProperty<T>{
+	private TransitionalCssPropertyCallback<T> callback;
 	
 	@Override
-	public TransitionalCssProperty<CssPaint> createTransition(){
-		return null;
+	public void setCallback( TransitionalCssPropertyCallback<T> callback ){
+		this.callback = callback;
+	}
+
+	@Override
+	public void setSource( T source ){
+		callback.set( source );
+	}
+
+	@Override
+	public void setTarget( T target ){
+		// ignore
+	}
+
+	@Override
+	public void setTransition( double transition ){
+		// ignore
+	}
+
+	@Override
+	public void step( int delay ){
+		// ignore
 	}
 }
