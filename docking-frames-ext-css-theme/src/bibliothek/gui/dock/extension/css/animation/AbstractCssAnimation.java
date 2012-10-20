@@ -114,10 +114,6 @@ public abstract class AbstractCssAnimation<T> extends AbstractCssPropertyContain
 		if( key.equals( durationKey ) ){
 			return true;
 		}
-		AnimatedProperty<?> property = properties.get( key );
-		if( property != null ){
-			return true;
-		}
 		for( AnimatedProperty<?> value : properties.values() ){
 			if( value.dependencies.containsKey( key )){
 				return true;

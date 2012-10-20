@@ -36,8 +36,10 @@ import bibliothek.gui.dock.extension.css.animation.AnimatedCssRule;
 /**
  * A {@link MatchedCssRule} is responsible for reading the properties of one {@link CssRule}
  * and forward them to a {@link CssItem}. Due to animations several {@link CssRule}s may be active
- * at the same time, it is the responsibility of this class to find out which {@link CssProperty}s
- * need to be set by an old rule, and which to be set by a new rule.
+ * at the same time, in this case this {@link MatchedCssRule} is marked as {@link #outdate()}. Only
+ * {@link CssProperty}s which are considered {@link #isInput(CssPropertyKey) input properties} remain
+ * active. Input properties usually are attached to a {@link CssPropertyContainer} which got involved
+ * in an animation, yet itself is not a {@link CssProperty} nor a {@link CssItem}.
  * @author Benjamin Sigg
  */
 public class MatchedCssRule {

@@ -106,6 +106,34 @@ public class AnimationsTest {
 		Assert.assertEquals( 0, item.getRange().getMax() );
 	}
 	
+	@Test
+	public void overlappingDependingProperties(){
+		TestCssScheme scheme = TestCssRules.getAnimatedRangeScheme();
+		TestItem item = new TestItem( scheme );
+		item.addAnimatedRangeProperty();
+		item.to( "delta" );
+		Assert.assertNull( item.getRange() );
+		scheme.add( item );
+		Assert.assertEquals( "delta", item.getRange().getName() );
+		Assert.assertEquals( 1000, item.getRange().getMin() );
+		Assert.assertEquals( 1000, item.getRange().getMax() );
+		
+		item.to( "beta" );
+		scheme.runAnimations( 5000 );
+		Assert.assertEquals( 1000, item.getRange().getMin() );
+		assertBetween( 450, 550, item.getRange().getMax() );
+		
+		item.to( "gamma" );
+		scheme.runAnimations( 5050 );
+		assertBetween( 450, 550, item.getRange().getMin() );
+		assertBetween( 450, 550, item.getRange().getMax() );
+		
+		scheme.runAnimations( 5050 );
+		Assert.assertEquals( "gamma", item.getRange().getName() );
+		Assert.assertEquals( 0, item.getRange().getMin() );
+		Assert.assertEquals( 1000, item.getRange().getMax() );		
+	}
+	
 	private void assertBetween( int min, int max, int actual ){
 		Assert.assertTrue( min + " <= " + actual,  min <= actual );
 		Assert.assertTrue( max + " >= " + actual, max >= actual );
