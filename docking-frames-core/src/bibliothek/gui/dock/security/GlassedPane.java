@@ -347,7 +347,7 @@ public class GlassedPane extends JPanel{
                 if( over != component ){
                 	overNewComponent = true;
                     if( over != null ){
-                    	Point overMouse = SwingUtilities.convertPoint( component, mouse, over );
+                    	Point overMouse = SwingUtilities.convertPoint( this, mouse, over );
                         over.dispatchEvent( new MouseEvent( 
                                 over, MouseEvent.MOUSE_EXITED, e.getWhen(), e.getModifiers(), 
                                 overMouse.x, overMouse.y, e.getClickCount(), e.isPopupTrigger(), 
@@ -357,7 +357,7 @@ public class GlassedPane extends JPanel{
                     over = component;
 
                     if( over != null ){
-                    	Point overMouse = SwingUtilities.convertPoint( component, mouse, over );
+                    	Point overMouse = SwingUtilities.convertPoint( this, mouse, over );
                         over.dispatchEvent( new MouseEvent( 
                                 over, MouseEvent.MOUSE_ENTERED, e.getWhen(), e.getModifiers(), 
                                 overMouse.x, overMouse.y, e.getClickCount(), e.isPopupTrigger(), 

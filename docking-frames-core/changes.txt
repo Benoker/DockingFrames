@@ -837,6 +837,9 @@
  - API: when removing a Dockable from a StackDockStation, the station tries to be more intelligent with selecting the next focused Dockable: it uses the FocusHistory instead of just selecting the "index+1'th" tab.
  - Bugfix: When a DockStation with children was put onto another DockStation at a location where a placeholder-map was available, that map could have been applied to the new child station. This was wrong: the station already had a layout, it did not need a new one.
  - Bugfix: Made the arch of the Eclipse-tab a bit more smooth
+
+[v1.1.2p1c]
+ - Bugfix: GlassedPane could throw exception when mouse was moved at the wrong time
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them
