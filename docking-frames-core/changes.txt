@@ -840,6 +840,9 @@
 
 [v1.1.2p1c]
  - Bugfix: GlassedPane could throw exception when mouse was moved at the wrong time
+
+[v1.1.2p1d]
+ - Bugfix: Fixed a bug where CControl could no longer read layouts stored in the binary format
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

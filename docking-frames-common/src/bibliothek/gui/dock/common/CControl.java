@@ -874,7 +874,7 @@ public class CControl {
                 public void read( DataInputStream in ) throws IOException {
                     Version version = Version.read( in );
                     version.checkCurrent();
-                    if( Version.VERSION_1_0_4.compareTo( version ) <= 0 ){
+                    if( Version.VERSION_1_1_1.compareTo( version ) > 0 && Version.VERSION_1_0_4.compareTo( version ) <= 0 ){
                     	readWorkingAreas( in );
                     }
                     frontend.read( in );

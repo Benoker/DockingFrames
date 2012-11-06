@@ -1839,6 +1839,8 @@ public class DockFrontend {
      * @throws IOException if there are any problems
      */
     public void writeBlop( SettingsBlop blop, DataOutputStream out ) throws IOException{
+    	Version.write( out, Version.VERSION_1_1_1a );
+    	
     	String currentSetting = blop.getCurrentName();
     	
         if( currentSetting == null )
