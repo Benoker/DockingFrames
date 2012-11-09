@@ -41,14 +41,16 @@ public class RepeatingFocusRequest implements FocusRequest{
 	private int attempts;
 	private DockElementRepresentative source;
 	private Component component;
+	private boolean hardRequest;
 	
 	/**
 	 * Creates a new request
 	 * @param source the element that gets focused, not <code>null</code>
 	 * @param component the {@link Component} that actually gains the focus, not <code>null</code>
+	 * @param hardRequest whether this request should be executed even if the application is invisible
 	 */
-	public RepeatingFocusRequest( DockElementRepresentative source, Component component ){
-		this( source, component, 10, 20 );
+	public RepeatingFocusRequest( DockElementRepresentative source, Component component, boolean hardRequest ){
+		this( source, component, 10, 20, hardRequest );
 	}
 	
 	/**
@@ -57,8 +59,10 @@ public class RepeatingFocusRequest implements FocusRequest{
 	 * @param component the {@link Component} that actually gains the focus, not <code>null</code>
 	 * @param delay how long to wait until requesting the focus, at least 1
 	 * @param attempts how often to try and gain the focus, at least 1
+	 * @param hardRequest whether this request should be executed even if the application is invisible
 	 */
-	public RepeatingFocusRequest( DockElementRepresentative source, Component component, int delay, int attempts ){
+	public RepeatingFocusRequest( DockElementRepresentative source, Component component, int delay, int attempts, boolean hardRequest
+			){
 		if( component == null ){
 			throw new IllegalArgumentException( "component must not be null" );
 		}
@@ -73,6 +77,7 @@ public class RepeatingFocusRequest implements FocusRequest{
 		this.component = component;
 		this.delay = delay;
 		this.attempts = attempts;
+		this.hardRequest = hardRequest;
 	}
 	
 	public boolean validate( FocusController controller ){
@@ -93,6 +98,10 @@ public class RepeatingFocusRequest implements FocusRequest{
 	
 	public boolean acceptable( Component component ){
 		return this.component == component;
+	}
+	
+	public boolean isHardRequest(){
+		return hardRequest;
 	}
 	
 	public void veto( FocusVeto veto ){

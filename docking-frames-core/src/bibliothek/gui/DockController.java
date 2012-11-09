@@ -73,8 +73,10 @@ import bibliothek.gui.dock.control.GlobalMouseDispatcher;
 import bibliothek.gui.dock.control.KeyboardController;
 import bibliothek.gui.dock.control.PopupController;
 import bibliothek.gui.dock.control.SingleParentRemover;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.FocusHistory;
+import bibliothek.gui.dock.control.focus.FocusRequest;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.event.ControllerSetupListener;
 import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
@@ -114,6 +116,9 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.text.DefaultTextScheme;
 import bibliothek.gui.dock.util.text.TextBridge;
 import bibliothek.gui.dock.util.text.TextValue;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 /**
  * A controller connects all the {@link DockStation}s, {@link Dockable}s and
@@ -930,15 +935,16 @@ public class DockController {
     	Dockable current = getFocusedDockable();
     	
         if( current == null ){
-            setFocusedDockable( focusedDockable, component, false );
+            setFocusedDockable( new DefaultFocusRequest( focusedDockable, component, false ) );
         }
         else if( !DockUtilities.isAncestor( focusedDockable, current )){
-            setFocusedDockable( focusedDockable, component, false );
+            setFocusedDockable( new DefaultFocusRequest( focusedDockable, component, false ) );
         }
     }
     
     /**
-     * Sets the {@link Dockable} which should have the focus.
+     * Sets the {@link Dockable} which should have the focus. This is identical of calling
+     * {@link #setFocusedDockable(FocusRequest)} with a new {@link DefaultFocusRequest}.
      * @param focusedDockable the element with the focus or <code>null</code>
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
@@ -946,7 +952,7 @@ public class DockController {
      * to <code>false</code>.
      */
     public void setFocusedDockable( Dockable focusedDockable, boolean force ) {
-    	setFocusedDockable( focusedDockable, null, force );
+    	setFocusedDockable( new DefaultFocusRequest( focusedDockable, force ) );
     }
     
     /**
@@ -958,9 +964,13 @@ public class DockController {
      * that all properties are correct, <code>false</code> if some
      * optimations are allowed. Clients normally can set this argument
      * to <code>false</code>.
+     * @deprecated clients should use {@link #setFocusedDockable(FocusRequest)} instead
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, description="remove this method", priority=Todo.Priority.ENHANCEMENT,
+    	target=Version.VERSION_1_1_3)
     public void setFocusedDockable( Dockable focusedDockable, Component component, boolean force ) {
-        setFocusedDockable( focusedDockable, component, force, true, false );
+    	setFocusedDockable( new DefaultFocusRequest( focusedDockable, component, force ) );
     }
 
     /**
@@ -976,9 +986,21 @@ public class DockController {
      * itself or one of its {@link DockElementRepresentative} is the focus owner 
      * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>focusedDockable</code>
      * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
+     * @deprecated clients should use {@link #setFocusedDockable(FocusRequest)} instead
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, description="remove this method", priority=Todo.Priority.ENHANCEMENT,
+		target=Version.VERSION_1_1_3)
     public void setFocusedDockable( Dockable focusedDockable, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ) {
-    	focusController.setFocusedDockable( focusedDockable, component, force, ensureFocusSet, ensureDockableFocused );
+    	setFocusedDockable( new DefaultFocusRequest( focusedDockable, component, force, ensureFocusSet, ensureDockableFocused ) );
+    }
+    
+    /**
+     * Starts a request to set the focused {@link Dockable}.
+     * @param request the request to execute, not <code>null</code>
+     */
+    public void setFocusedDockable( FocusRequest request ){
+    	focusController.focus( request );
     }
     
     /**

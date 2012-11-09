@@ -42,6 +42,7 @@ import javax.swing.KeyStroke;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.focus.DockableSelection;
 import bibliothek.gui.dock.focus.DockableSelectionListener;
 import bibliothek.gui.dock.util.DockProperties;
@@ -121,7 +122,7 @@ public class DockableSelector {
      */
     public void stop( Dockable dockable ){
         close();
-        controller.setFocusedDockable( dockable, null, false );
+        controller.setFocusedDockable( new DefaultFocusRequest( dockable, null, false ));
     }
     
     private void open(){

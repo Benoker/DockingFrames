@@ -38,6 +38,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.event.UIListener;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -288,7 +289,7 @@ public class ThemeManager extends TypedUIProperties{
     			register.setStalled( false );
     		}
 	    		
-    		controller.setFocusedDockable( focused, null, true );
+    		controller.setFocusedDockable( new DefaultFocusRequest( focused, null, true ));
     		
     		for( UIListener listener : uiListeners() )
     			listener.themeChanged( controller, oldTheme, theme );

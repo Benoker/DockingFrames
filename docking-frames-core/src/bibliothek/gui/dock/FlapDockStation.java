@@ -56,6 +56,7 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
 import bibliothek.gui.dock.disable.DisablingStrategy;
@@ -2412,11 +2413,11 @@ public class FlapDockStation extends AbstractDockableStation {
         			DockTitle title = handle.getTitle();
 	        		
 		            if( getFrontDockable() == dockable && title.isActive() ){
-		                getController().setFocusedDockable( FlapDockStation.this, null, true );
+		                getController().setFocusedDockable( new DefaultFocusRequest( FlapDockStation.this, null, true ));
 		                setFrontDockable( null );
 		            }
 		            else
-		                getController().setFocusedDockable( dockable, null, true );
+		                getController().setFocusedDockable( new DefaultFocusRequest( dockable, null, true ));
         		}
         	}
         }

@@ -358,7 +358,7 @@ public class ActionViewConverter {
 	 */
 	@SuppressWarnings( "unchecked" )
 	private <A, D extends DockAction> Entry<D, A> getEntry( ActionType<D> action, ViewTarget<? super A> target ){
-		Entry<?,?> result = converters.get( new Tuple<ActionType, ViewTarget<?>>( action, target ));
+		Entry<?,?> result = converters.get( new Tuple<ActionType<?>, ViewTarget<?>>( action, target ));
 		if( result == null ){
 			result = new Entry<D,A>();
 			converters.put( new Tuple<ActionType<?>, ViewTarget<?>>( action, target ), result );

@@ -25,13 +25,12 @@
  */
 package bibliothek.gui.dock.common.intern;
 
-import java.awt.Component;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.control.DockControllerFactory;
+import bibliothek.gui.dock.control.focus.FocusRequest;
 
 /**
  * The {@link DockController} that is usually used by a {@link CControl}.
@@ -60,13 +59,14 @@ public class CDockController extends DockController{
 	}
 	
 	@Override
-	public void setFocusedDockable( Dockable focusedDockable, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ) {
-		if( focusedDockable != null ){
+	public void setFocusedDockable( FocusRequest request ){
+		if( request.getSource() != null ){
+			Dockable focusedDockable = request.getSource().getElement().asDockable();
 			CLocationModeManager states = owner.getLocationManager();
 			if( states != null && !states.isOnTransaction() ){
 				states.ensureNotHidden( focusedDockable );
 			}
 		}
-		super.setFocusedDockable( focusedDockable, component, force, ensureFocusSet, ensureDockableFocused );
+		super.setFocusedDockable( request );
 	}
 }

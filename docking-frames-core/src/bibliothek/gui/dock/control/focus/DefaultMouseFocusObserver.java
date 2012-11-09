@@ -73,7 +73,7 @@ public class DefaultMouseFocusObserver implements MouseFocusObserver{
                 	FocusController focus = controller.getFocusController();
                 	FocusStrategy strategy = focus.getStrategy();
                 	if( strategy == null || strategy.shouldFocusAfterDrop( event.getDockable() )){
-                		controller.setFocusedDockable( event.getDockable(), null, true );
+                		controller.setFocusedDockable( new DefaultFocusRequest( event.getDockable(), null, true ));
                 	}
                 }
             });
@@ -257,7 +257,7 @@ public class DefaultMouseFocusObserver implements MouseFocusObserver{
 						if( element != null ){
 							Dockable dock = element.getElement().asDockable();
 					        if( dock != null ){
-					        	controller.setFocusedDockable( dock, component, false, ensureFocus, element.shouldTransfersFocus() );
+					        	controller.setFocusedDockable( new DefaultFocusRequest( dock, component, false, ensureFocus, element.shouldTransfersFocus() ));
 					        }
 						}
 					}
@@ -267,7 +267,7 @@ public class DefaultMouseFocusObserver implements MouseFocusObserver{
             	if( requestFocusInWindow ){
                		component.requestFocusInWindow();
                	}
-                controller.setFocusedDockable( dock, component, false, ensureFocus, element.shouldTransfersFocus() );
+                controller.setFocusedDockable( new DefaultFocusRequest( dock, component, false, ensureFocus, element.shouldTransfersFocus() ));
         	}
         }
     }

@@ -52,12 +52,39 @@ public class DefaultFocusRequest implements FocusRequest {
 	private boolean ensureFocusSet;
 	/** like {@link #ensureFocusSet}, but also ensuring that a child of the focused {@link Dockable} gained the focus */
 	private boolean ensureDockableFocused;
+	/** whether to execute this request even if the involved {@link Component}s are not visible */
+	private boolean hardRequest;
 	
 	/** whether the {@link FocusVetoListener} approved of this request */
 	private FocusVeto veto;
 	
 	/** the controller in whose realm this request is called */
 	private DockController controller;
+	
+    /**
+     * Creates a new request for setting the focused {@link Dockable}.
+     * @param source the item to focus, may be <code>null</code>
+     * @param force <code>true</code> if this request must ensure that all properties are correct, <code>false</code> if some
+     * optimations are allowed. Clients normally can set this argument to <code>false</code>.
+     */
+	public DefaultFocusRequest( DockElementRepresentative source, boolean force ){
+		this( source, null, force );
+	}
+	
+    /**
+     * Creates a new request for setting the focused {@link Dockable}.
+     * @param source the item to focus, may be <code>null</code>
+     * @param component the {@link Component} which triggered this request for example because the user clicked with the mouse on it. 
+     * This request can assume that the focus will automatically be transfered to <code>component</code> by the Swing framework itself.
+     * Can be <code>null</code>, in which case this request decides on its own which {@link Component} to focus. This request may or may
+     * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
+     * as if it would be <code>null</code>.
+     * @param force <code>true</code> if this request must ensure that all properties are correct, <code>false</code> if some
+     * optimations are allowed. Clients normally can set this argument to <code>false</code>.
+     */
+	public DefaultFocusRequest( DockElementRepresentative source, Component component, boolean force ){
+		this( source, component, force, true, false );
+	}
 	
     /**
      * Creates a new request for setting the focused {@link Dockable}.
@@ -75,11 +102,33 @@ public class DefaultFocusRequest implements FocusRequest {
      * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
      */
 	public DefaultFocusRequest( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ){
+		this( source, component, force, ensureFocusSet, ensureDockableFocused, false );
+	}
+	
+    /**
+     * Creates a new request for setting the focused {@link Dockable}.
+     * @param source the item to focus, may be <code>null</code>
+     * @param component the {@link Component} which triggered this request for example because the user clicked with the mouse on it. 
+     * This request can assume that the focus will automatically be transfered to <code>component</code> by the Swing framework itself.
+     * Can be <code>null</code>, in which case this request decides on its own which {@link Component} to focus. This request may or may
+     * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
+     * as if it would be <code>null</code>.
+     * @param force <code>true</code> if this request must ensure that all properties are correct, <code>false</code> if some
+     * optimations are allowed. Clients normally can set this argument to <code>false</code>.
+     * @param ensureFocusSet if <code>true</code>, then this request should make sure that either <code>source</code>
+     * itself or one of its {@link DockElementRepresentative} is the focus owner 
+     * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>source</code>
+     * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
+     * @param hardRequest whether this request should be executed even if the involved {@link Component}s are not
+     * visible.
+     */
+	public DefaultFocusRequest( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused, boolean hardRequest ){
 		this.source = source;
 		this.component = component;
 		this.force = force;
 		this.ensureFocusSet = ensureFocusSet;
 		this.ensureDockableFocused = ensureDockableFocused;
+		this.hardRequest = hardRequest;
 	}
 	
 	public DockElementRepresentative getSource(){
@@ -92,6 +141,10 @@ public class DefaultFocusRequest implements FocusRequest {
 	
 	public int getDelay(){
 		return 0;
+	}
+	
+	public boolean isHardRequest(){
+		return hardRequest;
 	}
 	
 	public boolean acceptable( Component component ){
@@ -142,7 +195,7 @@ public class DefaultFocusRequest implements FocusRequest {
 				// if another dockable gains the focus, then it is going to do that 
 				// before this request gets even processed. So this is a backup
 				// executed to ensure that the application does not lose focus
-				return new RepeatingFocusRequest( null, root );
+				return new RepeatingFocusRequest( null, root, isHardRequest() );
 			}
 		}
 		

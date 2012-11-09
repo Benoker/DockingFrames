@@ -33,6 +33,9 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.event.FocusVetoListener.FocusVeto;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Version;
 
 
 /**
@@ -143,6 +146,16 @@ public interface FocusController {
      * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
      * @return whether focus could be transfered, a value of <code>null</code> indicates that {@link #isOnFocusing()} returned
      * <code>true</code> and the call was ignored
+     * @deprecated this method will be replaced by {@link #focus(FocusRequest)}
      */
+    @Deprecated
+    @Todo( compatibility=Compatibility.BREAK_MAJOR, description="remove this method", priority=Todo.Priority.ENHANCEMENT,
+		target=Version.VERSION_1_1_3)
     public FocusVeto setFocusedDockable( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused );
+    
+    /**
+     * Sets the {@link Dockable} which should have the focus.
+     * @param request information about the {@link Dockable} that should receive the focus, must not be <code>null</code> 
+     */
+    public void focus( FocusRequest request );
 }

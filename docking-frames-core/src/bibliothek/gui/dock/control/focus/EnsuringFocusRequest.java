@@ -93,6 +93,10 @@ public class EnsuringFocusRequest implements FocusRequest{
 		return 0;
 	}
 	
+	public boolean isHardRequest(){
+		return false;
+	}
+	
 	public void veto( FocusVeto veto ){
 		// ignore
 	}
@@ -150,7 +154,7 @@ public class EnsuringFocusRequest implements FocusRequest{
         if( component.isFocusable() ){
             component.requestFocus();
             component.requestFocusInWindow();
-            return new RepeatingFocusRequest( dockable, component );
+            return new RepeatingFocusRequest( dockable, component, isHardRequest() );
         }
         else if( mouseClicked == null ){
             KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent( component );

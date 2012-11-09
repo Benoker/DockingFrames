@@ -54,6 +54,15 @@ public interface FocusRequest {
 	public int getDelay();
 	
 	/**
+	 * A hard request is not checked for correctness regarding the {@link Component#isVisible() visibility}
+	 * or {@link Component#isShowing() showing}. These requests can be executed even if the application
+	 * is not yet visible.
+	 * @return whether this request should be executable even if the involved {@link Component}s are not
+	 * visible
+	 */
+	public boolean isHardRequest();
+	
+	/**
 	 * Invoked by <code>controller</code> right before this request is processed. The method
 	 * checks whether this request is still valid, e.g. a request may no longer be valid because
 	 * it points to a {@link Dockable} that is no longer visible. 

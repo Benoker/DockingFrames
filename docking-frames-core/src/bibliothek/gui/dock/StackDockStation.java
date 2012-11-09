@@ -51,6 +51,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
@@ -1579,7 +1580,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	            if( controller != null ){
 	                Dockable selection = getFrontDockable();
 	                if( selection != null )
-	                    controller.setFocusedDockable( selection, null, false );
+	                    controller.setFocusedDockable( new DefaultFocusRequest( selection, null, false ));
 	                
 	                fireDockableSelected();
 	            }

@@ -87,7 +87,6 @@ public class ViewTarget<A> {
 		return id.hashCode();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object obj ){
 		if (this == obj)
@@ -97,6 +96,6 @@ public class ViewTarget<A> {
 		if( !(obj instanceof ViewTarget))
 			return false;
 		
-		return ((ViewTarget)obj).id.equals( id );
+		return ((ViewTarget<?>)obj).id.equals( id );
 	}
 }

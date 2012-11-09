@@ -51,6 +51,8 @@ import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
+import bibliothek.gui.dock.control.focus.FocusRequest;
 import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.VetoableDockFrontendEvent;
 import bibliothek.gui.dock.title.DockTitle;
@@ -342,7 +344,8 @@ public abstract class AbstractCDockable implements CDockable {
      */
     public void toFront(){
         if( isVisible() ){
-            control.getOwner().intern().getController().setFocusedDockable( intern(), null, false );
+        	FocusRequest request = new DefaultFocusRequest( intern(), null, false, true, false, true );
+            control.getOwner().intern().getController().setFocusedDockable( request );
         }
     }
     

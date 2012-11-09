@@ -843,6 +843,9 @@
 
 [v1.1.2p1d]
  - Bugfix: Fixed a bug where CControl could no longer read layouts stored in the binary format
+ 
+[v1.1.2p1e]
+ - API: The "toFront" method of AbstractCDockable is more powerful now: it even requests the focus if the application is not visible (yet).
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

@@ -28,6 +28,7 @@ package bibliothek.gui.dock.control;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockStationAdapter;
 
@@ -67,7 +68,7 @@ public class VisibilityFocusObserver extends DockRegisterAdapter {
 	@Override
 	public void dockableUnregistered( DockController controller, Dockable dockable ){
 		if( dockable == controller.getFocusedDockable() )
-			controller.setFocusedDockable( null, null, false );
+			controller.setFocusedDockable( new DefaultFocusRequest( null, null, false ));
 	}
 		
     /**
@@ -82,7 +83,7 @@ public class VisibilityFocusObserver extends DockRegisterAdapter {
             	Dockable focusedDockable = controller.getFocusedDockable();
                 if( dockable == focusedDockable || focusedDockable == null ){
                     if( dockable.isDockableShowing() ){
-                        controller.setFocusedDockable( dockable, null, true );
+                        controller.setFocusedDockable( new DefaultFocusRequest( dockable, null, true ));
                     }
                 }
             }
@@ -98,7 +99,7 @@ public class VisibilityFocusObserver extends DockRegisterAdapter {
             			parent = dockable.getDockParent();
             			if( parent != null ){
             				if( parent.isChildShowing( dockable )){
-            					controller.setFocusedDockable( dockable, null, false );
+            					controller.setFocusedDockable( new DefaultFocusRequest( dockable, null, false ));
             					return;
             				}
             			}
@@ -107,7 +108,7 @@ public class VisibilityFocusObserver extends DockRegisterAdapter {
             			break;
             	}
             	
-                controller.setFocusedDockable( null, null, false );
+                controller.setFocusedDockable( new DefaultFocusRequest( null, null, false ));
             }
         }
     }

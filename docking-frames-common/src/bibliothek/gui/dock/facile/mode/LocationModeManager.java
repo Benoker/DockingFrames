@@ -46,6 +46,7 @@ import bibliothek.gui.dock.common.group.CGroupMovement;
 import bibliothek.gui.dock.common.group.StackGroupBehavior;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.DockRegister;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.control.relocator.DockRelocatorEvent;
 import bibliothek.gui.dock.control.relocator.VetoableDockRelocatorAdapter;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
@@ -318,10 +319,10 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 				LocationMode mode = getMode( extendedMode.getModeIdentifier() );
 				if( mode != null ){
 					if( mode.shouldAutoFocus() ){
-						getController().setFocusedDockable( dockable, null, true, true, false );
+						getController().setFocusedDockable( new DefaultFocusRequest( dockable, null, true, true, false ));
 					}
 					else{
-						getController().setFocusedDockable( null, null, true );
+						getController().setFocusedDockable( new DefaultFocusRequest( null, null, true ));
 					}
 				}	
 			}

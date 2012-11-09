@@ -37,6 +37,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.actions.SimpleSelectableAction;
+import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.event.DockActionSourceListener;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -374,7 +375,7 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 					if( isSelected() ){
 						DockController controller = dockable.getController();
 						if( controller != null ){
-							controller.setFocusedDockable( dockable, null, true, true, true );
+							controller.setFocusedDockable( new DefaultFocusRequest( dockable, null, true, true, true ));
 						}
 					}
 					else{

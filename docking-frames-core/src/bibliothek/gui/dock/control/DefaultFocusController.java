@@ -103,14 +103,14 @@ public class DefaultFocusController extends AbstractFocusController {
     
     public FocusVeto setFocusedDockable( DockElementRepresentative source, Component component, boolean force, boolean ensureFocusSet, boolean ensureDockableFocused ){
     	DefaultFocusRequest request = new DefaultFocusRequest( source, component, force, ensureFocusSet, ensureDockableFocused );
-    	enqueue( request );
+    	focus( request );
     	return request.getVeto();
     }
     
     public void ensureFocusSet( boolean dockableOnly ){
     	Dockable dockable = focusedDockable;
     	if( dockable != null ){
-    		enqueue( new EnsuringFocusRequest( dockable, dockableOnly ));
+    		focus( new EnsuringFocusRequest( dockable, dockableOnly ));
     	}
     }
     
@@ -121,7 +121,7 @@ public class DefaultFocusController extends AbstractFocusController {
      * invalid data.
      * @param request the request
      */
-    public void enqueue( FocusRequest request ){
+    public void focus( FocusRequest request ){
     	Request next = new Request( request, false );
     	next.enqueue();
     }
@@ -178,8 +178,10 @@ public class DefaultFocusController extends AbstractFocusController {
         }
         
         if( component != null && pendingRequests.size() > 1 ){
-        	if( !component.isVisible() || !component.isShowing() ){
-        		component = null;
+        	if( !request.isHardRequest() ){
+	        	if( !component.isVisible() || !component.isShowing() ){
+	        		component = null;
+	        	}
         	}
         }
         
