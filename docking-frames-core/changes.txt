@@ -846,6 +846,7 @@
  
 [v1.1.2p1e]
  - API: The "toFront" method of AbstractCDockable is more powerful now: it even requests the focus if the application is not visible (yet).
+ - Bugfix: If a Dockable on a CombinedStackDockStation is shown on a tab and a menu, changes of the Dockable (like the icon) were only forwarded to the tab.
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

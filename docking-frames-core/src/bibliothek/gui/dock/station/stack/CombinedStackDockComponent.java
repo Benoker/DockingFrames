@@ -801,18 +801,16 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 				tab.setTooltip( tooltip );
 				tab.setEnabled( enabled );
 			}
-			else {
-				CombinedMenu menu = getMenu( dockable );
-				if( menu != null ) {
-					Dockable[] dockables = menu.getDockables();
-					for( int i = 0; i < dockables.length; i++ ) {
-						if( dockables[i] == dockable ) {
-							menu.setIcon( i, icon );
-							menu.setText( i, text );
-							menu.setTooltip( i, tooltip );
-							menu.setEnabled( i, enabled );
-							break;
-						}
+			CombinedMenu menu = getMenu( dockable );
+			if( menu != null ) {
+				Dockable[] dockables = menu.getDockables();
+				for( int i = 0; i < dockables.length; i++ ) {
+					if( dockables[i] == dockable ) {
+						menu.setIcon( i, icon );
+						menu.setText( i, text );
+						menu.setTooltip( i, tooltip );
+						menu.setEnabled( i, enabled );
+						break;
 					}
 				}
 			}
