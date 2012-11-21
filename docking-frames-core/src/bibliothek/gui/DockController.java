@@ -392,7 +392,8 @@ public class DockController {
      * @return the default {@link UIScheme}, should not be <code>null</code>
      */
     protected UIScheme<String, TextValue, TextBridge> createDefaultTextScheme(){
-    	ResourceBundle bundle = ResourceBundle.getBundle( "data.bibliothek.gui.dock.core.locale.text", Locale.getDefault(), this.getClass().getClassLoader() );
+    	ResourceBundle bundle = ResourceBundle.getBundle( "data.bibliothek.gui.dock.core.locale.text", Locale.getDefault(), 
+    			DockController.class.getClassLoader() );
     	
     	List<ResourceBundle> list = texts.loadExtensionBundles( Locale.getDefault() );
     	
