@@ -275,20 +275,14 @@ public class Node extends VisibleSplitNode implements Divideable{
 	    	int divider = getAccess().getOwner().getDividerSize();
 	    	
 	    	if( orientation == Orientation.HORIZONTAL ){
-	    		int onLeft = (int)( (left.width - divider/2) / getDivider()) + divider;
-	    		int onRight = (int)( (right.width - divider/2) / (1.0 - getDivider())) + divider;
-	    		
-	    		return new Dimension( 
-	    				Math.max( onLeft, onRight ),
+	    		return new Dimension(
+	    				left.width + divider + right.width,
 	    				Math.max( left.height, right.height ));
 	    	}
 	    	else{
-	    		int onTop = (int)( (left.height - divider/2) / getDivider()) + divider;
-	    		int onBottom = (int)( (right.height - divider/2) / (1.0 - getDivider())) + divider;
-	    		
-	    		return new Dimension( 
-	    				Math.max( left.width, right.width),
-	    				Math.max( onTop, onBottom ) );
+	    		return new Dimension(
+	    				Math.max( left.width, right.width ),
+	    				left.height + divider + right.height );
 	    	}
     	}
     	else if( left != null ){
@@ -313,6 +307,10 @@ public class Node extends VisibleSplitNode implements Divideable{
     
     public double getDivider() {
         return divider;
+    }
+    
+    public double getActualDivider(){
+    	return validateDivider( getDivider() );
     }
     
     public double validateDivider( double divider ){
@@ -373,7 +371,7 @@ public class Node extends VisibleSplitNode implements Divideable{
         	right.updateBounds( x, y, width, height, factorW, factorH, components );
         }
         else if( leftVisible && rightVisible ){
-        	double divider = getAccess().validateDivider( this.divider, this );
+        	double divider = getActualDivider();
         	int dividerSize = getAccess().getOwner().getDividerSize();
 
         	if( orientation == Orientation.HORIZONTAL ){
@@ -410,7 +408,7 @@ public class Node extends VisibleSplitNode implements Divideable{
         boolean rightVisible = right == null || right.isVisible();
         
         if( leftVisible && rightVisible ){
-        	double divider = getAccess().validateDivider( this.divider, this );
+        	double divider = getActualDivider();
         	int dividerSize = getAccess().getOwner().getDividerSize();
         	
         	if( orientation == Orientation.HORIZONTAL ){

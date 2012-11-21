@@ -71,6 +71,13 @@ public interface Divideable {
      */
 	public double getDivider();
 
+	/**
+	 * Gets the {@link #getDivider() divider} as it is actually seen by the user. Usually this is equivalent
+	 * to <code>validateDivider( getDivider() )</code>, subclasses may however consider other restrictions.
+	 * @return the divider as seen by the user
+	 */
+	public double getActualDivider();
+	
     /**
      * Sets the location of the divider. The area of the left child is the area
      * of the whole node multiplied with <code>divider</code>. 

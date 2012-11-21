@@ -394,7 +394,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 					setCursor( Cursor.getPredefinedCursor( Cursor.N_RESIZE_CURSOR ) );
 	
 				if( current != null ) {
-					bounds = current.getDividerBounds( current.getDivider(), bounds );
+					bounds = current.getDividerBounds( current.getActualDivider(), bounds );
 					deltaX = bounds.width / 2 + bounds.x - e.getX();
 					deltaY = bounds.height / 2 + bounds.y - e.getY();
 					
