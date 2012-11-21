@@ -361,12 +361,19 @@ public abstract class AbstractToolbarDockStation extends
 			return false;
 		}
 		
-		
 		boolean hasEnabled = false;
 		boolean hasDisabled = false;
 		
-		for( int i = 0, n = getDockableCount(); i<n; i++ ){
-			if( strategy.isEnabled( getDockable( i ), state )){
+		DockStation station = null;
+		if( getExpandedState() == ExpandedState.EXPANDED && getDockableCount() == 1 ){
+			station = getDockable( 0 ).asDockStation();
+		}
+		if( station == null ){
+			station = this;
+		}
+		
+		for( int i = 0, n = station.getDockableCount(); i<n; i++ ){
+			if( strategy.isEnabled( station.getDockable( i ), state )){
 				hasEnabled = true;
 			}
 			else{

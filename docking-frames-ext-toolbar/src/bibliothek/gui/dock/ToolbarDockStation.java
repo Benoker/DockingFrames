@@ -377,7 +377,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 
 		Dockable dockable = item.getDockable();
 		// check if the dockable and the station accept each other
-		if( this.accept( dockable ) & dockable.accept( this ) ) {
+		if( this.accept( dockable ) && dockable.accept( this ) ) {
 			// check if controller exist and if the controller accept that
 			// the dockable become a child of this station
 			if( controller != null ) {
@@ -788,7 +788,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		 */
 		public OverpaintablePanelBase(){
 			setBasePane( dockablePane );
-			setSolid( true );
+			setSolid( false );
 			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this, dockablePane ){
 				@Override
 				protected void revalidate(){

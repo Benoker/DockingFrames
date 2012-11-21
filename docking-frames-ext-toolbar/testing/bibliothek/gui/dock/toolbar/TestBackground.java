@@ -41,6 +41,7 @@ import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.util.BackgroundComponent;
 import bibliothek.gui.dock.util.BackgroundPaint;
 import bibliothek.gui.dock.util.PaintableComponent;
+import bibliothek.gui.dock.util.Transparency;
 
 public class TestBackground {
 	public static void main( String[] args ){
@@ -58,20 +59,36 @@ public class TestBackground {
 			
 			@Override
 			public void paint( BackgroundComponent background, PaintableComponent paintable, Graphics g ){
-				paintable.paintBackground( g );
+				paintable.paintBackground( null );
 				g.setColor( Color.RED );
 				
 				int w = paintable.getComponent().getWidth();
 				int h = paintable.getComponent().getHeight();
 
-				g.fillRect( 0, 0, w, h );
+				g.fillOval( 0, 0, w, h );
 			}
 			
 			@Override
 			public void install( BackgroundComponent component ){
-				// ignore	
+				component.setTransparency( Transparency.TRANSPARENT );
 			}
 		});
+		controller.getThemeManager().setBackgroundPaint( ThemeManager.BACKGROUND_PAINT + ".displayer", new BackgroundPaint(){
+			@Override
+			public void uninstall( BackgroundComponent component ){
+					
+			}
+			
+			@Override
+			public void paint( BackgroundComponent background, PaintableComponent paintable, Graphics g ){
+				
+			}
+			
+			@Override
+			public void install( BackgroundComponent component ){
+				component.setTransparency( Transparency.TRANSPARENT );
+			}
+		} );
 		controller.getThemeManager().setBackgroundPaint( ThemeManager.BACKGROUND_PAINT + ".station.toolbar", new BackgroundPaint(){
 			@Override
 			public void uninstall( BackgroundComponent component ){
@@ -80,18 +97,18 @@ public class TestBackground {
 			
 			@Override
 			public void paint( BackgroundComponent background, PaintableComponent paintable, Graphics g ){
-				paintable.paintBackground( g );
+				paintable.paintBackground( null );
 				g.setColor( Color.GREEN );
 				
 				int w = paintable.getComponent().getWidth();
 				int h = paintable.getComponent().getHeight();
 
-				g.fillRect( 0, 0, w, h );
+				g.fillOval( 0, 0, w, h );
 			}
 			
 			@Override
 			public void install( BackgroundComponent component ){
-				// ignore	
+				component.setTransparency( Transparency.TRANSPARENT );
 			}
 		});
 		controller.getThemeManager().setBackgroundPaint( ThemeManager.BACKGROUND_PAINT + ".station.toolbar.group", new BackgroundPaint(){
@@ -102,18 +119,18 @@ public class TestBackground {
 			
 			@Override
 			public void paint( BackgroundComponent background, PaintableComponent paintable, Graphics g ){
-				paintable.paintBackground( g );
+				paintable.paintBackground( null );
 				g.setColor( Color.BLUE );
 				
 				int w = paintable.getComponent().getWidth();
 				int h = paintable.getComponent().getHeight();
 				
-				g.fillRect( 0, 0, w, h );
+				g.fillOval( 0, 0, w, h );
 			}
 			
 			@Override
 			public void install( BackgroundComponent component ){
-				// ignore	
+				component.setTransparency( Transparency.TRANSPARENT );
 			}
 		});
 		

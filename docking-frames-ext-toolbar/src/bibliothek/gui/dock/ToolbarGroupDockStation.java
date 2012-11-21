@@ -623,7 +623,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		Dockable dockable = item.getDockable();
 
 		// check if the dockable and the station accept each other
-		if( this.accept( dockable ) & dockable.accept( this ) ) {
+		if( this.accept( dockable ) && dockable.accept( this ) ) {
 			// check if controller exists and if the controller accepts that
 			// the dockable becomes a child of this station
 			if( controller != null ) {
