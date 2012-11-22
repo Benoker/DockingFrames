@@ -110,6 +110,11 @@ public class ColumnDividier implements Divideable{
 				throw new IllegalStateException( "unknown side: " + station.getSide() );
 		}
 	}
+	
+	@Override
+	public double getActualDivider(){
+		return getDivider();
+	}
 
 	@Override
 	public void setDivider( double dividier ){

@@ -117,6 +117,11 @@ public class CellDivider implements Divideable{
 	public double getDivider(){
 		return 1;
 	}
+	
+	@Override
+	public double getActualDivider(){
+		return getDivider();
+	}
 
 	@Override
 	public void setDivider( double dividier ){
