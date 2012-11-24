@@ -847,8 +847,6 @@
 [v1.1.2p1e]
  - API: The "toFront" method of AbstractCDockable is more powerful now: it even requests the focus if the application is not visible (yet).
  - Bugfix: If a Dockable on a CombinedStackDockStation is shown on a tab and a menu, changes of the Dockable (like the icon) were only forwarded to the tab.
-
-[v1.1.2p1f]
  - Bugfix: DockController uses the ClassLoader of "DockController" and not of "this" to load resource files. This resolves an issue when using the framework with OSGi.
  - Bugfix: Toolbar extension: an expanded ToolbarDockStation could no longer be shrunk.
  - API: SplitDockStation now better supports Components with a minimum size. The minimum size of a node no longer depends on the current location of the divider, and if a Dockable hits its minimum size the other Dockables must shrink until they hit their minimum size too.
