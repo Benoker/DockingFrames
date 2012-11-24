@@ -68,10 +68,7 @@ public class CFlapIndexLocation extends AbstractStackholdingLocation{
     
     @Override
     public CLocation aside() {
-        if( index == Integer.MAX_VALUE )
-            return this;
-        
-        return new CFlapIndexLocation( parent, index+1 );
+    	return stack( 1 );
     }
 
     @Override

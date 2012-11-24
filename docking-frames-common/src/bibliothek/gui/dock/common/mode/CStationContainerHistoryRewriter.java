@@ -33,7 +33,9 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.CStationContainer;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
+import bibliothek.gui.dock.common.util.CDockUtilities;
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.support.mode.HistoryRewriter;
 
@@ -100,7 +102,10 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 				if( historyStation != null ){
 					container = getContainer( historyStation );
 					if( container != null ){
-						return container.getMatchingStation( rootContainer, rootStation );
+						CStation<?> result = container.getMatchingStation( rootContainer, rootStation );
+						if( result != null ){
+							return result;
+						}
 					}
 				}
 			}
@@ -117,6 +122,12 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 	 */
 	protected CStation<?> getMatchingStation( Dockable dockable, ExtendedMode mode ){
 		CStation<?> station = getParent( dockable );
+		CStation<?> workingArea = getWorkingArea( dockable );
+		
+		if( station != null && workingArea != null && !isValidParent( station, workingArea )){
+			return workingArea;
+		}
+		
 		CStationContainer container = getContainer( station );
 		if( container != null ){
 			return container.getDefaultStation( mode );
@@ -134,6 +145,23 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 			}
 		}
 		
+		return null;
+	}
+	
+	private boolean isValidParent( CStation<?> parent, CStation<?> workingArea ){
+		return parent != null && CDockUtilities.getFirstWorkingArea( parent ) == workingArea;
+	}
+	
+	/**
+	 * Gets the {@link CStation} which is set as {@link CDockable#getWorkingArea()}
+	 * for <code>dockable</code>.
+	 * @param dockable the element whose working area is searched
+	 * @return the working area or <code>null</code>
+	 */
+	protected CStation<?> getWorkingArea( Dockable dockable ){
+		if( dockable instanceof CommonDockable ){
+			return ((CommonDockable)dockable).getDockable().getWorkingArea();
+		}
 		return null;
 	}
 	
@@ -166,7 +194,31 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 	 * @return the parent of <code>child</code> or <code>null</code>
 	 */
 	protected CStationContainer getContainer( CStation<?> child ){
-		return control.getRegister().getContainer( child );
+		if( child == null ){
+			return null;
+		}
+		DockStation station = child.getStation();
+		
+		while( station != null ){
+			if( station instanceof CommonDockStation<?,?>){
+				CStation<?> next = ((CommonDockStation<?,?>)station).getStation();
+				CStationContainer container = control.getRegister().getContainer( next );
+				if( container != null ){
+					return container;
+				}
+			}
+			
+			Dockable dockable = station.asDockable();
+			if( dockable == null ){
+				return null;
+			}
+			station = dockable.getDockParent();
+			if( station == null ){
+				return null;
+			}			
+		}
+		
+		return null;
 	}
 	
 	public Location rewrite( Dockable dockable, CLocationMode mode, Location history ){

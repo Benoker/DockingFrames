@@ -361,21 +361,30 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
     	Dockable[] history = control.getOwner().getController().getFocusHistory().getHistory();
     	for( int i = history.length-1; i >= 0; i-- ){
     		Dockable next = history[i];
-    		if( next instanceof CommonDockable && next.asDockStation() != station.getStation() && DockUtilities.isAncestor( station.getStation(), next )){
+    		if( next instanceof CommonDockable && next.asDockStation() != station.getStation() ){
     			CDockable cnext = ((CommonDockable)next).getDockable();
-    			boolean valid;
-    			if( station.isWorkingArea() ){
-    				valid = cnext.getWorkingArea() == station;
+    			
+    			if( DockUtilities.isAncestor( station.getStation(), next )){
+	    			boolean valid;
+	    			if( station.isWorkingArea() ){
+	    				valid = cnext.getWorkingArea() == station;
+	    			}
+	    			else{
+	    				valid = cnext.getWorkingArea() == null;
+	    			}
+	    			if( valid ){
+	    				CLocation location = cnext.getBaseLocation();
+	    				if( location != null ){
+	    					return location.aside();
+	    				}
+	        		}
     			}
-    			else{
-    				valid = cnext.getWorkingArea() == null;
-    			}
-    			if( valid ){
+    			if( cnext.getWorkingArea() == station ){
     				CLocation location = cnext.getBaseLocation();
     				if( location != null ){
     					return location.aside();
     				}
-        		}
+    			}
     		}
     	}
     	return station.getStationLocation();

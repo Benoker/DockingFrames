@@ -76,6 +76,10 @@ public class StackGroupMovement implements CGroupMovement{
 					oneMissing = true;
 					break;
 				}
+				else if( child.getDockParent() != dockable.getDockParent() ){
+					oneMissing = true;
+					break;
+				}
 			}
 		}
 		

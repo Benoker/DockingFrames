@@ -529,7 +529,10 @@ public class CContentArea extends JPanel implements CStationContainer{
 		if( container instanceof CContentArea ){
 			CContentArea other = (CContentArea)container;
 			if( other.getStationCount() == getStationCount() ){
-				return getStation( other.indexOf( station ) );
+				int index = other.indexOf( station );
+				if( index != -1 ){
+					return getStation( index );
+				}
 			}
 		}
 		return null;

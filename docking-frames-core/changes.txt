@@ -852,6 +852,8 @@
  - Bugfix: DockController uses the ClassLoader of "DockController" and not of "this" to load resource files. This resolves an issue when using the framework with OSGi.
  - Bugfix: Toolbar extension: an expanded ToolbarDockStation could no longer be shrunk.
  - API: SplitDockStation now better supports Components with a minimum size. The minimum size of a node no longer depends on the current location of the divider, and if a Dockable hits its minimum size the other Dockables must shrink until they hit their minimum size too.
+ - Bugfix: CWorkingArea.show is now more intelligent, if a Dockable in the history is not a child of the working-area, yet still associated, then its location is used to place the new Dockable (instead of ignoring the history).
+ - Bugfix: Normalizing a maximized Dockable associated with a working-area now more often produces good results (instead of placing the normalized Dockables randomly and not on the working-area)
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them
