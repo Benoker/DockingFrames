@@ -55,10 +55,6 @@ public class StackGroupBehavior implements CGroupBehavior {
 	}
 
 	private boolean isGrouped( Dockable dockable, ExtendedMode target, LocationModeManager<?> manager ){
-		if( target == ExtendedMode.MAXIMIZED ){
-			return false;
-		}
-		
 		DockStation parent = dockable.getDockParent();
 		if( parent instanceof StackDockStation ) {
 			for( int i = 0, n = parent.getDockableCount(); i < n; i++ ) {

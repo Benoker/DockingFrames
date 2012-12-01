@@ -592,6 +592,12 @@ public interface CDockable {
 	public CControl getControl();
 	
 	/**
+	 * Searches the first {@link CStation} that is a parent of this {@link CDockable}.
+	 * @return the closest station, may be <code>null</code>
+	 */
+	public CStation<?> getParentStation();
+	
+	/**
 	 * Gets an action which is not added to the title by this {@link CDockable}
 	 * put by another module.
 	 * @param key the name of the action

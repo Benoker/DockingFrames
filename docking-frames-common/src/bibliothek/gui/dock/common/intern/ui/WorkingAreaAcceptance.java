@@ -60,7 +60,12 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     }
 
     public boolean accept( DockStation parent, Dockable child, Dockable next ) {
-    	return accept( parent, next );
+    	if( accept( parent, next ) ){
+    		return getWorkingArea( child ) == getWorkingArea( next );
+    	}
+    	else {
+    		return false;
+    	}
     }
     
     public boolean accept( DockStation parent, Dockable child ) {
@@ -126,9 +131,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
      */
     private boolean match( CStation<?> area, Dockable dockable ){
         if( dockable instanceof CommonDockable ){
-            CDockable fdockable = ((CommonDockable)dockable).getDockable();
-            CStation<?> request = fdockable.getWorkingArea();
-            if( request != area )
+            if( getWorkingArea( dockable ) != area )
                 return false;
         }
         
@@ -145,6 +148,14 @@ public class WorkingAreaAcceptance implements DockAcceptance {
         }
         else
             return true;
+    }
+    
+    private CStation<?> getWorkingArea( Dockable dockable ){
+    	if( dockable instanceof CommonDockable ){
+	    	CDockable fdockable = ((CommonDockable)dockable).getDockable();
+	        return fdockable.getWorkingArea();
+    	}
+    	return null;
     }
     
     /**

@@ -2704,9 +2704,9 @@ public class CControl {
         	if( !dockable.isVisible() )
         		return;
         	
-            DockRegister register = frontend.getController().getRegister();
-            register.setStalled( true );
+        	DockRegister register = frontend.getController().getRegister();
             try{
+            	register.setStalled( true );
             	Map<Dockable, ExtendedMode> nonBasic = new HashMap<Dockable, ExtendedMode>();
             	
             	for( Dockable check : locationManager.listDockables() ){
@@ -2718,14 +2718,18 @@ public class CControl {
             		}
             	}
             	
+            	Dockable[] focusHistory = getController().getFocusHistory().getHistory();
                 boolean changes = locationManager.ensureBasicModes();
 
                 frontend.hide( dockable.intern() );
 
                 if( changes ){
-                	for( Map.Entry<Dockable, ExtendedMode> entry : nonBasic.entrySet() ){
-                		if( frontend.isShown( entry.getKey() ) && locationManager.isModeAvailable( entry.getKey(), entry.getValue() )){
-                			locationManager.setMode( entry.getKey(), entry.getValue() );
+                	for( Dockable focused : focusHistory ){
+                		ExtendedMode mode = nonBasic.get( focused );
+                		if( mode != null ){
+                			if( frontend.isShown( focused ) && locationManager.isModeAvailable( focused, mode )){
+                				locationManager.setMode( focused, mode );
+                			}
                 		}
                 	}
                 }

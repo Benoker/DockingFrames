@@ -852,6 +852,12 @@
  - API: SplitDockStation now better supports Components with a minimum size. The minimum size of a node no longer depends on the current location of the divider, and if a Dockable hits its minimum size the other Dockables must shrink until they hit their minimum size too.
  - Bugfix: CWorkingArea.show is now more intelligent, if a Dockable in the history is not a child of the working-area, yet still associated, then its location is used to place the new Dockable (instead of ignoring the history).
  - Bugfix: Normalizing a maximized Dockable associated with a working-area now more often produces good results (instead of placing the normalized Dockables randomly and not on the working-area)
+
+[v1.1.2p1f]
+ - API[Common]: It is no longer possible to stack CDockables with differnt working-areas. This keeps actions like "normalize" more consistent.
+ - Bugfix[Common]: Maximization mode is more intelligent: when unmaximzing Dockables *all* instead the top level elements are scanned for known old locations, and if maximizing the stored old location is not deleted unless the new maximized Dockable is known to have a location.
+ - API[Common]: The action "ensureBasicModes" now also uses group-movement, so calling this method behaves very much like clicking all the "normalize" buttons of all Dockables 
+ - API[Common]: After hiding a CDockable the extended-mode of all Dockables that were not in a baisc mode is restored in the order of the focus history.
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

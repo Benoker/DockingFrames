@@ -466,7 +466,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 						}
 						
 						result.setA( true );
-						apply( dockable, next, set, false );
+						setMode( dockable, next.getExtendedMode() );
 					}
 				}		
 			}

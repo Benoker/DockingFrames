@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
@@ -48,6 +49,7 @@ import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.event.CVetoClosingEvent;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
+import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -834,10 +836,21 @@ public abstract class AbstractCDockable implements CDockable {
 		this.focusComponent = component;
 	}
     
-    /**
-     * Gets the control which is responsible for this dockable.
-     * @return the control
-     */
+    public CStation<?> getParentStation(){
+	    DockStation parent = intern().getDockParent();
+	    while( parent != null ){
+	    	if( parent instanceof CommonDockStation<?,?> ){
+	    		return ((CommonDockStation<?, ?>)parent).getStation();
+	    	}
+	    	Dockable item = parent.asDockable();
+	    	if( item == null ){
+	    		return null;
+	    	}
+	    	parent = item.getDockParent();
+	    }
+	    return null;
+    }
+    
     public CControl getControl(){
         if( control == null ){
         	return null;

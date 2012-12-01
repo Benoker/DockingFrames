@@ -629,7 +629,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
      * @param modeId the identifier of the mode
      * @return the history information or <code>null</code> if not found
      */
-    protected H getHistory( Dockable dockable, Path modeId ){
+    public H getHistory( Dockable dockable, Path modeId ){
     	DockableHandle entry = dockables.get( dockable );
     	if( entry == null )
     		return null;

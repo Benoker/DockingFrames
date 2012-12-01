@@ -27,9 +27,12 @@ package bibliothek.gui.dock.facile.mode;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.KeyStroke;
 
@@ -71,10 +74,10 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_MAXIMIZE;
 
 	/** the mode in which some dockable with id=key was before maximizing */
-	private HashMap<String, Path> lastMaximizedMode = new HashMap<String, Path>();
+	private Map<String, Path> lastMaximizedMode = new HashMap<String, Path>();
 
 	/** the location some dockable had before maximizing */
-	private HashMap<String, Location> lastMaximizedLocation = new HashMap<String, Location>();
+	private Map<String, Location> lastMaximizedLocation = new HashMap<String, Location>();
 
 	/** the listener responsible for detecting apply-events on other modes */
 	private Listener listener = new Listener();
@@ -235,13 +238,60 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			lastMaximizedMode.put( area.getUniqueId(), current.getUniqueIdentifier() );
 		}
 		else{
-			lastMaximizedLocation.remove( area.getUniqueId() );
-			lastMaximizedMode.remove( area.getUniqueId() );
 			getManager().store( dockable );
 		}
 
+		List<Dockable> oldMaximized = getMaximized( area );
 		area.setMaximized( maximizing, true, history, set );
+		
+		if( !(id == null && current == null )){
+			boolean didFindAsChild = false;
+			for( Dockable newMaximized : area.getMaximized() ){
+				if( newMaximized == maximizing ){
+					didFindAsChild = true;
+				}
+				else if( DockUtilities.isAncestor( newMaximized, maximizing )){
+					// the maximizing element was put on a DockStation
+					if( !oldMaximized.contains( newMaximized )){
+						// and the DockStation was created by this action
+						for( Dockable replaced : oldMaximized ){
+							if( DockUtilities.isAncestor( newMaximized, replaced )){
+								storeLastMaximizedLocation( area, replaced );
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			if( didFindAsChild ){
+				lastMaximizedLocation.remove( area.getUniqueId() );
+				lastMaximizedMode.remove( area.getUniqueId() );
+			}
+		}
+		
 		set.add( maximizing );
+	}
+	
+	private List<Dockable> getMaximized( MaximizedModeArea area ){
+		Dockable[] children = area.getMaximized();
+		if( children == null ){
+			return Collections.emptyList();
+		}
+		else{
+			return Arrays.asList( children );
+		}
+	}
+	
+	private void storeLastMaximizedLocation( MaximizedModeArea area, Dockable dockable ){
+		LocationMode previousMode = getManager().getPreviousMode( dockable );
+		if( previousMode != null ){
+			Location previousLocation = getManager().getHistory( dockable, previousMode.getUniqueIdentifier() );
+			if( previousLocation != null ){
+				lastMaximizedLocation.put( area.getUniqueId(), previousLocation );
+				lastMaximizedMode.put( area.getUniqueId(), previousMode.getUniqueIdentifier() );
+			}
+		}
 	}
 
 	/**
@@ -266,8 +316,6 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 						final LocationModeManager<?> manager = getManager();
 						manager.runTransaction( new AffectingRunnable() {
 							public void run( AffectedSet set ){
-								boolean known = manager.isRegistered( element );
-	
 								area.setMaximized( element, false, null, set );
 	
 								String key = area.getUniqueId();
@@ -281,14 +329,9 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 											lastMaximizedLocation.remove( key ),
 											set );
 								}
-	
-								if( known ){
-									if( !done ){
-										LocationMode mode = manager.getPreviousMode( element );
-										if( mode == null || mode == MaximizedMode.this )
-											mode = manager.getMode( NormalMode.IDENTIFIER );
-										manager.apply( element, mode.getUniqueIdentifier(), set, true );
-									}			
+								
+								if( !done ){
+									applyOldLocation( element, set );
 								}		
 							}
 						}, true );
@@ -301,6 +344,33 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		}
 	}
 
+	/**
+	 * Recursively searches through the tree of {@link DockElement}s and applies old locations
+	 * on those {@link Dockable}s which are known to have a location. Branches are not visited
+	 * if the a parent element has been found with an old location.
+	 * @param element the root of the tree to search through
+	 * @param set a set to be filled with all the {@link Dockable}s whose location changed.
+	 */
+	private void applyOldLocation( Dockable element, AffectedSet set ){
+		LocationModeManager<?> manager = getManager();
+		if( manager.isRegistered( element ) ){
+			LocationMode mode = manager.getPreviousMode( element );
+			if( mode == null || mode == MaximizedMode.this )
+				mode = manager.getMode( NormalMode.IDENTIFIER );
+			manager.apply( element, mode.getUniqueIdentifier(), set, true );
+		}
+		else if( element.asDockStation() != null ){
+			DockStation station = element.asDockStation();
+			Dockable[] children = new Dockable[ station.getDockableCount() ];
+			for( int i = 0; i < children.length; i++ ){
+				children[i] = station.getDockable( i );
+			}
+			for( Dockable child : children ){
+				applyOldLocation( child, set );
+			}
+		}
+	}
+	
 	/**
 	 * Searches the {@link MaximizedModeArea} which either represents
 	 * <code>station</code> or its nearest parent.
@@ -572,6 +642,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		return false;
 	}
 
+	
 	/**
 	 * A hook recording key-events for a specific {@link Dockable}. The hook will remove
 	 * itself from the {@link Dockable} automatically once the element is removed from
