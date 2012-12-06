@@ -63,7 +63,7 @@ public class CDockController extends DockController{
 		if( request.getSource() != null ){
 			Dockable focusedDockable = request.getSource().getElement().asDockable();
 			CLocationModeManager states = owner.getLocationManager();
-			if( states != null && !states.isOnTransaction() ){
+			if( states != null && !states.isOnTransaction() && focusedDockable != null ){
 				states.ensureNotHidden( focusedDockable );
 			}
 		}
