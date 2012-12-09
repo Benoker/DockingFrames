@@ -69,6 +69,7 @@ import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.FlapDockListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -1686,6 +1687,24 @@ public class FlapDockStation extends AbstractDockableStation {
         return new FlapDockProperty( index, holding, size, placeholder );
     }
 
+    public void aside( AsideRequest request ){
+	    DockableProperty location = request.getLocation();
+	    if( location instanceof FlapDockProperty ){
+	    	FlapDockProperty flapLocation = (FlapDockProperty)location;
+	    	Path oldPlaceholder = flapLocation.getPlaceholder();
+	    	if( oldPlaceholder != null ){
+	    		DockablePlaceholderList<?>.Item item = handles.getItem( oldPlaceholder );
+	    		if( item != null ){
+	    			delegate().combine( item, getCombiner(), request );
+	    		}
+	    	}
+	    	FlapDockProperty copy = flapLocation.copy();
+	    	copy.setSuccessor( null );
+	    	copy.setPlaceholder( request.getPlaceholder() );
+	    	request.answer( copy );
+	    }
+    }
+    
     public void move( Dockable dockable, DockableProperty property ) {
     	DockUtilities.checkLayoutLocked();
         if( property instanceof FlapDockProperty ){

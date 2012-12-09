@@ -240,4 +240,12 @@ public abstract class AbstractDockableStation extends AbstractDockable implement
         	listeners.fireDockablesRepositioned( moved );
         }
     }
+    
+    /**
+     * Creates a generic set of algorithms.
+     * @return the algorithms, not <code>null</code>
+     */
+    protected DockStationDelegate delegate(){
+    	return new DockStationDelegate();
+    }
 }

@@ -132,4 +132,13 @@ public abstract class AbstractDockStation implements DockStation {
     public void requestChildDisplayer( DisplayerRequest request ){
     	// ignore
     }
+
+    /**
+     * Creates a set of algorithms which may depend on this {@link DockStation}, and which perform
+     * various tasks that are handled the same way in many implementations of {@link DockStation}.
+     * @return the generic set of algorithms
+     */
+    protected DockStationDelegate delegate(){
+    	return new DockStationDelegate();
+    }
 }

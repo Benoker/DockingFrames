@@ -31,6 +31,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.relocator.Inserter;
 import bibliothek.gui.dock.control.relocator.Merger;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.Enforcement;
@@ -70,5 +72,13 @@ public interface Combiner {
      */
     public Dockable combine( CombinerSource source, CombinerTarget target );
     
-
+	/**
+	 * Prepares the layout of the {@link DockStation}s that are created by this {@link Combiner} to
+	 * keep track of a new {@link DockableProperty} with its own placeholder. The new property
+	 * is set "aside" an existing location. For more information please read the documentation
+	 * of {@link DockStation#asDockable()}.
+	 * @param request information about a location and methods to create the neighbor location
+	 * @see DockStation#aside(AsideRequest)
+	 */
+	public void aside( AsideRequest request );
 }

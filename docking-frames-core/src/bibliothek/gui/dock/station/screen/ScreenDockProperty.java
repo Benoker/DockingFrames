@@ -32,7 +32,6 @@ import java.io.IOException;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.layout.AbstractDockableProperty;
-import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.screen.window.ScreenDockDialog;
 import bibliothek.util.Path;
 import bibliothek.util.Version;
@@ -101,7 +100,7 @@ public class ScreenDockProperty extends AbstractDockableProperty {
     }
     
 
-    public DockableProperty copy() {
+    public ScreenDockProperty copy() {
         ScreenDockProperty copy = new ScreenDockProperty( x, y, width, height, placeholder, fullscreen );
         copy( copy );
         return copy;

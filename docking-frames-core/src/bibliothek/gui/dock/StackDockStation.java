@@ -60,6 +60,7 @@ import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.FocusVetoListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -681,6 +682,40 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	}
     	
         return new StackDockProperty( index, placeholder );
+    }
+    
+    public void aside( AsideRequest request ){
+    	DockableProperty location = request.getLocation();
+    	if( location instanceof StackDockProperty ){
+    		StackDockProperty stackLocation = (StackDockProperty)location;
+    		int index = -1;
+    		
+    		Path oldPlaceholder = stackLocation.getPlaceholder();
+    		if( oldPlaceholder != null ){
+    			index = dockables.getListIndex( oldPlaceholder );
+    			if( index == -1 ){
+    				dockables.insertAllPlaceholders();
+    				index = dockables.getListIndex( oldPlaceholder );
+    			}
+    		}
+    		if( index == -1 ){
+    			index = stackLocation.getIndex();
+    		}
+    		index++;
+    		
+    		Path newPlaceholder = request.getPlaceholder();
+    		if( newPlaceholder != null ){
+    			dockables.list().insertPlaceholder( index, newPlaceholder );
+    		}
+    		request.answer( new StackDockProperty( index, newPlaceholder ));
+    	} else {
+    		int index = dockables.dockables().size();
+    		Path newPlaceholder = request.getPlaceholder();
+    		if( newPlaceholder != null ){
+    			dockables.dockables().insertPlaceholder( index, newPlaceholder );
+    		}
+    		request.answer( new StackDockProperty( index, newPlaceholder ));
+    	}
     }
     
     public Dockable getFrontDockable() {

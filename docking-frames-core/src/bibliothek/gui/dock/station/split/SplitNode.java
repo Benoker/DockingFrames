@@ -40,6 +40,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
@@ -674,6 +675,10 @@ public abstract class SplitNode{
      * otherwise
      */
     public abstract boolean insert( SplitDockPlaceholderProperty property, Dockable dockable );
+    
+    public abstract boolean aside( SplitDockPlaceholderProperty property, AsideRequest request );
+    
+    public abstract boolean aside( SplitDockPathProperty property, int index, AsideRequest request );
     
     /**
      * Searches and returns the first {@link SplitNode} which contains <code>placeholder</code>.

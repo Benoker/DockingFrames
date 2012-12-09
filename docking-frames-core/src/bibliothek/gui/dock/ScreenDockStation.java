@@ -56,6 +56,7 @@ import bibliothek.gui.dock.action.LocationHint;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.AbstractDockStation;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -1072,6 +1073,24 @@ public class ScreenDockStation extends AbstractDockStation {
     	}
         
         return new ScreenDockProperty( bounds.x, bounds.y, bounds.width, bounds.height, placeholder, fullscreen );
+    }
+    
+    public void aside( AsideRequest request ){
+	    DockableProperty location = request.getLocation();
+	    if( location instanceof ScreenDockProperty ){
+	    	ScreenDockProperty screenLocation = (ScreenDockProperty)location;
+	    	Path oldPlaceholder = screenLocation.getPlaceholder();
+	    	if( oldPlaceholder != null ){
+	    		DockablePlaceholderList<ScreenDockWindowHandle>.Item item = dockables.getItem( oldPlaceholder );
+	    		if( item != null ){
+	    			delegate().combine( item, getCombiner(), request );
+	    		}
+	    	}
+	    	ScreenDockProperty copy = screenLocation.copy();
+	    	copy.setSuccessor( null );
+	    	copy.setPlaceholder( request.getPlaceholder() );
+	    	request.answer( copy );
+	    }
     }
     
     /**

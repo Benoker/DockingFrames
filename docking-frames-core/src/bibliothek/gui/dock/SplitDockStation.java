@@ -38,6 +38,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -78,6 +79,7 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -126,6 +128,7 @@ import bibliothek.gui.dock.station.split.SplitPlaceholderConverter;
 import bibliothek.gui.dock.station.split.SplitPlaceholderSet;
 import bibliothek.gui.dock.station.split.SplitSpanStrategy;
 import bibliothek.gui.dock.station.split.SplitTreeFactory;
+import bibliothek.gui.dock.station.split.SplitTreePathFactory;
 import bibliothek.gui.dock.station.split.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.split.layer.SplitOverrideDropLayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
@@ -165,6 +168,7 @@ import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
+import bibliothek.util.container.Tuple;
 
 /**
  * This station shows all its children at once. The children are separated
@@ -1287,6 +1291,49 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return result;
 	}
 
+	public void aside( AsideRequest request ){
+		if( request.getPlaceholder() == null ){
+			return;
+		}
+		
+		boolean result = false;
+		
+		DockableProperty location = request.getLocation();
+		if( location instanceof SplitDockPlaceholderProperty ){
+			SplitDockPlaceholderProperty property = (SplitDockPlaceholderProperty)location;
+			SplitNode node = root().getPlaceholderNode( property.getPlaceholder() );
+			if( node != null ){
+				result = node.aside( property, request );
+				if( !result ){
+					location = property.getBackup();
+				}
+			}
+			else{
+				location = property.getBackup();
+			}
+		}
+		if( location instanceof SplitDockPathProperty ){
+			SplitDockPathProperty property = (SplitDockPathProperty)location;
+			Tuple<Integer, SplitNode> start = getLowestNode( property );
+			
+			result = start.getB().aside( property, start.getA(), request );
+			
+			if( !result ){
+				location = property.toLocation();
+			}
+		}
+		if( location instanceof SplitDockProperty ){
+			SplitDockProperty property = (SplitDockProperty)location;
+			result = aside( property, request );
+		}
+		
+		if( result ){
+			SplitDockPathProperty path = getDockablePathProperty( request.getPlaceholder() );
+			SplitDockPlaceholderProperty newLocation = new SplitDockPlaceholderProperty( request.getPlaceholder(), path );
+			request.answer( newLocation );
+		}
+	}
+	
 	/**
 	 * Creates a {@link DockableProperty} for the location of <code>dockable</code>.
 	 * The location is encoded as the path through the tree to get to <code>dockable</code>.
@@ -1294,57 +1341,47 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * @return the location
 	 */
 	public SplitDockPathProperty getDockablePathProperty( final Dockable dockable ){
-		final SplitDockPathProperty path = new SplitDockPathProperty();
-		root().submit(new SplitTreeFactory<Object>(){
-			public Object leaf( Dockable check, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
-				if( dockable == check ) {
-					path.setLeafId(id);
-					return this;
-				}
-				return null;
-			}
-
-			public Object placeholder( long id, Path[] placeholders, PlaceholderMap placeholderMap ){
-				return null;
-			}
-
-			public Object root( Object root, long id ){
-				return root;
-			}
-
-			public Object horizontal( Object left, Object right, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
-				if( left != null ) {
-					if( visible ) {
-						path.insert(SplitDockPathProperty.Location.LEFT, divider, 0, id);
-					}
-					return left;
-				}
-				if( right != null ) {
-					if( visible ) {
-						path.insert(SplitDockPathProperty.Location.RIGHT, 1 - divider, 0, id);
-					}
-					return right;
-				}
-				return null;
-			}
-
-			public Object vertical( Object top, Object bottom, double divider, long id, Path[] placeholders, PlaceholderMap placeholderMap, boolean visible ){
-				if( top != null ) {
-					if( visible ) {
-						path.insert(SplitDockPathProperty.Location.TOP, divider, 0, id);
-					}
-					return top;
-				}
-				if( bottom != null ) {
-					if( visible ) {
-						path.insert(SplitDockPathProperty.Location.BOTTOM, 1 - divider, 0, id);
-					}
-					return bottom;
+		return root().submit( new SplitTreePathFactory(){
+			public SplitDockPathProperty leaf( Dockable check, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
+				if( check == dockable ){
+					SplitDockPathProperty path = new SplitDockPathProperty();
+					path.setLeafId( id );
+					return path;
 				}
 				return null;
 			}
 		});
-		return path;
+	}
+	
+	/**
+	 * Creates a {@link DockableProperty} pointing to the leaf containing <code>placeholder</code>.
+	 * @param placeholder the placeholder to search, not <code>null</code>
+	 * @return the path to <code>placeholder</code> or <code>null</code> if <code>placeholder</code> was not found
+	 */
+	public SplitDockPathProperty getDockablePathProperty( final Path placeholder ){
+		return root().submit( new SplitTreePathFactory(){
+			public SplitDockPathProperty leaf( Dockable check, long id, Path[] placeholders, PlaceholderMap placeholderMap ){
+				return placeholder( id, placeholders, placeholderMap );
+			}
+			
+			public SplitDockPathProperty placeholder( long id, Path[] placeholders, PlaceholderMap placeholderMap ){
+				if( contains( placeholders )){
+					SplitDockPathProperty path = new SplitDockPathProperty();
+					path.setLeafId( id );
+					return path;
+				}
+				return null;
+			}
+			
+			private boolean contains( Path[] placeholders ){
+				for( Path path : placeholders ){
+					if( path.equals( placeholder )){
+						return true;
+					}
+				}
+				return false;
+			}
+		});
 	}
 
 	/**
@@ -1690,93 +1727,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	
 			updateBounds();
 	
-			class DropInfo {
-				public Leaf bestLeaf;
-				public double bestLeafIntersection;
-	
-				public SplitNode bestNode;
-				public double bestNodeIntersection = Double.POSITIVE_INFINITY;
-				public PutInfo.Put bestNodePut;
-			}
-	
-			final DropInfo info = new DropInfo();
-	
-			root.visit(new SplitNodeVisitor(){
-				public void handleLeaf( Leaf leaf ){
-					double intersection = leaf.intersection(property);
-					if( intersection > info.bestLeafIntersection ) {
-						info.bestLeafIntersection = intersection;
-						info.bestLeaf = leaf;
-					}
-	
-					handleNeighbour(leaf);
-				}
-	
-				public void handleNode( Node node ){
-					if( node.isVisible() ) {
-						handleNeighbour(node);
-					}
-				}
-	
-				public void handleRoot( Root root ){
-					// do nothing
-				}
-	
-				public void handlePlaceholder( Placeholder placeholder ){
-					// ignore	
-				}
-	
-				private void handleNeighbour( SplitNode node ){
-					if( DockUtilities.acceptable( SplitDockStation.this, dockable ) ){
-						double x = node.getX();
-						double y = node.getY();
-						double width = node.getWidth();
-						double height = node.getHeight();
-		
-						double left = Math.abs(x - property.getX());
-						double right = Math.abs(x + width - property.getX() - property.getWidth());
-						double top = Math.abs(y - property.getY());
-						double bottom = Math.abs(y + height - property.getY() - property.getHeight());
-		
-						double value = left + right + top + bottom;
-						value -= Math.max(Math.max(left, right), Math.max(top, bottom));
-		
-						double kx = property.getX() + property.getWidth() / 2;
-						double ky = property.getY() + property.getHeight() / 2;
-		
-						PutInfo.Put put = node.relativeSidePut(kx, ky);
-		
-						double px, py;
-		
-						if( put == PutInfo.Put.TOP ) {
-							px = x + 0.5 * width;
-							py = y + 0.25 * height;
-						}
-						else if( put == PutInfo.Put.BOTTOM ) {
-							px = x + 0.5 * width;
-							py = y + 0.75 * height;
-						}
-						else if( put == PutInfo.Put.LEFT ) {
-							px = x + 0.25 * width;
-							py = y + 0.5 * height;
-						}
-						else {
-							px = x + 0.5 * width;
-							py = y + 0.75 * height;
-						}
-		
-						double distance = Math.pow((kx - px) * (kx - px) + (ky - py) * (ky - py), 0.25);
-		
-						value *= distance;
-		
-						if( value < info.bestNodeIntersection ) {
-							info.bestNodeIntersection = value;
-							info.bestNode = node;
-							info.bestNodePut = put;
-						}
-					}
-				}
-			});
+			DropInfo info = getDropInfo( property, dockable );
 	
 			if( info.bestLeaf != null ) {
 				DockStation station = info.bestLeaf.getDockable().asDockStation();
@@ -1832,7 +1783,130 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			access.fire();
 		}
 	}
+	
+	private boolean aside( SplitDockProperty property, AsideRequest request ){
+		DropInfo info = getDropInfo( property, null );
+		
+		if( info.bestLeaf != null ){
+			if( property.getSuccessor() != null && info.bestLeafIntersection > 0.75 ){
+				DockStation station = info.bestLeaf.getDockable().asDockStation();
+				if( station != null ){
+					request.forward( station );
+					fd
+				}
+				else{
+					
+				}
+				
+			}
+		}
+		
+	}
+	
+	/**
+	 * Information about where to put a {@link Dockable} such that its boundaries match
+	 * some preset boundaries.
+	 * @author Benjamin Sigg
+	 */
+	private static class DropInfo {
+		public Leaf bestLeaf;
+		public double bestLeafIntersection;
 
+		public SplitNode bestNode;
+		public double bestNodeIntersection = Double.POSITIVE_INFINITY;
+		public PutInfo.Put bestNodePut;
+	}
+
+	/**
+	 * Searches for the best place for <code>dockable</code> such that its boundaries met 
+	 * <code>property</code>.
+	 * @param property the location of <code>dockable</code>
+	 * @param dockable the element to place, can be <code>null</code>
+	 * @return the best place for <code>dockable</code>
+	 */
+	protected DropInfo getDropInfo( final SplitDockProperty property, final Dockable dockable ){
+		final DropInfo info = new DropInfo();
+
+		root.visit(new SplitNodeVisitor(){
+			public void handleLeaf( Leaf leaf ){
+				double intersection = leaf.intersection( property );
+				if( intersection > info.bestLeafIntersection ) {
+					info.bestLeafIntersection = intersection;
+					info.bestLeaf = leaf;
+				}
+
+				handleNeighbour(leaf);
+			}
+
+			public void handleNode( Node node ){
+				if( node.isVisible() ) {
+					handleNeighbour(node);
+				}
+			}
+
+			public void handleRoot( Root root ){
+				// do nothing
+			}
+
+			public void handlePlaceholder( Placeholder placeholder ){
+				// ignore	
+			}
+
+			private void handleNeighbour( SplitNode node ){
+				if( dockable == null || DockUtilities.acceptable( SplitDockStation.this, dockable ) ){
+					double x = node.getX();
+					double y = node.getY();
+					double width = node.getWidth();
+					double height = node.getHeight();
+	
+					double left = Math.abs(x - property.getX());
+					double right = Math.abs(x + width - property.getX() - property.getWidth());
+					double top = Math.abs(y - property.getY());
+					double bottom = Math.abs(y + height - property.getY() - property.getHeight());
+	
+					double value = left + right + top + bottom;
+					value -= Math.max(Math.max(left, right), Math.max(top, bottom));
+	
+					double kx = property.getX() + property.getWidth() / 2;
+					double ky = property.getY() + property.getHeight() / 2;
+	
+					PutInfo.Put put = node.relativeSidePut(kx, ky);
+	
+					double px, py;
+	
+					if( put == PutInfo.Put.TOP ) {
+						px = x + 0.5 * width;
+						py = y + 0.25 * height;
+					}
+					else if( put == PutInfo.Put.BOTTOM ) {
+						px = x + 0.5 * width;
+						py = y + 0.75 * height;
+					}
+					else if( put == PutInfo.Put.LEFT ) {
+						px = x + 0.25 * width;
+						py = y + 0.5 * height;
+					}
+					else {
+						px = x + 0.5 * width;
+						py = y + 0.75 * height;
+					}
+	
+					double distance = Math.pow((kx - px) * (kx - px) + (ky - py) * (ky - py), 0.25);
+	
+					value *= distance;
+	
+					if( value < info.bestNodeIntersection ) {
+						info.bestNodeIntersection = value;
+						info.bestNode = node;
+						info.bestNodePut = put;
+					}
+				}
+			}
+		});
+		
+		return info;
+	}
+	
 	/**
 	 * Tries to insert <code>dockable</code> at a location such that the path
 	 * to that location is the same as described in <code>property</code>.
@@ -1846,34 +1920,11 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			DockUtilities.checkLayoutLocked();
 	
 			// use the ids of the topmost nodes in the path to find a node of this station
-			int index = 0;
-			SplitNode start = null;
-	
-			long leafId = property.getLeafId();
-			if( leafId != -1 ) {
-				start = getNode(leafId);
-				if( start != null ) {
-					index = property.size();
-				}
-			}
-			if( start == null ) {
-				for( index = property.size() - 1; index >= 0; index-- ) {
-					SplitDockPathProperty.Node node = property.getNode(index);
-					long id = node.getId();
-					if( id != -1 ) {
-						start = getNode(id);
-						if( start != null ){
-							break;
-						}
-					}
-				}
-			}
-	
-			if( start == null || index < 0 ) {
-				start = root();
-				index = 0;
-			}
-	
+			Tuple<Integer, SplitNode> startNode = getLowestNode( property );
+			
+			int index = startNode.getA();
+			SplitNode start = startNode.getB();
+
 			updateBounds();
 			boolean done = start.insert(property, index, dockable);
 			if( done )
@@ -1883,6 +1934,46 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		finally{
 			access.fire();
 		}
+	}
+	
+	/**
+	 * Searches the lowest node whose {@link SplitNode#getId() identifier} is equal to
+	 * an identifier from <code>property</code>. In the best case scenario this method directly
+	 * returns the {@link Leaf} to which <code>property</code> points.<br>
+	 * @param property a path in which a {@link SplitNode} is searched
+	 * @return The node closest to the leaf and in <code>property</code>, can be the {@link #root()}. And
+	 * the index of the node for calling {@link SplitDockPathProperty#getNode(int)}.s
+	 */
+	protected Tuple<Integer, SplitNode> getLowestNode( SplitDockPathProperty property ){
+		SplitNode start = null;
+		int index = 0;
+		
+		long leafId = property.getLeafId();
+		if( leafId != -1 ) {
+			start = getNode(leafId);
+			if( start != null ) {
+				index = property.size();
+			}
+		}
+		if( start == null ) {
+			for( index = property.size() - 1; index >= 0; index-- ) {
+				SplitDockPathProperty.Node node = property.getNode(index);
+				long id = node.getId();
+				if( id != -1 ) {
+					start = getNode(id);
+					if( start != null ){
+						break;
+					}
+				}
+			}
+		}
+
+		if( start == null || index < 0 ) {
+			start = root();
+			index = 0;
+		}
+		
+		return new Tuple<Integer, SplitNode>( index, start );
 	}
 
 	/**

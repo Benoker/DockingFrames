@@ -38,9 +38,11 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
+import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DockableDisplayer;
-import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDragOperation;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -306,6 +308,23 @@ public interface DockStation extends DockElement{
      * @see bibliothek.gui.dock.util.DockUtilities#getPropertyChain(DockStation, Dockable)
      */
     public DockableProperty getDockableProperty( Dockable child, Dockable target );
+    
+    /**
+     * Requests this {@link DockStation} to find a {@link DockableProperty} that is "aside" another
+     * property. What exactly the meaning of "aside" is, is left to the implementation. Usually
+     * "aside" means on the same "stack" but with the next higher index.<br>
+     * The <code>request</code> object contains information about the location whose neighbor is
+     * searched, about a placeholder that should be used for the new location, and offers methods
+     * to forward the call to the next {@link DockStation} or {@link Combiner} if there is a
+     * {@link DockableProperty#getSuccessor() successor}.<br>
+     * This method should call the <code>answer</code> methods of <code>request</code> with every
+     * kind of information it finds.<br>
+     * If this method cannot handle <code>request</code>, then it just has to return without calling
+     * any of the <code>answer</code> methods. 
+     * @param request information about a location and methods to create the neighbor location
+     * @see Combiner#aside(AsideRequest)
+     */
+    public void aside( AsideRequest request );
     
     /**
      * Prepares this station to get the new child <code>dockable</code> or to move around the known child <code>dockable</code>.

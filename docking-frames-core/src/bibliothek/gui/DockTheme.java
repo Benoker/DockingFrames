@@ -42,7 +42,6 @@ import bibliothek.gui.dock.themes.DockThemeExtension;
 import bibliothek.gui.dock.themes.StationCombinerValue;
 import bibliothek.gui.dock.themes.ThemeCombiner;
 import bibliothek.gui.dock.themes.ThemeDisplayerFactory;
-import bibliothek.gui.dock.themes.ThemeDockableMovingImageFactory;
 import bibliothek.gui.dock.themes.ThemeDockableSelection;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.ThemeStationPaint;

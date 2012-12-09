@@ -793,6 +793,24 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	}
 	
 	/**
+     * Searches for the one {@link Item} in the {@link #dockables} list that contains
+     * <code>placeholder</code>.
+     * @param placeholder the placeholder used for searching
+     * @return the item with <code>placeholder</code> or <code>null</code>
+     */
+    public Item getItem( Path placeholder ){
+    	int index = getListIndex( placeholder );
+		if( index == -1 ){
+			insertAllPlaceholders();
+			index = getListIndex( placeholder );
+		}
+		if( index != -1 ){
+			return list().get( index );
+		}
+		return null;
+    }
+	
+	/**
 	 * Gets the number of entries in the level <code>level</code>.
 	 * @param level some level to count
 	 * @return the size of that level
@@ -1479,6 +1497,15 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		 * @param placeholder the placeholder to insert
 		 */
 		public void addPlaceholder( int index, Path placeholder );
+		
+		/**
+		 * Generates a new entry containing only <code>placeholder</code>. Filters not able to
+		 * show entries with only placeholders will still insert the entry, but the client cannot
+		 * access it. 
+		 * @param index the location of the new entry
+		 * @param placeholder the content of the new entry
+		 */
+		public void insertPlaceholder( int index, Path placeholder );
 
 		/**
 		 * Replaces the object at location <code>index</code> by <code>object</code>.
@@ -1585,19 +1612,13 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		}
 
 		public void add( int index, A object ){
-			if( size() == index ) {
-				Entry entry = head;
-				Entry predecessor = null;
-				while( entry != null ) {
-					predecessor = entry;
-					entry = entry.next;
-				}
-				new Entry( predecessor, wrap( object ) );
-			}
-			else {
-				Entry entry = getEntry( index );
-				new Entry( entry.previous( level ), wrap( object ) );
-			}
+			insert( index, wrap( object ));
+		}
+		
+		public void insertPlaceholder( int index, Path placeholder ){
+			Set<Path> placeholders = new HashSet<Path>();
+			placeholders.add( placeholder );
+			insert( index, new Item( placeholders ));
 		}
 
 		public void addPlaceholder( int index, Path placeholder ){
@@ -1609,6 +1630,22 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 				removeAll( placeholder );
 				entry.item.add( placeholder );
 			}
+		}
+		
+		private void insert( int index, Item item ){
+			if( size() == index ) {
+				Entry entry = head;
+				Entry predecessor = null;
+				while( entry != null ) {
+					predecessor = entry;
+					entry = entry.next;
+				}
+				new Entry( predecessor, item );
+			}
+			else {
+				Entry entry = getEntry( index );
+				new Entry( entry.previous( level ), item );
+			}			
 		}
 
 		public PlaceholderMetaMap getMetaMap( int index ){
