@@ -29,6 +29,7 @@ import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
+import bibliothek.gui.dock.extension.css.transition.types.TransitionalCssPaintProperty;
 
 /**
  * A type creating new {@link CssPaint}s.
@@ -45,6 +46,6 @@ public class CssPaintType implements CssType<CssPaint>{
 	
 	@Override
 	public TransitionalCssProperty<CssPaint> createTransition(){
-		return null;
+		return new TransitionalCssPaintProperty();
 	}
 }

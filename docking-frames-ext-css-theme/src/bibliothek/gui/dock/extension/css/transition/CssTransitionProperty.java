@@ -27,6 +27,7 @@ package bibliothek.gui.dock.extension.css.transition;
 
 import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
@@ -35,7 +36,10 @@ import bibliothek.gui.dock.extension.css.property.AbstractCssPropertyContainer;
 import bibliothek.util.filter.PresetFilter;
 
 /**
- * This property adds an transition to some kind of value.
+ * This property adds a transition to a property. There will be an additional sub-property "transition" telling
+ * how the transition should look like.<br>
+ * Note that if <code>T</code> is a {@link CssPropertyContainer}, using {@link CssContainerTransitionProperty} is
+ * more appropriate. 
  * @author Benjamin Sigg
  * @param <T> the type of value this property enhances with an transition
  */

@@ -33,8 +33,8 @@ import bibliothek.gui.dock.extension.css.CssRule;
  * Represents one {@link CssProperty} whose value is animated.<br>
  * Things get interesting if <code>T</code> is a {@link CssPropertyContainer}:
  * <ul>
- * 	<li>In oder for the created <code>T</code>, that is given to {@link TransitionalCssPropertyCallback#set(Object)}, the
- * clients needs access the property with a {@link CssContainerTransitionProperty}.</li>
+ * 	<li>To fully support the sub-properties of <code>T</code>, the clients needs to access the property with 
+ * a {@link CssContainerTransitionProperty}.</li>
  *  <li>Values that are calculated should not show up as {@link CssProperty}, otherwise they will be overriden
  *  by the values defined in the current, leading {@link CssRule} (negating the effects of the transition).</li> 
  * </ul>

@@ -28,12 +28,18 @@ package bibliothek.gui.dock.extension.css.transition.types;
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
+import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssPropertyCallback;
 
 /**
  * This {@link TransitionalCssProperty} handles objects of type {@link CssPropertyContainer}, it automatically requests and
- * handles the sub-properties. 
+ * handles the sub-properties:
+ * <ul>
+ * 	<li>Properties related to the <code>source</code> <code>T</code> are registered as dependency of the old {@link CssRule}.</li>
+ * 	<li>Properties related to the <code>target</code> <code>T</code> are registered as dependency of the new {@link CssRule}.</li>
+ *  <li>Properties related to the resulting <code>T</code> are handled by {@link TransitionalCssPropertyCallback#set(Object)}</li>
+ * </ul>
  * @author Benjamin Sigg
  * @param <T> the type of object animated by this property
  */

@@ -34,7 +34,7 @@ import bibliothek.gui.dock.extension.css.paint.CssPaint;
  * A property for handling a {@link CssPaint} with a transition.
  * @author Benjamin Sigg
  */
-public abstract class CssPaintTransitionProperty extends CssTransitionProperty<CssPaint>{
+public abstract class CssPaintTransitionProperty extends CssContainerTransitionProperty<CssPaint>{
 	/**
 	 * Creates the new property.
 	 * @param scheme the scheme in whose realm this property will work
