@@ -38,6 +38,7 @@ import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PerspectivePlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
 /**
@@ -67,8 +68,18 @@ public class ToolbarContainerDockPerspective extends ListDockableStationPerspect
 	 * @param children the new children
 	 */
 	public void read(  ToolbarContainerDockStationLayout layout, final Map<Integer, PerspectiveDockable> children ){
+		PlaceholderMap map = layout.getPlaceholders();
+		if( !map.getFormat().equals( new Path( "dock.ToolbarContainerStation" ) ) ) {
+			throw new IllegalArgumentException( "unknown format: " + map.getFormat() );
+		}
+		if( map.getVersion() != 0 ) {
+			throw new IllegalArgumentException( "unknown version: " + map.getVersion() );
+		}
+		
+		PlaceholderMap list = map.getMap( map.newKey( "content" ), "list" );
+		
 		PerspectivePlaceholderList<PerspectiveDockable> dockables = new PerspectivePlaceholderList<PerspectiveDockable>();
-		dockables.read( layout.getPlaceholders(), new PlaceholderListItemAdapter<PerspectiveDockable, PerspectiveDockable>(){
+		dockables.read( list, new PlaceholderListItemAdapter<PerspectiveDockable, PerspectiveDockable>(){
 			public PerspectiveDockable convert( ConvertedPlaceholderListItem item ){
 				if( children == null ){
 					return null;

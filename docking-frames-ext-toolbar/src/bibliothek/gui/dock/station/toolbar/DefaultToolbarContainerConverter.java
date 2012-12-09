@@ -125,7 +125,7 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 
 	@Override
 	public void setPlaceholders( ToolbarContainerDockStation station, PlaceholderMap map ){
-		if( !map.getFormat().equals( new Path( "dock.ContainerLineStation" ) ) ) {
+		if( !map.getFormat().equals( new Path( "dock.ToolbarContainerStation" ) ) ) {
 			throw new IllegalArgumentException( "unknown format: " + map.getFormat() );
 		}
 		if( map.getVersion() != 0 ) {
