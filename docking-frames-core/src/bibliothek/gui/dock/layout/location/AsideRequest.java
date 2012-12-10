@@ -61,6 +61,13 @@ public interface AsideRequest {
 	 * if not known or not necessary
 	 */
 	public PlaceholderMap getLayout();
+	
+	/**
+	 * Gets the {@link DockStation} that is the parent of the current {@link DockStation} or {@link Combiner}.
+	 * @return the parent station, may be <code>null</code> either for a root station or if the recursion of
+	 * {@link Combiner}s is too high
+	 */
+	public DockStation getParentStation();
 
 	/**
 	 * Shortcut for calling {@link #answer(DockableProperty)} with a value of <code>null</code>.

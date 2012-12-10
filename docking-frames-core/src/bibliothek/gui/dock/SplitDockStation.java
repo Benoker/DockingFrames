@@ -79,6 +79,7 @@ import bibliothek.gui.dock.event.DockableListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.SplitDockListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideAnswer;
 import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.Combiner;
@@ -1758,21 +1759,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 					return false;
 				}
 	
-				double divider = 0.5;
-				if( info.bestNodePut == PutInfo.Put.LEFT ) {
-					divider = property.getWidth() / info.bestNode.getWidth();
-				}
-				else if( info.bestNodePut == PutInfo.Put.RIGHT ) {
-					divider = 1 - property.getWidth() / info.bestNode.getWidth();
-				}
-				else if( info.bestNodePut == PutInfo.Put.TOP ) {
-					divider = property.getHeight() / info.bestNode.getHeight();
-				}
-				else if( info.bestNodePut == PutInfo.Put.BOTTOM ) {
-					divider = 1 - property.getHeight() / info.bestNode.getHeight();
-				}
-	
-				divider = Math.max(0, Math.min(1, divider));
+				double divider = info.getDivider( property );
 				return dropAside( info.bestNode, info.bestNodePut, dockable, null, divider, null );
 			}
 	
@@ -1784,23 +1771,34 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 	}
 	
+	/**
+	 * Tries to put a new location "aside" the one described by <code>property</code>.
+	 * @param property the location whose neighbor is to be created
+	 * @param request information about the current location
+	 * @return <code>true</code> if the operation was a success, <code>false</code> if not
+	 */
 	private boolean aside( SplitDockProperty property, AsideRequest request ){
 		DropInfo info = getDropInfo( property, null );
 		
 		if( info.bestLeaf != null ){
 			if( property.getSuccessor() != null && info.bestLeafIntersection > 0.75 ){
 				DockStation station = info.bestLeaf.getDockable().asDockStation();
+				AsideAnswer answer;
 				if( station != null ){
-					request.forward( station );
-					fd
+					answer = request.forward( station );
 				}
 				else{
-					
+					PlaceholderMap layout = info.bestLeaf.getPlaceholderMap();
+					answer = request.forward( getCombiner(), layout );
 				}
-				
+				return !answer.isCanceled();
 			}
 		}
 		
+		if( info.bestNode != null ){
+			double divider = info.getDivider( property );
+			
+		}
 	}
 	
 	/**
@@ -1815,6 +1813,24 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		public SplitNode bestNode;
 		public double bestNodeIntersection = Double.POSITIVE_INFINITY;
 		public PutInfo.Put bestNodePut;
+		
+		public double getDivider( SplitDockProperty property ){
+			double divider = 0.5;
+			if( bestNodePut == PutInfo.Put.LEFT ) {
+				divider = property.getWidth() / bestNode.getWidth();
+			}
+			else if( bestNodePut == PutInfo.Put.RIGHT ) {
+				divider = 1 - property.getWidth() / bestNode.getWidth();
+			}
+			else if( bestNodePut == PutInfo.Put.TOP ) {
+				divider = property.getHeight() / bestNode.getHeight();
+			}
+			else if( bestNodePut == PutInfo.Put.BOTTOM ) {
+				divider = 1 - property.getHeight() / bestNode.getHeight();
+			}
+
+			return Math.max(0, Math.min(1, divider));
+		}
 	}
 
 	/**

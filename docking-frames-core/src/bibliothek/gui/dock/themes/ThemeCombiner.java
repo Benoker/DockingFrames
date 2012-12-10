@@ -30,9 +30,11 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.support.CombinerSource;
@@ -56,9 +58,12 @@ public class ThemeCombiner implements Combiner{
 	}
 
 	private Combiner get( CombinerSource source ){
-		return controller.getTheme().getCombiner( source.getParent() );
+		return get( source.getParent() );
 	}
 
+	private Combiner get( DockStation station ){
+		return controller.getTheme().getCombiner( station );
+	}
 
 	public CombinerTarget prepare( CombinerSource source, Enforcement force ){
 		Combiner combiner = get( source );
@@ -74,6 +79,14 @@ public class ThemeCombiner implements Combiner{
 	public Dockable combine( CombinerSource source, CombinerTarget target ){
 		Target tTarget = (Target) target;
 		return tTarget.combiner.combine( source, tTarget.delegate );
+	}
+	
+	public void aside( AsideRequest request ){
+		DockStation parent = request.getParentStation();
+		if( parent != null ){
+			Combiner combiner = get( parent );
+			combiner.aside( request );
+		}
 	}
 
 	/**

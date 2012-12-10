@@ -21,6 +21,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
@@ -176,6 +177,12 @@ public class CombinerExample {
 	        stack.drop( source.getNew() );
 	        
 	        return stack;
-	    }		
+	    }
+		
+		/* This method would be used to put a Dockable "aside" another dockable, but we do ignore 
+		 * it in this example. */
+		public void aside( AsideRequest request ){
+			// ignore	
+		}
 	}
 }

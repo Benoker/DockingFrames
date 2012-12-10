@@ -30,6 +30,7 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
@@ -79,5 +80,13 @@ public class StationCombinerValue extends StationThemeItemValue<Combiner> implem
     	}
 
         return combiner.combine( source, target );
+    }
+    
+    public void aside( AsideRequest request ){
+    	Combiner combiner = get();
+    	if( combiner == null ){
+    		combiner = new BasicCombiner();
+    	}
+    	combiner.aside( request );
     }
 }

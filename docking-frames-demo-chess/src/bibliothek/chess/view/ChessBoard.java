@@ -29,6 +29,7 @@ import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.dockable.DockableStateListener;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
@@ -331,6 +332,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	public DockableProperty getDockableProperty( Dockable dockable, Dockable ignored ){
 		Field field = getFieldOf( dockable );
 		return new ChessBoardProperty( field.getRow(), field.getColumn() );
+	}
+	
+	public void aside( AsideRequest request ){
+		// no support for this feature required
 	}
 
 	public Dockable getFrontDockable(){

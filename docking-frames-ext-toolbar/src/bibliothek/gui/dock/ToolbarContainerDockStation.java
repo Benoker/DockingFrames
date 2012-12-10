@@ -54,6 +54,7 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
@@ -102,6 +103,10 @@ import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
+import bibliothek.util.Todo.Version;
 
 /**
  * A {@link Dockable} and a {@link DockStation} which stands for a group of
@@ -402,6 +407,13 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			}
 		}
 		return new ToolbarContainerProperty( index, placeholder );
+	}
+	
+	@Override
+	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
+		description="Implement this feature")
+	public void aside( AsideRequest request ){
+		// ignore (for now)	
 	}
 	
 	@Override
