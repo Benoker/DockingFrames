@@ -55,12 +55,33 @@ public abstract class AbstractSplitDockGrid<D> {
 	/** The dividing lines which should appear */
 	private List<Line> lines = new ArrayList<Line>();
 	
+	/** Whether to {@link #unpack(double, double, double, double)} all {@link Node}s before adding new {@link Dockable}s */
+	private boolean unpack = true;
+	
     /**
      * Creates a new, empty grid.
      */
     public AbstractSplitDockGrid(){
         // do nothing
     }
+    
+    /**
+     * Whether to automatically call {@link #unpack(double, double, double, double)} before adding any new {@link Dockable}s
+     * to this grid. Default: true.
+     * @param unpack whether to unpack automatically
+     */
+    public void setUnpack( boolean unpack ){
+		this.unpack = unpack;
+	}
+    
+    /**
+     * Tells whether {@link #unpack(double, double, double, double)} is called automatically before adding new {@link Dockable}s
+     * to this grid.
+     * @return whether {@link #unpack(double, double, double, double)} is called
+     */
+    public boolean isUnpack(){
+		return unpack;
+	}
     
     /**
      * Creates a grid by reading a string which represents a grid.<br>
@@ -191,6 +212,10 @@ public abstract class AbstractSplitDockGrid<D> {
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
         
+        if( isUnpack() ){
+        	unpack( x, y, width, height );
+        }
+        
         Node<D> node = nodeAt( x, y, width, height );
         int insert = 0;
         
@@ -233,6 +258,10 @@ public abstract class AbstractSplitDockGrid<D> {
         
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
+        
+        if( isUnpack() ){
+        	unpack( x, y, width, height );
+        }
         
         Node<D> node = nodeAt( x, y, width, height );
         int insert = 0;
@@ -311,6 +340,10 @@ public abstract class AbstractSplitDockGrid<D> {
         
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
+        
+        if( isUnpack() ){
+        	unpack( x, y, width, height );
+        }
 
         for( Node<D> node : nodes ){
             if( node.x == x && 
