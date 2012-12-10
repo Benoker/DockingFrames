@@ -861,6 +861,10 @@
 
 [v1.1.2p1g]
  - Bugfix[Toolbar]: Code for reading the layout of a toolbar and creating a ToolbarContainerDockPerspective was using an outdated format. 
+
+[v1.1.2p1h]
+ - Bugfix: Arch could throw an exception if too small
+ - API: CGridPerspective offers a new method "unpack", making sure there is no stack of dockables in the grid.
      
 [Todo]
 - Drop StackDockStation over Dockable and merge them

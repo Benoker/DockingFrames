@@ -250,6 +250,19 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	}
 
 	/**
+	 * Unpacks the stations (e.g. a stack) that is stored at <code>x,y,width,height</code>. The result
+	 * is like removing all children and add them again with {@link #gridAdd(double, double, double, double, CDockablePerspective...)}.
+	 * @param x the x-coordinate of a set of {@link CDockablePerspective}, can be any number
+	 * @param y the y-coordinate of a set of {@link CDockablePerspective}, can be any number
+	 * @param width the width of a set of {@link CDockablePerspective}, can be any number greater than 0
+	 * @param height the height of a set of {@link CDockablePerspective}, can be any number greater than 0
+	 */
+	public void unpack( double x, double y, double width, double height ){
+		gridChanges = true;
+		grid.unpack( x, y, width, height );
+	}
+	
+	/**
 	 * Adds <code>dockables</code> at location <code>x/y</code> with size <code>width/height</code> to an internal 
 	 * list of pending commands to execute. This method does not change the layout of this area, but a call
 	 * to {@link #gridDeploy()} will.<br>
