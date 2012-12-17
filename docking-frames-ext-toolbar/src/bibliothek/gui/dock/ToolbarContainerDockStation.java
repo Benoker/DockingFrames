@@ -1026,7 +1026,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		if( strategy.isToolbarPart( dockable ) ) {
 			Dockable replacement = strategy.ensureToolbarLayer( this, dockable );
 			if( replacement != dockable ){
+				replacement.setController( getController() );
 				replacement.asDockStation().drop( dockable );
+				replacement.setController( null );
 				dockable = replacement;
 			}
 
