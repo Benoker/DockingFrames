@@ -866,5 +866,5 @@
  - Bugfix: Arch could throw an exception if too small
  - API: CGridPerspective offers a new method "unpack", making sure there is no stack of dockables in the grid.
      
-[Todo]
-- Drop StackDockStation over Dockable and merge them
+[v1.1.2p2]
+ - API: ToolbarItemDockable now features a BackgroundComponent and thus supports things like true transparency
