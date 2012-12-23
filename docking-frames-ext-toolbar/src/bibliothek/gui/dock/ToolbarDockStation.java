@@ -34,6 +34,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -832,42 +833,49 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 			final Graphics2D g2D = (Graphics2D) g;
 			paintRemoval( g );
 			if( dropInfo != null ) {
+				Insets insets = dockablePane.getInsets();
+				if( insets == null ){
+					insets = new Insets( 0, 0, 0, 0 );
+				}
+				
 				int index = dropInfo.getIndex();
 				int x, y, width, height;
 				if( getOrientation() == Orientation.HORIZONTAL ) {
 					if( index == 0 ) {
-						x = 0;
+						x = insets.left;
 					}
 					else {
 						x = dockablePane.getComponent( index - 1 ).getX() + dockablePane.getComponent( index - 1 ).getWidth();
 					}
 					if( index == dockablePane.getComponentCount() ) {
-						width = getWidth() - x;
+						width = getWidth() - x - insets.right;
 					}
 					else {
 						width = dockablePane.getComponent( index ).getX() - x;
 					}
-					y = 0;
-					height = getHeight();
+					y = insets.top;
+					height = getHeight() - insets.top - insets.bottom;
 				}
 				else {
 					if( index == 0 ) {
-						y = 0;
+						y = insets.top;
 					}
 					else {
 						y = dockablePane.getComponent( index - 1 ).getY() + dockablePane.getComponent( index - 1 ).getHeight();
 					}
 					if( index == dockablePane.getComponentCount() ) {
-						height = getHeight() - y;
+						height = getHeight() - y - insets.top;
 					}
 					else {
 						height = dockablePane.getComponent( index ).getY() - y;
 					}
-					x = 0;
-					width = getWidth();
+					x = insets.left;
+					width = getWidth() - insets.left - insets.right;
 				}
-				Rectangle stationBounds = new Rectangle( 0, 0, getWidth(), getHeight() );
-				paint.drawInsertion( g2D, stationBounds, new Rectangle( x, y, width, height ) );
+				if( width > 0 && height > 0 ){
+					Rectangle stationBounds = new Rectangle( 0, 0, getWidth(), getHeight() );
+					paint.drawInsertion( g2D, stationBounds, new Rectangle( x, y, width, height ) );
+				}
 			}
 		}
 
