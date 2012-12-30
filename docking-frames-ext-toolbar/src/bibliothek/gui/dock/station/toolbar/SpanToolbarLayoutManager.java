@@ -33,6 +33,7 @@ package bibliothek.gui.dock.station.toolbar;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.LayoutManager2;
 
@@ -246,6 +247,14 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 
 	@Override
 	public Dimension preferredLayoutSize( Container parent ){
+		Insets insets = parent.getInsets();
+		int deltaWidth = 0;
+		int deltaHeight = 0;
+		if( insets != null ){
+			deltaWidth += insets.left + insets.right;
+			deltaHeight += insets.top + insets.bottom;
+		}
+		
 		if( station.getOrientation() == Orientation.HORIZONTAL ){
 			int width = 0;
 			int height = 0;
@@ -269,7 +278,7 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 				width += span.getSize();
 			}
 			
-			return new Dimension( width, height+2*sideGap );
+			return new Dimension( width + deltaWidth, height+2*sideGap + deltaHeight );
 		}
 		else{
 			int width = 0;
@@ -294,7 +303,7 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 				height += span.getSize();
 			}
 			
-			return new Dimension( width+2*sideGap, height );
+			return new Dimension( width+2*sideGap + deltaWidth, height + deltaHeight );
 		}
 	}
 
@@ -305,10 +314,21 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 
 	@Override
 	public void layoutContainer( Container parent ){
+		Insets insets = parent.getInsets();
+		int x = 0;
+		int y = 0;
+		int width = parent.getWidth();
+		int height = parent.getHeight();
+		if( insets != null ){
+			x = insets.left;
+			y = insets.top;
+			width -= insets.left + insets.right;
+			height -= insets.top + insets.bottom;
+			width = Math.max( width, 1 );
+			height = Math.max( height, 1 );
+		}
+		
 		if( station.getOrientation() == Orientation.HORIZONTAL ){
-			int x = 0;
-			int height = parent.getHeight();
-			
 			for( int i = 0, n = parent.getComponentCount(); i<n; i++ ){
 				int span = 0;
 				if( i < spans.length ){
@@ -323,14 +343,11 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 				}
 				Component comp = parent.getComponent( i );
 				Dimension size = comp.getPreferredSize();
-				comp.setBounds( x, sideGap, size.width, height-2*sideGap );
+				comp.setBounds( x, y+sideGap, size.width, height-2*sideGap );
 				x += size.width;
 			}
 		}
 		else{
-			int y = 0;
-			int width = parent.getWidth();
-
 			for( int i = 0, n = parent.getComponentCount(); i<n; i++ ){
 				int span = 0;
 				if( i < spans.length ){
@@ -345,7 +362,7 @@ public abstract class SpanToolbarLayoutManager implements LayoutManager2{
 				}
 				Component comp = parent.getComponent( i );
 				Dimension size = comp.getPreferredSize();
-				comp.setBounds( sideGap, y, width-2*sideGap, size.height );
+				comp.setBounds( x+sideGap, y, width-2*sideGap, size.height );
 				y += size.height;
 			}
 		}
