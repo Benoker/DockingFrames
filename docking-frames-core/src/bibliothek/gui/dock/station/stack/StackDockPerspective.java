@@ -192,6 +192,16 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 	}
 	
 	/**
+	 * Gets the location where <code>placeholder</code> would be found if it were a 
+	 * <code>dockable</code>.
+	 * @param placeholder the placeholder to search
+	 * @return the location of <code>placeholder</code> or <code>-1</code>
+	 */
+	public int indexOf( Path placeholder ){
+		return dockables.getDockableIndex( placeholder );
+	}
+	
+	/**
 	 * Removes <code>dockable</code> from this station.
 	 * @param dockable the element to remove
 	 * @return <code>true</code> if <code>dockable</code> was removed, <code>false</code>

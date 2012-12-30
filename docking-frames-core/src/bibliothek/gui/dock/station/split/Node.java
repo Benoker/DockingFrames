@@ -33,6 +33,8 @@ import java.util.Map;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
+import bibliothek.gui.dock.layout.location.AsideRequest;
+import bibliothek.gui.dock.station.split.SplitDockPathProperty.Location;
 import bibliothek.util.Path;
 
 /**
@@ -618,6 +620,46 @@ public class Node extends VisibleSplitNode implements Divideable{
     }
     
     @Override
+    public boolean aside( SplitDockPathProperty property, int depth, AsideRequest request ){
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	
+    	if( leftVisible && rightVisible ){
+    		if( depth >= property.size() ){
+    			return false;
+    		}
+    		else{
+    			SplitDockPathProperty.Node node = property.getNode( depth );
+    			if( needToExpand( node )){
+    				long placeholderId = getLeafId( property );
+    				long splitId = getSplitId( property, depth );
+    				Placeholder placeholder = createPlaceholder( splitId );
+    				split( property, depth, placeholder, placeholderId );
+    				placeholder.addPlaceholder( request.getPlaceholder() );
+    				return true;
+    			}
+    			else{
+    				if( isLeftOrTop( node.getLocation() )){
+    					return left.aside( property, depth+1, request );
+    				}
+    				else{
+    					return right.aside( property, depth+1, request );
+    				}
+    			}
+    		}
+    	}
+    	else if( leftVisible ){
+    		return left.aside( property, depth, request );
+    	}
+    	else if( rightVisible ){
+    		return right.aside( property, depth, request );
+    	}
+    	else{
+    		return false;
+    	}
+    }
+    
+    @Override
     public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
     	boolean leftVisible = left == null || left.isVisible();
     	boolean rightVisible = right == null || right.isVisible();
@@ -631,77 +673,22 @@ public class Node extends VisibleSplitNode implements Divideable{
     		else{
     			SplitDockPathProperty.Node node = property.getNode( depth );
 
-    			boolean expand = 
-    				// if this node is horizontal, but the path is vertical
-    				( orientation == SplitDockStation.Orientation.HORIZONTAL &&
-    						(node.getLocation() == SplitDockPathProperty.Location.TOP ||
-    								node.getLocation() == SplitDockPathProperty.Location.BOTTOM )) ||
-    								// ... or if this node is vertical, but the path is horizontal
-    								( orientation == SplitDockStation.Orientation.VERTICAL &&
-    										(node.getLocation() == SplitDockPathProperty.Location.LEFT ||
-    												node.getLocation() == SplitDockPathProperty.Location.RIGHT ));
-
-    			if( node.getId() != -1 && node.getId() != getId() ){
-    				expand = true;
-    			}
-
-    			if( expand ){
+    			if( needToExpand( node ) ){
     				// split up this node
-    				long leafId = property.getLeafId();
-    				SplitDockPathProperty.Node lastNode = null;
-    				if( leafId == -1 ){
-    					lastNode = property.getLastNode();
-    					if( lastNode != null ){
-    						leafId = lastNode.getId();
-    					}
-    				}
-
-    				long splitId = -1;
-    				if( lastNode != node ){
-    					if( depth > 0 ){
-    						splitId = property.getNode( depth-1 ).getId();
-    					}
-    					else{
-    						splitId = node.getId();
-    					}
-    				}
+    				long leafId = getLeafId( property );
+    				long splitId = getSplitId( property, depth );
+    				
     				Leaf leaf = create( dockable, leafId );
     				if( leaf == null )
     					return false;
 
-    				SplitDockStation.Orientation orientation;
-    				if( node.getLocation() == SplitDockPathProperty.Location.TOP ||
-    						node.getLocation() == SplitDockPathProperty.Location.BOTTOM )
-    					orientation = SplitDockStation.Orientation.VERTICAL;
-    				else
-    					orientation = SplitDockStation.Orientation.HORIZONTAL;
-
-    				Node split;
-    				SplitNode parent = getParent();
-    				int location = parent.getChildLocation( this );
-    				if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
-    						node.getLocation() == SplitDockPathProperty.Location.TOP ){
-    					split = createNode( splitId );
-    					split.setLeft( leaf );
-    					split.setRight( this );
-    					split.setOrientation( orientation );
-    					split.setDivider( node.getSize() );
-    				}
-    				else{
-    					split = createNode( splitId );
-    					split.setLeft( this );
-    					split.setRight( leaf );
-    					split.setOrientation( orientation );
-    					split.setDivider( 1-node.getSize() );
-    				}
-    				parent.setChild( split, location );
+    				split( property, depth, leaf, splitId );
     				leaf.setDockable( dockable, null );
     				return true;
     			}
     			else{
     				// forward the call to a child
-    				if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
-    						node.getLocation() == SplitDockPathProperty.Location.TOP ){
+    				if( isLeftOrTop( node.getLocation() ) ){
     					return left.insert( property, depth+1, dockable );
     				}
     				else{
@@ -719,6 +706,59 @@ public class Node extends VisibleSplitNode implements Divideable{
     	else{
     		return false;
     	}
+    }
+    
+    private long getLeafId( SplitDockPathProperty property ){
+		long leafId = property.getLeafId();
+		SplitDockPathProperty.Node lastNode = null;
+		if( leafId == -1 ){
+			lastNode = property.getLastNode();
+			if( lastNode != null ){
+				leafId = lastNode.getId();
+			}
+		}
+		return leafId;
+    }
+    
+    private long getSplitId( SplitDockPathProperty property, int depth ){
+    	SplitDockPathProperty.Node node = property.getNode( depth );
+    	SplitDockPathProperty.Node lastNode = null;
+    	
+    	if( property.getLeafId() == -1 ){
+    		lastNode = property.getLastNode();
+    	}
+    	
+		if( lastNode != node ){
+			if( depth > 0 ){
+				return property.getNode( depth-1 ).getId();
+			}
+			else{
+				return node.getId();
+			}
+		}
+		return -1;
+    }
+    
+    private boolean isLeftOrTop( Location location ){
+    	return location == Location.LEFT || location == Location.TOP;
+    }
+    
+    private boolean needToExpand( SplitDockPathProperty.Node node ){
+		boolean expand = 
+			// if this node is horizontal, but the path is vertical
+			( orientation == SplitDockStation.Orientation.HORIZONTAL &&
+					(node.getLocation() == SplitDockPathProperty.Location.TOP ||
+							node.getLocation() == SplitDockPathProperty.Location.BOTTOM )) ||
+							// ... or if this node is vertical, but the path is horizontal
+							( orientation == SplitDockStation.Orientation.VERTICAL &&
+									(node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+											node.getLocation() == SplitDockPathProperty.Location.RIGHT ));
+
+		if( node.getId() != -1 && node.getId() != getId() ){
+			expand = true;
+		}
+		
+		return expand;
     }
     
     @Override

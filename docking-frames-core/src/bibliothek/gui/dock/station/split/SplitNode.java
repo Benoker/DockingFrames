@@ -277,7 +277,64 @@ public abstract class SplitNode{
             }
         }
     }
+
+    /**
+     * Splits this node into two nodes, a new parent {@link Node} is created and inserted.
+     * @param property description of a path in the tree
+     * @param depth the element of <code>property</code> which decides how to split this node
+     * @param newChild the new neighbor of this node, its location is described by <code>property</code>
+     */
+    protected void split( SplitDockPathProperty property, int depth, SplitNode newChild ){
+    	split( property, depth, newChild, -1 );
+    }
     
+    /**
+     * Splits this node into two nodes, a new parent {@link Node} is created and inserted.
+     * @param property description of a path in the tree
+     * @param depth the element of <code>property</code> which decides how to split this node
+     * @param newChild the new neighbor of this node, its location is described by <code>property</code>
+     * @param newNodeId the identifier of the new parent node, can be <code>-1</code>
+     */
+    protected void split( SplitDockPathProperty property, int depth, SplitNode newChild, long newNodeId ){
+        Node split;
+        SplitDockPathProperty.Node node = property.getNode( depth );
+        
+        SplitDockStation.Orientation orientation;
+        if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
+                node.getLocation() == SplitDockPathProperty.Location.RIGHT )
+            orientation = SplitDockStation.Orientation.HORIZONTAL;
+        else
+            orientation = SplitDockStation.Orientation.VERTICAL;
+        
+        boolean reverse = node.getLocation() == SplitDockPathProperty.Location.RIGHT ||
+            node.getLocation() == SplitDockPathProperty.Location.BOTTOM;
+        
+        SplitDockPathProperty.Node lastNode = property.getLastNode();
+        
+        if( lastNode != null ){
+        	newNodeId = lastNode.getId();
+        }
+        
+        SplitNode parent = getParent();
+        int location = parent.getChildLocation( this );
+        if( reverse ){
+            split = createNode( newNodeId );
+            split.setOrientation( orientation );
+            split.setLeft( this );
+            split.setRight( newChild );
+            split.setDivider( 1 - node.getSize() );
+        }
+        else{
+            split = createNode( newNodeId );
+            split.setLeft( newChild );
+            split.setRight( this );
+            split.setOrientation( orientation );
+            split.setDivider( node.getSize() );
+        }
+        
+        parent.setChild( split, location );
+    }
+
     /**
      * Creates a new {@link Leaf}
      * @param id the unique identifier of the new leaf, can be -1
@@ -676,8 +733,14 @@ public abstract class SplitNode{
      */
     public abstract boolean insert( SplitDockPlaceholderProperty property, Dockable dockable );
     
-    public abstract boolean aside( SplitDockPlaceholderProperty property, AsideRequest request );
-    
+    /**
+     * Inserts a new placeholder at location <code>property</code>.
+     * @param property the path to the placeholder
+     * @param index the current segment, represents <code>this</code> node
+     * @param request more information about the request, including the placeholder to add
+     * @return <code>true</code> if the placeholder was added, <code>false</code> if it could
+     * not be added
+     */
     public abstract boolean aside( SplitDockPathProperty property, int index, AsideRequest request );
     
     /**

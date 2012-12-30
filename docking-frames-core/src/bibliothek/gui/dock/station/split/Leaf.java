@@ -40,6 +40,7 @@ import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.span.Span;
@@ -527,51 +528,30 @@ public class Leaf extends SpanSplitNode{
     }
     
     @Override
+    public boolean aside( SplitDockPathProperty property, int index, AsideRequest request ){
+    	if( index < property.size() ){
+    		Placeholder placeholder = createPlaceholder( property.getLeafId() );
+    		split( property, index, placeholder );
+    		placeholder.addPlaceholder( request.getPlaceholder() );
+    		return true;
+    	}
+    	else{
+    		addPlaceholder( request.getPlaceholder() );
+    		return true;
+    	}
+    }
+    
+    @Override
     public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ) {
         if( depth < property.size() ){
             // split up the leaf
-            Node split;
-            SplitDockPathProperty.Node node = property.getNode( depth );
-            
-            SplitDockStation.Orientation orientation;
-            if( node.getLocation() == SplitDockPathProperty.Location.LEFT ||
-                    node.getLocation() == SplitDockPathProperty.Location.RIGHT )
-                orientation = SplitDockStation.Orientation.HORIZONTAL;
-            else
-                orientation = SplitDockStation.Orientation.VERTICAL;
-            
-            boolean reverse = node.getLocation() == SplitDockPathProperty.Location.RIGHT ||
-                node.getLocation() == SplitDockPathProperty.Location.BOTTOM;
-            
-            SplitDockPathProperty.Node lastNode = property.getLastNode();
-            long newNodeId = -1;
-            if( lastNode != null ){
-            	newNodeId = lastNode.getId();
-            }
-            Leaf leaf = create( dockable, property.getLeafId() );
-            if( leaf == null )
-                return false;
-            
-            SplitNode parent = getParent();
-            int location = parent.getChildLocation( this );
-            if( reverse ){
-                split = createNode( newNodeId );
-                split.setOrientation( orientation );
-                split.setLeft( this );
-                split.setRight( leaf );
-                split.setDivider( 1 - node.getSize() );
-            }
-            else{
-                split = createNode( newNodeId );
-                split.setLeft( leaf );
-                split.setRight( this );
-                split.setOrientation( orientation );
-                split.setDivider( node.getSize() );
-            }
-            
-            parent.setChild( split, location );
-            leaf.setDockable( dockable, null );
-            return true;
+        	Leaf leaf = create( dockable, property.getLeafId() );
+        	if( leaf == null ){
+        		return false;
+        	}
+        	split( property, depth, leaf );
+        	leaf.setDockable( dockable, null );
+        	return true;
         }
         else{
             // try to melt with child
@@ -593,7 +573,7 @@ public class Leaf extends SpanSplitNode{
             return getAccess().drop( dockable, property.toLocation( this ), this );
         }
     }
-
+    
     @Override
     public <N> N submit( SplitTreeFactory<N> factory ){
     	PlaceholderMap map = getPlaceholderMap();

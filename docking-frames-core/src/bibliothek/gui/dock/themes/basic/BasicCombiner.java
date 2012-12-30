@@ -34,13 +34,20 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+import bibliothek.gui.dock.dockable.DefaultDockablePerspective;
+import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideRequest;
+import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
+import bibliothek.gui.dock.station.stack.StackDockPerspective;
+import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.util.Path;
 
 /**
  * A simple implementation of {@link Combiner}, which merges two {@link Dockable Dockables}
@@ -92,6 +99,50 @@ public class BasicCombiner implements Combiner {
 	        return stack;
 		}
     }
+	
+	public void aside( final AsideRequest request ){
+		if( request.getPlaceholder() == null ){
+			request.answer();
+			return;
+		}
+		
+		PlaceholderMap placeholders = request.getLayout();
+		StackDockPerspective stack = new StackDockPerspective();
+		if( placeholders != null ){
+			stack.setPlaceholders( placeholders );
+		}
+		
+		PerspectiveDockable dockable = new DefaultDockablePerspective(){
+			@Override
+			public Path getPlaceholder(){
+				return request.getPlaceholder();
+			}
+		};
+		
+		int index = indexOf( stack, request.getLocation() );
+		if( index == -1 ){
+			index = stack.getDockableCount();
+		}
+		else{
+			index++;
+		}
+		
+		stack.insertPlaceholder( index, dockable );
+		
+		request.answer( new StackDockProperty( index, request.getPlaceholder() ), stack.getPlaceholders() );
+	}
+	
+	private int indexOf( StackDockPerspective stack, DockableProperty location ){
+		if( location instanceof StackDockProperty ){
+			StackDockProperty property = (StackDockProperty)location;
+			int index = stack.indexOf( property.getPlaceholder() );
+			if( index != -1 ){
+				return index;
+			}
+			return property.getIndex();
+		}
+		return -1;
+	}
 	
 	private class DisplayerTarget implements CombinerTarget{
 		private DisplayerCombinerTarget operation;

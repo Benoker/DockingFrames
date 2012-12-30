@@ -5,6 +5,7 @@ import java.util.Map;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.util.Path;
 
 /**
@@ -60,6 +61,20 @@ public class Placeholder extends SplitNode {
 		return null;
 	}
 
+	@Override
+	public boolean aside( SplitDockPathProperty property, int index, AsideRequest request ){
+		if( index < property.size() ){
+			Placeholder placeholder = createPlaceholder( property.getLeafId() );
+			split( property, index, placeholder );
+			placeholder.addPlaceholder( request.getPlaceholder() );
+			return true;
+		}
+		else{
+			addPlaceholder( request.getPlaceholder() );
+			return true;
+		}
+	}
+	
 	@Override
 	public boolean insert( SplitDockPlaceholderProperty property, Dockable dockable ){
 		Path placeholder = property.getPlaceholder();

@@ -29,9 +29,11 @@ package bibliothek.gui.dock.station.split;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.DockHierarchyLock.Token;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
+import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.span.SpanFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -162,4 +164,31 @@ public interface SplitDockAccess {
 	 * @return the new placeholder
 	 */
 	public Placeholder createPlaceholder( long id );
+	
+	/**
+	 * Sets the current information telling where and how an item is to be dropped.
+	 * @param putInfo the current drop information
+	 */
+	public void setDropInfo( PutInfo putInfo );
+
+	/**
+	 * Resets the information telling where and how an item is to be dropped.
+	 */
+	public void unsetDropInfo();
+	
+	/**
+	 * Moves the <code>dockable</code> described by <code>putInfo</code> at a new location
+	 * @param putInfo description of the new location
+	 * @param item more information about the drag and drop operation that is currently happening
+	 */
+	public void move( PutInfo putInfo, StationDropItem item );
+	
+	/**
+	 * Adds the {@link Dockable} given by <code>putInfo</code> to this station.
+     * @param token if <code>null</code>, then a token will be acquired by this method
+     * and this method will fire events, otherwise this methods is executed silently
+     * @param putInfo information about where to drop the new {@link Dockable}
+     * @param item detailed information about the drag and drop operation that is going on
+	 */
+	public void drop( Token token, PutInfo putInfo, StationDropItem item );
 }

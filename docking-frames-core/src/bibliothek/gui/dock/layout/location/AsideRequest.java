@@ -96,6 +96,16 @@ public interface AsideRequest {
 	 * @param station the new layout, can be <code>null</code>
 	 */
 	public void answer( PlaceholderMap station );
+	
+	/**
+	 * Sets the result of this request, and tells how the layout of a non-existent stations looks after the request
+	 * has been handled. The arguments can be <code>null</code>, as described in {@link #answer(DockableProperty)}
+	 * and {@link #answer(PlaceholderMap)}.
+	 * @param location the location describing the "neighbor" of {@link DockableProperty}, a value
+	 * of <code>null</code> indicates that the parent and child request should be merged directly
+	 * @param station the new layout, can be <code>null</code>
+	 */
+	public void answer( DockableProperty location, PlaceholderMap station );
 
 	/**
 	 * Calls the {@link DockStation#aside(AsideRequest)} method of <code>station</code> with the 
