@@ -809,6 +809,20 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		}
 		return null;
     }
+    
+    /**
+     * Searches for the one {@link Item} in the {@link #dockables() dockables} list that
+     * contains <code>dockable</code>.
+     * @param dockable the dockable used for searching
+     * @return the item representing <code>dockable</code> or <code>null</code>
+     */
+    public Item getItem( D dockable ){
+    	Entry entry = search( dockable );
+    	if( entry == null ){
+    		return null;
+    	}
+    	return entry.item;
+    }
 	
 	/**
 	 * Gets the number of entries in the level <code>level</code>.
@@ -832,6 +846,17 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 				return entry;
 			}
 			entry = entry.next( Level.BASE );
+		}
+		return null;
+	}
+	
+	private Entry search( D dockable ){
+		Entry entry = head( Level.DOCKABLE );
+		while( entry != null ) {
+			if( entry.item.getDockable().asDockable() == dockable ) {
+				return entry;
+			}
+			entry = entry.next( Level.DOCKABLE );
 		}
 		return null;
 	}

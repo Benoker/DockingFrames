@@ -1079,18 +1079,36 @@ public class ScreenDockStation extends AbstractDockStation {
 	    DockableProperty location = request.getLocation();
 	    if( location instanceof ScreenDockProperty ){
 	    	ScreenDockProperty screenLocation = (ScreenDockProperty)location;
-	    	Path oldPlaceholder = screenLocation.getPlaceholder();
-	    	if( oldPlaceholder != null ){
-	    		DockablePlaceholderList<ScreenDockWindowHandle>.Item item = dockables.getItem( oldPlaceholder );
-	    		if( item != null ){
-	    			delegate().combine( item, getCombiner(), request );
-	    		}
+	    	DockablePlaceholderList<ScreenDockWindowHandle>.Item item = getItem( screenLocation );
+
+	    	if( item != null ){
+	    		delegate().combine( item, getCombiner(), request );
 	    	}
+	    	
 	    	ScreenDockProperty copy = screenLocation.copy();
 	    	copy.setSuccessor( null );
 	    	copy.setPlaceholder( request.getPlaceholder() );
 	    	request.answer( copy );
 	    }
+    }
+    
+    private DockablePlaceholderList<ScreenDockWindowHandle>.Item getItem( ScreenDockProperty property ){
+    	Path oldPlaceholder = property.getPlaceholder();
+    	if( oldPlaceholder != null ){
+    		DockablePlaceholderList<ScreenDockWindowHandle>.Item item = dockables.getItem( oldPlaceholder );
+    		if( item != null ){
+    			return item;
+    		}
+    	}
+    	ScreenDockStationExtension.DropArguments args = new ScreenDockStationExtension.DropArguments();
+		args.setProperty( property );
+		args.setBoundsIncludeWindow( true );
+		windowAt( args );
+		ScreenDockWindow window = args.getWindow();
+		if( window != null ){
+			return dockables.getItem( window.getDockable() );
+		}
+		return null;
     }
     
     /**

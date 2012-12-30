@@ -42,7 +42,7 @@ import bibliothek.util.Path;
 public class DockStationDelegate {
     
     /**
-     * Cann be called by {@link DockStation#aside(AsideRequest)} if <code>request</code> contains a 
+     * Can be called by {@link DockStation#aside(AsideRequest)} if <code>request</code> contains a 
      * location that points toward <code>item</code>. The method first tries to call
      * {@link DockStation#aside(AsideRequest)} of the {@link Dockable} represented by
      * <code>item</code>, and if that fails it tries to call {@link Combiner#aside(AsideRequest)}.

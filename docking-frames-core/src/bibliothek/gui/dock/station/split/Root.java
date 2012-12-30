@@ -37,7 +37,6 @@ import javax.swing.JComponent;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.layout.location.AsideRequest;
-import bibliothek.util.Path;
 
 /**
  * The root of the tree that represents the internal structure of a 
@@ -269,10 +268,12 @@ public class Root extends SpanSplitNode{
     @Override
     public boolean aside( SplitDockPathProperty property, int index, AsideRequest request ){
     	if( child == null ){
-    		long id = property.getLeafId();
-    		Placeholder placeholder = createPlaceholder( id );
-    		setChild( placeholder );
-    		placeholder.addPlaceholder( request.getPlaceholder() );
+    		if( request.getPlaceholder() != null ){
+	    		long id = property.getLeafId();
+	    		Placeholder placeholder = createPlaceholder( id );
+	    		setChild( placeholder );
+	    		placeholder.addPlaceholder( request.getPlaceholder() );
+    		}
     		return true;
     	}
     	else{

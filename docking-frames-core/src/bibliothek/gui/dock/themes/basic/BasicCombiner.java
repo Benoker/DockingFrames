@@ -101,33 +101,33 @@ public class BasicCombiner implements Combiner {
     }
 	
 	public void aside( final AsideRequest request ){
-		if( request.getPlaceholder() == null ){
-			request.answer();
-			return;
-		}
-		
 		PlaceholderMap placeholders = request.getLayout();
 		StackDockPerspective stack = new StackDockPerspective();
 		if( placeholders != null ){
 			stack.setPlaceholders( placeholders );
 		}
 		
-		PerspectiveDockable dockable = new DefaultDockablePerspective(){
-			@Override
-			public Path getPlaceholder(){
-				return request.getPlaceholder();
-			}
-		};
-		
 		int index = indexOf( stack, request.getLocation() );
 		if( index == -1 ){
 			index = stack.getDockableCount();
+			if( index == 0 ){
+				index = 1;
+			}
 		}
 		else{
 			index++;
 		}
 		
-		stack.insertPlaceholder( index, dockable );
+		if( request.getPlaceholder() != null ){
+			PerspectiveDockable dockable = new DefaultDockablePerspective(){
+				@Override
+				public Path getPlaceholder(){
+					return request.getPlaceholder();
+				}
+			};
+			
+			stack.insertPlaceholder( index, dockable );
+		}
 		
 		request.answer( new StackDockProperty( index, request.getPlaceholder() ), stack.getPlaceholders() );
 	}

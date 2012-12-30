@@ -82,6 +82,8 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
+import bibliothek.gui.dock.layout.location.AsideAnswer;
+import bibliothek.gui.dock.layout.location.DefaultAsideRequest;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
@@ -92,6 +94,7 @@ import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -1294,6 +1297,73 @@ public class DockFrontend {
             throw new IllegalArgumentException( "no entry present for: " + id );
         
         return info.isEntryLayout();
+    }
+    
+    /**
+     * Updates the stored location of <code>dockable</code> such that it is aside <code>aside</code>. This method
+     * should be used to set the location of an invisible {@link Dockable}, as it does not affect the location of
+     * a {@link Dockable} that is already visible. Usually the method is used like this:
+     * <code>DockFronted frontend = ...
+     * Dockable dockable = ...
+     * 
+     * frontend.addDockable( "x", dockable );
+     * frontend.setLocationAside( dockable, someOtherDockable );
+     * frontend.show( dockable );</code><br>
+     * Clients may also combine this feature with the {@link DockController#getFocusHistory() focus history} to access
+     * the last focused {@link Dockable} for the argument <code>aside</code>.
+     * @param dockable the item whose location is to be set
+     * @param aside the new neighbor of <code>dockable</code>
+     * @return whether the operation was a success, an operation requires at least that both <code>dockable</code>
+     * and <code>aside</code> were added to this {@link DockFrontend}, and that <code>aside</code> currently
+     * has a location. There is no need for <code>aside</code> to be visible.
+     */
+    public boolean setLocationAside( Dockable dockable, Dockable aside ){
+    	if( dockable == null ){
+    		throw new IllegalArgumentException( "dockable must not be null" );
+    	}
+    	if( aside == null ){
+    		throw new IllegalArgumentException( "aside must not be null" );
+    	}
+    	if( dockable == aside ){
+    		throw new IllegalArgumentException( "dockable and aside must not be the same object" );
+    	}
+    	
+    	DockInfo info = getInfo( aside );
+    	if( info == null ){
+    		return false;
+    	}
+    	
+    	DockInfo newInfo = getInfo( dockable );
+    	if( newInfo == null ){
+    		return false;
+    	}
+    	
+    	info.updateLocation();
+    	String root = info.getRoot();
+    	DockableProperty location = info.getLocation();
+    	if( root == null || location == null ){
+    		return false;
+    	}
+    	
+    	DockStation rootStation = getRoot( root );
+    	if( rootStation == null ){
+    		return false;
+    	}
+    
+    	PlaceholderStrategy placeholderStrategy = controller.getProperties().get( PlaceholderStrategy.PLACEHOLDER_STRATEGY );
+    	Path placeholder = null;
+    	if( placeholderStrategy != null ){
+    		placeholder = placeholderStrategy.getPlaceholderFor( dockable );
+    	}
+    	
+    	DefaultAsideRequest request = new DefaultAsideRequest( location, placeholder );
+    	AsideAnswer answer = request.execute( rootStation );
+    	if( answer.isCanceled() || answer.getLocation() == null ){
+    		return false;
+    	}
+    	
+    	newInfo.setLocation( root, answer.getLocation() );
+    	return true;
     }
     
     /**

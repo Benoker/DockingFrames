@@ -7,6 +7,7 @@ import tutorial.support.sets.TutorialSet;
 public class BasicDockFrontendSet extends TutorialSet{
 	public BasicDockFrontendSet(){
 		super( DockFrontendExample.class,
-			   PersistentLayoutExample.class );
+			   PersistentLayoutExample.class,
+			   AsideExample.class );
 	}
 }

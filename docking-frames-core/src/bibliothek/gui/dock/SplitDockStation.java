@@ -1293,10 +1293,6 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public void aside( AsideRequest request ){
-		if( request.getPlaceholder() == null ){
-			return;
-		}
-		
 		boolean result = false;
 		
 		DockableProperty location = request.getLocation();
@@ -1326,9 +1322,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		
 		if( result ){
-			SplitDockPathProperty path = getDockablePathProperty( request.getPlaceholder() );
-			SplitDockPlaceholderProperty newLocation = new SplitDockPlaceholderProperty( request.getPlaceholder(), path );
-			request.answer( newLocation );
+			if( request.getPlaceholder() == null ){
+				location = request.getLocation();
+				if( location instanceof SplitDockPlaceholderProperty ){
+					location = ((SplitDockPlaceholderProperty)location).getBackup();
+				}
+				location = location.copy();
+				location.setSuccessor( null );
+				request.answer( location );
+			}
+			else{
+				SplitDockPathProperty path = getDockablePathProperty( request.getPlaceholder() );
+				SplitDockPlaceholderProperty newLocation = new SplitDockPlaceholderProperty( request.getPlaceholder(), path );
+				request.answer( newLocation );
+			}
 		}
 	}
 	

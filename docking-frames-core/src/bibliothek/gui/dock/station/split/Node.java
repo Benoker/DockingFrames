@@ -631,11 +631,13 @@ public class Node extends VisibleSplitNode implements Divideable{
     		else{
     			SplitDockPathProperty.Node node = property.getNode( depth );
     			if( needToExpand( node )){
-    				long placeholderId = getLeafId( property );
-    				long splitId = getSplitId( property, depth );
-    				Placeholder placeholder = createPlaceholder( splitId );
-    				split( property, depth, placeholder, placeholderId );
-    				placeholder.addPlaceholder( request.getPlaceholder() );
+    				if( request.getPlaceholder() != null ){
+	    				long placeholderId = getLeafId( property );
+	    				long splitId = getSplitId( property, depth );
+	    				Placeholder placeholder = createPlaceholder( splitId );
+	    				split( property, depth, placeholder, placeholderId );
+	    				placeholder.addPlaceholder( request.getPlaceholder() );
+    				}
     				return true;
     			}
     			else{

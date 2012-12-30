@@ -529,16 +529,27 @@ public class Leaf extends SpanSplitNode{
     
     @Override
     public boolean aside( SplitDockPathProperty property, int index, AsideRequest request ){
-    	if( index < property.size() ){
-    		Placeholder placeholder = createPlaceholder( property.getLeafId() );
-    		split( property, index, placeholder );
-    		placeholder.addPlaceholder( request.getPlaceholder() );
-    		return true;
+    	DockStation station = getDockable().asDockStation();
+    	if( station == null ){
+    		request.forward( getStation().getCombiner(), getPlaceholderMap() );
     	}
     	else{
-    		addPlaceholder( request.getPlaceholder() );
-    		return true;
+    		request.forward( station );
     	}
+    	
+    	if( request.getPlaceholder() != null ){
+	    	if( index < property.size() ){
+	    		if( station == null ){
+		    		Placeholder placeholder = createPlaceholder( property.getLeafId() );
+		    		split( property, index, placeholder );
+		    		placeholder.addPlaceholder( request.getPlaceholder() );
+	    		}
+	    	}
+	    	else{
+	    		addPlaceholder( request.getPlaceholder() );
+	    	}
+    	}
+    	return true;
     }
     
     @Override
