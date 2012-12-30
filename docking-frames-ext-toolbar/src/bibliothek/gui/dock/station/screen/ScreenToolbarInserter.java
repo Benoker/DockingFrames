@@ -118,7 +118,9 @@ public class ScreenToolbarInserter implements Inserter {
 		Dockable child = source.getItem().getDockable();
 		final Dockable item = strategy.ensureToolbarLayer( source.getParent(), child );
 		if( item != child ){
+			item.setController( controller );
 			item.asDockStation().drop( child );
+			item.setController( null );
 		}
 		
 		if( (orientation != null) && (item.asDockStation() instanceof OrientedDockStation) ) {

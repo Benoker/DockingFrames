@@ -121,7 +121,7 @@ public class Arch {
 		// line
 		// double[] sample = line( topArchWidth-1, values[topArchWidth-1], width - bottomArchWidth, values[width - bottomArchWidth] );
 		double[] sample = line( topArchWidth, topArchHeight, width - bottomArchWidth, height - bottomArchHeight );
-		for( int x = 0; x < sample.length; x++ ){
+		for( int x = 0; x < sample.length && x+topArchWidth < values.length; x++ ){
 			int y = (int)(sample[x]+0.5 );
 		
 			values[x+topArchWidth] = y;

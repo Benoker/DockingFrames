@@ -858,6 +858,13 @@
  - Bugfix[Common]: Maximization mode is more intelligent: when unmaximzing Dockables *all* instead the top level elements are scanned for known old locations, and if maximizing the stored old location is not deleted unless the new maximized Dockable is known to have a location.
  - API[Common]: The action "ensureBasicModes" now also uses group-movement, so calling this method behaves very much like clicking all the "normalize" buttons of all Dockables 
  - API[Common]: After hiding a CDockable the extended-mode of all Dockables that were not in a baisc mode is restored in the order of the focus history.
+
+[v1.1.2p1g]
+ - Bugfix[Toolbar]: Code for reading the layout of a toolbar and creating a ToolbarContainerDockPerspective was using an outdated format. 
+
+[v1.1.2p1h]
+ - Bugfix: Arch could throw an exception if too small
+ - API: CGridPerspective offers a new method "unpack", making sure there is no stack of dockables in the grid.
      
-[Todo]
-- Drop StackDockStation over Dockable and merge them
+[v1.1.2p2]
+ - API: ToolbarItemDockable now features a BackgroundComponent and thus supports things like true transparency

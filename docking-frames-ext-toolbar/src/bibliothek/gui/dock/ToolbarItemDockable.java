@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
+import javax.swing.LayoutFocusTraversalPolicy;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
@@ -45,18 +45,24 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.dockable.AbstractDockable;
+import bibliothek.gui.dock.dockable.DockableBackgroundComponent;
 import bibliothek.gui.dock.dockable.DockableIcon;
 import bibliothek.gui.dock.station.OrientationObserver;
 import bibliothek.gui.dock.station.toolbar.ToolbarItemDockableFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.toolbar.expand.ExpandableStateController;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItem;
 import bibliothek.gui.dock.toolbar.expand.ExpandableToolbarItemListener;
 import bibliothek.gui.dock.toolbar.expand.ExpandedState;
 import bibliothek.gui.dock.toolbar.item.ComponentItem;
 import bibliothek.gui.dock.toolbar.item.DockActionItem;
+import bibliothek.gui.dock.util.BackgroundAlgorithm;
+import bibliothek.gui.dock.util.BackgroundPanel;
+import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.SilentPropertyValue;
+import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.icon.DockIcon;
 
 /**
@@ -67,9 +73,8 @@ import bibliothek.gui.dock.util.icon.DockIcon;
  * @author Benjamin Sigg
  */
 public class ToolbarItemDockable extends AbstractDockable implements ExpandableToolbarItem {
-
 	/** the component */
-	private JPanel content;
+	private BackgroundPanel content;
 
 	/** the layout of {@link #content} */
 	private CardLayout contentLayout;
@@ -88,6 +93,9 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 
 	/** the current orientation of the toolbar */
 	private bibliothek.gui.Orientation orientation = bibliothek.gui.Orientation.HORIZONTAL;
+	
+	/** the background of this dockable */
+	private Background background = new Background();
 	
 	/**
 	 * Creates a new dockable
@@ -262,7 +270,11 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 			}
 		};
 
-		content = new JPanel( contentLayout );
+		content = new ConfiguredBackgroundPanel( contentLayout, Transparency.SOLID );
+		content.setFocusable( false );
+		content.setFocusTraversalPolicyProvider( true );
+    	content.setFocusTraversalPolicy( new LayoutFocusTraversalPolicy() );
+    	content.setBackground( background );
 
 		new ExpandableStateController( this );
 
@@ -483,6 +495,7 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 			}
 
 			super.setController( controller );
+			background.setController( controller );
 
 			if( controller != null ) {
 				for( ExpandedState state : ExpandedState.values() ) {
@@ -621,5 +634,25 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 	@Override
 	public String toString(){
 		return this.getClass().getSimpleName() + '@' + Integer.toHexString( hashCode() );
+	}
+	
+    /**
+     * A representation of the background of this {@link Dockable}.
+     * @author Benjamin Sigg
+     */
+	private class Background extends BackgroundAlgorithm implements DockableBackgroundComponent{
+		public Background(){
+			super( DockableBackgroundComponent.KIND, ThemeManager.BACKGROUND_PAINT + ".dockable.toolbar" );
+		}
+		
+		@Override
+		public Component getComponent(){
+			return getDockable().getComponent(); 
+		}
+		
+		@Override
+		public Dockable getDockable(){
+			return ToolbarItemDockable.this;
+		}
 	}
 }

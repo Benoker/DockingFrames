@@ -29,6 +29,7 @@ import java.util.Map;
 
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveStation;
 
 /**
  * An implementation of {@link AbstractSplitDockGrid} that works with {@link PerspectiveDockable}s.
@@ -74,5 +75,18 @@ public class PerspectiveSplitDockGrid extends AbstractSplitDockGrid<PerspectiveD
 		PerspectiveSplitDockTree tree = new PerspectiveSplitDockTree();
 		fillTree( tree );
 		return tree;
+	}
+
+	@Override
+	protected PerspectiveDockable[] unpack( PerspectiveDockable dockable ){
+		PerspectiveStation station = dockable.asStation();
+		if( station == null ){
+			return new PerspectiveDockable[]{ dockable };
+		}
+		PerspectiveDockable[] result = new PerspectiveDockable[ station.getDockableCount() ];
+		for( int i = 0; i < result.length; i++ ){
+			result[i] = station.getDockable( i );
+		}
+		return result;
 	}
 }

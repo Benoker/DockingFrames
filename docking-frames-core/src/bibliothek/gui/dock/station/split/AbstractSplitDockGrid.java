@@ -55,12 +55,33 @@ public abstract class AbstractSplitDockGrid<D> {
 	/** The dividing lines which should appear */
 	private List<Line> lines = new ArrayList<Line>();
 	
+	/** Whether to {@link #unpack(double, double, double, double)} all {@link Node}s before adding new {@link Dockable}s */
+	private boolean unpack = true;
+	
     /**
      * Creates a new, empty grid.
      */
     public AbstractSplitDockGrid(){
         // do nothing
     }
+    
+    /**
+     * Whether to automatically call {@link #unpack(double, double, double, double)} before adding any new {@link Dockable}s
+     * to this grid. Default: true.
+     * @param unpack whether to unpack automatically
+     */
+    public void setUnpack( boolean unpack ){
+		this.unpack = unpack;
+	}
+    
+    /**
+     * Tells whether {@link #unpack(double, double, double, double)} is called automatically before adding new {@link Dockable}s
+     * to this grid.
+     * @return whether {@link #unpack(double, double, double, double)} is called
+     */
+    public boolean isUnpack(){
+		return unpack;
+	}
     
     /**
      * Creates a grid by reading a string which represents a grid.<br>
@@ -113,6 +134,56 @@ public abstract class AbstractSplitDockGrid<D> {
      */
     protected abstract D[] array( int size );
     
+    /**
+     * Unpacks any existing {@link DockStation} at location <code>x,y,width,height</code>. All children
+     * of all {@link DockStation}s are removed and re-added as if {@link #addDockable(double, double, double, double, Object...)}
+     * would have been called multiple times.
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @param width the width, more than 0
+	 * @param height the height, more than 0
+     */
+    public void unpack( double x, double y, double width, double height ){
+    	Node<D> node = nodeAt( x, y, width, height );
+    	if( node != null && node.dockables != null ){
+    		List<D> copy = new ArrayList<D>();
+    		for( D dockable : node.dockables ){
+    			for( D unpacked : unpack( dockable )){
+    				copy.add( unpacked );
+    			}
+    		}
+    		D[] unpacked = copy.toArray( array( copy.size() ));
+    		node.dockables = unpacked;
+    	}
+    }
+    
+    /**
+     * Unpacks <code>dockable</code>. Unpacking means converting <code>dockable</code> in something like a {@link DockStation}
+     * and returning all the children {@link Dockable}s.
+     * @param dockable the dockable to unpack
+     * @return either <code>dockable</code> or all its children
+     */
+    protected abstract D[] unpack( D dockable );
+    
+    /**
+     * Gets all the dockables that were {@link #addDockable(double, double, double, double, Object...) added}
+     * to this grid at location <code>x,y,width,height</code>
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 * @param width the width, more than 0
+	 * @param height the height, more than 0
+     * @return the dockables, <code>null</code> if there are no dockables at this location
+     */
+    public D[] getDockables( double x, double y, double width, double height ){
+    	Node<D> node = nodeAt( x, y, width, height );
+    	if( node == null ){
+    		return null;
+    	}
+    	D[] copy = array( node.dockables.length );
+    	System.arraycopy( node.dockables, 0, copy, 0, copy.length );
+    	return copy;
+    }
+    
 	/**
 	 * Adds <code>dockable</code> to the grid. The coordinates are not absolute,
 	 * only the relative location and size matters. If there are already 
@@ -140,6 +211,10 @@ public abstract class AbstractSplitDockGrid<D> {
         
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
+        
+        if( isUnpack() ){
+        	unpack( x, y, width, height );
+        }
         
         Node<D> node = nodeAt( x, y, width, height );
         int insert = 0;
@@ -183,6 +258,10 @@ public abstract class AbstractSplitDockGrid<D> {
         
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
+        
+        if( isUnpack() ){
+        	unpack( x, y, width, height );
+        }
         
         Node<D> node = nodeAt( x, y, width, height );
         int insert = 0;
@@ -261,6 +340,10 @@ public abstract class AbstractSplitDockGrid<D> {
         
         if( height < 0 )
             throw new IllegalArgumentException( "height < 0" );
+        
+        if( isUnpack() ){
+        	unpack( x, y, width, height );
+        }
 
         for( Node<D> node : nodes ){
             if( node.x == x && 

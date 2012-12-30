@@ -42,6 +42,7 @@ import java.awt.event.HierarchyListener;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -128,7 +129,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	 * The graphical representation of this station: the pane which contains
 	 * component
 	 */
-	private OverpaintablePanelBase mainPanel;
+	private SecureContainer mainPanel;
 
 	/**
 	 * Size of the lateral zone where no drop action can be done (Measured in
@@ -344,7 +345,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		// dockables first, else doLayout() is done on wrong inside information
 		this.orientation = orientation;
 		fireOrientingEvent();
-		mainPanel.updateAlignment();
 		mainPanel.revalidate();
 	}
 
@@ -734,6 +734,52 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		insertAt( handle, index );
 	}
 
+
+	/**
+	 * A panel with a fixed size (minimum, maximum and preferred size have
+	 * same values).
+	 * 
+	 * @author Herve Guillaume
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	protected class SizeFixedPanel extends ConfiguredBackgroundPanel {
+		public SizeFixedPanel(){
+			super( Transparency.TRANSPARENT );
+			setBackground( ToolbarDockStation.this.getBackgroundAlgorithm() );
+		}
+		
+		@Override
+		public Dimension getPreferredSize(){
+			final Dimension pref = super.getPreferredSize();
+			// Insets insets = getInsets();
+			// pref.height += insets.top + insets.bottom;
+			// pref.width += insets.left + insets.right;
+			return pref;
+		}
+
+		@Override
+		public Dimension getMaximumSize(){
+			return getPreferredSize();
+		}
+
+		@Override
+		public Dimension getMinimumSize(){
+			return getPreferredSize();
+		}
+	}
+	
+	/**
+	 * Creates the parent {@link JComponent} of the {@link Dockable}s that are shown in this
+	 * station. The default behavior is to create a new {@link SizeFixedPanel}, using
+	 * {@link #getBackgroundAlgorithm()} for managing painting.
+	 * @return the new content pane
+	 */
+	@Override
+	protected JPanel createBackgroundPanel(){
+		return new SizeFixedPanel();
+	}
+	
 	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
@@ -748,50 +794,18 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		 */
 		private static final long serialVersionUID = -4399008463139189130L;
 
-		/**
-		 * A panel with a fixed size (minimum, maximum and preferred size have
-		 * same values).
-		 * 
-		 * @author Herve Guillaume
-		 * 
-		 */
-		@SuppressWarnings("serial")
-		private class SizeFixedPanel extends ConfiguredBackgroundPanel {
-			public SizeFixedPanel(){
-				super( Transparency.TRANSPARENT );
-				setBackground( ToolbarDockStation.this.getBackgroundAlgorithm() );
-			}
-			
-			@Override
-			public Dimension getPreferredSize(){
-				final Dimension pref = super.getPreferredSize();
-				// Insets insets = getInsets();
-				// pref.height += insets.top + insets.bottom;
-				// pref.width += insets.left + insets.right;
-				return pref;
-			}
-
-			@Override
-			public Dimension getMaximumSize(){
-				return getPreferredSize();
-			}
-
-			@Override
-			public Dimension getMinimumSize(){
-				return getPreferredSize();
-			}
-		}
 
 		/**
 		 * The content Pane of this {@link OverpaintablePanel} (with a
 		 * BoxLayout)
 		 */
-		private final JPanel dockablePane = new SizeFixedPanel();
+		private final JComponent dockablePane;
 
 		/**
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
+			dockablePane = createBackgroundPanel();
 			setBasePane( dockablePane );
 			setSolid( false );
 			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this, dockablePane ){
@@ -816,38 +830,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		@Override
 		public Dimension getMaximumSize(){
 			return getPreferredSize();
-		}
-
-		/**
-		 * Update alignment with regards to the current orientation of this
-		 * {@link ToolbarDockStation}
-		 */
-		public void updateAlignment(){
-			//			if (getOrientation() != null){
-			//				switch (getOrientation()) {
-			//				case HORIZONTAL:
-			//					// insets use to draw insertion lines with proper larger
-			//					// basePane.setBorder(new EmptyBorder(new Insets(0,
-			//					// INSETS_SIZE, 0, INSETS_SIZE + 1)));
-			//					dockablePane.setLayout(new BoxLayout(dockablePane,
-			//							BoxLayout.X_AXIS));
-			//					dockablePane.setAlignmentY(Component.CENTER_ALIGNMENT);
-			//					dockablePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-			//					break;
-			//				case VERTICAL:
-			//					// insets use to draw insertion lines with proper larger
-			//					// basePane.setBorder(new EmptyBorder(new
-			//					// Insets(INSETS_SIZE,
-			//					// 0, INSETS_SIZE + 1, 0)));
-			//					dockablePane.setLayout(new BoxLayout(dockablePane,
-			//							BoxLayout.Y_AXIS));
-			//					dockablePane.setAlignmentY(Component.TOP_ALIGNMENT);
-			//					dockablePane.setAlignmentX(Component.CENTER_ALIGNMENT);
-			//					break;
-			//				default:
-			//					throw new IllegalArgumentException();
-			//				}
-			//			}
 		}
 
 		@Override

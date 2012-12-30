@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station.split;
 
 import java.util.Map;
 
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 
@@ -60,6 +61,19 @@ public class SplitDockGrid extends AbstractSplitDockGrid<Dockable>{
      */
     public SplitDockGrid( String layout, Map<Character, Dockable[]> dockables ){
     	super( layout, dockables );
+    }
+    
+    @Override
+    protected Dockable[] unpack( Dockable dockable ){
+	    DockStation station = dockable.asDockStation();
+	    if( station == null ){
+	    	return new Dockable[]{ dockable };
+	    }
+	    Dockable[] result = new Dockable[ station.getDockableCount() ];
+	    for( int i = 0; i < result.length; i++ ){
+	    	result[i] = station.getDockable( i );
+	    }
+	    return result;
     }
     
     @Override
