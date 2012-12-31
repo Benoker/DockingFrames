@@ -95,6 +95,10 @@ public class CStackLocation extends AbstractStackholdingLocation{
 		return parent.findProperty( stack );
 	}
 	
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
 	@Override
 	public CLocation aside() {
 	    if( index == Integer.MAX_VALUE )

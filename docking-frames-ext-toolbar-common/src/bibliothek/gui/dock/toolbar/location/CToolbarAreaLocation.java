@@ -87,6 +87,10 @@ public class CToolbarAreaLocation extends CLocation{
 		}
 	}
 
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
 	@Override
 	public CLocation aside(){
 		return this;

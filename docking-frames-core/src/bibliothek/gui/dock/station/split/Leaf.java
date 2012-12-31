@@ -40,6 +40,7 @@ import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideAnswer;
 import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationChildHandle;
@@ -528,25 +529,40 @@ public class Leaf extends SpanSplitNode{
     }
     
     @Override
-    public boolean aside( SplitDockPathProperty property, int index, AsideRequest request ){
-    	DockStation station = getDockable().asDockStation();
-    	if( station == null ){
-    		request.forward( getStation().getCombiner(), getPlaceholderMap() );
-    	}
-    	else{
-    		request.forward( station );
-    	}
-    	
+    public boolean aside( AsideRequest request ){
     	if( request.getPlaceholder() != null ){
-	    	if( index < property.size() ){
+    		addPlaceholder( request.getPlaceholder() );
+	    	DockStation station = getDockable().asDockStation();
+	    	if( station == null ){
+	    		AsideAnswer answer = request.forward( getStation().getCombiner(), getPlaceholderMap() );
+	    		if( answer.isCanceled() ){
+	    			return false;
+	    		}
+	    		setPlaceholderMap( answer.getLayout() );
+	    	}
+	    	else{
+	    		AsideAnswer answer = request.forward( station );
+	    		if( answer.isCanceled() ){
+	    			return false;
+	    		}
+	    	}
+    	}
+    	return true;
+    }
+    
+    @Override
+    public boolean aside( SplitDockPathProperty property, int index, AsideRequest request ){
+    	if( request.getPlaceholder() != null ){
+    		if( index < property.size() ){
+    			DockStation station = getDockable().asDockStation();
 	    		if( station == null ){
 		    		Placeholder placeholder = createPlaceholder( property.getLeafId() );
 		    		split( property, index, placeholder );
-		    		placeholder.addPlaceholder( request.getPlaceholder() );
+		    		return placeholder.aside( request );
 	    		}
 	    	}
 	    	else{
-	    		addPlaceholder( request.getPlaceholder() );
+	    		return aside( request );
 	    	}
     	}
     	return true;

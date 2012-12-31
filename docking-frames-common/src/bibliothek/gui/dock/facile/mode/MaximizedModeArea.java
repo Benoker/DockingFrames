@@ -27,6 +27,7 @@ package bibliothek.gui.dock.facile.mode;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 
@@ -105,4 +106,12 @@ public interface MaximizedModeArea extends ModeArea{
 	 * @return the preferred unmaximized mode, can be <code>null</code>
 	 */
 	public LocationMode getUnmaximizedMode();
+	
+	/**
+	 * Gets the location of <code>dockable</code> which is a child
+	 * of this station.
+	 * @param child the child
+	 * @return the location, may be <code>null</code>
+	 */
+	public DockableProperty getLocation( Dockable child );
 }

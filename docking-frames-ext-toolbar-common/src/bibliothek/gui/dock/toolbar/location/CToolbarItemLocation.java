@@ -78,6 +78,10 @@ public class CToolbarItemLocation extends CLocation{
 		return parent.findProperty( property );
 	}
 
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
 	@Override
 	public CLocation aside(){
 		return new CToolbarItemLocation( parent, index+1 );

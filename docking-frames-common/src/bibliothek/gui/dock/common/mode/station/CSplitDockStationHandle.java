@@ -394,6 +394,13 @@ public class CSplitDockStationHandle{
 			}
 		}
 		
+		public DockableProperty getLocation( Dockable child ){
+			DockableProperty property = DockUtilities.getPropertyChain( getStation(), child );
+			SplitDockFullScreenProperty result = new SplitDockFullScreenProperty();
+			result.setSuccessor( property.getSuccessor() );
+			return result;
+		}
+		
 		public boolean autoDefaultArea() {
 			return true;
 		}
@@ -563,23 +570,28 @@ public class CSplitDockStationHandle{
 		}
 		
 		public CLocation getCLocation( Dockable dockable ){
-			CLocation stationLocation = station.getStationLocation();
 			DockableProperty property = DockUtilities.getPropertyChain( getStation(), dockable );
+			return getCLocation( property );
+		}
+		
+		public CLocation getCLocation( Dockable dockable, Location location ){
+			DockableProperty property = location.getLocation();
+			return getCLocation( property );
+		}
+		
+		private CLocation getCLocation( DockableProperty property ){
+			CLocation stationLocation = station.getStationLocation();
+			CMaximizedLocation result = new CMaximizedLocation( stationLocation.findRoot() );
+			
 			if( property != null ){
 				property = property.getSuccessor();
 			}
-			
-			CMaximizedLocation result = new CMaximizedLocation( stationLocation.findRoot() );
 			if( property != null ){
 				return result.expandProperty( station.getStation().getController(), property );
 			}
 			else{
 				return result;
 			}
-		}
-		
-		public CLocation getCLocation( Dockable dockable, Location location ){
-			return getCLocation( dockable );
 		}
 	}
 }

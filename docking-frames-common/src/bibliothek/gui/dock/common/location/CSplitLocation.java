@@ -54,6 +54,10 @@ public class CSplitLocation extends CLocation{
 		this.parent = parent;
 	}
 	
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
     @Override
     public CLocation aside() {
         return this;

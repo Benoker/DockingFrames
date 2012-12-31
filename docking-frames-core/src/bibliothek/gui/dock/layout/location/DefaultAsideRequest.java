@@ -134,12 +134,6 @@ public class DefaultAsideRequest implements AsideRequest{
 		this.resultingLayout = current.getLayout();
 	}
 	
-	/**
-	 * Executes this request calling the <code>aside</code> method of <code>station</code>.
-	 * @param station the station whose {@link DockStation#aside(AsideRequest) aside} method is to be called
-	 * @return a new location
-	 * @throws IllegalStateException if this request is already executed
-	 */
 	public AsideAnswer execute( DockStation station ){
 		setCurrent( new DockStationForward( station ) );
 		return execute();

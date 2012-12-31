@@ -54,6 +54,11 @@ public class CExtendedModeLocation extends CLocation{
 		return null;
 	}
 	
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
+	@Override
 	public CLocation aside(){
 		return this;
 	}

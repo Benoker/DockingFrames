@@ -107,6 +107,8 @@ public interface CStation<S extends CommonDockStation<?, ?>> {
      * {@link CLocationModeManager#getDropLocation(CStation)}. 
      * @return the optimal spot for dropping a new {@link CDockable} or <code>null</code> if this
      * station is not able to calculate the optimal spot (e.g. because the station is not visible)
+     * @see CDockable#setLocationsAside(CDockable)
+     * @see CDockable#setLocationsAsideFocused()
      */
     public CLocation getDropLocation();
     

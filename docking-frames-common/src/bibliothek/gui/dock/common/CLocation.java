@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.common;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.location.CBaseLocation;
@@ -265,7 +266,11 @@ public abstract class CLocation {
 	 * Returns a {@link CLocation} that describes the location of an element
 	 * that should be inserted next to this location.
 	 * @return the new location
+	 * @deprecated Clients should make use of {@link CDockable#setLocationsAside(CDockable)} and
+	 * {@link CDockable#setLocationsAsideFocused()}, because these methods can directly modify {@link DockStation}s
+	 * and insert placeholders when necessary. 
 	 */
+	@Deprecated
 	public abstract CLocation aside();
 	
 	@Override

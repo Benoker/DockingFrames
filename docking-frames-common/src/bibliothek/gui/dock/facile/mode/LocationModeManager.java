@@ -57,6 +57,8 @@ import bibliothek.gui.dock.facile.mode.status.DefaultExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablement;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementFactory;
 import bibliothek.gui.dock.facile.mode.status.ExtendedModeEnablementListener;
+import bibliothek.gui.dock.layout.location.AsideRequest;
+import bibliothek.gui.dock.layout.location.AsideRequestFactory;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
 import bibliothek.gui.dock.support.mode.ModeManager;
@@ -527,6 +529,38 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
      */
     public void ensureValidLocation( Dockable dockable ){
     	// nothing
+    }
+    
+    /**
+     * Iterates through all the {@link LocationMode}s for which <code>aside</code> has stored locations,
+     * and sets <code>dockable</code> as neighbor. This method does not change the actual location of <code>dockable</code>,
+     * rather a call to <code>apply</code> would be necessary to update the location.<br> 
+     * It is the responsibility of the caller to ensure that <code>dockable</code> can actually be placed at any
+     * location where <code>aside</code> ever was.
+     * @param dockable the item whose location should change
+     * @param aside the item whose neighbor is set
+     */
+    public void setLocationAside( Dockable dockable, Dockable aside ){
+    	M current = getCurrentMode( aside );
+    	
+    	for( M mode : getModeHistory( aside )){
+    		Location location;
+    		if( mode == current ){
+    			location = mode.current( aside );
+    		}
+    		else{
+    			location = getHistory( aside, mode.getUniqueIdentifier() );
+    		}
+    		if( location != null ){
+    			AsideRequestFactory factory = getController().getProperties().get( AsideRequest.REQUEST_FACTORY );
+    			AsideRequest request = factory.createAsideRequest( location.getLocation(), dockable );
+    			
+    			Location result = mode.aside( request, location );
+    			if( result != null ){
+    				setProperties( mode, dockable, result );
+    			}
+    		}
+    	}
     }
     
     @Override

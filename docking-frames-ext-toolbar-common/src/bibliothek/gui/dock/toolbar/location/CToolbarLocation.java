@@ -90,6 +90,10 @@ public class CToolbarLocation extends CLocation{
 		return parent.findProperty( property );
 	}
 
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
 	@Override
 	public CLocation aside(){
 		return new CToolbarLocation( parent, column, line+1 );

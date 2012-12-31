@@ -37,6 +37,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.layout.location.AsideAnswer;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 import bibliothek.gui.dock.support.mode.ModeManager;
@@ -309,6 +311,20 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		return null;
 	}
 
+	public Location aside( AsideRequest request, Location location ){
+		A area = get( location.getRoot() );
+		if( area == null ){
+			return null;
+		}
+		
+		AsideAnswer answer = request.execute( area.getStation() );
+		if( answer.isCanceled() ){
+			return null;
+		}
+		
+		return new Location( getUniqueIdentifier(), location.getRoot(), answer.getLocation() );
+	}
+	
 	public DockActionSource getActionsFor( Dockable dockable, Mode<Location> mode ){
 		if( mode == this ){
 			return null;

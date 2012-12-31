@@ -165,7 +165,7 @@ public class SplitPlaceholderSet {
 			
 			private void handle( SplitNode check ){
 				if( check != node ){
-					for( Path placeholder : node.getPlaceholders() ){
+					for( Path placeholder : check.getPlaceholders() ){
 						placeholdersToRemove.add( placeholder );
 					}
 				}

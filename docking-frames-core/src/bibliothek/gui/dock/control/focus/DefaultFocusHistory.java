@@ -35,6 +35,7 @@ import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Filter;
 
 /**
  * The default implementation of {@link FocusHistory} adds listeners to a 
@@ -80,6 +81,15 @@ public class DefaultFocusHistory implements FocusHistory{
 				if( item != station && DockUtilities.isAncestor( station, item )){
 					return item;
 				}
+			}
+		}
+		return null;
+	}
+	
+	public Dockable getFirst( Filter<Dockable> filter ){
+		for( Dockable dockable : history ){
+			if( filter.includes( dockable )){
+				return dockable;
 			}
 		}
 		return null;

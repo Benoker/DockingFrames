@@ -79,6 +79,10 @@ public class CFlapLocation extends CLocation{
 		return parent;
 	}
     
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
     @Override
     public CLocation aside() {
         return this;

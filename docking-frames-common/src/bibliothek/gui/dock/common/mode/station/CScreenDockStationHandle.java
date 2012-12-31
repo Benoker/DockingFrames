@@ -286,6 +286,10 @@ public class CScreenDockStationHandle {
 			return false;
 		}
 
+		public DockableProperty getLocation( Dockable child ){
+			return DockUtilities.getPropertyChain( getStation(), child );
+		}
+		
 		public Runnable onApply( LocationModeEvent event ) {
 			if( event.isDone() )
 				return null;

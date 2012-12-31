@@ -125,6 +125,10 @@ public class CRectangleLocation extends AbstractStackholdingLocation{
 		return split;
 	}
 
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
     @Override
     public CLocation aside() {
         return stack( 1 );

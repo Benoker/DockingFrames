@@ -77,6 +77,10 @@ public class TreeLocationLeaf extends AbstractStackholdingLocation{
 		return property;
 	}
 	
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
 	@Override
 	public CLocation aside() {
 	    return stack( 1 );

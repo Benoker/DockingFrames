@@ -103,7 +103,7 @@ public class CWorkingArea extends CGridArea{
      */
     public <F extends SingleCDockable> F show( F dockable ){
     	add( dockable );
-    	dockable.setLocation( getDropLocation() );
+    	dockable.setLocationsAsideFocused();
     	dockable.setVisible( true );
     	return dockable;
     }
@@ -119,7 +119,7 @@ public class CWorkingArea extends CGridArea{
      */
     public <F extends MultipleCDockable> F show( F dockable ){
     	add( dockable );
-    	dockable.setLocation( getDropLocation() );
+    	dockable.setLocationsAsideFocused();
     	dockable.setVisible( true );
     	return dockable;
     }

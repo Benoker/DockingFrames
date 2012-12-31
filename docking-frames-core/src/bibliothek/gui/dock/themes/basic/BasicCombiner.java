@@ -37,7 +37,6 @@ import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.dockable.DefaultDockablePerspective;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.location.AsideRequest;
-import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.StationPaint;
@@ -46,6 +45,7 @@ import bibliothek.gui.dock.station.stack.StackDockProperty;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.Enforcement;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.util.Path;
 
@@ -106,6 +106,9 @@ public class BasicCombiner implements Combiner {
 		if( placeholders != null ){
 			stack.setPlaceholders( placeholders );
 		}
+		if( stack.getItemCount() == 0 ){
+			insert( stack, request.getLocation() );
+		}
 		
 		int index = indexOf( stack, request.getLocation() );
 		if( index == -1 ){
@@ -117,19 +120,35 @@ public class BasicCombiner implements Combiner {
 		else{
 			index++;
 		}
+		index = Math.min( stack.getItemCount(), index );
 		
 		if( request.getPlaceholder() != null ){
-			PerspectiveDockable dockable = new DefaultDockablePerspective(){
-				@Override
-				public Path getPlaceholder(){
-					return request.getPlaceholder();
-				}
-			};
-			
-			stack.insertPlaceholder( index, dockable );
+			stack.insertPlaceholder( index, request.getPlaceholder(), Level.BASE );
 		}
 		
 		request.answer( new StackDockProperty( index, request.getPlaceholder() ), stack.getPlaceholders() );
+	}
+	
+	private void insert( StackDockPerspective stack, DockableProperty location ){
+		final Path placeholder;
+		
+		if( location instanceof StackDockProperty ){
+			placeholder = ((StackDockProperty)location).getPlaceholder();
+		}
+		else{
+			placeholder = null;
+		}
+		
+		if( placeholder == null ){
+			stack.add( new DefaultDockablePerspective() );
+		}
+		else{
+			stack.addPlaceholder( new DefaultDockablePerspective(){
+				public Path getPlaceholder(){
+					return placeholder;
+				}
+			} );
+		}
 	}
 	
 	private int indexOf( StackDockPerspective stack, DockableProperty location ){

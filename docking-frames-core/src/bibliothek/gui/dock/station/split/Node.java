@@ -620,6 +620,22 @@ public class Node extends VisibleSplitNode implements Divideable{
     }
     
     @Override
+    public boolean aside( AsideRequest request ){
+    	boolean leftVisible = left == null || left.isVisible();
+    	boolean rightVisible = right == null || right.isVisible();
+    	
+    	if( leftVisible ){
+    		return left.aside( request );
+    	}
+    	else if( rightVisible ){
+    		return right.aside( request );
+    	}
+    	else{
+    		return false;
+    	}
+    }
+    
+    @Override
     public boolean aside( SplitDockPathProperty property, int depth, AsideRequest request ){
     	boolean leftVisible = left == null || left.isVisible();
     	boolean rightVisible = right == null || right.isVisible();

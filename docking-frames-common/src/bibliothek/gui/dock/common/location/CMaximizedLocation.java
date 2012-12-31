@@ -87,6 +87,10 @@ public class CMaximizedLocation extends AbstractStackholdingLocation {
         return "[maximized]";
     }
 
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
 	@Override
 	public CLocation aside(){
 		return stack( 1 );

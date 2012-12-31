@@ -1641,6 +1641,10 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		}
 		
 		public void insertPlaceholder( int index, Path placeholder ){
+			if( placeholder == null ){
+				throw new IllegalArgumentException( "placeholder must not be null" );
+			}
+			
 			Set<Path> placeholders = new HashSet<Path>();
 			placeholders.add( placeholder );
 			insert( index, new Item( placeholders ));

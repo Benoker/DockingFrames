@@ -27,6 +27,7 @@ package bibliothek.gui.dock.control.focus;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.util.Filter;
 
 /**
  * This interface tells the order in which the {@link Dockable}s got the focus.
@@ -49,4 +50,11 @@ public interface FocusHistory {
 	 * <code>null</code> if no such {@link Dockable} can be found
 	 */
 	public Dockable getNewestOn( DockStation... parents );
+	
+	/**
+	 * Traverses the {@link #getHistory() history} in reverse and returns the first {@link Dockable} matching <code>filter</code>.
+	 * @param filter the filter to apply, not <code>null</code>
+	 * @return the newest {@link Dockable} having focus and matching <code>filter</code>, or <code>null</code>
+	 */
+	public Dockable getFirst( Filter<Dockable> filter );
 }

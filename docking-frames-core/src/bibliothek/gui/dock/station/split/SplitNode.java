@@ -734,6 +734,14 @@ public abstract class SplitNode{
     public abstract boolean insert( SplitDockPlaceholderProperty property, Dockable dockable );
     
     /**
+     * Inserts a new placeholder at this node.
+     * @param request more information about the request, including the placeholder to add
+     * @return <code>true</code> if the placeholder was added, <code>false</code> if it could
+     * not be added 
+     */
+    public abstract boolean aside( AsideRequest request );
+    
+    /**
      * Inserts a new placeholder at location <code>property</code>.
      * @param property the path to the placeholder
      * @param index the current segment, represents <code>this</code> node

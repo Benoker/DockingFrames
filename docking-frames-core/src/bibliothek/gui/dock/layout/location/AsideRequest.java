@@ -29,6 +29,9 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.util.DockProperties;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 import bibliothek.util.Path;
 
 /**
@@ -40,6 +43,24 @@ import bibliothek.util.Path;
  * @author Benjamin Sigg
  */
 public interface AsideRequest {
+	/**
+	 * Property key for getting the default {@link AsideRequestFactory}.
+	 */
+	public static final PropertyKey<AsideRequestFactory> REQUEST_FACTORY = new PropertyKey<AsideRequestFactory>( "dock.AsideRequestFactory",
+			new DynamicPropertyFactory<AsideRequestFactory>(){
+				public AsideRequestFactory getDefault( PropertyKey<AsideRequestFactory> key, DockProperties properties ){
+					return new DefaultAsideRequestFactory( properties );
+				}
+			}, true );
+	
+	/**
+	 * Executes this request calling the <code>aside</code> method of <code>station</code>.
+	 * @param station the station whose {@link DockStation#aside(AsideRequest) aside} method is to be called
+	 * @return a new location
+	 * @throws IllegalStateException if this request is already executed
+	 */
+	public AsideAnswer execute( DockStation station );
+	
 	/**
 	 * Gets the old location, the location whose neighbor is searched. The property
 	 * may have a {@link DockableProperty#getSuccessor() successor}.

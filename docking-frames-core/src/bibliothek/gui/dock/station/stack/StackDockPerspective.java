@@ -34,6 +34,7 @@ import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PerspectivePlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -151,13 +152,40 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 	}
 	
 	/**
+	 * Adds <code>placeholder</code> at the end of the list of dockables.
+	 * @param placeholder the new placeholder
+	 */
+	public void addPlaceholder( Path placeholder ){
+		insertPlaceholder( getDockableCount(), placeholder, Level.DOCKABLE );
+	}
+	
+	/**
 	 * Adds a placeholder for <code>dockable</code> at location <code>index</code>.
 	 * @param index the location where the placeholder goes
 	 * @param dockable the element for which a placeholder should be left
 	 */
 	public void insertPlaceholder( int index, PerspectiveDockable dockable ){
-		dockables.dockables().add( index, dockable );
-		dockables.dockables().remove( index );
+		insertPlaceholder( index, dockable.getPlaceholder(), Level.DOCKABLE );
+	}
+	
+	/**
+	 * Adds <code>placeholder</code> at location <code>index</code>.
+	 * @param index the location where the placeholder goes
+	 * @param placeholder the new placeholder
+	 * @param level at which level <code>index</code> should be evaluated, not <code>null</code>
+	 */
+	public void insertPlaceholder( int index, Path placeholder, Level level ){
+		switch( level ){
+			case BASE:
+				dockables.list().insertPlaceholder( index, placeholder );
+				break;
+			case DOCKABLE:
+				dockables.dockables().insertPlaceholder( index, placeholder );
+				break;
+			case PLACEHOLDER:
+				dockables.purePlaceholders().insertPlaceholder( index, placeholder );
+				break;
+		}
 	}
 
 	/**
@@ -313,5 +341,13 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 
 	public int getDockableCount(){
 		return dockables.dockables().size();
+	}
+	
+	/**
+	 * Gets the number of children, this includes <code>dockables</code> and <code>placeholders</code>.
+	 * @return the total number of children
+	 */
+	public int getItemCount(){
+		return dockables.list().size();
 	}
 }

@@ -47,6 +47,7 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.KeyboardListener;
 import bibliothek.gui.dock.facile.mode.action.MaximizedModeAction;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
 import bibliothek.gui.dock.support.mode.Mode;
@@ -160,8 +161,9 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		MaximizedModeArea area = get( dockable );
 		if( area == null )
 			return null;
-
-		return new Location( getUniqueIdentifier(), area.getUniqueId(), null );
+		
+		DockableProperty location = area.getLocation( dockable );
+		return new Location( getUniqueIdentifier(), area.getUniqueId(), location );
 	}
 
 	public boolean isCurrentMode( Dockable dockable ){

@@ -53,6 +53,7 @@ import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.util.Filter;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
@@ -361,6 +362,34 @@ public interface CDockable {
 	 * @see #getBaseLocation()
 	 */
 	public void setLocation( CLocation location );
+
+	/**
+	 * Sets the location of this {@link CDockable} aside <code>dockable</code> in all {@link ExtendedMode}s. If this
+	 * {@link Dockable} is visible, then it may change its location and {@link ExtendedMode}. Note that <code>dockable</code> and <code>this</code>
+	 * must not be the same object, and that both {@link CDockable}s must be {@link CControl#addDockable(bibliothek.gui.dock.common.SingleCDockable) registered}
+	 * at a {@link CControl}. 
+	 * @param dockable the item whose locations should be copied
+	 * @throws IllegalArgumentException if <code>dockable</code> is <code>null</code>, not registered, the same
+	 * as <code>this</code>, or has a different {@link #getWorkingArea() working area}
+	 * @throws IllegalStateException if <code>this</code> is not registered at the same {@link CControl} as <code>dockable</code>
+	 */
+	public void setLocationsAside( CDockable dockable );
+	
+	/**
+	 * Traverses the history of focused {@link CDockable}s, and selects the newest item with focus and matching
+	 * <code>filter</code> for calling {@link #setLocationsAside(CDockable)}.
+	 * @param filter to select a {@link CDockable} which did have the focus
+	 * @return <code>true</code> if an old focused {@link Dockable} was found, <code>false</code> if not 
+	 */
+	public boolean setLocationsAside( Filter<CDockable> filter );
+	
+	/**
+	 * Searches for the last focused {@link CDockable} with the same {@link #getWorkingArea() working area} as
+	 * <code>this</code>, and calls {@link #setLocationsAside(CDockable)} with it.
+	 * @return <code>true</code> if the last focused {@link CDockable} was found, <code>false</code> otherwise. If
+	 * <code>false</code> then no action was performed
+	 */
+	public boolean setLocationsAsideFocused();
 	
 	/**
 	 * Gets the location of this <code>CDockable</code>. If this <code>CDockable</code> is visible, then

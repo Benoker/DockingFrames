@@ -868,3 +868,5 @@
      
 [v1.1.2p2]
  - API: ToolbarItemDockable now features a BackgroundComponent and thus supports things like true transparency
+ - API: DockStation and Combiner now offer methods to add a placeholder "aside" some given location
+ - API: CDockable now offers methods to automatically set the location close to the focused Dockable

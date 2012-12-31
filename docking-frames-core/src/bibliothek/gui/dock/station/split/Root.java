@@ -266,6 +266,21 @@ public class Root extends SpanSplitNode{
     }
     
     @Override
+    public boolean aside( AsideRequest request ){
+    	if( child == null ){
+	    	if( request.getPlaceholder() != null ){
+	    		Placeholder placeholder = createPlaceholder( -1 );
+	    		setChild( placeholder );
+	    		return placeholder.aside( request );
+			}
+    	}
+    	else{
+    		return child.aside( request );
+    	}
+    	return true;
+    }
+    
+    @Override
     public boolean aside( SplitDockPathProperty property, int index, AsideRequest request ){
     	if( child == null ){
     		if( request.getPlaceholder() != null ){

@@ -986,6 +986,15 @@ public class CControl {
     }
     
     /**
+     * Gets an object describing which {@link CDockable}s did have the focus in 
+     * which order.
+     * @return the focus history
+     */
+    public CFocusHistory getFocusHistory(){
+    	return new DefaultCFocusHistory( this );
+    }
+    
+    /**
      * Adds a new veto focus listener to this control. The listener gets
      * informed about pending changes in the focus.
      * @param listener the new listener

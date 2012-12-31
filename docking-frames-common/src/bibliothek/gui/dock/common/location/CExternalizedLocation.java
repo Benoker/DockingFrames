@@ -41,6 +41,10 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
      * {@link CControl#EXTERNALIZED_STATION_ID}.
      */
     public static final CLocation STATION = new CLocation(){
+    	/**
+    	 * @deprecated see {@link CLocation#aside()} for an explanation.
+    	 */
+    	@Deprecated
         @Override
         public CLocation aside() {
             return this;
@@ -144,6 +148,10 @@ public class CExternalizedLocation extends AbstractStackholdingLocation{
 		return new CMaximalExternalizedLocation( x, y, width, height );
 	}
 	
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
 	@Override
 	public CLocation aside() {
 	    return stack( 1 );

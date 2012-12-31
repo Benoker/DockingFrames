@@ -83,7 +83,8 @@ import bibliothek.gui.dock.layout.DockablePropertyFactory;
 import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.layout.location.AsideAnswer;
-import bibliothek.gui.dock.layout.location.DefaultAsideRequest;
+import bibliothek.gui.dock.layout.location.AsideRequest;
+import bibliothek.gui.dock.layout.location.AsideRequestFactory;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.flap.FlapDockPropertyFactory;
@@ -94,7 +95,6 @@ import bibliothek.gui.dock.station.split.SplitDockPropertyFactory;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
 import bibliothek.gui.dock.station.stack.StackDockPropertyFactory;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
-import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -1350,13 +1350,9 @@ public class DockFrontend {
     		return false;
     	}
     
-    	PlaceholderStrategy placeholderStrategy = controller.getProperties().get( PlaceholderStrategy.PLACEHOLDER_STRATEGY );
-    	Path placeholder = null;
-    	if( placeholderStrategy != null ){
-    		placeholder = placeholderStrategy.getPlaceholderFor( dockable );
-    	}
+    	AsideRequestFactory factory = controller.getProperties().get( AsideRequest.REQUEST_FACTORY );
+    	AsideRequest request = factory.createAsideRequest( location, dockable );
     	
-    	DefaultAsideRequest request = new DefaultAsideRequest( location, placeholder );
     	AsideAnswer answer = request.execute( rootStation );
     	if( answer.isCanceled() || answer.getLocation() == null ){
     		return false;

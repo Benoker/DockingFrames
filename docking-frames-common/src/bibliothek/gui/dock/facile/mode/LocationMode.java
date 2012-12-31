@@ -29,6 +29,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.Mode;
 
@@ -56,6 +57,14 @@ public interface LocationMode extends Mode<Location>{
 	 * @param controller the new controller or <code>null</code>
 	 */
 	public void setController( DockController controller );
+	
+	/**
+	 * Calls {@link DockStation#aside(AsideRequest)} on a station that matches <code>location</code>.
+	 * @param request the request to forward to a {@link DockStation} or to process
+	 * @param location the source of the location whose neighbor is searched
+	 * @return the neighbor or a value of <code>null</code> if the request could not be processed
+	 */
+	public Location aside( AsideRequest request, Location location );
 	
 	/**
 	 * Gets the manager which currently works with this mode.

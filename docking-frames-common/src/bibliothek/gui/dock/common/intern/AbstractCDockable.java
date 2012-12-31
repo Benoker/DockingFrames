@@ -33,6 +33,7 @@ import java.util.Map;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CFocusHistory;
 import bibliothek.gui.dock.common.CGrid;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CStation;
@@ -51,6 +52,7 @@ import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.layout.RequestDimension;
+import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
@@ -58,6 +60,7 @@ import bibliothek.gui.dock.control.focus.FocusRequest;
 import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.VetoableDockFrontendEvent;
 import bibliothek.gui.dock.title.DockTitle;
+import bibliothek.util.Filter;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -360,6 +363,63 @@ public abstract class AbstractCDockable implements CDockable {
                 this.location = null;
             }
         }
+    }
+    
+    public void setLocationsAside( CDockable dockable ){
+	    if( dockable == null ){
+	    	throw new IllegalArgumentException( "dockable must not be null" );
+	    }
+	    if( dockable == this ){
+	    	throw new IllegalArgumentException( "dockable must not be the same object as this" );
+	    }
+	    if( dockable.getControl() == null ){
+	    	throw new IllegalArgumentException( "dockable is not registered at a CControl" );
+	    }
+	    if( dockable.getControl() != getControl() ){
+	    	throw new IllegalArgumentException( "dockable is registered at another CControl" ); 
+	    }
+	    if( dockable.getWorkingArea() != getWorkingArea() ){
+	    	throw new IllegalArgumentException( "dockable has another working-area as this" );
+	    }
+	    CLocationModeManager locationManager = getControl().getLocationManager();
+	    locationManager.setLocationAside( intern(), dockable.intern() );
+	    
+	    CLocationMode mode = locationManager.getCurrentMode( dockable.intern() );
+	    if( mode != null ){
+	    	CLocation location = locationManager.getLocation( intern(), mode.getExtendedMode() );
+	    	if( location != null ){
+	    		setLocation( location );
+	    	}
+	    }
+    }
+    
+    public boolean setLocationsAside( Filter<CDockable> filter ){
+    	if( getControl() == null ){
+    		throw new IllegalStateException( "this dockable must be registered at a CControl" );
+    	}
+    	CFocusHistory history = getControl().getFocusHistory();
+    	CDockable dockable = history.getFirst( filter );
+    	if( dockable == null ){
+    		return false;
+    	}
+    	setLocationsAside( dockable );
+    	return true;
+    }
+    
+    public boolean setLocationsAsideFocused(){
+    	boolean result = setLocationsAside( new Filter<CDockable>(){
+    		public boolean includes( CDockable item ){
+    			return item != AbstractCDockable.this && item.getWorkingArea() == workingArea && item.isVisible();
+    		}
+		});
+    	if( !result ){
+    		result = setLocationsAside( new Filter<CDockable>(){
+        		public boolean includes( CDockable item ){
+        			return item != AbstractCDockable.this && item.getWorkingArea() == workingArea;
+        		}
+    		});
+    	}
+    	return result;
     }
     
     public CLocation getBaseLocation(){

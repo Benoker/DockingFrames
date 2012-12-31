@@ -66,6 +66,10 @@ public class CFlapIndexLocation extends AbstractStackholdingLocation{
         return index;
     }
     
+	/**
+	 * @deprecated see {@link CLocation#aside()} for an explanation.
+	 */
+	@Deprecated
     @Override
     public CLocation aside() {
     	return stack( 1 );

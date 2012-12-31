@@ -1300,6 +1300,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			SplitDockPlaceholderProperty property = (SplitDockPlaceholderProperty)location;
 			SplitNode node = root().getPlaceholderNode( property.getPlaceholder() );
 			if( node != null ){
+				node.aside( request );
 				result = true;
 			}
 			else{
@@ -1319,6 +1320,31 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		if( location instanceof SplitDockProperty ){
 			SplitDockProperty property = (SplitDockProperty)location;
 			result = aside( property, request );
+		}
+		if( location instanceof SplitDockFullScreenProperty ){
+			Dockable fullscreen = getFullScreen();
+			if( fullscreen != null ){
+				Leaf leaf = getRoot().getLeaf( fullscreen );
+				if( request.getPlaceholder() != null ){
+					leaf.addPlaceholder( request.getPlaceholder() );
+				}
+				DockStation fullScreenStation = fullscreen.asDockStation();
+				AsideAnswer answer;
+				if( fullScreenStation != null ){
+					answer = request.forward( fullScreenStation );
+				}
+				else{
+					answer = request.forward( getCombiner(), leaf.getPlaceholderMap() );
+					if( !answer.isCanceled() ){
+						leaf.setPlaceholderMap( answer.getLayout() );
+					}
+				}
+				if( answer.isCanceled() ){
+					return;
+				}
+			}
+			request.answer( new SplitDockFullScreenProperty() );
+			return;
 		}
 		
 		if( result ){
