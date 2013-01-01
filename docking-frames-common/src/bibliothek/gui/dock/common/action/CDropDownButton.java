@@ -27,6 +27,8 @@ package bibliothek.gui.dock.common.action;
 
 import javax.swing.Icon;
 
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.common.action.core.CommonSimpleDropDownAction;
 import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
 
@@ -88,6 +90,29 @@ public class CDropDownButton extends CDecorateableAction<CommonSimpleDropDownAct
     }
     
     /**
+     * Gets the number of {@link DockAction}s that were added to this menu.
+     * @return the number of actions
+     */
+    public int getActionCount(){
+    	return intern().size();
+    }
+    
+    /**
+     * Gets the <code>index</code>'th action of this menu.
+     * @param index the index of the action
+     * @return the action or <code>null</code> if the <code>index</code>'th 
+     * {@link DockAction} is not a {@link CommonDockAction} (and hence no {@link CAction}
+     * can be found)
+     */
+    public CAction getAction( int index ){
+    	DockAction action = intern().getDockAction( index );
+    	if( action instanceof CommonDockAction ){
+    		return ((CommonDockAction)action).getAction();
+    	}
+    	return null;
+    }
+    
+    /**
      * Removes the action at location <code>index</code>.
      * @param index the location of the element to remove
      */
@@ -109,5 +134,17 @@ public class CDropDownButton extends CDecorateableAction<CommonSimpleDropDownAct
      */
     public void setSelection( CAction action ){
     	intern().setSelection( action.intern() );
+    }
+    
+    /**
+     * Gets the currently selected action.
+     * @return the selected action or <code>null</code>
+     */
+    public CAction getSelection(){
+    	DockAction action = intern().getSelection();
+    	if( action instanceof CommonDockAction ){
+    		return ((CommonDockAction)action).getAction();
+    	}
+    	return null;
     }
 }

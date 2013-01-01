@@ -78,6 +78,15 @@ public class SimpleDropDownAction extends AbstractSimpleDropDownAction implement
 		}
 	}
 	
+	/**
+	 * Gets the <code>index</code>'th action of this menu.
+	 * @param index the index of an action
+	 * @return the action at <code>index</code>
+	 */
+	public DockAction getDockAction( int index ){
+		return actions.getDockAction( index );
+	}
+	
 	public int size(){
 		return actions.getDockActionCount();
 	}

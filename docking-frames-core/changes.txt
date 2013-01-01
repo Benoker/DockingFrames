@@ -869,7 +869,8 @@
 [v1.1.2p2]
  - API: ToolbarItemDockable now features a BackgroundComponent and thus supports things like true transparency
  - API: DockStation and Combiner now offer methods to add a placeholder "aside" some given location
- - API: CDockable now offers methods to automatically set the location close to the focused Dockable
+ - API: CDockable now offers methods to automatically set the location close to the focused Dockable (CDockable.setLocationsAside...)
  - API: Moving a maximized CDockable (moving means the parent does not change) does no longer normalize the Dockable 
  - Bugfix: SplitDockStation.removePlaceholder did not work properly, the placeholders were not removed from leafs or nodes
+ - API: Added methods to CMenu and CDropDownButton for getting the CActions that were added to the menu
  

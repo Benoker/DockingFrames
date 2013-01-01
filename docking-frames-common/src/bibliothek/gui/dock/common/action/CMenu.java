@@ -28,6 +28,8 @@ package bibliothek.gui.dock.common.action;
 import javax.swing.Icon;
 
 import bibliothek.gui.dock.action.DefaultDockActionSource;
+import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.common.action.core.CommonDockAction;
 import bibliothek.gui.dock.common.action.core.CommonSimpleMenuAction;
 import bibliothek.gui.dock.common.intern.action.CDecorateableAction;
 
@@ -90,6 +92,29 @@ public class CMenu extends CDecorateableAction<CommonSimpleMenuAction> {
      */
     public void insertSeparator( int index ){
         insert( index, CSeparator.SEPARATOR );
+    }
+    
+    /**
+     * Gets the number of {@link DockAction}s that were added to this menu.
+     * @return the number of actions
+     */
+    public int getActionCount(){
+    	return menu.getDockActionCount();
+    }
+    
+    /**
+     * Gets the <code>index</code>'th action of this menu.
+     * @param index the index of the action
+     * @return the action or <code>null</code> if the <code>index</code>'th 
+     * {@link DockAction} is not a {@link CommonDockAction} (and hence no {@link CAction}
+     * can be found)
+     */
+    public CAction getAction( int index ){
+    	DockAction action = menu.getDockAction( index );
+    	if( action instanceof CommonDockAction ){
+    		return ((CommonDockAction)action).getAction();
+    	}
+    	return null;
     }
     
     /**
