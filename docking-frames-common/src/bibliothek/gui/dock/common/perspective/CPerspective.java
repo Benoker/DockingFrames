@@ -52,7 +52,6 @@ import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A {@link CPerspective} is a lightweight, modifiable representation of all {@link Dockable}s and {@link DockStation}s
@@ -176,19 +175,6 @@ public class CPerspective {
 	 * Adds a new station to this perspective. If a station with name <code>id</code> is
 	 * already registered, then this station gets replaced.
 	 * @param station the new station
-	 * @deprecated use {@link #addStation(CStationPerspective)} instead
-	 */
-	@Deprecated
-	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
-			description="Remove this method")
-	public void addRoot( CStationPerspective station ){
-		addStation( station );
-	}
-
-	/**
-	 * Adds a new station to this perspective. If a station with name <code>id</code> is
-	 * already registered, then this station gets replaced.
-	 * @param station the new station
 	 */
 	public void addStation( CStationPerspective station ){
 		if( station == null ){
@@ -197,20 +183,7 @@ public class CPerspective {
 		stations.put( station.getUniqueId(), station );
 		station.setPerspective( this );
 	}
-	
-	/**
-	 * Gets the station which was registered with the unique identifier <code>id</code>.
-	 * @param id some unique identifier
-	 * @return the station associated with <code>id</code>, can be <code>null</code>
-	 * @deprecated use {@link #getStation(String)} instead
-	 */
-	@Deprecated
-	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
-			description="Remove this method")
-	public CStationPerspective getRoot( String id ){
-		return getStation( id );
-	}
-	
+		
 	/**
 	 * Gets the station which was registered with the unique identifier <code>id</code>.
 	 * @param id some unique identifier
@@ -268,19 +241,7 @@ public class CPerspective {
 			dockables.put( id, dockable );
 		}
 	}
-	
-	/**
-	 * Gets the names of all the stations that were registered
-	 * @return the names, not <code>null</code>
-	 * @deprecated use {@link #getStationKeys()} instead
-	 */
-	@Deprecated
-	@Todo( compatibility=Compatibility.BREAK_MINOR, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
-			description="Remove this method")
-	public String[] getRootKeys(){
-		return getStationKeys();
-	}
-	
+		
 	/**
 	 * Gets the names of all the stations that were registered
 	 * @return the names, not <code>null</code>

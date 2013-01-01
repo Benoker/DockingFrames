@@ -39,7 +39,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -188,8 +187,6 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.text.DefaultTextScheme;
 import bibliothek.util.Filter;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
@@ -539,7 +536,7 @@ public class CControl {
                     if( cdock instanceof MultipleCDockable ){
                         MultipleCDockable multiple = (MultipleCDockable)cdock;
                         if( multiple.isRemoveOnClose() ){
-                            remove( multiple );
+                            removeDockable( multiple );
                         }
                     }
                 }
@@ -1351,25 +1348,6 @@ public class CControl {
     }
 
     /**
-     * Gets an unmodifiable list of all {@link CContentArea}s registered at
-     * this control
-     * @return the list of content-areas
-     * @deprecated use {@link #getStationContainers()} instead
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_2,
-    		description="remove this method, replace by 'getStationContainers'")
-    public List<CContentArea> getContentAreas(){
-        List<CContentArea> result = new ArrayList<CContentArea>();
-        for( CStationContainer container : getStationContainers() ){
-        	if( container instanceof CContentArea ){
-        		result.add( (CContentArea)container );
-        	}
-        }
-        return Collections.unmodifiableList( result );
-    }
-
-    /**
      * Gets an unmodifiable list of all {@link CStationContainer}s that are registered at this {@link CControl}.
      * @return the list of containers
      */
@@ -1581,19 +1559,6 @@ public class CControl {
     	DockStation root = frontend.getRoot( station.getUniqueId() );
     	return root == station.getStation();
     }
-
-    /**
-     * Removes a {@link CStation} from this control. It is unspecified what
-     * happens with the children on <code>station</code>
-     * @param station the station to remove
-     * @deprecated use {@link #removeStation(CStation)} instead
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MINOR, priority=Todo.Priority.MINOR, target=Todo.Version.VERSION_1_1_2,
-    		description="remove this method and replace by 'removeStation'")
-    public void remove( CStation<?> station ){
-    	removeStation( station );
-    }
     
     /**
      * Removes a {@link CStation} from this control. It is unspecified what
@@ -1735,7 +1700,7 @@ public class CControl {
     public boolean removeSingleDockable( String id ){
         for( SingleCDockable dockable : register.getSingleDockables() ){
             if( dockable.getUniqueId().equals( id )){
-                return remove( dockable );
+                return removeDockable( dockable );
             }
         }
         return false;
@@ -1751,24 +1716,6 @@ public class CControl {
      * @return true if the element was removed, <code>false</code> otherwise
      */
     public boolean removeDockable( SingleCDockable dockable ){
-    	return remove( dockable );
-    }
-
-    /**
-     * Removes <code>dockable</code> from this control. The location information
-     * for <code>dockable</code> remains stored if either there is a 
-     * {@link #addSingleDockableFactory(String, SingleCDockableFactory) SingleCDockableFactory}
-     * registered or the {@link #setMissingStrategy(MissingCDockableStrategy) MissingCDockableStrategy}
-     * tells to store the values.
-     * @param dockable the element to remove
-     * @return true if the element was removed, <code>false</code> otherwise
-     * @deprecated Please use {@link #removeDockable(SingleCDockable)} instead, this method will be removed in
-     * a future release
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.ENHANCEMENT, target=Todo.Version.VERSION_1_1_2, 
-    		description="remove this method")
-    public boolean remove( SingleCDockable dockable ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 
@@ -2118,19 +2065,6 @@ public class CControl {
      * @param dockable the element to remove 
      */
     public void removeDockable( MultipleCDockable dockable ){
-    	remove( dockable );
-    }
-    
-    /**
-     * Removes a dockable from this control. The dockable is made invisible.
-     * @param dockable the element to remove
-     * @deprecated please use {@link #removeDockable(MultipleCDockable)} instead, this method will be removed
-     * in a future release 
-     */
-    @Deprecated
-    @Todo( compatibility=Compatibility.BREAK_MAJOR, priority=Todo.Priority.ENHANCEMENT, target=Todo.Version.VERSION_1_1_2, 
-    		description="remove this method")
-    public void remove( MultipleCDockable dockable ){
         if( dockable == null )
             throw new NullPointerException( "dockable must not be null" );
 

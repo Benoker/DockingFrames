@@ -874,4 +874,5 @@
  - Bugfix: SplitDockStation.removePlaceholder did not work properly, the placeholders were not removed from leafs or nodes
  - API: Added methods to CMenu and CDropDownButton for getting the CActions that were added to the menu
  ! API: EclipseDockableDisplayer removed, and EclipseDockableDisplayer2 renamed to EclipseDockableDisplayer
- ! API: Removed NoTitleDisplayer 
+ ! API: Removed NoTitleDisplayer
+ ! API: Removed several methods from CControl, CDockable and CPerspective which were marked deprecated since a long time 

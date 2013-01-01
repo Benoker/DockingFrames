@@ -616,11 +616,6 @@ public abstract class AbstractCDockable implements CDockable {
     	return EnableableItem.isEnabled( enabled, item );
     }
     
-    @Deprecated
-    public void setMinimizedHold( boolean hold ) {
-    	setSticky( hold );
-    }
-    
     public void setSticky( boolean sticky ){
         if( this.sticky != sticky ){
             this.sticky = sticky;
@@ -628,18 +623,8 @@ public abstract class AbstractCDockable implements CDockable {
         }
     }
     
-    @Deprecated
-    public boolean isMinimizedHold() {
-        return isSticky();
-    }
-    
     public boolean isSticky(){
 	    return sticky;
-    }
-    
-    @Deprecated
-    public void setMinimizedHoldSwitchable( boolean minimizeHoldSwitchable ){
-    	setStickySwitchable( minimizeHoldSwitchable );
     }
     
     public void setStickySwitchable( boolean switchable ){
@@ -648,12 +633,7 @@ public abstract class AbstractCDockable implements CDockable {
     		listenerCollection.getCDockablePropertyListener().stickySwitchableChanged( this );
     	}
 	}
-    
-    @Deprecated
-    public boolean isMinimizedHoldSwitchable(){
-	    return isStickySwitchable();
-    }
-    
+       
     public boolean isStickySwitchable(){
     	return stickySwitchable;
     }
