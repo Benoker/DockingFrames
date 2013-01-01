@@ -9,6 +9,7 @@ public class BasicCommonSet extends TutorialSet{
 		super( SingleDockableFactoryExample.class,
 			NewCStationExample.class,
 			MultiFrameExample.class,
-			TitleWithTextFieldExample.class );
+			TitleWithTextFieldExample.class,
+			OpeningEditors.class );
 	}
 }
