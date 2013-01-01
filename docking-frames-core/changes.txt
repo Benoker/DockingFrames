@@ -873,4 +873,5 @@
  - API: Moving a maximized CDockable (moving means the parent does not change) does no longer normalize the Dockable 
  - Bugfix: SplitDockStation.removePlaceholder did not work properly, the placeholders were not removed from leafs or nodes
  - API: Added methods to CMenu and CDropDownButton for getting the CActions that were added to the menu
- 
+ ! API: EclipseDockableDisplayer removed, and EclipseDockableDisplayer2 renamed to EclipseDockableDisplayer
+ ! API: Removed NoTitleDisplayer 
