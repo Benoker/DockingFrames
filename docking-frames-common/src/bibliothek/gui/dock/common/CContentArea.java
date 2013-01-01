@@ -526,6 +526,10 @@ public class CContentArea extends JPanel implements CStationContainer{
 	}
 	
 	public CStation<?> getMatchingStation( CStationContainer container, CStation<?> station ){
+		if( container == this ){
+			return station;
+		}
+		
 		if( container instanceof CContentArea ){
 			CContentArea other = (CContentArea)container;
 			if( other.getStationCount() == getStationCount() ){

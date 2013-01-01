@@ -1294,6 +1294,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	public void aside( AsideRequest request ){
 		boolean result = false;
+		if( request.getPlaceholder() != null ){
+			// clean up old traces of this placeholder
+			removePlaceholder( request.getPlaceholder() );
+		}
 		
 		DockableProperty location = request.getLocation();
 		if( location instanceof SplitDockPlaceholderProperty ){
@@ -2986,15 +2990,15 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 
 			public void handlePlaceholder( Placeholder placeholder ){
-				handle(root);
+				handle(placeholder);
 			}
 
 			public void handleNode( Node node ){
-				handle(root);
+				handle(node);
 			}
 
 			public void handleLeaf( Leaf leaf ){
-				handle(root);
+				handle(leaf);
 			}
 
 			private void handle( SplitNode node ){

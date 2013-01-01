@@ -542,8 +542,9 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
      */
     public void setLocationAside( Dockable dockable, Dockable aside ){
     	M current = getCurrentMode( aside );
+    	List<M> history = getModeHistory( aside );
     	
-    	for( M mode : getModeHistory( aside )){
+    	for( M mode : history ){
     		Location location;
     		if( mode == current ){
     			location = mode.current( aside );
@@ -557,8 +558,9 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
     			
     			Location result = mode.aside( request, location );
     			if( result != null ){
-    				setProperties( mode, dockable, result );
+    				addToModeHistory( dockable, mode, result );
     			}
+    			
     		}
     	}
     }

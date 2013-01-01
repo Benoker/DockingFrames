@@ -871,3 +871,5 @@
  - API: DockStation and Combiner now offer methods to add a placeholder "aside" some given location
  - API: CDockable now offers methods to automatically set the location close to the focused Dockable
  - API: Moving a maximized CDockable (moving means the parent does not change) does no longer normalize the Dockable 
+ - Bugfix: SplitDockStation.removePlaceholder did not work properly, the placeholders were not removed from leafs or nodes
+ 

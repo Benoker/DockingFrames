@@ -143,11 +143,7 @@ public class BasicCombiner implements Combiner {
 			stack.add( new DefaultDockablePerspective() );
 		}
 		else{
-			stack.addPlaceholder( new DefaultDockablePerspective(){
-				public Path getPlaceholder(){
-					return placeholder;
-				}
-			} );
+			stack.addPlaceholder( placeholder );
 		}
 	}
 	

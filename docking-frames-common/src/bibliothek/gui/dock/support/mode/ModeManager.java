@@ -987,6 +987,22 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	}
 	
 	/**
+	 * Adds the history data <code>history</code> to <code>dockable</code> for mode <code>mode</code>, and
+	 * stores <code>mode</code> as the newest used mode.
+	 * @param dockable the element whose history is modified must be known to this manager
+	 * @param mode the mode whose history is modified
+	 * @param history the new history
+	 * @throws IllegalStateException if <code>dockable</code> is not known to this manager
+	 */
+	public void addToModeHistory( Dockable dockable, M mode, H history ){
+		DockableHandle handle = getHandle( dockable );
+		if( handle == null ){
+			throw new IllegalArgumentException( "unknown dockable" );
+		}
+		handle.addToHistory( mode.getUniqueIdentifier(), history );
+	}
+	
+	/**
 	 * Gets the history which properties <code>dockable</code>
 	 * used in the past. Entries of value <code>null</code> are ignored.
 	 * The older entries are at the beginning of the list.
@@ -1400,9 +1416,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	        	ModeHandle oldMode = peekMode();
 	            if( oldMode != mode ){
 	            	Path id = mode.mode.getUniqueIdentifier();
-		            history.remove( id );
-		            history.add( id );
-		            properties.put( id, mode.mode.current( dockable ) );
+		            addToHistory( id, mode.mode.current( dockable ) );
 		            rebuild( dockable );
 		            fireModeChanged( dockable, oldMode == null ? null : oldMode.mode, mode.mode );
 	            }
@@ -1410,6 +1424,17 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	            	rebuild( dockable );
 	            }
         	}
+        }
+        
+        /**
+         * Adds the mode <code>id</code> to the history.
+         * @param id the unique identifier of a mode
+         * @param data history data associated with mode <code>id</code>
+         */
+        public void addToHistory( Path id, H data ){
+        	history.remove( id );
+            history.add( id );
+            properties.put( id, data );
         }
         
         /**

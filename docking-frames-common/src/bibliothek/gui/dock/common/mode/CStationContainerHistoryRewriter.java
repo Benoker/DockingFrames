@@ -140,7 +140,10 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 			if( rootStation != null ){
 				container = getContainer( rootStation );
 				if( container != null ){
-					return container.getDefaultStation( mode );
+					CStation<?> result = container.getDefaultStation( mode );
+					if( result != null && isValidParent( result, workingArea )){
+						return result;
+					}
 				}
 			}
 		}
