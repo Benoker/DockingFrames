@@ -268,28 +268,21 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		area.setMaximized( maximizing, true, history, set );
 		
 		if( !(id == null && current == null )){
-			boolean didFindAsChild = false;
 			for( Dockable newMaximized : area.getMaximized() ){
-				if( newMaximized == maximizing ){
-					didFindAsChild = true;
-				}
-				else if( DockUtilities.isAncestor( newMaximized, maximizing )){
-					// the maximizing element was put on a DockStation
-					if( !oldMaximized.contains( newMaximized )){
-						// and the DockStation was created by this action
-						for( Dockable replaced : oldMaximized ){
-							if( DockUtilities.isAncestor( newMaximized, replaced )){
-								storeLastMaximizedLocation( area, replaced );
-								break;
+				if( newMaximized != maximizing ){
+					if( DockUtilities.isAncestor( newMaximized, maximizing )){
+						// the maximizing element was put on a DockStation
+						if( !oldMaximized.contains( newMaximized )){
+							// and the DockStation was created by this action
+							for( Dockable replaced : oldMaximized ){
+								if( DockUtilities.isAncestor( newMaximized, replaced )){
+									storeLastMaximizedLocation( area, replaced );
+									break;
+								}
 							}
 						}
 					}
 				}
-			}
-			
-			if( didFindAsChild ){
-				lastMaximizedLocation.remove( area.getUniqueId() );
-				lastMaximizedMode.remove( area.getUniqueId() );
 			}
 		}
 		
@@ -380,6 +373,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			LocationMode mode = manager.getPreviousMode( element );
 			if( mode == null || mode == MaximizedMode.this )
 				mode = manager.getMode( NormalMode.IDENTIFIER );
+			
 			manager.apply( element, mode.getUniqueIdentifier(), set, true );
 		}
 		else if( element.asDockStation() != null ){
