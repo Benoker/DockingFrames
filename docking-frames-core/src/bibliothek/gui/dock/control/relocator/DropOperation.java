@@ -84,24 +84,24 @@ public class DropOperation implements RelocateOperation{
 			Point mouse = new Point( item.getMouseX(), item.getMouseY() );
 			
 			if( operation.isMove() ){
-				DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse );
+				DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse, true );
 				listener.dragging( event );
 				if( event.isCanceled() || event.isForbidden() ){
 					return false;
 				}
 				operation.execute();
-				listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse ) );
+				listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse, true ) );
 			}
 			else{
 				DockStation parent = selection.getDockParent();
 				if( parent != null ){
-					DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse );
+					DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse, false );
 					listener.dragging( event );
 					if( event.isCanceled() || event.isForbidden() ){
 						return false;
 					}
 					parent.drag( selection );
-					listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse ) );
+					listener.dragged( new DefaultDockRelocatorEvent( controller, selection, new Dockable[]{}, station, mouse, false ) );
 				}
 				operation.execute();
 			}

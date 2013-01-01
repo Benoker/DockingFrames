@@ -115,14 +115,15 @@ public class CSplitDockStationHandle{
 	private VetoableDockRelocatorListener relocatorListener = new VetoableDockRelocatorAdapter() {
 		@Override
 		public void dropped( DockRelocatorEvent event ){
-			MaximizedModeArea next = maximizedMode.getNextMaximizeArea( event.getTarget() );
-			
-			if( next == maximal ){
-				manager.runTransaction( new AffectingRunnable() {
-					public void run( AffectedSet set ){
-						maximizedMode.unmaximize( (DockStation)getStation(), set );		
-					}
-				});
+			if( !event.isMove() ){
+				MaximizedModeArea next = maximizedMode.getNextMaximizeArea( event.getTarget() );
+				if( next == maximal ){
+					manager.runTransaction( new AffectingRunnable() {
+						public void run( AffectedSet set ){
+							maximizedMode.unmaximize( (DockStation)getStation(), set );		
+						}
+					});
+				}
 			}
 		}
 	};

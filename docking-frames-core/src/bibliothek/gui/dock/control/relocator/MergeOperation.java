@@ -94,7 +94,7 @@ public class MergeOperation implements RelocateOperation{
 		
 		if( parent != null && parent != station ){
 			Point mouse = new Point( item.getMouseX(), item.getMouseY() );
-			DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, children, station, mouse );
+			DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( controller, selection, children, station, mouse, getOperation().isMove() );
 			listener.dragging( event );
 			if( event.isCanceled() || event.isForbidden() ){
 				return false;

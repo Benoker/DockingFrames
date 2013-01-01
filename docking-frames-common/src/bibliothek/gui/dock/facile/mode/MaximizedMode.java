@@ -178,6 +178,27 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		return false;
 	}
 	
+	
+	@Override
+	public boolean isRepresenting( DockStation station ){
+		if( super.isRepresenting( station )){
+			return true;
+		}
+		
+		Dockable dockable = station.asDockable();
+		if( dockable == null ){
+			return false;
+		}
+		
+		for( MaximizedModeArea area : this ){
+			if( area.isChild( dockable ) ){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Assuming <code>dockable</code> is a maximized element, tells which
 	 * mode would be the preferred mode for unmaximization.

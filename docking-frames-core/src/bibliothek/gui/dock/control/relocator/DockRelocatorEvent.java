@@ -147,4 +147,11 @@ public interface DockRelocatorEvent {
 	 * @return whether to ignore the event
 	 */
 	public boolean isIgnored();
+	
+	/**
+	 * Tells whether the event really is a move event (the parent of the {@link Dockable} does not change).
+	 * @return <code>true</code> if the event describes a move event, <code>false</code> if not or if the event
+	 * does not describe a drop operation.
+	 */
+	public boolean isMove();
 }

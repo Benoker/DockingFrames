@@ -78,7 +78,6 @@ public class CMaximizedMode extends MaximizedMode<CMaximizedModeArea> implements
 		return false;
 	}
 	
-	
 	public boolean respectWorkingAreas( DockStation station ){
 		CModeArea area = get( station );
 		if( area == null ){

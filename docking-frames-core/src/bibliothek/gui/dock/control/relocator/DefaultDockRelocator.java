@@ -298,7 +298,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         	}
         	
         	if( result != null ){
-	        	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, result.getImplicit( dockable ), station, new Point( mouseX, mouseY ) );
+        		boolean move = result.getOperation().isMove();;
+	        	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, result.getImplicit( dockable ), station, new Point( mouseX, mouseY ), move );
 	        	fireSearched( event );
 	        	
 	        	if( event.isForbidden() ){
@@ -498,7 +499,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             disableAllModes();
             
             Dockable[] implicit = operation == null ? new Dockable[]{} : operation.getImplicit( dockable );
-            DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation == null ? null : operation.getStation(), new Point( x, y ) );
+            boolean move = operation != null && operation.getOperation().isMove();
+            DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation == null ? null : operation.getStation(), new Point( x, y ), move );
             event.cancel();
             fireCanceled( event );
             
@@ -610,13 +612,13 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     	lastItem = null;
     	
     	Dockable[] implicit = new Dockable[]{};
-    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse );
+    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse, false );
     	fireGrabbing( event );
     	if( event.isIgnored() ){
     		return Reaction.CONTINUE;
     	}
     	if( event.isCanceled() ){
-    		event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse );
+    		event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse, false );
     		event.cancel();
     		fireCanceled( event );
     		return onBreak( event );
@@ -641,7 +643,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             	dragOperation = parent.prepareDrag( dockable );
             }
             
-            event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse );
+            event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, null, mouse, false );
             fireGrabbed( event );
             if( event.isCanceled() || event.isForbidden() ){
             	cancel( dockable );
@@ -664,7 +666,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         boolean drop = false;
 
         Dockable[] implicit = next == null ? new Dockable[]{} : next.getImplicit( dockable );
-    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, next == null ? null : next.getStation(), mouse );
+        boolean move = next != null && next.getOperation().isMove();
+    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, next == null ? null : next.getStation(), mouse, move );
     	fireDragged( event );
     	if( event.isCanceled() ){
     		cancel( dockable );
@@ -777,7 +780,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
             disableAllModes();
             
             if( stop ){
-            	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, mouse );
+            	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, mouse, false );
             	event.cancel();
             	fireCanceled( event );
                 
@@ -804,7 +807,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 	
                     if( next != null ){
                     	Dockable[] implicit = next.getImplicit( dockable );
-                    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, next.getStation(), mouse );
+                    	boolean move = next.getOperation().isMove();
+                    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, next.getStation(), mouse, move );
                     	fireCanceled( event );
                     	if( event.isCanceled() || event.isForbidden() ){
                     		next = null;
@@ -823,7 +827,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 
                 if( operation != null ){
                 	Dockable[] implicit = operation.getImplicit( dockable );
-                	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation.getStation(), mouse );
+                	boolean move = operation.getOperation().isMove();
+                	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation.getStation(), mouse, move );
                 	event.drop();
                 	fireDropping( event );
                 	if( event.isCanceled() || event.isForbidden() ){
@@ -841,7 +846,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                     operation.destroy( null );
                     this.operation = null;
                     
-                    dropped = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation.getStation(), mouse );
+                    dropped = new DefaultDockRelocatorEvent( getController(), dockable, implicit, operation.getStation(), mouse, operation.getOperation().isMove() );
                     if( canceled ){
                     	dropped.cancel();
                     	fireCanceled( dropped );
@@ -850,7 +855,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                     consume = true;
                 }
                 else{
-                	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, mouse );
+                	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, mouse, false );
                 	event.cancel();
                 	fireCanceled( event );
                 }
@@ -909,7 +914,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     private void cancel(Dockable dockable){
     	titleDragCancel();
-    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, null );
+    	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, null, false );
 		event.cancel();
 		fireCanceled( event );
     }

@@ -46,6 +46,7 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	private Dockable[] implicit;
 	private DockStation target;
 	private Point mouse;
+	private boolean move;
 	
 	/**
 	 * Creates a new event.
@@ -54,13 +55,15 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	 * @param implicit the elements that change their position too
 	 * @param target the potential parent of <code>dockable</code>
 	 * @param mouse the location of the mouse on the screen or <code>null</code>
+	 * @param move whether the event does not change the parent of <code>dockable</code>
 	 */
-	public DefaultDockRelocatorEvent( DockController controller, Dockable dockable, Dockable[] implicit, DockStation target, Point mouse ){
+	public DefaultDockRelocatorEvent( DockController controller, Dockable dockable, Dockable[] implicit, DockStation target, Point mouse, boolean move ){
 		this.implicit = implicit;
 		this.controller = controller;
 		this.dockable = dockable;
 		this.target = target;
 		this.mouse = mouse;
+		this.move = move;
 	}
 	
 	public void cancel(){
@@ -120,5 +123,9 @@ public class DefaultDockRelocatorEvent implements DockRelocatorEvent{
 	
 	public boolean isIgnored(){
 		return ignore;
+	}
+	
+	public boolean isMove(){
+		return move;
 	}
 }
