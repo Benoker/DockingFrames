@@ -1691,7 +1691,7 @@ public class FlapDockStation extends AbstractDockableStation {
 	    DockableProperty location = request.getLocation();
 	    if( location instanceof FlapDockProperty ){
 	    	FlapDockProperty flapLocation = (FlapDockProperty)location;
-	    	DockablePlaceholderList<?>.Item item = getItem( flapLocation );
+	    	DockablePlaceholderList<DockableHandle>.Item item = getItem( flapLocation );
 	    	
 	    	if( item != null ){
 	    		delegate().combine( item, getCombiner(), request );
@@ -1704,11 +1704,11 @@ public class FlapDockStation extends AbstractDockableStation {
 	    }
     }
     
-    private DockablePlaceholderList<?>.Item getItem( FlapDockProperty property ){
+    private DockablePlaceholderList<DockableHandle>.Item getItem( FlapDockProperty property ){
     	Path oldPlaceholder = property.getPlaceholder();
 
     	if( oldPlaceholder != null ){
-    		DockablePlaceholderList<?>.Item item = handles.getItem( oldPlaceholder );
+    		DockablePlaceholderList<DockableHandle>.Item item = handles.getItem( oldPlaceholder );
     		if( item != null ){
     			return item;
     		}

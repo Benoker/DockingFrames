@@ -50,7 +50,7 @@ public class DockStationDelegate {
      * @param combainer the {@link Combiner} to ask if there is no {@link DockStation} to ask, not <code>null</code>
      * @param request information about the location to create
      */
-    public void combine( DockablePlaceholderList<?>.Item item, Combiner combiner, AsideRequest request ){
+    public <T extends PlaceholderListItem<Dockable>> void combine( DockablePlaceholderList<T>.Item item, Combiner combiner, AsideRequest request ){
     	PlaceholderListItem<Dockable> handle = item.getDockable();
     	Path placeholder = request.getPlaceholder();
     	if( placeholder != null ){
