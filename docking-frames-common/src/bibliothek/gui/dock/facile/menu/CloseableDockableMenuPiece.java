@@ -25,10 +25,15 @@
  */
 package bibliothek.gui.dock.facile.menu;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
@@ -56,6 +61,18 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
     /** a listener collecting all new {@link Dockable}s of the {@link #frontend} */
     private DockableCollector collector = new DockableCollector();
     
+    /** the comparator deciding how to sort the items */
+    private Comparator<String> order = new Comparator<String>(){
+    	private Collator collator = Collator.getInstance();
+
+		public int compare( String o1, String o2 ){
+			return collator.compare( o1, o2 );
+		}
+    };
+    
+    /** the identifier of the next {@link #order(int)} that will actually be executed */
+    private AtomicInteger orderCommand = new AtomicInteger(0);
+    
     /**
      * Creates a new piece
      */
@@ -69,6 +86,57 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
      */
     public CloseableDockableMenuPiece( DockFrontend frontend ) {
         setFrontend( frontend );
+    }
+    
+    /**
+     * Sets the order of the menu items. The default behavior is to order the
+     * items alphabetically.
+     * @param order the order, or <code>null</code>
+     */
+    public void setOrder( Comparator<String> order ){
+		this.order = order;
+		reorder();
+	}
+    
+    /**
+     * Gets the order of the menu items.
+     * @return the order, can be <code>null</code>
+     */
+    public Comparator<String> getOrder(){
+		return order;
+	}
+    
+    /**
+     * Asynchronously order the menu items
+     */
+    protected void reorder(){
+    	final int identifier = orderCommand.incrementAndGet();
+    	if( EventQueue.isDispatchThread() ){
+	    	EventQueue.invokeLater( new Runnable(){
+				public void run(){
+					order( identifier );
+				}
+			} );
+    	}
+    	else{
+    		order( identifier );
+    	}
+    }
+    
+    private void order( int identifier ){
+    	if( identifier == orderCommand.get() && order != null ){
+    		Item[] items = this.items.values().toArray( new Item[ this.items.size() ] );
+    		Arrays.sort( items, new Comparator<Item>(){
+    			public int compare( Item o1, Item o2 ){
+    				return order.compare( o1.getText(), o2.getText() );
+    			}
+			});
+    		
+    		removeAll();
+    		for( Item item : items ){
+    			add( item );
+    		}
+    	}
     }
     
     /**
@@ -155,9 +223,11 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
      * Adds an earlier created item into the menu, subclasses might override
      * this method to add the item at a different location.
      * @param item the item to insert
+     * @see #setOrder(Comparator)
      */
     protected void insert( Item item ){
         add( item );
+        reorder();
     }
     
     /**
@@ -311,6 +381,7 @@ public class CloseableDockableMenuPiece extends BaseMenuPiece{
 
         public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
             setText( newTitle );
+            reorder();
         }
 
         public void titleToolTipChanged( Dockable dockable, String oldToolTip, String newToolTip ) {

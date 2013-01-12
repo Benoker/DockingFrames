@@ -879,6 +879,7 @@ public abstract class SplitNode{
     			Path[] placeholders = tree.getPlaceholders( key );
     			Placeholder leaf = createPlaceholder( key.getNodeId() );
     			leaf.setPlaceholders( placeholders );
+    			leaf.setPlaceholderMap( tree.getPlaceholderMap( key ));
     			return leaf;
     		}
     		else{

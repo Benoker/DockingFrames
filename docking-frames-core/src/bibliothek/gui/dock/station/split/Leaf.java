@@ -184,7 +184,7 @@ public class Leaf extends SpanSplitNode{
         	handle = getAccess().newHandle( dockable );
             
         	if( updatePlaceholders ){
-        		getAccess().getPlaceholderSet().set( null, dockable );
+        		getAccess().getPlaceholderSet().set( this, dockable );
         	}
         	
         	getAccess().addHandle( handle, token );
@@ -519,7 +519,9 @@ public class Leaf extends SpanSplitNode{
             }
             
             // try using the theoretical boundaries of the element
-            boolean done = getAccess().drop( dockable, property.toSplitLocation( this ), this );
+            SplitDockProperty selfLocation = new SplitDockProperty( getX(), getY(), getWidth(), getHeight() );
+            selfLocation.setSuccessor( property.getSuccessor() );
+            boolean done = getAccess().drop( dockable, selfLocation, this );
             if( done ){
             	removePlaceholder( placeholder );
             }

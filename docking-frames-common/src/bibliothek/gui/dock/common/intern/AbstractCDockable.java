@@ -376,7 +376,7 @@ public abstract class AbstractCDockable implements CDockable {
 	    	throw new IllegalArgumentException( "dockable is not registered at a CControl" );
 	    }
 	    if( dockable.getControl() != getControl() ){
-	    	throw new IllegalArgumentException( "dockable is registered at another CControl" ); 
+	    	throw new IllegalStateException( "dockable is registered at another CControl" ); 
 	    }
 	    if( dockable.getWorkingArea() != getWorkingArea() ){
 	    	throw new IllegalArgumentException( "dockable has another working-area as this" );

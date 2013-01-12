@@ -1924,7 +1924,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	
 			updateBounds();
 	
-			DropInfo info = getDropInfo( property, dockable );
+			DropInfo info = getDropInfo( property, dockable, root );
 	
 			if( info.bestLeaf != null ) {
 				DockStation station = info.bestLeaf.getDockable().asDockStation();
@@ -1978,7 +1978,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			return false;
 		}
 		
-		DropInfo info = getDropInfo( property, null );
+		DropInfo info = getDropInfo( property, null, getRoot() );
 		
 		if( info.bestLeaf != null ){
 			if( property.getSuccessor() != null && info.bestLeafIntersection > 0.75 ){
@@ -2053,9 +2053,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * <code>property</code>.
 	 * @param property the location of <code>dockable</code>
 	 * @param dockable the element to place, can be <code>null</code>
+	 * @param root a node that must be part of the path for <code>dockable</code>
 	 * @return the best place for <code>dockable</code>
 	 */
-	protected DropInfo getDropInfo( final SplitDockProperty property, final Dockable dockable ){
+	protected DropInfo getDropInfo( final SplitDockProperty property, final Dockable dockable, SplitNode root ){
 		final DropInfo info = new DropInfo();
 
 		root.visit(new SplitNodeVisitor(){
@@ -2348,7 +2349,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			if( property != null ) {
 				DockStation combinedStation = combination.asDockStation();
 				if( combinedStation != null && dockable.getDockParent() == combinedStation ) {
-					combinedStation.move(dockable, property);
+					if( getPlaceholderStrategy().getPlaceholderFor( dockable ) == null ){
+						// if a placeholder is present, then the combiner should have set the dockable at the correct position
+						combinedStation.move(dockable, property);
+					}
 				}
 			}
 	

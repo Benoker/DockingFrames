@@ -875,4 +875,12 @@
  - API: Added methods to CMenu and CDropDownButton for getting the CActions that were added to the menu
  ! API: EclipseDockableDisplayer removed, and EclipseDockableDisplayer2 renamed to EclipseDockableDisplayer
  ! API: Removed NoTitleDisplayer
- ! API: Removed several methods from CControl, CDockable and CPerspective which were marked deprecated since a long time 
+ ! API: Removed several methods from CControl, CDockable and CPerspective which were marked deprecated since a long time
+ 
+[v1.1.2p2a]
+ - Bugfix: when removing a child station from a SplitDockPerspective, the placeholders were not stored properly
+ - Bugfix: when dropping a Dockable on a SplitDockStation the location was not always read correctly (caused by a change when implementing the "aside" feature)
+ ! API: CloseableDockableMenuPiece now sorts its items
+ - Bugfix: Replacing a "Placeholder" with a "Leaf" does no longer delete the PlaceholderMap
+ - Bugfix: SplitDockStation is more careful when removing placeholders from PlaceholderMaps
+ - Bugfix: SplitDockStation does no longer move Dockables after combining if said Dockables have a placeholder   

@@ -98,10 +98,10 @@ public class Placeholder extends SplitNode {
 			Leaf leaf = create( dockable, getId() );
 			if( leaf == null )
 				return false;
-			getAccess().getPlaceholderSet().set( null, placeholder, this );
+			getAccess().getPlaceholderSet().set( this, placeholder, this );
 			leaf.setPlaceholders( getPlaceholders() );
-			leaf.setPlaceholderMap( getPlaceholderMap() );
 			replace( leaf );
+			leaf.setPlaceholderMap( getPlaceholderMap() );
 			leaf.setDockable( dockable, null );
 			return true;	
 		}

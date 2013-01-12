@@ -339,7 +339,7 @@ public interface CDockable {
 
 	/**
 	 * Tells whether this <code>CDockable</code> is currently visible to the user. A <code>CDockable</code>
-	 * which is not {@link #isVisible() visible}, is not <code>dockable visible</code> either. The method
+	 * which is not {@link #isVisible() visible}, is not <code>showing</code> either. The method
 	 * does not take into account that a frame may be positioned such that it is not entierly visible on the
 	 * screen. The method may or may not take into account, that a frame may be minimized.<br>
 	 * Clients interested in monitoring this property can add a {@link CDockableLocationListener} to this dockable.

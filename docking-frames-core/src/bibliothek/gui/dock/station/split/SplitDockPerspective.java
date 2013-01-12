@@ -981,7 +981,15 @@ public class SplitDockPerspective implements PerspectiveDockable, PerspectiveSta
     				perspective.addPlaceholder( this, placeholder );
     			}
     			if( dockable.asStation() != null ){
-    				setPlaceholderMap( dockable.asStation().getPlaceholders() );
+    				PlaceholderMap placeholders = dockable.asStation().getPlaceholders();
+    				setPlaceholderMap( placeholders );
+    				if( placeholders != null ){
+    					for( PlaceholderMap.Key key : placeholders.getPlaceholders() ){
+    						for( Path subPlaceholder : key.getPlaceholders() ){
+    							perspective.addPlaceholder( this, subPlaceholder );
+    						}
+    					}
+    				}
     			}
     			
     			setDockable( null );
