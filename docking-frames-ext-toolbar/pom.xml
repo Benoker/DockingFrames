@@ -2,9 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>bibliothek</groupId>
+  <parent>
+    <groupId>org.dockingframes</groupId>
+    <artifactId>docking-frames-base</artifactId>
+    <version>1.1.2-SNAPSHOT</version>
+  </parent>
+
   <artifactId>docking-frames-ext-toolbar</artifactId>
-  <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>docking-frames-ext-toolbar</name>
@@ -40,7 +44,7 @@
     <dependency>
       <groupId>org.dockingframes</groupId>
       <artifactId>docking-frames-common</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
