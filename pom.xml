@@ -164,6 +164,17 @@
 				<role>contributor</role>
 			</roles>
 		</developer>
+                <developer>
+     			<id>krijnschaap@gmail.com</id>
+			<email>krijnschaap@gmail.com</email>
+			<name>Krijn Schaap</name>
+			<properties>
+				<credits>Maintenance of maven build system</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
 	</developers>
 
 	<properties>
