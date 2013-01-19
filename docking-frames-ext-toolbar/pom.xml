@@ -15,7 +15,7 @@
   <url></url>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javaVersion>1.6</javaVersion>
   </properties>
   <build>
       <sourceDirectory>
@@ -33,12 +33,15 @@
             </includes>
         </resource>
     </resources>
+    <testSourceDirectory>
+       testing
+    </testSourceDirectory>
   </build>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
     <dependency>
