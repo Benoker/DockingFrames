@@ -85,8 +85,15 @@ public abstract class CssContainerTransitionProperty<T extends CssPropertyContai
 			else{
 				this.value = value;
 			}
+			propertyChanged( this.value );
 		}
 	}
+	
+	/**
+	 * Called if the value of this property changed.
+	 * @param value the new value, may be <code>null</code>
+	 */
+	protected abstract void propertyChanged( T value );
 	
 	@Override
 	protected void bind(){
@@ -102,6 +109,7 @@ public abstract class CssContainerTransitionProperty<T extends CssPropertyContai
 		if( value != null ){
 			value.removePropertyContainerListener( listener );
 		}
+		set( null );
 	}
 	
 	@Override

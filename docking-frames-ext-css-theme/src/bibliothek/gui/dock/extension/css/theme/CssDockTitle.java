@@ -93,7 +93,7 @@ public class CssDockTitle extends AbstractDockTitle{
 		
 		item.putProperty( "background", new CssPaintTransitionProperty( css, item ){
 			@Override
-			public void set( CssPaint value ){
+			protected void propertyChanged( CssPaint value ){
 				background = value;
 				repaint();
 			}

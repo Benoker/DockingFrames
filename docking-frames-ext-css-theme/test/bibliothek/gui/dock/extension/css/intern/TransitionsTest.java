@@ -194,9 +194,7 @@ public class TransitionsTest {
 		
 		public void addAnimatedRangeProperty(){
 			putProperty( "range", new RangeTransitionProperty( scheme, this ){
-				@Override
-				public void set( Range value ){
-					super.set( value );
+				protected void propertyChanged( Range value ){
 					System.out.println( value.getClass().getSimpleName() + ": " + value.getName() + " " + value.getMin() + " " + value.getMax() );
 					values.put( "range", value );
 				}

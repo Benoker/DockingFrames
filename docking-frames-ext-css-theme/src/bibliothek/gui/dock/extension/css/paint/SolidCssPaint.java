@@ -111,4 +111,9 @@ public class SolidCssPaint implements CssPaint{
 	public void paintBorder( Graphics g, Component c, CssShape shape ){
 		// ignore
 	}
+	
+	@Override
+	public String toString(){
+		return getClass().getSimpleName() + "[color=" + color + "]";
+	}
 }
