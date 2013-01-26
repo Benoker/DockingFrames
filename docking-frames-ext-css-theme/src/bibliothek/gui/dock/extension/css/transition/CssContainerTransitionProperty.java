@@ -109,7 +109,6 @@ public abstract class CssContainerTransitionProperty<T extends CssPropertyContai
 		if( value != null ){
 			value.removePropertyContainerListener( listener );
 		}
-		set( null );
 	}
 	
 	@Override

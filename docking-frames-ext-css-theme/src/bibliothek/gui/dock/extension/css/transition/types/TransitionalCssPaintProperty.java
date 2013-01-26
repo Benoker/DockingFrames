@@ -61,7 +61,7 @@ public class TransitionalCssPaintProperty extends AbstractTransitionalCssPropert
 		public void paintArea( Graphics g, Component c, CssShape shape ){
 			Graphics2D g2 = (Graphics2D)g.create();
 			if( source != null ){
-				g2.setComposite( AlphaComposite.getInstance( AlphaComposite.DST_OVER, transition ) );
+				g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1-transition ) );
 				source.paintArea( g2, c, shape );
 			}
 			if( target != null ){
@@ -75,7 +75,7 @@ public class TransitionalCssPaintProperty extends AbstractTransitionalCssPropert
 		public void paintBorder( Graphics g, Component c, CssShape shape ){
 			Graphics2D g2 = (Graphics2D)g.create();
 			if( source != null ){
-				g2.setComposite( AlphaComposite.getInstance( AlphaComposite.DST_OVER, transition ) );
+				g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1-transition ) );
 				source.paintBorder( g2, c, shape );
 			}
 			if( target != null ){
@@ -87,7 +87,7 @@ public class TransitionalCssPaintProperty extends AbstractTransitionalCssPropert
 		
 		@Override
 		public String[] getPropertyKeys(){
-			return null;
+			return new String[]{};
 		}
 
 		@Override
@@ -105,6 +105,11 @@ public class TransitionalCssPaintProperty extends AbstractTransitionalCssPropert
 
 		@Override
 		public void init( Component component ){
+		}
+		
+		@Override
+		public String toString(){
+			return getClass().getSimpleName() + "[source=" + source + ", target=" + target + ", transition=" + transition + "]";
 		}
 	}
 }

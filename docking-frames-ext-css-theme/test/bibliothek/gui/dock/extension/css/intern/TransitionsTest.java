@@ -16,6 +16,7 @@ import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
 import bibliothek.gui.dock.extension.css.property.ColorCssProperty;
 import bibliothek.gui.dock.extension.css.transition.ColorTransitionProperty;
+import bibliothek.gui.dock.extension.css.type.ColorType;
 
 public class TransitionsTest {
 	@Test
@@ -82,6 +83,37 @@ public class TransitionsTest {
 		
 		Assert.assertEquals( Color.BLUE, item.getColor() );
 	}
+	
+
+	@Test
+	public void onesidedProperties(){
+		TestCssScheme scheme = TestCssRules.getAnimatedColorScheme();
+		DefaultCssRule rule = new DefaultCssRule( TestCssRules.selector( "yellow" ) );
+		rule.setProperty( "color", ColorType.convert( Color.YELLOW ) );
+		scheme.addRule( rule );
+	
+		TestItem item = new TestItem( scheme );
+		item.addAnimatedColorProperty();
+		item.to( "yellow" );
+		Assert.assertNull( item.getColor() );
+		scheme.add( item );
+		
+		// going from element without transition
+		Assert.assertEquals( Color.YELLOW, item.getColor() );
+		item.to( "red" );
+		Assert.assertEquals( Color.RED, item.getColor() );
+		
+		// going from element with transition
+		item.to( "yellow" );
+
+		scheme.runAnimations( 5000 );
+		Assert.assertFalse( Color.YELLOW.equals( item.getColor() ) );
+		Assert.assertFalse( Color.RED.equals( item.getColor() ) );
+		scheme.runAnimations( 5050 );
+		Assert.assertEquals( Color.YELLOW, item.getColor() );
+
+	}
+	
 	
 	@Test
 	public void dependingProperties(){

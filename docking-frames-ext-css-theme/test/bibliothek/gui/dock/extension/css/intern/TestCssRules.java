@@ -34,7 +34,7 @@ public class TestCssRules {
 		return scheme;
 	}
 	
-	private static CssSelector selector( String identifier ){
+	public static CssSelector selector( String identifier ){
 		return DefaultCssSelector.selector().any().identifier( identifier ).build();
 	}
 	

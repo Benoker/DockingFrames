@@ -119,6 +119,8 @@ public class DefaultCssScheduler implements CssScheduler{
 			
 			if( execute ){
 				call.execute( now );
+			} else {
+				break;
 			}
 		}
 	}
