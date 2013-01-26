@@ -10,6 +10,7 @@ public class BasicCommonSet extends TutorialSet{
 			NewCStationExample.class,
 			MultiFrameExample.class,
 			TitleWithTextFieldExample.class,
-			OpeningEditors.class );
+			OpeningEditors.class,
+			JDesktopPaneExample.class );
 	}
 }
