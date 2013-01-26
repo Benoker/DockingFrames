@@ -39,11 +39,15 @@ public class WindowProviderWrapper implements WindowProvider{
     
     private List<WindowProviderListener> listeners = new ArrayList<WindowProviderListener>();
     
+    /** the last remembered state of the visibility of the window of this {@link WindowProvider} */
+    private boolean showing = false;
+    
     private WindowProviderListener listener = new WindowProviderListener(){
         public void windowChanged( WindowProvider provider, Window window ) {
             fireWindowChanged( window );
         }
         public void visibilityChanged( WindowProvider provider, boolean showing ){
+        	WindowProviderWrapper.this.showing = showing;
         	fireVisibilityChanged( showing );
         }
     };
@@ -114,8 +118,9 @@ public class WindowProviderWrapper implements WindowProvider{
             if( oldWindow != newWindow ){
                 fireWindowChanged( newWindow );
             }
-            if( oldShowing != newShowing ){
+            if( oldShowing != newShowing || showing != newShowing ){
             	fireVisibilityChanged( newShowing );
+            	showing = newShowing;
             }
         }
     }

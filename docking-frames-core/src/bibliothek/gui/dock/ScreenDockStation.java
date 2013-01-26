@@ -1958,7 +1958,7 @@ public class ScreenDockStation extends AbstractDockStation {
     	        	listener.windowRegistering( this, dockable, newWindow );
     	        }
     	        
-    	        if( visible ){
+    	        if( visible && isShowing() ){
     	        	if( delay == null || delay.intValue() <= 0 ){
     	        		newWindow.setVisible( true );
     	        	}

@@ -16,28 +16,25 @@ public class JTutorialFrame extends JFrame{
 	
 	public JTutorialFrame( String title ){
 		setBounds( 40, 40, 800, 600 );
-		
 		setTitle( title );
-		setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
-		addWindowListener( new WindowAdapter(){
-			public void windowClosing( WindowEvent e ){
-				dispose();
-				for( Runnable onClose : runOnClose ){
-					onClose.run();
-				}
-			}
-		});
+		initWindowListener();
 	}
 	
 	public JTutorialFrame( Class<?> clazz ){
 		setBounds( 40, 40, 800, 600 );
-		
 		Tutorial tutorial = (Tutorial)clazz.getAnnotation( Tutorial.class );
 		setTitle( tutorial == null ? clazz.getSimpleName() : tutorial.title() );
+		initWindowListener();
+	}
+	
+	private void initWindowListener(){
 		setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
 		addWindowListener( new WindowAdapter(){
 			public void windowClosing( WindowEvent e ){
 				dispose();
+			}
+			
+			public void windowClosed( WindowEvent e ){
 				for( Runnable onClose : runOnClose ){
 					onClose.run();
 				}

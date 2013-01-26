@@ -409,13 +409,13 @@ public class DockController {
      * only once.
      */
     public void kill(){
-	    focusObserver.kill();
+    	setRootWindowProvider( null );
+    	focusObserver.kill();
 	    register.kill();
 	    keyboardController.kill();
 	    theme.kill();
 	    extensions.kill();
 	    mouseDispatcher.kill();
-	    setRootWindowProvider( null );
     }
     
     /**
