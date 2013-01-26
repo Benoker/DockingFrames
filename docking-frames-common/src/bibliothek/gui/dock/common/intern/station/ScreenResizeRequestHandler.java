@@ -78,7 +78,7 @@ public class ScreenResizeRequestHandler extends AbstractResizeRequestHandler {
                                 bounds.x + (bounds.width - width)/2, 
                                 bounds.y + (bounds.height - height)/2,
                                 width,
-                                height ), false );
+                                height ) );
             }
         }
     }

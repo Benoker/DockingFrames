@@ -169,7 +169,7 @@ public class ExpandManager{
 		if (window.isFullscreen()){
 			window.setNormalBounds(bounds);
 		} else{
-			window.setWindowBounds(bounds, true);
+			window.setWindowBounds(bounds);
 		}
 	}
 }

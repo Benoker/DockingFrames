@@ -407,7 +407,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     public void setWindowBounds( Rectangle bounds, Position position ){
     	Rectangle valid = getStation().getBoundaryRestriction().check( this, bounds );
     	if( valid == null ){
-    		setWindowBounds( bounds, true );
+    		setWindowBounds( bounds );
     	}
     	else{
     		switch( position ){
@@ -439,11 +439,11 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     				bounds = valid;
     				break;
     		}
-    		setWindowBounds( bounds, true );
+    		setWindowBounds( bounds );
     	}
     }
     
-    public void setWindowBounds( Rectangle bounds, boolean screenCoordinates ){
+    public void setWindowBounds( Rectangle bounds ){
         Rectangle valid = getStation().getBoundaryRestriction().check( this, bounds );
 
         if( valid != null ){

@@ -822,7 +822,7 @@ public class ScreenDockStation extends AbstractDockStation {
 				        window.setController( getController() );
 				        window.setFullscreenStrategy( getFullscreenStrategy() );
 				        window.setDockable( dockable );
-				        window.setWindowBounds( new Rectangle( x, y, width, height ), false );
+				        window.setWindowBounds( new Rectangle( x, y, width, height ) );
 				        window.setVisible( isShowing() );
 				        window.validate();
 				        window.setFullscreen( fullscreen );
@@ -1247,7 +1247,7 @@ public class ScreenDockStation extends AbstractDockStation {
             
             ScreenDockProperty bounds = (ScreenDockProperty)property;
             
-            window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ), false );
+            window.setWindowBounds( new Rectangle( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight() ) );
         }
     }
 
@@ -1327,7 +1327,7 @@ public class ScreenDockStation extends AbstractDockStation {
 	            }
 	        }
 	        
-	        window.setWindowBounds( bounds, false );
+	        window.setWindowBounds( bounds );
 	        window.validate();
 	        
 	        if( !boundsIncludeWindow ){
@@ -1336,7 +1336,7 @@ public class ScreenDockStation extends AbstractDockStation {
 	            if( offset != null ){
 	                Rectangle windowBounds = window.getWindowBounds();
 	                windowBounds = new Rectangle( windowBounds.x + offset.x, windowBounds.y + offset.y, windowBounds.width, windowBounds.height );
-	                window.setWindowBounds( windowBounds, false );
+	                window.setWindowBounds( windowBounds );
 	            }
 	        }
 	        
@@ -1951,7 +1951,7 @@ public class ScreenDockStation extends AbstractDockStation {
     			
     	        newWindow.setController( getController() );
     	        newWindow.setFullscreenStrategy( getFullscreenStrategy() );
-    	        newWindow.setWindowBounds( bounds, true );
+    	        newWindow.setWindowBounds( bounds );
     	        newWindow.setFullscreen( fullscreen );
     	        
     	        for( ScreenDockStationListener listener : screenDockStationListeners() ){
@@ -2325,7 +2325,7 @@ public class ScreenDockStation extends AbstractDockStation {
 	            
 	            Rectangle bounds = window.getWindowBounds();
 	            bounds = new Rectangle( titleX - zero.x, titleY - zero.y, bounds.width, bounds.height );
-	            window.setWindowBounds( bounds, true );
+	            window.setWindowBounds( bounds );
 	        }
 	    }
 

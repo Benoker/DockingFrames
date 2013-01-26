@@ -883,4 +883,8 @@
  ! API: CloseableDockableMenuPiece now sorts its items
  - Bugfix: Replacing a "Placeholder" with a "Leaf" does no longer delete the PlaceholderMap
  - Bugfix: SplitDockStation is more careful when removing placeholders from PlaceholderMaps
- - Bugfix: SplitDockStation does no longer move Dockables after combining if said Dockables have a placeholder   
+ - Bugfix: SplitDockStation does no longer move Dockables after combining if said Dockables have a placeholder
+ 
+[v1.1.2p2b]
+ - Bugfix: fixed an issue where the "InternalDockDialog" could not be dragged properly when its parent window was not at position 0/0.
+ ! API: Removed unnecessary parameter from "ScreenDockWindow.setWindowBounds"   

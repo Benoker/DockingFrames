@@ -265,7 +265,7 @@ public class StickMagnetGraph {
 					Rectangle bounds = request.getInitialBounds( window );
 					bounds.x += dx;
 					bounds.y += dy;
-					window.setWindowBounds( bounds, true );
+					window.setWindowBounds( bounds );
 				}
 				
 				return true;
@@ -674,7 +674,7 @@ public class StickMagnetGraph {
 
 						
 						
-						node.getWindow().setWindowBounds( initial, true );
+						node.getWindow().setWindowBounds( initial );
 					}
 				}
 				node.getConstraints().reset();

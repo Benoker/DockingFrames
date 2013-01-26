@@ -74,7 +74,7 @@ public class InternalFullscreenStrategy implements ScreenDockFullscreenStrategy{
 									ScreenDockStation station = entry.getKey();
 									for( Dockable dockable : entry.getValue() ){
 										ScreenDockWindow window = station.getWindow( dockable );
-										window.setWindowBounds( new Rectangle( 0, 0, desktop.getWidth(), desktop.getHeight() ), false );
+										window.setWindowBounds( new Rectangle( 0, 0, desktop.getWidth(), desktop.getHeight() ) );
 									}
 									entry.setValue( station.getFullscreenChildren() );
 								}
@@ -174,12 +174,12 @@ public class InternalFullscreenStrategy implements ScreenDockFullscreenStrategy{
 	public void setFullscreen( ScreenDockWindow window, boolean fullscreen ){
 		if( fullscreen ){
 			window.setNormalBounds( window.getWindowBounds() );
-			window.setWindowBounds( new Rectangle( 0, 0, desktop.getWidth(), desktop.getHeight() ), false );
+			window.setWindowBounds( new Rectangle( 0, 0, desktop.getWidth(), desktop.getHeight() ) );
 		}
 		else{
 			Rectangle bounds = window.getNormalBounds();
 			if( bounds != null ){
-				window.setWindowBounds( bounds, false );
+				window.setWindowBounds( bounds );
 				window.setNormalBounds( null );
 			}
 		}

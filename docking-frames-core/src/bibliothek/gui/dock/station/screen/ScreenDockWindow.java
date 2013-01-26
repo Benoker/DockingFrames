@@ -189,10 +189,8 @@ public interface ScreenDockWindow {
      * use {@link ScreenDockStation#getBoundaryRestriction()} to check the validity
      * of the new bounds.
      * @param bounds the new location and size
-     * @param screenCoordinates whether the location is relative to the real screen (<code>true</code>)
-     * or relative to the coordinate of this window (<code>false</code>).
      */
-    public void setWindowBounds( Rectangle bounds, boolean screenCoordinates );
+    public void setWindowBounds( Rectangle bounds );
     
     /**
      * Sets the boundaries this window should use if not in fullscreen mode. This boundaries

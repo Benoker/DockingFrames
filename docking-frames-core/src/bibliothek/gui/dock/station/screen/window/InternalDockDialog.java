@@ -27,7 +27,6 @@ package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.Rectangle;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JPanel;
@@ -76,16 +75,6 @@ public class InternalDockDialog extends AbstractScreenDockWindow{
 		Point result = SwingUtilities.convertPoint( component, point, desktop );
 		point.x = result.x;
 		point.y = result.y;
-	}
-	
-	@Override
-	public void setWindowBounds( Rectangle bounds, boolean screenCoordinates ){
-		if( screenCoordinates ){
-			Point location = bounds.getLocation();
-			SwingUtilities.convertPointFromScreen( location, desktop );
-			bounds = new Rectangle( location, bounds.getSize() );
-		}
-		super.setWindowBounds( bounds, false );
 	}
 	
 	public void destroy(){

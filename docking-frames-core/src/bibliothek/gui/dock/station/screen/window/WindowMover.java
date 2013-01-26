@@ -370,7 +370,7 @@ public class WindowMover {
 						bounds = new Rectangle( startBoundaries.x + dx, startBoundaries.y + dy, startBoundaries.width, startBoundaries.height );
 					}
 					bounds = magnet.attract( bounds );
-					window.setWindowBounds( bounds, true );				
+					window.setWindowBounds( bounds );				
 				}
 			}
 		}
