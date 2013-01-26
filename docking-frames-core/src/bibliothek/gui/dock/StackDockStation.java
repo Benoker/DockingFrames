@@ -1646,24 +1646,24 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         }
 
         public void titleTextChanged( Dockable dockable, String oldTitle, String newTitle ) {
-            if( dockables.dockables().size() > 1 ){
-                int index = indexOf( dockable );
+            int index = indexOf( dockable );
+            if( index >= 0 ){
                 updateContent( index );
             }
         }
         
         public void titleToolTipChanged( Dockable dockable, String oldTooltip, String newTooltip ) {
-            if( dockables.dockables().size() > 1 ){
-                int index = indexOf( dockable );
+            int index = indexOf( dockable );
+            if( index >= 0 ){
                 updateContent( index );
             }
         }
 
         public void titleIconChanged( Dockable dockable, Icon oldIcon, Icon newIcon ) {
-            if( dockables.dockables().size() > 1 ){
-                int index = indexOf( dockable );
+            int index = indexOf( dockable );
+            if( index >= 0 ){
                 updateContent( index );
-            }            
+            }           
         }
         
         public void titleExchanged( Dockable dockable, DockTitle title ) {

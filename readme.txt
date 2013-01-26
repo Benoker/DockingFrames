@@ -110,7 +110,7 @@ Maven Snapshot Repository
 		<dependency>
     		<groupId>org.dockingframes</groupId>
     		<artifactId>docking-frames-common</artifactId>
-    		<version>1.1.1-SNAPSHOT</version>
+    		<version>1.1.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -120,7 +120,7 @@ Maven Snapshot Repository
 Maven Release Repository
 
 	you can get latest release from maven central:
-	http://search.maven.org/#artifactdetails|org.dockingframes|docking-frames-common|1.1.0|jar
+	http://search.maven.org/#artifactdetails|org.dockingframes|docking-frames-common|1.1.1|jar
 
 	just add to your pom.xml
 
@@ -128,7 +128,7 @@ Maven Release Repository
 		<dependency>
     		<groupId>org.dockingframes</groupId>
     		<artifactId>docking-frames-common</artifactId>
-    		<version>1.1.0</version>
+    		<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 

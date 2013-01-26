@@ -11,13 +11,15 @@
 
 	<groupId>org.dockingframes</groupId>
 	<artifactId>docking-frames-base</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
 
 		<module>docking-frames-core</module>
 		<module>docking-frames-common</module>
+		<module>docking-frames-ext-toolbar</module>
+		<module>docking-frames-ext-toolbar-common</module>
 
 		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar on
 			maven -->
@@ -162,12 +164,22 @@
 				<role>contributor</role>
 			</roles>
 		</developer>
+                <developer>
+     			<id>krijnschaap@gmail.com</id>
+			<email>krijnschaap@gmail.com</email>
+			<name>Krijn Schaap</name>
+			<properties>
+				<credits>Maintenance of maven build system</credits>
+			</properties>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</developer>
 	</developers>
 
 	<properties>
-
 		<javaVersion>1.5</javaVersion>
-
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<build>
