@@ -508,7 +508,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 if( selected >= 0 && selected < stackComponent.getTabCount() )
                     stackComponent.setSelectedIndex( selected );
                 
-                stackComponent.removeStackDockComponentListener( visibleListener );
+                stackComponent.addStackDockComponentListener( visibleListener );
             }
             
             Component component = stackComponent.getComponent();
