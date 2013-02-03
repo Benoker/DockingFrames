@@ -141,9 +141,7 @@ public class PropertyForwarder {
 		}
 		if( source != null ){
 			T value = source.getProperty( property.getType( scheme ), key );
-			if( value != null ){
-				property.set( value );
-			}
+			property.set( value );
 		}
 		properties.put( key, property );
 		property.addPropertyContainerListener( listener );

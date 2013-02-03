@@ -33,6 +33,7 @@ import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.property.AbstractContainerCssProperty;
 import bibliothek.gui.dock.extension.css.property.AbstractCssPropertyContainer;
+import bibliothek.gui.dock.extension.css.transition.types.InstantCssTransition;
 import bibliothek.util.filter.PresetFilter;
 
 /**
@@ -68,11 +69,17 @@ public abstract class CssTransitionProperty<T> extends AbstractCssPropertyContai
 				throw new IllegalStateException( "the value of this property is set, but the property is not yet in use" );
 			}
 			
-			if( value != null && value != currentTransition ){
+			if( value == null ){
+				// inform the system that this property *may* be involved in an transition
+				value = new InstantCssTransition<T>();
+					
+			}
+			if( value != currentTransition ){
 				value.setType( CssTransitionProperty.this.getType( scheme ) );
 				value.setPropertyFilter( new PresetFilter<CssPropertyKey>( propertyKey ) );
 				scheme.animate( item, propertyKey, value );
 			}
+			
 			currentTransition = value;
 		}
 	};

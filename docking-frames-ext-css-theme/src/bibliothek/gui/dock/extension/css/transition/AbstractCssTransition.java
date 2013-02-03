@@ -35,15 +35,14 @@ import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.property.AbstractCssPropertyContainer;
-import bibliothek.gui.dock.extension.css.property.IntegerCssProperty;
 import bibliothek.gui.dock.extension.css.transition.scheduler.CssSchedulable;
 import bibliothek.gui.dock.extension.css.transition.scheduler.CssScheduler;
 import bibliothek.util.Filter;
 
 /**
- * This  blends one type of item slowly into another type of item. The  can observe one or many
- * properties of type <code>T</code>. If these properties have any sub-properties, then sub-s can be used
- * to modify them as well.
+ * This transition offers methods that can help to blend one type of item slowly into another type of item. 
+ * The {@link AbstractCssTransition} can observe one or many properties of type <code>T</code>. 
+ * If these properties have any sub-properties, then sub-s can be used to modify them as well.
  * @author Benjamin Sigg
  * @param <T> the type of item this  handles
  */
@@ -53,32 +52,11 @@ public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContai
 	private CssRule target;
 	private Filter<CssPropertyKey> propertyFilter;
 	
-	private int duration = 500;
-	private int time = 0;
-	
 	/** the list of properties which either are animated or required for the  */
 	private Map<CssPropertyKey, AnimatedProperty<?>> properties = new HashMap<CssPropertyKey, AnimatedProperty<?>>();
 	
 	private CssType<T> type;
-	
-	private CssPropertyKey durationKey;
-	private IntegerCssProperty durationProperty = new IntegerCssProperty(){
-		@Override
-		public void set( Integer value ){
-			if( value == null ){
-				duration = 500;
-			}
-			else{
-				duration = value;
-			}
-		}
-		
-		@Override
-		public void setScheme( CssScheme scheme, CssPropertyKey key ){
-			durationKey = key;
-		}
-	};
-	
+
 	private CssRuleListener listener = new CssRuleListener(){
 		@Override
 		public void selectorChanged( CssRule source ){
@@ -111,9 +89,6 @@ public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContai
 	
 	@Override
 	public boolean isInput( CssPropertyKey key ){
-		if( key.equals( durationKey ) ){
-			return true;
-		}
 		for( AnimatedProperty<?> value : properties.values() ){
 			if( value.dependencies.containsKey( key )){
 				return true;
@@ -124,14 +99,11 @@ public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContai
 	
 	@Override
 	public String[] getPropertyKeys(){
-		return new String[]{ "duration" };
+		return new String[]{};
 	}
 
 	@Override
 	public CssProperty<?> getProperty( String key ){
-		if( "duration".equals( key )){
-			return durationProperty;
-		}
 		return null;
 	}
 	
@@ -155,23 +127,24 @@ public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContai
 		}
 	}
 	
-	@Override
-	public void step( int delay ){
-		if( delay != -1 ){
-			time += delay;
+	/**
+	 * Sets the progress of the animation and schedules a new call to {@link #step(int)}. 
+	 * @param progress the current progress, between <code>0</code> and <code>1</code>
+	 */
+	protected void updateProgress( double progress ){
+		for( AnimatedProperty<?> next : properties.values()){
+			next.updateProgress( progress );
 		}
-		if( time > duration ){
-			for( AnimatedProperty<?> next : properties.values()){
-				next.end();
-			}
-		}
-		else{
-			double progress = time / (double)duration;
-			for( AnimatedProperty<?> next : properties.values()){
-				next.updateProgress( progress );
-			}
-			callback.step();
-		}
+		callback.step();		
+	}
+	
+	/**
+	 * Informs all properties that the animation is over.
+	 */
+	protected void endAnimation(){
+		for( AnimatedProperty<?> next : properties.values()){
+			next.end();
+		}		
 	}
 	
 	@Override

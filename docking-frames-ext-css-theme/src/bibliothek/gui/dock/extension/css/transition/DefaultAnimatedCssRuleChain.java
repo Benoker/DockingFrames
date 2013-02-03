@@ -110,6 +110,20 @@ public class DefaultAnimatedCssRuleChain implements TransitionalCssRuleChain{
 		return new DefaultTransitionalCssRule( root );
 	}
 	
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append( getClass().getSimpleName() ).append( "[item=" ).append( item ).append( ", chain={" );
+		
+		Link link = head;
+		while( link != null ){
+			builder.append( "\n  " ).append( link );
+			link = link.next;
+		}
+		builder.append( "\n}]" );
+		return builder.toString();
+	}
+	
 	private class Link implements RuleChainLink{
 		private List<RuleChainLinkListener> listeners = new ArrayList<RuleChainLinkListener>( 2 );
 		private TransitionalCssRule rule;
@@ -119,6 +133,11 @@ public class DefaultAnimatedCssRuleChain implements TransitionalCssRuleChain{
 		public Link( CssRule root ){
 			rule = createRule( root );
 			rule.inserted( this );
+		}
+		
+		@Override
+		public String toString(){
+			return getClass().getSimpleName() + "[rule=" + rule + "]";
 		}
 		
 		@Override

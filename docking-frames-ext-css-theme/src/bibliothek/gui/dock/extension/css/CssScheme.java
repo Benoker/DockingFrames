@@ -47,9 +47,9 @@ import bibliothek.gui.dock.extension.css.transition.scheduler.CssScheduler;
 import bibliothek.gui.dock.extension.css.transition.scheduler.DefaultCssScheduler;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
 import bibliothek.gui.dock.extension.css.type.ColorType;
-import bibliothek.gui.dock.extension.css.type.CssTransitionType;
 import bibliothek.gui.dock.extension.css.type.CssPaintType;
 import bibliothek.gui.dock.extension.css.type.CssShapeType;
+import bibliothek.gui.dock.extension.css.type.CssTransitionType;
 import bibliothek.gui.dock.extension.css.type.IntegerType;
 
 /**

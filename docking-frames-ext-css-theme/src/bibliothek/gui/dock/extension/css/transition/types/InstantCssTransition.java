@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,16 +27,21 @@ package bibliothek.gui.dock.extension.css.transition.types;
 
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.transition.AnimatedCssTransition;
+import bibliothek.gui.dock.extension.css.transition.AbstractCssTransition;
+import bibliothek.gui.dock.extension.css.transition.CssTransition;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
- * An transition property fading one {@link CssPaint} into another.
+ * This specialized {@link CssTransition} instantly finishes the transition.
  * @author Benjamin Sigg
- * @param <T> the type of value this transition will handle
+ * @param <T> the type of item this  handles 
  */
-public class LinearCssTransition<T> extends AnimatedCssTransition<T>{
+public class InstantCssTransition<T> extends AbstractCssTransition<T>{
+	@Override
+	public void step( int delay ){
+		endAnimation();
+	}
+
 	@Override
 	protected TransitionalCssProperty<T> createProperty( CssType<T> type, CssPropertyKey key ){
 		return type.createTransition();
