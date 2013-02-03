@@ -89,20 +89,22 @@ public class Leaf extends SpanSplitNode{
     @Override
     public Dimension getMinimumSize() {
     	SplitDockStation station = getStation();
-    	Dimension minimum;
-    	if( station == null ){
-    		minimum = new Dimension( 0, 0 );
-    	}
-    	else{
-    		minimum = station.getMinimumLeafSize();
+    	DockableDisplayer displayer = null;
+    	if( handle != null ){
+    		displayer = handle.getDisplayer();
     	}
     	
-    	if( handle == null )
+    	if( displayer == null ){
+	    	Dimension minimum;
+	    	if( station == null ){
+	    		minimum = new Dimension( 0, 0 );
+	    	}
+	    	else{
+	    		minimum = station.getMinimumLeafSize();
+	    	}
     		return minimum;
+    	}
     	
-    	DockableDisplayer displayer = handle.getDisplayer();
-    	if( displayer == null )
-    		return new Dimension( 0, 0 );
     	return displayer.getComponent().getMinimumSize();
     }
     

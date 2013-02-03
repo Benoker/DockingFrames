@@ -343,7 +343,7 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
             divider = (leftNeed + dividerNeed / 2) / ( leftNeed + rightNeed + dividerNeed );
         else if( divider * size < leftNeed + dividerNeed / 2 )
             divider = (leftNeed + dividerNeed / 2) / size;
-        else if( divider*size > size - rightNeed - dividerNeed / 2 )
+        else if( divider * size > size - rightNeed - dividerNeed / 2 )
             divider = (size - rightNeed - dividerNeed / 2) / size;
         
         return divider;

@@ -123,7 +123,7 @@ public class DisplayerContentPane extends ConfiguredBackgroundPanel{
 	}
 	@Override
 	public Dimension getMaximumSize(){
-	Dimension base;
+		Dimension base;
     	
     	if( title == null && dockable != null )
     		base = dockable.getMaximumSize();

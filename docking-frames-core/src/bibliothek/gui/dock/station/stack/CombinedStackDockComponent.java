@@ -385,20 +385,32 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		else {
 			insets = new Insets( insets.top, insets.left, insets.bottom, insets.right );
 		}
-
-		/*
-		Border border = panel.getBorder();
-		if( border != null ){
-			Insets borderInsets = border.getBorderInsets( panel );
-			insets.left += borderInsets.left;
-			insets.top += borderInsets.top;
-			insets.right += borderInsets.right;
-			insets.bottom += borderInsets.bottom;
-		}
-		*/
-
 		return new Rectangle( insets.left, insets.top, Math.max( 1, panel.getWidth() - insets.left - insets.right ), Math.max( 1, panel.getHeight()
 				- insets.top - insets.bottom ) );
+	}
+	
+	@Override
+	public Dimension getMinimumSize(){
+		Dimension result = super.getMinimumSize();
+		Insets insets = panel.getInsets();
+		if( insets != null ){
+			result = new Dimension( 
+					result.width + insets.left + insets.right,
+					result.height + insets.top + insets.bottom );
+		}
+		return result;
+	}
+	
+	@Override
+	public Dimension getPreferredSize(){
+		Dimension result = super.getPreferredSize();
+		Insets insets = panel.getInsets();
+		if( insets != null ){
+			result = new Dimension( 
+					result.width + insets.left + insets.right,
+					result.height + insets.top + insets.bottom );
+		}
+		return result;
 	}
 
 	public Rectangle getSelectedBounds(){

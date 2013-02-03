@@ -40,9 +40,8 @@ import bibliothek.gui.dock.themes.basic.BasicDockableDisplayerDecorator;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
- * The new {@link DockableDisplayer} used by the {@link EclipseTheme}. This class replaces
- * {@link EclipseDockableDisplayer}. Other than its predecessor, this class also supports showing a {@link DockTitle}.<br>
- * In a future release this class will be renamed to {@link EclipseDockableDisplayer}.
+ * The {@link EclipseDockableDisplayer} is used to present {@link Dockable}s with the {@link TitleBar#ECLIPSE} 
+ * look. This class also supports showing a {@link DockTitle}.
  * @author Benjamin Sigg
  */
 public class EclipseDockableDisplayer extends BasicDockableDisplayer{

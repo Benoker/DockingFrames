@@ -131,7 +131,8 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	}
 	
 	/**
-	 * Gets the minimal size that {@link #getAvailableArea()} should return. 
+	 * Gets the minimal size required to have a big enough {@link #getAvailableArea()} to show
+	 * all content. 
 	 * @return the minimal size
 	 */
 	public Dimension getMinimumSize(){
@@ -145,7 +146,8 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	}
 	
 	/**
-	 * Gets the preferred size that {@link #getAvailableArea()} should return.
+	 * Gets the preferred size required to have a big enough {@link #getAvailableArea()} to show
+	 * all content.
 	 * @return the preferred size
 	 */
 	public Dimension getPreferredSize(){

@@ -890,4 +890,5 @@
  ! API: Removed unnecessary parameter from "ScreenDockWindow.setWindowBounds"
  
 [v1.1.2p2c]
- - Bugfix: StackDockStation did not properly add a listener to its StackDockComponent when the component was set and the station already had children. As a result using the overflow-menu for selecting a Dockable did not trigger a focus change.    
+ - Bugfix: StackDockStation did not properly add a listener to its StackDockComponent when the component was set and the station already had children. As a result using the overflow-menu for selecting a Dockable did not trigger a focus change.
+ - Bugfix: Fixed an issue where the insets of the EclipseBorder was ignored when calculating the minimum/preferred size of a Dockable.    

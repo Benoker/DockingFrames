@@ -158,6 +158,6 @@ public class EclipseBorder extends AbstractEclipseBorder {
 	}
 
 	public Insets getBorderInsets(Component c) {
-		return new Insets(1, 1, 1, 1);
+		return new Insets( 1, 1, 1, 1 );
 	}
 }
