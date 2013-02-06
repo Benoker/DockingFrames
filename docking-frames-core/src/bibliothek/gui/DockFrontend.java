@@ -1135,7 +1135,11 @@ public class DockFrontend {
     /**
      * Sets the default setting for {@link #setHideable(Dockable, boolean)}. This
      * default value is stored as soon as the identifier of a {@link Dockable} 
-     * becomes known and further changes of the default value will not affect it. 
+     * becomes known and further changes of the default value will not affect it.<br>
+     * As a side effect a value of <code>false</code> will make new, unmodified {@link Dockable}s
+     * visible when loading a layout (by calling a method like {@link #readXML(XElement)}).<br>
+     * The default value is <code>false</code>, because the most simple applications will
+     * not offer any way of making an invisible {@link Dockable} visible again.
      * @param defaultHideable the default value
      * @see #setHideable(Dockable, boolean)
      */
@@ -1167,8 +1171,11 @@ public class DockFrontend {
     }
     
     /**
-     * Sets whether to show add a close-action or not to <code>dockable</code>.
-     * Changes are affected immediately.
+     * Sets whether to show a close-action for <code>dockable</code>. Changing this
+     * property has an immediate effect on the action.<br>
+     * As a side effect any non-hideable {@link Dockable} will become visible if a new layout
+     * is loaded by calling a method like {@link #setCurrentSetting(String)} or
+     * {@link #readXML(XElement)}.
      * @param dockable the element whose state will be changed
      * @param hideable the new state
      * @throws IllegalArgumentException if <code>dockable</code> is not known 
