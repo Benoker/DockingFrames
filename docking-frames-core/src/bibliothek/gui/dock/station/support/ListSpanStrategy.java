@@ -37,7 +37,6 @@ import bibliothek.gui.dock.station.span.SpanCallback;
 import bibliothek.gui.dock.station.span.SpanMode;
 import bibliothek.gui.dock.station.span.SpanUsage;
 import bibliothek.gui.dock.themes.StationSpanFactoryValue;
-import bibliothek.gui.dock.themes.ThemeManager;
 
 /**
  * Manages the {@link Span}s of a {@link DockStation} that orderes its {@link Dockable}s like a list.
@@ -65,7 +64,7 @@ public abstract class ListSpanStrategy {
 	 */
 	public ListSpanStrategy( String spanFactoryId, DockStation station ){
 		this.station = station;
-		factory = new StationSpanFactoryValue( ThemeManager.SPAN_FACTORY + ".flap", station ){
+		factory = new StationSpanFactoryValue( spanFactoryId, station ){
 			@Override
 			protected void changed(){
 				teaser = null;
@@ -164,7 +163,9 @@ public abstract class ListSpanStrategy {
 	 * @param index the index of the new {@link Dockable}
 	 */
 	public void tease( int index ){
-		teaser.mutate( SpanMode.TEASING );
+		if( teaser != null ){
+			teaser.mutate( SpanMode.TEASING );
+		}
 		for( int i = 0, n = spans.size(); i<n; i++ ){
 			if( i == index ){
 				spans.get( i ).mutate( SpanMode.OPEN );
@@ -191,7 +192,9 @@ public abstract class ListSpanStrategy {
 	 * Makes all {@link Span}s invisible.
 	 */
 	public void untease(){
-		teaser.mutate( SpanMode.OFF );
+		if( teaser != null ){
+			teaser.mutate( SpanMode.OFF );
+		}
 		for( Span button : spans ){
 			button.mutate( SpanMode.OFF );
 		}
@@ -202,6 +205,9 @@ public abstract class ListSpanStrategy {
 	 * @return the current minimum size
 	 */
 	public int getTeasing(){
+		if( teaser == null ){
+			return 0;
+		}
 		return teaser.getSize();
 	}
 	
