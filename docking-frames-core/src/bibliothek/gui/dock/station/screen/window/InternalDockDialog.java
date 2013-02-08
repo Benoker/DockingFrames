@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Point;
 
 import javax.swing.JDesktopPane;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -52,22 +53,49 @@ public class InternalDockDialog extends AbstractScreenDockWindow{
 	 * @param desktop the parent of this dialog
 	 */
 	public InternalDockDialog( ScreenDockStation station, WindowConfiguration configuration, JDesktopPane desktop ){
+		this( station, configuration, desktop, JDesktopPane.MODAL_LAYER );
+	}
+
+	/**
+	 * Creates the new dialog
+	 * @param station the owner of this dialog
+	 * @param configuration the configuration to apply during creation of this window
+	 * @param desktop the parent of this dialog
+	 * @param layer the layer in which to show this dialog, a constant like {@link JLayeredPane#MODAL_LAYER}
+	 */
+	public InternalDockDialog( ScreenDockStation station, WindowConfiguration configuration, JDesktopPane desktop, int layer ){
 		super( station, configuration );
 		this.desktop = desktop;
-		initDialog( configuration );
+		initDialog( configuration, layer );
 	}
 	
-	private void initDialog( WindowConfiguration configuration ){
+	private void initDialog( WindowConfiguration configuration, int layer ){
 		dialog = new JPanel();
 		dialog.setVisible( false );
 		desktop.add( dialog );
-		desktop.setLayer( dialog, JDesktopPane.MODAL_LAYER );
+		desktop.setLayer( dialog, layer );
 		
 		if( configuration.isTransparent() ){
 			dialog.setOpaque( false );
 		}
 		
 		init( dialog, dialog, configuration, true );
+	}
+	
+	/**
+	 * Gets the layer at which this dialog appers in its parent {@link JDesktopPane}.
+	 * @return the layer
+	 */
+	public int getLayer(){
+		return desktop.getLayer( (Component)dialog );
+	}
+	
+	/**
+	 * Sets the layer at which this dialog appears.
+	 * @param layer the new layer, a constant like {@link JLayeredPane#MODAL_LAYER}
+	 */
+	public void setLayer( int layer ){
+		desktop.setLayer( dialog, layer );
 	}
 	
 	@Override
