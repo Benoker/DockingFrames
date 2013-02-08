@@ -434,7 +434,20 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 */
 	@Override
 	public ToolbarStrategy getToolbarStrategy(){
-		final SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, getController() );
+		DockController controller = getController();
+		DockStation parent = getDockParent();
+		while( controller == null && parent != null ){
+			controller = parent.getController();
+			Dockable parentDockable = parent.asDockable();
+			if( parentDockable == null ){
+				parent = null;
+			}
+			else{
+				parent = parentDockable.getDockParent();
+			}
+		}
+		
+		final SilentPropertyValue<ToolbarStrategy> value = new SilentPropertyValue<ToolbarStrategy>( ToolbarStrategy.STRATEGY, controller );
 		final ToolbarStrategy result = value.getValue();
 		value.setProperties( (DockController) null );
 		return result;
