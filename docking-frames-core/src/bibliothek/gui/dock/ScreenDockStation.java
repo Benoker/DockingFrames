@@ -1032,8 +1032,12 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         Dimension preferred = dropSizeStrategy.getValue().getAddSize( this, dockable );
-        Rectangle rect = new Rectangle( x, y, Math.max( preferred.width, 100 ), Math.max( preferred.height, 100 ));
-        addDockable( dockable, rect );
+        int width = Math.max( preferred.width, 100 );
+        int height = Math.max( preferred.height, 100 );
+        
+        if( !drop( dockable, new ScreenDockProperty( x, y, width, height ) ) ){
+        	addDockable( dockable, new Rectangle( x, y, width, height ) );
+        }
     }
 
     public DockableProperty getDockableProperty( Dockable dockable, Dockable target ) {

@@ -896,4 +896,6 @@
 [v1.1.2p2d]
  - API: Made ListSpanStrategy more resilient against early calls to its methods (it did throw an NPE)
  - Bugfix: ListSpanStrategy did not respect the parameter "spanFactoryId" in its constructor
- - API: InternalScreenDockWindowFactory supports setting the layer of the newly created dialogs 
+ - API: InternalScreenDockWindowFactory supports setting the layer of the newly created dialogs
+ - Bugfix: Made ScreenDockStation aware of extensions when calling the drop(Dockable) method
+ - Bugfix: Made ToolbarGroupDockStation searching for a DockController by its parents when missing one 
