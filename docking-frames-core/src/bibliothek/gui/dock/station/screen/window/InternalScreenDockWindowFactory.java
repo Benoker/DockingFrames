@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.station.screen.window;
 
 import javax.swing.JDesktopPane;
+import javax.swing.JLayeredPane;
 
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.InternalBoundaryRestriction;
@@ -41,6 +42,9 @@ public class InternalScreenDockWindowFactory implements ScreenDockWindowFactory{
 	/** the parent for new windows */
 	private JDesktopPane desktop;
 	
+	/** the layer in which new {@link InternalDockDialog}s will appear */
+	private int screenDockWindowLayer = JDesktopPane.MODAL_LAYER;
+	
 	/**
 	 * Creates the factory. All windows will have <code>desktop</code> as parent.
 	 * @param desktop the parent for new windows
@@ -52,11 +56,31 @@ public class InternalScreenDockWindowFactory implements ScreenDockWindowFactory{
 		this.desktop = desktop;
 	}
 	
+	/**
+	 * Sets the layer in which new {@link InternalDockDialog}s will appear. The default value
+	 * for this property is {@link JLayeredPane#MODAL_LAYER}. Please have a look at
+	 * {@link JLayeredPane#setLayer(java.awt.Component, int)} to learn more about the meaning
+	 * of this integer.
+	 * @param screenDockWindowLayer the layer, a constant like {@link JLayeredPane#MODAL_LAYER}
+	 */
+	public void setScreenDockWindowLayer( int screenDockWindowLayer ){
+		this.screenDockWindowLayer = screenDockWindowLayer;
+	}
+	
+	/**
+	 * Gets the layer in which new {@link InternalDockDialog}s will appear.
+	 * @return the layer
+	 * @see #setScreenDockWindowLayer(int)
+	 */
+	public int getScreenDockWindowLayer(){
+		return screenDockWindowLayer;
+	}
+	
 	public ScreenDockWindow updateWindow( ScreenDockWindow window, WindowConfiguration configuration, ScreenDockStation station ){
 		return null;
 	}
 	
 	public ScreenDockWindow createWindow( ScreenDockStation station, WindowConfiguration configuration ){
-		return new InternalDockDialog( station, configuration, desktop );
+		return new InternalDockDialog( station, configuration, desktop, getScreenDockWindowLayer() );
 	}
 }
