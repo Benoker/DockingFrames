@@ -895,4 +895,5 @@
  
 [v1.1.2p2d]
  - API: Made ListSpanStrategy more resilient against early calls to its methods (it did throw an NPE)
- - Bugfix: ListSpanStrategy did not respect the parameter "spanFactoryId" in its constructor 
+ - Bugfix: ListSpanStrategy did not respect the parameter "spanFactoryId" in its constructor
+ - API: InternalScreenDockWindowFactory supports setting the layer of the newly created dialogs 
