@@ -60,14 +60,30 @@ public interface ScreenDockWindowBorder extends Border{
 	
 	/**
 	 * Sets the size of the corners in pixels. If the mouse is in a corner, then the window
-	 * can be resized in two dimensions.
+	 * can be resized in two dimensions.<br>
+	 * This property is only important if the window is {@link #setResizeable(boolean) resizeable}, otherwise
+	 * it can be ignored
 	 * @param cornerSize the size in pixels, at least 0
 	 */
 	public void setCornerSize( int cornerSize );
 	
 	/**
-	 * Sets the size of the area at the top that can be grabbed and used to move the window. 
+	 * Sets the size of the area at the top that can be grabbed and used to move the window.<br>
+	 * This property is only important if the window is {@link #setMoveable(boolean) moveable}, otherwise
+	 * it can be ignored. 
 	 * @param moveSize the size, at least 0
 	 */
 	public void setMoveSize( int moveSize );
+	
+	/**
+	 * Informs this border whether the window can be moved by grabbing <code>this</code>.
+	 * @param moveable whether the window can be moved
+	 */
+	public void setMoveable( boolean moveable );
+	
+	/**
+	 * Informs this border whether the window can be resized by grabbing <code>this</code>.
+	 * @param resizeable whether the window can be resized
+	 */
+	public void setResizeable( boolean resizeable );
 }

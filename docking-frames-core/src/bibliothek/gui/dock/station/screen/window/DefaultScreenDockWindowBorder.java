@@ -82,6 +82,11 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 	/** size of the "title" at the top in pixels */
 	private int moveSize = 0;
 	
+	/** whether the window can be moved */
+	private boolean moveable = false;
+	/** whether the window can be resized */
+	private boolean resizeable = false;
+	
 	/** where the mouse is currently hovering */
 	private Position mouseOver = Position.NOTHING;
 	/** where the mouse is currently pressed */
@@ -225,6 +230,30 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		return moveSize;
 	}
 	
+	public void setMoveable( boolean moveable ){
+		this.moveable = moveable;	
+	}
+	
+	/**
+	 * Tells whether the window can be moved by grabbing <code>this</code> border.
+	 * @return whether the window can be moved
+	 */
+	public boolean isMoveable(){
+		return moveable;
+	}
+	
+	public void setResizeable( boolean resizeable ){
+		this.resizeable = resizeable;	
+	}
+	
+	/**
+	 * Tells whether the window can be resized by grabbing <code>this</code> border.
+	 * @return whether the window can be resized
+	 */
+	public boolean isResizeable(){
+		return resizeable;
+	}
+	
 	/**
 	 * Sets whether dividing lines are to be painted or not 
 	 * @param drawDividers <code>true</code> if lines should be painted
@@ -265,8 +294,12 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 	}
 	
 	public Insets getBorderInsets( Component c ){
-		return new Insets( 5, 4, 4, 4 );
-//		return new Insets( 15, 9, 9, 9 );
+		if( isResizeable() ){
+			return new Insets( 5, 4, 4, 4 );
+		}
+		else{
+			return new Insets( 5, 0, 0, 0 );
+		}
 	}
 
 	public boolean isBorderOpaque(){
@@ -274,31 +307,66 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 	}
 
 	public void paintBorder( Component c, Graphics g, int x, int y, int width, int height ){
+		PaintParameters parameters = new PaintParameters( width, height, c );
+		
 		Color oldColor = g.getColor();
 		g.translate( x, y );
 		
-		Insets insets = getBorderInsets( c );
+		paintTop( c, g, parameters );
 		
-		int hWidth = width/2;
-		int titleLeft = x+hWidth-moveSize/2;
-		int titleRight = x+hWidth+moveSize/2;
+		if( isResizeable() ){
+			paintTopLeft( c, g, parameters );
+			paintTopRight( c, g, parameters );
+			paintLeft( c, g, parameters );
+			paintRight( c, g, parameters );
+			paintBottom( c, g, parameters );
+			paintBottomLeft( c, g, parameters );
+			paintBottomRight( c, g, parameters );
+			if( drawDividers ){
+				paintDividingLines( c, g, parameters );
+			}
+		}
 		
-		int corner = Math.max( cornerSize, Math.max( Math.max( insets.top, insets.bottom ), Math.max( insets.left, insets.right ) ) );
+		g.translate( -x, -y );
+		g.setColor( oldColor );
+	}
+	
+	private void paintTop( Component c, Graphics g, PaintParameters p ){
+		if( moveSize > 0 && isMoveable() ){
+			paintTopWithMove( c, g, p );
+		}
+		else{
+			paintTopWithoutMove( c, g, p );
+		}
+
+	}
+	
+	private void paintTopWithMove( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
 		
-		// title
-		if( moveSize > 0 ){
-			if( insets.top > 2 ){
-				g.setColor( getColor( c, Position.MOVE ) );
-				g.fillRect( titleLeft, 0, titleRight-titleLeft, insets.top-2 );
-			}			
-			
-			g.setColor( getColor( c, false, false, Position.MOVE ) );
-			g.drawLine( titleLeft, insets.top-2, titleRight-1, insets.top-2 );
-			
-			g.setColor( getColor( c, true, false, Position.MOVE ) );
-			g.drawLine( titleLeft, insets.top-1, titleRight-1, insets.top-1 );
-			
-			// top
+		int corner = p.corner;
+		Insets insets = p.insets;
+		int titleLeft = p.titleLeft;
+		int titleRight = p.titleRight;
+		
+		if( !isResizeable() ){
+			titleLeft = 0;
+			titleRight = width;
+		}
+		
+		if( insets.top > 2 ){
+			g.setColor( getColor( c, Position.MOVE ) );
+			g.fillRect( titleLeft, 0, titleRight-titleLeft, insets.top-2 );
+		}			
+		
+		g.setColor( getColor( c, false, false, Position.MOVE ) );
+		g.drawLine( titleLeft, insets.top-2, titleRight-1, insets.top-2 );
+		
+		g.setColor( getColor( c, true, false, Position.MOVE ) );
+		g.drawLine( titleLeft, insets.top-1, titleRight-1, insets.top-1 );
+		
+		// top
+		if( isResizeable() ){
 			if( insets.top > 2 ){
 				g.setColor( getColor( c, Position.N ) );
 				g.fillRect( corner, 0, titleLeft - corner, insets.top-2 );
@@ -312,19 +380,29 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 			g.drawLine( corner, insets.top-1, titleLeft-1, insets.top-1 );
 			g.drawLine( titleRight, insets.top-1, width-corner-1, insets.top-1 );
 		}
-		else{
-			if( insets.bottom > 2 ){
-				g.setColor( getColor( c, Position.N ) );
-				g.fillRect( corner, 0, width-2*corner, insets.top-2 );
-			}
-			g.setColor( getColor( c, false, false, Position.N ) );
-			g.drawLine( corner, insets.top-2, width-corner-1, insets.top-2 );
-			
-			g.setColor( getColor( c, true, false, Position.N ) );
-			g.drawLine( corner, insets.top-1, width-corner-1, insets.top-1 );
-		}
+	}
+	
+	private void paintTopWithoutMove( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
 		
-		// top left
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
+		if( insets.bottom > 2 ){
+			g.setColor( getColor( c, Position.N ) );
+			g.fillRect( corner, 0, width-2*corner, insets.top-2 );
+		}
+		g.setColor( getColor( c, false, false, Position.N ) );
+		g.drawLine( corner, insets.top-2, width-corner-1, insets.top-2 );
+		
+		g.setColor( getColor( c, true, false, Position.N ) );
+		g.drawLine( corner, insets.top-1, width-corner-1, insets.top-1 );
+	}
+	
+	private void paintTopLeft( Component c, Graphics g, PaintParameters p ){
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
 		if( insets.top > 2 ){
 			g.setColor( getColor( c, Position.NW ) );
 			g.fillRect( 0, 0, corner, insets.top-2 );
@@ -340,8 +418,14 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		g.setColor( getColor( c, true, false, Position.NW ) );
 		g.drawLine( insets.left-1, insets.top-1, corner-1, insets.top-1 );
 		g.drawLine( insets.left-1, insets.top-1, insets.left-1, corner-1 );
+	}
+	
+	private void paintTopRight( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
 		
-		// top right
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
 		if( insets.top > 2 ){
 			g.setColor( getColor( c, Position.NE ) );
 			g.fillRect( width-corner, 0, corner, insets.top-2 );
@@ -359,8 +443,14 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		g.drawLine( width-corner, insets.top-1, width-insets.right-1, insets.top-1 );
 		g.setColor( getColor( c, true, true, Position.NE ) );
 		g.drawLine( width-insets.right, insets.top-1, width-insets.right, corner-1 );
+	}
+	
+	private void paintLeft( Component c, Graphics g, PaintParameters p ){
+		int height = p.height;
 		
-		// left
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
 		if( insets.left > 2 ){
 			g.setColor( getColor( c, Position.W ) );
 			g.fillRect( 0, corner, insets.left-2, height-2*corner );
@@ -369,9 +459,16 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		g.drawLine( insets.left-2, corner, insets.left-2, height-corner-1 );
 		
 		g.setColor( getColor( c, true, false, Position.W ) );
-		g.drawLine( insets.left-1, corner, insets.left-1, height-corner-1 );
+		g.drawLine( insets.left-1, corner, insets.left-1, height-corner-1 );		
+	}
+	
+	private void paintRight( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
+		int height = p.height;
 		
-		// right
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
 		if( insets.right > 2 ){
 			g.setColor( getColor( c, Position.E ) );
 			g.fillRect( width-insets.right+2, corner, insets.right-2, height-2*corner );
@@ -381,8 +478,15 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		
 		g.setColor( getColor( c, true, true, Position.E ) );
 		g.drawLine( width-insets.right, corner, width-insets.right, height-corner-1 );
+	}
+	
+	private void paintBottom( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
+		int height = p.height;
 		
-		// bottom
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
 		if( insets.bottom > 2 ){
 			g.setColor( getColor( c, Position.S ) );
 			g.fillRect( corner, height-insets.bottom+2, width-2*corner, insets.bottom-2 );
@@ -393,8 +497,14 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		
 		g.setColor( getColor( c, false, true, Position.S ) );
 		g.drawLine( corner, height-insets.bottom+1, width-corner-1, height-insets.bottom+1 );
+	}
+	
+	private void paintBottomLeft( Component c, Graphics g, PaintParameters p ){
+		int height = p.height;
 		
-		// bottom left
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
 		if( insets.left > 2 ){
 			g.setColor( getColor( c, Position.SW ) );
 			g.fillRect( 0, height-corner, insets.left-2, corner );
@@ -412,8 +522,15 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		g.drawLine( insets.left-1, height-insets.bottom, corner-1, height-insets.bottom );
 		g.setColor( getColor( c, false, true, Position.SW ) );
 		g.drawLine( insets.left-2, height-insets.bottom+1, corner-1, height-insets.bottom+1 );
+	}
+	
+	private void paintBottomRight( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
+		int height = p.height;
 		
-		// bottom right
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
 		if( insets.right > 2 ){
 			g.setColor( getColor( c, Position.SE) );
 			g.fillRect( width-insets.right+2, height-corner, insets.right-2, corner );
@@ -428,94 +545,161 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 		g.setColor( getColor( c, false, true, Position.SE ) );
 		g.drawLine( width-corner, height-insets.bottom+1, width-insets.right, height-insets.bottom+1 );
 		g.drawLine( width-insets.right+1, height-corner, width-insets.right+1, height-insets.bottom+1 );
-		
-		// dividing lines
-		if( drawDividers ){
-			// top
-			if( moveSize > 0 ){
-				if( insets.top > 2 ){
-					g.setColor( getLine( c ) );
-					g.drawLine( corner, 0, corner, insets.top-3 );
-					g.drawLine( titleLeft, 0, titleLeft, insets.top-3 );
-					g.drawLine( titleRight-1, 0, titleRight-1, insets.top-3 );
-					g.drawLine( width-corner-1, 0, width-corner-1, insets.top-3 );
-				}
-				g.setColor( getLine( c, true, false ) );
-				g.drawLine( corner, insets.top-1, corner, insets.top-1 );
-				g.drawLine( titleLeft, insets.top-1, titleLeft, insets.top-1 );
-				g.drawLine( titleRight-1, insets.top-1, titleRight-1, insets.top-1 );
-				g.drawLine( width-corner-1, insets.top-1, width-corner-1, insets.top-1 );
-				
-				g.setColor( getLine( c, false, false ) );
-				g.drawLine( corner, insets.top-2, corner, insets.top-2 );
-				g.drawLine( titleLeft, insets.top-2, titleLeft, insets.top-2 );
-				g.drawLine( titleRight-1, insets.top-21, titleRight-1, insets.top-2 );
-				g.drawLine( width-corner-1, insets.top-2, width-corner-1, insets.top-2 );
-			}
-			else{
-				if( insets.top > 2 ){
-					g.setColor( getLine( c ) );
-					g.drawLine( corner, 0, corner, insets.top-3 );
-					g.drawLine( width-corner-1, 0, width-corner-1, insets.top-3 );
-				}
-				g.setColor( getLine( c, true, false ) );
-				g.drawLine( corner, insets.top-1, corner, insets.top-1 );
-				g.drawLine( width-corner-1, insets.top-1, width-corner-1, insets.top-1 );
-				
-				g.setColor( getLine( c, false, false ) );
-				g.drawLine( corner, insets.top-2, corner, insets.top-2 );
-				g.drawLine( width-corner-1, insets.top-2, width-corner-1, insets.top-2 );				
-			}
-			
-			// bottom
-			if( insets.bottom > 2 ){
-				g.setColor( getLine( c ) );
-				g.drawLine( corner, height-insets.bottom+2, corner, height-1 );
-				g.drawLine( width-corner-1, height-insets.bottom+2, width-corner-1, height-1 );
-			}
-			g.setColor( getLine( c, true, false ) );
-			g.drawLine( corner, height-insets.bottom, corner, height-insets.bottom );
-			g.drawLine( width-corner-1, height-insets.bottom, width-corner-1, height-insets.bottom );
-			
-			g.setColor( getLine( c, false, false ) );
-			g.drawLine( corner, height-insets.bottom+1, corner, height-insets.bottom+1 );
-			g.drawLine( width-corner-1, height-insets.bottom+1, width-corner-1, height-insets.bottom+1 );
-			
-			// left
-			if( insets.left > 2 ){
-				g.setColor( getLine( c ) );
-				g.drawLine( 0, corner, insets.left-3, corner );
-				g.drawLine( 0, height-corner-1, insets.left-3, height-corner-1 );
-			}
-			
-			g.setColor( getLine( c, true, false ) );
-			g.drawLine( insets.left-1, corner, insets.left-1, corner );
-			g.drawLine( insets.left-1, height-corner-1, insets.left-1, height-corner-1 );
-			
-			g.setColor( getLine( c, false, false ) );
-			g.drawLine( insets.left-2, corner, insets.left-2, corner );
-			g.drawLine( insets.left-2, height-corner-1, insets.left-2, height-corner-1 );
-			
-			// right
-			if( insets.right > 2 ){
-				g.setColor( getLine( c ) );
-				g.drawLine( width-insets.right+2, corner, width-1, corner );
-				g.drawLine( width-insets.right+2, height-corner-1, width-1, height-corner-1 );
-			}
-			
-			g.setColor( getLine( c, true, false ) );
-			g.drawLine( width-insets.right, corner, width-insets.right, corner );
-			g.drawLine( width-insets.right, height-corner-1, width-insets.right, height-corner-1 );
-			
-			g.setColor( getLine( c, false, false ) );
-			g.drawLine( width-insets.right+1, corner, width-insets.right+1, corner );
-			g.drawLine( width-insets.right+1, height-corner-1, width-insets.right+1, height-corner-1 );
-		}
-		
-		g.translate( -x, -y );
-		g.setColor( oldColor );
 	}
 	
+	private void paintDividingLines( Component c, Graphics g, PaintParameters p ){
+		paintTopDividingLines( c, g, p );
+		paintBottomDividingLines( c, g, p );
+		paintLeftDividingLines( c, g, p );
+		paintRightDividingLines( c, g, p );
+	}
+	
+	private void paintTopDividingLines( Component c, Graphics g, PaintParameters p ){
+		if( moveSize > 0 ){
+			paintTopDividingLinesWithMove( c, g, p );
+		}
+		else{
+			paintTopDividingLinesWithoutMove( c, g, p );
+		}
+	}
+	
+	private void paintTopDividingLinesWithMove( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
+		
+		int corner = p.corner;
+		Insets insets = p.insets;
+		int titleLeft = p.titleLeft;
+		int titleRight = p.titleRight;
+		
+		if( insets.top > 2 ){
+			g.setColor( getLine( c ) );
+			g.drawLine( corner, 0, corner, insets.top-3 );
+			g.drawLine( titleLeft, 0, titleLeft, insets.top-3 );
+			g.drawLine( titleRight-1, 0, titleRight-1, insets.top-3 );
+			g.drawLine( width-corner-1, 0, width-corner-1, insets.top-3 );
+		}
+		g.setColor( getLine( c, true, false ) );
+		g.drawLine( corner, insets.top-1, corner, insets.top-1 );
+		g.drawLine( titleLeft, insets.top-1, titleLeft, insets.top-1 );
+		g.drawLine( titleRight-1, insets.top-1, titleRight-1, insets.top-1 );
+		g.drawLine( width-corner-1, insets.top-1, width-corner-1, insets.top-1 );
+		
+		g.setColor( getLine( c, false, false ) );
+		g.drawLine( corner, insets.top-2, corner, insets.top-2 );
+		g.drawLine( titleLeft, insets.top-2, titleLeft, insets.top-2 );
+		g.drawLine( titleRight-1, insets.top-21, titleRight-1, insets.top-2 );
+		g.drawLine( width-corner-1, insets.top-2, width-corner-1, insets.top-2 );		
+	}
+	
+	private void paintTopDividingLinesWithoutMove( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
+		
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
+		if( insets.top > 2 ){
+			g.setColor( getLine( c ) );
+			g.drawLine( corner, 0, corner, insets.top-3 );
+			g.drawLine( width-corner-1, 0, width-corner-1, insets.top-3 );
+		}
+		g.setColor( getLine( c, true, false ) );
+		g.drawLine( corner, insets.top-1, corner, insets.top-1 );
+		g.drawLine( width-corner-1, insets.top-1, width-corner-1, insets.top-1 );
+		
+		g.setColor( getLine( c, false, false ) );
+		g.drawLine( corner, insets.top-2, corner, insets.top-2 );
+		g.drawLine( width-corner-1, insets.top-2, width-corner-1, insets.top-2 );		
+	}
+	
+	private void paintBottomDividingLines( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
+		int height = p.height;
+		
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
+		if( insets.bottom > 2 ){
+			g.setColor( getLine( c ) );
+			g.drawLine( corner, height-insets.bottom+2, corner, height-1 );
+			g.drawLine( width-corner-1, height-insets.bottom+2, width-corner-1, height-1 );
+		}
+		g.setColor( getLine( c, true, false ) );
+		g.drawLine( corner, height-insets.bottom, corner, height-insets.bottom );
+		g.drawLine( width-corner-1, height-insets.bottom, width-corner-1, height-insets.bottom );
+		
+		g.setColor( getLine( c, false, false ) );
+		g.drawLine( corner, height-insets.bottom+1, corner, height-insets.bottom+1 );
+		g.drawLine( width-corner-1, height-insets.bottom+1, width-corner-1, height-insets.bottom+1 );		
+	}
+	
+	private void paintLeftDividingLines( Component c, Graphics g, PaintParameters p ){
+		int height = p.height;
+		
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
+		if( insets.left > 2 ){
+			g.setColor( getLine( c ) );
+			g.drawLine( 0, corner, insets.left-3, corner );
+			g.drawLine( 0, height-corner-1, insets.left-3, height-corner-1 );
+		}
+		
+		g.setColor( getLine( c, true, false ) );
+		g.drawLine( insets.left-1, corner, insets.left-1, corner );
+		g.drawLine( insets.left-1, height-corner-1, insets.left-1, height-corner-1 );
+		
+		g.setColor( getLine( c, false, false ) );
+		g.drawLine( insets.left-2, corner, insets.left-2, corner );
+		g.drawLine( insets.left-2, height-corner-1, insets.left-2, height-corner-1 );		
+	}
+	
+	private void paintRightDividingLines( Component c, Graphics g, PaintParameters p ){
+		int width = p.width;
+		int height = p.height;
+		
+		int corner = p.corner;
+		Insets insets = p.insets;
+		
+		if( insets.right > 2 ){
+			g.setColor( getLine( c ) );
+			g.drawLine( width-insets.right+2, corner, width-1, corner );
+			g.drawLine( width-insets.right+2, height-corner-1, width-1, height-corner-1 );
+		}
+		
+		g.setColor( getLine( c, true, false ) );
+		g.drawLine( width-insets.right, corner, width-insets.right, corner );
+		g.drawLine( width-insets.right, height-corner-1, width-insets.right, height-corner-1 );
+		
+		g.setColor( getLine( c, false, false ) );
+		g.drawLine( width-insets.right+1, corner, width-insets.right+1, corner );
+		g.drawLine( width-insets.right+1, height-corner-1, width-insets.right+1, height-corner-1 );
+	}
+	
+	private class PaintParameters{
+		public final int width;
+		public final int height;
+		
+		public final int corner;
+		
+		public final int titleLeft;
+		public final int titleRight;
+		
+		public final Insets insets;
+		
+		public PaintParameters( int width, int height, Component c ){
+			this.width = width;
+			this.height = height;
+			
+			insets = getBorderInsets( c );
+			
+			int hWidth = width/2;
+			titleLeft = hWidth-moveSize/2;
+			titleRight = hWidth+moveSize/2;
+			
+			corner = Math.max( cornerSize, Math.max( Math.max( insets.top, insets.bottom ), Math.max( insets.left, insets.right ) ) );
+		}
+	}
+		
 	/**
 	 * Gets the color that should be used for painting a line.
 	 * @param c the component for which the line is painted

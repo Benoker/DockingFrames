@@ -898,4 +898,7 @@
  - Bugfix: ListSpanStrategy did not respect the parameter "spanFactoryId" in its constructor
  - API: InternalScreenDockWindowFactory supports setting the layer of the newly created dialogs
  - Bugfix: Made ScreenDockStation aware of extensions when calling the drop(Dockable) method
- - Bugfix: Made ToolbarGroupDockStation searching for a DockController by its parents when missing one 
+ - Bugfix: Made ToolbarGroupDockStation searching for a DockController by its parents when missing one
+ 
+[v1.1.2p2e]
+ ! API: The border of a ScreenDockWindow can now be used to move the window, while resizing is not allowed. In previous versions the border simply was removed if resizing was disabled. 

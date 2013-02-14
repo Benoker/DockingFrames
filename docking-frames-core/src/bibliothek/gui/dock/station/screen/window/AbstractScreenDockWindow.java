@@ -204,7 +204,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         Container parent = getDisplayerParent();
         parent.setLayout( new GridLayout( 1, 1 ));
 
-        if( configuration.isResizeable() && borderAllowed ){
+        if( (configuration.isResizeable() || configuration.isMoveOnBorder()) && borderAllowed ){
             if( parent instanceof JComponent && configuration.getBorderFactory() != null ){
             	border = configuration.getBorderFactory().create( this, (JComponent)parent );
             	border.setController( getController() );
@@ -656,11 +656,23 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         		
             	border.setCornerSize( corner() );
             	WindowConfiguration configuration = getConfiguration();
-            	if( configuration != null && configuration.isMoveOnBorder() ){
-            		border.setMoveSize( getDisplayerParent().getWidth()/3 );
+            	if( configuration == null ){
+            		border.setMoveable( false );
+            		border.setResizeable( false );
+            		
+            		border.setMoveSize( 0 );
+            		border.setCornerSize( 0 );
             	}
             	else{
-            		border.setMoveSize( 0 );
+            		border.setMoveable( configuration.isMoveOnBorder() );
+            		border.setResizeable( configuration.isResizeable() );
+            		
+            		if( configuration.isMoveOnBorder() ){
+            			border.setMoveSize( getDisplayerParent().getWidth()/3 );	
+            		}
+            		else{
+            			border.setMoveSize( 0 );
+            		}
             	}
         	}
         }
@@ -680,6 +692,11 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         }
         
         private int corner(){
+        	WindowConfiguration configuration = getConfiguration();
+        	if( configuration == null || !configuration.isResizeable() ){
+        		return 0;
+        	}
+        	
             Container component = getDisplayerParent();
             Insets insets = component.getInsets();
 
@@ -803,56 +820,63 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
             	e.getX() <= insets.left || e.getX() >= component.getWidth() - insets.right;
 
             if( valid ){
-            	int corner = corner();
-            	
-                boolean top = e.getY() <= corner;
-                boolean left = e.getX() <= corner;
-                boolean bottom = e.getY() >= component.getHeight() - corner;
-                boolean right = e.getX() >= component.getWidth() - corner;
-
-                if( top && left ){
-                    setCursor( Cursor.getPredefinedCursor( Cursor.NW_RESIZE_CURSOR ) );
-                    position = Position.NW;
-                }
-                else if( top && right ){
-                    setCursor( Cursor.getPredefinedCursor( Cursor.NE_RESIZE_CURSOR ) );
-                    position = Position.NE;
-                }
-                else if( bottom && right ){
-                    setCursor( Cursor.getPredefinedCursor( Cursor.SE_RESIZE_CURSOR ) );
-                    position = Position.SE;
-                }
-                else if( bottom && left ){
-                    setCursor( Cursor.getPredefinedCursor( Cursor.SW_RESIZE_CURSOR ) );
-                    position = Position.SW;
-                }
-                else if( top ){
-                    int width = component.getWidth();
-                    if( getConfiguration().isMoveOnBorder() && e.getX() > width / 3 && e.getX() < width / 3 * 2 ){
-                        setCursor( Cursor.getPredefinedCursor( Cursor.MOVE_CURSOR ));
-                        position = Position.MOVE;
-                    }
-                    else{
-                        setCursor( Cursor.getPredefinedCursor( Cursor.N_RESIZE_CURSOR ) );
-                        position = Position.N;
-                    }
-                }
-                else if( bottom ){
-                    setCursor( Cursor.getPredefinedCursor( Cursor.S_RESIZE_CURSOR ) );
-                    position = Position.S;
-                }
-                else if( left ){
-                    setCursor( Cursor.getPredefinedCursor( Cursor.W_RESIZE_CURSOR ) );
-                    position = Position.W;
-                }
-                else if( right ){
-                    setCursor( Cursor.getPredefinedCursor( Cursor.E_RESIZE_CURSOR ) );
-                    position = Position.E;
-                }
-                else{
-                    setCursor( Cursor.getDefaultCursor() );
-                    position = Position.NOTHING;
-                }
+            	WindowConfiguration configuration = getConfiguration();
+            	if( configuration.isMoveOnBorder() && !configuration.isResizeable()){
+            		setCursor( Cursor.getPredefinedCursor( Cursor.MOVE_CURSOR ));
+            		position = Position.MOVE;
+            	}
+            	else{
+	            	int corner = corner();
+	            	
+	                boolean top = e.getY() <= corner;
+	                boolean left = e.getX() <= corner;
+	                boolean bottom = e.getY() >= component.getHeight() - corner;
+	                boolean right = e.getX() >= component.getWidth() - corner;
+	
+	                if( top && left ){
+	                    setCursor( Cursor.getPredefinedCursor( Cursor.NW_RESIZE_CURSOR ) );
+	                    position = Position.NW;
+	                }
+	                else if( top && right ){
+	                    setCursor( Cursor.getPredefinedCursor( Cursor.NE_RESIZE_CURSOR ) );
+	                    position = Position.NE;
+	                }
+	                else if( bottom && right ){
+	                    setCursor( Cursor.getPredefinedCursor( Cursor.SE_RESIZE_CURSOR ) );
+	                    position = Position.SE;
+	                }
+	                else if( bottom && left ){
+	                    setCursor( Cursor.getPredefinedCursor( Cursor.SW_RESIZE_CURSOR ) );
+	                    position = Position.SW;
+	                }
+	                else if( top ){
+	                    int width = component.getWidth();
+	                    if( configuration.isMoveOnBorder() && e.getX() > width / 3 && e.getX() < width / 3 * 2 ){
+	                        setCursor( Cursor.getPredefinedCursor( Cursor.MOVE_CURSOR ));
+	                        position = Position.MOVE;
+	                    }
+	                    else{
+	                        setCursor( Cursor.getPredefinedCursor( Cursor.N_RESIZE_CURSOR ) );
+	                        position = Position.N;
+	                    }
+	                }
+	                else if( bottom ){
+	                    setCursor( Cursor.getPredefinedCursor( Cursor.S_RESIZE_CURSOR ) );
+	                    position = Position.S;
+	                }
+	                else if( left ){
+	                    setCursor( Cursor.getPredefinedCursor( Cursor.W_RESIZE_CURSOR ) );
+	                    position = Position.W;
+	                }
+	                else if( right ){
+	                    setCursor( Cursor.getPredefinedCursor( Cursor.E_RESIZE_CURSOR ) );
+	                    position = Position.E;
+	                }
+	                else{
+	                    setCursor( Cursor.getDefaultCursor() );
+	                    position = Position.NOTHING;
+	                }
+            	}
             }
             else{
                 setCursor( Cursor.getDefaultCursor() );
