@@ -62,10 +62,10 @@ public class CToolbarContentArea extends CContentArea{
 		
 		JPanel center = new JPanel( new BorderLayout() );
 		center.add( getCenter(), BorderLayout.CENTER );
-		center.add( getEast().getComponent(), BorderLayout.EAST );
-		center.add( getWest().getComponent(), BorderLayout.WEST );
-		center.add( getNorth().getComponent(), BorderLayout.NORTH );
-		center.add( getSouth().getComponent(), BorderLayout.SOUTH );
+		center.add( getEastArea(), BorderLayout.EAST );
+		center.add( getWestArea(), BorderLayout.WEST );
+		center.add( getNorthArea(), BorderLayout.NORTH );
+		center.add( getSouthArea(), BorderLayout.SOUTH );
 		add( center, BorderLayout.CENTER );
 		
 		eastToolbar = new CToolbarArea( getEastToolbarIdentifier(), Orientation.VERTICAL );
