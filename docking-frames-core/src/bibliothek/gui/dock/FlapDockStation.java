@@ -1892,6 +1892,10 @@ public class FlapDockStation extends AbstractDockableStation {
 	        listeners.fireDockableAdded( dockable );
         
         	fireDockablesRepositioned( index+1 );
+        	
+        	if( getController().isFocused( dockable )){
+        		setFrontDockable( dockable );
+        	}
         }
         finally{
         	token.release();
