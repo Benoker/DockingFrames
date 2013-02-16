@@ -36,6 +36,7 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -66,6 +67,7 @@ import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
 import bibliothek.gui.dock.util.BackgroundPanel;
 import bibliothek.gui.dock.util.Transparency;
+import bibliothek.util.Workarounds;
 
 /**
  * This abstract implementation of {@link ScreenDockWindow} uses a {@link DockableDisplayer}
@@ -107,6 +109,9 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     
     /** the current modifier of the border */
     private WindowBorder borderModifier;
+    
+    /** responsible for updating the shape of this window */
+    private ScreenWindowShapeAdapter shape;
     
     /** a listener added to the <code>Dockable</code> of this window, updates icon and title text */
     private DockableListener listener = new DockableAdapter(){
@@ -255,6 +260,26 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     	}
     	if( borderModifier != null ){
     		borderModifier.setController( controller );
+    	}
+    }
+    
+    /**
+     * Sets the algorithm which is responsible for updating the shape of this window. The algorithm remains
+     * active until {@link #destroy()} is called.<br>
+     * Note: This method does nothing if {@link Workarounds#supportsTransparency(Window)} returns <code>false</code>.
+     * @param window the {@link Window} representing <code>this</code>, it should be {@link #getWindowComponent()}
+     * @param shape the algorithm defining the new shape
+     */
+    protected void setShape( Window window, ScreenWindowShape shape ){
+    	if( Workarounds.getDefault().supportsTransparency( window )){
+    		if( this.shape != null ){
+    			this.shape.disable();
+    			this.shape = null;
+    		}
+    		if( shape != null ){
+    			this.shape = new ScreenWindowShapeAdapter( this, window );
+    			this.shape.setShape( shape );
+    		}
     	}
     }
 
@@ -619,6 +644,12 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      */
     public DockableDisplayer getDisplayer() {
         return displayer;
+    }
+    
+    public void destroy(){
+	    if( shape != null ){
+	    	shape.disable();
+	    }
     }
     
     /**

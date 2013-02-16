@@ -58,6 +58,9 @@ public class WindowConfiguration {
 	/** whether the window itself is transparent */
 	private boolean transparent = false;
 	
+	/** which parts of the window are visible */
+	private ScreenWindowShape shape = null;
+	
 	/** creates new borders */
 	private ScreenDockWindowBorderFactory borderFactory = DefaultScreenDockWindowBorder.FACTORY;
 	
@@ -150,7 +153,10 @@ public class WindowConfiguration {
 	
 	/**
 	 * Tells whether the window is transparent. Whether transparency affects decorations such as a {@link Border}
-	 * depends on the {@link ScreenDockWindow} itself.
+	 * depends on the {@link ScreenDockWindow} itself.<br>
+	 * Note that either {@link #isTransparent() transparency} or {@link #getShape() shape} of a window can be
+	 * set, but not both at the same time. If both are set, then {@link #isTransparent() transparency} is considered to be more
+	 * important, and {@link #getShape() the shape} is used as fallback.
 	 * @param transparent whether the window is transparent
 	 */
 	public void setTransparent( boolean transparent ){
@@ -164,6 +170,26 @@ public class WindowConfiguration {
 	 */
 	public boolean isTransparent(){
 		return transparent;
+	}
+	
+	/**
+	 * Tells which parts of the window are visible. A value of <code>null</code> indicates that the entire window
+	 * should be visible.
+	 * Note that either {@link #isTransparent() transparency} or {@link #getShape() shape} of a window can be
+	 * set, but not both at the same time. If both are set, then {@link #isTransparent() transparency} is considered to be more
+	 * important, and {@link #getShape() the shape} is used as fallback.
+	 * @param shape the shape of the window, or <code>null</code>
+	 */
+	public void setShape( ScreenWindowShape shape ){
+		this.shape = shape;
+	}
+	
+	/**
+	 * Tells which parts of the {@link ScreenDockWindow} are visible.
+	 * @return the visible part of the window, can be <code>null</code>
+	 */
+	public ScreenWindowShape getShape(){
+		return shape;
 	}
 	
 	/**

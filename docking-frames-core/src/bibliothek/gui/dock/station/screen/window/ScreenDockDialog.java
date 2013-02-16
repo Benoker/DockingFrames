@@ -94,16 +94,19 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
         dialog.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
         dialog.setModal( false );
         
+        boolean translucency = false;
+        
         if( configuration.isTransparent() ){
-
     		JPanel panel = new JPanel();
     		panel.setOpaque( false );
     		dialog.setContentPane( panel );
     		
-        	Workarounds.getDefault().setTranslucent( dialog );
+        	translucency = Workarounds.getDefault().setTranslucent( dialog );
         }
-        
         init( dialog, dialog.getContentPane(), configuration, undecorated );
+        if( !translucency && configuration.getShape() != null ){
+        	setShape( dialog, configuration.getShape() );
+        }
     }
     
     public void setPreventFocusStealing( boolean prevent ){
@@ -119,6 +122,7 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
     }
 
     public void destroy() {
+    	super.destroy();
         dialog.dispose();
     }
 

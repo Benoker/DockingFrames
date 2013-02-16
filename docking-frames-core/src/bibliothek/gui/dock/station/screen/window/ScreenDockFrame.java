@@ -67,8 +67,12 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
         
         init( frame, frame.getContentPane(), configuration, undecorated );
         
+        boolean translucency = false;
         if( configuration.isTransparent() ){
-        	Workarounds.getDefault().setTranslucent( frame );
+        	translucency = Workarounds.getDefault().setTranslucent( frame );
+        }
+        if( !translucency && configuration.getShape() != null ){
+        	setShape( frame, configuration.getShape() );
         }
     }
 
@@ -81,6 +85,7 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
     }
     
     public void destroy() {
+    	super.destroy();
         frame.dispose();
     }
 

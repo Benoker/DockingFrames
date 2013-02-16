@@ -904,4 +904,5 @@
  ! API: The border of a ScreenDockWindow can now be used to move the window, while resizing is not allowed. In previous versions the border simply was removed if resizing was disabled.
  - Bugfix: CToolbarContentArea made minimized Dockables invisible (actually their size was always close to 0/0)
  - API: If a focused Dockable is put onto a FlapDockStation, the station does open its window
- ! API: Workarounds for Java 6 and 7 now make a distinction between transparency and translucency, opening the path for better transparency support. 
+ ! API: Workarounds for Java 6 and 7 now make a distinction between transparency and translucency, opening the path for better transparency support.
+ - API: WindowConfiguration supports a new property: shape. Shape tells which parts of a ScreenDockWindow are visible, and which are not. 
