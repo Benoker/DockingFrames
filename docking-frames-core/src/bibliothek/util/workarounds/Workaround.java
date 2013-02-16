@@ -26,6 +26,7 @@
 package bibliothek.util.workarounds;
 
 import java.awt.Component;
+import java.awt.Shape;
 import java.awt.Window;
 
 import bibliothek.util.Workarounds;
@@ -43,10 +44,34 @@ public interface Workaround {
 	public void markAsGlassPane( Component component );
 	
 	/**
-	 * Makes the window <code>window</code> transparent. See {@link Workarounds#makeTransparent(Window)} for a more
+	 * Tells whether this {@link Workaround} has the abbility to make <code>window</code> translucent.
+	 * Translucent means that each pixel of the <code>window</code> can have its own alpha value.
+	 * @param window the window to test
+	 * @return whether translucency is an option
+	 */
+	public boolean supportsPerpixelTranslucency( Window window );
+	
+	/**
+	 * Makes the window <code>window</code> translucent. See {@link Workarounds#setTranslucent(Window)} for a more
 	 * detailed description.
 	 * @param window the window that should be transparent
-	 * @return whether the window is now transparent or not
+	 * @return whether translucency is supported for <code>window</code>
 	 */
-	public boolean makeTransparent( Window window );
+	public boolean setTranslucent( Window window );
+	
+	/**
+	 * Tells whether this {@link Workaround} has the abbility to make <code>window</code> transparent.
+	 * Transparent means that some pixels of the <code>window</code> cannot be seen.
+	 * @param window the widnow to test
+	 * @return whether transparency is an option
+	 */
+	public boolean supportsPerpixelTransparency( Window window );
+	
+	/**
+	 * Makes the window <code>window</code> transparent in all the regions that are not inside <code>shape</code>.
+	 * @param window the window that should be transparent
+	 * @param shape the shape of the window, or <code>null</code> if the window should not be transparent
+	 * @return whether transparency is supported for <code>window</code>
+	 */
+	public boolean setTransparent( Window window, Shape shape );
 }

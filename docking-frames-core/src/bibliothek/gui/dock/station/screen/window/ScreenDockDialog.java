@@ -100,7 +100,7 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
     		panel.setOpaque( false );
     		dialog.setContentPane( panel );
     		
-        	Workarounds.getDefault().makeTransparent( dialog );
+        	Workarounds.getDefault().setTranslucent( dialog );
         }
         
         init( dialog, dialog.getContentPane(), configuration, undecorated );

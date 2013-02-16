@@ -28,6 +28,7 @@ package bibliothek.util.workarounds;
 import java.awt.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Shape;
 import java.awt.Window;
 import java.lang.reflect.Method;
 
@@ -36,20 +37,58 @@ import java.lang.reflect.Method;
  * @author Benjamin Sigg
  */
 public class Java7Workaround extends Java6Workaround{
-
-	@Override
-	public boolean makeTransparent( Window window ){
+	
+	private boolean supports( String translucencyName ){
 		try{
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			GraphicsDevice gd = ge.getDefaultScreenDevice();
 	
 			Class<?> windowTransulcency = Class.forName( "java.awt.GraphicsDevice$WindowTranslucency" );
 			Method isWindowTranslucencySupported = GraphicsDevice.class.getMethod( "isWindowTranslucencySupported", windowTransulcency );
-			boolean pixelTranslucency = (Boolean)isWindowTranslucencySupported.invoke( gd, windowTransulcency.getField( "PERPIXEL_TRANSLUCENT" ).get( null ) );
-			if( pixelTranslucency ){
-				window.setBackground( new Color(0,0,0,0) );
-				return true;
-			}
+			return (Boolean)isWindowTranslucencySupported.invoke( gd, windowTransulcency.getField( translucencyName ).get( null ) );
+		}
+		catch( Exception e ){
+			e.printStackTrace();
+			return false;
+		}	
+	}
+	
+	@Override
+	public boolean supportsPerpixelTransparency( Window window ){
+		return supports( "PERPIXEL_TRANSPARENT" );
+	}
+	
+	@Override
+	public boolean supportsPerpixelTranslucency( Window window ){
+		return supports( "PERPIXEL_TRANSLUCENT" );
+	}
+	
+	@Override
+	public boolean setTransparent( Window window, Shape shape ){
+		if( !supportsPerpixelTransparency( window )){
+			return false;
+		}
+		
+		try{
+			Method setShape = Window.class.getMethod( "setShape", Shape.class );
+			setShape.invoke( window, shape );
+			return true;
+		}
+		catch( Exception e ){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean setTranslucent( Window window ){
+		if( !supportsPerpixelTranslucency( window )){
+			return false;
+		}
+		
+		try{
+			window.setBackground( new Color(0,0,0,0) );
+			return true;
 		}
 		catch( Exception e ){
 			e.printStackTrace();

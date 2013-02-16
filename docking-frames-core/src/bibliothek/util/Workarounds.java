@@ -27,6 +27,7 @@ package bibliothek.util;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Shape;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,8 @@ public class Workarounds {
 		if( version.startsWith( "1.6" )){
 			getDefault().addWorkaround( new Java6Workaround() );
 		}
-		else{
+		else if( !version.startsWith( "1.5" )){
+			// will also work with Java 8...
 			getDefault().addWorkaround( new Java7Workaround() );
 		}
 	}
@@ -117,16 +119,62 @@ public class Workarounds {
 	}
 	
 	/**
-	 * Makes <code>window</code> transparent, meaning that the opacity of each pixel is defined by the
-	 * alpha value or the {@link Color} that was used to paint over that pixel.
-	 * @param window the window that should be transparent
-	 * @return <code>true</code> if the winodw is now transparent
+	 * Tells whether there is at least one {@link Workaround} that supports perpixel transparency. Transparency
+	 * means that some pixels are visible, while others are not.
+	 * @param window the window to test
+	 * @return whether transparency is supported
 	 */
-	public boolean makeTransparent( Window window ){
+	public boolean supportsTransparency( Window window ){
+		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
+			if( listener.supportsPerpixelTransparency( window )){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Makes <code>window</code> transparent, any pixel not inside <code>shape</code> is not painted.
+	 * @param window the window that should be transparent
+	 * @param shape the visible part of the window, <code>null</code> if the entire window should be visible
+	 * @return <code>true</code> if the window was made transparent
+	 */
+	public boolean setTransparent( Window window, Shape shape ){
 		boolean result = false;
 		
 		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
-			result = listener.makeTransparent( window ) || result;
+			result = listener.setTransparent( window, shape ) || result;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Tells whether there is a least one {@link Workaround} that supports perpixel translucency. Translucency
+	 * means that some pixels may have another alpha value than others.
+	 * @param window the window to test
+	 * @return whether translucency is supported
+	 */
+	public boolean supportsTranslucency( Window window ){
+		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
+			if( listener.supportsPerpixelTranslucency( window )){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Makes <code>window</code> translucent, meaning that the opacity of each pixel is defined by the
+	 * alpha value or the {@link Color} that was used to paint over that pixel.
+	 * @param window the window that should be translucent
+	 * @return <code>true</code> if the winodw is now translucent
+	 */
+	public boolean setTranslucent( Window window ){
+		boolean result = false;
+		
+		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
+			result = listener.setTranslucent( window ) || result;
 		}
 		
 		return result;

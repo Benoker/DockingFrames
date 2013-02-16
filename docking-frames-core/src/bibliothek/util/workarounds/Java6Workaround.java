@@ -26,6 +26,8 @@
 package bibliothek.util.workarounds;
 
 import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Window;
@@ -87,11 +89,108 @@ public class Java6Workaround implements Workaround{
 		}
 	}
 	
-	public boolean makeTransparent( Window window ){
+	private boolean supports( String translucencyName ){
+		// AWTUtilities.isTranslucencySupported(Translucency)
+		
+		try{
+			Class<?> awtUtilities = Class.forName( "com.sun.awt.AWTUtilities" );
+			Class<?> translucency = Class.forName( "com.sun.awt.AWTUtilities$Translucency" );
+			
+			Object translucencyValue = translucency.getField( translucencyName ).get( null );
+			
+			Method isTranslucencySupported = awtUtilities.getMethod( "isTranslucencySupported", translucency );
+			
+			return (Boolean)isTranslucencySupported.invoke( null, translucencyValue );
+		}
+		catch( ClassNotFoundException ex ){
+			// ignore
+		}
+		catch( NoSuchMethodException ex ){
+			// ignore
+		}
+		catch( SecurityException ex ){
+			// ignore
+		}
+		catch( InvocationTargetException ex ){
+			if( printWarnings && !invocationTargetException ){
+				invocationTargetException = true;
+				ex.printStackTrace();
+			}
+		}
+		catch( IllegalArgumentException e ){
+			// ignore
+		}
+		catch( IllegalAccessException e ){
+			// ignore
+		}
+		catch( Exception e ){
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean supportsPerpixelTranslucency( Window window ){
+		return supports( "PERPIXEL_TRANSLUCENT" );
+	}
+	
+	public boolean supportsPerpixelTransparency( Window window ){
+		if( window instanceof Dialog && !((Dialog)window).isUndecorated() ){
+			return false;
+		}
+		if( window instanceof Frame && !((Frame)window).isUndecorated() ){
+			return false;
+		}
+		
+		return supports( "PERPIXEL_TRANSPARENT" );
+	}
+	
+	public boolean setTranslucent( Window window ){
+		if( !supportsPerpixelTranslucency( window )){
+			return false;
+		}
+		
 		try{
 			Class<?> awtUtilities = Class.forName( "com.sun.awt.AWTUtilities" );
 			Method setWindowOpaque = awtUtilities.getMethod( "setWindowOpaque", Window.class, boolean.class );
 			setWindowOpaque.invoke( null, window, false );
+			return true;
+		}
+		catch( ClassNotFoundException ex ){
+			// ignore
+		}
+		catch( NoSuchMethodException ex ){
+			// ignore
+		}
+		catch( SecurityException ex ){
+			// ignore
+		}
+		catch( InvocationTargetException ex ){
+			if( printWarnings && !invocationTargetException ){
+				invocationTargetException = true;
+				ex.printStackTrace();
+			}
+		}
+		catch( IllegalArgumentException e ){
+			// ignore
+		}
+		catch( IllegalAccessException e ){
+			// ignore
+		}
+		catch( Exception e ){
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean setTransparent( Window window, Shape shape ){
+		if( !supportsPerpixelTransparency( window )){
+			return false;
+		}
+		
+		try{
+			Class<?> awtUtilities = Class.forName( "com.sun.awt.AWTUtilities" );
+			Method setWindowOpaque = awtUtilities.getMethod( "setWindowShape", Window.class, Shape.class );
+			setWindowOpaque.invoke( null, window, shape );
 			return true;
 		}
 		catch( ClassNotFoundException ex ){

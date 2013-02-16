@@ -68,7 +68,7 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
         init( frame, frame.getContentPane(), configuration, undecorated );
         
         if( configuration.isTransparent() ){
-        	Workarounds.getDefault().makeTransparent( frame );
+        	Workarounds.getDefault().setTranslucent( frame );
         }
     }
 
