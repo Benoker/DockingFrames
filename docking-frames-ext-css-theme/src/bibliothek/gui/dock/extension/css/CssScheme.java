@@ -179,12 +179,17 @@ public class CssScheme {
 	public CssRuleContent search( CssItem item ){
 		synchronized( RULES_LOCK ){
 			ensureRulesSorted();
+			CssRuleContentUnion result = null;
+			
 			for( CssRule rule : rules ){
 				if( rule.getSelector().matches( item.getPath() )){
-					return rule.getContent();
+					if( result == null ){
+						result = new CssRuleContentUnion();
+					}
+					result.add( rule.getContent() );
 				}
 			}
-			return null;
+			return result;
 		}
 	}
 	
