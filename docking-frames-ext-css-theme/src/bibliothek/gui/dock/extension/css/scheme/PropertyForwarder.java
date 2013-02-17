@@ -34,17 +34,18 @@ import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
-import bibliothek.gui.dock.extension.css.CssRuleListener;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
+import bibliothek.gui.dock.extension.css.CssRuleContentListener;
 import bibliothek.gui.dock.extension.css.CssScheme;
 
 /**
  * This class monitors a {@link CssPropertyContainer} and sets the values of its
- * {@link CssProperty}s using values from a {@link CssRule}.
+ * {@link CssProperty}s using values from a {@link CssRuleContent}.
  * @author Benjamin Sigg
  */
 public class PropertyForwarder {
 	/** the source of all values */
-	private CssRule source;
+	private CssRuleContent source;
 	
 	/** where to insert all the values */
 	private CssPropertyContainer target;
@@ -64,13 +65,13 @@ public class PropertyForwarder {
 	 * @param target the target for all values
 	 * @param scheme convertion information for values
 	 */
-	public PropertyForwarder( CssRule source, CssPropertyContainer target, CssScheme scheme ){
+	public PropertyForwarder( CssRuleContent source, CssPropertyContainer target, CssScheme scheme ){
 		this.source = source;
 		this.target = target;
 		this.scheme = scheme;
 		
 		target.addPropertyContainerListener( listener );
-		source.addRuleListener( listener );
+		source.addRuleContentListener( listener );
 	}
 	
 	/**
@@ -111,7 +112,7 @@ public class PropertyForwarder {
 	 */
 	public void destroy(){
 		target.removePropertyContainerListener( listener );
-		source.removeRuleListener( listener );
+		source.removeRuleContentListener( listener );
 		
 		for( CssProperty<?> property : properties.values() ){
 			property.removePropertyContainerListener( listener );
@@ -185,14 +186,9 @@ public class PropertyForwarder {
 		return properties.get( key );
 	}
 	
-	private class Listener implements CssRuleListener, CssPropertyContainerListener{
+	private class Listener implements CssRuleContentListener, CssPropertyContainerListener{
 		@Override
-		public void selectorChanged( CssRule source ){
-			// ignore	
-		}
-		
-		@Override
-		public void propertyChanged( CssRule source, CssPropertyKey key ){
+		public void propertyChanged( CssRuleContent source, CssPropertyKey key ){
 			CssProperty<?> sink = properties.get( key );
 			if( sink != null ){
 				resetProperty( sink, key );
@@ -200,7 +196,7 @@ public class PropertyForwarder {
 		}
 		
 		@Override
-		public void propertiesChanged( CssRule source ){
+		public void propertiesChanged( CssRuleContent source ){
 			for( Map.Entry<CssPropertyKey, CssProperty<?>> entry : properties.entrySet() ){
 				resetProperty( entry.getValue(), entry.getKey() );
 			}

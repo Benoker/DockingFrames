@@ -28,24 +28,25 @@ package bibliothek.gui.dock.extension.css.transition;
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
 
 /**
- * An {@link TransitionalCssRule} is a {@link CssRule} whose fields may constantly be changing
+ * An {@link TransitionalCssRuleContent} is a {@link CssRuleContent} whose fields may constantly be changing
  * because of an transition. The transition itself is implemented by a set of {@link CssTransition}s.<br>
- * An {@link TransitionalCssRule} usually is a wrapper around another rule, and modifies the fields of that
+ * An {@link TransitionalCssRuleContent} usually is a wrapper around another rule, and modifies the fields of that
  * other rule on the fly. The source rule is called {@link #getRoot() root rule}.<br>
- * {@link TransitionalCssRule}s are ordered in a list, this list is called the {@link TransitionalCssRuleChain}.
+ * {@link TransitionalCssRuleContent}s are ordered in a list, this list is called the {@link TransitionalCssRuleChain}.
  * @author Benjamin Sigg
  */
-public interface TransitionalCssRule extends CssRule{
+public interface TransitionalCssRuleContent extends CssRuleContent{
 	/**
-	 * Gets the root {@link CssRule}. The root rule is the source of all the properties offered by this
-	 * {@link TransitionalCssRule}. Note that if several transitions are nested, then the root rule is not the previous
+	 * Gets the root {@link CssRuleContent}. The root rule is the source of all the properties offered by this
+	 * {@link TransitionalCssRuleContent}. Note that if several transitions are nested, then the root rule is not the previous
 	 * transition, but still the original source of all properties.
 	 * @return the root rule, the rule that would be applied if there was no transition, can be <code>null</code>
 	 * or <code>this</code>
 	 */
-	public CssRule getRoot();
+	public CssRuleContent getRoot();
 	
 	/**
 	 * Informs this rule that it has been inserted into the list of transitions. This method may only be called
@@ -59,7 +60,7 @@ public interface TransitionalCssRule extends CssRule{
 	
 	/**
 	 * Tells whether the property with name <code>property</code> is an animated property. The value of an 
-	 * animated property is set by this or one of the predecessor {@link TransitionalCssRule}s, while the value
+	 * animated property is set by this or one of the predecessor {@link TransitionalCssRuleContent}s, while the value
 	 * of an ordinary property originates from a root {@link CssRule}.
 	 * @param property the name of a property
 	 * @return whether <code>property</code> is animated.
@@ -76,24 +77,24 @@ public interface TransitionalCssRule extends CssRule{
 	public boolean isInput( CssPropertyKey property );
 	
 	/**
-	 * Starts an additional transition on this rule. {@link CssTransition#init(CssRule, CsstransitionCallback)} should
-	 * be called on <code>transition</code>. If the {@link #transition(CssRule) transition} already started
-	 * then {@link CssTransition#transition(CssRule)} should be called as well.
+	 * Starts an additional transition on this rule. {@link CssTransition#init(CssRuleContent, CsstransitionCallback)} should
+	 * be called on <code>transition</code>. If the {@link #transition(CssRuleContent) transition} already started
+	 * then {@link CssTransition#transition(CssRuleContent)} should be called as well.
 	 * @param transitionKey the key of the {@link CssProperty} describing <code>transition</code>
 	 * @param transition the new transition, not <code>null</code>
 	 */
 	public void animate( CssPropertyKey transitionKey, CssTransition<?> transition );
 	
 	/**
-	 * Starts a transition on this rule. {@link CssTransition#transition(CssRule)} should be called
+	 * Starts a transition on this rule. {@link CssTransition#transition(CssRuleContent)} should be called
 	 * on all transitions. This rule has to call {@link RuleChainLink#remove()} as soon as all
 	 * transitions have finished the transition.
 	 * @param root the next root rule, may be <code>null</code>
 	 */
-	public void transition( CssRule root );
+	public void transition( CssRuleContent root );
 	
 	/**
-	 * Executes <code>job</code> once this {@link TransitionalCssRule} no longer is active.
+	 * Executes <code>job</code> once this {@link TransitionalCssRuleContent} no longer is active.
 	 * @param job the job to execute, not <code>null</code>
 	 */
 	public void onDestroyed( Runnable job );

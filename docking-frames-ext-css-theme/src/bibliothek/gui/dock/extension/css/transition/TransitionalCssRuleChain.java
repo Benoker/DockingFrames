@@ -26,26 +26,26 @@
 package bibliothek.gui.dock.extension.css.transition;
 
 import bibliothek.gui.dock.extension.css.CssItem;
-import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssProperty;
-import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
 import bibliothek.gui.dock.extension.css.CssScheme;
 
 /***
- * Represents a list of {@link TransitionalCssRule} tied to one {@link CssItem}. The chain offers methods
- * to start new transitions or to apply a new {@link CssRule}.
+ * Represents a list of {@link TransitionalCssRuleContent} tied to one {@link CssItem}. The chain offers methods
+ * to start new transitions or to apply a new {@link CssRuleContent}.
  * @author Benjamin Sigg
  */
 public interface TransitionalCssRuleChain {
 	/**
-	 * Initializes <code>transition</code> and will use it the next time {@link #transition(CssRule)} is called. 
-	 * Multiple transitions may be initialized before a call to {@link #transition(CssRule)}.
+	 * Initializes <code>transition</code> and will use it the next time {@link #transition(CssRuleContent)} is called. 
+	 * Multiple transitions may be initialized before a call to {@link #transition(CssRuleContent)}.
 	 * @param transitionKey the key of the {@link CssProperty} describing <code>transition</code>
 	 * @param transition the additional transition to handle
 	 * @return the rule that represents the current configuration of this chain, the same object may be used
 	 * all the time, or a new object may be created when necessary
 	 */
-	public TransitionalCssRule animate( CssPropertyKey transitionKey, CssTransition<?> transition );
+	public TransitionalCssRuleContent animate( CssPropertyKey transitionKey, CssTransition<?> transition );
 
 	/**
 	 * Starts an transition for a transition of {@link #getRoot()} to <code>next</code>.
@@ -53,7 +53,7 @@ public interface TransitionalCssRuleChain {
 	 * @return the rule that represents the current configuration of this chain, the same object may be used
 	 * all the time, or a new object may be created when necessary
 	 */
-	public TransitionalCssRule transition( CssRule next );
+	public TransitionalCssRuleContent transition( CssRuleContent next );
 	
 	/**
 	 * Gets the item which is animated by this chain.

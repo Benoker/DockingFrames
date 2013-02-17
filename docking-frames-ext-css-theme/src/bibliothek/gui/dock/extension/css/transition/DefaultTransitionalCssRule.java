@@ -35,8 +35,8 @@ import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
 import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.property.AbstractCssPropertyContainer;
 import bibliothek.gui.dock.extension.css.scheme.PropertyForwarder;
@@ -44,30 +44,30 @@ import bibliothek.gui.dock.extension.css.transition.scheduler.CssSchedulable;
 import bibliothek.gui.dock.extension.css.transition.scheduler.CssScheduler;
 
 /**
- * The default implementation of {@link TransitionalCssRule} makes use of one {@link CssRule} and a list
+ * The default implementation of {@link TransitionalCssRuleContent} makes use of one {@link CssRule} and a list
  * of {@link CssTransition}s to perform transitions. 
  * @author Benjamin Sigg
  */
 public class DefaultTransitionalCssRule extends AbstractTransitionalCssRule {
-	private CssRule root;
-	private WrappedCssRule source;
+	private CssRuleContent root;
+	private WrappedCssRuleContent source;
 	private List<Transition> transitions = new ArrayList<Transition>();
 	
-	private WrappedCssRule target;
+	private WrappedCssRuleContent target;
 	private boolean transition = false;
 	
 	/**
 	 * Creates a new animated rule.
 	 * @param root the root rule, the source of all properties, can be <code>null</code>
 	 */
-	public DefaultTransitionalCssRule( CssRule root ){
+	public DefaultTransitionalCssRule( CssRuleContent root ){
 		this.root = root;
-		source = new WrappedCssRule( root );
-		target = new WrappedCssRule( null );
+		source = new WrappedCssRuleContent( root );
+		target = new WrappedCssRuleContent( null );
 	}
 	
 	@Override
-	protected void setPrevious( TransitionalCssRule previous ){
+	protected void setPrevious( TransitionalCssRuleContent previous ){
 		super.setPrevious( previous );
 		if( previous == null ){
 			source.setRule( root );
@@ -88,7 +88,7 @@ public class DefaultTransitionalCssRule extends AbstractTransitionalCssRule {
 	}
 	
 	@Override
-	public void transition( CssRule root ){
+	public void transition( CssRuleContent root ){
 		target.setRule( root );
 		transition = true;
 		if( transitions.isEmpty() ){
@@ -118,7 +118,7 @@ public class DefaultTransitionalCssRule extends AbstractTransitionalCssRule {
 				return true;
 			}
 		}
-		TransitionalCssRule previous = getPrevious();
+		TransitionalCssRuleContent previous = getPrevious();
 		if( previous == null ){
 			return false;
 		}
@@ -126,13 +126,8 @@ public class DefaultTransitionalCssRule extends AbstractTransitionalCssRule {
 	}
 	
 	@Override
-	public CssRule getRoot(){
+	public CssRuleContent getRoot(){
 		return root;
-	}
-	
-	@Override
-	public CssSelector getSelector(){
-		return root.getSelector();
 	}
 	
 	@Override
@@ -152,7 +147,7 @@ public class DefaultTransitionalCssRule extends AbstractTransitionalCssRule {
 		}
 		
 		if( transitional == null ){
-			TransitionalCssRule previous = getPrevious();
+			TransitionalCssRuleContent previous = getPrevious();
 			if( previous == null || !previous.isAnimated( property )){
 				return root.getProperty( type, property );
 			}

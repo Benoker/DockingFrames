@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,13 +26,22 @@
 package bibliothek.gui.dock.extension.css;
 
 /**
- * This observer is added to a {@link CssRule}.
+ * This observer is added to a {@link CssRuleContent}, and is informed whenever a property
+ * of the rule changes
  * @author Benjamin Sigg
  */
-public interface CssRuleListener {
+public interface CssRuleContentListener {
+
 	/**
-	 * Called if {@link CssRule#getSelector()} changed.
+	 * Called if {@link CssRuleContent#getProperty(String)} changed.
+	 * @param source the source of the event
+	 * @param key the name of the property that changed
+	 */
+	public void propertyChanged( CssRuleContent source, CssPropertyKey key );
+	
+	/**
+	 * Called if all {@link CssRuleContent#getProperty(CssType, String) properties} changed.
 	 * @param source the source of the event
 	 */
-	public void selectorChanged( CssRule source );
+	public void propertiesChanged( CssRuleContent source );
 }

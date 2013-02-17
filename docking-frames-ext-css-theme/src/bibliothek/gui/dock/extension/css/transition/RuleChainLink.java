@@ -26,7 +26,7 @@
 package bibliothek.gui.dock.extension.css.transition;
 
 /**
- * A single element of a {@link TransitionalCssRuleChain}, represents one {@link TransitionalCssRule}.
+ * A single element of a {@link TransitionalCssRuleChain}, represents one {@link TransitionalCssRuleContent}.
  * @author Benjamin Sigg
  */
 public interface RuleChainLink {
@@ -34,7 +34,7 @@ public interface RuleChainLink {
 	 * Gets the rule which is represented by this link.
 	 * @return the rule of this link, can be <code>null</code> if this link is no longer in use
 	 */
-	public TransitionalCssRule getRule();
+	public TransitionalCssRuleContent getRule();
 	
 	/**
 	 * Gets the link that is previously in the chain.

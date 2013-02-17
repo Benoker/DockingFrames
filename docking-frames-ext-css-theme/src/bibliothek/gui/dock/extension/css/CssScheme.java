@@ -41,7 +41,7 @@ import bibliothek.gui.dock.extension.css.scheme.MatchedCssRule;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.extension.css.transition.CssTransition;
 import bibliothek.gui.dock.extension.css.transition.DefaultAnimatedCssRuleChain;
-import bibliothek.gui.dock.extension.css.transition.TransitionalCssRule;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssRuleContent;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssRuleChain;
 import bibliothek.gui.dock.extension.css.transition.scheduler.CssScheduler;
 import bibliothek.gui.dock.extension.css.transition.scheduler.DefaultCssScheduler;
@@ -76,16 +76,6 @@ public class CssScheme {
 		public void selectorChanged( CssRule source ){
 			rulesAreSorted = false;
 			rematch();
-		}
-		
-		@Override
-		public void propertyChanged( CssRule source, CssPropertyKey key ){
-			// ignore
-		}
-		
-		@Override
-		public void propertiesChanged( CssRule source ){
-			// ignore	
 		}
 	};
 	
@@ -181,17 +171,17 @@ public class CssScheme {
 	}
 	
 	/**
-	 * Searches a {@link CssRule} whose {@link CssSelector} matches
-	 * {@link CssItem}.
+	 * Searches a {@link CssRule}s whose {@link CssSelector} matches
+	 * {@link CssItem}. Then collects the properties of the rule and returns them.
 	 * @param item the item for which a rule is searched
-	 * @return the rule or <code>null</code> if nothing was found
+	 * @return the properties of the rule, <code>null</code> if nothing was found
 	 */
-	public CssRule search( CssItem item ){
+	public CssRuleContent search( CssItem item ){
 		synchronized( RULES_LOCK ){
 			ensureRulesSorted();
 			for( CssRule rule : rules ){
 				if( rule.getSelector().matches( item.getPath() )){
-					return rule;
+					return rule.getContent();
 				}
 			}
 			return null;
@@ -355,7 +345,7 @@ public class CssScheme {
 	 */
 	private class Match implements CssItemListener, CssPathListener{
 		private TransitionalCssRuleChain chain;
-		private TransitionalCssRule rule;
+		private TransitionalCssRuleContent rule;
 		private CssItem item;
 		private CssPath path;
 		
@@ -384,22 +374,22 @@ public class CssScheme {
 		}
 		
 		private void animate( CssPropertyKey transitionKey, CssTransition<?> transition ){
-			TransitionalCssRule nextRule = chain.animate( transitionKey, transition );
+			TransitionalCssRuleContent nextRule = chain.animate( transitionKey, transition );
 			if( nextRule != rule ){
 				replaceRule( nextRule );
 			}
 		}
 		
-		private void setRule( CssRule nextRule ){
+		private void setRule( CssRuleContent nextRule ){
 			if( rule == null || nextRule != rule.getRoot() ){
-				TransitionalCssRule nextAnimatedRule = chain.transition( nextRule );
+				TransitionalCssRuleContent nextAnimatedRule = chain.transition( nextRule );
 				if( nextAnimatedRule != rule ){
 					replaceRule( nextAnimatedRule );
 				}
 			}
 		}
 		
-		private void replaceRule( TransitionalCssRule nextRule ){
+		private void replaceRule( TransitionalCssRuleContent nextRule ){
 			boolean firstRule = currentMatch == null;
 			
 			if( currentMatch != null ){

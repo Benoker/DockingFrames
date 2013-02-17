@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,13 +26,28 @@
 package bibliothek.gui.dock.extension.css;
 
 /**
- * This observer is added to a {@link CssRule}.
+ * A set of properties that may be associated with one or several {@link CssRule}s.
  * @author Benjamin Sigg
  */
-public interface CssRuleListener {
+public interface CssRuleContent {
 	/**
-	 * Called if {@link CssRule#getSelector()} changed.
-	 * @param source the source of the event
+	 * Gets one of the properties of this rule.
+	 * @param type the type which the property is supposed to have 
+	 * @param property the name of the property to read
+	 * @return the property or <code>null</code> if not present
+	 * @throws IllegalArgumentException if the property cannot be understood as <code>type</code>
 	 */
-	public void selectorChanged( CssRule source );
+	public <T> T getProperty( CssType<T> type, CssPropertyKey property );
+	
+	/**
+	 * Adds the observer <code>listener</code> to this object.
+	 * @param listener the new observer, not <code>null</code>
+	 */
+	public void addRuleContentListener( CssRuleContentListener listener );
+	
+	/**
+	 * Removes the observer <code>listener</code> from this object.
+	 * @param listener the listener to remove
+	 */
+	public void removeRuleContentListener( CssRuleContentListener listener );
 }

@@ -30,7 +30,7 @@ import java.util.List;
 
 import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
-import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
 import bibliothek.gui.dock.extension.css.CssScheme;
 
 /**
@@ -62,15 +62,15 @@ public class DefaultAnimatedCssRuleChain implements TransitionalCssRuleChain{
 	}
 
 	@Override
-	public TransitionalCssRule animate( CssPropertyKey transitionKey, CssTransition<?> transition ){
-		TransitionalCssRule rule = tail.getRule();
+	public TransitionalCssRuleContent animate( CssPropertyKey transitionKey, CssTransition<?> transition ){
+		TransitionalCssRuleContent rule = tail.getRule();
 		rule.animate( transitionKey, transition );
 		return rule;
 	}
 
 	@Override
-	public TransitionalCssRule transition( CssRule next ){
-		TransitionalCssRule oldRule = tail.getRule();
+	public TransitionalCssRuleContent transition( CssRuleContent next ){
+		TransitionalCssRuleContent oldRule = tail.getRule();
 		
 		Link link = new Link( next );
 		tail.setNext( link );
@@ -102,11 +102,11 @@ public class DefaultAnimatedCssRuleChain implements TransitionalCssRuleChain{
 	}
 
 	/**
-	 * Creates a new {@link TransitionalCssRule} which takes its default properties from <code>root</code>.
+	 * Creates a new {@link TransitionalCssRuleContent} which takes its default properties from <code>root</code>.
 	 * @param root the root rule, can be <code>null</code>
 	 * @return the new animated rule
 	 */
-	protected TransitionalCssRule createRule( CssRule root ){
+	protected TransitionalCssRuleContent createRule( CssRuleContent root ){
 		return new DefaultTransitionalCssRule( root );
 	}
 	
@@ -126,11 +126,11 @@ public class DefaultAnimatedCssRuleChain implements TransitionalCssRuleChain{
 	
 	private class Link implements RuleChainLink{
 		private List<RuleChainLinkListener> listeners = new ArrayList<RuleChainLinkListener>( 2 );
-		private TransitionalCssRule rule;
+		private TransitionalCssRuleContent rule;
 		private Link previous;
 		private Link next;
 		
-		public Link( CssRule root ){
+		public Link( CssRuleContent root ){
 			rule = createRule( root );
 			rule.inserted( this );
 		}
@@ -141,7 +141,7 @@ public class DefaultAnimatedCssRuleChain implements TransitionalCssRuleChain{
 		}
 		
 		@Override
-		public TransitionalCssRule getRule(){
+		public TransitionalCssRuleContent getRule(){
 			return rule;
 		}
 

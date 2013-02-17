@@ -29,40 +29,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
-import bibliothek.gui.dock.extension.css.CssRule;
-import bibliothek.gui.dock.extension.css.CssRuleListener;
-import bibliothek.gui.dock.extension.css.CssSelector;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
+import bibliothek.gui.dock.extension.css.CssRuleContentListener;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.intern.DefaultCssSelector;
 
 /**
- * A wrapper around a {@link CssRule}, allows to set a {@link CssRule} where replacing the rule
+ * A wrapper around a {@link CssRuleContent}, allows to set a {@link CssRuleContent} where replacing the rule
  * is not possible yet necessary.
  * @author Benjamin Sigg
  */
-public class WrappedCssRule implements CssRule{
-	private CssRule rule;
-	private List<CssRuleListener> listeners = new ArrayList<CssRuleListener>();
+public class WrappedCssRuleContent implements CssRuleContent{
+	private CssRuleContent rule;
+	private List<CssRuleContentListener> listeners = new ArrayList<CssRuleContentListener>();
 	
-	private CssRuleListener forwardListener = new CssRuleListener(){
+	private CssRuleContentListener forwardListener = new CssRuleContentListener(){
 		@Override
-		public void selectorChanged( CssRule source ){
-			for( CssRuleListener listener : listeners() ){
-				listener.selectorChanged( WrappedCssRule.this );
+		public void propertyChanged( CssRuleContent source, CssPropertyKey key ){
+			for( CssRuleContentListener listener : listeners() ){
+				listener.propertyChanged( WrappedCssRuleContent.this, key );
 			}
 		}
 		
 		@Override
-		public void propertyChanged( CssRule source, CssPropertyKey key ){
-			for( CssRuleListener listener : listeners() ){
-				listener.propertyChanged( WrappedCssRule.this, key );
-			}
-		}
-		
-		@Override
-		public void propertiesChanged( CssRule source ){
-			for( CssRuleListener listener : listeners() ){
-				listener.propertiesChanged( WrappedCssRule.this );
+		public void propertiesChanged( CssRuleContent source ){
+			for( CssRuleContentListener listener : listeners() ){
+				listener.propertiesChanged( WrappedCssRuleContent.this );
 			}
 		}
 	};
@@ -71,7 +62,7 @@ public class WrappedCssRule implements CssRule{
 	 * Creates a new rule
 	 * @param rule the rule from which to read properties, can be <code>null</code>
 	 */
-	public WrappedCssRule( CssRule rule ){
+	public WrappedCssRuleContent( CssRuleContent rule ){
 		setRule( rule );
 	}
 	
@@ -79,28 +70,19 @@ public class WrappedCssRule implements CssRule{
 	 * Sets the rule whose properties should be forwarded.
 	 * @param rule the rule, can be <code>null</code>
 	 */
-	public void setRule( CssRule rule ){
+	public void setRule( CssRuleContent rule ){
 		if( this.rule != null && !listeners.isEmpty() ){
-			this.rule.removeRuleListener( forwardListener );
+			this.rule.removeRuleContentListener( forwardListener );
 		}
 		this.rule = rule;
 		if( this.rule != null && !listeners.isEmpty() ){
-			this.rule.addRuleListener( forwardListener );
-			for( CssRuleListener listener : listeners() ){
-				listener.selectorChanged( this );
+			this.rule.addRuleContentListener( forwardListener );
+			for( CssRuleContentListener listener : listeners() ){
 				listener.propertiesChanged( this );
 			}
 		}
 	}
 	
-	@Override
-	public CssSelector getSelector(){
-		if( rule == null ){
-			return DefaultCssSelector.selector().build();
-		}
-		return rule.getSelector();
-	}
-
 	@Override
 	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
 		if( rule == null ){
@@ -111,29 +93,29 @@ public class WrappedCssRule implements CssRule{
 		}
 	}
 	
-	private CssRuleListener[] listeners(){
-		return listeners.toArray( new CssRuleListener[ listeners.size() ] );
+	private CssRuleContentListener[] listeners(){
+		return listeners.toArray( new CssRuleContentListener[ listeners.size() ] );
 	}
 
 	@Override
-	public void addRuleListener( CssRuleListener listener ){
+	public void addRuleContentListener( CssRuleContentListener listener ){
 		if( listener == null ){
 			throw new IllegalArgumentException( "listener must not be null" );
 		}
 		if( listeners.isEmpty() ){
 			if( rule != null ){
-				rule.addRuleListener( forwardListener );
+				rule.addRuleContentListener( forwardListener );
 			}
 		}
 		listeners.add( listener );
 	}
 
 	@Override
-	public void removeRuleListener( CssRuleListener listener ){
+	public void removeRuleContentListener( CssRuleContentListener listener ){
 		listeners.remove( listener );
 		if( listeners.isEmpty() ){
 			if( rule != null ){
-				rule.removeRuleListener( forwardListener );
+				rule.removeRuleContentListener( forwardListener );
 			}
 		}
 	}

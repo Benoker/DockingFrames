@@ -29,6 +29,7 @@ import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.util.Filter;
 
@@ -89,10 +90,10 @@ public interface CssTransition<T> extends CssPropertyContainer{
 	 * @param source a rule representing the properties before the transition started
 	 * @param callback information about the properties and utility methods
 	 */
-	public void init( CssRule source, CssTransitionCallback callback );
+	public void init( CssRuleContent source, CssTransitionCallback callback );
 	
 	/**
-	 * Called asynchronously if {@link CssTransitionCallback#step()} is called, or if one of the underlying {@link CssRule}
+	 * Called asynchronously if {@link CssTransitionCallback#step()} is called, or if one of the underlying {@link CssRuleContent}s
 	 * changed a property. This method is always executed in the EDT.<br>
 	 * This method should recalculate all the properties affected by this transition and transfer the new values
 	 * to the {@link CssTransitionCallback}.
@@ -107,5 +108,5 @@ public interface CssTransition<T> extends CssPropertyContainer{
 	 * to the properties of <code>destination</code>, and then shutdown by calling {@link CssTransitionCallback#destroyed()}.
 	 * @param destination the target rule which should be adapted by this transition
 	 */
-	public void transition( CssRule destination );
+	public void transition( CssRuleContent destination );
 }

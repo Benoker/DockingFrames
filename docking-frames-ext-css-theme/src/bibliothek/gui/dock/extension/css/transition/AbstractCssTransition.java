@@ -30,8 +30,8 @@ import java.util.Map;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
-import bibliothek.gui.dock.extension.css.CssRule;
-import bibliothek.gui.dock.extension.css.CssRuleListener;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
+import bibliothek.gui.dock.extension.css.CssRuleContentListener;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
 import bibliothek.gui.dock.extension.css.property.AbstractCssPropertyContainer;
@@ -48,8 +48,8 @@ import bibliothek.util.Filter;
  */
 public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContainer implements CssTransition<T>{
 	private CssTransitionCallback callback;
-	private CssRule source;
-	private CssRule target;
+	private CssRuleContent source;
+	private CssRuleContent target;
 	private Filter<CssPropertyKey> propertyFilter;
 	
 	/** the list of properties which either are animated or required for the  */
@@ -57,21 +57,16 @@ public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContai
 	
 	private CssType<T> type;
 
-	private CssRuleListener listener = new CssRuleListener(){
+	private CssRuleContentListener listener = new CssRuleContentListener(){
 		@Override
-		public void selectorChanged( CssRule source ){
-			// ignore
-		}
-		
-		@Override
-		public void propertiesChanged( CssRule source ){
+		public void propertiesChanged( CssRuleContent source ){
 			for( AnimatedProperty<?> property : properties.values() ){
 				property.updateValues();
 			}
 		}
 		
 		@Override
-		public void propertyChanged( CssRule source, CssPropertyKey key ){
+		public void propertyChanged( CssRuleContent source, CssPropertyKey key ){
 			AnimatedProperty<?> animatedProperty = properties.get( key );
 			if( animatedProperty != null ){
 				animatedProperty.updateValues();
@@ -113,10 +108,10 @@ public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContai
 	}
 	
 	@Override
-	public void init( CssRule current, CssTransitionCallback callback ){
+	public void init( CssRuleContent current, CssTransitionCallback callback ){
 		this.callback = callback;
 		this.source = current;
-		source.addRuleListener( listener );
+		source.addRuleContentListener( listener );
 		CssPropertyKey[] keys = callback.getPropertiesOfType( type );
 		for( CssPropertyKey key : keys ){
 			if( propertyFilter == null || propertyFilter.includes( key )){
@@ -148,10 +143,10 @@ public abstract class AbstractCssTransition<T> extends AbstractCssPropertyContai
 	}
 	
 	@Override
-	public void transition( CssRule destination ){
+	public void transition( CssRuleContent destination ){
 		target = destination;
 		
-		target.addRuleListener( listener );
+		target.addRuleContentListener( listener );
 		
 		for( AnimatedProperty<?> property : properties.values() ){
 			property.updateValues();

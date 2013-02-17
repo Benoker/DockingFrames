@@ -38,13 +38,11 @@ public interface CssRule {
 	public CssSelector getSelector();
 	
 	/**
-	 * Gets one of the properties of this rule.
-	 * @param type the type which the property is supposed to have 
-	 * @param property the name of the property to read
-	 * @return the property or <code>null</code> if not present
-	 * @throws IllegalArgumentException if the property cannot be understood as <code>type</code>
+	 * Gets the set of properties. This method should always return the same object, and it
+	 * should not return <code>null</code>.
+	 * @return the set of properties, not <code>null</code>
 	 */
-	public <T> T getProperty( CssType<T> type, CssPropertyKey property );
+	public CssRuleContent getContent();
 	
 	/**
 	 * Adds <code>listener</code> to this rule, <code>listener</code> will be informed if

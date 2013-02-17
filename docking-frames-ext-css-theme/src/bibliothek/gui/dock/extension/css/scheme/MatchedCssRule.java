@@ -30,8 +30,9 @@ import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
 import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.transition.TransitionalCssRule;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssRuleContent;
 
 /**
  * A {@link MatchedCssRule} is responsible for reading the properties of one {@link CssRule}
@@ -48,7 +49,7 @@ public class MatchedCssRule {
 	}
 	
 	/** the values of all the properties */
-	private TransitionalCssRule rule;
+	private TransitionalCssRuleContent rule;
 	
 	/** the behavior of this {@link MatchedCssRule} */
 	private Mode mode = Mode.NEW;
@@ -61,7 +62,7 @@ public class MatchedCssRule {
 	 * @param item the item whose properties are set
 	 * @param rule the rule from which to read properties, can be <code>null</code>
 	 */
-	public MatchedCssRule( CssScheme scheme, CssItem item, TransitionalCssRule rule ){
+	public MatchedCssRule( CssScheme scheme, CssItem item, TransitionalCssRuleContent rule ){
 		this.rule = rule;
 		forwarder = new Forwarder( rule, item, scheme );
 	}
@@ -112,7 +113,7 @@ public class MatchedCssRule {
 	}
 	
 	private class Forwarder extends PropertyForwarder{
-		public Forwarder( CssRule source, CssPropertyContainer target, CssScheme scheme ){
+		public Forwarder( CssRuleContent source, CssPropertyContainer target, CssScheme scheme ){
 			super( source, target, scheme );
 		}
 		

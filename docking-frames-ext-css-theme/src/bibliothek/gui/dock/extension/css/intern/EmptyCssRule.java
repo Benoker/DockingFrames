@@ -28,6 +28,8 @@ package bibliothek.gui.dock.extension.css.intern;
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
+import bibliothek.gui.dock.extension.css.CssRuleContentListener;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
@@ -36,7 +38,7 @@ import bibliothek.gui.dock.extension.css.CssType;
  * The {@link EmptyCssRule} does never offer any {@link CssProperty}s. 
  * @author Benjamin Sigg
  */
-public class EmptyCssRule implements CssRule{
+public class EmptyCssRule implements CssRule, CssRuleContent{
 	private CssSelector selector;
 	
 	public EmptyCssRule( CssSelector selector ){
@@ -52,10 +54,25 @@ public class EmptyCssRule implements CssRule{
 	}
 	
 	@Override
+	public CssRuleContent getContent(){
+		return this;
+	}
+	
+	@Override
 	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
 		return null;
 	}
 
+	@Override
+	public void addRuleContentListener( CssRuleContentListener listener ){
+		// ignore	
+	}
+	
+	@Override
+	public void removeRuleContentListener( CssRuleContentListener listener ){
+		// ignore	
+	}
+	
 	@Override
 	public void addRuleListener( CssRuleListener listener ){
 		// ignore

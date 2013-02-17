@@ -33,6 +33,8 @@ import java.util.Map;
 import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
+import bibliothek.gui.dock.extension.css.CssRuleContent;
+import bibliothek.gui.dock.extension.css.CssRuleContentListener;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
@@ -41,12 +43,15 @@ import bibliothek.gui.dock.extension.css.CssType;
  * The default {@link CssRule} is just a {@link Map} of properties.
  * @author Benjamin Sigg
  */
-public class DefaultCssRule implements CssRule{
+public class DefaultCssRule implements CssRule, CssRuleContent{
 	/** tells which {@link CssItem} are affected by this rule */
 	private CssSelector selector;
 	
 	/** all the listeners that have been added to this rule */
 	private List<CssRuleListener> listeners = new ArrayList<CssRuleListener>( 2 );
+	
+	/** all the listeners that have been added to this rule-content */
+	private List<CssRuleContentListener> contentListeners = new ArrayList<CssRuleContentListener>( 2 );
 	
 	/** all the properties of this rule */
 	private Map<CssPropertyKey, String> properties = new HashMap<CssPropertyKey, String>( 5 );
@@ -76,6 +81,11 @@ public class DefaultCssRule implements CssRule{
 		for( CssRuleListener listener : listeners.toArray( new CssRuleListener[ listeners.size() ] )){
 			listener.selectorChanged( this );
 		}
+	}
+	
+	@Override
+	public CssRuleContent getContent(){
+		return this;
 	}
 	
 	@Override
@@ -109,11 +119,24 @@ public class DefaultCssRule implements CssRule{
 		else{
 			properties.put( key, value );
 		}
-		for( CssRuleListener listener : listeners.toArray( new CssRuleListener[ listeners.size() ] )){
+		for( CssRuleContentListener listener : contentListeners.toArray( new CssRuleContentListener[ contentListeners.size() ] )){
 			listener.propertyChanged( this, key );
 		}
 	}
 
+	@Override
+	public void addRuleContentListener( CssRuleContentListener listener ){
+		if( listener == null ){
+			throw new IllegalArgumentException( "listener must not be null" );
+		}
+		contentListeners.add( listener );
+	}
+	
+	@Override
+	public void removeRuleContentListener( CssRuleContentListener listener ){
+		contentListeners.remove( listener );	
+	}
+	
 	@Override
 	public void addRuleListener( CssRuleListener listener ){
 		if( listener == null ){

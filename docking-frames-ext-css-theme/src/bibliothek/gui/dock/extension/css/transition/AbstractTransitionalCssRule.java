@@ -29,16 +29,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
+import bibliothek.gui.dock.extension.css.CssRuleContentListener;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 
 /**
- * This {@link TransitionalCssRule} offers functionality to store and listen
+ * This {@link TransitionalCssRuleContent} offers functionality to store and listen
  * to a {@link RuleChainLink}, and offers methods to fire events to
  * {@link CssRuleListener}s. 
  * @author Benjamin Sigg
  */
-public abstract class AbstractTransitionalCssRule implements TransitionalCssRule{
-	private List<CssRuleListener> listeners = new ArrayList<CssRuleListener>();
+public abstract class AbstractTransitionalCssRule implements TransitionalCssRuleContent{
+	private List<CssRuleContentListener> listeners = new ArrayList<CssRuleContentListener>();
 	
 	/** implements all the listener interfaces required by this rule */
 	private Listener listener = new Listener();
@@ -47,7 +48,7 @@ public abstract class AbstractTransitionalCssRule implements TransitionalCssRule
 	private RuleChainLink link;
 	
 	/** the predecessor transition */
-	private TransitionalCssRule previous;
+	private TransitionalCssRuleContent previous;
 	
 	/** jobs to execute on destruction */
 	private List<Runnable> jobs = new ArrayList<Runnable>();
@@ -73,12 +74,12 @@ public abstract class AbstractTransitionalCssRule implements TransitionalCssRule
 	}
 	
 	@Override
-	public void addRuleListener( CssRuleListener listener ){
+	public void addRuleContentListener( CssRuleContentListener listener ){
 		listeners.add( listener );
 	}
 
 	@Override
-	public void removeRuleListener( CssRuleListener listener ){
+	public void removeRuleContentListener( CssRuleContentListener listener ){
 		listeners.remove( listener );
 	}
 	
@@ -86,7 +87,7 @@ public abstract class AbstractTransitionalCssRule implements TransitionalCssRule
 	 * Sets the predecessor transition.
 	 * @param previous the predecessor, may be <code>null</code>
 	 */
-	protected void setPrevious( TransitionalCssRule previous ){
+	protected void setPrevious( TransitionalCssRuleContent previous ){
 		this.previous = previous;
 	}
 	
@@ -94,30 +95,20 @@ public abstract class AbstractTransitionalCssRule implements TransitionalCssRule
 	 * Gets the predecessor transition.
 	 * @return the predecessor transition
 	 */
-	protected TransitionalCssRule getPrevious(){
+	protected TransitionalCssRuleContent getPrevious(){
 		return previous;
 	}
 	
 	/**
-	 * Fires an event informing all {@link CssRuleListener}s that property <code>key</code> changed.
+	 * Fires an event informing all {@link CssRuleContentListener}s that property <code>key</code> changed.
 	 * @param key the key of the changed property
 	 */
 	protected void fireChanged( CssPropertyKey key ){
-		for( CssRuleListener listener : listeners.toArray( new CssRuleListener[ listeners.size()] )){
+		for( CssRuleContentListener listener : listeners.toArray( new CssRuleContentListener[ listeners.size()] )){
 			listener.propertyChanged( this, key );
 		}
 	}
-	
-	/**
-	 * Fires an event informing all {@link CssRuleListener}s that the {@link #getSelector() selector}
-	 * of this rule changed.
-	 */
-	protected void fireSelectorChanged(){
-		for( CssRuleListener listener : listeners.toArray( new CssRuleListener[ listeners.size()] )){
-			listener.selectorChanged( this );
-		}
-	}
-	
+		
 	@Override
 	public void onDestroyed( Runnable job ){
 		if( job == null ){
