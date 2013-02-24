@@ -325,7 +325,7 @@ public class ToolbarGridTest {
 			TestItem item = new TestItem( placeholder );
 			grid.insert( column, row, item );
 			if( placeholder != null ) {
-				grid.insertPlaceholder( column, row, new Path( "test", placeholder ) );
+				grid.addPlaceholder( column, row, new Path( "test", placeholder ) );
 			}
 			dockables.add( item.asDockable() );
 			check();

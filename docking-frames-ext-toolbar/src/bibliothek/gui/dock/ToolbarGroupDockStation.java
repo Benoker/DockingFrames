@@ -59,6 +59,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideAnswer;
 import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.security.SecureContainer;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -1483,7 +1484,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		if( strategy != null ) {
 			placeholder = strategy.getPlaceholderFor( target );
 			if( (placeholder != null) && (column >= 0) && (line >= 0) ) {
-				dockables.insertPlaceholder( column, line, placeholder );
+				dockables.addPlaceholder( column, line, placeholder );
 			}
 		}
 
@@ -1494,7 +1495,69 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
 		description="Implement this feature")
 	public void aside( AsideRequest request ){
-		// ignore (for now)	
+		DockableProperty location = request.getLocation();
+		int column = -1;
+		int line = -1;
+		Path newPlaceholder = request.getPlaceholder();
+		
+		if( location instanceof ToolbarGroupProperty ){
+			ToolbarGroupProperty groupLocation = (ToolbarGroupProperty)location;
+			
+			Path placeholder = groupLocation.getPlaceholder();
+			if( placeholder != null ){
+				column = dockables.getColumn( placeholder );
+			}
+			if( column == -1 ){
+				placeholder = null;
+				column = groupLocation.getColumn();
+			}
+			
+			int totalColumnCount = dockables.getTotalColumnCount();
+			column = Math.max( 0, Math.min( column, totalColumnCount ) );
+			
+			if( placeholder != null && column < totalColumnCount ){
+				line = dockables.getLine( column, placeholder );
+			}
+			else if( column == totalColumnCount ){
+				line = 0;
+			}
+			
+			if( line == -1 ){
+				line = groupLocation.getLine();
+				line = Math.max( 0, Math.min( line, dockables.getLineCount( column ) ) );
+			}
+			
+			if( groupLocation.getSuccessor() == null ){
+				// insert
+				if( newPlaceholder != null ){
+					dockables.insertPlaceholder( column, line, newPlaceholder );
+				}
+			}
+			else{
+				// add to existing location
+				if( newPlaceholder != null ){
+					dockables.addPlaceholder( column, line, newPlaceholder );
+					Dockable existing = dockables.getModel().getColumn( column ).getDockable( line );
+					if( existing.asDockStation() != null ){
+						AsideAnswer answer = request.forward( existing.asDockStation() );
+						if( answer.isCanceled() ){
+							return;
+						}
+					}
+				}
+			}
+		}
+		else {
+			column = 0;
+			if( dockables.getColumnCount() > 0 ){
+				line = dockables.getLineCount( column );
+			}
+			else{
+				line = 0;
+			}
+		}
+		
+		request.answer( new ToolbarGroupProperty( column, line, newPlaceholder ) );
 	}
 
 	@Override

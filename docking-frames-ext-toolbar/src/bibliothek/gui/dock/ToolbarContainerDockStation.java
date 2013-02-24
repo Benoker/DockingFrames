@@ -54,6 +54,7 @@ import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
+import bibliothek.gui.dock.layout.location.AsideAnswer;
 import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.DisplayerCollection;
@@ -103,10 +104,6 @@ import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 
 /**
  * A {@link Dockable} and a {@link DockStation} which stands for a group of
@@ -409,11 +406,47 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		return new ToolbarContainerProperty( index, placeholder );
 	}
 	
-	@Override
-	@Todo( compatibility=Compatibility.COMPATIBLE, priority=Priority.ENHANCEMENT, target=Version.VERSION_1_1_2,
-		description="Implement this feature")
 	public void aside( AsideRequest request ){
-		// ignore (for now)	
+    	DockableProperty location = request.getLocation();
+    	int index;
+    	Path newPlaceholder = request.getPlaceholder();
+    	if( location instanceof ToolbarContainerProperty ){
+    		ToolbarContainerProperty toolbarLocation = (ToolbarContainerProperty)location;
+    		if( toolbarLocation.getSuccessor() == null ){
+    			index = dockables.getNextListIndex( toolbarLocation.getIndex(), toolbarLocation.getPlaceholder() );
+    			if( newPlaceholder != null ){
+    				dockables.list().insertPlaceholder( index, newPlaceholder );
+    			}
+    		}
+    		else{
+    			index = dockables.getListIndex( toolbarLocation.getIndex(), toolbarLocation.getPlaceholder() );
+    			if( newPlaceholder != null ){
+    				dockables.list().addPlaceholder( index, newPlaceholder );
+    				
+    				StationChildHandle handle = dockables.list().get( index ).getDockable();
+    				if( handle != null ){
+    					DockStation station = handle.asDockable().asDockStation();
+    					if( station != null ){
+    						AsideAnswer answer = request.forward( station );
+    						if( answer.isCanceled() ){
+    							return;
+    						}
+    					}
+    				}
+    				
+    			}
+    		}
+    	} 
+    	else {
+    		index = dockables.dockables().size();
+    		if( newPlaceholder != null ){
+    			dockables.dockables().insertPlaceholder( index, newPlaceholder );
+    		}
+    	}
+    	
+    	
+    	
+    	request.answer( new ToolbarContainerProperty( index, newPlaceholder ));
 	}
 	
 	@Override

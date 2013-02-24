@@ -686,36 +686,22 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     public void aside( AsideRequest request ){
     	DockableProperty location = request.getLocation();
+    	int index;
+    	Path newPlaceholder = request.getPlaceholder();
     	if( location instanceof StackDockProperty ){
     		StackDockProperty stackLocation = (StackDockProperty)location;
-    		int index = -1;
-    		
-    		Path oldPlaceholder = stackLocation.getPlaceholder();
-    		if( oldPlaceholder != null ){
-    			index = dockables.getListIndex( oldPlaceholder );
-    			if( index == -1 ){
-    				dockables.insertAllPlaceholders();
-    				index = dockables.getListIndex( oldPlaceholder );
-    			}
-    		}
-    		if( index == -1 ){
-    			index = stackLocation.getIndex();
-    		}
-    		index++;
-    		
-    		Path newPlaceholder = request.getPlaceholder();
+    		index = dockables.getNextListIndex( stackLocation.getIndex(), stackLocation.getPlaceholder() );
     		if( newPlaceholder != null ){
     			dockables.list().insertPlaceholder( index, newPlaceholder );
     		}
-    		request.answer( new StackDockProperty( index, newPlaceholder ));
-    	} else {
-    		int index = dockables.dockables().size();
-    		Path newPlaceholder = request.getPlaceholder();
+    	} 
+    	else {
+    		index = dockables.dockables().size();
     		if( newPlaceholder != null ){
     			dockables.dockables().insertPlaceholder( index, newPlaceholder );
     		}
-    		request.answer( new StackDockProperty( index, newPlaceholder ));
     	}
+    	request.answer( new StackDockProperty( index, newPlaceholder ));
     }
     
     public Dockable getFrontDockable() {

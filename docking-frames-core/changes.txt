@@ -905,4 +905,8 @@
  - Bugfix: CToolbarContentArea made minimized Dockables invisible (actually their size was always close to 0/0)
  - API: If a focused Dockable is put onto a FlapDockStation, the station does open its window
  ! API: Workarounds for Java 6 and 7 now make a distinction between transparency and translucency, opening the path for better transparency support.
- - API: WindowConfiguration supports a new property: shape. Shape tells which parts of a ScreenDockWindow are visible, and which are not. 
+ - API: WindowConfiguration supports a new property: shape. Shape tells which parts of a ScreenDockWindow are visible, and which are not.
+ 
+[v1.1.2p4]
+ - API: Implemented all the "aside" methods in the toolbar extension
+ - API: AbstractCDockable.setLocationAside no longer sets a generic CLocation but a CExtendedModeLocation, which will make the LocationManager to access the original DockableProperty. This makes the method using placeholders more efficiently. 

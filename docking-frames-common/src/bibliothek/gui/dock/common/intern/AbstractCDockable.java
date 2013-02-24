@@ -52,6 +52,7 @@ import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.layout.RequestDimension;
+import bibliothek.gui.dock.common.location.CExtendedModeLocation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -386,10 +387,7 @@ public abstract class AbstractCDockable implements CDockable {
 	    
 	    CLocationMode mode = locationManager.getCurrentMode( dockable.intern() );
 	    if( mode != null ){
-	    	CLocation location = locationManager.getLocation( intern(), mode.getExtendedMode() );
-	    	if( location != null ){
-	    		setLocation( location );
-	    	}
+    		setLocation( new CExtendedModeLocation( mode.getExtendedMode() ) );
 	    }
     }
     

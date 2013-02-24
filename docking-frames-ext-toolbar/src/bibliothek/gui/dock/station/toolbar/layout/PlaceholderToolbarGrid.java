@@ -458,11 +458,40 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 * @param placeholder
 	 *            the placeholder to store
 	 */
-	public void insertPlaceholder( int column, int line, Path placeholder ){
+	public void addPlaceholder( int column, int line, Path placeholder ){
 		columns.dockables().addPlaceholder( column, placeholder );
 		final Column<D, S, P> item = columns.dockables().get( column );
 		item.getList().dockables().addPlaceholder( line, placeholder );
 		ensureRemoved( item.getList(), placeholder );
+	}
+	
+	/**
+	 * Inserts <code>placeholder</code> into column <code>column</code> at <code>line</code>. This
+	 * method may create a new column if <code>column</code> is as big as the grid.
+	 * @param column the column into which to insert <code>placeholder</code>, includes
+	 * empty columns.
+	 * @param line the line into which to insert <code>placeholder</code>
+	 * @param placeholder the new placeholder, not <code>null</code>
+	 */
+	public void insertPlaceholder( int column, int line, Path placeholder ){
+		if( column == columns.list().size() ){
+			columns.list().insertPlaceholder( column, placeholder );
+		}
+		else{
+			columns.list().addPlaceholder( column, placeholder );
+		}
+		PlaceholderList<ColumnItem<D, S, P>, ColumnItem<D, S, P>, Column<D, S, P>>.Item item = columns.list().get( column );
+		if( item.getDockable() == null ){
+			item.setDockable( columns.createColumn( createColumn() ));
+		}
+		Filter<PlaceholderList<D,S,P>.Item> lineList = item.getDockable().getList().list();
+		
+		if( line == lineList.size() ){
+			lineList.insertPlaceholder( line, placeholder );
+		}
+		else{
+			lineList.addPlaceholder( line, placeholder );
+		}
 	}
 
 	/**
@@ -635,7 +664,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			}
 		}
 		else {
-			return item.getDockable().getList().getDockableIndex( placeholder );
+			return item.getDockable().getList().list().indexOfPlaceholder( placeholder );
 		}
 	}
 

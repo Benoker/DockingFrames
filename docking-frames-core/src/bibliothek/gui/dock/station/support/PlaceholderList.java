@@ -723,6 +723,49 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 
 		return entry.index( Level.BASE );
 	}
+	
+	/**
+	 * Searches for an index in {@link #list()} described by
+	 * <code>placeholder</code> or <code>index</code>.<br>
+	 * This method calls {@link #insertAllPlaceholders()} if <code>placeholder</code> cannot
+	 * be found.
+	 * @param index the backup index, used if <code>placeholder</code> cannot be found
+	 * @param placeholder a placeholder to search, can be <code>null</code>
+	 * @return the location after <code>placeholder</code> or <code>index</code>
+	 */
+	public int getListIndex( int index, Path placeholder ){
+		int result = -1;
+		
+		if( placeholder != null ){
+			result = getListIndex( placeholder );
+			if( result == -1 ){
+				insertAllPlaceholders();
+				result = getListIndex( placeholder );
+			}
+		}
+		if( result == -1 ){
+			result = index;
+		}
+		result = Math.min( result, list().size() );
+		return result;
+	}
+	
+	/**
+	 * Searches for an index in {@link #list()} that follows the item described by
+	 * <code>placeholder</code> or <code>index</code>.<br>
+	 * This method calls {@link #insertAllPlaceholders()} if <code>placeholder</code> cannot
+	 * be found.
+	 * @param index the backup index, used if <code>placeholder</code> cannot be found
+	 * @param placeholder a placeholder to search, can be <code>null</code>
+	 * @return the location after <code>placeholder</code> or <code>index</code>
+	 */
+	public int getNextListIndex( int index, Path placeholder ){
+		int result = getListIndex( index, placeholder );
+		
+		result++;
+		result = Math.min( result, list().size() );
+		return result;
+	}
 
 	/**
 	 * Tells whether this list contains a reference to <code>placeholder</code>.
@@ -1563,6 +1606,13 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		public int indexOf( M object );
 
 		/**
+		 * Searches the first occurence of <code>placeholder</code>.
+		 * @param placeholder the placeholder to search
+		 * @return the location of <code>placeholder</code> or <code>-1</code>
+		 */
+		public int indexOfPlaceholder( Path placeholder );
+		
+		/**
 		 * Moves the item at location <code>source</code> to location <code>destination</code>.
 		 * @param source the current location of some item
 		 * @param destination the new location
@@ -1690,6 +1740,19 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			Entry entry = head( level );
 			while( entry != null ) {
 				if( unwrap( entry.item ).equals( object ) ) {
+					return index;
+				}
+				entry = entry.next( level );
+				index++;
+			}
+			return -1;
+		}
+		
+		public int indexOfPlaceholder( Path placeholder ){
+			int index = 0;
+			Entry entry = head( level );
+			while( entry != null ) {
+				if( entry.item.hasPlaceholder( placeholder )){
 					return index;
 				}
 				entry = entry.next( level );
