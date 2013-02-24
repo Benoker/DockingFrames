@@ -909,4 +909,5 @@
  
 [v1.1.2p4]
  - API: Implemented all the "aside" methods in the toolbar extension
- - API: AbstractCDockable.setLocationAside no longer sets a generic CLocation but a CExtendedModeLocation, which will make the LocationManager to access the original DockableProperty. This makes the method using placeholders more efficiently. 
+ - API: AbstractCDockable.setLocationAside no longer sets a generic CLocation but a CExtendedModeLocation, which will make the LocationManager to access the original DockableProperty. This makes the method using placeholders more efficiently.
+ - API: Border of FlapWindow is now customizeable 

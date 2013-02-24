@@ -63,6 +63,7 @@ import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.themes.ThemeManager;
+import bibliothek.gui.dock.themes.border.BorderForwarder;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
@@ -86,6 +87,9 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			// ignore
 		}
 	};
+	
+	/** the border of the {@link #contentPane} */
+	private BorderForwarder contentBorder;
 
 	/** <code>true</code> if the mouse is currently pressed */
 	private boolean pressed;
@@ -159,7 +163,8 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 		contentPane = contentContainer.getContentPane();
 		contentPane.setOpaque( false );
 
-		contentPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		contentBorder = new WindowBorder( contentPane );
+		contentBorder.setBorder( BorderFactory.createBevelBorder(BevelBorder.RAISED) );
 		contentPane.addMouseListener(this);
 		contentPane.addMouseMotionListener(this);
 
@@ -405,6 +410,7 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	public void setController( DockController controller ){
 		background.setController( controller );
 		contentContainer.setController( controller );
+		contentBorder.setController( controller );
 	}
 
 	/**
@@ -548,6 +554,25 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 	public void mouseMoved( MouseEvent e ){
 		// do nothing
 	}
+	
+    /**
+     * Represents the border of this window
+     * @author Benjamin Sigg
+     */
+    private class WindowBorder extends BorderForwarder implements FlapWindowBorder{
+    	public WindowBorder( JComponent target ){
+    		super( FlapWindowBorder.KIND, ThemeManager.BORDER_MODIFIER + ".flap.window", target );
+    	}
+    	
+    	public FlapWindow getWindow(){
+    		return DefaultFlapWindow.this;
+    	}
+    	
+    	public FlapDockStation getStation(){
+    		return DefaultFlapWindow.this.getStation();
+    	}
+    }
+
 	
 	/**
 	 * The background algorithm of this window
