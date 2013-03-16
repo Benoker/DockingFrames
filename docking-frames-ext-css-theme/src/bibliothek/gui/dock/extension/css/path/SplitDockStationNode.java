@@ -30,11 +30,19 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.extension.css.doc.CssDocKey;
+import bibliothek.gui.dock.extension.css.doc.CssDocPathNode;
+import bibliothek.gui.dock.extension.css.doc.CssDocText;
 
 /**
  * This node describes the child of a {@link SplitDockStation}. 
  * @author Benjamin Sigg
  */
+@CssDocPathNode(
+		name=@CssDocKey(key=SplitDockStationNode.NAME),
+		description=@CssDocText(text="Relation between a SplitDockStation and its child(ren)"),
+		pseudoClasses={
+			@CssDocKey(key="selected", description=@CssDocText(text="Applied if the child is selected"))})
 public class SplitDockStationNode extends AbstractCssNode{
 	/** the name of this node */
 	public static final String NAME = "split-child";

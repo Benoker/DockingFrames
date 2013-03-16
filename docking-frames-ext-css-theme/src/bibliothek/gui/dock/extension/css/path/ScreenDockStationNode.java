@@ -31,6 +31,9 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.extension.css.CssNode;
+import bibliothek.gui.dock.extension.css.doc.CssDocKey;
+import bibliothek.gui.dock.extension.css.doc.CssDocPathNode;
+import bibliothek.gui.dock.extension.css.doc.CssDocText;
 import bibliothek.gui.dock.station.screen.ScreenDockProperty;
 import bibliothek.gui.dock.station.screen.ScreenDockStationListener;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
@@ -39,6 +42,17 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindow;
  * This {@link CssNode} describes the child of a {@link ScreenDockStation}.
  * @author Benjamin Sigg
  */
+@CssDocPathNode(
+		name=@CssDocKey(key=ScreenDockStationNode.NAME),
+		description=@CssDocText(text="Relation between a ScreenDockStation and its child(ren)"),
+		properties={
+			@CssDocKey(key="x", description=@CssDocText(text="x coordinate of the child (in pixel)")),
+			@CssDocKey(key="y", description=@CssDocText(text="y coordinate of the child (in pixel)")),
+			@CssDocKey(key="width", description=@CssDocText(text="width of the child (in pixel)")),
+			@CssDocKey(key="height", description=@CssDocText(text="height of the child (in pixel)"))},
+		pseudoClasses={
+			@CssDocKey(key="fullscreen", description=@CssDocText(text="Applied if the child is in fullscreen mode")),
+			@CssDocKey(key="selected", description=@CssDocText(text="Applied if the child is selected"))})
 public class ScreenDockStationNode extends AbstractCssNode {
 	/** The name of this node */
 	public static final String NAME = "screen-child";

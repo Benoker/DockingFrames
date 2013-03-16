@@ -30,11 +30,21 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.event.DockStationListener;
+import bibliothek.gui.dock.extension.css.doc.CssDocKey;
+import bibliothek.gui.dock.extension.css.doc.CssDocPathNode;
+import bibliothek.gui.dock.extension.css.doc.CssDocText;
 
 /**
  * This node describes the child of a {@link StackDockStation}.
  * @author Benjamin Sigg
  */
+@CssDocPathNode(
+		name=@CssDocKey(key=StackDockStationNode.NAME),
+		description=@CssDocText(text="Relation between a StackDockStation and its child(ren)"),
+		properties={
+			@CssDocKey(key="index", description=@CssDocText(text="Location of the child on this StackDockStation"))},
+		pseudoClasses={
+			@CssDocKey(key="selected", description=@CssDocText(text="Applied if the child is selected"))})
 public class StackDockStationNode extends AbstractCssNode{
 	/** the name of this node */
 	public static final String NAME = "stack-child";

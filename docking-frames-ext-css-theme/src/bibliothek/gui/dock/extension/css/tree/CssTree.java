@@ -40,6 +40,10 @@ import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.extension.css.CssNode;
 import bibliothek.gui.dock.extension.css.CssPath;
+import bibliothek.gui.dock.extension.css.doc.CssDocKey;
+import bibliothek.gui.dock.extension.css.doc.CssDocPath;
+import bibliothek.gui.dock.extension.css.doc.CssDocPathNode;
+import bibliothek.gui.dock.extension.css.doc.CssDocText;
 import bibliothek.gui.dock.extension.css.path.FlapDockStationNode;
 import bibliothek.gui.dock.extension.css.path.NamedCssNode;
 import bibliothek.gui.dock.extension.css.path.ScreenDockStationNode;
@@ -209,6 +213,21 @@ public class CssTree {
 	 * @param element the element to which the {@link CssPath} should point
 	 * @return the path, may be a new {@link CssPath} or may be shared with other modules
 	 */
+	@CssDocPath(
+			id="getPathFor",
+			description=@CssDocText(text="Generic path for a Dockable or a DockStation, the nodes are created by different CssNodeFactorys."),
+			unordered={
+				@CssDocPathNode(name=@CssDocKey(key="split", description=@CssDocText(text="Denotes a SplitDockStation when using the default CssNodeFactories"))),
+				@CssDocPathNode(name=@CssDocKey(key="flap", description=@CssDocText(text="Denotes a FlapDockStation when using the default CssNodeFactories"))),
+				@CssDocPathNode(name=@CssDocKey(key="stack", description=@CssDocText(text="Denotes a StackDockStation when using the default CssNodeFactories"))),
+				@CssDocPathNode(name=@CssDocKey(key="screen", description=@CssDocText(text="Denotes a ScreenDockStation when using the default CssNodeFactories"))),
+				@CssDocPathNode(name=@CssDocKey(key="dockable", description=@CssDocText(text="Denotes a Dockable when using the default CssNodeFactories"))),
+				@CssDocPathNode(name=@CssDocKey(key="element", description=@CssDocText(text="Denotes a generic DockElement when using the default CssNodeFactories"))),
+				@CssDocPathNode(reference=StackDockStationNode.class),
+				@CssDocPathNode(reference=ScreenDockStationNode.class),
+				@CssDocPathNode(reference=SplitDockStationNode.class),
+				@CssDocPathNode(reference=FlapDockStationNode.class),
+			})
 	public CssPath getPathFor( DockElement element ){
 		CssPath path = pathCache.get( element );
 		if( path == null ){

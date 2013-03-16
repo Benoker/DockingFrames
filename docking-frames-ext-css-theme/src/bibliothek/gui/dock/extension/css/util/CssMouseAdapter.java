@@ -33,6 +33,9 @@ import java.awt.event.MouseListener;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.dock.extension.css.CssNode;
+import bibliothek.gui.dock.extension.css.doc.CssDocKey;
+import bibliothek.gui.dock.extension.css.doc.CssDocKeys;
+import bibliothek.gui.dock.extension.css.doc.CssDocText;
 
 /**
  * This {@link MouseListener} can be added to any {@link Component}, it will update the
@@ -40,6 +43,10 @@ import bibliothek.gui.dock.extension.css.CssNode;
  * {@link MouseEvent}s that are catched from said {@link Component}s.
  * @author Benjamin Sigg
  */
+@CssDocKeys({
+	@CssDocKey(key="hover", description=@CssDocText(text="Applied if the mouse is hovering over this element")),
+	@CssDocKey(key="pressed", description=@CssDocText(text="Applied if the mouse has grabbed this element"))
+})
 public abstract class CssMouseAdapter extends MouseAdapter implements MouseInputListener{
 	private boolean hovering = false;
 	private boolean mousePressed = false;

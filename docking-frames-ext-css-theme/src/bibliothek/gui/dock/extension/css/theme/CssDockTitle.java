@@ -33,6 +33,11 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.extension.css.CssPath;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.DefaultCssItem;
+import bibliothek.gui.dock.extension.css.doc.CssDocProperty;
+import bibliothek.gui.dock.extension.css.doc.CssDocKey;
+import bibliothek.gui.dock.extension.css.doc.CssDocPath;
+import bibliothek.gui.dock.extension.css.doc.CssDocPathNode;
+import bibliothek.gui.dock.extension.css.doc.CssDocText;
 import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
@@ -40,6 +45,7 @@ import bibliothek.gui.dock.extension.css.path.MultiCssPath;
 import bibliothek.gui.dock.extension.css.property.ShapeCssProperty;
 import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.extension.css.transition.CssPaintTransitionProperty;
+import bibliothek.gui.dock.extension.css.tree.CssTree;
 import bibliothek.gui.dock.extension.css.util.CssMouseAdapter;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -55,8 +61,15 @@ public class CssDockTitle extends AbstractDockTitle{
 	private CssPath selfPath;
 	
 	private DefaultCssItem item;
-	
+
+	@CssDocProperty(
+			path=@CssDocPath(referenceId="self"),
+			property=@CssDocKey(key="background"))
 	private CssPaint background;
+	
+	@CssDocProperty(
+			path=@CssDocPath(referenceId="self"),
+			property=@CssDocKey(key="shape"))
 	private CssShape shape;
 	
 	/**
@@ -147,6 +160,20 @@ public class CssDockTitle extends AbstractDockTitle{
 		updateSelf();
 	}
 	
+	@CssDocPath(id="self",
+			parentId="getPathFor",
+			parentClass = CssTree.class,
+			description=@CssDocText(format="Path to a %s.", arguments={"CssDockTitle"}),
+			nodes={@CssDocPathNode(
+					name=@CssDocKey(key="title"),
+					pseudoClasses={
+							@CssDocKey(key="selected", description=@CssDocText(text="Applied if the title is selected"))},
+					properties={
+							@CssDocKey(key="side", description=@CssDocText(text="Depends on the orientation of the title, one of 'east', 'west', 'south', 'north' or 'free'")),
+							@CssDocKey(key="horizontal", description=@CssDocText(text="'true' if the title is horizontal")),
+							@CssDocKey(key="vertical", description=@CssDocText(text="'true' if the title is vertical")),
+							@CssDocKey(reference=CssMouseAdapter.class)}
+					)})
 	private void updateSelf(){
 		if( self != null ){
 			if( isActive() ){
