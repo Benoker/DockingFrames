@@ -23,13 +23,14 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.property.paint;
 
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 import bibliothek.gui.dock.extension.css.transition.types.TransitionalColorProperty;
 
@@ -49,15 +50,16 @@ public class ColorType implements CssType<Color>{
 	}
 	
 	@Override
-	public Color convert( String value ){
-		Color color = colors.get( value.toLowerCase() );
+	public Color convert( CssDeclarationValue value ){
+		String text = value.getSingleValue().toLowerCase();
+		Color color = colors.get( text );
 		if( color != null ){
 			return color;
 		}
-		if( value.startsWith( "#" ) && value.length() == 7 ){
-			int red = Integer.parseInt( value.substring( 1, 3 ), 16 );
-			int green = Integer.parseInt( value.substring( 3, 5 ), 16 );
-			int blue = Integer.parseInt( value.substring( 5, 7 ), 16 );
+		if( text.startsWith( "#" ) && text.length() == 7 ){
+			int red = Integer.parseInt( text.substring( 1, 3 ), 16 );
+			int green = Integer.parseInt( text.substring( 3, 5 ), 16 );
+			int blue = Integer.parseInt( text.substring( 5, 7 ), 16 );
 			return new Color( red, green, blue );
 		}
 		return null;
@@ -100,7 +102,7 @@ public class ColorType implements CssType<Color>{
 	}
 	
 	private void put( String key, String color ){
-		put( key, convert( color ));
+		put( key, convert( new CssDeclarationValue( color )));
 	}
 	
 	private void initHtmlColors(){

@@ -23,39 +23,31 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.transition;
+package bibliothek.gui.dock.extension.css.property;
 
-import bibliothek.gui.dock.extension.css.CssItem;
-import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
+import bibliothek.gui.dock.extension.css.transition.types.TransitionalIntegerProperty;
 
 /**
- * A property for handling a {@link CssPaint} with a transition.
+ * Converter for reading {@link String}s and creating {@link Integer}s.
  * @author Benjamin Sigg
  */
-public abstract class CssPaintTransitionProperty extends CssContainerTransitionProperty<CssPaint>{
-	/**
-	 * Creates the new property.
-	 * @param scheme the scheme in whose realm this property will work
-	 * @param item the item to which this property belongs
-	 */
-	public CssPaintTransitionProperty( CssScheme scheme, CssItem item ){
-		super( scheme, item );
+public class IntegerType implements CssType<Integer>{
+	@Override
+	public Integer convert( CssDeclarationValue value ){
+		try{
+			return Integer.valueOf( value.getSingleValue() );
+		}
+		catch( NumberFormatException ex ){
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
-	public CssType<CssPaint> getType( CssScheme scheme ){
-		return scheme.getConverter( CssPaint.class );
-	}
-
-	@Override
-	protected void bind(){
-		// ignore
-	}
-
-	@Override
-	protected void unbind(){
-		// ignore
+	public TransitionalCssProperty<Integer> createTransition(){
+		return new TransitionalIntegerProperty();
 	}
 }

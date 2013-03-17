@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,37 +23,70 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.transition;
+package bibliothek.gui.dock.extension.css.property.font;
 
 import bibliothek.gui.dock.extension.css.CssItem;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
+import bibliothek.gui.dock.extension.css.transition.CssContainerTransitionProperty;
+import bibliothek.gui.dock.util.font.FontModifier;
 
 /**
- * A property for handling a {@link CssPaint} with a transition.
+ * A property for handling a {@link CssFontModifier} with a transition.
  * @author Benjamin Sigg
  */
-public abstract class CssPaintTransitionProperty extends CssContainerTransitionProperty<CssPaint>{
+public abstract class CssFontTransitionProperty extends CssContainerTransitionProperty<CssFontModifier>{
+	/** listener added to the current font modifier */
+	private CssFontModifierListener listener = new CssFontModifierListener(){
+		@Override
+		public void modifierChanged( CssFontModifier source ){
+			setModifier( source.getModifier() );	
+		}
+	};
+	
+	/** the current font modifier */
+	private CssFontModifier modifier;
+	
 	/**
 	 * Creates the new property.
 	 * @param scheme the scheme in whose realm this property will work
 	 * @param item the item to which this property belongs
 	 */
-	public CssPaintTransitionProperty( CssScheme scheme, CssItem item ){
+	public CssFontTransitionProperty( CssScheme scheme, CssItem item ){
 		super( scheme, item );
 	}
-
+	
 	@Override
-	public CssType<CssPaint> getType( CssScheme scheme ){
-		return scheme.getConverter( CssPaint.class );
+	public CssType<CssFontModifier> getType( CssScheme scheme ){
+		return scheme.getConverter( CssFontModifier.class );
 	}
-
+	
+	@Override
+	protected void propertyChanged( CssFontModifier value ){
+		if( modifier != null ){
+			modifier.removeFontModifierListener( listener );
+		}
+		modifier = value;
+		if( modifier != null ){
+			modifier.addFontModifierListener( listener );
+			setModifier( modifier.getModifier() );
+		}
+		else{
+			setModifier( null );
+		}
+	}
+	
+	/**
+	 * Called if the {@link CssFontModifier} was exchanged or updated.
+	 * @param modifier the new modifier, may be <code>null</code>
+	 */
+	protected abstract void setModifier( FontModifier modifier );
+	
 	@Override
 	protected void bind(){
 		// ignore
 	}
-
+	
 	@Override
 	protected void unbind(){
 		// ignore

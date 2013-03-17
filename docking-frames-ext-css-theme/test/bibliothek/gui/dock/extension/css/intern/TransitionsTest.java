@@ -14,9 +14,9 @@ import bibliothek.gui.dock.extension.css.intern.range.Range;
 import bibliothek.gui.dock.extension.css.intern.range.RangeTransitionProperty;
 import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
-import bibliothek.gui.dock.extension.css.property.ColorCssProperty;
+import bibliothek.gui.dock.extension.css.property.paint.ColorCssProperty;
+import bibliothek.gui.dock.extension.css.property.paint.ColorType;
 import bibliothek.gui.dock.extension.css.transition.ColorTransitionProperty;
-import bibliothek.gui.dock.extension.css.type.ColorType;
 
 public class TransitionsTest {
 	@Test

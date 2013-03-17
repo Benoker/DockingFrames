@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,29 +23,40 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.property;
+package bibliothek.gui.dock.extension.css.property.font;
 
-import java.awt.Color;
-
-import bibliothek.gui.dock.extension.css.CssProperty;
-import bibliothek.gui.dock.extension.css.CssPropertyKey;
-import bibliothek.gui.dock.extension.css.CssScheme;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.type.ColorType;
+import bibliothek.gui.dock.extension.css.transition.MiddleTransitionalCssProperty;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
+import bibliothek.gui.dock.util.font.GenericFontModifier.Modify;
 
 /**
- * A {@link CssProperty} for setting {@link Color}s, uses the {@link ColorType}
- * for conversion.
+ * Converts a String into a {@link Modify}.
  * @author Benjamin Sigg
  */
-public abstract class ColorCssProperty extends SimpleCssPropertyContainer implements CssProperty<Color>{
+public class FontModifyType implements CssType<Modify>{
 	@Override
-	public CssType<Color> getType( CssScheme scheme ){
-		return scheme.getConverter( Color.class );
+	public Modify convert( CssDeclarationValue value ){
+		String text = value.getSingleValue().toLowerCase();
+		
+		if( "on".equals( text ) || "true".equals( text )){
+			return Modify.ON;
+		}
+		if( "off".equals( text ) || "false".equals( text )){
+			return Modify.OFF;
+		}
+		if( "ignore".equals( text )){
+			return Modify.IGNORE;
+		}
+		if( "reverse".equals( text )){
+			return Modify.REVERSE;
+		}
+		return null;
 	}
-	
+
 	@Override
-	public void setScheme( CssScheme scheme, CssPropertyKey key ){
-		// ignore	
-	}
+	public TransitionalCssProperty<Modify> createTransition(){
+		return new MiddleTransitionalCssProperty<Modify>();
+	}	
 }

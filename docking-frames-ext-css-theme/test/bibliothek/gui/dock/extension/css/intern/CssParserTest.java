@@ -12,6 +12,7 @@ import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 public class CssParserTest {
@@ -25,8 +26,8 @@ public class CssParserTest {
 	private CssType<String> string(){
 		return new CssType<String>(){
 			@Override
-			public String convert( String value ){
-				return value;
+			public String convert( CssDeclarationValue value ){
+				return value.getValue();
 			}
 
 			@Override

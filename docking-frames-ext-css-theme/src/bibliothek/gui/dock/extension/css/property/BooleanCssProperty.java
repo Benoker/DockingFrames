@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,30 +23,25 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.property;
 
+import bibliothek.gui.dock.extension.css.CssProperty;
+import bibliothek.gui.dock.extension.css.CssPropertyKey;
+import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
-import bibliothek.gui.dock.extension.css.transition.types.TransitionalIntegerProperty;
 
 /**
- * Converter for reading {@link String}s and creating {@link Integer}s.
+ * A property for reading {@link Boolean}s.
  * @author Benjamin Sigg
  */
-public class IntegerType implements CssType<Integer>{
+public abstract class BooleanCssProperty extends SimpleCssPropertyContainer implements CssProperty<Boolean>{
 	@Override
-	public Integer convert( String value ){
-		try{
-			return Integer.valueOf( value );
-		}
-		catch( NumberFormatException ex ){
-			ex.printStackTrace();
-			return null;
-		}
+	public CssType<Boolean> getType( CssScheme scheme ){
+		return scheme.getConverter( Boolean.class );
 	}
-
+	
 	@Override
-	public TransitionalCssProperty<Integer> createTransition(){
-		return new TransitionalIntegerProperty();
+	public void setScheme( CssScheme scheme, CssPropertyKey key ){
+		// ignore	
 	}
 }

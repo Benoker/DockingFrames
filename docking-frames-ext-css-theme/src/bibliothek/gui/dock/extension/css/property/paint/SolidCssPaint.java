@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.paint;
+package bibliothek.gui.dock.extension.css.property.paint;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -33,8 +33,7 @@ import java.awt.Shape;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
-import bibliothek.gui.dock.extension.css.property.ColorCssProperty;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.property.shape.CssShape;
 
 /**
  * This paint just fills an area with one color.

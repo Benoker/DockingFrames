@@ -38,6 +38,7 @@ import bibliothek.gui.dock.extension.css.CssRuleContentListener;
 import bibliothek.gui.dock.extension.css.CssRuleListener;
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
 
 /**
  * The default {@link CssRule} is just a {@link Map} of properties.
@@ -54,7 +55,7 @@ public class DefaultCssRule implements CssRule, CssRuleContent{
 	private List<CssRuleContentListener> contentListeners = new ArrayList<CssRuleContentListener>( 2 );
 	
 	/** all the properties of this rule */
-	private Map<CssPropertyKey, String> properties = new HashMap<CssPropertyKey, String>( 5 );
+	private Map<CssPropertyKey, CssDeclarationValue> properties = new HashMap<CssPropertyKey, CssDeclarationValue>( 5 );
 	
 	/**
 	 * Creates a new rule
@@ -90,8 +91,8 @@ public class DefaultCssRule implements CssRule, CssRuleContent{
 	
 	@Override
 	public <T> T getProperty( CssType<T> type, CssPropertyKey property ){
-		String value = properties.get( property );
-		if( "null".equals( value ) || value == null ){
+		CssDeclarationValue value = properties.get( property );
+		if( value == null ){
 			return null;
 		}
 		return type.convert( properties.get( property ) );
@@ -104,7 +105,12 @@ public class DefaultCssRule implements CssRule, CssRuleContent{
 	 * @param value the value of the property or <code>null</code>
 	 */
 	public void setProperty( String key, String value ){
-		setProperty( CssPropertyKey.parse( key ), value );
+		if( value == null ){
+			setProperty( CssPropertyKey.parse( key ), null );
+		}
+		else{
+			setProperty( CssPropertyKey.parse( key ), new CssDeclarationValue( value ) );
+		}
 	}
 	
 	/**
@@ -112,7 +118,7 @@ public class DefaultCssRule implements CssRule, CssRuleContent{
 	 * @param key the name of the property to set
 	 * @param value the value of the property or <code>null</code>
 	 */
-	public void setProperty( CssPropertyKey key, String value ){
+	public void setProperty( CssPropertyKey key, CssDeclarationValue value ){
 		if( value == null ){
 			properties.remove( key );
 		}
@@ -155,7 +161,7 @@ public class DefaultCssRule implements CssRule, CssRuleContent{
 		StringBuilder builder = new StringBuilder();
 		builder.append( selector );
 		builder.append( "{" );
-		for( Map.Entry<CssPropertyKey, String> entry : properties.entrySet() ){
+		for( Map.Entry<CssPropertyKey, CssDeclarationValue> entry : properties.entrySet() ){
 			builder.append( "\n" );
 			builder.append( entry.getKey() ).append( ": " ).append( entry.getValue() );
 		}

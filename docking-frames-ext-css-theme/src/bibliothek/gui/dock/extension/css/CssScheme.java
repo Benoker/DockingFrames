@@ -35,10 +35,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.CssPathListener;
+import bibliothek.gui.dock.extension.css.property.BooleanType;
+import bibliothek.gui.dock.extension.css.property.CssTransitionType;
+import bibliothek.gui.dock.extension.css.property.IntegerType;
+import bibliothek.gui.dock.extension.css.property.font.CssFontModifier;
+import bibliothek.gui.dock.extension.css.property.font.CssFontModifierType;
+import bibliothek.gui.dock.extension.css.property.font.FontModifyType;
+import bibliothek.gui.dock.extension.css.property.paint.ColorType;
+import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
+import bibliothek.gui.dock.extension.css.property.paint.CssPaintType;
+import bibliothek.gui.dock.extension.css.property.shape.CssShape;
+import bibliothek.gui.dock.extension.css.property.shape.CssShapeType;
 import bibliothek.gui.dock.extension.css.scheme.MatchedCssRule;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
 import bibliothek.gui.dock.extension.css.transition.CssTransition;
 import bibliothek.gui.dock.extension.css.transition.DefaultAnimatedCssRuleChain;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssRuleContent;
@@ -46,11 +55,7 @@ import bibliothek.gui.dock.extension.css.transition.TransitionalCssRuleChain;
 import bibliothek.gui.dock.extension.css.transition.scheduler.CssScheduler;
 import bibliothek.gui.dock.extension.css.transition.scheduler.DefaultCssScheduler;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
-import bibliothek.gui.dock.extension.css.type.ColorType;
-import bibliothek.gui.dock.extension.css.type.CssPaintType;
-import bibliothek.gui.dock.extension.css.type.CssShapeType;
-import bibliothek.gui.dock.extension.css.type.CssTransitionType;
-import bibliothek.gui.dock.extension.css.type.IntegerType;
+import bibliothek.gui.dock.util.font.GenericFontModifier.Modify;
 
 /**
  * Represents the contents of some css files. It is a map allowing 
@@ -87,10 +92,15 @@ public class CssScheme {
 	}
 	
 	private void initDefaultTypes(){
-		setConverter( Color.class, new ColorType() );
 		setConverter( CssPaint.class, new CssPaintType() );
 		setConverter( CssShape.class, new CssShapeType() );
+		setConverter( CssFontModifier.class, new CssFontModifierType() );
+		
+		setConverter( Color.class, new ColorType() );
 		setConverter( Integer.class, new IntegerType() );
+		setConverter( Modify.class, new FontModifyType() );
+		setConverter( Boolean.class, new BooleanType() );
+		
 		types.put( CssTransition.class, new CssTransitionType() );
 	}
 	

@@ -23,37 +23,20 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.shape;
+package bibliothek.gui.dock.extension.css.property.paint;
 
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
-
-import bibliothek.gui.dock.extension.css.property.SimpleCssPropertyContainer;
+import bibliothek.gui.dock.extension.css.CssScheme;
+import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.property.AbstractContainerCssProperty;
 
 /**
- * An {@link OvalShape} is an oval touching the borders of the available space.
+ * Allows access to a {@link CssPaint}.
  * @author Benjamin Sigg
  */
-public class OvalShape extends SimpleCssPropertyContainer implements CssShape{
-	private Ellipse2D shape;
-	
+public abstract class PaintCssProperty extends AbstractContainerCssProperty<CssPaint> {
 	@Override
-	public void setSize( int width, int height ){
-		if( shape == null || shape.getWidth() != width || shape.getHeight() != height ){
-			shape = new Ellipse2D.Double( 0, 0, width, height );
-		}
-	}
-
-	@Override
-	public boolean contains( int x, int y ){
-		if( shape == null ){
-			return false;
-		}
-		return shape.contains( x, y );
-	}
-
-	@Override
-	public Shape toShape(){
-		return shape;
+	public CssType<CssPaint> getType( CssScheme scheme ){
+		return scheme.getConverter( CssPaint.class );
 	}
 }
+

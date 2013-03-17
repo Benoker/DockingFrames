@@ -23,7 +23,7 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.transition.types;
+package bibliothek.gui.dock.extension.css.property.paint;
 
 import java.awt.AlphaComposite;
 import java.awt.Component;
@@ -32,8 +32,8 @@ import java.awt.Graphics2D;
 
 import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyContainerListener;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.property.shape.CssShape;
+import bibliothek.gui.dock.extension.css.transition.types.AbstractTransitionalCssProperty;
 
 /**
  * An algorithm to "fade" from one {@link CssPaint} into another {@link CssPaint}.

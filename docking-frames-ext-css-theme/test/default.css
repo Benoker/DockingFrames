@@ -6,13 +6,14 @@ title {
 title:hover {
 	background: solid;
 	background-color: blue;
-	background-transition: linear;
-	background-transition-duration: 2000;
 }
 
 title:selected {
 	background: solid;
 	background-color: red;
+	fontmodifier: generic;
+	fontmodifier-italic: yes;
+	fontmodifier-delta: 4;
 }
 
 title[vertical] {

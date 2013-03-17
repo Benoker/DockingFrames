@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,39 +23,34 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.shape;
+package bibliothek.gui.dock.extension.css.property.font;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
+import java.awt.Font;
 
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
+import bibliothek.gui.dock.util.font.FontModifier;
 
 /**
- * A {@link CssShape} describes some area, only content within that area is considered
- * to be part of the item that is using this area. One shape can only be used by one 
- * item at a time.
+ * A {@link CssFontModifier} is an algorithm that takes a default {@link Font}, and
+ * converts it into a new font.
  * @author Benjamin Sigg
  */
-public interface CssShape extends CssPropertyContainer{
+public interface CssFontModifier extends CssPropertyContainer{
 	/**
-	 * Informs this shape what size the underlying item has. This method may be called often.
-	 * @param width the maximum width of this shape
-	 * @param height the maximum height of this shape
+	 * Gets the actual modifier. The object returned by this method is imutable.
+	 * @return the actual modifier
 	 */
-	public void setSize( int width, int height );
+	public FontModifier getModifier();
 	
 	/**
-	 * Tells whether the point <code>x/y</code> is within this shape.
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 * @return whether <code>x/y</code> is within this shape
+	 * Adds <code>listener</code> as observer to this property.
+	 * @param listener the new observer
 	 */
-	public boolean contains( int x, int y );
-	
+	public void addFontModifierListener( CssFontModifierListener listener );
+
 	/**
-	 * Converts this shape into a form that can be used for painting. The new {@link Shape}
-	 * should support {@link Graphics2D#setClip(Shape)}.
-	 * @return the shape for painting, or <code>null</code>
+	 * Removes <code>listener</code> as observer from this property.
+	 * @param listener the observer to remove
 	 */
-	public Shape toShape();
+	public void removeFontModifierListener( CssFontModifierListener listener );
 }

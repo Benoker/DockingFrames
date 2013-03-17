@@ -34,6 +34,7 @@ import java.util.List;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssRule;
 import bibliothek.gui.dock.extension.css.CssSelector;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
 
 /**
  * The {@link CssParser} takes some text and creates {@link CssRule}s from
@@ -409,7 +410,12 @@ public class CssParser {
 		
 		public void propertyRead( String key, String value ){
 			for( DefaultCssRule rule : currentRules ){
-				rule.setProperty( CssPropertyKey.parse( key ), value );
+				if( "null".equals( value ) || value == null ){
+					rule.setProperty( CssPropertyKey.parse( key ), null );
+				}
+				else{
+					rule.setProperty( CssPropertyKey.parse( key ), new CssDeclarationValue( value ));
+				}
 			}
 		}
 		

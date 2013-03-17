@@ -23,20 +23,27 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.property;
+package bibliothek.gui.dock.extension.css.property.shape;
 
-import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
- * Allows access to a {@link CssPaint}.
+ * A type creating new {@link CssShape}s.
  * @author Benjamin Sigg
  */
-public abstract class PaintCssProperty extends AbstractContainerCssProperty<CssPaint> {
+public class CssShapeType implements CssType<CssShape>{
 	@Override
-	public CssType<CssPaint> getType( CssScheme scheme ){
-		return scheme.getConverter( CssPaint.class );
+	public CssShape convert( CssDeclarationValue value ){
+		if( "oval".equals( value.getSingleValue() )){
+			return new OvalShape();
+		}
+		return null;
+	}
+	
+	@Override
+	public TransitionalCssProperty<CssShape> createTransition(){
+		return null;
 	}
 }
-

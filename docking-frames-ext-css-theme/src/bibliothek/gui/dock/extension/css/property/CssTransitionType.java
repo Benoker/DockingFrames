@@ -23,28 +23,29 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.property;
 
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
-import bibliothek.gui.dock.extension.css.shape.OvalShape;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
+import bibliothek.gui.dock.extension.css.transition.CssTransition;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
+import bibliothek.gui.dock.extension.css.transition.types.LinearCssTransition;
 
 /**
- * A type creating new {@link CssShape}s.
+ * A type creating new {@link CssTransition}s.
  * @author Benjamin Sigg
  */
-public class CssShapeType implements CssType<CssShape>{
+public class CssTransitionType implements CssType<CssTransition<?>>{
 	@Override
-	public CssShape convert( String value ){
-		if( "oval".equals( value )){
-			return new OvalShape();
+	public CssTransition<?> convert( CssDeclarationValue value ){
+		if( "linear".equals( value.getSingleValue() )){
+			return new LinearCssTransition<Object>();
 		}
 		return null;
 	}
 	
 	@Override
-	public TransitionalCssProperty<CssShape> createTransition(){
+	public TransitionalCssProperty<CssTransition<?>> createTransition(){
 		return null;
 	}
 }

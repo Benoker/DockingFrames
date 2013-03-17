@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,28 +23,22 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.property;
 
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.transition.CssTransition;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
+import bibliothek.gui.dock.extension.css.transition.MiddleTransitionalCssProperty;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
-import bibliothek.gui.dock.extension.css.transition.types.LinearCssTransition;
 
-/**
- * A type creating new {@link CssTransition}s.
- * @author Benjamin Sigg
- */
-public class CssTransitionType implements CssType<CssTransition<?>>{
+public class BooleanType implements CssType<Boolean>{
 	@Override
-	public CssTransition<?> convert( String value ){
-		if( "linear".equals( value )){
-			return new LinearCssTransition<Object>();
-		}
-		return null;
+	public Boolean convert( CssDeclarationValue value ){
+		String text = value.getSingleValue();
+		return "true".equals( text ) || "t".equals( text ) || "1".equals( text ) || "on".equals( text ) || "yes".equals( text );
 	}
 	
 	@Override
-	public TransitionalCssProperty<CssTransition<?>> createTransition(){
-		return null;
+	public TransitionalCssProperty<Boolean> createTransition(){
+		return new MiddleTransitionalCssProperty<Boolean>();
 	}
 }

@@ -38,22 +38,30 @@ import bibliothek.gui.dock.extension.css.doc.CssDocKey;
 import bibliothek.gui.dock.extension.css.doc.CssDocPath;
 import bibliothek.gui.dock.extension.css.doc.CssDocPathNode;
 import bibliothek.gui.dock.extension.css.doc.CssDocText;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.path.DefaultCssNode;
 import bibliothek.gui.dock.extension.css.path.DefaultCssPath;
 import bibliothek.gui.dock.extension.css.path.MultiCssPath;
-import bibliothek.gui.dock.extension.css.property.ShapeCssProperty;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.property.font.CssFontModifier;
+import bibliothek.gui.dock.extension.css.property.font.CssFontTransitionProperty;
+import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
+import bibliothek.gui.dock.extension.css.property.shape.CssShape;
+import bibliothek.gui.dock.extension.css.property.shape.ShapeCssProperty;
 import bibliothek.gui.dock.extension.css.transition.CssPaintTransitionProperty;
 import bibliothek.gui.dock.extension.css.tree.CssTree;
 import bibliothek.gui.dock.extension.css.util.CssMouseAdapter;
 import bibliothek.gui.dock.title.AbstractDockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.gui.dock.util.font.FontModifier;
 
 /**
  * This title makes use of a {@link CssScheme} to set up its look.
  * @author Benjamin Sigg
  */
+@CssDocProperty(
+		path=@CssDocPath(referenceId="self"),
+		property=@CssDocKey(key="fontmodifier"),
+		type=CssFontModifier.class,
+		description=@CssDocText(text="Modifies the font of the title, e.g. makes it italic or changes it size"))
 public class CssDockTitle extends AbstractDockTitle{
 	private CssScheme css;
 	
@@ -119,6 +127,14 @@ public class CssDockTitle extends AbstractDockTitle{
 				repaint();
 			}
 		} );
+		
+		item.putProperty( "fontmodifier", new CssFontTransitionProperty( css, item ){
+			@Override
+			protected void setModifier( FontModifier modifier ){
+				setFontModifier( modifier );
+			}
+		} );
+		
 		css.add( item );
 	}
     

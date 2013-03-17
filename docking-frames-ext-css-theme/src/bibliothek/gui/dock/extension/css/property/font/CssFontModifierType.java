@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,39 +23,28 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.transition;
+package bibliothek.gui.dock.extension.css.property.font;
 
-import bibliothek.gui.dock.extension.css.CssItem;
-import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
+import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 
 /**
- * A property for handling a {@link CssPaint} with a transition.
+ * Creates new {@link CssFontModifier}, the default implementation only creates new {@link GenericCssFontModifier}s.
  * @author Benjamin Sigg
  */
-public abstract class CssPaintTransitionProperty extends CssContainerTransitionProperty<CssPaint>{
-	/**
-	 * Creates the new property.
-	 * @param scheme the scheme in whose realm this property will work
-	 * @param item the item to which this property belongs
-	 */
-	public CssPaintTransitionProperty( CssScheme scheme, CssItem item ){
-		super( scheme, item );
+public class CssFontModifierType implements CssType<CssFontModifier>{
+	@Override
+	public CssFontModifier convert( CssDeclarationValue value ){
+		String text = value.getSingleValue();
+		if( "generic".equals( text )){
+			return new GenericCssFontModifier();
+		}
+		return null;
 	}
 
 	@Override
-	public CssType<CssPaint> getType( CssScheme scheme ){
-		return scheme.getConverter( CssPaint.class );
-	}
-
-	@Override
-	protected void bind(){
-		// ignore
-	}
-
-	@Override
-	protected void unbind(){
-		// ignore
+	public TransitionalCssProperty<CssFontModifier> createTransition(){
+		return new TransitionalCssFontModifierProperty();
 	}
 }

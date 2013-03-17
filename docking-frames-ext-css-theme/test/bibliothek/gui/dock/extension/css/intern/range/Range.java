@@ -2,6 +2,7 @@ package bibliothek.gui.dock.extension.css.intern.range;
 
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
 import bibliothek.gui.dock.extension.css.CssType;
+import bibliothek.gui.dock.extension.css.CssDeclarationValue;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 import bibliothek.gui.dock.extension.css.transition.types.AbstractTransitionalCssProperty;
 
@@ -13,8 +14,8 @@ public interface Range extends CssPropertyContainer{
 		}
 		
 		@Override
-		public Range convert( String value ){
-			return new DefaultRange( value );
+		public Range convert( CssDeclarationValue value ){
+			return new DefaultRange( value.getValue() );
 		}
 	};
 	

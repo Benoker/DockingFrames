@@ -23,29 +23,37 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.type;
+package bibliothek.gui.dock.extension.css.property.shape;
 
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
-import bibliothek.gui.dock.extension.css.paint.SolidCssPaint;
-import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
-import bibliothek.gui.dock.extension.css.transition.types.TransitionalCssPaintProperty;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+
+import bibliothek.gui.dock.extension.css.property.SimpleCssPropertyContainer;
 
 /**
- * A type creating new {@link CssPaint}s.
+ * An {@link OvalShape} is an oval touching the borders of the available space.
  * @author Benjamin Sigg
  */
-public class CssPaintType implements CssType<CssPaint>{
-	@Override
-	public CssPaint convert( String value ){
-		if( "solid".equals( value )){
-			return new SolidCssPaint();
-		}
-		return null;
-	}	
+public class OvalShape extends SimpleCssPropertyContainer implements CssShape{
+	private Ellipse2D shape;
 	
 	@Override
-	public TransitionalCssProperty<CssPaint> createTransition(){
-		return new TransitionalCssPaintProperty();
+	public void setSize( int width, int height ){
+		if( shape == null || shape.getWidth() != width || shape.getHeight() != height ){
+			shape = new Ellipse2D.Double( 0, 0, width, height );
+		}
+	}
+
+	@Override
+	public boolean contains( int x, int y ){
+		if( shape == null ){
+			return false;
+		}
+		return shape.contains( x, y );
+	}
+
+	@Override
+	public Shape toShape(){
+		return shape;
 	}
 }

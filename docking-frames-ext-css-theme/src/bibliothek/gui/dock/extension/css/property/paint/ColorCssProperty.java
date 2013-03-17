@@ -23,25 +23,29 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.property;
+package bibliothek.gui.dock.extension.css.property.paint;
 
+import java.awt.Color;
+
+import bibliothek.gui.dock.extension.css.CssProperty;
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssScheme;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.property.SimpleCssPropertyContainer;
 
 /**
- * Allows access to a {@link CssShape}.
+ * A {@link CssProperty} for setting {@link Color}s, uses the {@link ColorType}
+ * for conversion.
  * @author Benjamin Sigg
  */
-public abstract class ShapeCssProperty extends AbstractContainerCssProperty<CssShape>{
+public abstract class ColorCssProperty extends SimpleCssPropertyContainer implements CssProperty<Color>{
 	@Override
-	public CssType<CssShape> getType( CssScheme scheme ){
-		return scheme.getConverter( CssShape.class );
+	public CssType<Color> getType( CssScheme scheme ){
+		return scheme.getConverter( Color.class );
 	}
 	
 	@Override
 	public void setScheme( CssScheme scheme, CssPropertyKey key ){
-		// ignore
+		// ignore	
 	}
 }

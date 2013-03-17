@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import bibliothek.gui.dock.extension.css.CssSelector;
 import bibliothek.gui.dock.extension.css.intern.range.Range;
-import bibliothek.gui.dock.extension.css.type.ColorType;
+import bibliothek.gui.dock.extension.css.property.paint.ColorType;
 
 public class TestCssRules {
 	public static TestCssScheme getNoAnimationScheme(){

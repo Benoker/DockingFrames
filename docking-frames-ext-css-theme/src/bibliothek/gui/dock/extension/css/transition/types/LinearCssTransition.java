@@ -27,7 +27,7 @@ package bibliothek.gui.dock.extension.css.transition.types;
 
 import bibliothek.gui.dock.extension.css.CssPropertyKey;
 import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.paint.CssPaint;
+import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
 import bibliothek.gui.dock.extension.css.transition.AnimatedCssTransition;
 import bibliothek.gui.dock.extension.css.transition.TransitionalCssProperty;
 

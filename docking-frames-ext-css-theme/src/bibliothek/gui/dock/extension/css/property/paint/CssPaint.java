@@ -23,13 +23,13 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.paint;
+package bibliothek.gui.dock.extension.css.property.paint;
 
 import java.awt.Component;
 import java.awt.Graphics;
 
 import bibliothek.gui.dock.extension.css.CssPropertyContainer;
-import bibliothek.gui.dock.extension.css.shape.CssShape;
+import bibliothek.gui.dock.extension.css.property.shape.CssShape;
 
 /**
  * An algorithm used to paint an area or border.

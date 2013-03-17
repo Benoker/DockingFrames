@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,39 +23,17 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-package bibliothek.gui.dock.extension.css.transition;
-
-import bibliothek.gui.dock.extension.css.CssItem;
-import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
+package bibliothek.gui.dock.extension.css.property.font;
 
 /**
- * A property for handling a {@link CssPaint} with a transition.
+ * A listener that can be added to a {@link CssFontModifier}, it will be informed
+ * if the modifier changes its behavior.
  * @author Benjamin Sigg
  */
-public abstract class CssPaintTransitionProperty extends CssContainerTransitionProperty<CssPaint>{
+public interface CssFontModifierListener {
 	/**
-	 * Creates the new property.
-	 * @param scheme the scheme in whose realm this property will work
-	 * @param item the item to which this property belongs
+	 * Called if the modifier changed its behavior.
+	 * @param source the source of the event
 	 */
-	public CssPaintTransitionProperty( CssScheme scheme, CssItem item ){
-		super( scheme, item );
-	}
-
-	@Override
-	public CssType<CssPaint> getType( CssScheme scheme ){
-		return scheme.getConverter( CssPaint.class );
-	}
-
-	@Override
-	protected void bind(){
-		// ignore
-	}
-
-	@Override
-	protected void unbind(){
-		// ignore
-	}
+	public void modifierChanged( CssFontModifier source );
 }

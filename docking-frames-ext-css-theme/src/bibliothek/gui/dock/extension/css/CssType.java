@@ -48,7 +48,7 @@ public interface CssType<T> {
 	 * @return the actual object <code>value</code> represents, or <code>null</code> if <code>value</code>
 	 * cannot be converted
 	 */
-	public T convert( String value );
+	public T convert( CssDeclarationValue value );
 	
 	/**
 	 * Creates the default transition used to merge two objects of type <code>T</code> together.

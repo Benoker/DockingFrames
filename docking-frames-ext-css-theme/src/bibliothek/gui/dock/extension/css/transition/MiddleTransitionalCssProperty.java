@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2012 Benjamin Sigg
+ * Copyright (C) 2013 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,37 +25,52 @@
  */
 package bibliothek.gui.dock.extension.css.transition;
 
-import bibliothek.gui.dock.extension.css.CssItem;
-import bibliothek.gui.dock.extension.css.CssScheme;
-import bibliothek.gui.dock.extension.css.CssType;
-import bibliothek.gui.dock.extension.css.property.paint.CssPaint;
-
 /**
- * A property for handling a {@link CssPaint} with a transition.
+ * A {@link TransitionalCssProperty} that performs a jump from the source to the target value in the
+ * middle of the transition.
  * @author Benjamin Sigg
+ * @param <T> the type of value "animated" by this "transition"
  */
-public abstract class CssPaintTransitionProperty extends CssContainerTransitionProperty<CssPaint>{
-	/**
-	 * Creates the new property.
-	 * @param scheme the scheme in whose realm this property will work
-	 * @param item the item to which this property belongs
-	 */
-	public CssPaintTransitionProperty( CssScheme scheme, CssItem item ){
-		super( scheme, item );
+public class MiddleTransitionalCssProperty<T> implements TransitionalCssProperty<T> {
+	private TransitionalCssPropertyCallback<T> callback;
+	private T source;
+	private T target;
+	private double transition;
+	
+	@Override
+	public void setCallback( TransitionalCssPropertyCallback<T> callback ){
+		this.callback = callback;
 	}
 
 	@Override
-	public CssType<CssPaint> getType( CssScheme scheme ){
-		return scheme.getConverter( CssPaint.class );
+	public void setSource( T source ){
+		this.source = source;
+		update();
 	}
 
 	@Override
-	protected void bind(){
-		// ignore
+	public void setTarget( T target ){
+		this.target = target;
+		update();
 	}
 
 	@Override
-	protected void unbind(){
-		// ignore
+	public void setTransition( double transition ){
+		this.transition = transition;
+		update();
+	}
+
+	@Override
+	public void step( int delay ){
+		update();
+	}
+
+	private void update(){
+		if( transition < 0.5 ){
+			callback.set( source );
+		}
+		else{
+			callback.set( target );
+		}
 	}
 }
