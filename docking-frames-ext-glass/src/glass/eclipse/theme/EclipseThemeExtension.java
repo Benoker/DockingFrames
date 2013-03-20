@@ -32,8 +32,7 @@ public class EclipseThemeExtension implements DockThemeExtension {
 
    public void install (DockController controller, DockTheme theme) {
       DockTitleManager manager = controller.getDockTitleManager();
-      DockTitleVersion version = manager.getVersion(FlapDockStation.BUTTON_TITLE_ID);
-      version.setFactory(CGlassDockTitleFactory.FACTORY, Priority.CLIENT);
+      manager.registerClient( FlapDockStation.BUTTON_TITLE_ID, CGlassDockTitleFactory.FACTORY );
    }
 
    public void installed (DockController controller, DockTheme theme) {
