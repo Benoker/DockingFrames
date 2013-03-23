@@ -16,7 +16,7 @@ import bibliothek.gui.dock.common.DefaultMultipleCDockable;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 
 @Tutorial( title="Opening a CDockable on a CWorkingArea", id="OpeningEditors" )
-public class OpeningEditors {
+public class OpeningEditorsExample {
 	public static void main( String[] args ){
 		/* A common task is to open yet another CDockable. When opening a CDockable we want that dockable 
 		 * to show up close to the currently focused dockable. CDockable offers several methods to do that,
@@ -25,7 +25,7 @@ public class OpeningEditors {
 		 * If opening CDockables on a CWorkingArea we can also make use of the "show" method, which not only
 		 * sets the location, but also registers the Dockable at the CControl. */
 		
-		JTutorialFrame frame = new JTutorialFrame( OpeningEditors.class );
+		JTutorialFrame frame = new JTutorialFrame( OpeningEditorsExample.class );
 		CControl control = new CControl( frame );
 		frame.destroyOnClose( control );
 		

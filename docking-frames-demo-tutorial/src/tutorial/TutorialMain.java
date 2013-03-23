@@ -42,6 +42,7 @@ import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 
 public class TutorialMain extends JFrame{
+	@SuppressWarnings("deprecation")
 	public static void main( String[] args ) throws InstantiationException, IllegalAccessException{
 		DockController.disableCoreWarning();
 		

@@ -122,13 +122,13 @@ public class LayerPriority implements Comparable<LayerPriority>{
 	 * <ul> 
 	 * 	<li>The inner-layer priority is set to <code>sub</code> </li>
 	 *  <li>The {@link #getPriority() priority} is to the priority of <code>this</code> </li> 
-	 *  <li>The {@link #isReverse() reverse} property is set to the value of <code>sub</code> </li> 
+	 *  <li>The {@link #isReverse() reverse} property is set to the value of <code>this</code> </li> 
 	 * </ul>
 	 * @param sub the new sub layer
 	 * @return the merged layer
 	 */
 	public LayerPriority merge( LayerPriority sub ){
-		return new LayerPriority( getPriority(), sub.isReverse(), sub );
+		return new LayerPriority( getPriority(), isReverse(), sub );
 	}
 	
 	/**
