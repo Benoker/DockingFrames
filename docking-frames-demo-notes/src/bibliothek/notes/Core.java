@@ -107,6 +107,7 @@ public class Core implements ComponentCollector{
 		model = new NoteModel();
 		frame = new MainFrame();
 		
+		DockController.disableCoreWarning();
 		final DockController controller = new DockController();
 		controller.setRestrictedEnvironment( secure );
 		

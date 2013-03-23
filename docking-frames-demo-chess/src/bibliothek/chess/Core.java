@@ -29,6 +29,7 @@ import bibliothek.chess.view.HidingTheme;
 import bibliothek.chess.view.PawnReplaceDialog;
 import bibliothek.chess.view.StateLabel;
 import bibliothek.demonstration.Monitor;
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.security.GlassedPane;
 import bibliothek.gui.dock.support.lookandfeel.ComponentCollector;
 
@@ -86,6 +87,7 @@ public class Core implements ComponentCollector{
             }
         });
         
+        DockController.disableCoreWarning();
         controller = new ChessDockController();
         controller.setRootWindow( frame );
         theme.setShowTitles( false );

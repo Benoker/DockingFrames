@@ -69,4 +69,9 @@ public class CDockController extends DockController{
 		}
 		super.setFocusedDockable( request );
 	}
+	
+	@Override
+	protected void showCoreWarning(){
+		// do not show the warning
+	}
 }

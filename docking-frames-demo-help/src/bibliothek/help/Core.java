@@ -23,6 +23,7 @@ import javax.swing.WindowConstants;
 
 import bibliothek.demonstration.Monitor;
 import bibliothek.demonstration.util.LookAndFeelMenu;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
@@ -239,6 +240,7 @@ public class Core implements ComponentCollector{
         frame.setTitle( "Help - Demonstration of DockingFrames" );
         frame.setIconImage( ResourceSet.toImage( ResourceSet.ICONS.get( "application" ) ) );
         
+        DockController.disableCoreWarning();
         frontend = new DockFrontend( frame );
         frontend.getController().setRestrictedEnvironment( secure );
         	

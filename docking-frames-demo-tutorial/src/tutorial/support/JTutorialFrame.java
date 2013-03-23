@@ -15,16 +15,27 @@ public class JTutorialFrame extends JFrame{
 	private List<Runnable> runOnClose = new ArrayList<Runnable>();
 	
 	public JTutorialFrame( String title ){
+		disableCoreWarning();
 		setBounds( 40, 40, 800, 600 );
 		setTitle( title );
 		initWindowListener();
 	}
 	
 	public JTutorialFrame( Class<?> clazz ){
+		disableCoreWarning();
 		setBounds( 40, 40, 800, 600 );
 		Tutorial tutorial = (Tutorial)clazz.getAnnotation( Tutorial.class );
 		setTitle( tutorial == null ? clazz.getSimpleName() : tutorial.title() );
 		initWindowListener();
+	}
+	
+	/**
+	 * Calls {@link DockController#disableCoreWarning()}. Since the tutorials should not teach people to disable
+	 * the warning, the call is hidden in here. 
+	 */
+	@SuppressWarnings("deprecation")
+	private void disableCoreWarning(){
+		DockController.disableCoreWarning();
 	}
 	
 	private void initWindowListener(){

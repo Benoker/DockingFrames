@@ -35,6 +35,7 @@ import tutorial.support.CopyCodeAction;
 import tutorial.support.TutorialPanel;
 import tutorial.support.sets.RootSet;
 import tutorial.support.sets.TutorialTreeModel;
+import bibliothek.gui.DockController;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
@@ -42,6 +43,8 @@ import bibliothek.gui.dock.common.theme.ThemeMap;
 
 public class TutorialMain extends JFrame{
 	public static void main( String[] args ) throws InstantiationException, IllegalAccessException{
+		DockController.disableCoreWarning();
+		
 		TutorialMain readme = new TutorialMain();
 		readme.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		readme.setBounds( 20, 20, 800, 600 );

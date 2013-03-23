@@ -5,6 +5,7 @@ import java.awt.Color;
 import tutorial.support.ColorDockable;
 import tutorial.support.JTutorialFrame;
 import tutorial.support.Tutorial;
+import bibliothek.gui.DockController;
 import bibliothek.gui.DockFrontend;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.SplitDockStation.Orientation;

@@ -28,6 +28,7 @@ package bibliothek.gui;
 
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.InputEvent;
@@ -95,6 +96,7 @@ import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleManager;
+import bibliothek.gui.dock.util.CoreWarningDialog;
 import bibliothek.gui.dock.util.DirectWindowProvider;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -242,6 +244,9 @@ public class DockController {
     /** ensurance against concurrent modifications */
     private DockHierarchyLock lock = new DockHierarchyLock();
     
+    /** whether {@link #showCoreWarning()} actually opens a dialog */
+    private static boolean showCoreWarning = true;
+    
     /**
      * Creates a new controller. 
      */
@@ -262,6 +267,30 @@ public class DockController {
     public DockController( DockControllerFactory factory ){
     	if( factory != null ){
     		initiate( factory, null );
+    	}
+    	showCoreWarning();
+    }
+    
+    /**
+     * Disables the dialog warning from using the Core API, that pops up when creating a {@link DockController}.
+     * @deprecated it really is not a good idea using the Core API, then there is the Common API
+     */
+    @Deprecated
+    public static void disableCoreWarning(){
+    	showCoreWarning = false;
+    }
+    
+    /**
+     * Opens an annoying dialog warning the developer that he is using the Core API, when he should be using
+     * the Common API. This warning can be disabled by calling {@link #disableCoreWarning()}. 
+     */
+    protected void showCoreWarning(){
+    	if( showCoreWarning ){
+	    	EventQueue.invokeLater( new Runnable(){
+				public void run(){
+					CoreWarningDialog.showDialog();
+				}
+			});
     	}
     }
     

@@ -46,6 +46,7 @@ public class MainPanel extends SplitDockStation {
 	 * be available to the user
 	 */
 	public MainPanel( Core core, List<Demonstration> demos ){
+		DockController.disableCoreWarning();
 		DockController controller = new DockController();
 		controller.setRestrictedEnvironment( true );
 		controller.addAcceptance( new DockAcceptance(){

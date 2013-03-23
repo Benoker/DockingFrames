@@ -913,4 +913,5 @@
  - API: Border of FlapWindow is now customizeable
  
 [v1.1.2p4a]
- - Bugfix: the glass extension could produce a NullPointerException when using only the Core API. 
+ - Bugfix: the glass extension could produce a NullPointerException when using only the Core API.
+ - API: Added an annoying dialog that pops up when using the Core API, warning the developer that the much better Common API is available. 
