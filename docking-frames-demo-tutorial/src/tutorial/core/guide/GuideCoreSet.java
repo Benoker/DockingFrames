@@ -3,7 +3,7 @@ package tutorial.core.guide;
 import tutorial.support.Tutorial;
 import tutorial.support.sets.TutorialSet;
 
-@Tutorial(title="Core", id="GuideCore")
+@Tutorial(title="Examples from the guide", id="GuideCore")
 public class GuideCoreSet extends TutorialSet{
 	public GuideCoreSet(){
 		super(  PlaceholderExample.class,

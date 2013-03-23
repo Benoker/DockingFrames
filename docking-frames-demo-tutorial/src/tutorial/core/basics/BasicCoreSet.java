@@ -3,7 +3,7 @@ package tutorial.core.basics;
 import tutorial.support.Tutorial;
 import tutorial.support.sets.TutorialSet;
 
-@Tutorial(title="Core", id="BasicsCore")
+@Tutorial(title="Basic", id="BasicsCore")
 public class BasicCoreSet extends TutorialSet{
 	public BasicCoreSet(){
 		super(  HelloWorldExample.class,
