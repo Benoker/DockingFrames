@@ -283,5 +283,15 @@ public class OverpaintablePanel extends JLayeredPane {
         protected void paintComponent( Graphics g ) {
             paintOverlay( g );
         }
+        
+        @Override
+        public Dimension getMinimumSize(){
+        	return new Dimension( 0, 0 );
+        }
+        
+        @Override
+        public Dimension getPreferredSize(){
+	        return new Dimension( 0, 0 );
+        }
     }
 }

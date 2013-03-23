@@ -93,6 +93,7 @@ import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitleFactory;
+import bibliothek.gui.dock.themes.color.StationColor;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleVersion;
@@ -102,6 +103,7 @@ import bibliothek.gui.dock.util.DockUtilities;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
 import bibliothek.gui.dock.util.Transparency;
+import bibliothek.gui.dock.util.color.DockColor;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.util.Path;
 
@@ -144,6 +146,9 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * toolbars
 	 */
 	protected OverpaintablePanelBase mainPanel;
+	
+	/** the background color of {@link #mainPanel} */
+	private BackgroundColor mainPanelBackground;
 
 	/** dockables associate with the container pane */
 	private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
@@ -209,6 +214,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		setDockablesMaxNumber( maxNumberOfDockables );
 		
 		mainPanel = new OverpaintablePanelBase();
+		mainPanelBackground = new BackgroundColor();
 		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar", this );
 
 		displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.container", this );
@@ -1129,6 +1135,21 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	}
 
 	/**
+	 * A {@link DockColor} used to change the background of {@link ToolbarContainerDockStation#mainPanel}
+	 * @author Benjamin Sigg
+	 */
+	private class BackgroundColor extends StationColor{
+		public BackgroundColor(){
+			super( "toolbar.container.background", ToolbarContainerDockStation.this, null );
+		}
+		
+		@Override
+		protected void changed( Color oldValue, Color newValue ){
+			mainPanel.setBackground( newValue );
+		}
+	}
+
+	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
 	 * the base panel
@@ -1141,7 +1162,6 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			setBackground(new Color(100, 100, 100));
 			containerPanel = createPanel();
 			// content.setBounds( 0, 0, content.getPreferredSize().width,
 			// content.getPreferredSize().height );
@@ -1270,6 +1290,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			displayerFactory.setController( controller );
 			layoutManager.setController( controller );
 			background.setController( controller );
+			mainPanelBackground.connect( controller );
 
 			if( controller == null ) {
 				title = null;
