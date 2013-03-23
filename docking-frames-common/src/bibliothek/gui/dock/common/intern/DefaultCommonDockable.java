@@ -125,4 +125,9 @@ public class DefaultCommonDockable extends DefaultDockable implements CommonDock
 	        }
         }
     }
+    
+    @Override
+    public String toString(){
+	    return getClass().getSimpleName() + "[dockable=" + dockable + "]";
+    }
 }

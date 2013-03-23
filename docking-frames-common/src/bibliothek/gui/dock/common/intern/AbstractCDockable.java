@@ -150,6 +150,11 @@ public abstract class AbstractCDockable implements CDockable {
     	// nothing
     }
     
+    @Override
+    public String toString(){
+    	return getClass().getSimpleName() + "[unique id=" + uniqueId + "]";
+    }
+    
     /**
      * Creates the {@link CommonDockable} that is associated with this dockable, called the first
      * time the {@link CommonDockable} is required for an operation.

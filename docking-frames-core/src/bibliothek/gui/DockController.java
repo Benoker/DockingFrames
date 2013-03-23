@@ -1487,37 +1487,16 @@ public class DockController {
 
     	/** a listener added to each {@link Dockable} */
     	private DockableListener dockableListener = new DockableAdapter(){
-            @Override
+    		@Override
             public void titleBound( Dockable dockable, DockTitle title ) {
-                titles.add( title );
-                
-                title.bind();
-                fireTitleBound( title, dockable );
-                
-                DockStation station = dockable.getDockParent();
-                boolean focused = false;
-                Dockable temp = getFocusedDockable();
-                while( !focused && temp != null ){
-                    focused = temp == dockable;
-                    DockStation parent = temp.getDockParent();
-                    temp = parent == null ? null : parent.asDockable();
-                }
-                
-                if( station == null )
-                    title.changed( new ActivityDockTitleEvent( dockable, focused ));
-                else
-                    station.changed( dockable, title, focused );
-                
-                if( focused )
-                    activeTitles.put( title, dockable );
+    			titles.add( title );
+    			handleAddedTitle( dockable, title );
             }
-            
             
             @Override
             public void titleUnbound( Dockable dockable, DockTitle title ) {
-                titles.remove( title );
-                title.unbind();
-                fireTitleUnbound( title, dockable );
+            	titles.remove( title );
+            	handleRemovedTitle( dockable, title );
             }
     	};
     	
@@ -1543,6 +1522,33 @@ public class DockController {
             else
                 title.changed( new ActivityDockTitleEvent( dockable, false ));
         }
+        
+        private void handleAddedTitle( Dockable dockable, DockTitle title ){
+            title.bind();
+            fireTitleBound( title, dockable );
+            
+            DockStation station = dockable.getDockParent();
+            boolean focused = false;
+            Dockable temp = getFocusedDockable();
+            while( !focused && temp != null ){
+                focused = temp == dockable;
+                DockStation parent = temp.getDockParent();
+                temp = parent == null ? null : parent.asDockable();
+            }
+            
+            if( station == null )
+                title.changed( new ActivityDockTitleEvent( dockable, focused ));
+            else
+                station.changed( dockable, title, focused );
+            
+            if( focused )
+                activeTitles.put( title, dockable );
+        }
+        
+        private void handleRemovedTitle( Dockable dockable, DockTitle title ){
+            title.unbind();
+            fireTitleUnbound( title, dockable );
+        }
 
         @Override
         public void dockableRegistering( DockController controller, Dockable dockable ){
@@ -1555,8 +1561,7 @@ public class DockController {
             DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( this.titles.add( title )){
-                    title.bind();
-                    fireTitleBound( title, dockable );
+                	handleAddedTitle( dockable, title );
                 }
             }
         }
@@ -1569,8 +1574,7 @@ public class DockController {
             DockTitle[] titles = dockable.listBoundTitles();
             for( DockTitle title : titles ){
                 if( this.titles.remove( title ) ){
-                    title.unbind();
-                    fireTitleUnbound( title, dockable );
+                	handleRemovedTitle( dockable, title );
                 }
             }
         }
