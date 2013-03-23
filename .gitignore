@@ -9,3 +9,21 @@ logs/
 
 release.properties
 pom.xml.releaseBackup
+
+.directory
+*.log
+*.out
+*~
+*.backup
+*.toc
+*.aux
+*.$$$
+*.~*#
+*.idx
+*.ilg
+*.ind
+*.kilepr
+*.orig
+*.bbl
+*.blg
+*.pdf
