@@ -1,0 +1,17 @@
+% This file is part of Latexlibs.
+% Copyright 2011 Erwin Müller, erwin.mueller@deventm.org.
+% This work is licensed under the Creative Commons Attribution 3.0 Unported
+% License. To view a copy of this license, visit
+% http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
+% Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+\ProvidesPackage{colorhyper}[2010/08/15 v1.0 Makes the hyperlinks in a defined color.]
+
+\RequirePackage{hyperref}
+\RequirePackage{color}
+
+% define the color of the hyperlink
+\definecolor{hyperlinkcolor}{rgb}{0,0,.6}
+
+\hypersetup{colorlinks=true, breaklinks=true, linkcolor=hyperlinkcolor,
+menucolor=hyperlinkcolor, pagecolor=hyperlinkcolor, urlcolor=hyperlinkcolor,
+citecolor=hyperlinkcolor}
