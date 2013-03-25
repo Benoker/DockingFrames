@@ -5,15 +5,13 @@
   <parent>
     <groupId>org.dockingframes</groupId>
     <artifactId>docking-frames-base</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.2-P5</version>
   </parent>
 
   <artifactId>docking-frames-ext-toolbar-common</artifactId>
   <packaging>jar</packaging>
 
   <name>docking-frames-ext-toolbar-common</name>
-  <url></url>
-
   <properties>
     <javaVersion>1.6</javaVersion>
   </properties>
