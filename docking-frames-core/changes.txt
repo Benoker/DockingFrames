@@ -912,7 +912,7 @@
  - API: AbstractCDockable.setLocationAside no longer sets a generic CLocation but a CExtendedModeLocation, which will make the LocationManager to access the original DockableProperty. This makes the method using placeholders more efficiently.
  - API: Border of FlapWindow is now customizeable
  
-[v1.1.2p4a]
+[v1.1.2p5]
  - Bugfix: the glass extension could produce a NullPointerException when using only the Core API.
  - API: Added an annoying dialog that pops up when using the Core API, warning the developer that the much better Common API is available.
  - Bugfix: If a dockable was already marked as the "focused dockable", but the event of registering the dockable was delayed, then the already present DockTitles of said Dockable were not informed about the focus-state.
