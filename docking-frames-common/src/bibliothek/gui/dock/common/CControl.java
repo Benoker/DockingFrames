@@ -71,7 +71,6 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.action.predefined.CCloseAction;
 import bibliothek.gui.dock.common.action.util.CDefaultDockActionDistributor;
-import bibliothek.gui.dock.common.behavior.ExternalizingCGridAreaFactory;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
@@ -779,8 +778,6 @@ public class CControl {
         		return stack;
         	}
         });
-        
-        addSingleDockableFactory( ExternalizingCGridAreaFactory.PATTERN, new ExternalizingCGridAreaFactory( this ) );
         
         CommonDockStationFactory stationFactory = new CommonDockStationFactory( this, null, backupFactory );
         frontend.registerFactory( stationFactory );

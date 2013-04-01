@@ -55,7 +55,7 @@ import bibliothek.util.Todo.Version;
  */
 @Todo(priority=Priority.MAJOR, target=Version.VERSION_1_1_2, compatibility=Compatibility.COMPATIBLE,
 description="The 'unmaximize' button appears at the wrong location. And during drag and drop layout information is lost" +
-		" due to the listener that inserts the station after the dockable was inserted")
+		" due to the listener that inserts the station after the dockable was inserted. Also perspectives will not yet work.")
 public class ExternalizingCGridArea extends CGridArea {
 	/** The type of this area, returned by {@link #getTypeId()} */
 	public static final Path TYPE_ID = new Path( "dock", "ExternalizingCGridArea" );

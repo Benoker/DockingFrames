@@ -52,6 +52,8 @@ public class ExternalizingCGridAreaConfiguration {
 	/** algorithm for inserting {@link ExternalizingCGridArea}s */
 	private SplitInserter splitInserter;
 	
+	private ExternalizingCGridAreaFactory factory;
+	
 	/** whether this configuration is installed */
 	private boolean installed = false;
 	
@@ -75,6 +77,7 @@ public class ExternalizingCGridAreaConfiguration {
 			throw new IllegalArgumentException( "control must not be null" );
 		}
 		this.control = control;
+		factory = new ExternalizingCGridAreaFactory( control );
 	}
 	
 	/**
@@ -89,19 +92,19 @@ public class ExternalizingCGridAreaConfiguration {
 	}
 	
 	/**
-	 * Gets the {@link CControl} for which this configuration is used.
-	 * @return the {@link CControl}
-	 */
-	public CControl getControl(){
-		return control;
-	}
-	
-	/**
 	 * Creates a new instance of {@link SplitInserter}.
 	 * @return a new object, not <code>null</code>
 	 */
 	protected SplitInserter createSplitInserter(){
 		return new SplitInserter();
+	}
+	
+	/**
+	 * Gets the {@link CControl} for which this configuration is used.
+	 * @return the {@link CControl}
+	 */
+	public CControl getControl(){
+		return control;
 	}
 	
 	/**
@@ -122,6 +125,7 @@ public class ExternalizingCGridAreaConfiguration {
 		}
 		installed = true;
 		getScreenDockStation().addDockStationListener( getSplitInserter() );
+		control.addSingleDockableFactory( ExternalizingCGridAreaFactory.PATTERN, factory );
 	}
 	
 	/**
@@ -132,6 +136,7 @@ public class ExternalizingCGridAreaConfiguration {
 			throw new IllegalStateException( "not installed" );
 		}
 		getScreenDockStation().removeDockStationListener( getSplitInserter() );
+		control.removeSingleDockableFactory( factory );
 	}
 	
 	/**
