@@ -275,10 +275,24 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 * @return the root or <code>null</code>, never <code>dockable</code> itself
 	 */
 	public A get( Dockable dockable ){
+		return get( dockable, false );
+	}
+
+	/**
+	 * Recursively searches through all stations of <code>dockable</code>
+	 * until a station is found that is registered at this mode.
+	 * @param dockable the element whose root is searched
+	 * @param locationRoot if <code>true</code>, then only those {@link ModeArea}s are returned
+	 * which are {@link ModeArea#isLocationRoot()} 
+	 * @return the root or <code>null</code>, never <code>dockable</code> itself
+	 */
+	public A get( Dockable dockable, boolean locationRoot ){
 		while( dockable != null ){
 			for( A area : areas.values() ){
-				if( area.isChild( dockable ) ){
-					return area;
+				if( !locationRoot || area.isLocationRoot() ){
+					if( area.isChild( dockable ) ){
+						return area;
+					}
 				}
 			}
 			DockStation station = dockable.getDockParent();

@@ -199,6 +199,10 @@ public class CScreenDockStationHandle {
 		public boolean autoDefaultArea() {
 			return true;
 		}
+		
+		public boolean isLocationRoot(){
+			return true;
+		}
 
 		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ) {
 			set.add( dockable );
@@ -284,6 +288,10 @@ public class CScreenDockStationHandle {
 		
 		public boolean autoDefaultArea() {
 			return false;
+		}
+		
+		public boolean isLocationRoot(){
+			return true;
 		}
 
 		public DockableProperty getLocation( Dockable child ){

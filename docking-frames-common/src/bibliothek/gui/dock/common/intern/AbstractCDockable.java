@@ -62,6 +62,7 @@ import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.VetoableDockFrontendEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Filter;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -457,6 +458,11 @@ public abstract class AbstractCDockable implements CDockable {
         	if( !isMaximizable() )
         		return;
         }
+        if( extendedMode == ExtendedMode.NORMALIZED ){
+        	if( !isNormalizeable() ){
+        		return;
+        	}
+        }
         
         CControlAccess control = control();
         if( control != null )
@@ -646,6 +652,13 @@ public abstract class AbstractCDockable implements CDockable {
         listenerCollection.getCDockablePropertyListener().minimizeSizeChanged( this );
     }
     
+    /**
+     * Always <code>true</code>, clients should not override this method unless they know exactly what they are doing.
+     */
+    public boolean isNormalizeable(){
+    	return true;
+    }
+    
     public Dimension getMinimizedSize() {
         return new Dimension( minimizeSize.width, minimizeSize.height );
     }
@@ -737,6 +750,16 @@ public abstract class AbstractCDockable implements CDockable {
      */
     public CLocation getDefaultLocation( ExtendedMode mode ){
         return defaultLocations.get( mode );
+    }
+    
+    /**
+     * Gets the unique identifier that has been assigned to this {@link CDockable} by the {@link CControl}. Every
+     * dockable has a unique identifier, but it may not be the same identifier as set by this client.
+     * @return the unique identifier, it is set once this dockable is added to a {@link CControl}
+     */
+    @FrameworkOnly
+    protected String getDockableUniqueId(){
+    	return uniqueId;
     }
     
     public CControlAccess getControlAccess(){

@@ -58,7 +58,6 @@ import bibliothek.gui.dock.facile.mode.MaximizedMode;
 import bibliothek.gui.dock.facile.mode.MaximizedModeArea;
 import bibliothek.gui.dock.facile.mode.ModeArea;
 import bibliothek.gui.dock.facile.mode.ModeAreaListener;
-import bibliothek.gui.dock.facile.mode.NormalMode;
 import bibliothek.gui.dock.facile.mode.NormalModeArea;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.split.DockableSplitDockTree;
@@ -66,6 +65,7 @@ import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
 import bibliothek.gui.dock.support.mode.AffectedSet;
 import bibliothek.gui.dock.support.mode.AffectingRunnable;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.util.Path;
 
 /**
  * Combination of {@link CMaximizedModeArea}, {@link CNormalModeArea} and a
@@ -138,7 +138,12 @@ public class CSplitDockStationHandle{
 		this.manager = manager;
 	}
 	
-	private void add( ModeAreaListenerWrapper listener ){
+	/**
+	 * Adds <code>listener</code> to this handle, the listener will be invoked if the current
+	 * fullscreen-Dockable of the {@link SplitDockStation} changed.
+	 * @param listener the new listener
+	 */
+	protected void add( ModeAreaListenerWrapper listener ){
 		if( listener == null )
 			throw new IllegalArgumentException( "listener must not be empty" );
 		if( listeners.isEmpty() ){
@@ -147,7 +152,11 @@ public class CSplitDockStationHandle{
 		listeners.add( listener );
 	}
 	
-	private void remove( ModeAreaListenerWrapper listener ){
+	/**
+	 * Removes <code>listener</code> from this handle.
+	 * @param listener the listener to remove
+	 */
+	protected void remove( ModeAreaListenerWrapper listener ){
 		listeners.remove( listener );
 		if( listeners.isEmpty() ){
 			station.getStation().removeSplitDockStationListener( fullScreenListener );
@@ -160,6 +169,14 @@ public class CSplitDockStationHandle{
 	 */
 	public SplitDockStation getStation(){
 		return station.getStation();
+	}
+	
+	/**
+	 * Gets the {@link CStation} which is managed by this handle.
+	 * @return the station
+	 */
+	public CStation<CSplitDockStation> getCStation(){
+		return station;
 	}
 	
 	/**
@@ -177,6 +194,23 @@ public class CSplitDockStationHandle{
 	public CMaximizedModeArea asMaximziedModeArea(){
 		return maximal;
 	}
+	
+	/**
+	 * Gets the mode which should be used to unmaximize children.
+	 * @return the mode to unmaximize children
+	 */
+	protected LocationMode getNormalMode(){
+		return normalMode;
+	}
+	
+	private Path normalModeIdentifier(){
+		return normalExtendedMode().getModeIdentifier();
+	}
+	
+	private ExtendedMode normalExtendedMode(){
+		return getNormalMode().getExtendedMode();
+	}
+	
 	
 	/**
 	 * Ensures that <code>dockable</code> is a child of this
@@ -202,7 +236,7 @@ public class CSplitDockStationHandle{
 	 * A wrapper for a {@link ModeAreaListener}.
 	 * @author Benjamin Sigg
 	 */
-	private static class ModeAreaListenerWrapper{
+	protected static class ModeAreaListenerWrapper{
 		/** the listener */
 		private ModeAreaListener listener;
 		/** the area */
@@ -239,6 +273,10 @@ public class CSplitDockStationHandle{
 		}
 	}
 	
+	/**
+	 * Represents the {@link SplitDockStation} as {@link CNormalModeArea}.
+	 * @author Benjamin Sigg
+	 */
 	protected class Normal implements CNormalModeArea{
 		public void setMode( LocationMode mode ){
 			normalMode = mode;
@@ -253,6 +291,10 @@ public class CSplitDockStationHandle{
 		}
 		
 		public boolean autoDefaultArea() {
+			return true;
+		}
+		
+		public boolean isLocationRoot(){
 			return true;
 		}
 		
@@ -367,6 +409,10 @@ public class CSplitDockStationHandle{
 		}
 	}
 	
+	/**
+	 * Represents a {@link SplitDockStation} as a {@link CMaximizedModeArea}.
+	 * @author Benjamin Sigg
+	 */
 	protected class Maximal implements CMaximizedModeArea{
 		/** the controller in whose realm this area works */
 		private DockController controller;
@@ -406,12 +452,16 @@ public class CSplitDockStationHandle{
 			return true;
 		}
 		
+		public boolean isLocationRoot(){
+			return true;
+		}
+		
 		public LocationMode getUnmaximizedMode(){
-			return normalMode;
+			return getNormalMode();
 		}
 		
 		public void prepareApply( Dockable dockable, AffectedSet affected ){
-			CLocationMode normal = manager.getMode( NormalMode.IDENTIFIER );
+			CLocationMode normal = manager.getMode( normalModeIdentifier() );
 			if( normal != null ){
 				manager.apply( dockable, normal, affected, false );
 			}
@@ -421,8 +471,8 @@ public class CSplitDockStationHandle{
 			boolean remaximize = history != null && history.getLocation() instanceof SplitDockFullScreenProperty; 
 			
 			if( !remaximize ){
-				if( manager.getMode( dockable ) != ExtendedMode.NORMALIZED ){
-					CLocationMode normal = manager.getMode( NormalMode.IDENTIFIER );
+				if( manager.getMode( dockable ) != normalExtendedMode() ){
+					CLocationMode normal = manager.getMode( normalModeIdentifier() );
 					if( normal != null ){
 						CGroupMovement movement = maximizedMode.getManager().getGroupBehavior().prepare( manager, dockable, normal.getExtendedMode() );
 						if( movement != null ){
@@ -442,7 +492,7 @@ public class CSplitDockStationHandle{
         	
 			DockableProperty property = location == null ? null : location.getLocation();
 			
-			if( event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
+			if( event.getMode().getUniqueIdentifier().equals( normalModeIdentifier() )){
 				// try to set the mode prematurely
 		        if( property != null ){
 		        	if( property.getSuccessor() == null ){
@@ -450,7 +500,7 @@ public class CSplitDockStationHandle{
 		            	CLocationMode secondLast = manager.getPreviousMode( dockable );
 		            	
 		                if( last != null && secondLast != null ){
-		                	if( NormalMode.IDENTIFIER.equals( secondLast.getUniqueIdentifier() ) &&
+		                	if( normalModeIdentifier().equals( secondLast.getUniqueIdentifier() ) &&
 		                			MaximizedMode.IDENTIFIER.equals( last.getUniqueIdentifier() )){
 		                    
 		                		MaximizedModeArea area = maximizedMode.get( location.getRoot() );
@@ -479,7 +529,7 @@ public class CSplitDockStationHandle{
 	        }
 	        
 	        // if this station currently shows dockable as maximized element, ensure it is no longer maximized
-			if( maximizedMode != null && event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
+			if( maximizedMode != null && event.getMode().getUniqueIdentifier().equals( normalModeIdentifier() )){
 				MaximizedModeArea area = maximizedMode.getMaximizeArea( dockable );
 				if( area == this ){
 					maximizedMode.unmaximize( dockable, event.getAffected() );
@@ -493,7 +543,7 @@ public class CSplitDockStationHandle{
 			if( event.isDone() )
 				return null;
 			
-			if( !event.getMode().getUniqueIdentifier().equals( NormalMode.IDENTIFIER )){
+			if( !event.getMode().getUniqueIdentifier().equals( normalModeIdentifier() )){
 				maximizedMode.unmaximize( getStation().getFullScreen(), event.getAffected() );
 
 		        return new Runnable() {

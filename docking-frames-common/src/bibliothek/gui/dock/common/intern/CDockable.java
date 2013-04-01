@@ -240,6 +240,14 @@ public interface CDockable {
 	public boolean isExternalizable();
 	
 	/**
+	 * Tells whether this <code>CDockable</code> can be normalized by the user. Usually this method should
+	 * return <code>true</code> for any dockable, as "normalizing" is the default mode.<br>
+	 * Clients should not override this method.
+	 * @return <code>true</code>, unless a subclass requires very special behavior.
+	 */
+	public boolean isNormalizeable();
+	
+	/**
 	 * Tells whether this <code>CDockable</code> can be combined with another
 	 * <code>Dockable</code> to create a stack.
 	 * @return <code>true</code> if this element can be combined with

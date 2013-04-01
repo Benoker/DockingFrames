@@ -51,6 +51,14 @@ public interface ModeArea {
 	public boolean autoDefaultArea();
 	
 	/**
+	 * Tells whether this area can be used as root in a {@link Location}. An area that is not
+	 * a location root will (usually) not be used to set the location of a child.<br>
+	 * Most implementations of {@link ModeArea} should return <code>true</code>.
+	 * @return whether this {@link ModeArea} agrees on seeing its {@link #getUniqueId()} in a {@link Location}
+	 */
+	public boolean isLocationRoot();
+	
+	/**
 	 * Tells whether <code>dockable</code> is a direct child of this station.
 	 * @param dockable some element
 	 * @return <code>true</code> if and only if the parent of <code>dockable</code>

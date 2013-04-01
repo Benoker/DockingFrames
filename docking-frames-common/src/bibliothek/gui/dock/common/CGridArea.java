@@ -44,11 +44,14 @@ import bibliothek.gui.dock.common.intern.station.CommonStationDelegate;
 import bibliothek.gui.dock.common.intern.station.SplitResizeRequestHandler;
 import bibliothek.gui.dock.common.location.CGridAreaLocation;
 import bibliothek.gui.dock.common.mode.CMaximizedMode;
+import bibliothek.gui.dock.common.mode.CMaximizedModeArea;
+import bibliothek.gui.dock.common.mode.CNormalModeArea;
 import bibliothek.gui.dock.common.mode.station.CSplitDockStationHandle;
 import bibliothek.gui.dock.common.perspective.CGridPerspective;
 import bibliothek.gui.dock.common.perspective.CStationPerspective;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 
 /**
@@ -111,8 +114,18 @@ public class CGridArea extends AbstractDockableCStation<CSplitDockStation> imple
 		resizeRequestHandler = new SplitResizeRequestHandler( this.station );
 		setMaximizingArea( true );
 		
-		modeManagerHandle = new CSplitDockStationHandle( this, control.getLocationManager() );
+		modeManagerHandle = createSplitDockStationHandle( control );
 	}
+	
+	/**
+	 * Creates the handle that will represent <code>this</code> as {@link CNormalModeArea} and {@link CMaximizedModeArea}.
+	 * @param control the control in whose realm this area is used 
+	 * @return the new handle, not <code>null</code>
+	 */
+	protected CSplitDockStationHandle createSplitDockStationHandle( CControl control ){
+		 return new CSplitDockStationHandle( this, control.getLocationManager() );
+	}
+	
 	
 	@Override
 	protected CommonDockable createCommonDockable(){
@@ -220,21 +233,48 @@ public class CGridArea extends AbstractDockableCStation<CSplitDockStation> imple
 	public boolean isMaximizingArea(){
 		return maximizing;
 	}
+	
+	/**
+	 * Tells whether all children of this area are considered to be normalized. Clients should not
+	 * override this method.<br>
+	 * Note that if this method returns <code>false</code>, then the default {@link CSplitDockStationHandle} returned
+	 * by {@link #getModeManagerHandle()} will fail, clients <b>must</b> provide a custom implementation of 
+	 * {@link CSplitDockStationHandle} if they override this method.
+	 * @return whether the children are normalized per default
+	 */
+	@FrameworkOnly
+	protected boolean isNormalizingArea(){
+		return true;
+	}
 
-	@Override
-	protected void install( CControlAccess access ){
-		access.getLocationManager().getNormalMode().add( modeManagerHandle.asNormalModeArea() );
-		access.getOwner().addResizeRequestListener( resizeRequestHandler );
-		if( isMaximizingArea() ){
-			CMaximizedMode mode = access.getLocationManager().getMaximizedMode();
-			mode.add( modeManagerHandle.asMaximziedModeArea() );
-		}	
+	/**
+	 * Access to the object that represents <code>this</code> as {@link CNormalModeArea} and as
+	 * {@link CMaximizedModeArea}.
+	 * @return a representation of <code>this</code> as area
+	 */
+	@FrameworkOnly
+	protected CSplitDockStationHandle getModeManagerHandle(){
+		return modeManagerHandle;
 	}
 	
 	@Override
+	protected void install( CControlAccess access ){
+		if( isNormalizingArea() ){
+			access.getLocationManager().getNormalMode().add( modeManagerHandle.asNormalModeArea() );
+			access.getOwner().addResizeRequestListener( resizeRequestHandler );
+		}
+		if( isMaximizingArea() ){
+			CMaximizedMode mode = access.getLocationManager().getMaximizedMode();
+			mode.add( modeManagerHandle.asMaximziedModeArea() );
+		}
+	}
+
+	@Override
 	protected void uninstall( CControlAccess access ){
-		access.getLocationManager().getNormalMode().remove( modeManagerHandle.asNormalModeArea().getUniqueId() );
-		access.getOwner().removeResizeRequestListener( resizeRequestHandler );
+		if( isNormalizingArea() ){
+			access.getLocationManager().getNormalMode().remove( modeManagerHandle.asNormalModeArea().getUniqueId() );
+			access.getOwner().removeResizeRequestListener( resizeRequestHandler );
+		}
 		if( isMaximizingArea() ){
 			CMaximizedMode mode = access.getLocationManager().getMaximizedMode();
 			mode.remove( modeManagerHandle.asMaximziedModeArea().getUniqueId() );

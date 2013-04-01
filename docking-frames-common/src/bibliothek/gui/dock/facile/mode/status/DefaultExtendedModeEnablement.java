@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.Path;
 
 /**
- * This default implementation observes {@link CDockable#isExternalizable()},
+ * This default implementation observes {@link CDockable#isNormalizeable()}, {@link CDockable#isExternalizable()},
  * {@link CDockable#isMinimizable()} and {@link CDockable#isMaximizable()}.
  * @author Benjamin Sigg
  *
@@ -73,6 +73,10 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 		
 		public void externalizableChanged( CDockable dockable ){
 			fire( dockable.intern(), ExtendedMode.EXTERNALIZED, isAvailable( dockable.intern(), ExtendedMode.EXTERNALIZED ).isAvailable() );
+		}
+		
+		public void normalizeableChanged( CDockable dockable ){
+			fire( dockable.intern(), ExtendedMode.NORMALIZED, isAvailable( dockable.intern(), ExtendedMode.NORMALIZED ).isAvailable() );
 		}
 	};
 	
@@ -148,10 +152,6 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 	 * @return whether <code>mode</code> is available or not
 	 */
 	protected Availability isModeAvailable( Dockable dockable, ExtendedMode mode ){
-		if( mode == ExtendedMode.NORMALIZED ){
-			return Availability.WEAK_AVAILABLE;
-		}
-		
 		if( dockable instanceof CommonDockable ){
 			CDockable cdockable = ((CommonDockable)dockable).getDockable();
 			
@@ -168,6 +168,10 @@ public class DefaultExtendedModeEnablement extends AbstractExtendedModeEnablemen
 			}
 			else if( mode == ExtendedMode.MINIMIZED ){
 				result = cdockable.isMinimizable();
+				set = true;
+			}
+			else if( mode == ExtendedMode.NORMALIZED ){
+				result = cdockable.isNormalizeable();
 				set = true;
 			}
 			

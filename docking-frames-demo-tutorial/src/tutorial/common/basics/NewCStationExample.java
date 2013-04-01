@@ -187,6 +187,10 @@ public class NewCStationExample {
 		public boolean autoDefaultArea(){
 			return true;
 		}
+		
+		public boolean isLocationRoot(){
+			return true;
+		}
 
 		public boolean isChild( Dockable dockable ){
 			return dockable.getDockParent() == getStation();

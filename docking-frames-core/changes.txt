@@ -917,4 +917,11 @@
  - API: Added an annoying dialog that pops up when using the Core API, warning the developer that the much better Common API is available.
  - Bugfix: If a dockable was already marked as the "focused dockable", but the event of registering the dockable was delayed, then the already present DockTitles of said Dockable were not informed about the focus-state.
  ! API: The way in which LayerPriorities are merged has been changed - clients should not be affected by this change.
- - API: Default background color of ToolbarContainerDockStation is now "null", but clients can also set a custom color.  
+ - API: Default background color of ToolbarContainerDockStation is now "null", but clients can also set a custom color.
+ 
+[v1.1.2p6]
+ - API: added a new feature where clients can change the behavior of externalized CDockables: they are no longer stacked, but splitted.
+ - API: added a tutorial explaining the new feature of externalized CDockables.   
+ ! API: several changes to the API of CGridArea and ModeArea in order to implement the new feature (see above)
+ - API: new ExternalizingCGridArea, includes some factories.
+ ! API: added property "isNormalizeable" to CDockable and listeners, this property should not be used by clients however.

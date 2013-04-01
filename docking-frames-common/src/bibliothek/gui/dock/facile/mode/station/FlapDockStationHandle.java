@@ -66,6 +66,10 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 		return true;
 	}
 	
+	public boolean isLocationRoot(){
+		return true;
+	}
+	
 	public void addModeAreaListener( ModeAreaListener listener ){
 		// ignore
 	}

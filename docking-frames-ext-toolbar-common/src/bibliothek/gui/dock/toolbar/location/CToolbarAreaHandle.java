@@ -113,6 +113,11 @@ public class CToolbarAreaHandle implements CToolbarModeArea{
 	public boolean autoDefaultArea(){
 		return true;
 	}
+	
+	@Override
+	public boolean isLocationRoot(){
+		return true;
+	}
 
 	@Override
 	public boolean isChild( Dockable dockable ){

@@ -356,6 +356,8 @@ public abstract class ModeManager<H, M extends Mode<H>> {
         DockableHandle entry = entries.get( key );
         if( entry != null && entry.dockable != null )
             throw new IllegalArgumentException( "There is already a dockable registered with the key: " + key );
+        if( dockables.containsKey( dockable ))
+        	throw new IllegalArgumentException( "The dockable is already known to this manager (but it does have a different name)" );
         
         if( entry == null ){
             entry = new DockableHandle( dockable, key );

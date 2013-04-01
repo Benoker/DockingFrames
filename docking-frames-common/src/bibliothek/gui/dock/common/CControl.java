@@ -71,6 +71,7 @@ import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.common.action.predefined.CCloseAction;
 import bibliothek.gui.dock.common.action.util.CDefaultDockActionDistributor;
+import bibliothek.gui.dock.common.behavior.ExternalizingCGridAreaFactory;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
 import bibliothek.gui.dock.common.event.CDockablePropertyListener;
@@ -778,6 +779,8 @@ public class CControl {
         		return stack;
         	}
         });
+        
+        addSingleDockableFactory( ExternalizingCGridAreaFactory.PATTERN, new ExternalizingCGridAreaFactory( this ) );
         
         CommonDockStationFactory stationFactory = new CommonDockStationFactory( this, null, backupFactory );
         frontend.registerFactory( stationFactory );
@@ -2006,7 +2009,20 @@ public class CControl {
         }
         return null;
     }
-
+    
+    /**
+     * Gets the unique identifier which is used internally for <code>dockable</code>
+     * @param dockable the item to search
+     * @return the internal unique identifier of <code>dockable</code>, may be <code>null</code>
+     */
+    public String getUniqueId( MultipleCDockable dockable ){
+    	CDockableAccess access = accesses.get( dockable );
+    	if( access == null ){
+    		return null;
+    	}
+    	return register.multiToNormalId( access.getUniqueId() );
+    }
+    
     private boolean shouldStore( String id ){
         if( register.isSingleId( id )){
         	if( register.getBackupFactory().getFactory( register.singleToNormalId( id ) ) != null ){
@@ -2143,6 +2159,14 @@ public class CControl {
         return register.getFactory( id );
     }
 
+    /**
+     * Gets the unique identifier of <code>factory</code>.
+     * @param factory the factory to search
+     * @return the unique identifier or <code>null</code>
+     */
+    public String getFactoryId( MultipleCDockableFactory<?, ?> factory ){
+    	return access.getFactoryId( factory );
+    }
 
     /**
      * Removes the {@link MultipleCDockableFactory} with identifier <code>id</code>

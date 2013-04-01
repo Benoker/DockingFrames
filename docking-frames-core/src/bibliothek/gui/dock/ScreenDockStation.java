@@ -1510,7 +1510,7 @@ public class ScreenDockStation extends AbstractDockStation {
         Dockable dockable = args.getDockable();
         ScreenDockProperty property = args.getProperty();
         
-        if( best != null ){
+        if( best != null && best.getDockable() != null ){
             DockableProperty successor = property.getSuccessor();
             Dockable dock = best.getDockable();
             if( successor != null ){

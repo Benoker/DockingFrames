@@ -93,6 +93,11 @@ public class CListenerCollection {
             for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
                 listener.minimizableChanged( dockable );
         }
+        
+        public void normalizeableChanged( CDockable dockable ){
+        	for( CDockablePropertyListener listener : getCDockablePropertyListeners() )
+                listener.normalizeableChanged( dockable );	
+        }
 
         public void minimizeSizeChanged( CDockable dockable ) {
             for( CDockablePropertyListener listener : getCDockablePropertyListeners() )

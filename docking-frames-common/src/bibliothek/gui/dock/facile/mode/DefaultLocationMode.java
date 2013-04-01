@@ -45,7 +45,7 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 	 * <code>dockable</code> but does not change any properties.
 	 */
 	public Location current( Dockable dockable ){
-		A area = get( dockable );
+		A area = get( dockable, true );
 		if( area == null )
 			return null;
 		DockableProperty location = area.getLocation( dockable );
