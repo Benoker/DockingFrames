@@ -742,7 +742,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	@SuppressWarnings("serial")
 	protected class SizeFixedPanel extends ConfiguredBackgroundPanel {
 		public SizeFixedPanel(){
-			super( Transparency.TRANSPARENT );
+			super( Transparency.SOLID );
 			setBackground( ToolbarDockStation.this.getBackgroundAlgorithm() );
 		}
 		

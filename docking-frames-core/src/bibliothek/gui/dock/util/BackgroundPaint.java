@@ -40,6 +40,36 @@ import bibliothek.gui.DockTheme;
  * @author Benjamin Sigg
  */
 public interface BackgroundPaint {
+	/** Simple {@link BackgroundPaint} that will attempt to make any background transparent */
+	public static final BackgroundPaint TRANSPARENT = new BackgroundPaint(){
+		public void uninstall( BackgroundComponent component ){
+			component.setTransparency( Transparency.DEFAULT );
+		}
+		
+		public void paint( BackgroundComponent background, PaintableComponent paintable, Graphics g ){
+			// ignore
+		}
+		
+		public void install( BackgroundComponent component ){
+			component.setTransparency( Transparency.TRANSPARENT );
+		}
+	};
+	
+	/** Simple {@link BackgroundPaint} that will attempt to make any background opaque (not transparent) */
+	public static final BackgroundPaint SOLID = new BackgroundPaint(){
+		public void uninstall( BackgroundComponent component ){
+			component.setTransparency( Transparency.DEFAULT );
+		}
+		
+		public void paint( BackgroundComponent background, PaintableComponent paintable, Graphics g ){
+			// ignore
+		}
+		
+		public void install( BackgroundComponent component ){
+			component.setTransparency( Transparency.SOLID );
+		}
+	};
+	
 	/**
 	 * Informs this paint that is will be used by <code>component</code>.
 	 * @param component the component that is going to use this paint, not <code>null</code>

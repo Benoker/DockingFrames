@@ -925,3 +925,6 @@
  ! API: several changes to the API of CGridArea and ModeArea in order to implement the new feature (see above)
  - API: new ExternalizingCGridArea, includes some factories.
  ! API: added property "isNormalizeable" to CDockable and listeners, this property should not be used by clients however.
+ 
+[v1.1.2p6a]
+ - API: ToolbarDockStation is no longer transparent per default, clients can make it transparent with the ThemeManager, the constant BackgroundPaint.TRANSPARENT and the key 'ThemeManager.BACKGROUND_PAINT + ".station.toolbar"'
