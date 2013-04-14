@@ -33,7 +33,10 @@ import java.awt.Insets;
 import javax.swing.JComponent;
 
 import bibliothek.gui.DockController;
+import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.DockableDisplayer.Location;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
+import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.color.AbstractDockColor;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.color.ColorManager;
@@ -98,11 +101,14 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 	/** the component whose border this is */
 	private JComponent target;
 	
-	/** the window for which this border is used */
+	/** the window for which this border is used, not <code>null</code> */
 	private ScreenDockWindow window;
 	
 	/** the controller which is monitored for colors */
 	private DockController controller;
+	
+	/** whether the move area should appear on the same side as the {@link DockTitle} if resizing is not allowed */
+	private boolean moveOnlyOnSameSideAsTitle = true;
 	
 	protected final BorderColor colorLine = new BorderColor( "line" );
 	protected final BorderColor colorLineHighlightInner = new BorderColor( "line.highlight.inner" );
@@ -272,6 +278,24 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 	public boolean isDrawDividers(){
 		return drawDividers;
 	}
+	
+	/**
+	 * Sets whether the move-area should appear on the same side as the {@link DockTitle}, this property
+	 * only has an effect if {@link #isResizeable()} is <code>false</code>.
+	 * @param moveOnlyOnSameSideAsTitle if the position of the move area should be set automatically
+	 */
+	public void setMoveOnlyOnSameSideAsTitle( boolean moveOnlyOnSameSideAsTitle ){
+		this.moveOnlyOnSameSideAsTitle = moveOnlyOnSameSideAsTitle;
+	}
+	
+	/**
+	 * Tells whether the position of the move are is set automatically.
+	 * @return behavior of the move area
+	 * @see #setMoveOnlyOnSameSideAsTitle(boolean)
+	 */
+	public boolean isMoveOnlyOnSameSideAsTitle(){
+		return moveOnlyOnSameSideAsTitle;
+	}
 
 	public void setMouseOver( Position mouseOver ){
 		if( mouseOver == null ){
@@ -296,6 +320,30 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 	public Insets getBorderInsets( Component c ){
 		if( isResizeable() ){
 			return new Insets( 5, 4, 4, 4 );
+		}
+		else if( moveOnlyOnSameSideAsTitle ){
+			Location titleLocation = null;
+			
+			DockableDisplayer displayer = window.getDockableDisplayer();
+			if( displayer != null ){
+				titleLocation = displayer.getTitleLocation();
+			}
+			if( titleLocation == null ){
+				titleLocation = Location.TOP;
+			}
+			
+			switch( titleLocation ){
+				case BOTTOM:
+					return new Insets( 0, 0, 5, 0 );
+				case TOP:
+					return new Insets( 5, 0, 0, 0 );
+				case LEFT:
+					return new Insets( 0, 5, 0, 0 );
+				case RIGHT:
+					return new Insets( 0, 0, 0, 5 );
+				default:
+					throw new IllegalStateException( "unknown location: " + titleLocation );
+			}
 		}
 		else{
 			return new Insets( 5, 0, 0, 0 );
@@ -325,10 +373,19 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 			if( drawDividers ){
 				paintDividingLines( c, g, parameters );
 			}
+		} 
+		else{
+			paintMoveOnly( c, g, parameters );
 		}
 		
 		g.translate( -x, -y );
 		g.setColor( oldColor );
+	}
+	
+	private void paintMoveOnly( Component c, Graphics g, PaintParameters p ){
+		paintLeftMoveOnly( c, g, p );
+		paintRightMoveOnly( c, g, p );
+		paintBottomMoveOnly( c, g, p );
 	}
 	
 	private void paintTop( Component c, Graphics g, PaintParameters p ){
@@ -339,6 +396,59 @@ public class DefaultScreenDockWindowBorder implements ScreenDockWindowBorder{
 			paintTopWithoutMove( c, g, p );
 		}
 
+	}
+	
+	private void paintLeftMoveOnly( Component c, Graphics g, PaintParameters p ){
+		Insets insets = p.insets;
+		if( insets.left > 0 ){
+			if( insets.left > 2 ){
+				g.setColor( getColor( c, Position.MOVE ) );
+				g.fillRect( 0, 0, insets.left, p.height );
+			}
+			
+			g.setColor( getColor( c, false, false, Position.MOVE ) );
+			g.drawLine( insets.left-2, 0, insets.left-2, p.height );
+			
+			g.setColor( getColor( c, true, false, Position.MOVE ) );
+			g.drawLine( insets.left-1, 0, insets.left-1, p.height );
+		}
+	}
+	
+	private void paintRightMoveOnly( Component c, Graphics g, PaintParameters p ){
+		Insets insets = p.insets;
+		if( insets.right > 0 ){
+			int width = p.width;
+			int height = p.height;
+			
+			if( insets.right > 2 ){
+				g.setColor( getColor( c, Position.MOVE ) );
+				g.fillRect( width-insets.right+2, 0, insets.right-2, height );
+			}
+			g.setColor( getColor( c, false, true, Position.MOVE ) );
+			g.drawLine( width-insets.right+1, 0, width-insets.right+1, height-1 );
+			
+			g.setColor( getColor( c, true, true, Position.MOVE ) );
+			g.drawLine( width-insets.right, 0, width-insets.right, height-1 );
+		}
+	}
+	
+	private void paintBottomMoveOnly( Component c, Graphics g, PaintParameters p ){
+		Insets insets = p.insets;
+		if( insets.bottom > 0 ){
+			int width = p.width;
+			int height = p.height;
+			
+			if( insets.bottom > 2 ){
+				g.setColor( getColor( c, Position.MOVE ) );
+				g.fillRect( 0, height-insets.bottom+2, width, insets.bottom-2 );
+			}
+			
+			g.setColor( getColor( c, true, true, Position.MOVE ) );
+			g.drawLine( 0, height-insets.bottom, width-1, height-insets.bottom );
+			
+			g.setColor( getColor( c, false, true, Position.MOVE ) );
+			g.drawLine( 0, height-insets.bottom+1, width-1, height-insets.bottom+1 );
+		}
 	}
 	
 	private void paintTopWithMove( Component c, Graphics g, PaintParameters p ){

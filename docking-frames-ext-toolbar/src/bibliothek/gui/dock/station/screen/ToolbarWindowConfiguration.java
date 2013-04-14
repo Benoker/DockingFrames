@@ -43,8 +43,7 @@ import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
  * 
  * @author Benjamin Sigg
  */
-public class ToolbarWindowConfiguration implements
-		ScreenDockWindowConfiguration{
+public class ToolbarWindowConfiguration implements ScreenDockWindowConfiguration{
 	private final DockController controller;
 
 	/**

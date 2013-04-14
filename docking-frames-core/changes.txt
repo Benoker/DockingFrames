@@ -928,3 +928,4 @@
  
 [v1.1.2p6a]
  - API: ToolbarDockStation is no longer transparent per default, clients can make it transparent with the ThemeManager, the constant BackgroundPaint.TRANSPARENT and the key 'ThemeManager.BACKGROUND_PAINT + ".station.toolbar"'
+ - API: If a ScreenDockWindow is not resizeable, but has a border and is moveable, then the border appears on the same side as the DockTitle
