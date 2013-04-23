@@ -95,6 +95,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			}
 		}
 	}
+	
+	/** all the observers that are monitoring this object */
+	private List<ToolbarGridLayoutManagerListener> listeners = new ArrayList<ToolbarGridLayoutManagerListener>();
 
 	/**
 	 * Creates a new layout manager.
@@ -427,6 +430,23 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		return new Dimension( width, height );
 	}
 
+	/**
+	 * Adds the observer <code>listener</code> to this object. The observer will be called whenever
+	 * the layout of a {@link Container} is updated.
+	 * @param listener the new observer, not <code>null</code>
+	 */
+	public void addListener( ToolbarGridLayoutManagerListener listener ){
+		listeners.add( listener );
+	}
+	
+	/**
+	 * Removes the observer <code>listener</code> from this object.
+	 * @param listener the listener to remove
+	 */
+	public void removeListener( ToolbarGridLayoutManagerListener listener ){
+		listeners.remove( listener );
+	}
+	
 	@Override
 	public void layoutContainer( Container parent ){
 		final Wrapper[][] components = layout();
@@ -437,6 +457,9 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		}
 		else {
 			layout( parent, components, layoutSize( parent, components, Size.MINIMUM ), available, Size.MINIMUM );
+		}
+		for( ToolbarGridLayoutManagerListener listener : listeners ){
+			listener.didLayout( parent );
 		}
 	}
 

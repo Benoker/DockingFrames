@@ -1157,6 +1157,30 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		mainPanel.revalidate();
 	}
 	
+	public Rectangle getDropGapBoundaries(){
+		if( dropInfo == null ){
+			return null;
+		}
+		
+		Component dockablePane = mainPanel.dockablePane;
+		Point zero = new Point( 0, 0 );
+		zero = SwingUtilities.convertPoint( dockablePane, zero, mainPanel );
+
+		Rectangle gapBounds;
+
+		if( dropInfo.getLine() == -1 ) {
+			gapBounds = layoutManager.getGapBounds( dropInfo.getColumn(), false );
+		}
+		else {
+			gapBounds = layoutManager.getGapBounds( dropInfo.getColumn(), dropInfo.getLine() );
+		}
+
+		gapBounds.x += zero.x;
+		gapBounds.y += zero.y;
+	
+		return gapBounds;
+	}
+	
 	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
@@ -1336,21 +1360,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			paintDrag( g );
 
 			if( dropInfo != null && dropInfo.hasEffect() ) {
-				Component dockablePane = mainPanel.dockablePane;
 				Point zero = new Point( 0, 0 );
 				zero = SwingUtilities.convertPoint( dockablePane, zero, this );
-
-				Rectangle gapBounds;
-
-				if( dropInfo.getLine() == -1 ) {
-					gapBounds = layoutManager.getGapBounds( dropInfo.getColumn(), false );
-				}
-				else {
-					gapBounds = layoutManager.getGapBounds( dropInfo.getColumn(), dropInfo.getLine() );
-				}
-
-				gapBounds.x += zero.x;
-				gapBounds.y += zero.y;
+				
+				Rectangle gapBounds = getDropGapBoundaries();
 				paint.drawInsertion( g2D, new Rectangle( zero.x, zero.y, dockablePane.getWidth(), dockablePane.getHeight() ), gapBounds );
 			}
 		}

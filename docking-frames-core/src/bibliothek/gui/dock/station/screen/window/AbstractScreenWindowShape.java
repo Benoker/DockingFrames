@@ -52,7 +52,7 @@ public abstract class AbstractScreenWindowShape implements ScreenWindowShape{
 	}
 	
 	/**
-	 * Firts checks that the {@link #getCallback() callback} is not <code>null</code>, then calls
+	 * First checks that the {@link #getCallback() callback} is not <code>null</code>, then calls
 	 * {@link #getShape()} and sets the result.
 	 */
 	public void reshape(){

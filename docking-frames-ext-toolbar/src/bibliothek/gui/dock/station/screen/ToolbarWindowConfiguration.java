@@ -74,6 +74,7 @@ public class ToolbarWindowConfiguration implements ScreenDockWindowConfiguration
 			configuration.setResetOnDropable(false);
 			configuration.setResizeable(false);
 			configuration.setTransparent( true );
+			configuration.setShape( new ToolbarScreenWindowShape() );
 			return configuration;
 		}
 

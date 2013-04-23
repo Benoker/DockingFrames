@@ -216,8 +216,6 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
             	borderModifier = new WindowBorder( (JComponent)parent );
             	borderModifier.setBorder( border );
             	borderModifier.setController( getController() );
-            	
-            	((JComponent)parent).setBorder( border );
             }
 
             Listener listener = new Listener();
