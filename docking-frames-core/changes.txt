@@ -929,3 +929,8 @@
 [v1.1.2p6a]
  - API: ToolbarDockStation is no longer transparent per default, clients can make it transparent with the ThemeManager, the constant BackgroundPaint.TRANSPARENT and the key 'ThemeManager.BACKGROUND_PAINT + ".station.toolbar"'
  - API: If a ScreenDockWindow is not resizeable, but has a border and is moveable, then the border appears on the same side as the DockTitle
+ 
+[v1.1.2p7]
+ - API: Added ToolbarScreenWindowShape, a backup mechanism to create transparent floating toolbars in environments where translucency is not available.
+ - API: The new DndAutoSelectStrategy will automatically change the selected tab on a StackDockStation if the user hovers over a tab during a drag and drop operation.
+ ! API: Created a new project for handling stuff from Java 1.6 - during build the classes are copied into the JAR files, but their objects are only created if the application is executed with Java 1.6 or higher

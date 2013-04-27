@@ -29,6 +29,7 @@ package bibliothek.gui.dock.station.stack;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -451,6 +452,10 @@ public abstract class CombinedStackDockComponent<T extends CombinedTab, M extend
 		return tab.getBounds();
 	}
 
+	public int getIndexOfTabAt( Point mouseLocation ){
+		return getLayoutManager().getIndexOfTabAt( this, mouseLocation );
+	}
+	
 	public int getTabCount(){
 		return getDockableCount();
 	}

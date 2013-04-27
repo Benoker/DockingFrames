@@ -36,6 +36,10 @@ package bibliothek.util.container;
  * @param <B> type of the second field
  */
 public class Tuple<A, B> extends Single<A>{
+	public static <A, B> Tuple<A, B> of( A a, B b ){
+		return new Tuple<A,B>( a, b );
+	}
+	
 	private B b;
 	
 	public Tuple(){
@@ -60,11 +64,10 @@ public class Tuple<A, B> extends Single<A>{
         return (Tuple<A,B>)super.clone();
 	}
 	
-    @SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object o ){
-    	if( o instanceof Tuple ){
-			Tuple s = (Tuple)o;
+    	if( o.getClass() == getClass() ){
+			Tuple<?, ?> s = (Tuple<?, ?>)o;
 			return super.equals( o ) && ( (s.b == null && b == null) || (s.b != null && s.b.equals( b )));
 		}
 		return false;

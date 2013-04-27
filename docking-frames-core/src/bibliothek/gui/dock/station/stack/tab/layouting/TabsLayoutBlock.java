@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.station.stack.tab.layouting;
 
+import java.awt.Point;
+
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.stack.tab.Tab;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
@@ -59,4 +61,11 @@ public interface TabsLayoutBlock extends LayoutBlock{
 	 * @return the tabs that would be shown
 	 */
 	public Tab[] getTabs( Size size );
+	
+	/**
+	 * Searches the index of the tab beneath <code>mouseLocation</code>.
+	 * @param mouseLocation the location of the mouse
+	 * @return the index of the tab beneath <code>mouseLocation</code> or <code>-1</code>
+	 */
+	public int getIndexOfTabAt( Point mouseLocation );
 }

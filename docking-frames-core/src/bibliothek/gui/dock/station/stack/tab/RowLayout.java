@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.station.stack.tab;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import bibliothek.gui.DockTheme;
@@ -57,6 +58,17 @@ public class RowLayout implements TabLayoutManager{
 	 */
 	private AxisConversion getConversion( TabPane pane ){
 		return new DefaultAxisConversion( pane.getAvailableArea(), pane.getDockTabPlacement() );
+	}
+	
+	public int getIndexOfTabAt( TabPane pane, Point mouseLocation ){
+		int index = 0;
+		for( Tab tab : pane.getTabs() ){
+			if( tab.getBounds().contains( mouseLocation )){
+				return index;
+			}
+			index++;
+		}
+		return -1;
 	}
 
 	public void layout( TabPane pane ){

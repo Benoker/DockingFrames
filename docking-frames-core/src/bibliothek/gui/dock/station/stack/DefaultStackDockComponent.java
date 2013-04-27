@@ -269,6 +269,16 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 		return new SimpleDockElementRepresentative( target, this );
 	}
 	
+	public int getIndexOfTabAt( Point mouseLocation ){
+		for( int i = 0, n = getTabCount(); i<n; i++ ){
+			Rectangle tab = getBoundsAt( i );
+			if( tab != null && tab.contains( mouseLocation )){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public int indexOf( Dockable dockable ){
 		int index = 0;
 		for( Tab tab : dockables ){

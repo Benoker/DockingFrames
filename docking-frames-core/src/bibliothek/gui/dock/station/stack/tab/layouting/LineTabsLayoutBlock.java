@@ -27,8 +27,11 @@ package bibliothek.gui.dock.station.stack.tab.layouting;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import bibliothek.gui.Dockable;
@@ -119,7 +122,59 @@ public class LineTabsLayoutBlock extends AbstractTabsLayoutBlock{
 		result[tabs.length] = new LineSize( Size.Type.PREFERRED, preferred, tabs, true, 1.0 );
 		return result;
 	}
+
+	public int getIndexOfTabAt( Point mouseLocation ){
+		Tab[] tabs = getCurrentTabs();
 		
+		int[] overlapPrevious = getOverlapToPrevious( tabs );
+		int[] overlapNext = getOverlapToNext( tabs );
+		
+		int backup = -1;
+		boolean horizontal = getOrientation().isHorizontal();
+		
+		for( int i = 0; i < tabs.length; i++ ){
+			Rectangle bounds = tabs[i].getBounds();
+			if( bounds.contains( mouseLocation )){
+				boolean exact;
+				
+				if( horizontal ){
+					exact = 
+							(mouseLocation.x >= bounds.x + overlapPrevious[i]) &&
+							(mouseLocation.x < bounds.x + bounds.width - overlapNext[i]);
+				}
+				else {
+					exact = 
+							(mouseLocation.y >= bounds.y + overlapPrevious[i]) &&
+							(mouseLocation.y < bounds.y + bounds.height - overlapNext[i]);					
+				}
+				
+				if( exact ){
+					return i;
+				} 
+				else{
+					backup = i;
+				}
+			}
+		}
+		
+		return backup;
+	}
+	
+	/**
+	 * Gets all the tabs that are currently shown, ordered by <code>z</code>.
+	 * @return the currently shown tabs
+	 */
+	protected Tab[] getCurrentTabs(){
+		TabPane pane = getPane();
+		Tab[] tabs = pane.getTabs();
+		Arrays.sort( tabs, new Comparator<Tab>(){
+			public int compare( Tab a, Tab b ){
+				return a.getZOrder() - b.getZOrder();
+			}
+		});
+		return tabs;
+	}
+	
 	@Override
 	public void doLayout(){
 		Tab[] tabs = getTabs();

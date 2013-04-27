@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.station.stack.tab;
 
 import java.awt.Dimension;
+import java.awt.Point;
 
 import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
@@ -92,6 +93,13 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayoutPane>
 	@Override
 	protected void destroy( MenuLineLayoutPane info ){
 		info.destroy();
+	}
+	
+	public int getIndexOfTabAt( TabPane pane, Point mouseLocation ){
+		MenuLineLayoutPane layout = getInfo( pane );
+		if( layout == null )
+			throw new IllegalArgumentException( "unknown pane" );
+		return layout.getIndexOfTabAt( mouseLocation );
 	}
 
 	public Dimension getMinimumSize( TabPane pane ){

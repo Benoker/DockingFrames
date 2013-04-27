@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.station.stack.tab;
 
 import java.awt.Dimension;
+import java.awt.Point;
 
 import bibliothek.gui.dock.station.stack.tab.layouting.LayoutBlock;
 
@@ -62,6 +63,14 @@ public interface TabLayoutManager {
 	 * @return the preferred size of the available area of <code>pane</code>
 	 */
 	public Dimension getPreferredSize( TabPane pane );
+	
+	/**
+	 * Finds out which tab is below the mouse at location <code>mouseLocation</code>.
+	 * @param pane the panel for which to search the tab
+	 * @param mouseLocation the location of the mouse
+	 * @return the index of the tab beneath <code>mouseLocation</code> or <code>null</code>
+	 */
+	public int getIndexOfTabAt( TabPane pane, Point mouseLocation );
 	
 	/**
 	 * Informs this {@link TabLayoutManager} that from now on it will have

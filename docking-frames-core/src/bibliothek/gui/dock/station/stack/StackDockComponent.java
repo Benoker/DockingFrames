@@ -27,6 +27,7 @@
 package bibliothek.gui.dock.station.stack;
 
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import javax.swing.Icon;
@@ -86,6 +87,13 @@ public interface StackDockComponent {
      * if the element is not directly visible
      */
     public Rectangle getBoundsAt(int index);
+    
+    /**
+     * Gets the index of the tab that is beneath <code>mouseLocation</code>.
+     * @param mouseLocation the location of the mouse on {@link #getComponent() the component}
+     * @return the index of a tab or <code>-1</code>
+     */
+    public int getIndexOfTabAt( Point mouseLocation );
 
     /**
      * Adds a new child at an unspecified location. 

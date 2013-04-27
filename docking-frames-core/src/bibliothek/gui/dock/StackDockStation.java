@@ -76,6 +76,8 @@ import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+import bibliothek.gui.dock.station.stack.DndAutoSelectStrategy;
+import bibliothek.gui.dock.station.stack.StackDnDAutoSelectSupport;
 import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
 import bibliothek.gui.dock.station.stack.StackDockComponentListener;
@@ -117,6 +119,7 @@ import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.extension.Extension;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
 
 /**
@@ -166,6 +169,23 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public static final PropertyKey<TabConfigurations> TAB_CONFIGURATIONS =
     	new PropertyKey<TabConfigurations>( "stack dock tab configurations",
     			new ConstantPropertyFactory<TabConfigurations>( TabConfigurations.DEFAULT ), true );
+    
+    /**
+     * Generic interface that listens to the drag and drop events, in order to auto select tabs.<br>
+     * This property is not intended to be set by clients, clients should set 
+     * {@link #DND_AUTO_SELECT_STRATEGY} instead.
+     */
+    @FrameworkOnly
+    public static final PropertyKey<StackDnDAutoSelectSupport> DND_AUTO_SELECT_SUPPORT =
+    		new PropertyKey<StackDnDAutoSelectSupport>( "stack dock auto select" );
+
+    /**
+     * Decides what happens if the use drags some data over a tab (the default behavior is
+     * defined by {@link DndAutoSelectStrategy#DEFAULT}).
+     */
+    public static final PropertyKey<DndAutoSelectStrategy> DND_AUTO_SELECT_STRATEGY =
+    		new PropertyKey<DndAutoSelectStrategy>( "stack dock auto select strategy", 
+    			new ConstantPropertyFactory<DndAutoSelectStrategy>( DndAutoSelectStrategy.DEFAULT ), true );
     
     /** A list of all children */
     private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
@@ -274,6 +294,22 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 				int index = indexOf( dockable );
 				if( index >= 0 ){
 					updateContent( index );
+				}
+			}
+		}
+	};
+	
+	/** the current {@link StackDnDAutoSelectSupport} */
+	private PropertyValue<StackDnDAutoSelectSupport> autoSelectSupport = new PropertyValue<StackDnDAutoSelectSupport>( DND_AUTO_SELECT_SUPPORT ){
+		@Override
+		protected void valueChanged( StackDnDAutoSelectSupport oldValue, StackDnDAutoSelectSupport newValue ){
+			StackDockComponent component = getStackComponent();
+			if( component != null ){
+				if( oldValue != null ){
+					oldValue.uninstall( component );
+				}
+				if( newValue != null ){
+					newValue.install( StackDockStation.this, component );
 				}
 			}
 		}
@@ -474,6 +510,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         if( stackComponent != this.stackComponent ){
             int selected = -1;
+            StackDnDAutoSelectSupport autoSelectSupport = this.autoSelectSupport.getValue();
             
             if( this.stackComponent != null ){
             	this.stackComponent.setController( null );
@@ -486,6 +523,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 selected = this.stackComponent.getSelectedIndex();
                 this.stackComponent.removeStackDockComponentListener( visibleListener );
                 this.stackComponent.removeAll();
+                
+                if( autoSelectSupport != null ){
+                	autoSelectSupport.uninstall( this.stackComponent );
+                }
             }
             
             this.stackComponent = stackComponent;
@@ -518,6 +559,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
                 component.addMouseMotionListener( listener );
             }
             
+            if( autoSelectSupport != null ){
+            	autoSelectSupport.install( this, this.stackComponent );
+            }
             updateConfigurableDisplayerHints();
         }
     }
@@ -589,8 +633,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             stackComponentRepresentative.setController( controller );
             paint.setController( controller );
             displayerFactory.setController( controller );
-            
             panelBackground.setController( controller );
+            autoSelectSupport.setProperties( controller );
             
             if( controller != null ){
                 title = controller.getDockTitleManager().getVersion( TITLE_ID, ControllerTitleFactory.INSTANCE );

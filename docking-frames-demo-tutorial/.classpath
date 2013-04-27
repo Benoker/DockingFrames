@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DockingFrames"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DockingFramesJ6"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

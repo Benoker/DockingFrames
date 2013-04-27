@@ -27,6 +27,7 @@ package bibliothek.gui.dock.station.stack.tab;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -183,6 +184,15 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 	 */
 	public MenuLineLayout getLayout(){
 		return layout;
+	}
+	
+	/**
+	 * Searches the index of the tab beneath <code>mouseLocation</code>.
+	 * @param mouseLocation the location of the mouse
+	 * @return the index of the tab beneath <code>mouseLocation</code> or <code>-1</code>
+	 */
+	public int getIndexOfTabAt( Point mouseLocation ){
+		return tabs.getIndexOfTabAt( mouseLocation );
 	}
 	
 	/**
