@@ -1,0 +1,1 @@
+Extension to the core library, adding features that are only available since Java 1.6

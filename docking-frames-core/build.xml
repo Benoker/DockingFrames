@@ -115,6 +115,7 @@
 		<property name="name.demonstration" value="docking-frames-demo-app"/>
 		<property name="name.demonstrationInterface" value="docking-frames-demo-app-ice"/>
 		<property name="name.core" value="docking-frames-core"/>
+		<property name="name.core.j6" value="docking-frames-core-j6"/>
 		<property name="name.help" value="docking-frames-demo-help"/>
 		<property name="name.notes" value="docking-frames-demo-notes"/>
 		<property name="name.paint" value="docking-frames-demo-paint"/>
@@ -130,6 +131,7 @@
 		<property name="location.demonstration" value="docking-frames-demo-app"/>
 		<property name="location.demonstrationInterface" value="docking-frames-demo-app-ice"/>
 		<property name="location.core" value="docking-frames-core"/>
+		<property name="location.core.j6" value="docking-frames-core-j6"/>
 		<property name="location.help" value="docking-frames-demo-help"/>
 		<property name="location.notes" value="docking-frames-demo-notes"/>
 		<property name="location.paint" value="docking-frames-demo-paint"/>
@@ -142,12 +144,18 @@
 			<fileset dir="${source}/${name.core}">
 				<include name="**/*.java"/>
 			</fileset>
+			<fileset dir="${source}/${name.core.j6}">
+				<include name="**/*.java"/>
+			</fileset>
 			<link href="http://docs.oracle.com/javase/1.5.0/docs/api/"/>
 		</javadoc>
 
 		<mkdir dir="${doc}/${name.common}"/>
 		<javadoc destdir="${doc}/${name.common}" use="true" splitindex="true" useexternalfile="true">
 			<fileset dir="${source}/${name.core}">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="${source}/${name.core.j6}">
 				<include name="**/*.java"/>
 			</fileset>
 			<fileset dir="${source}/${name.common}">
@@ -305,7 +313,7 @@
 
 	<!-- Compiling -->
 	<target name="bin.chess" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
-		<javac srcdir="${source}/${name.chess}" destdir="${temp}/${name.chess}">
+		<javac srcdir="${source}/${name.chess}" destdir="${temp}/${name.chess}" source="1.5" target="1.5">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
 			<classpath path="${temp}/${name.core}"/>
@@ -318,7 +326,7 @@
 	</target>
 
 	<target name="bin.layouts" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
-		<javac srcdir="${source}/${name.layouts}" destdir="${temp}/${name.layouts}">
+		<javac srcdir="${source}/${name.layouts}" destdir="${temp}/${name.layouts}"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
 			<classpath path="${temp}/${name.core}"/>
@@ -331,7 +339,7 @@
 	</target>
 
 	<target name="bin.common" depends="source, bin.dir, bin.core">
-		<javac srcdir="${source}/${name.common}" destdir="${temp}/${name.common}" debug="on">
+		<javac srcdir="${source}/${name.common}" destdir="${temp}/${name.common}" debug="on"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.core}"/>
 		</javac>
 		<copy todir="${temp}/${name.common}">
@@ -343,7 +351,7 @@
 
 
 	<target name="bin.tutorial" depends="source, bin.dir, bin.core, bin.common">
-		<javac srcdir="${source}/${name.tutorial}" destdir="${temp}/${name.tutorial}" debug="on">
+		<javac srcdir="${source}/${name.tutorial}" destdir="${temp}/${name.tutorial}" debug="on"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.core}"/>
 			<classpath path="${temp}/${name.common}"/>
 		</javac>
@@ -355,7 +363,7 @@
 	</target>
 
 	<target name="bin.demonstration" depends="source, bin.dir, bin.layouts, bin.chess, bin.common, bin.demonstrationInterface, bin.core, bin.help, bin.notes, bin.paint, bin.sizeAndColor">
-		<javac srcdir="${source}/${name.demonstration}" destdir="${temp}/${name.demonstration}">
+		<javac srcdir="${source}/${name.demonstration}" destdir="${temp}/${name.demonstration}"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.chess}"/>
 			<classpath path="${temp}/${name.layouts}"/>
 			<classpath path="${temp}/${name.common}"/>
@@ -374,7 +382,7 @@
 	</target>
 
 	<target name="bin.demonstrationInterface" depends="source, bin.dir, bin.common">
-		<javac srcdir="${source}/${name.demonstrationInterface}" destdir="${temp}/${name.demonstrationInterface}">
+		<javac srcdir="${source}/${name.demonstrationInterface}" destdir="${temp}/${name.demonstrationInterface}"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.common}"/>
 		</javac>
 		<copy todir="${temp}/${name.demonstrationInterface}">
@@ -385,7 +393,8 @@
 	</target>
 
 	<target name="bin.core" depends="source, bin.dir">
-		<javac srcdir="${source}/${name.core}" destdir="${temp}/${name.core}" debug="on"/>
+		<javac srcdir="${source}/${name.core}" destdir="${temp}/${name.core}" debug="on"  source="1.5" target="1.5"/>
+		<javac srcdir="${source}/${name.core.j6}" destdir="${temp}/${name.core}" debug="on" source="1.5" target="1.5"/>
 		<copy todir="${temp}/${name.core}">
 			<fileset dir="${source}/${name.core}">
 				<exclude name="**/*.java"/>
@@ -394,7 +403,7 @@
 	</target>
 
 	<target name="bin.help" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
-		<javac srcdir="${source}/${name.help}" destdir="${temp}/${name.help}">
+		<javac srcdir="${source}/${name.help}" destdir="${temp}/${name.help}"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
 			<classpath path="${temp}/${name.core}"/>
@@ -408,7 +417,7 @@
 	</target>
 
 	<target name="bin.notes" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
-		<javac srcdir="${source}/${name.notes}" destdir="${temp}/${name.notes}">
+		<javac srcdir="${source}/${name.notes}" destdir="${temp}/${name.notes}"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
 			<classpath path="${temp}/${name.core}"/>
@@ -421,7 +430,7 @@
 	</target>
 
 	<target name="bin.paint" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
-		<javac srcdir="${source}/${name.paint}" destdir="${temp}/${name.paint}">
+		<javac srcdir="${source}/${name.paint}" destdir="${temp}/${name.paint}"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
 			<classpath path="${temp}/${name.core}"/>
@@ -434,7 +443,7 @@
 	</target>
 
 	<target name="bin.sizeAndColor" depends="source, bin.dir, bin.common, bin.demonstrationInterface, bin.core">
-		<javac srcdir="${source}/${name.sizeAndColor}" destdir="${temp}/${name.sizeAndColor}">
+		<javac srcdir="${source}/${name.sizeAndColor}" destdir="${temp}/${name.sizeAndColor}"  source="1.5" target="1.5">
 			<classpath path="${temp}/${name.common}"/>
 			<classpath path="${temp}/${name.demonstrationInterface}"/>
 			<classpath path="${temp}/${name.core}"/>
@@ -502,6 +511,9 @@
 				<exclude name="*.svn/*"/>
 			</fileset>
 		</copy>
+		<copy todir="${source}/${name.core.j6}">
+			<fileset dir="${location.core.j6}/src" />
+		</copy>
 		<copy todir="${source}/${name.help}">
 			<fileset dir="${location.help}/src">
 				<exclude name="*.svn/*"/>
@@ -535,6 +547,7 @@
 		<mkdir dir="${source}/${name.demonstration}"/>
 		<mkdir dir="${source}/${name.demonstrationInterface}"/>
 		<mkdir dir="${source}/${name.core}"/>
+		<mkdir dir="${source}/${name.core.j6}"/>
 		<mkdir dir="${source}/${name.help}"/>
 		<mkdir dir="${source}/${name.notes}"/>
 		<mkdir dir="${source}/${name.paint}"/>

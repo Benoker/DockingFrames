@@ -32,8 +32,7 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 
-import bibliothek.util.workarounds.Java6Workaround;
-import bibliothek.util.workarounds.Java7Workaround;
+import bibliothek.gui.DockController;
 import bibliothek.util.workarounds.Workaround;
 
 /**
@@ -59,11 +58,30 @@ public class Workarounds {
 	static{
 		String version = System.getProperty( "java.version" );
 		if( version.startsWith( "1.6" )){
-			getDefault().addWorkaround( new Java6Workaround() );
+			tryAddWorkaround( "bibliothek.util.workarounds.Java6Workaround" );
 		}
 		else if( !version.startsWith( "1.5" )){
 			// will also work with Java 8...
-			getDefault().addWorkaround( new Java7Workaround() );
+			tryAddWorkaround( "bibliothek.util.workarounds.Java7Workaround" );
+		}
+	}
+	
+	/**
+	 * Tries first to call {@link Class#forName(String)} with <code>className</code> as argument, then creates
+	 * a new object, casts it to a {@link Workaround}, and finally {@link #addWorkaround(Workaround) installs that workaround}
+	 * @param className the name of the class to install
+	 * @return <code>true</code> if a new Workaround was installed
+	 */
+	public static boolean tryAddWorkaround( String className ){
+		try{
+			Class<?> clazz = Class.forName( className );
+			Object instance = clazz.newInstance();
+			getDefault().addWorkaround( (Workaround)instance );
+			return true;
+		}
+		catch( Exception e ){
+			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -178,5 +196,16 @@ public class Workarounds {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Calls the {@link Workaround#setup(DockController)} method of all installed {@link Workaround}s, in the order
+	 * of which the workarounds were installed.
+	 * @param controller a newly created controller
+	 */
+	public void setup( DockController controller ){
+		for( Workaround listener : code.toArray( new Workaround[ code.size() ] )){
+			listener.setup( controller );
+		}
 	}
 }

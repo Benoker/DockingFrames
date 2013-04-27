@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Shape;
 import java.awt.Window;
 
+import bibliothek.gui.DockController;
 import bibliothek.util.Workarounds;
 
 /**
@@ -37,6 +38,13 @@ import bibliothek.util.Workarounds;
  * @author Benjamin Sigg
  */
 public interface Workaround {
+	/**
+	 * Called whenever a new {@link DockController} is created, the {@link Workaround} may modify the controller in 
+	 * any way it likes (e.g. install specialied factories).
+	 * @param controller the {@link DockController} which was just created and initialized
+	 */
+	public void setup( DockController controller );
+	
 	/**
 	 * Called for any {@link Component} which is used as glass pane (as invisible panel).
 	 * @param component the component that is invisible

@@ -121,6 +121,7 @@ import bibliothek.gui.dock.util.text.TextValue;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Version;
+import bibliothek.util.Workarounds;
 
 /**
  * A controller connects all the {@link DockStation}s, {@link Dockable}s and
@@ -402,7 +403,9 @@ public class DockController {
         focusController.addDockableFocusListener( new FocusControllerObserver() );
         
         for( ControllerSetupListener listener : setupListeners )
-            listener.done( this );
+        	listener.done( this );
+        
+        Workarounds.getDefault().setup( this );
     }
     
     /**
