@@ -8,18 +8,8 @@
         <version>1.1.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>docking-frames-core</artifactId>
+	<artifactId>docking-frames-core-j6</artifactId>
 	<packaging>jar</packaging>
-	
-	<dependencies>
-		<dependency>
-			<groupId>org.dockingframes</groupId>
-			<artifactId>docking-frames-core-j6</artifactId>
-			<type>jar</type>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
 
 	<name>${project.artifactId}</name>
 	<description>${project.name} is a core library</description>

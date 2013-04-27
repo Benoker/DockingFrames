@@ -17,6 +17,7 @@
 	<modules>
 
 		<module>docking-frames-core</module>
+		<module>docking-frames-core-j6</module>
 		<module>docking-frames-common</module>
 		<module>docking-frames-ext-toolbar</module>
 		<module>docking-frames-ext-toolbar-common</module>
@@ -178,7 +179,7 @@
 	</developers>
 
 	<properties>
-		<javaVersion>1.5</javaVersion>
+		<javaVersion>1.6</javaVersion>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
