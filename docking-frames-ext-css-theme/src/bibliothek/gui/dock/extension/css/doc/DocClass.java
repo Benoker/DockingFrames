@@ -33,9 +33,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a single {@link Class}.
@@ -90,40 +92,53 @@ public class DocClass implements Iterable<DocProperty>{
 	
 	private void initProperties(){
 		properties = new ArrayList<DocProperty>();
-		CssDocProperty property = clazz.getAnnotation( CssDocProperty.class );
-		
-		if( property != null ){
-			properties.add( new DocProperty( this, property, clazz ) );
-		}
-		for( Constructor<?> constructor : clazz.getDeclaredConstructors()){
-			property = constructor.getAnnotation( CssDocProperty.class );
+		initProperties( clazz, new HashSet<Class<?>>() );
+	}
+	
+	private void initProperties(Class<?> clazz, Set<Class<?>> visited){
+		if( visited.add( clazz )){
+			CssDocProperty property = clazz.getAnnotation( CssDocProperty.class );
+			
 			if( property != null ){
 				properties.add( new DocProperty( this, property, clazz ) );
 			}
-		}
-		
-		for( Field field : clazz.getDeclaredFields() ){
-			property = field.getAnnotation( CssDocProperty.class );
-			if( property != null ){
-				properties.add( new DocProperty( this, property, field.getType() ) );
+			for( Constructor<?> constructor : clazz.getDeclaredConstructors()){
+				property = constructor.getAnnotation( CssDocProperty.class );
+				if( property != null ){
+					properties.add( new DocProperty( this, property, clazz ) );
+				}
 			}
-		}
-		
-		for( Method method : clazz.getDeclaredMethods() ){
-			property = method.getAnnotation( CssDocProperty.class );
-			if( property != null ){
-				properties.add( new DocProperty( this, property, method.getReturnType() ) );
-			}
-		}
-		
-		Collections.sort( properties, new Comparator<DocProperty>(){
-			private Collator collator = Collator.getInstance();
 			
-			@Override
-			public int compare( DocProperty a, DocProperty b ){
-				return collator.compare( a.getName(), b.getName() );
+			for( Field field : clazz.getDeclaredFields() ){
+				property = field.getAnnotation( CssDocProperty.class );
+				if( property != null ){
+					properties.add( new DocProperty( this, property, field.getType() ) );
+				}
 			}
-		} );
+			
+			for( Method method : clazz.getDeclaredMethods() ){
+				property = method.getAnnotation( CssDocProperty.class );
+				if( property != null ){
+					properties.add( new DocProperty( this, property, method.getReturnType() ) );
+				}
+			}
+			
+			Collections.sort( properties, new Comparator<DocProperty>(){
+				private Collator collator = Collator.getInstance();
+				
+				@Override
+				public int compare( DocProperty a, DocProperty b ){
+					return collator.compare( a.getName(), b.getName() );
+				}
+			} );
+			
+			CssDocSeeAlso seeAlso = clazz.getAnnotation( CssDocSeeAlso.class );
+			if( seeAlso != null ){
+				for( Class<?> next : seeAlso.value() ){
+					initProperties( next, visited );
+				}
+			}
+		}
 	}
 
 	/**

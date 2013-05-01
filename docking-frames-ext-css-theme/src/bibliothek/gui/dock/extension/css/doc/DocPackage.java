@@ -75,12 +75,16 @@ public class DocPackage implements Iterable<DocClass>{
 	}
 	
 	/**
-	 * Adds <code>clazz</code> to the set of known {@link Class classes}.
+	 * Adds <code>clazz</code> to the set of known {@link Class classes}. Does nothing if
+	 * <code>clazz</code> is already known.
 	 * @param clazz the new class
 	 */
 	public void add( Class<?> clazz ){
-		DocClass doc = new DocClass( this, clazz );
-		classes.put( clazz.getSimpleName(), doc );
+		String name = clazz.getSimpleName();
+		if( !classes.containsKey( name )){
+			DocClass doc = new DocClass( this, clazz );
+			classes.put( name, doc );
+		}
 	}
 	
 	/**

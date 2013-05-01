@@ -1,11 +1,13 @@
 title {
 	background: solid;
 	background-color: SteelBlue;
+	icontextgap: 3;
 }
 
 title:hover {
 	background: solid;
 	background-color: blue;
+	icontextgap: 30;
 }
 
 title:selected {
