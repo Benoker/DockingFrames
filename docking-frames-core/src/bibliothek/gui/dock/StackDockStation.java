@@ -1644,8 +1644,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	            DockController controller = getController();
 	            if( controller != null ){
 	                Dockable selection = getFrontDockable();
-	                if( selection != null )
+	                if( selection != null && !controller.getRelocator().isOnPut() ){
 	                    controller.setFocusedDockable( new DefaultFocusRequest( selection, null, false ));
+	                }
 	                
 	                fireDockableSelected();
 	            }

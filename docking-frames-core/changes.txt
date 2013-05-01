@@ -934,3 +934,6 @@
  - API: Added ToolbarScreenWindowShape, a backup mechanism to create transparent floating toolbars in environments where translucency is not available.
  - API: The new DndAutoSelectStrategy will automatically change the selected tab on a StackDockStation if the user hovers over a tab during a drag and drop operation.
  ! API: Created a new project for handling stuff from Java 1.6 - during build the classes are copied into the JAR files, but their objects are only created if the application is executed with Java 1.6 or higher
+ 
+[v1.1.2p7a]
+ - API: StackDockStation does not change focused Dockable if the selection changes while ending a drag and drop operation. This prevents the framework from doing some unnecessary work.
