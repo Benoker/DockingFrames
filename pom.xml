@@ -17,7 +17,6 @@
 	<modules>
 
 		<module>docking-frames-core</module>
-		<module>docking-frames-core-j6</module>
 		<module>docking-frames-common</module>
 		<module>docking-frames-ext-toolbar</module>
 		<module>docking-frames-ext-toolbar-common</module>
