@@ -100,6 +100,8 @@
 	</target>
 
 	<target name="paths">
+		<property name="javac-1.5" value="/home/beni/jdk1.5.0_22/bin/javac"/>
+		
 		<property name="base" value="dock"/>
 		<property name="source" value="${base}/src"/>
 		<property name="bin" value="${base}/bin"/>
@@ -131,7 +133,6 @@
 		<property name="location.demonstration" value="docking-frames-demo-app"/>
 		<property name="location.demonstrationInterface" value="docking-frames-demo-app-ice"/>
 		<property name="location.core" value="docking-frames-core"/>
-		<property name="location.core.j6" value="docking-frames-core-j6"/>
 		<property name="location.help" value="docking-frames-demo-help"/>
 		<property name="location.notes" value="docking-frames-demo-notes"/>
 		<property name="location.paint" value="docking-frames-demo-paint"/>
@@ -393,10 +394,17 @@
 	</target>
 
 	<target name="bin.core" depends="source, bin.dir">
-		<javac srcdir="${source}/${name.core}" destdir="${temp}/${name.core}" debug="on"  source="1.5" target="1.5"/>
-		<javac srcdir="${source}/${name.core.j6}" destdir="${temp}/${name.core}" debug="on" source="1.5" target="1.5"/>
+		<javac
+			fork="yes"
+			executable="${javac-1.5}"
+			srcdir="${source}/${name.core}" 
+			destdir="${temp}/${name.core}" debug="on"  source="1.5" target="1.5"/>
+		<javac srcdir="${source}/${name.core.j6}" destdir="${temp}/${name.core}" debug="on" source="1.6" target="1.6"/>
 		<copy todir="${temp}/${name.core}">
 			<fileset dir="${source}/${name.core}">
+				<exclude name="**/*.java"/>
+			</fileset>
+			<fileset dir="${source}/${name.core.j6}">
 				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
@@ -467,6 +475,7 @@
 		<mkdir dir="${temp}/${name.demonstration}"/>
 		<mkdir dir="${temp}/${name.demonstrationInterface}"/>
 		<mkdir dir="${temp}/${name.core}"/>
+		<mkdir dir="${temp}/${name.core.j6}"/>
 		<mkdir dir="${temp}/${name.help}"/>
 		<mkdir dir="${temp}/${name.notes}"/>
 		<mkdir dir="${temp}/${name.paint}"/>
@@ -512,7 +521,7 @@
 			</fileset>
 		</copy>
 		<copy todir="${source}/${name.core.j6}">
-			<fileset dir="${location.core.j6}/src" />
+			<fileset dir="${location.core}/src-j6" />
 		</copy>
 		<copy todir="${source}/${name.help}">
 			<fileset dir="${location.help}/src">

@@ -11,16 +11,6 @@
 	<artifactId>docking-frames-core</artifactId>
 	<packaging>jar</packaging>
 	
-	<dependencies>
-		<dependency>
-			<groupId>org.dockingframes</groupId>
-			<artifactId>docking-frames-core-j6</artifactId>
-			<type>jar</type>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
-
 	<name>${project.artifactId}</name>
 	<description>${project.name} is a core library</description>
 
