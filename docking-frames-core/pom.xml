@@ -40,4 +40,36 @@
                 </resource>
             </resources>
         </build>
+
+    <profiles>
+        <profile>
+            <activation>
+                <!-- This profile is activated when jdk >= 1.6 -->
+                <jdk>[1.6,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>src-j6</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                   </plugin>
+               </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
