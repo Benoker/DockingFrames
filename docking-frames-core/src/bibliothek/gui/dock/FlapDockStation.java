@@ -2315,6 +2315,7 @@ public class FlapDockStation extends AbstractDockableStation {
     		buttonListener = new ButtonListener( dockable );
     		if( holdAction != null || forceActionSourceCreation ){
     			actions = new FlapDockStationSource( FlapDockStation.this, dockable, holdAction );
+    			actions.updateHoldSwitchable();
     		}
     	}
     	
