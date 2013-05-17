@@ -173,7 +173,7 @@ public class EclipseTheme extends BasicTheme {
 	@Override
 	public void install( DockController controller ){
 		DockTitleManager titleManager = controller.getDockTitleManager();
-		titleManager.registerTheme( EclipseTheme.TAB_DOCK_TITLE, BasicTabDockTitle.createFactory( this ) );
+		titleManager.registerTheme( EclipseTheme.TAB_DOCK_TITLE, BasicTabDockTitle.FACTORY );
 
 		super.install( controller );
 

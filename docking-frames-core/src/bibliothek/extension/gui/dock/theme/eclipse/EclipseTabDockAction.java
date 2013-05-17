@@ -42,5 +42,21 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Documented
 public @interface EclipseTabDockAction {
-	// nothing
+	/**
+	 * The location of the action if the tab is neither selected nor focused.
+	 * @return behavior if the tab is not selected, not <code>null</code>
+	 */
+	public EclipseTabDockActionLocation normal() default EclipseTabDockActionLocation.TAB;
+	
+	/**
+	 * The location of the action if the tab is selected.
+	 * @return behavior if the tab is selected, not <code>null</code>
+	 */
+	public EclipseTabDockActionLocation selected() default EclipseTabDockActionLocation.TAB;
+	
+	/**
+	 * The location of the action if the tab is selected and focused.
+	 * @return behavior if the tab is selected and focused, not <code>null</code>
+	 */	
+	public EclipseTabDockActionLocation focused() default EclipseTabDockActionLocation.TAB;
 }

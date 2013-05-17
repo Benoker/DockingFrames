@@ -76,8 +76,41 @@ public class DefaultEclipseThemeConnector implements EclipseThemeConnector {
         return TitleBar.NONE_HINTED;
     }
     
-	public boolean isTabAction( Dockable dockable, DockAction action ){
-		EclipseTabDockAction tab = action.getClass().getAnnotation( EclipseTabDockAction.class );
-		return tab != null;
+	public boolean shouldShowOnSide( DockAction action, EclipseTabStateInfo tab ){
+		return getLocation( action, tab ).isSide();
+	}
+	
+	public boolean shouldShowOnTab( DockAction action, EclipseTabStateInfo tab ){
+		return getLocation( action, tab ).isTab();
+	}
+	
+	/**
+	 * Gets the location of <code>action</code>.
+	 * @param action the action whose location is searched
+	 * @param tab the state of a tab
+	 * @return the location of <code>action</code>, not <code>null</code>
+	 */
+	protected EclipseTabDockActionLocation getLocation( DockAction action, EclipseTabStateInfo tab ){
+		EclipseTabDockAction annotation = action.getClass().getAnnotation( EclipseTabDockAction.class );
+		return getLocation( annotation, tab );
+	}
+	
+	/**
+	 * Gets the location encoded in <code>annotation</code>.
+	 * @param annotation an annotation, can be <code>null</code>
+	 * @param tab the state of a tab
+	 * @return the location a {@link DockAction} should have according to <code>annotation</code>
+	 */
+	protected EclipseTabDockActionLocation getLocation( EclipseTabDockAction annotation, EclipseTabStateInfo tab ){
+		if( annotation == null ){
+			return EclipseTabDockActionLocation.SIDE;
+		}
+		if( tab.isFocused() ){
+			return annotation.focused();
+		}
+		if( tab.isSelected() ){
+			return annotation.selected();
+		}
+		return annotation.normal();
 	}
 }

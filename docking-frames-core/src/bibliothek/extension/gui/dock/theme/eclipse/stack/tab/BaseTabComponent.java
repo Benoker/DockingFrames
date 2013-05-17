@@ -39,6 +39,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabStateInfo;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
@@ -98,7 +99,7 @@ import bibliothek.gui.dock.util.swing.OrientedLabel;
     "stack.tab.text.disabled", 
     
     "stack.border" })
-public abstract class BaseTabComponent extends ConfiguredBackgroundPanel implements TabComponent{
+public abstract class BaseTabComponent extends ConfiguredBackgroundPanel implements TabComponent, EclipseTabStateInfo{
     protected final TabColor colorStackTabBorder;
     protected final TabColor colorStackTabBorderSelected;
     protected final TabColor colorStackTabBorderSelectedFocused;
@@ -138,6 +139,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     private Icon icon;
     
     private ButtonPanel buttons;
+    private EclipseDockActionSource actions;
     
     private boolean hasFocus;
     private boolean isSelected;
@@ -266,6 +268,10 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
 		setLayout( layoutManager );
     }
     
+    public EclipseTabStateInfo getEclipseTabStateInfo(){
+    	return this;
+    }
+    
     /**
      * Adds an additional set of colors to this tab. This method should be called before this
      * tab is {@link #bind() bound}.
@@ -306,6 +312,16 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
         }
         
         label.setFontModifier( font.font() );
+    }
+    
+    /**
+     * Recalculates which actions to show on this component.
+     */
+    protected void refreshActions(){
+    	if( actions != null ){
+    		actions.refresh();
+    	}
+    	pane.getInfoComponent().refreshActions();
     }
     
     /**
@@ -365,9 +381,11 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     }
     
     public void bind() {
-        if( buttons != null )
-            buttons.set( dockable, new EclipseDockActionSource(
-            		pane.getTheme(), dockable.getGlobalActionOffers(), dockable, true ) );
+        if( buttons != null ){
+        	actions = new EclipseDockActionSource(
+            		pane.getTheme(), dockable.getGlobalActionOffers(), this, true );
+            buttons.set( dockable, actions );
+        }
         
         DockController controller = pane.getController();
         if( tab != null ){
@@ -503,6 +521,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     public void setFocused( boolean focused ){
     	if( hasFocus != focused ){
     		hasFocus = focused;
+    		refreshActions();
     		updateFocus();
     	}
     }
@@ -536,6 +555,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     		else{
     			label.setIcon( null );
     		}
+    		refreshActions();
     		revalidate();
     		updateSelected();
     	}
@@ -774,6 +794,7 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     	if( isEnabled() != enabled ){
 	    	super.setEnabled( enabled );
 	    	label.setEnabled( enabled );
+	    	refreshActions();
 	    	updateEnabled();
     	}
     }
@@ -784,7 +805,8 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
 	    
     	if( this.orientation != orientation ){
 	    	this.orientation = orientation;	
-	    	layoutManager.setOrientation( orientation );    
+	    	layoutManager.setOrientation( orientation );
+	    	refreshActions();
 		    updateOrientation();
     	}
     }

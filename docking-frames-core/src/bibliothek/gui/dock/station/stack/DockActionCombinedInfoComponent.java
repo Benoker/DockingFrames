@@ -105,6 +105,14 @@ public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneCom
 	}
 	
 	/**
+	 * Gets the element which is currently shown on this info.
+	 * @return the selected item, can be <code>null</code>
+	 */
+	public Dockable getSelection(){
+		return dockable;
+	}
+	
+	/**
 	 * Sets the {@link DockController} in whose realm this panel is used. This method is usually called
 	 * automatically by the {@link TabPaneListener} that is added to the owner of this panel.
 	 * @param controller the controller, can be <code>null</code>

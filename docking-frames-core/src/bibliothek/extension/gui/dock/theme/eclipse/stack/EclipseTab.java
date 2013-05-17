@@ -35,6 +35,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabStateInfo;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
@@ -75,6 +76,14 @@ public class EclipseTab extends AbstractTab implements CombinedTab{
 		component.setIcon( dockable.getTitleIcon() );
 		component.setText( dockable.getTitleText() );
 		component.setTab( this );
+	}
+	
+	/**
+	 * Gets information about the state of this tab.
+	 * @return information about this tab
+	 */
+	public EclipseTabStateInfo getEclipseTabStateInfo(){
+		return component.getEclipseTabStateInfo();
 	}
 	
 	public void setConfiguration( TabConfiguration configuration ){

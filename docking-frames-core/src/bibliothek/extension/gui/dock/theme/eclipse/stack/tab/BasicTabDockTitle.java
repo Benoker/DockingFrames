@@ -31,11 +31,8 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 
-import bibliothek.extension.gui.dock.theme.EclipseTheme;
-import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.themes.basic.BasicDockTitle;
 import bibliothek.gui.dock.themes.color.TitleColor;
@@ -62,29 +59,21 @@ import bibliothek.util.Condition;
     "stack.tab.text", "stack.border"})
 public class BasicTabDockTitle extends BasicDockTitle {
     /**
-     * Gets a new {@link DockTitleFactory} using <code>theme</code> as
-     * source of various properties.
-     * @param theme the settings
-     * @return the new factory
+     * A factory creating new {@link BasicTabDockTitle}s.
      */
-    public static DockTitleFactory createFactory( final EclipseTheme theme ){
-        return new DockTitleFactory(){
-        	public void install( DockTitleRequest request ){
-	        	// ignore	
-        	}
-        	
-        	public void uninstall( DockTitleRequest request ){
-	        	// ignore	
-        	}
-        	
-        	public void request( DockTitleRequest request ){
-        		request.answer( new BasicTabDockTitle( theme, request.getTarget(), request.getVersion() ) );
-        	}
-        };
-    }
-    
-    /** the theme used to get theme-properties */
-    private EclipseTheme theme;
+    public static final DockTitleFactory FACTORY = new DockTitleFactory(){
+    	public void install( DockTitleRequest request ){
+        	// ignore	
+    	}
+    	
+    	public void uninstall( DockTitleRequest request ){
+        	// ignore	
+    	}
+    	
+    	public void request( DockTitleRequest request ){
+    		request.answer( new BasicTabDockTitle( request.getTarget(), request.getVersion() ) );
+    	}
+    };
     
     /** whether this tab is currently selected */
     private boolean selected = false;
@@ -96,13 +85,11 @@ public class BasicTabDockTitle extends BasicDockTitle {
     
     /**
      * Creates a new title
-     * @param theme the properties needed to paint this title correctly
      * @param dockable the element for which this title is shown
      * @param origin the type of this title
      */
-    public BasicTabDockTitle( EclipseTheme theme, Dockable dockable, DockTitleVersion origin ) {
+    public BasicTabDockTitle( Dockable dockable, DockTitleVersion origin ) {
         super( dockable, origin, false );
-        this.theme = theme;
         
         setBorder( ThemeManager.BORDER_MODIFIER + ".title.tab", BorderFactory.createEmptyBorder( 0, 0, 1, 0 ) );
         
@@ -161,11 +148,6 @@ public class BasicTabDockTitle extends BasicDockTitle {
         super.unbind();
 
         borderColor.setManager( null );
-    }
-    
-    @Override
-    protected DockActionSource getActionSourceFor( Dockable dockable ) {
-        return new EclipseDockActionSource( theme, super.getActionSourceFor( dockable ), dockable, true );
     }
     
     @Override

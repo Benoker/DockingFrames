@@ -27,6 +27,8 @@ package bibliothek.gui.dock.common.theme.eclipse;
 
 import bibliothek.extension.gui.dock.theme.eclipse.DefaultEclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockAction;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabDockActionLocation;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabStateInfo;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnector;
 import bibliothek.extension.gui.dock.theme.eclipse.EclipseThemeConnectorListener;
 import bibliothek.gui.DockStation;
@@ -106,18 +108,33 @@ public class CommonEclipseThemeConnector extends DefaultEclipseThemeConnector {
 	}
 	
 	@Override
-	public boolean isTabAction( Dockable dockable, DockAction action ){
-		if( super.isTabAction( dockable, action ) ){
-			return true;
-		}
+	protected EclipseTabDockActionLocation getLocation( DockAction action, EclipseTabStateInfo tab ){
 		if( action instanceof CommonDockAction ){
 			CAction common = ((CommonDockAction)action).getAction();
-			EclipseTabDockAction tab = common.getClass().getAnnotation( EclipseTabDockAction.class );
-			return tab != null;
+			EclipseTabDockActionLocation location = getLocation( common, tab );
+			if( location != null ){
+				return location;
+			}
 		}
-		return false;
+		return super.getLocation( action, tab );
 	}
 	
+	/**
+	 * Gets the location of <code>action</code> depending on the state of <code>tab</code>. 
+	 * @param action the action whose location is searched
+	 * @param tab the state of a tab
+	 * @return the location or <code>null</code> to select the default location
+	 */
+	protected EclipseTabDockActionLocation getLocation( CAction action, EclipseTabStateInfo tab ){
+		EclipseTabDockAction annotation = action.getClass().getAnnotation( EclipseTabDockAction.class );
+		if( annotation != null ){
+			return getLocation( annotation, tab );
+		}
+		else{
+			return null;
+		}
+	}
+
 	@Override
 	public TitleBar getTitleBarKind( DockStation parent, Dockable dockable ){
 		if( parent instanceof StackDockStation )

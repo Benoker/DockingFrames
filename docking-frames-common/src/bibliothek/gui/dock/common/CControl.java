@@ -2804,7 +2804,7 @@ public class CControl {
             return locationManager;
         }
 
-        public DockAction createCloseAction( final CDockable fdockable ) {
+        public DockAction createCloseAction( final CDockable dockable ) {
             if( closeAction == null )
                 closeAction = new CCloseAction( CControl.this );
 

@@ -104,12 +104,24 @@ public interface EclipseThemeConnector {
 	public TitleBar getTitleBarKind( DockStation parent, Dockable dockable );
 		
 	/**
-	 * Tells whether <code>action</code> should be displayed on the tab
-	 * of <code>dockable</code> or on the right side.
-	 * @param dockable the owner of <code>action</code>
-	 * @param action the action to display
-	 * @return <code>true</code> if <code>action</code> should be child of
-	 * the tab
+	 * Tells whether <code>action</code> should be shown on the right side of the
+	 * tab of <code>dockable</code>.<br>
+	 * Note that {@link #shouldShowOnSide(DockAction, Dockable)} and {@link #shouldShowOnTab(DockAction, EclipseTabStateInfo)}
+	 * are independent of each other.
+	 * @param action the action to show
+	 * @param tab information about the tab that shows the {@link Dockable}
+	 * @return whether <code>action</code> should be shown on the right side
 	 */
-	public boolean isTabAction( Dockable dockable, DockAction action );
+	public boolean shouldShowOnSide( DockAction action, EclipseTabStateInfo tab );
+	
+
+	/**
+	 * Tells whether <code>action</code> should be shown on the tab of <code>dockable</code>.<br>
+	 * Note that {@link #shouldShowOnSide(DockAction, Dockable)} and {@link #shouldShowOnTab(DockAction, EclipseTabStateInfo)}
+	 * are independent of each other.
+	 * @param action the action to show
+	 * @param tab information about the tab that shows the {@link Dockable}
+	 * @return whether <code>action</code> should be shown on the tab
+	 */
+	public boolean shouldShowOnTab( DockAction action, EclipseTabStateInfo tab );
 }

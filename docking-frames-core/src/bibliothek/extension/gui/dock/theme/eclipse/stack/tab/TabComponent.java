@@ -32,6 +32,7 @@ import java.awt.Insets;
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
 
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabStateInfo;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
@@ -50,6 +51,12 @@ public interface TabComponent extends DockElementRepresentative{
 	 * @return the internal representation, not <code>null</code>
 	 */
 	public Component getComponent();
+	
+	/**
+	 * Gets information about the state of this tab.
+	 * @return information about the state, updates itself.
+	 */
+	public EclipseTabStateInfo getEclipseTabStateInfo();
 	
 	/**
 	 * Tells this component whether it has to be painted selected or not.

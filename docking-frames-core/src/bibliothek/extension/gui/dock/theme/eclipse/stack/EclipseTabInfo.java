@@ -42,6 +42,7 @@ import bibliothek.gui.dock.station.stack.tab.TabPane;
 // Note: no BackgroundComponent, this panel is completely transparent
 public class EclipseTabInfo extends DockActionCombinedInfoComponent {
 	private EclipseTabPane pane;
+	private EclipseDockActionSource currentActions;
 	
 	/**
 	 * Creates a new component.
@@ -54,6 +55,25 @@ public class EclipseTabInfo extends DockActionCombinedInfoComponent {
 		
 	@Override
 	protected DockActionSource createActionSource( Dockable dockable ){
-		return new EclipseDockActionSource( pane.getTheme(), dockable.getGlobalActionOffers(), dockable, false );
+		EclipseTab tab = pane.getOnTab( dockable );
+		currentActions = new EclipseDockActionSource( pane.getTheme(), dockable.getGlobalActionOffers(), tab.getEclipseTabStateInfo(), false );
+		return currentActions;
+	}
+	
+	@Override
+	protected void updateContent(){
+		super.updateContent();
+		if( getSelection() == null ){
+			currentActions = null;
+		}
+	}
+	
+	/**
+	 * Refreshes the list of actions that are shown on this panel.
+	 */
+	public void refreshActions(){
+		if( currentActions != null ){
+			currentActions.refresh();
+		}
 	}
 }

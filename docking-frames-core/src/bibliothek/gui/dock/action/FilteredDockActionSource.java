@@ -173,6 +173,34 @@ public abstract class FilteredDockActionSource extends AbstractDockActionSource{
 	}
 	
 	/**
+	 * Recalculates the visibility of all actions and fires events to the registered {@link DockActionSourceListener}
+	 * if the state of an action changed.
+	 */
+	public void refresh(){
+		if( actions != null ){
+			int index = 0;
+			
+			for( int i = 0, n = source.getDockActionCount(); i<n; i++ ){
+				boolean include = include( source.getDockAction( i ) );
+				if( include != actions.get( i ).booleanValue() ){
+					actions.set( i, include );
+					if( include ){
+						// action has been added
+						fireAdded( index, index );
+					}
+					else{
+						// action was removed
+						fireRemoved( index, index );
+					}
+				}
+				if( include ){
+					index++;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Tells whether <code>action</code> should be included in the list of
 	 * actions of this source, or not.
 	 * @param action the action to test

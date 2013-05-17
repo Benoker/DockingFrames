@@ -12,6 +12,7 @@ public class BasicCommonSet extends TutorialSet{
 			TitleWithTextFieldExample.class,
 			OpeningEditorsExample.class,
 			JDesktopPaneExample.class,
-			SplittingExternalizedDockablesExample.class );
+			SplittingExternalizedDockablesExample.class,
+			HideCloseActionExample.class );
 	}
 }

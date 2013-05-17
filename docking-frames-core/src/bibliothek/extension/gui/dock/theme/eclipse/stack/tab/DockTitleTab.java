@@ -18,14 +18,18 @@ import javax.swing.border.Border;
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.extension.gui.dock.theme.EclipseTheme;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseDockActionSource;
+import bibliothek.extension.gui.dock.theme.eclipse.EclipseTabStateInfo;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTab;
 import bibliothek.extension.gui.dock.theme.eclipse.stack.EclipseTabPane;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
+import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.station.stack.tab.TabConfiguration;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+import bibliothek.gui.dock.title.ActionsDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitle.Orientation;
 import bibliothek.gui.dock.title.DockTitleManager;
@@ -43,7 +47,7 @@ import bibliothek.gui.dock.title.DockTitleVersion;
  * @deprecated Using a custom {@link TabPainter} is the preferred way to modify the tabs 
  */
 @Deprecated
-public class DockTitleTab implements TabComponent{
+public class DockTitleTab implements TabComponent, EclipseTabStateInfo{
     /**
      * A {@link TabPainter} that uses the id {@link EclipseTheme#TAB_DOCK_TITLE}
      * to get a {@link DockTitleVersion} from the {@link DockTitleManager}
@@ -69,7 +73,7 @@ public class DockTitleTab implements TabComponent{
                     return fallback.createTabComponent( pane, dockable );
                     
                 pane.setContentBorderAt( pane.indexOf( dockable ), null );
-                return new DockTitleTab( station, dockable, version );
+                return new DockTitleTab( station, dockable, version, pane.getTheme() );
         	}
         	
         	public InvisibleTab createInvisibleTab( InvisibleTabPane pane, Dockable dockable ){
@@ -94,6 +98,8 @@ public class DockTitleTab implements TabComponent{
     private DockTitleRequest title;
     /** the location of this tab */
     private TabPlacement placement;
+    /** the theme using this tab */
+    private EclipseTheme theme;
     
     /** content of this tab */
     private JPanel content;
@@ -153,13 +159,15 @@ public class DockTitleTab implements TabComponent{
      * @param station the station which uses the tabbed pane, might be <code>null</code>
      * @param dockable the element for which this tab is shown
      * @param title the title which represents the tab
+     * @param theme the theme which uses this tab
      */
-    public DockTitleTab( DockStation station, final Dockable dockable, DockTitleVersion title ){
+    public DockTitleTab( DockStation station, final Dockable dockable, DockTitleVersion title, EclipseTheme theme ){
     	content = new JPanel( new BorderLayout() );
     	content.setOpaque( false );
     	
         this.station = station;
         this.dockable = dockable;
+        this.theme = theme;
         this.title = new DockTitleRequest( station, dockable, title ) {
 			@Override
 			protected void answer( DockTitle previous, DockTitle title ){
@@ -178,6 +186,10 @@ public class DockTitleTab implements TabComponent{
 				}
 			}
 		};
+    }
+
+    public EclipseTabStateInfo getEclipseTabStateInfo(){
+    	return this;
     }
     
     public void setConfiguration( TabConfiguration configuration ){
@@ -248,6 +260,10 @@ public class DockTitleTab implements TabComponent{
         return title.getTarget();
     }
     
+    public Dockable getDockable(){
+    	return title.getTarget();
+    }
+    
     public boolean isUsedAsTitle() {
         return true;
     }
@@ -301,6 +317,10 @@ public class DockTitleTab implements TabComponent{
         this.focused = focused;
         fire();
     }
+    
+    public boolean isFocused(){
+		return focused;
+	}
 
     public void setPaintIconWhenInactive( boolean paint ) {
         this.paintIconWhenInactive = paint;
@@ -310,6 +330,10 @@ public class DockTitleTab implements TabComponent{
     public void setSelected( boolean selected ) {
         this.selected = selected;
         fire();
+    }
+    
+    public boolean isSelected(){
+    	return selected;
     }
 
     public void setIcon( Icon icon ){
@@ -337,8 +361,12 @@ public class DockTitleTab implements TabComponent{
     protected void fire(){
     	DockTitle answer = title.getAnswer();
     	if( answer != null ){
-    		EclipseDockTitleEvent event = new EclipseDockTitleEvent( station, dockable, selected, focused, paintIconWhenInactive );
-    		answer.changed( event );
+    		EclipseDockTitleEvent eclipseEvent = new EclipseDockTitleEvent( station, dockable, selected, focused, paintIconWhenInactive );
+    		answer.changed( eclipseEvent );
+    		
+    		DockActionSource actions = new EclipseDockActionSource( theme, dockable.getGlobalActionOffers(), getEclipseTabStateInfo(), true );
+    		ActionsDockTitleEvent actionEvent = new ActionsDockTitleEvent( station, dockable, actions );
+    		answer.changed( actionEvent );
     	}
     }
 }
