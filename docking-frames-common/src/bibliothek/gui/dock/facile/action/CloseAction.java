@@ -31,6 +31,7 @@ import javax.swing.Icon;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockActionIcon;
 import bibliothek.gui.dock.action.DockActionText;
 import bibliothek.gui.dock.action.ListeningDockAction;
@@ -45,6 +46,8 @@ import bibliothek.gui.dock.action.actions.SimpleButtonAction;
  */
 public class CloseAction extends SimpleButtonAction implements ListeningDockAction{
     private DockActionIcon icon;
+    private DockActionIcon iconHover;
+    private DockActionIcon iconPressed;
     
     private DockActionText text;
     private DockActionText tooltip;
@@ -71,12 +74,51 @@ public class CloseAction extends SimpleButtonAction implements ListeningDockActi
 				setIcon( newValue );	
 			}
 		};
+		iconHover = new DockActionIcon( "close.hover", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( ActionContentModifier.NONE_HOVER, newValue );	
+			}
+		};
+		iconPressed = new DockActionIcon( "close.pressed", this ){
+			protected void changed( Icon oldValue, Icon newValue ){
+				setIcon( ActionContentModifier.NONE_PRESSED, newValue );	
+			}
+		};
         
         setController( controller );
     }
     
+    /**
+     * Gets the {@link DockActionIcon} which is responsible for automatically setting the close
+     * icon.
+     * @return the object that sets the icon
+     */
+    public DockActionIcon getCloseIcon(){
+		return icon;
+	}
+    
+    /**
+     * Gets the {@link DockActionIcon} which is responsible for automatically setting the close icon
+     * when the mouse is hovering over the button.
+     * @return the object that sets the icon
+     */
+    public DockActionIcon getCloseIconHover(){
+		return iconHover;
+	}
+    
+    /**
+     * Gets the {@link DockActionIcon} which is responsible for automatically setting the close icon
+     * if the mouse is pressed.
+     * @return the object that sets the icon
+     */
+    public DockActionIcon getCloseIconPressed(){
+		return iconPressed;
+	}
+    
     public void setController( DockController controller ) {
         icon.setController( controller );
+        iconHover.setController( controller );
+        iconPressed.setController( controller );
         text.setController( controller );
         tooltip.setController( controller );
     }

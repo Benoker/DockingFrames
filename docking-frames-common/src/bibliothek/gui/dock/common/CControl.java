@@ -69,7 +69,7 @@ import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.action.DockAction;
-import bibliothek.gui.dock.common.action.predefined.CCloseAction;
+import bibliothek.gui.dock.common.action.CloseActionFactory;
 import bibliothek.gui.dock.common.action.util.CDefaultDockActionDistributor;
 import bibliothek.gui.dock.common.event.CControlListener;
 import bibliothek.gui.dock.common.event.CDockableAdapter;
@@ -280,6 +280,13 @@ public class CControl {
                 "ccontrol.resize_lock_conflict_resolver", 
                 new ConstantPropertyFactory<ConflictResolver<RequestDimension>>( new DefaultConflictResolver<RequestDimension>()), true );
 
+    /**
+     * This factory creates the actions that close dockables.
+     */
+    public static final PropertyKey<CloseActionFactory> CLOSE_ACTION_FACTORY = 
+    		new PropertyKey<CloseActionFactory>( "ccontrol.closeActionFactory",
+    				new ConstantPropertyFactory<CloseActionFactory>( CloseActionFactory.DEFAULT ), true );
+    
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";
 
@@ -2637,7 +2644,7 @@ public class CControl {
      */
     private class Access implements CControlAccess{
         /** action used to close {@link CDockable}s  */
-        private CCloseAction closeAction;
+        private DockAction closeAction;
 
         public CControl getOwner(){
             return CControl.this;
@@ -2805,10 +2812,12 @@ public class CControl {
         }
 
         public DockAction createCloseAction( final CDockable dockable ) {
-            if( closeAction == null )
-                closeAction = new CCloseAction( CControl.this );
+            if( closeAction == null ){
+            	CloseActionFactory factory = getController().getProperties().get( CLOSE_ACTION_FACTORY );
+            	closeAction = factory.create( CControl.this, dockable ).intern();
+            }
 
-            return closeAction.intern();
+            return closeAction;
         }
 
         public MutableCControlRegister getRegister() {

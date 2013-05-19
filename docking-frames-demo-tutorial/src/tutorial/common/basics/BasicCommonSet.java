@@ -13,6 +13,7 @@ public class BasicCommonSet extends TutorialSet{
 			OpeningEditorsExample.class,
 			JDesktopPaneExample.class,
 			SplittingExternalizedDockablesExample.class,
-			HideCloseActionExample.class );
+			HideCloseActionExample.class,
+			EclipseLikeCloseButtonExample.class );
 	}
 }

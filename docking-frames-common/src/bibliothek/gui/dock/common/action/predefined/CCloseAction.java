@@ -71,7 +71,15 @@ public class CCloseAction extends CDropDownItem<CCloseAction.Action>{
             throw new NullPointerException( "control is null" );
         
         this.control = control;
-        init( new Action() );
+        init( createAction() );
+    }
+    
+    /**
+     * Creates the action that is used for {@link #intern()}.
+     * @return the internal representation of this action
+     */
+    protected Action createAction(){
+    	return new Action();
     }
     
     /**
