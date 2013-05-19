@@ -935,5 +935,8 @@
  - API: The new DndAutoSelectStrategy will automatically change the selected tab on a StackDockStation if the user hovers over a tab during a drag and drop operation.
  ! API: Created a new project for handling stuff from Java 1.6 - during build the classes are copied into the JAR files, but their objects are only created if the application is executed with Java 1.6 or higher
  
-[v1.1.2p7a]
+[v1.1.2p8]
  - API: StackDockStation does not change focused Dockable if the selection changes while ending a drag and drop operation. This prevents the framework from doing some unnecessary work.
+ ! API: If using the EclipseTheme, the actions on the tabs can be configured to disappear if the tabs are not selected or focused.
+ - API: Introduced the CloseActionFactory, clients can now more easily change the close action of all CDockables
+ - API: Added support for more icons in CloseAction
