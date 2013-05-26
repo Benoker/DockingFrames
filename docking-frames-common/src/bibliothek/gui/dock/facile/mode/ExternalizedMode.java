@@ -93,8 +93,8 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
 	}
 	
 	@Override
-	public void runApply( Dockable dockable, Location history, AffectedSet set ){
-		externalize( dockable, history, set );
+	public boolean runApply( Dockable dockable, Location history, AffectedSet set ){
+		return externalize( dockable, history, set );
 	}
 	
     /**
@@ -107,8 +107,9 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
      * an externalized position. Can be <code>null</code>.
      * @param affected a set of <code>Dockable</code>s which will be filled by the
      * elements that change their mode because of this method
+     * @return whether the operation was a success or not
      */
-    private void externalize( Dockable dockable, Location location, AffectedSet affected ){
+    private boolean externalize( Dockable dockable, Location location, AffectedSet affected ){
     	affected.add( dockable );
 
         ExternalizedModeArea area = null;
@@ -127,7 +128,7 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
         	property = behavior.findLocation( area, dockable );
         }
         
-        area.setLocation( dockable, property, affected );
+        return area.setLocation( dockable, property, affected );
     }
     
     public ModeSettingFactory<Location> getSettingFactory(){

@@ -162,17 +162,23 @@ public class NewCStationExample {
 			return DockUtilities.getPropertyChain( getStation(), child );
 		}
 
-		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
+		public boolean setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
 			set.add( dockable );
 			
 			if( isChild( dockable )){
 				getStation().move( dockable, location );
 			}
 			else{
+				boolean acceptable = DockUtilities.acceptable( getStation(), dockable );
+				if( !acceptable ){
+					return false;
+				}
+				
 				if( !getStation().drop( dockable, location )){
 					getStation().drop( dockable );
 				}
 			}
+			return true;
 		}
 
 		public void addModeAreaListener( ModeAreaListener listener ){

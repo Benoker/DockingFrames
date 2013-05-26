@@ -940,3 +940,6 @@
  ! API: If using the EclipseTheme, the actions on the tabs can be configured to disappear if the tabs are not selected or focused.
  - API: Introduced the CloseActionFactory, clients can now more easily change the close action of all CDockables
  - API: Added support for more icons in CloseAction
+ 
+[v1.1.2p8a]
+ - Bugfix: normalizing/minimizing a stack of minimized or externalized CDockables, where some CDockables were associated with a CWorkingArea and others were not, could close some dockables

@@ -57,7 +57,7 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 	 * and {@link DockStation#drop(Dockable, DockableProperty)} methods to put
 	 * <code>dockable</code> at its location.
 	 */
-	public void runApply( Dockable dockable, Location history, AffectedSet set ){
+	public boolean runApply( Dockable dockable, Location history, AffectedSet set ){
 		A area = null;
 		if( history != null ) 
 			area = get( history.getRoot() );
@@ -74,7 +74,7 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 		}
 		
 		DockableProperty location = history == null ? null : history.getLocation();
-		area.setLocation( dockable, location, set );
+		return area.setLocation( dockable, location, set );
 	}
 
 	/**

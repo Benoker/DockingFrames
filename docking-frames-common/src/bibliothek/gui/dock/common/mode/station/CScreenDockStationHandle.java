@@ -204,21 +204,30 @@ public class CScreenDockStationHandle {
 			return true;
 		}
 
-		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ) {
+		public boolean setLocation( Dockable dockable, DockableProperty location, AffectedSet set ) {
 			set.add( dockable );
 			
 			if( isChild( dockable )){
 				if( location != null ){
 					station.getStation().move( dockable, location );
 				}
+				return true;
 			}
 			else{
-				if( location != null ){
-					if( !station.getStation().drop( dockable, location ))
-						location = null;
+				boolean acceptable = DockUtilities.acceptable( getStation(), dockable );
+				if( !acceptable ){
+					return false;
 				}
-				if( location == null )
+				
+				if( location != null ){
+					if( !station.getStation().drop( dockable, location )){
+						location = null;
+					}
+				}
+				if( location == null ){
 					station.getStation().drop( dockable );
+				}
+				return true;
 			}
 		}
 
@@ -319,7 +328,7 @@ public class CScreenDockStationHandle {
 							dockable = maximizedMode.getMaximizingElement( dockable );
 							
 							area.setMaximized( dockable, false, null, event.getAffected() );
-							event.done();
+							event.done(true);
 							return null;
 		                }
 		            }

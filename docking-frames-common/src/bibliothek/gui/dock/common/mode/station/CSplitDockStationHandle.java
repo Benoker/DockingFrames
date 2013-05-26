@@ -348,35 +348,39 @@ public class CSplitDockStationHandle{
 			return true;
 		}
 		
-		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
+		public boolean setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
 			set.add( dockable );
 			
 			if( dockable.getDockParent() == station.getStation() ){
 				if( location != null ){
 					cleanFullscreen( set );
 					getStation().move( dockable, location );
+					return true;
 				}
 			}
 			else{
-				if( dockable.getDockParent() != null ){
-					dockable.getDockParent().drag( dockable );
-				}
-				
-				cleanFullscreen( set );
-				
-				if( location != null ){
-					if( !getStation().drop( dockable, location )){
-						location = null;
+				boolean acceptable = DockUtilities.acceptable( getStation(), dockable );
+				if( acceptable ){
+					if( dockable.getDockParent() != null ){
+						dockable.getDockParent().drag( dockable );
 					}
-				}
-				if( location == null ){
-					if( !DockUtilities.isAncestor( station.getStation(), dockable )){
-						if( getStation().accept( dockable ) && dockable.accept( getStation() ) && manager.getController().getAcceptance().accept( getStation(), dockable )){
+					
+					cleanFullscreen( set );
+					
+					if( location != null ){
+						if( !getStation().drop( dockable, location )){
+							location = null;
+						}
+					}
+					if( location == null ){
+						if( !DockUtilities.isAncestor( station.getStation(), dockable )){
 							getStation().drop( dockable );
 						}
 					}
+					return true;
 				}
 			}
+			return false;
 		}
 		
 		private void cleanFullscreen( AffectedSet set ){
@@ -507,7 +511,7 @@ public class CSplitDockStationHandle{
 		                		
 		                        if( area == this ){
 		                            area.setMaximized( dockable, false, null, event.getAffected() );
-		                            event.done();
+		                            event.done(true);
 		                            return null;
 		                        }
 		                    }

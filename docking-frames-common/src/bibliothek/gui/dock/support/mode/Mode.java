@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.support.mode;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.util.Path;
 
@@ -58,15 +59,18 @@ public interface Mode<H> {
 	public Path getUniqueIdentifier();
 
 	/**
-	 * Applies this mode to <code>dockable</code>.
+	 * Applies this mode to <code>dockable</code>. This method may fail for example because a {@link DockAcceptance}
+	 * does prevent <code>dockable</code> from being moved.
 	 * @param dockable the element whose mode becomes <code>this</code>
 	 * @param history history information that was returned by this mode
 	 * on its last call to {@link #current(Dockable)}. May be <code>null</code>
 	 * if this mode was never applied or returns <code>null</code> on {@link #current(Dockable)}.
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
+	 * @return <code>true</code> if <code>dockable</code> was succesfully moved on its parent or to a new parent, 
+	 * or <code>false</code> if <code>dockable</code> did not change its location
 	 */
-	public void apply( Dockable dockable, H history, AffectedSet set );
+	public boolean apply( Dockable dockable, H history, AffectedSet set );
 	
 	/**
 	 * Provides history information about the current state of <code>dockable</code>

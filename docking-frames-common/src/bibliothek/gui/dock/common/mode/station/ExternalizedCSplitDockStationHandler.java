@@ -98,8 +98,8 @@ public class ExternalizedCSplitDockStationHandler extends CSplitDockStationHandl
 			return asNormalModeArea().getLocation( child );
 		}
 	
-		public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
-			asNormalModeArea().setLocation( dockable, location, set );
+		public boolean setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
+			return asNormalModeArea().setLocation( dockable, location, set );
 		}
 	
 		public String getUniqueId(){

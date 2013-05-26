@@ -51,6 +51,9 @@ public class LocationModeEvent {
 	/** flag indicating that the mode transition has been done */
 	private boolean done = false;
 	
+	/** flag telling whether the operation was a success */
+	private boolean success;
+	
 	/**
 	 * Creates a new event.
 	 * @param mode the source of the event
@@ -69,10 +72,12 @@ public class LocationModeEvent {
 	 * Marks the mode transition as over. This method is normally called after 
 	 * {@link Mode#apply(Dockable, Object, AffectedSet) apply} has finished its job. 
 	 * {@link LocationModeListener}s might however prematurely call this method. In this case
-	 * <code>apply</code> is not executed, but all remaining events are sent anyway.  
+	 * <code>apply</code> is not executed, but all remaining events are sent anyway.
+	 * @param success whether the operation was a success  
 	 */
-	public void done(){
+	public void done(boolean success){
 		done = true;
+		this.success = success;
 	}
 	
 	/**
@@ -81,6 +86,16 @@ public class LocationModeEvent {
 	 */
 	public boolean isDone(){
 		return done;
+	}
+	
+	/**
+	 * Assuming {@link #isDone()} is <code>true</code>, then this flag tells whether the operation was a success or not.
+	 * If the operation was not a success, then the {@link #getDockable() dockable} was not moved at all, or was not
+	 * moved to the correct location.
+	 * @return whether the operation was a success
+	 */
+	public boolean isSuccess(){
+		return success;
 	}
 	
 	/**

@@ -110,15 +110,21 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 		return false;
 	}
 
-	public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
+	public boolean setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
 		set.add( dockable );
 		
 		if( isChild( dockable )){
 			if( location != null ){
 				station.move( dockable, location );
 			}
+			return true;
 		}
 		else{
+			boolean acceptable = DockUtilities.acceptable( getStation(), dockable );
+			if( !acceptable ){
+				return false;
+			}
+			
 			if( location != null ){
 				if( !station.drop( dockable, location )){
 					location = null;
@@ -127,6 +133,7 @@ public class FlapDockStationHandle implements MinimizedModeArea{
 			if( location == null ){
 				station.drop( dockable );
 			}
+			return true;
 		}
 	}
 }

@@ -389,19 +389,21 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		return false;
 	}
 	
-	public void apply( Dockable dockable, Location history, AffectedSet set ){
+	public boolean apply( Dockable dockable, Location history, AffectedSet set ){
 		LocationModeEvent event = new LocationModeEvent( this, history, dockable, set );
 		for( LocationModeListener listener : listeners() ){
 			listener.applyStarting( event );
 		}
 		if( !event.isDone() ){
-			runApply( dockable, history, set );
-			event.done();
+			boolean success = runApply( dockable, history, set );
+			event.done(success);
 		}
 		
 		for( LocationModeListener listener : listeners() ){
 			listener.applyDone( event );
 		}
+		
+		return event.isSuccess();
 	}
 	
 	/**
@@ -412,8 +414,10 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	 * {@link #current(Dockable)} the last time.
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
+	 * @return <code>true</code> if <code>dockable</code> was moved, <code>false</code> if the method failed
+	 * to set the location of <code>dockable</code> for any reason
 	 */
-	protected abstract void runApply( Dockable dockable, Location history, AffectedSet set );
+	protected abstract boolean runApply( Dockable dockable, Location history, AffectedSet set );
 	
 	/**
 	 * Creates a new handle for <code>dockable</code>.

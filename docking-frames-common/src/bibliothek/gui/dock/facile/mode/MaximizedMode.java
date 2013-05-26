@@ -147,14 +147,14 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		return ExtendedMode.MAXIMIZED;
 	}
 
-	public void runApply( Dockable dockable, Location history, AffectedSet set ){
+	public boolean runApply( Dockable dockable, Location history, AffectedSet set ){
 		MaximizedModeArea area = getMaximizeArea( dockable, history );
 		
 		if( area == null )
 			area = getDefaultArea();
 		
 		area.prepareApply( dockable, history, set );
-		maximize( area, dockable, history, set );
+		return maximize( area, dockable, history, set );
 	}
 
 	public Location current( Dockable dockable ){
@@ -237,8 +237,9 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 	 * No guarantees are given that the final location matches <code>history</code>.
 	 * @param set a set of <code>Dockable</code>s which will be filled by the
 	 * elements that change their mode because of this method
+	 * @return whether the operation was a success
 	 */
-	public void maximize( MaximizedModeArea area, Dockable dockable, Location history, AffectedSet set ){
+	public boolean maximize( MaximizedModeArea area, Dockable dockable, Location history, AffectedSet set ){
 		Dockable maximizing = getMaximizingElement( dockable );
 		if( maximizing != dockable )
 			getManager().store( maximizing );
@@ -287,6 +288,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 		}
 		
 		set.add( maximizing );
+		return true;
 	}
 	
 	private List<Dockable> getMaximized( MaximizedModeArea area ){

@@ -30,7 +30,7 @@ import bibliothek.gui.dock.StackDockStation;
 
 /**
  * Generic algorithm allowing {@link StackDockComponent}s to inform the client if the user drags some
- * data over a tab. The interface itself only offers an {@link #install(StackDockComponent)} and 
+ * data over a tab. The interface itself only offers an {@link #install(StackDockStation, StackDockComponent)} and 
  * {@link #uninstall(StackDockComponent)} method - what exactly the subclass does with the 
  * {@link StackDockComponent} is not defined.<br>
  * An implementation of this interface is automatically installed if the application runs with
