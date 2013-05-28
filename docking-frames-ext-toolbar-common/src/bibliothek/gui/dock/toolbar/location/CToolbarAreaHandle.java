@@ -77,7 +77,7 @@ public class CToolbarAreaHandle implements CToolbarModeArea{
 	}
 	
 	@Override
-	public void setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
+	public boolean setLocation( Dockable dockable, DockableProperty location, AffectedSet set ){
 		set.add( dockable );
 		
 		ToolbarContainerDockStation station = this.station.getStation();
@@ -86,8 +86,14 @@ public class CToolbarAreaHandle implements CToolbarModeArea{
 			if( location != null ){
 				station.move( dockable, location );
 			}
+			return true;
 		}
 		else{
+			boolean acceptable = DockUtilities.acceptable( getStation(), dockable );
+			if( !acceptable ){
+				return false;
+			}
+			
 			if( location != null ){
 				if( !station.drop( dockable, location )){
 					location = null;
@@ -96,6 +102,7 @@ public class CToolbarAreaHandle implements CToolbarModeArea{
 			if( location == null ){
 				station.drop( dockable );
 			}
+			return true;
 		}
 	}
 
