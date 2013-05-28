@@ -943,3 +943,4 @@
  
 [v1.1.2p8a]
  - Bugfix: normalizing/minimizing a stack of minimized or externalized CDockables, where some CDockables were associated with a CWorkingArea and others were not, could close some dockables
+ - Bugfix: ScreenToolbarInserter did not respect DockAcceptance, which could lead to drag and drop operations that did only execute the "drag" part.

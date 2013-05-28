@@ -45,6 +45,7 @@ import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * This {@link Inserter} searches for toolbars using the {@link ToolbarStrategy}
@@ -92,10 +93,9 @@ public class ScreenToolbarInserter implements Inserter {
 			return null;
 		}
 
-		if( source.getParent().accept( child ) && child.accept( source.getParent() ) ) {
-			// if a DockAcceptance does not allow the combination, while the
-			// involved elements do, we better
-			// assume the DockAcceptance has a good reason.
+		boolean accept = DockUtilities.acceptable( source.getParent(), child );
+		
+		if( !accept ) {
 			return null;
 		}
 
