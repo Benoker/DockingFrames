@@ -731,6 +731,14 @@ public class DockUtilities {
 				catch( SecurityException e ){
 					// ignore and continue
 				}
+	    		catch( RuntimeException e ){
+	    			// may happen if a ClassLoader is not happy about "forName". Not nice, but better
+	    			// than crashing the application.
+	    		}
+	    		catch( Error e ){
+	    			// may happen if a ClassLoader is not happy about "forName". Not nice, but better
+	    			// than crashing the application.	    			
+	    		}
 	    	}
     	}
     }
