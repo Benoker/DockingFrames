@@ -2349,7 +2349,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			if( property != null ) {
 				DockStation combinedStation = combination.asDockStation();
 				if( combinedStation != null && dockable.getDockParent() == combinedStation ) {
-					if( getPlaceholderStrategy().getPlaceholderFor( dockable ) == null ){
+					if( source.getPlaceholders() == null || getPlaceholderStrategy().getPlaceholderFor( dockable ) == null ){
 						// if a placeholder is present, then the combiner should have set the dockable at the correct position
 						combinedStation.move(dockable, property);
 					}
