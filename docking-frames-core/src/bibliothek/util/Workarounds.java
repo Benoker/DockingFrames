@@ -74,7 +74,7 @@ public class Workarounds {
 	 */
 	public static boolean tryAddWorkaround( String className ){
 		try{
-			Class<?> clazz = Class.forName( className );
+			Class<?> clazz = Class.forName( className, true, Workarounds.class.getClassLoader() );
 			Object instance = clazz.newInstance();
 			getDefault().addWorkaround( (Workaround)instance );
 			return true;
