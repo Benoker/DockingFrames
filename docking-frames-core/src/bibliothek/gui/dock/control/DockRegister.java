@@ -622,7 +622,9 @@ public class DockRegister {
                     
                     @Override
                     public void handleDockStation( DockStation station ) {
-                    	station.addDockStationListener( StationListener.this );
+                    	if( protectedAncestor == null || !DockUtilities.isAncestor( protectedAncestor, station )){
+                    		station.addDockStationListener( StationListener.this );
+                    	}
                     }
                 });
             }
@@ -681,6 +683,13 @@ public class DockRegister {
                     		}
                     	}
                     }
+                    
+                    @Override
+                    public void handleDockStation( DockStation station ) {
+                    	if( protectedAncestor == null || !DockUtilities.isAncestor( protectedAncestor, station )){
+                    		station.removeDockStationListener( StationListener.this );
+                    	}
+                    }
                 });
             }
         }
@@ -691,11 +700,6 @@ public class DockRegister {
         		throw new IllegalStateException( "the parent of dockable is wrong: it is neither null nor '" + station + "'" );
         	}
             dockable.setDockParent( null );
-            
-            DockStation asStation = dockable.asDockStation();
-            if( asStation != null ){
-            	asStation.removeDockStationListener( StationListener.this );
-            }
             
             if( stalled == 0 ){
                 removeDockable( dockable );
