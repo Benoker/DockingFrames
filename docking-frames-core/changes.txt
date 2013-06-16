@@ -951,3 +951,4 @@
  
 [v1.1.2p8c]
  - Bugfix: DockRegister did remove DockStationListeners from protected DockStations, but it should have kept these listeners
+ - API: Changed initialization of ToolbarDockStation such that it is more easy for subclasses to add additional Components

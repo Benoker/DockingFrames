@@ -128,7 +128,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	 * The graphical representation of this station: the pane which contains
 	 * component
 	 */
-	private SecureContainer mainPanel;
+	private OverpaintablePanelBase mainPanel;
 
 	/**
 	 * Size of the lateral zone where no drop action can be done (Measured in
@@ -185,7 +185,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 
 	protected void init(){
 		super.init( ThemeManager.BACKGROUND_PAINT + ".station.toolbar" );
-		mainPanel = new OverpaintablePanelBase();
+		mainPanel = createMainPanel();
+		mainPanel.setupLayout();
 		paint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".toolbar", this );
 		setOrientation( getOrientation() );
 		displayerFactory = createDisplayerFactory();
@@ -390,7 +391,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 				}
 			}
 			Point mouse = new Point( item.getMouseX(), item.getMouseY() );
-			SwingUtilities.convertPointFromScreen( mouse, mainPanel );
+			SwingUtilities.convertPointFromScreen( mouse, mainPanel.getDockablePane() );
 			int index = layoutManager.getInsertionIndex( mouse.x, mouse.y );
 			DropInfo info = new DropInfo( dockable, index );
 			if( info.hasNoEffect() ) {
@@ -575,8 +576,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 
 		dockable.setDockParent( this );
 
-		mainPanel.getContentPane().add( handle.getDisplayer().getComponent(), index );
-		mainPanel.getContentPane().invalidate();
+		mainPanel.getDockablePane().add( handle.getDisplayer().getComponent(), index );
+		mainPanel.getDockablePane().invalidate();
 
 		mainPanel.revalidate();
 		mainPanel.getContentPane().repaint();
@@ -615,7 +616,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 			dockable.setDockParent( null );
 
 			dockables.remove( index );
-			mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
+			mainPanel.getDockablePane().remove( handle.getDisplayer().getComponent() );
 			mainPanel.doLayout();
 			mainPanel.revalidate();
 			mainPanel.repaint();
@@ -652,7 +653,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 			dockable.setDockParent( null );
 
 			dockables.remove( index );
-			mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
+			mainPanel.getDockablePane().remove( handle.getDisplayer().getComponent() );
 			mainPanel.doLayout();
 			mainPanel.getContentPane().revalidate();
 			mainPanel.getContentPane().repaint();
@@ -726,7 +727,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 
 		final StationChildHandle handle = dockables.dockables().get( index );
 
-		mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
+		mainPanel.getDockablePane().remove( handle.getDisplayer().getComponent() );
 		handle.updateDisplayer();
 		insertAt( handle, index );
 	}
@@ -767,6 +768,14 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	}
 	
 	/**
+	 * Called by the constructor, this method creates the main component of this station.
+	 * @return the main component, must not be <code>null</code>
+	 */
+	protected OverpaintablePanelBase createMainPanel(){
+		return new OverpaintablePanelBase();
+	}
+	
+	/**
 	 * Creates the parent {@link JComponent} of the {@link Dockable}s that are shown in this
 	 * station. The default behavior is to create a new {@link SizeFixedPanel}, using
 	 * {@link #getBackgroundAlgorithm()} for managing painting.
@@ -796,15 +805,29 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		 * The content Pane of this {@link OverpaintablePanel} (with a
 		 * BoxLayout)
 		 */
-		private final JComponent dockablePane;
+		private JComponent dockablePane;
 
 		/**
 		 * Creates a new panel
 		 */
 		public OverpaintablePanelBase(){
-			dockablePane = createBackgroundPanel();
-			setBasePane( dockablePane );
 			setSolid( false );
+		}
+		
+		/**
+		 * Initializes this panel with the default layout, namely exactly one child which is the
+		 *  {@link #setDockablePane(JComponent) dockable pane}.
+		 */
+		public void setupLayout(){
+			dockablePane = createBackgroundPanel();
+			setBasePane( dockablePane );			
+		}
+		
+		public void setDockablePane(JComponent pane){
+			if(dockablePane != null){
+				throw new IllegalStateException( "dockablePane is already set" );
+			}
+			dockablePane = pane;
 			layoutManager = new SpanToolbarLayoutManager( ToolbarDockStation.this, dockablePane ){
 				@Override
 				protected void revalidate(){
@@ -812,6 +835,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 				}
 			};
 			dockablePane.setLayout( layoutManager );
+		}
+		
+		public JComponent getDockablePane(){
+			return dockablePane;
 		}
 
 		@Override
@@ -829,6 +856,19 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 			return getPreferredSize();
 		}
 
+		private Insets subtractComponent( JComponent component, Insets insets ){
+			Point topLeft = new Point( 0, 0 );
+			topLeft = SwingUtilities.convertPoint( component, topLeft, this );
+			
+			insets.left += topLeft.x;
+			insets.top += topLeft.y;
+			
+			insets.right += (getWidth() - component.getWidth()) - topLeft.x;
+			insets.bottom += (getHeight() - component.getHeight()) - topLeft.y;
+			
+			return insets;
+		}
+		
 		@Override
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
@@ -838,6 +878,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 				if( insets == null ){
 					insets = new Insets( 0, 0, 0, 0 );
 				}
+				insets = subtractComponent( dockablePane, insets );
 				
 				int index = dropInfo.getIndex();
 				int x, y, width, height;
@@ -885,7 +926,10 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 			if( removal != null ) {
 				for( StationChildHandle handle : dockables.dockables() ) {
 					if( handle.getDockable() == removal ) {
-						Rectangle bounds = handle.getDisplayer().getComponent().getBounds();
+						Dimension size = handle.getDisplayer().getComponent().getSize();
+						Point location = new Point(0, 0);
+						location = SwingUtilities.convertPoint( handle.getDisplayer().getComponent(), location, this );
+						Rectangle bounds = new Rectangle( location, size );
 						paint.drawRemoval( g, bounds, bounds );
 						break;
 					}
