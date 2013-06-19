@@ -77,7 +77,7 @@ public class RegisteringDockFactory<D extends Dockable, P extends PerspectiveDoc
     }
 
     public D layout( BackupFactoryData<L> layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
-        D element = factory.layout( layout.getData(), placeholders );
+        D element = factory.layout( layout.getData(), children, placeholders );
         if( element != null ){
             String id = layout.getIdentifier();
             if( id.startsWith( "dockable" )){

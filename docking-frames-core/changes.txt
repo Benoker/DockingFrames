@@ -952,3 +952,5 @@
 [v1.1.2p8c]
  - Bugfix: DockRegister did remove DockStationListeners from protected DockStations, but it should have kept these listeners
  - API: Changed initialization of ToolbarDockStation such that it is more easy for subclasses to add additional Components
+ - Bugfix: When loading a CStation from a perspective, and exception was thrown because of the unique identifier of the station not beeing an identifier of a SingleCDockable
+ - API: Added some methods (save, load) to CControl to more easily handle layouts

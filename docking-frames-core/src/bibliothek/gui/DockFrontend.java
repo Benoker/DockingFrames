@@ -1490,10 +1490,21 @@ public class DockFrontend {
      * @param name the name for the setting
      */
     public void save( String name ){
+    	save( name, true );
+    }
+    
+    /**
+     * Saves the current layout with the specified name.
+     * @param name the name for the setting
+     * @param entry whether only the normal "entry" inforation should be saved, or all the information. The default
+     * value should be <code>true</code>
+     * @see #getPerspective(boolean) 
+     */
+    public void save( String name, boolean entry ){
     	if( name == null )
     		throw new IllegalArgumentException( "name must not be null" );
     	
-    	Setting setting = getSetting( true );
+    	Setting setting = getSetting( entry );
     	setSetting( name, setting );
         currentSetting = name;
         fireSaved( name );
@@ -1505,6 +1516,17 @@ public class DockFrontend {
      * @throws IllegalArgumentException if no setting <code>name</code> could be found
      */
     public void load( String name ){
+    	load( name, true );
+    }
+    
+    /**
+     * Loads a setting of this frontend.
+     * @param name the name of the setting
+     * @param entry <code>true</code> if only information for normal entries should be extracted, <code>false</code> if
+     * as much information as possible should be read. Should be the same value as was used for {@link #save(String, boolean)}
+     * @throws IllegalArgumentException if no setting <code>name</code> could be found
+     */
+    public void load( String name, boolean entry ){
         if( name == null )
     		throw new IllegalArgumentException( "name must not be null" );
     	
@@ -1514,7 +1536,7 @@ public class DockFrontend {
         
         currentSetting = name;
         
-        setSetting( setting, true );
+        setSetting( setting, entry );
         
         fireLoaded( name );
     }

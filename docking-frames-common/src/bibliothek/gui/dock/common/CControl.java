@@ -2034,8 +2034,11 @@ public class CControl {
         	}
             return missingStrategy.shouldStoreSingle( register.singleToNormalId( id ) );
         }
-        else{
+        else if( register.isMultiId( id )){
             return missingStrategy.shouldStoreMulti( register.multiToNormalId( id ) );
+        }
+        else{
+        	return false;
         }
     }    
     
@@ -2605,11 +2608,47 @@ public class CControl {
     }
 
     /**
+     * Saves the current layout with the current name. Does nothing if there is no name for the current layout. 
+     * @return the name that was used to save the layout
+     * @see #save(String)
+     */
+    public String save(){
+    	return save( false );
+    }
+    
+    /**
+     * Saves the current layout with the current name. Does nothing if there is no name for the current layout. 
+     * @param includeWorkingAreas whether the content of the {@link CStation}s that are marked as
+     * {@link CStation#isWorkingArea() working area} should be stored as well.
+     * @return the name that was used to save the layout
+     * @see #save(String)
+     */
+    public String save( boolean includeWorkingAreas ){
+    	String current = frontend.getCurrentSetting();
+    	if( current == null ){
+    		return null;
+    	}
+    	else{
+    		save( current, includeWorkingAreas );
+    		return current;
+    	}
+    }
+    
+    /**
      * Stores the current layout with the given name. This creates "entry" (partial) layout information.
      * @param name the name of the current layout.
      */
     public void save( String name ){
         frontend.save( name );
+    }
+    /**
+     * Stores the current layout with the given name. This creates "entry" (partial) layout information.
+     * @param name the name of the current layout.
+     * @param includeWorkingAreas whether the content of the {@link CStation}s that are marked as
+     * {@link CStation#isWorkingArea() working area} should be stored as well.
+     */
+    public void save( String name, boolean includeWorkingAreas ){
+        frontend.save( name, !includeWorkingAreas );
     }
 
     /**
@@ -2618,6 +2657,17 @@ public class CControl {
      */
     public void load( String name ){
         frontend.load( name );
+    }
+    
+    /**
+     * Loads an earlier stored layout.
+     * @param name the name of the layout.
+     * @param includeWorkingAreas whether the content of the {@link CStation}s that are marked as
+     * {@link CStation#isWorkingArea() working area} should be updated as well. This value should be the same
+     * as was used to call {@link #save(String, boolean)}.
+     */
+    public void load( String name, boolean includeWorkingAreas ){
+        frontend.load( name, !includeWorkingAreas );
     }
 
     /**

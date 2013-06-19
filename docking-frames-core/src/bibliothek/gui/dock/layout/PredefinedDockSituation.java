@@ -657,7 +657,6 @@ public class PredefinedDockSituation extends DockSituation {
             }
         }
 
-        @SuppressWarnings("unchecked")
         public DockElement layout( PredefinedLayout layout, Map<Integer, Dockable> children, PlaceholderStrategy placeholders ) {
             DockLayoutInfo delegate = layout.getDelegate();
             boolean isLayout = delegate.getKind() == DockLayoutInfo.Data.DOCK_LAYOUT;
@@ -670,7 +669,7 @@ public class PredefinedDockSituation extends DockSituation {
             DockElement element = stringToElement.get( layout.getPredefined() );
             if( element == null && isLayout ){
                 String factoryId = delegate.getDataLayout().getFactoryID();
-                DockFactory factory = getBackup( factoryId );
+                DockFactory<?, ?, BackupFactoryData<?>> factory = getBackup( factoryId );
                 if( factory != null ){
                     return factory.layout( new BackupFactoryData<Object>(
                             layout.getPredefined(), 
@@ -701,7 +700,7 @@ public class PredefinedDockSituation extends DockSituation {
                     return null;
 
                 String factoryId = delegate.getDataLayout().getFactoryID();
-                DockFactory factory = getBackup( factoryId );
+                DockFactory<?, ?, BackupFactoryData<?>> factory = getBackup( factoryId );
                 if( factory != null ){
                     return factory.layout( new BackupFactoryData<Object>( 
                             layout.getPredefined(),

@@ -39,6 +39,7 @@ import bibliothek.gui.dock.common.CContentArea;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CControlRegister;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.SingleCDockableFactory;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.mode.CLocationMode;
@@ -173,7 +174,9 @@ public class CPerspective {
 	
 	/**
 	 * Adds a new station to this perspective. If a station with name <code>id</code> is
-	 * already registered, then this station gets replaced.
+	 * already registered, then this station gets replaced.<br>
+	 * <b>WARNING: </b> the framework will not automatically create a {@link CStation}. The client needs 
+	 * to register a {@link SingleCDockableFactory} in order to create the station when it is missing. 
 	 * @param station the new station
 	 */
 	public void addStation( CStationPerspective station ){

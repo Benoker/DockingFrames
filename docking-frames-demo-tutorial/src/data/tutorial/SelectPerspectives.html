@@ -1,0 +1,15 @@
+<html><body>
+
+"Perspective" and "layout" are two words for the same thing: the information how CDockables are placed on CStations.<br><br>
+
+The "Perspective API" is an easy way for clients to build layouts without needing access to the actual CDockables. This
+example shows how the perspectives can be applied to an application:
+<ul>
+	<li>The first, and preferred, method is to first create several perspectives, and then call "save" and "load" to switch between the layouts.</li>
+	<li>The second, not so good, approach is to create perspectives and apply them when the users calls for it.</li>
+</ul>
+
+The first approach has the added bonus, that changes made by the user can be saved. It can further be combined with the
+"write" and "read" method of CControl, to persistently store the settings made by the user.
+
+</body></html>

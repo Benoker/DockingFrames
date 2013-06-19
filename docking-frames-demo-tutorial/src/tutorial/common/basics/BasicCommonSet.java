@@ -7,6 +7,7 @@ import tutorial.support.sets.TutorialSet;
 public class BasicCommonSet extends TutorialSet{
 	public BasicCommonSet(){
 		super( SingleDockableFactoryExample.class,
+			SelectPerspectivesExample.class,
 			NewCStationExample.class,
 			MultiFrameExample.class,
 			TitleWithTextFieldExample.class,
