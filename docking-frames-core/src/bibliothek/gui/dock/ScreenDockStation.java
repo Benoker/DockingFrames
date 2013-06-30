@@ -2397,7 +2397,6 @@ public class ScreenDockStation extends AbstractDockStation {
 			// ignore
 		}
 		
-		@Override
 		public void windowClosing( ScreenDockWindow window ){
 			ScreenDockWindowClosingStrategy strategy = getWindowClosingStrategy();
 			if( strategy != null ){
