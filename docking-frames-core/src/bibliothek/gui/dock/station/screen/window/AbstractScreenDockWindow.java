@@ -146,6 +146,11 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 		public void fullscreenStateChanged( ScreenDockWindow window ) {
 			remembered = isFullscreen();
 		}
+		
+		@Override
+		public void windowClosing( ScreenDockWindow window ){
+			// ignore
+		}
 	};
 
     /**

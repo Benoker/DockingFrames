@@ -957,3 +957,4 @@
  
 [v1.1.2p8d]
  - Bugfix: When clicking on a Dockable with no focusable Components, the framework will now attempt to focus one of the children (at least ensuring focus goes away from the old Component)
+ - API: It is now possible to "close" a decorated externalized Dockable in Common (the CDockable is normalized). The behavior can be customized with the property key ScreenDockStation.WINDOW_CLOSING_STRATEGY.

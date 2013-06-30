@@ -28,6 +28,8 @@ package bibliothek.gui.dock.station.screen.window;
 
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -93,6 +95,12 @@ public class ScreenDockDialog extends AbstractScreenDockWindow {
         
         dialog.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
         dialog.setModal( false );
+        dialog.addWindowListener( new WindowAdapter(){
+        	@Override
+        	public void windowClosing( WindowEvent e ){
+        		fireWindowClosing();
+        	}
+		});
         
         boolean translucency = false;
         
