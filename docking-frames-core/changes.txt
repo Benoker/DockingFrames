@@ -954,3 +954,6 @@
  - API: Changed initialization of ToolbarDockStation such that it is more easy for subclasses to add additional Components
  - Bugfix: When loading a CStation from a perspective, and exception was thrown because of the unique identifier of the station not beeing an identifier of a SingleCDockable
  - API: Added some methods (save, load) to CControl to more easily handle layouts
+ 
+[v1.1.2p8d]
+ - Bugfix: When clicking on a Dockable with no focusable Components, the framework will now attempt to focus one of the children (at least ensuring focus goes away from the old Component)
