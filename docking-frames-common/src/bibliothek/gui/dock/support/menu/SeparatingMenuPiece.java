@@ -338,11 +338,12 @@ public class SeparatingMenuPiece extends MenuPiece{
 	    		fireRemove( index, length );
 	    		
 	    		if( child.getItemCount() == 0 ){
-	    			if( topSeparator && bottomSeparator )
+	    			if( topSeparator && bottomSeparator ){
 	    				fireRemove( 0, 2 );
-	    			
-	    			if( topSeparator || bottomSeparator )
+	    			}
+	    			else if( topSeparator || bottomSeparator ){
 	    				fireRemove( 0, 1 );
+	    			}
 	    			
 	    			if( emptySeparator )
 	    				fireInsert( 0, getEmptySeparator() );
