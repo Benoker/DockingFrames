@@ -61,8 +61,7 @@ public class RepeatingFocusRequest implements FocusRequest{
 	 * @param attempts how often to try and gain the focus, at least 1
 	 * @param hardRequest whether this request should be executed even if the application is invisible
 	 */
-	public RepeatingFocusRequest( DockElementRepresentative source, Component component, int delay, int attempts, boolean hardRequest
-			){
+	public RepeatingFocusRequest( DockElementRepresentative source, Component component, int delay, int attempts, boolean hardRequest ){
 		if( component == null ){
 			throw new IllegalArgumentException( "component must not be null" );
 		}

@@ -185,6 +185,15 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     }
     
     /**
+     * Informs all listeners that this window wants to be closed
+     */
+    protected void fireWindowClosing(){
+    	for( ScreenDockWindowListener listener : listeners() ){
+    		listener.windowClosing( this );
+    	}
+    }
+    
+    /**
      * Forces the subclass of this window to show <code>displayer</code>. Only
      * one displayer should be shown at any time. A new displayer replaces
      * an old one. 

@@ -91,6 +91,7 @@ import bibliothek.gui.dock.station.screen.magnet.MagnetStrategy;
 import bibliothek.gui.dock.station.screen.magnet.MultiAttractorStrategy;
 import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowConfiguration;
 import bibliothek.gui.dock.station.screen.window.DefaultScreenDockWindowFactory;
+import bibliothek.gui.dock.station.screen.window.ScreenDockWindowClosingStrategy;
 import bibliothek.gui.dock.station.screen.window.ScreenDockWindowHandle;
 import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
 import bibliothek.gui.dock.station.support.CombinerSource;
@@ -166,6 +167,10 @@ public class ScreenDockStation extends AbstractDockStation {
     public static final PropertyKey<ScreenDockWindowFactory> WINDOW_FACTORY =
         new PropertyKey<ScreenDockWindowFactory>( "ScreenDockStation.window_factory", 
         		new ConstantPropertyFactory<ScreenDockWindowFactory>( new DefaultScreenDockWindowFactory() ), true );
+    
+    /** strategy for closing {@link ScreenDockWindow}s, default is <code>null</code> */
+    public static final PropertyKey<ScreenDockWindowClosingStrategy> WINDOW_CLOSING_STRATEGY =
+    		new PropertyKey<ScreenDockWindowClosingStrategy>( "ScreenDockStation.window_closing" );
     
     /** 
      * A key for a property telling how to configure new windows. Replacing the configuration always leads to closing
@@ -453,7 +458,7 @@ public class ScreenDockStation extends AbstractDockStation {
         stationPaint = new DefaultStationPaintValue( ThemeManager.STATION_PAINT + ".screen", this );
         magnet = new MagnetController( this );
         
-        addScreenDockStationListener( new FullscreenListener() );
+        addScreenDockStationListener( new ScreenWindowListener() );
         
         owner.addWindowProviderListener( new WindowProviderListener(){
         	public void visibilityChanged( WindowProvider provider, boolean showing ){
@@ -2204,6 +2209,14 @@ public class ScreenDockStation extends AbstractDockStation {
 		this.dropOverRatio = dropOverRatio;
 	}
     
+    private ScreenDockWindowClosingStrategy getWindowClosingStrategy(){
+    	DockController controller = getController();
+    	if( controller == null ){
+    		return null;
+    	}
+    	return controller.getProperties().get( WINDOW_CLOSING_STRATEGY );
+    }
+    
     /**
      * Information where a {@link Dockable} will be dropped. This class
      * is used only while a Dockable is dragged and this station has answered
@@ -2346,11 +2359,11 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * A listener that adds itself to {@link ScreenDockWindow}s for monitoring their fullscreen state
-     * and their position.
+     * A listener that adds itself to {@link ScreenDockWindow}s for monitoring their fullscreen state,
+     * their position, and calling the {@link ScreenDockWindowClosingStrategy} when necessary.
      * @author Benjamin Sigg
      */
-    private class FullscreenListener implements ScreenDockStationListener, ScreenDockWindowListener{
+    private class ScreenWindowListener implements ScreenDockStationListener, ScreenDockWindowListener{
 		public void fullscreenChanged( ScreenDockStation station, Dockable dockable ) {
 			listeners.fireDockablesRepositioned( dockable );
 		}
@@ -2382,6 +2395,13 @@ public class ScreenDockStation extends AbstractDockStation {
 
 		public void visibilityChanged( ScreenDockWindow window ) {
 			// ignore
+		}
+		
+		public void windowClosing( ScreenDockWindow window ){
+			ScreenDockWindowClosingStrategy strategy = getWindowClosingStrategy();
+			if( strategy != null ){
+				strategy.closing( window );
+			}
 		}
     }
 }

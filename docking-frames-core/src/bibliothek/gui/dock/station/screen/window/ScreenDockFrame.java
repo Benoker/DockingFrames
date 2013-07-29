@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.station.screen.window;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -64,6 +67,12 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
         }
         
         frame.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
+        frame.addWindowListener( new WindowAdapter(){
+        	@Override
+        	public void windowClosing( WindowEvent e ){
+        		fireWindowClosing();
+        	}
+		});
         
         init( frame, frame.getContentPane(), configuration, undecorated );
         

@@ -102,6 +102,7 @@ import bibliothek.gui.dock.common.intern.action.CActionOffer;
 import bibliothek.gui.dock.common.intern.action.CButtonContentFilter;
 import bibliothek.gui.dock.common.intern.station.CFlapLayoutManager;
 import bibliothek.gui.dock.common.intern.station.CLockedResizeLayoutManager;
+import bibliothek.gui.dock.common.intern.station.CScreenDockStationWindowClosingStrategy;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.intern.ui.CDisablingStrategy;
@@ -814,6 +815,7 @@ public class CControl {
         putProperty( DockActionImportanceOrder.ORDER, new CActionImportanceOrder() );
         putProperty( DockAction.BUTTON_CONTENT_FILTER, new CButtonContentFilter() );
         putProperty( DisablingStrategy.STRATEGY, new CDisablingStrategy( this ) );
+        putProperty( ScreenDockStation.WINDOW_CLOSING_STRATEGY, new CScreenDockStationWindowClosingStrategy() );
     }
     
     /**

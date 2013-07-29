@@ -35,7 +35,6 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
-import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy.Attraction;
 import bibliothek.gui.dock.station.screen.magnet.MagnetRequest.Side;
 import bibliothek.gui.dock.util.PropertyValue;
@@ -356,7 +355,7 @@ public class MagnetController {
 	 * the {@link MagnetStrategy}.
 	 * @author Benjamin Sigg
 	 */
-	private class Operation implements MagnetizedOperation, ScreenDockWindowListener, MagnetRequest{
+	private class Operation implements MagnetizedOperation, MagnetRequest{
 		/** the window that is reshaped */
 		private ScreenDockWindow window;
 		
@@ -382,8 +381,6 @@ public class MagnetController {
 			for( ScreenDockWindow check : getWindows() ){
 				initialBoundaries.put( check, check.getWindowBounds() );
 			}
-			
-			window.addScreenDockWindowListener( this );
 		}
 		
 		public ScreenDockWindow getWindow(){
@@ -558,19 +555,6 @@ public class MagnetController {
 			resultBoundaries = new Rectangle( bounds );
 		}
 
-		public void visibilityChanged( ScreenDockWindow window ){
-			// ignore
-		}
-
-		public void fullscreenStateChanged( ScreenDockWindow window ){
-			// ignore
-		}
-
-		public void shapeChanged( ScreenDockWindow window ){
-			// TODO Auto-generated method stub
-			
-		}
-
 		public Rectangle attract( Rectangle bounds ){
 			baseBoundaries = new Rectangle( bounds );
 			resultBoundaries = new Rectangle( bounds );
@@ -589,7 +573,6 @@ public class MagnetController {
 		}
 
 		public void stop(){
-			window.removeScreenDockWindowListener( this );
 			if( current == this ){
 				current = null;
 			}

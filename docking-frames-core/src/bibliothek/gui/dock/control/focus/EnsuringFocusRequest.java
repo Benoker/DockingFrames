@@ -156,8 +156,13 @@ public class EnsuringFocusRequest implements FocusRequest{
             component.requestFocusInWindow();
             return new RepeatingFocusRequest( dockable, component, isHardRequest() );
         }
-        else if( mouseClicked == null ){
+        else if( mouseClicked == null || mouseClicked == dockable.getComponent() ){
             KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent( component );
+        }
+        else{
+        	mouseClicked.requestFocus();
+        	mouseClicked.requestFocusInWindow();
+        	return new RepeatingFocusRequest( dockable, mouseClicked, isHardRequest() );
         }
         return null;
 	}

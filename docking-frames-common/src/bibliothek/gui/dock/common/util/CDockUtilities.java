@@ -27,7 +27,10 @@ package bibliothek.gui.dock.common.util;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.util.DockUtilities;
 
@@ -54,6 +57,37 @@ public class CDockUtilities extends DockUtilities{
 			}
 			Dockable child = parent.asDockable();
 			parent = child == null ? null : child.getDockParent();
+		}
+		return null;
+	}
+	
+	/**
+	 * Searches a {@link CDockable} in the tree starting with <code>element</code>. This method
+	 * first travels along the {@link DockStation#getFrontDockable() selected} dockables before 
+	 * searching the entire tree.
+	 * @param element root of the tree
+	 * @return the first {@link CDockable} that is found in <code>element</code>
+	 */
+	public static CDockable getFirstDockable( DockElement element ){
+		Dockable dockable = element.asDockable();
+		if( dockable instanceof CommonDockable ){
+			return ((CommonDockable)dockable).getDockable();
+		}
+		
+		DockStation station = element.asDockStation();
+		if( station != null ){
+			CDockable result = null;
+			dockable = station.getFrontDockable();
+			if( dockable != null ){
+				result = getFirstDockable( dockable );
+			}
+			for( int i = 0, n = station.getDockableCount(); i<n && result == null; i++ ){
+				Dockable next = station.getDockable( i );
+				if( next != dockable ){
+					result = getFirstDockable( next );
+				}
+			}
+			return result;
 		}
 		return null;
 	}

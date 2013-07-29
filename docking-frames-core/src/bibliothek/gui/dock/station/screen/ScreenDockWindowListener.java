@@ -47,4 +47,10 @@ public interface ScreenDockWindowListener {
 	 * @param window the caller
 	 */
 	public void shapeChanged( ScreenDockWindow window );
+	
+	/**
+	 * Called if the user wants to close the window (e.g. by pressing alt+F4, or clicking on the "x" button)
+	 * @param window the source of the event
+	 */
+	public void windowClosing( ScreenDockWindow window );
 }
