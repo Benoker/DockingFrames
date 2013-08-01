@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.Icon;
+import javax.swing.border.EmptyBorder;
 
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -56,6 +57,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     	super( Transparency.DEFAULT );
         label.setOpaque( false );
         label.setAlignmentX( 0 );
+        label.setBorder( new EmptyBorder( 0, 5, 0, 0 ) );
     }
     
     /**
@@ -162,7 +164,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
      */
     public void setText( String text ){
         this.text = text;
-        label.setText( (text == null || text.length() == 0) ? null : "  " + text );
+        label.setText( (text == null || text.length() == 0) ? null : text );
         revalidate();
         repaint();
     }
