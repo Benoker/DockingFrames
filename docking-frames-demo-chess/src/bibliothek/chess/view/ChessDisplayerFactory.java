@@ -24,6 +24,9 @@ public class ChessDisplayerFactory implements DisplayerFactory{
 		displayer.setDockable( dockable );
 		displayer.setOpaque( false );
 		
+		displayer.setRespectBorderHint(false);
+		displayer.setDefaultBorderHint(false);
+		
 		request.answer( displayer );
 	}
 }
