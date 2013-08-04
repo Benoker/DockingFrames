@@ -133,7 +133,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	private Orientation orientation = DEFAULT_ORIENTATION;
 
 	/** the number of dockables <code>this</code> station will accept */
-	private int dockablesMaxNumber = 1;
+	private int dockablesMaxNumber = -1;
 
 	/** The containerPane */
 	private JPanel containerPanel;
@@ -201,7 +201,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * Constructs a new ContainerLineStation
 	 */
 	public ToolbarContainerDockStation( Orientation orientation ){
-		this( orientation, 1 );
+		this( orientation, -1 );
 	}
 	
 	/**

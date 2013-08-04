@@ -819,8 +819,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 		 *  {@link #setDockablePane(JComponent) dockable pane}.
 		 */
 		public void setupLayout(){
-			dockablePane = createBackgroundPanel();
-			setBasePane( dockablePane );			
+			setDockablePane( createBackgroundPanel() );
+			setBasePane( dockablePane );
 		}
 		
 		public void setDockablePane(JComponent pane){

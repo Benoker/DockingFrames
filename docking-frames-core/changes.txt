@@ -960,4 +960,8 @@
  - API: It is now possible to "close" a decorated externalized Dockable in Common (the CDockable is normalized). The behavior can be customized with the property key ScreenDockStation.WINDOW_CLOSING_STRATEGY.
 
 [v1.1.2p8e]
- - Bugfix: SeparatingMenuPiece did call "remove" one time too often if both top and bottom separator were enabled and the item count did fall to 0 
+ - Bugfix: SeparatingMenuPiece did call "remove" one time too often if both top and bottom separator were enabled and the item count did fall to 0
+ 
+[v1.1.2p8f]
+ - Bugfix: could not use toolbars because of a NullPointerException
+ 
