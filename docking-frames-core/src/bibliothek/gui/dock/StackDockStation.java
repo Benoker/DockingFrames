@@ -1496,7 +1496,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         DockHierarchyLock.Token token = DockHierarchyLock.acquireUnlinking( this, dockable );
         try{
 	       	listeners.fireDockableRemoving( dockable );
-	        visibleListener.ignoreSelectionChanges = true;
+	       	dockable.removeDockableListener( listener );
+
+	       	visibleListener.ignoreSelectionChanges = true;
 	       	
 	        if( dockables.dockables().size() == 1 ){
 	        	if( singleTabStackDockComponent() ){
@@ -1521,7 +1523,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	        }
 	
 	        handle.destroy();
-	        dockable.removeDockableListener( listener );
 	        dockable.setDockParent( null );
 	        
 	        visibleListener.ignoreSelectionChanges = false;

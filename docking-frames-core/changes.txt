@@ -964,4 +964,6 @@
  
 [v1.1.2p8f]
  - Bugfix: could not use toolbars because of a NullPointerException
+ - Bugfix: updating a title when removing a Dockable from a StackDockStation could cause an exception, the listener that observers the title-event is now removed earlier.
+ 
  
