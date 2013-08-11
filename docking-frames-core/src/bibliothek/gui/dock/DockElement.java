@@ -29,6 +29,7 @@ package bibliothek.gui.dock;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.component.DockComponentRoot;
 
 
 /**
@@ -36,7 +37,7 @@ import bibliothek.gui.Dockable;
  * must either be a {@link Dockable}, a {@link DockStation} or both of them.
  * @author Benjamin Sigg
  */
-public interface DockElement {
+public interface DockElement extends DockComponentRoot{
 	/**
      * Returns <code>this</code> if <code>this</code> is an instance of 
      * {@link Dockable}. Otherwise <code>null</code> is returned.

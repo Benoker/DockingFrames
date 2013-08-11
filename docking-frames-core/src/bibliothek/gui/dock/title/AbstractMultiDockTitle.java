@@ -48,6 +48,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ViewTarget;
+import bibliothek.gui.dock.component.DockComponentConfiguration;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -89,6 +91,10 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
     
     /** The {@link Dockable} for which this title is shown */
     private Dockable dockable;
+    
+
+    /** informs clients about all the {@link Component}s of this title */
+    private DockComponentRootHandler rootHandler;
     
     /** A label for the title-text */
     private OrientedLabel label = new OrientedLabel(){
@@ -211,6 +217,22 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
             }
         });
         setOpaque( false );
+        
+     	rootHandler = createRootHandler();
+     	rootHandler.addRoot( getComponent() );
+    }
+    
+    /**
+     * Creates the {@link DockComponentRootHandler} which is responsible for informing the client about
+     * the {@link Component}s that are shown on this title.
+     * @return the new handler
+     */
+    protected DockComponentRootHandler createRootHandler(){
+    	return new DockComponentRootHandler( this ) {
+			protected TraverseResult shouldTraverse( Component component ) {
+				return TraverseResult.INCLUDE_CHILDREN;
+			}
+		};
     }
     
     /**
@@ -808,6 +830,8 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
         updateIcon();
         updateTooltip();
         
+        rootHandler.setController( controller );
+        
         revalidate();
     }
 
@@ -817,6 +841,8 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
         bound = false;
         
         dockable.removeDockableListener( listener );
+        
+        rootHandler.setController( null );
         
         for( AbstractDockColor color : colors )
             color.connect( null );
@@ -833,6 +859,14 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
         setIcon( null );
         setTooltip( null );
         background.setController( null );
+    }
+    
+    public void setComponentConfiguration( DockComponentConfiguration configuration ) {
+    	rootHandler.setConfiguration( configuration );
+    }
+    
+    public DockComponentConfiguration getComponentConfiguration() {
+    	return rootHandler.getConfiguration();
     }
     
     /**

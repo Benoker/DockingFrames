@@ -402,6 +402,10 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     public Rectangle getWindowBounds() {
         return window.getBounds();
     }
+    
+    public Component getComponent() {
+    	return window;
+    }
 
     public void setPaintCombining( CombinerTarget target ){
         this.combination = target; 

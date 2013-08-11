@@ -52,6 +52,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
+import bibliothek.gui.dock.component.DefaultDockStationComponentRootHandler;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -219,6 +221,11 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 				}
 			}
 		} );
+	}
+	
+	@Override
+	protected DockComponentRootHandler createRootHandler() {
+		return new DefaultDockStationComponentRootHandler( this, displayers );
 	}
 
 	// ########################################################

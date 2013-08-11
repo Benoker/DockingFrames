@@ -57,6 +57,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
+import bibliothek.gui.dock.component.DefaultDockStationComponentRootHandler;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.location.AsideAnswer;
@@ -285,6 +287,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		setTitleIcon( null );
 		expander = new ToolbarGroupExpander( this );
 		setDividerStrategy( dividerStrategyFactory.getValue().create( this ) );
+	}
+	
+	@Override
+	protected DockComponentRootHandler createRootHandler() {
+		return new DefaultDockStationComponentRootHandler( this, displayers );
 	}
 
 	// ########################################################

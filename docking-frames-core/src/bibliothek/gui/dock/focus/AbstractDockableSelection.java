@@ -32,12 +32,19 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.Icon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.control.DockRegister;
-import bibliothek.gui.dock.event.DockAdapter;
+import bibliothek.gui.dock.event.DockRegisterAdapter;
 import bibliothek.gui.dock.event.DockRegisterListener;
 import bibliothek.gui.dock.event.DockableAdapter;
 import bibliothek.gui.dock.event.DockableListener;
@@ -132,7 +139,7 @@ public abstract class AbstractDockableSelection extends JPanel implements Dockab
     };
     
     /** a listener to {@link #controller} informing when dockables are added or removed */
-    private DockRegisterListener registerListener = new DockAdapter(){
+    private DockRegisterListener registerListener = new DockRegisterAdapter(){
         @Override
         public void dockableRegistered( DockController controller, Dockable dockable ) {
             if( selectable( dockable )){

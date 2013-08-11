@@ -61,6 +61,8 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.popup.ActionPopupMenuFactory;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.component.DockComponentManager;
+import bibliothek.gui.dock.component.DockComponentRoot;
 import bibliothek.gui.dock.control.ComponentHierarchyObserver;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DefaultDockControllerFactory;
@@ -192,6 +194,9 @@ public class DockController {
     private Map<DockTitle, Dockable> activeTitles = new HashMap<DockTitle, Dockable>();
     /** a source for {@link DockTitle} */
     private DockTitleManager dockTitles;
+    
+    /** keeps track of all the {@link DockComponentRoot}s in the realm of this controller */
+    private DockComponentManager dockComponentManager;
     
     /** the set of icons used with this controller */
     private IconManager icons;
@@ -379,6 +384,7 @@ public class DockController {
         keyboardController = factory.createKeyboardController( this, setup );
         dockableSelector = factory.createDockableSelector( this, setup );
         mouseDispatcher = factory.createGlobalMouseDispatcher( this, setup );
+        dockComponentManager = factory.createDockComponentManager( this, setup );
         
         extensions.init();
         
@@ -805,6 +811,15 @@ public class DockController {
      */
     public DockProperties getProperties(){
 		return properties;
+	}
+    
+    /**
+     * Gets a manager which keeps track of all the {@link DockComponentRoot}s, and hence of all the {@link Component}s
+     * that are known to this {@link DockController}.
+     * @return the manager, not <code>null</code>
+     */
+    public DockComponentManager getDockComponentManager() {
+		return dockComponentManager;
 	}
     
     /**

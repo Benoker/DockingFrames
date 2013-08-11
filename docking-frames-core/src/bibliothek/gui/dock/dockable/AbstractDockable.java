@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.dockable;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -44,6 +45,8 @@ import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
+import bibliothek.gui.dock.component.DockComponentConfiguration;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.event.DockHierarchyListener;
@@ -106,6 +109,9 @@ public abstract class AbstractDockable implements Dockable {
     
     private DockableDisplayerHints hints;
     
+    /** Informs the client about all the {@link Component}s that are present on this {@link Dockable} */
+    private DockComponentRootHandler rootHandler;
+    
     /**
      * A modifiable list of {@link DockAction} which can be triggered and 
      * will affect this dockable.
@@ -147,6 +153,24 @@ public abstract class AbstractDockable implements Dockable {
     	globalSource.bind();
     }
     
+    /**
+     * Gets the {@link DockComponentRootHandler} which is responsible for keeping track of all the {@link Component}s of this
+     * dockable.
+     * @return the root handler, not <code>null</code>
+     */
+    protected DockComponentRootHandler getRootHandler(){
+    	if( rootHandler == null ){
+    		rootHandler = createRootHandler();
+    		rootHandler.addRoot( getComponent() );
+    	}
+    	return rootHandler;
+    }
+    
+    /**
+     * Creates the {@link DockComponentRootHandler} which configures the {@link Component}s of this dockable.
+     * @return the new handler, not <code>null</code>
+     */
+    protected abstract DockComponentRootHandler createRootHandler();
     
     /**
      * Creates the {@link DockIcon} which represents this {@link Dockable} or this {@link DockStation}. The
@@ -179,6 +203,8 @@ public abstract class AbstractDockable implements Dockable {
     }
 
     public void setController( DockController controller ) {
+    	getRootHandler().setController( null );
+    	
     	if( this.controller != null ){
     		if( keyboardListener != null ){
     			this.controller.getKeyboardController().removeListener( keyboardListener );
@@ -194,10 +220,20 @@ public abstract class AbstractDockable implements Dockable {
         if( !keyListeners.isEmpty() ){
         	registerKeyboardListener();
         }
+        
+        getRootHandler().setController( controller );
     }
 
     public DockController getController() {
         return controller;
+    }
+    
+    public void setComponentConfiguration( DockComponentConfiguration configuration ) {
+    	getRootHandler().setConfiguration( configuration );
+    }
+    
+    public DockComponentConfiguration getComponentConfiguration() {
+    	return getRootHandler().getConfiguration();
     }
     
     public boolean isDockableShowing(){

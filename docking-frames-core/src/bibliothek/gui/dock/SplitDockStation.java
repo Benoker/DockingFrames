@@ -62,6 +62,9 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.HierarchyDockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.component.DefaultDockStationComponentRootHandler;
+import bibliothek.gui.dock.component.DockComponentConfiguration;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.control.relocator.Merger;
 import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.disable.DisablingStrategyListener;
@@ -204,7 +207,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/**
 	 * The algorithm that allows users to resize children of a {@link SplitDockStation} by
-	 * grabbing a gab between two children and moving that gap around.
+	 * grabbing a gap between two children and moving that gap around.
 	 */
 	public static final PropertyKey<SplitDividerStrategy> DIVIDER_STRATEGY = new PropertyKey<SplitDividerStrategy>("SplitDockStation divider strategy",
 			new DynamicPropertyFactory<SplitDividerStrategy>(){
@@ -255,6 +258,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 
 	/** the list of actions offered for this Dockable */
 	private HierarchyDockActionSource globalSource;
+	
+	/** keeps track of all the {@link Component}s of this station */
+	private DockComponentRootHandler rootHandler;
 
 	/**
 	 * The list of all registered {@link DockStationListener DockStationListeners}. 
@@ -535,6 +541,22 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		});
 	}
 
+	private DockComponentRootHandler getRootHandler(){
+		if( rootHandler == null ){
+			rootHandler = createRootHandler();
+			rootHandler.addRoot( getComponent() );
+		}
+		return rootHandler;
+	}
+	
+	/**
+	 * Creates a new {@link DockComponentRootHandler} for monitoring all the {@link Component}s of this station.
+	 * @return the new handler
+	 */
+    protected DockComponentRootHandler createRootHandler() {
+    	return new DefaultDockStationComponentRootHandler( this, displayers );
+    }
+	
 	/**
 	 * Gets the root of this station, creates a root if necessary. This
 	 * method cannot be overridden while {@link #getRoot()} can. This method
@@ -709,6 +731,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	public void setController( DockController controller ){
+		getRootHandler().setController( null );
+		
 		super.setController( controller );
 		if( this.controller != controller ) {
 			if( this.controller != null ){
@@ -748,6 +772,8 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				handle.setTitleRequest(title);
 			}
 
+			getRootHandler().setController( controller );
+
 			hierarchyObserver.controllerChanged(controller);
 			visibility.fire();
 		}
@@ -756,6 +782,14 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	@Override
 	public DockController getController(){
 		return controller;
+	}
+	
+	public DockComponentConfiguration getComponentConfiguration() {
+		return getRootHandler().getConfiguration();
+	}
+	
+	public void setComponentConfiguration( DockComponentConfiguration configuration ) {
+		getRootHandler().setConfiguration( configuration );
 	}
 
 	public void addDockableListener( DockableListener listener ){

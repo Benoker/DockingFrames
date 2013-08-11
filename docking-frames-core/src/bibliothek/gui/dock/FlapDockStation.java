@@ -56,6 +56,7 @@ import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
@@ -483,6 +484,21 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     protected ListeningDockAction createHoldAction(){
         return new FlapDockHoldToggle( this );
+    }
+    
+    protected DockComponentRootHandler createRootHandler() {
+    	return new DockComponentRootHandler( this ){
+			protected TraverseResult shouldTraverse( Component component ) {
+				if( buttonPane.getBasePane() == component ){
+					return TraverseResult.EXCLUDE_CHILDREN;
+				}
+				if( displayers.isDisplayerComponent( component )){
+					return TraverseResult.EXCLUDE;
+				}
+				
+				return TraverseResult.INCLUDE_CHILDREN;
+			}
+		};
     }
     
     @Override
@@ -1194,6 +1210,7 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     private void setFlapWindow( FlapWindow window ){
     	if( this.window != null ){
+    		getRootHandler().removeRoot( window.getComponent() );
     		this.window.setController( null );
     		this.window.destroy();
     	}
@@ -1202,6 +1219,7 @@ public class FlapDockStation extends AbstractDockableStation {
         if( window != null ){
         	window.setController( getController() );
             window.setDropInfo( dropInfo );
+            getRootHandler().removeRoot( window.getComponent() );
         }
     }
     

@@ -29,6 +29,8 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DefaultActionOffer;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.component.DefaultDockComponentManager;
+import bibliothek.gui.dock.component.DockComponentManager;
 import bibliothek.gui.dock.control.focus.DefaultFocusHistory;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
 import bibliothek.gui.dock.control.focus.DefaultMouseFocusObserver;
@@ -140,5 +142,9 @@ public class DefaultDockControllerFactory implements DockControllerFactory {
     
     public ExtensionManager createExtensionManager( DockController controller, ControllerSetupCollection setup ){
     	return new ExtensionManager( controller );
+    }
+    
+    public DockComponentManager createDockComponentManager(DockController dockController, ControllerSetupCollection setup) {
+    	return new DefaultDockComponentManager();
     }
 }

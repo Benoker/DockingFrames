@@ -46,6 +46,8 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.component.DockComponentConfiguration;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.displayer.DisplayerBackgroundComponent;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.displayer.DisplayerDockBorder;
@@ -173,6 +175,9 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     /** the panel that shows the content of this displayer */
     private DisplayerContentPane content;
     
+    /** notifies clients about the {@link Component}s of this displayer */
+    private DockComponentRootHandler rootHandler;
+    
     /**
      * Creates a new displayer
      * @param station the station for which this displayer is needed
@@ -249,6 +254,33 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
         
         baseBorder = new DisplayerBorder( this, "basic.base" );
         contentBorder = new DisplayerBorder( content, "basic.content" );
+        
+        rootHandler = createRootHandler();
+        rootHandler.addRoot( getComponent() );
+    }
+    
+    /**
+     * Creates the {@link DockComponentRootHandler} for this displayer. The root handler is required to inform the client
+     * about all the {@link Component}s that are related to this displayer.
+     * @return the new root handler
+     */
+    protected DockComponentRootHandler createRootHandler(){
+    	return new DockComponentRootHandler( this ) {
+			protected TraverseResult shouldTraverse( Component component ) {
+				// do not visit title or Dockable
+				DockTitle title = getTitle();
+				if( title != null && title.getComponent() == component ){
+					return TraverseResult.EXCLUDE;
+				}
+				
+				Dockable dockable = getDockable();
+				if( dockable != null && dockable.getComponent() == component ){
+					return TraverseResult.EXCLUDE;
+				}
+				
+				return TraverseResult.INCLUDE_CHILDREN;
+			}
+		};
     }
     
     /**
@@ -404,6 +436,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
     
     public void setController( DockController controller ) {
+    	rootHandler.setController( null );
     	this.controller = controller;
     	decider.setProperties( controller );
     	decorator.setController( controller );
@@ -411,10 +444,19 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	baseBorder.setController( controller );
     	contentBorder.setController( controller );
     	resetDecorator();
+    	rootHandler.setController( controller );
     }
     
     public DockController getController() {
         return controller;
+    }
+    
+    public void setComponentConfiguration( DockComponentConfiguration configuration ) {
+	    rootHandler.setConfiguration( configuration );	
+    }
+    
+    public DockComponentConfiguration getComponentConfiguration() {
+    	return rootHandler.getConfiguration();
     }
     
     public void addDockableDisplayerListener( DockableDisplayerListener listener ){

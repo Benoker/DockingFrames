@@ -51,6 +51,8 @@ import bibliothek.gui.DockStation;
 import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.component.DefaultDockStationComponentRootHandler;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.control.focus.DefaultFocusRequest;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
@@ -441,6 +443,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
      */
     protected StackDockComponent createStackDockComponent(){
         return new DefaultStackDockComponent();
+    }
+    
+    protected DockComponentRootHandler createRootHandler() {
+    	return new DefaultDockStationComponentRootHandler( this, displayers );
     }
     
     public DockStation getStackDockParent(){

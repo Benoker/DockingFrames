@@ -16,6 +16,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.action.DefaultDockActionSource;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.component.DockComponentConfiguration;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
 import bibliothek.gui.dock.dockable.DockableStateListener;
@@ -244,5 +245,14 @@ public class ChessFigure extends JLabel implements Dockable {
 	public boolean isDockableVisible(){
 		// ignore
 		return true;
+	}
+	
+	public DockComponentConfiguration getComponentConfiguration() {
+		// not required for this example
+		return null;
+	}
+	
+	public void setComponentConfiguration( DockComponentConfiguration configuration ) {
+		// not required for this example
 	}
 }

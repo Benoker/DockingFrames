@@ -53,6 +53,8 @@ import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.action.ListeningDockAction;
 import bibliothek.gui.dock.action.LocationHint;
+import bibliothek.gui.dock.component.DefaultDockStationComponentRootHandler;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.layout.DockableProperty;
@@ -468,6 +470,10 @@ public class ScreenDockStation extends AbstractDockStation {
         		updateWindows();
         	}
         });
+    }
+    
+    protected DockComponentRootHandler createRootHandler() {
+    	return new DefaultDockStationComponentRootHandler( this, displayers );
     }
     
     /**
@@ -1829,6 +1835,8 @@ public class ScreenDockStation extends AbstractDockStation {
         window.setController( getController() );
         window.setFullscreenStrategy( getFullscreenStrategy() );
         
+        getRootHandler().addRoot( window.getComponent() );
+        
         for( ScreenDockStationListener listener : screenDockStationListeners() ){
         	listener.windowRegistering( this, dockable, window );
         }
@@ -1865,6 +1873,7 @@ public class ScreenDockStation extends AbstractDockStation {
         
         dockables.remove( index );
         
+        getRootHandler().removeRoot( window.getComponent() );
         window.setDockable( null );
         window.setPaintCombining( null );
         window.setController( null );

@@ -108,7 +108,7 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     	super.init( dockable, origin );
     	setShowMiniButtons( showMiniButtons );
     }
-    
+
     /**
      * Tells whether this titel is able to show any {@link DockAction}. 
      * @return <code>true</code> if {@link DockAction}s are enabled

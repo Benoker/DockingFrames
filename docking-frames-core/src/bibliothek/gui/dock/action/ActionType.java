@@ -102,7 +102,6 @@ public class ActionType<D extends DockAction> {
 		return id.hashCode();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object obj ){
 		if (this == obj)
@@ -112,6 +111,6 @@ public class ActionType<D extends DockAction> {
 		if( !(obj instanceof ActionType))
 			return false;
 		
-		return ((ActionType)obj).id.equals( id );
+		return ((ActionType<?>)obj).id.equals( id );
 	}
 }

@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.station.flap;
 
+import java.awt.Component;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -146,4 +147,10 @@ public interface FlapWindow {
      * @see FlapDockStation#getExpansionBounds()
      */
     public void updateBounds();
+    
+    /**
+     * Gets the root {@link Component} of this {@link FlapWindow}
+     * @return the root component, may be <code>null</code> after {@link #destroy()} was called
+     */
+    public Component getComponent();
 }

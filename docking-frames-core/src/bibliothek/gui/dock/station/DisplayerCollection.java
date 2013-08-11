@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -126,6 +127,20 @@ public class DisplayerCollection implements Iterable<DockableDisplayer>{
     	for( DockableDisplayer displayer : this ){
     		displayer.removeDockableDisplayerListener( listener );
     	}
+    }
+    
+    /**
+     * Tells whether <code>component</code> is the root component of any {@link DockableDisplayer}.
+     * @param component the component to search
+     * @return <code>true</code> if at least one {@link DockableDisplayer#getComponent()} returns <code>component</code>
+     */
+    public boolean isDisplayerComponent( Component component ){
+    	for( DockableDisplayer displayer : this ){
+    		if( displayer.getComponent() == component ){
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     public Iterator<DockableDisplayer> iterator() {

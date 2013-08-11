@@ -26,6 +26,7 @@
 
 package bibliothek.gui.dock.station;
 
+import java.awt.Component;
 import java.io.IOException;
 
 import bibliothek.gui.DockController;
@@ -34,6 +35,8 @@ import bibliothek.gui.DockTheme;
 import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockFactory;
+import bibliothek.gui.dock.component.DockComponentConfiguration;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.displayer.DisplayerRequest;
 import bibliothek.gui.dock.event.DockStationListener;
 import bibliothek.gui.dock.station.support.DockStationListenerManager;
@@ -61,12 +64,43 @@ public abstract class AbstractDockStation implements DockStation {
 	/** The theme of this station */
 	private DockTheme theme;
 	
+	/** keeps track of all the components of this station */
+	private DockComponentRootHandler rootHandler;
+	
+	/**
+	 * Gets the {@link DockComponentRootHandler} which is responsible for keeping track of all the
+	 * {@link Component}s of this station.
+	 * @return the root handler, not <code>null</code>
+	 */
+	protected DockComponentRootHandler getRootHandler(){
+		if( rootHandler == null ){
+			rootHandler = createRootHandler();
+		}
+		return rootHandler;
+	}
+	
+	/**
+	 * Creates a new {@link DockComponentRootHandler} which will be responsible for keeping track of
+	 * all the {@link Component}s of this station.
+	 * @return the new handler
+	 */
+	protected abstract DockComponentRootHandler createRootHandler();
+	
     public void setController( DockController controller ) {
         this.controller = controller;
+        getRootHandler().setController( controller );
     }
 
     public DockController getController() {
         return controller;
+    }
+    
+    public DockComponentConfiguration getComponentConfiguration() {
+    	return getRootHandler().getConfiguration();
+    }
+    
+    public void setComponentConfiguration( DockComponentConfiguration configuration ) {
+	    getRootHandler().setConfiguration( configuration );
     }
     
     public DockTheme getTheme() {

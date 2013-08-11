@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.screen;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -225,6 +226,12 @@ public interface ScreenDockWindow {
      * Forces this window to update the boundaries of its children.
      */
     public void validate();
+    
+    /**
+     * Gets the root {@link Component} fo this window.
+     * @return the root component
+     */
+    public Component getComponent();
     
     /**
      * Gets the distances between the edges of the window and the edges of

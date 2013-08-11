@@ -44,6 +44,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DockableBackgroundComponent;
 import bibliothek.gui.dock.dockable.DockableIcon;
@@ -294,6 +295,19 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 		setTitleText( title );
 	}
 
+	@Override
+	protected DockComponentRootHandler createRootHandler() {
+		return new DockComponentRootHandler( this ){
+			@Override
+			protected TraverseResult shouldTraverse( Component component ) {
+				if( component == content ){
+					return TraverseResult.EXCLUDE_CHILDREN;
+				}
+				return TraverseResult.INCLUDE_CHILDREN;
+			}
+		};
+	}
+	
 	/**
 	 * Gets the component associated with the nearest {@link ExpandedState} with
 	 * regards to the <code>state</code> parameter. If two states are equally

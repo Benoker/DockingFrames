@@ -33,6 +33,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
+import bibliothek.gui.dock.component.DockComponentRoot;
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.Enforcement;
@@ -49,7 +50,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * @see DisplayerFactory
  * @author Benjamin Sigg
  */
-public interface DockableDisplayer {
+public interface DockableDisplayer extends DockComponentRoot{
     /** The four possible locations of the title */
     public static enum Location{
         /** the left side */

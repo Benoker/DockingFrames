@@ -40,6 +40,7 @@ import javax.swing.LayoutFocusTraversalPolicy;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.dockable.DefaultDockableFactory;
 import bibliothek.gui.dock.dockable.DockableBackgroundComponent;
@@ -167,6 +168,19 @@ public class DefaultDockable extends AbstractDockable {
 	    return new DockableIcon( "dockable.default", this ){
 			protected void changed( Icon oldValue, Icon newValue ){
 				fireTitleIconChanged( oldValue, newValue );	
+			}
+		};
+    }
+    
+    protected DockComponentRootHandler createRootHandler() {
+	    return new DockComponentRootHandler( this ) {
+			protected TraverseResult shouldTraverse( Component component ) {
+				if( component == getContentPane() ){
+					return TraverseResult.EXCLUDE_CHILDREN;
+				}
+				else{
+					return TraverseResult.INCLUDE_CHILDREN;
+				}
 			}
 		};
     }

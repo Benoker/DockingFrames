@@ -32,6 +32,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionOffer;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
+import bibliothek.gui.dock.component.DockComponentManager;
 import bibliothek.gui.dock.control.focus.FocusController;
 import bibliothek.gui.dock.control.focus.FocusHistory;
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
@@ -195,4 +196,13 @@ public interface DockControllerFactory {
      * @return the new manager, not <code>null</code>
      */
 	public ExtensionManager createExtensionManager( DockController controller, ControllerSetupCollection setup );
+
+	/**
+	 * Creates a new {@link DockComponentManager}.
+	 * @param controller the controller which will use the new manager
+	 * @param setup an observable where new objects can add {@link ControllerSetupListener}
+     * to be informed when the setup of <code>controller</code> is finished. 
+	 * @return the new manager, not <code>null</code>
+	 */
+	public DockComponentManager createDockComponentManager(DockController dockController, ControllerSetupCollection setup);
 }

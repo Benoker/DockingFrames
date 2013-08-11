@@ -34,6 +34,7 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.action.DockAction;
+import bibliothek.gui.dock.component.DockComponentRoot;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
@@ -50,7 +51,7 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
  * the {@link DockController}.
  * @author Benjamin Sigg
  */
-public interface DockTitle extends DockElementRepresentative{
+public interface DockTitle extends DockElementRepresentative, DockComponentRoot{
 	/** Key for a {@link OrientationToRotationStrategy}. The strategy can tell this title how to render its text given
 	 * the orientation of this title. */
 	public static final PropertyKey<OrientationToRotationStrategy> ORIENTATION_STRATEGY = 

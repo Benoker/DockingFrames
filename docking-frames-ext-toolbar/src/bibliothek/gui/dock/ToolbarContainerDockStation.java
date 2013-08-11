@@ -52,6 +52,8 @@ import bibliothek.gui.DockUI;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
 import bibliothek.gui.Position;
+import bibliothek.gui.dock.component.DefaultDockStationComponentRootHandler;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.location.AsideAnswer;
@@ -153,7 +155,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/** dockables associate with the container pane */
 	private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
 	/** the {@link DockableDisplayer} shown */
-	private final DisplayerCollection displayer;
+	private final DisplayerCollection displayers;
 	/** factory for {@link DockTitle}s used for the main panel */
 	private DockTitleVersion title;
 	/** factory for creating new {@link DockableDisplayer}s */
@@ -219,7 +221,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 		displayerFactory = new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.container", this );
 
-		displayer = new DisplayerCollection( this, displayerFactory, DISPLAYER_ID );
+		displayers = new DisplayerCollection( this, displayerFactory, DISPLAYER_ID );
 
 		final DockableDisplayerListener listener = new DockableDisplayerListener(){
 			@Override
@@ -231,7 +233,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				// ignore
 			}
 		};
-		displayer.addDockableDisplayerListener( listener );
+		displayers.addDockableDisplayerListener( listener );
 		setTitleIcon( null );
 
 		new OrientationObserver( this ){
@@ -270,6 +272,11 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		panel.setLayout( layoutManager );
 		panel.setBorder( new EmptyBorder( new Insets( 3, 3, 3, 3 ) ) );
 		return panel;
+	}
+	
+	@Override
+	protected DockComponentRootHandler createRootHandler() {
+		return new DefaultDockStationComponentRootHandler( this, displayers );
 	}
 
 	@Override
@@ -329,7 +336,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 			@Override
 			public StationChildHandle wrap( Dockable dockable ){
-				return new StationChildHandle( ToolbarContainerDockStation.this, displayer, dockable, title );
+				return new StationChildHandle( ToolbarContainerDockStation.this, displayers, dockable, title );
 			}
 
 			@Override
@@ -1087,7 +1094,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 			try {
 				listeners.fireDockableAdding( dockable );
 				final DockablePlaceholderList.Filter<StationChildHandle> dockables = getDockables().dockables();
-				final StationChildHandle handle = new StationChildHandle( this, displayer, dockable, title );
+				final StationChildHandle handle = new StationChildHandle( this, displayers, dockable, title );
 				if( placeholder != null ){
 					index = getDockables().put( placeholder, handle );
 				}
@@ -1299,7 +1306,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 				title = controller.getDockTitleManager().getVersion( TITLE_ID, BasicDockTitleFactory.FACTORY );
 			}
 
-			displayer.setController( controller );
+			displayers.setController( controller );
 			placeholderStrategy.setProperties( controller );
 
 			if( controller != null ) {

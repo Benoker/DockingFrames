@@ -276,6 +276,13 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			window.asComponent().repaint();
 		}
 	}
+	
+	public Component getComponent() {
+		if( window == null ){
+			return null;
+		}
+		return window.asComponent();
+	}
 
 	/**
 	 * Tells whether this window is still valid, e.g whether the window can be shown 

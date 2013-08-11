@@ -46,6 +46,7 @@ import org.junit.Test;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.dockable.AbstractDockable;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList;
@@ -445,6 +446,16 @@ public class ToolbarGridTest {
 
 		public String getId(){
 			return id;
+		}
+		
+		@Override
+		protected DockComponentRootHandler createRootHandler() {
+			return new DockComponentRootHandler( this ){
+				@Override
+				protected TraverseResult shouldTraverse( Component component ) {
+					return TraverseResult.EXCLUDE;
+				}
+			};
 		}
 	}
 
