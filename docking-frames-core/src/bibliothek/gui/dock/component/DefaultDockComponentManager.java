@@ -77,7 +77,6 @@ public class DefaultDockComponentManager implements DockComponentManager{
 		}
 	}
 	
-	@Override
 	public void register( DockComponentRoot root ) {
 		if( !roots.containsKey( root )){
 			Handle handle = new Handle( root );
@@ -86,7 +85,6 @@ public class DefaultDockComponentManager implements DockComponentManager{
 		}
 	}
 
-	@Override
 	public void unregister( DockComponentRoot root ) {
 		Handle handle = roots.remove( root );
 		if( handle != null ){
