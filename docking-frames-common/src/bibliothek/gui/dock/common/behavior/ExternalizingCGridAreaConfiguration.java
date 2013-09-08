@@ -25,10 +25,13 @@
  */
 package bibliothek.gui.dock.common.behavior;
 
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Rectangle;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockHierarchyLock;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
@@ -36,6 +39,7 @@ import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.station.LayoutLocked;
+import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 
 /**
  * The {@link ExternalizingCGridAreaConfiguration} is a piece of code responsible for changing the behavior
@@ -157,10 +161,8 @@ public class ExternalizingCGridAreaConfiguration {
 	protected class SplitInserter extends DockStationAdapter {
 		public void dockableAdded( DockStation station, final Dockable dockable ){
 			if( !(dockable instanceof SplitDockStation) ) {
-				DockHierarchyLock lock = control.getController().getHierarchyLock();
-
-				lock.onRelease( new Runnable(){
-					public void run(){
+				EventQueue.invokeLater( new Runnable() {
+					public void run() {
 						checkAndReplace( dockable );
 					}
 				});
@@ -177,16 +179,41 @@ public class ExternalizingCGridAreaConfiguration {
 			
 			try {
 				controller.freezeLayout();
-			
+				ScreenDockStation screenDockStation = (ScreenDockStation)station;
+				
+				Dimension oldSize = dockable.getComponent().getSize();
+							
 				ExternalizingCGridArea split = createGridArea();
 				control.addDockable( split );
 				
 				station.replace( dockable, split.getStation() );
 				split.getStation().drop( dockable );
+				
+				resizeDelayed( screenDockStation, split.getStation(), dockable, oldSize );
 			}
 			finally {
 				controller.meltLayout();
 			}
+		}
+		
+		private void resizeDelayed( final ScreenDockStation station, final Dockable parent, final Dockable dockable, final Dimension oldSize ){
+			EventQueue.invokeLater( new Runnable() {
+				public void run() {
+					ScreenDockWindow window = station.getWindow( parent );
+					if( window != null ){
+						window.validate();
+					
+						Dimension newSize = dockable.getComponent().getSize();
+						int dw = oldSize.width - newSize.width; 
+						int dh = oldSize.height - newSize.height;
+
+						Rectangle bounds = window.getWindowBounds();
+						bounds.width += dw;
+						bounds.height += dh;
+						window.setWindowBounds( bounds );
+					}
+				}
+			} );
 		}
 	};	
 }
