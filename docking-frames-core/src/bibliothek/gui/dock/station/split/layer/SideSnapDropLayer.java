@@ -89,6 +89,8 @@ public class SideSnapDropLayer implements DockStationDropLayer{
 		Point point = new Point( x, y );
 		SwingUtilities.convertPointFromScreen( point, getComponent() );
 		Rectangle bounds = getComponent().getBounds();
+		bounds.x = 0;
+		bounds.y = 0;
 		if( bounds.contains( point )){
 			return false;
 		}
