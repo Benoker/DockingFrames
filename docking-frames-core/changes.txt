@@ -970,4 +970,6 @@
  - API: added the DockComponentManager which allows clients to directly configure nearly all Components that are created the framework
 
 [v1.1.2p9a]
- - Bugfix: If a SplitDockStation was not at coordinates 0/0, then the SideSnapDropLayer was actually at the wrong position  
+ - Bugfix: If a SplitDockStation was not at coordinates 0/0, then the SideSnapDropLayer was actually at the wrong position
+ - Bugfix: There could be a ConcurrentModificationException if ModeArea were created or removed during a drag and drop operation
+   

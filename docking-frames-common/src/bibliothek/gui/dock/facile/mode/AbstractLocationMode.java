@@ -216,7 +216,8 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	}
 	
 	public Iterator<A> iterator(){
-		return areas.values().iterator();
+		List<A> copy = new ArrayList<A>( areas.values() );
+		return copy.iterator();
 	}
 	
 	/**
