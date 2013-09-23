@@ -94,7 +94,7 @@ public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> i
 	
 	public boolean respectWorkingAreas( DockStation station ){
 		CModeArea area = get( station );
-		if( area == null ){
+		if( area == null || area.getStation() != station ){
 			return true;
 		}
 		return area.respectWorkingAreas();

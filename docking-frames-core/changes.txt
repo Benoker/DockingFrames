@@ -972,4 +972,6 @@
 [v1.1.2p9a]
  - Bugfix: If a SplitDockStation was not at coordinates 0/0, then the SideSnapDropLayer was actually at the wrong position
  - Bugfix: There could be a ConcurrentModificationException if ModeArea were created or removed during a drag and drop operation
-   
+
+[v1.1.2p9b]
+ - Bugfix: It is no longer possible to merge two stacks of floating CDockables that have a different working-area   

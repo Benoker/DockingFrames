@@ -25,6 +25,9 @@
  */
 package bibliothek.gui.dock.common.intern.ui;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.DockElement;
@@ -39,6 +42,8 @@ import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.mode.CLocationMode;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.DockUtilities.DockVisitor;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -151,11 +156,26 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     }
     
     private CStation<?> getWorkingArea( Dockable dockable ){
-    	if( dockable instanceof CommonDockable ){
-	    	CDockable fdockable = ((CommonDockable)dockable).getDockable();
-	        return fdockable.getWorkingArea();
+    	final Set<CStation<?>> workingAreas = new HashSet<CStation<?>>();
+    	
+    	DockUtilities.visit( dockable, new DockVisitor() {
+    		@Override
+    		public void handleDockable( Dockable dockable ) {
+    			if( dockable instanceof CommonDockable ){
+    		    	CDockable fdockable = ((CommonDockable)dockable).getDockable();
+    		    	CStation<?> workingArea = fdockable.getWorkingArea();
+    		    	if( workingArea != null ){
+    		    		workingAreas.add( workingArea );
+    		    	}
+    	    	}
+    		}
+		});
+    	if( workingAreas.size() == 1 ){
+    		return workingAreas.iterator().next();
     	}
-    	return null;
+    	else{
+    		return null;
+    	}
     }
     
     /**
