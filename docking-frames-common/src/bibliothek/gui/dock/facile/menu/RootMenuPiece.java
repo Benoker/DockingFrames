@@ -47,6 +47,10 @@ public class RootMenuPiece extends NodeMenuPiece {
 	/** disable {@link #menu} when there are no items */
 	private boolean disableWhenEmpty;
 	
+	/** whether the {@link #menu} should be enabled */
+	private boolean enabled = true;
+	
+	
 	/**
 	 * Creates a new root-piece, using a normal {@link JMenu} to inserts
 	 * its content.
@@ -97,16 +101,34 @@ public class RootMenuPiece extends NodeMenuPiece {
 				for( int i = 0; i < items.length; i++ )
 					menu.add( items[i], i+index );
 			
-				menu.setEnabled( !disableWhenEmpty || getItemCount() > 0 );
+				updateEnabled();
 			}
 			public void remove( MenuPiece child, int index, int length ){
 				JMenu menu = getMenu();
 				for( int i = index+length-1; i >= index; i-- )
 					menu.remove( i );
-				
-				menu.setEnabled( !disableWhenEmpty || getItemCount() > 0 );
+
+				updateEnabled();
 			}
 		});
+	}
+	
+	/**
+	 * Calls {@link JMenu#setEnabled(boolean)} with a parameter that is calculated using
+	 * {@link #isDisableWhenEmpty()}, {@link #getItemCount()} and 
+	 */
+	protected void updateEnabled(){
+		if( isEnabled() ){
+			if( isDisableWhenEmpty() ){
+				menu.setEnabled( getItemCount() > 0 );
+			}
+			else{
+				menu.setEnabled( true );
+			}
+		}
+		else{
+			menu.setEnabled( false );
+		}
 	}
 	
 	private void checkVisibility(){
@@ -133,17 +155,38 @@ public class RootMenuPiece extends NodeMenuPiece {
 	 * disabled when empty
 	 */
 	public void setDisableWhenEmpty( boolean disableWhenEmpty ) {
-        this.disableWhenEmpty = disableWhenEmpty;
-        menu.setEnabled( !disableWhenEmpty || getItemCount() > 0 );
+		this.disableWhenEmpty = disableWhenEmpty;
+        updateEnabled();
     }
 	
 	/**
 	 * Whether to disable the menu when it is empty or not.
 	 * @return <code>true</code> if the menu gets disabled
+	 * @see #setEnabled(boolean)
 	 */
 	public boolean isDisableWhenEmpty() {
         return disableWhenEmpty;
     }
+	
+	/**
+	 * Enables or disables the menu. If the argument is <code>false</code>, then the
+	 * menu is disabled in any case. Otherwise the menu may be enabled or disabled
+	 * depending on the value of {@link #isDisableWhenEmpty()}.
+	 * @param enabled wether the menu should be enabled
+	 * @see #setEnabled(boolean)
+	 */
+	public void setEnabled( boolean enabled ) {
+		this.enabled = enabled;
+		updateEnabled();
+	}
+	
+	/**
+	 * Tells whether the menu can be enabled or not.
+	 * @return <code>true</code> if the menu can be enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
 	
 	@Override
 	public JMenu getMenu(){

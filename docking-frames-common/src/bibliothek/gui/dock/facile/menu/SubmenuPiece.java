@@ -94,7 +94,7 @@ public class SubmenuPiece extends MenuPiece{
     }
     
     /**
-     * Disables the menu if there are no items in the menu.
+     * Disables the menu if there are no items in the menu. 
      * @param disableWhenEmpty <code>true</code> if the menu should be
      * disabled when empty
      */
@@ -108,6 +108,24 @@ public class SubmenuPiece extends MenuPiece{
      */
     public boolean isDisableWhenEmpty() {
         return root.isDisableWhenEmpty();
+    }
+    
+    /**
+     * Sets whether the submenu can be enabled. The actual state of the
+     * menu also depends on {@link #isDisableWhenEmpty()}.
+     * @param enabled whether the submenu can be enabled
+     */
+    public void setEnabled( boolean enabled ){
+    	root.setEnabled( enabled );
+    }
+    
+    /**
+     * Tells whether the submenu could be enabled. The actual state of the 
+     * menu also depends on {@link #isDisableWhenEmpty()}
+     * @return whether the menu could be enabled
+     */
+    public boolean isEnabled(){
+    	return root.isEnabled();
     }
     
     @Override

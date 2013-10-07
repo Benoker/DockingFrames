@@ -974,4 +974,7 @@
  - Bugfix: There could be a ConcurrentModificationException if ModeArea were created or removed during a drag and drop operation
 
 [v1.1.2p9b]
- - Bugfix: It is no longer possible to merge two stacks of floating CDockables that have a different working-area   
+ - Bugfix: It is no longer possible to merge two stacks of floating CDockables that have a different working-area
+ 
+[v1.1.2p9c]
+ - API: Added "setEnabled" to RootMenuPiece allowing clients to disable the menu   
