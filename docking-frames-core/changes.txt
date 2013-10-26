@@ -977,4 +977,7 @@
  - Bugfix: It is no longer possible to merge two stacks of floating CDockables that have a different working-area
  
 [v1.1.2p9c]
- - API: Added "setEnabled" to RootMenuPiece allowing clients to disable the menu   
+ - API: Added "setEnabled" to RootMenuPiece allowing clients to disable the menu
+ 
+[v1.1.2p9d]
+ ! Bugfix: CGridPerspective did not allow its subclass CWorkingPerspective to configure the delegate early enough   

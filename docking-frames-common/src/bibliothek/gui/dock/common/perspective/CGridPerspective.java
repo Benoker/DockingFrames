@@ -101,7 +101,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 
 		public boolean isChild( PerspectiveDockable dockable ){
 			if( dockable.getParent() == intern() ) {
-				return delegate.getFullscreen() != dockable;
+				return delegate().getFullscreen() != dockable;
 			}
 			return false;
 		}
@@ -121,7 +121,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 
 		public boolean isChild( PerspectiveDockable dockable ){
 			if( dockable.getParent() == intern() ) {
-				return delegate.getFullscreen() == dockable;
+				return delegate().getFullscreen() == dockable;
 			}
 			return false;
 		}
@@ -208,6 +208,10 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	@Override
 	protected CommonSplitDockPerspective create(){
 		return delegate;
+	}
+	
+	private CommonSplitDockPerspective delegate() {
+		return intern();
 	}
 
 	@Override
@@ -377,7 +381,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 			gridChanges = false;
 			try {
 				onDeploy = true;
-				delegate.read( grid.toTree(), null );
+				delegate().read( grid.toTree(), null );
 			}
 			finally {
 				onDeploy = false;
@@ -393,7 +397,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public void gridPrepare(){
 		gridChanges = false;
 		gridClear();
-		handle( delegate.getRoot().getChild(), 0, 0, 100, 100 );
+		handle( delegate().getRoot().getChild(), 0, 0, 100, 100 );
 	}
 
 	private void handle( Entry entry, double x, double y, double width, double height ){
@@ -457,7 +461,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * @return the root of the intern tree of dockables, <code>null</code> if this area does not have any children
 	 */
 	public SplitDockPerspective.Root getRoot(){
-		return delegate.getRoot();
+		return delegate().getRoot();
 	}
 
 	/**
@@ -530,7 +534,7 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	 * @return the maximized child or <code>null</code>
 	 */
 	public PerspectiveDockable getMaximized(){
-		return delegate.getFullscreen();
+		return delegate().getFullscreen();
 	}
 
 	@Override
@@ -539,15 +543,15 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	}
 
 	public String getFactoryID(){
-		return delegate.getFactoryID();
+		return delegate().getFactoryID();
 	}
 
 	public PlaceholderMap getPlaceholders(){
-		return delegate.getPlaceholders();
+		return delegate().getPlaceholders();
 	}
 
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		delegate.setPlaceholders( placeholders );
+		delegate().setPlaceholders( placeholders );
 	}
 
 	/**
