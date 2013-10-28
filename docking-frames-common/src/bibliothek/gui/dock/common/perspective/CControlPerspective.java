@@ -161,12 +161,24 @@ public class CControlPerspective {
     
     /**
      * Stores <code>perspective</code> as a layout that can be selected by the user by calling
-     * {@link CControl#load(String)}.
+     * {@link CControl#load(String)}.<br>
+     * The contents of working areas are ignored by this method.
      * @param name the name of the layout
      * @param perspective the new layout, not <code>null</code>
      */
     public void setPerspective( String name, CPerspective perspective ){
-    	control.getOwner().intern().setSetting( name, convert( perspective, false ) );
+    	setPerspective( name, perspective, false );
+    }
+
+    /**
+     * Stores <code>perspective</code> as a layout that can be selected by the user by calling
+     * {@link CControl#load(String)}.
+     * @param name the name of the layout
+     * @param perspective the new layout, not <code>null</code>
+     * @param includeWorkingAreas whether the contents of working areas should be stored as well
+     */
+    public void setPerspective( String name, CPerspective perspective, boolean includeWorkingAreas ){
+    	control.getOwner().intern().setSetting( name, convert( perspective, includeWorkingAreas ) );
     }
     
     /**

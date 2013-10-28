@@ -1147,7 +1147,7 @@ public class CControl {
      * Informs this {@link CControl} whether location of {@link CDockable}s that are associated with a 
      * {@link CStation#isWorkingArea() working area} should be stored when storing a layout.<br>
      * This method installs a {@link DockSituationIgnore} on the intern {@link DockFrontend}, the filter is only
-     * used for "normal entries", "final entries" (does stored when the application shuts down) are not affected.<br>
+     * used for "normal entries", "final entries" (stored when the application shuts down) are not affected.<br>
      * The default value for this property is <code>true</code>. 
      * @param ignore if <code>true</code> then some {@link CDockable}s are filtered out, otherwise their location
      * is stored.
