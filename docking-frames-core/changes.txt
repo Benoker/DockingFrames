@@ -980,5 +980,6 @@
  - API: Added "setEnabled" to RootMenuPiece allowing clients to disable the menu
  
 [v1.1.2p9d]
- ! Bugfix: CGridPerspective did not allow its subclass CWorkingPerspective to configure the delegate early enough
- - API: Overloaded CControlPerspective.setPerspective with a version that allows to store the contents of working areas   
+ - Bugfix: CGridPerspective did not allow its subclass CWorkingPerspective to configure the delegate early enough
+ - API: Overloaded CControlPerspective.setPerspective with a version that allows to store the contents of working areas
+ - Bugfix: StackDockStation did fire a focus event when its theme was updated

@@ -246,6 +246,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     /** whether the result of {@link Component#getMinimumSize()} should be a small value */
     private boolean smallMinimumSize = true;
     
+    /** whether the theme of this station is currently updated */
+    private boolean updatingTheme = false;
+    
     /** strategy for selecting placeholders */
     private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) {
 		@Override
@@ -603,7 +606,13 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     
     @Override
     protected void callDockUiUpdateTheme() throws IOException {
-    	DockUI.updateTheme( this, new StackDockStationFactory());
+    	try{
+    		updatingTheme = true;
+    		DockUI.updateTheme( this, new StackDockStationFactory());
+    	}
+    	finally{
+    		updatingTheme = false;
+    	}
     }
    
     @Override
@@ -1649,7 +1658,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         public void selectionChanged( StackDockComponent stack ){
         	if( !ignoreSelectionChanges ){
 	            DockController controller = getController();
-	            if( controller != null ){
+	            if( controller != null && !updatingTheme ){
 	                Dockable selection = getFrontDockable();
 	                if( selection != null && !controller.getRelocator().isOnPut() ){
 	                    controller.setFocusedDockable( new DefaultFocusRequest( selection, null, false ));
