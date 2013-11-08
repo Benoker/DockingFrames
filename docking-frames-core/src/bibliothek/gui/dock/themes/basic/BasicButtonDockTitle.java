@@ -147,11 +147,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
      */
     public BasicButtonDockTitle( Dockable dockable, DockTitleVersion origin ) {
         super();
-        
-        if( origin != null ){
-        	connector.setProperties( origin.getController() );
-        }
-    
+
         behavior = new ButtonContentValue( new ButtonContent( TRUE, TRUE, IF_DOCKABLE, IF_STATION, TRUE, TRUE ) ){
 			@Override
 			protected void propertyChanged(){
@@ -217,7 +213,9 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     @Override
     public void bind(){
     	DockTitleVersion origin = getOrigin();
+    	
     	if( origin != null ){
+    		connector.setProperties( origin.getController() );
         	behavior.setProperties( origin.getController() );
         }
     	behavior.setDockable( getDockable() );
@@ -227,6 +225,7 @@ public class BasicButtonDockTitle extends AbstractDockTitle {
     
     @Override
     public void unbind(){
+    	connector.setProperties( (DockController)null );
     	behavior.setProperties( (DockController)null );
     	behavior.setDockable( null );
     	super.unbind();
