@@ -129,7 +129,7 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 	public void paintBackground( Graphics g, JComponent component ){
 		final Graphics2D g2D = (Graphics2D) g.create();
 		g2D.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-		g2D.setColor( color.getValue() );
+		g2D.setColor( color.color() );
 		if( getOrientation().isHorizontal() ) {
 			final RoundRectangle2D rectangleRounded = new RoundRectangle2D.Double( 0, 0, getWidth(), getHeight() * 2, 8, 8 );
 			g2D.fill( rectangleRounded );

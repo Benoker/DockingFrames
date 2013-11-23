@@ -986,3 +986,6 @@
  
 [v1.1.2p10]
  - Bugfix: Thanks to an anonymous user, a memory leak in BasicButtonDockTitle was found and fixed
+ 
+[v1.1.2p10a]
+ - Bugfix: ToolbarGroupTitle did ignore the color, and always used the same gray
