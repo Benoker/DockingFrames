@@ -54,6 +54,11 @@ public abstract class PredefinedPerspective extends Perspective{
 		super( situation );
 	}
 	
+	@Override
+	public PredefinedDockSituation getSituation() {
+		return (PredefinedDockSituation)super.getSituation();
+	}
+	
 	/**
 	 * Adds an additional set of items to this perspective.
 	 * @param map the set of known items, not <code>null</code>

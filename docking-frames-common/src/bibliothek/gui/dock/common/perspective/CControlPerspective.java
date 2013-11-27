@@ -68,6 +68,7 @@ import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.gui.dock.perspective.PredefinedPerspective;
 import bibliothek.gui.dock.support.mode.ModeSettings;
 import bibliothek.gui.dock.support.mode.ModeSettingsConverter;
 import bibliothek.util.ClientOnly;
@@ -749,7 +750,7 @@ public class CControlPerspective {
     
     private DockFrontendPerspective wrap( CPerspective perspective, boolean includeWorkingAreas, PerspectiveElementFactory factory ){
     	DockFrontendPerspective frontend = control.getOwner().intern().getPerspective( !includeWorkingAreas, factory );
-    	Perspective inner = frontend.getPerspective();
+    	PredefinedPerspective inner = frontend.getPerspective();
     	
     	factory.setBasePerspective( inner );
     	

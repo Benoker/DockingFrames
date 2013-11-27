@@ -31,6 +31,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.PropertyTransformer;
 import bibliothek.gui.dock.perspective.Perspective;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
+import bibliothek.gui.dock.perspective.PredefinedPerspective;
 
 /**
  * Represents the layout that is created and managed by a {@link DockFrontend}, offers
@@ -46,7 +47,7 @@ public interface DockFrontendPerspective {
 	 * Gets the internal representation of this layout.
 	 * @return the internal representation
 	 */
-	public Perspective getPerspective();
+	public PredefinedPerspective getPerspective();
 	
 	/**
 	 * Gets a {@link PropertyTransformer} which is used to read and write
