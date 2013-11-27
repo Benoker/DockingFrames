@@ -43,6 +43,7 @@ import bibliothek.gui.dock.layout.DockLayoutComposition;
 import bibliothek.gui.dock.layout.DockLayoutInfo;
 import bibliothek.gui.dock.layout.DockSituation;
 import bibliothek.gui.dock.layout.DockSituationIgnore;
+import bibliothek.gui.dock.layout.PredefinedDockSituation;
 import bibliothek.util.xml.XElement;
 
 /**
@@ -56,14 +57,14 @@ import bibliothek.util.xml.XElement;
  */
 public abstract class Perspective {
 	/** Provides  algorithms used to convert the {@link PerspectiveElement}s */
-	private DockSituation situation;
+	private PredefinedDockSituation situation;
 
 	/**
 	 * Creates a new {@link Perspective} using <code>situation</code> to read and write
 	 * items.
 	 * @param situation the set of factories to use
 	 */
-	public Perspective( DockSituation situation ){
+	public Perspective( PredefinedDockSituation situation ){
 		this.situation = situation;
 	}
 	
@@ -267,7 +268,7 @@ public abstract class Perspective {
 	 * and {@link DockLayoutComposition}s.
 	 * @return the situation, not <code>null</code>
 	 */
-	public DockSituation getSituation(){
+	public PredefinedDockSituation getSituation(){
 		return situation;
 	}
 

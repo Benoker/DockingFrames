@@ -36,6 +36,7 @@ import bibliothek.gui.dock.DockFactory;
 import bibliothek.gui.dock.layout.BackupFactoryData;
 import bibliothek.gui.dock.layout.LocationEstimationMap;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.perspective.PerspectiveElement;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.xml.XElement;
 
@@ -48,7 +49,7 @@ import bibliothek.util.xml.XElement;
  * @param <P> the kind of perspective read by this factory
  * @param <L> the kind of data the wrapped factory needs
  */
-public class RegisteringDockFactory<D extends Dockable, P extends PerspectiveDockable, L> implements DockFactory<D, P, BackupFactoryData<L>> {
+public class RegisteringDockFactory<D extends Dockable, P extends PerspectiveElement, L> implements DockFactory<D, P, BackupFactoryData<L>> {
     /** the {@link DockFrontend} to which this factory will add new elements */
     private DockFrontend frontend;
     /** delegate used to read new elements */

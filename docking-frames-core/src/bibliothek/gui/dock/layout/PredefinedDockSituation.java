@@ -71,8 +71,8 @@ public class PredefinedDockSituation extends DockSituation {
     private static final String UNKNOWN = "delegate_";
 
     /** backup factories for elements that should be in the cache, but are missing */
-    private Map<String, DockFactory<? extends DockElement,?,BackupFactoryData<?>>> backups =
-        new HashMap<String, DockFactory<? extends DockElement,?,BackupFactoryData<?>>>();
+    private Map<String, DockFactory<? extends DockElement,?,? extends BackupFactoryData<?>>> backups =
+        new HashMap<String, DockFactory<? extends DockElement,?,? extends BackupFactoryData<?>>>();
 
     private final PreloadFactory factory = new PreloadFactory();
     
@@ -126,7 +126,7 @@ public class PredefinedDockSituation extends DockSituation {
      * as parameter.
      * @param factory a backup factory
      */
-    public void addBackup( DockFactory<? extends DockElement,?,BackupFactoryData<?>> factory ){
+    public void addBackup( DockFactory<? extends DockElement, ?, ? extends BackupFactoryData<?>> factory ){
         backups.put( UNKNOWN + factory.getID(), factory );
     }
 
@@ -542,8 +542,9 @@ public class PredefinedDockSituation extends DockSituation {
      * @param id the name of the factory
      * @return the factory or <code>null</code>
      */
-    protected DockFactory<? extends DockElement,?,BackupFactoryData<?>> getBackup( String id ){
-        return backups.get( id );
+    @SuppressWarnings( "unchecked" )
+	protected DockFactory<? extends DockElement,?,BackupFactoryData<?>> getBackup( String id ){
+        return (DockFactory<? extends DockElement,?,BackupFactoryData<?>>)backups.get( id );
     }
 
     @Override

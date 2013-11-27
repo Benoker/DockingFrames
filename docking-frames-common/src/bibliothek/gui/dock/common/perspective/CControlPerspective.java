@@ -50,6 +50,7 @@ import bibliothek.gui.dock.common.intern.CSetting;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonSingleDockableFactory;
+import bibliothek.gui.dock.common.intern.CommonSingleDockableLayout;
 import bibliothek.gui.dock.common.intern.RootStationAdjacentFactory;
 import bibliothek.gui.dock.common.intern.station.CommonDockStationFactory;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -57,6 +58,7 @@ import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationSettingConverter;
 import bibliothek.gui.dock.frontend.DockFrontendPerspective;
 import bibliothek.gui.dock.frontend.FrontendPerspectiveCache;
+import bibliothek.gui.dock.frontend.RegisteringDockFactory;
 import bibliothek.gui.dock.frontend.Setting;
 import bibliothek.gui.dock.layout.DockLayout;
 import bibliothek.gui.dock.layout.DockLayoutComposition;
@@ -142,11 +144,22 @@ public class CControlPerspective {
      * @return the perspective or <code>null</code> if <code>name</code> was not found
      */
     public CPerspective getPerspective( String name ){
+    	return getPerspective( name, false );
+    }
+
+    /**
+     * Gets the perspective which represents a layout that was stored using {@link CControl#save(String)}.
+     * @param name the name of the stored layout
+     * @param includeWorkingAreas whether the content of working areas should be included (requires that
+     * the layout was saved in the first place)
+     * @return the perspective or <code>null</code> if <code>name</code> was not found
+     */
+    public CPerspective getPerspective( String name, boolean includeWorkingAreas ){
     	Setting setting = control.getOwner().intern().getSetting( name );
     	if( setting == null ){
     		return null;
     	}
-    	return convert( (CSetting)setting, false );
+    	return convert( (CSetting)setting, includeWorkingAreas );
     }
     
     /**
@@ -741,7 +754,9 @@ public class CControlPerspective {
     	factory.setBasePerspective( inner );
     	
     	CommonSingleDockableFactory singleDockableFactory = new CommonSingleDockableFactory( control.getOwner(), perspective );
+
     	inner.getSituation().add( singleDockableFactory );
+    	inner.getSituation().addBackup( new RegisteringDockFactory<CommonDockable, CommonElementPerspective, CommonSingleDockableLayout>( control.getOwner().intern(), singleDockableFactory ) );
     	inner.getSituation().add( new CommonDockStationFactory( control.getOwner(), factory, singleDockableFactory ) );
     	
     	return frontend;
