@@ -386,42 +386,38 @@ public class WindowMover {
 		}
 		
 		private void handleMouseReleased( MouseEvent e ){
-			if( !e.isConsumed() ){
-				e.consume();
-				
-				Point current = e.getPoint();
-				convertPointToScreen( current, e.getComponent() );
-				
-				if( relocator != null ){
-					Reaction reaction = relocator.drop( current.x, current.y, e.getModifiersEx() );
+			Point current = e.getPoint();
+			convertPointToScreen( current, e.getComponent() );
+			
+			if( relocator != null ){
+				Reaction reaction = relocator.drop( current.x, current.y, e.getModifiersEx() );
 
-					switch( reaction ){
-						case BREAK:
-							relocator = null;
-							uninstallDragAcceptance();
-							uninstallVeto();
-							break;
-						case BREAK_CONSUMED:
-							relocator = null;
-							uninstallDragAcceptance();
-							uninstallVeto();
-							e.consume();
-							break;
-						case CONTINUE_CONSUMED:
-							e.consume();
-							break;
-					}
+				switch( reaction ){
+					case BREAK:
+						relocator = null;
+						uninstallDragAcceptance();
+						uninstallVeto();
+						break;
+					case BREAK_CONSUMED:
+						relocator = null;
+						uninstallDragAcceptance();
+						uninstallVeto();
+						e.consume();
+						break;
+					case CONTINUE_CONSUMED:
+						e.consume();
+						break;
 				}
-				
-				if( e.getButton() == MouseEvent.BUTTON1 ){
-					if( magnet != null ){
-						magnet.stop();
-					}
-					startPoint = null;
-					startBoundaries = null;
-					uninstallDragAcceptance();
-					uninstallVeto();
+			}
+			
+			if( e.getButton() == MouseEvent.BUTTON1 ){
+				if( magnet != null ){
+					magnet.stop();
 				}
+				startPoint = null;
+				startBoundaries = null;
+				uninstallDragAcceptance();
+				uninstallVeto();
 			}
 		}
 	}

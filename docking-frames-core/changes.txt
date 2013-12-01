@@ -990,3 +990,6 @@
 [v1.1.2p10a]
  - Bugfix: ToolbarGroupTitle did ignore the color, and always used the same gray
  - Bugfix: When reading a CPerspective a new instanceof of CommonSingleDockableFactory needed to be registered as backup factory
+ 
+[v1.1.2p10b]
+ - Bugfix by Veronique: clicking on a floating Dockable did cause the WindowMover to register a VetoableDockRelocatorListener, but that listener was never unregistered because the mouseReleased-event was already consumed by the mousePressed method.
