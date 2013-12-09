@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.common.perspective;
 
+import java.util.List;
+
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 import bibliothek.gui.dock.common.CControl;
@@ -41,6 +43,7 @@ import bibliothek.gui.dock.common.perspective.mode.LocationModeManagerPerspectiv
 import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.perspective.PerspectiveDockable;
+import bibliothek.gui.dock.station.split.GridNode;
 import bibliothek.gui.dock.station.split.PerspectiveSplitDockGrid;
 import bibliothek.gui.dock.station.split.PerspectiveSplitDockTree;
 import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
@@ -432,6 +435,14 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 	public PerspectiveSplitDockGrid grid(){
 		gridChanges = true;
 		return grid;
+	}
+	
+	/**
+	 * Gets all the nodes of the grid. Each node is a set of {@link PerspectiveDockable}s and their location and size.
+	 * @return the nodes, may be empty, is unmodifiable 
+	 */
+	public List<GridNode<PerspectiveDockable>> getGridNodes(){
+		return grid.getGridNodes();
 	}
 
 	/**

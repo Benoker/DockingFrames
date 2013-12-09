@@ -26,6 +26,8 @@
 package bibliothek.gui.dock.station.split;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -422,7 +424,35 @@ public abstract class AbstractSplitDockGrid<D> {
 	protected List<Node<D>> getNodes(){
 		return nodes;
 	}
-		
+	
+	/**
+	 * Gets all the nodes of this grid. Each node is a set of <code>D</code>s 
+	 * and their location.
+	 * @return the nodes, the list is not modifiable
+	 */
+	public List<GridNode<D>> getGridNodes(){
+		return Collections.<GridNode<D>>unmodifiableList( nodes );
+	}
+
+	/**
+	 * Gets the one node containing <code>dockable</code>. This method checks for 
+	 * equality using the <code>==</code> operation.
+	 * @param dockable the item to search
+	 * @return the node or <code>null</code> if not found
+	 */
+	protected Node<D> getNode( D dockable ){
+		for( Node<D> node : nodes ){
+			if( node.dockables != null ){
+				for( D item : node.dockables ){
+					if( item == dockable ){
+						return node;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Transforms the grid into a tree and returns the root.
 	 * @return the root, can be <code>null</code>
@@ -666,7 +696,7 @@ public abstract class AbstractSplitDockGrid<D> {
 	 * @param <D> the kind of element that represents a {@link Dockable}
 	 * @author Benjamin Sigg
 	 */
-	protected static class Node<D>{
+	protected static class Node<D> implements GridNode<D>{
 		/** the x-coordinate */
 		public double x;
 		/** the y-coordinate */
@@ -707,6 +737,51 @@ public abstract class AbstractSplitDockGrid<D> {
 			}
 			else{
 				return tree.vertical( childA.put( tree ), childB.put( tree ), divider, placeholders, placeholderMap, -1 );
+			}
+		}
+
+		@Override
+		public double getX() {
+			return x;
+		}
+
+		@Override
+		public double getY() {
+			return y;
+		}
+
+		@Override
+		public double getWidth() {
+			return width;
+		}
+
+		@Override
+		public double getHeight() {
+			return height;
+		}
+
+		@Override
+		public List<D> getDockables() {
+			if( dockables == null ){
+				return Collections.emptyList();
+			}
+			else{
+				return Collections.unmodifiableList( Arrays.asList( dockables ) );
+			}
+		}
+
+		@Override
+		public D getSelected() {
+			return selected;
+		}
+
+		@Override
+		public List<Path> getPlaceholders() {
+			if( placeholders == null ){
+				return Collections.emptyList();
+			}
+			else{
+				return Collections.unmodifiableList( Arrays.asList( placeholders ) );
 			}
 		}
 	}

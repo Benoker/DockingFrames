@@ -993,3 +993,6 @@
  
 [v1.1.2p10b]
  - Bugfix by Veronique: clicking on a floating Dockable did cause the WindowMover to register a VetoableDockRelocatorListener, but that listener was never unregistered because the mouseReleased-event was already consumed by the mousePressed method.
+ 
+[v1.1.2p10c]
+ - API: allow clients access to the nodes of an AbstractSplitDockGrid
