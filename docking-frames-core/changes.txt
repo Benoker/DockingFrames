@@ -996,3 +996,6 @@
  
 [v1.1.2p10c]
  - API: allow clients access to the nodes of an AbstractSplitDockGrid
+ 
+[v1.1.2p10d]
+ - Bugfix: when minimizing a Dockable, focus the most recent Dockable that was focused - instead of the Dockable that was not focused the longest.

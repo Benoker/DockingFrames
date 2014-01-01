@@ -674,6 +674,7 @@ public class CControl {
 		    					CDockable cdockable = ((CommonDockable)next).getDockable();
 		    					if( cdockable.getExtendedMode() != ExtendedMode.MINIMIZED ){
 		    						getController().setFocusedDockable( cdockable.intern(), true );
+		    						break;
 		    					}
 		    				}
 		    			}
