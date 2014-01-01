@@ -740,27 +740,22 @@ public abstract class AbstractSplitDockGrid<D> {
 			}
 		}
 
-		@Override
 		public double getX() {
 			return x;
 		}
 
-		@Override
 		public double getY() {
 			return y;
 		}
 
-		@Override
 		public double getWidth() {
 			return width;
 		}
 
-		@Override
 		public double getHeight() {
 			return height;
 		}
 
-		@Override
 		public List<D> getDockables() {
 			if( dockables == null ){
 				return Collections.emptyList();
@@ -770,12 +765,10 @@ public abstract class AbstractSplitDockGrid<D> {
 			}
 		}
 
-		@Override
 		public D getSelected() {
 			return selected;
 		}
 
-		@Override
 		public List<Path> getPlaceholders() {
 			if( placeholders == null ){
 				return Collections.emptyList();
