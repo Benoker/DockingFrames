@@ -121,6 +121,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	private boolean resizeOnRemove = false;
 	private Column columnToResize = null;
 	private Dockable dockableCausingResize = null;
+	private int maxColumnCount = -1;
 	
 	/**
 	 * Creates a new station.
@@ -566,6 +567,29 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	}
 	
 	/**
+	 * Gets the maximal amount of columns.
+	 * @return the maximal amount of columns, or <code>-1</code>
+	 */
+	public int getMaxColumnCount() {
+		return maxColumnCount;
+	}
+	
+	/**
+	 * Sets the maximum amount of columns that the user can create. The station does not
+	 * re-organize itself if there are currently more columns than <code>maxColumnCount</code>.<br>
+	 * A value of <code>-1</code> can be set, telling the station that there is no maximum.
+	 * @param maxColumnCount the maximum amount of columns, <code>-1</code> or any number that is greater than <code>0</code>
+	 */
+	public void setMaxColumnCount( int maxColumnCount ) {
+		if( maxColumnCount == -1 || maxColumnCount >= 1 ){
+			this.maxColumnCount = maxColumnCount;
+		}
+		else{
+			throw new IllegalArgumentException( "maxColumnCount is out of bounds" );
+		}
+	}
+	
+	/**
 	 * Ensures that the dropped {@link Dockable} does not come to rest at a location that would destroy the columns.
 	 */
 	@Override
@@ -651,7 +675,12 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 		@Override
 		public PutInfo validatePutInfo( SplitDockStation station, PutInfo putInfo ){
 			putInfo = ensureDropLocation( putInfo );
-			return super.validatePutInfo( station, putInfo );
+			if( putInfo != null ){
+				return super.validatePutInfo( station, putInfo );
+			}
+			else{
+				return null;
+			}
 		}
 		
 		public Leaf[] getLastLeafOfColumns(){
@@ -778,6 +807,12 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 				}
 
 				if( header ) {
+					int columnCount = getMap().getColumnCount();
+					boolean canHaveNewColumns = maxColumnCount == -1 || columnCount < maxColumnCount;
+					if( !canHaveNewColumns ){
+						return null;
+					}
+					
 					SplitNode node = putInfo.getNode();
 					while( node != null && !model.isHeaderLevel( node ) ) {
 						node = node.getParent();
