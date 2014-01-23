@@ -999,6 +999,3 @@
  
 [v1.1.2p10d]
  - Bugfix: when minimizing a Dockable, focus the most recent Dockable that was focused - instead of the Dockable that was not focused the longest.
-
-[v1.1.2p10e]
- - Bugfix: the RectGradientPainter did paint a line that was placed at a bad position
