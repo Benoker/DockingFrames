@@ -1248,6 +1248,12 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 		@Override
 		public Dimension getPreferredSize(){
+			// this is a workaround because the boundaries of the children are required to
+			// compute the preferred size of this components. It is not pretty...
+			if( dockablePane != null && !dockablePane.isValid() ){
+				dockablePane.doLayout();
+			}
+			
 			return getBasePane().getPreferredSize();
 		}
 

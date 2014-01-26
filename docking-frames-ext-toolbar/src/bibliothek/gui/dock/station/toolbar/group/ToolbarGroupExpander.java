@@ -49,7 +49,7 @@ import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * This is a helper class enabling support for {@link ExpandedState} of the children of a {@link ToolbarGroupDockStation}.
- * This class provides all the tasks that may be usefull:
+ * This class provides all the tasks that may be useful:
  * <ul>
  * 	<li>It makes sure that during drag and drop operations the dragged dockable changes its state if necessary</li>
  *  <li>It provides a {@link ColumnDockActionSource} to allow implementation of a {@link DockTitle} showing

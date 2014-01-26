@@ -168,7 +168,6 @@ public class ToolbarContainerLayoutManager implements LayoutManager2{
 		for( int i = 0, n = parent.getComponentCount(); i <= n; i++ ){
 			gaps += spans.getGap( i );
 		}
-		
 		if( station.getOrientation() == Orientation.HORIZONTAL ){
 			if( preferred.width > gaps ){
 				float factor = parent.getWidth() / (float)(preferred.width - gaps);
