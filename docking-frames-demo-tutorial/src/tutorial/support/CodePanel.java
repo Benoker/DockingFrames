@@ -96,13 +96,11 @@ public class CodePanel {
 			
 			StyleConstants.setFontFamily( textStyle, "Monospaced" );
 			StyleConstants.setBold( textStyle, false );
-			StyleConstants.setItalic( textStyle, false );
 			
 			StyleConstants.setForeground( keywordStyle, new Color( 0, 0, 150 ));
 			StyleConstants.setBold( keywordStyle, true );
 			
 			StyleConstants.setForeground( commentStyle, new Color( 0, 150, 0 ));
-			StyleConstants.setItalic( commentStyle, true );
 			
 			StyleConstants.setForeground( stringStyle, Color.BLUE );
 
