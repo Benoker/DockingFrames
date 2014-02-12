@@ -2752,7 +2752,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 		}
 
-		dividerStrategy.getValue().paint( this, g );
+		SplitDividerStrategy dividerStrategy = this.dividerStrategy.getValue();
+		if( dividerStrategy != null ){
+			dividerStrategy.paint( this, g );
+		}
 		
 		if( dragInfo != null && dragInfo.getDockable() != null ){
 			Leaf leaf = getRoot().getLeaf( dragInfo.getDockable() );

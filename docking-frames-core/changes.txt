@@ -1003,3 +1003,6 @@
 [v1.1.2p10e]
  - Bugfix: the RectGradientPainter did paint a line that was placed at a bad position
  - Bugfix: made a dirty hackaround of a design flaw in the library that caused ToolbarGroupDockStations to report the wrong preferred size.
+ 
+[v1.1.2p10f]
+ - Bugfix: prevent a possible NPE if the SplitDockStation is painted without being attached to a DockController
