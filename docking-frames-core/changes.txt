@@ -1006,3 +1006,6 @@
  
 [v1.1.2p10f]
  - Bugfix: prevent a possible NPE if the SplitDockStation is painted without being attached to a DockController
+ 
+[v1.1.2p10g]
+ - Bugfix: ModeManager.getModeHistory now always includes the current mode, even if the dockable was never moved around.

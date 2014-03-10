@@ -978,14 +978,24 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 		if( handle == null )
 			return Collections.emptyList();
 		
+		M lastMode = getCurrentMode( dockable );
+		
 		List<M> result = new ArrayList<M>();
 		for( Path path : handle.history ){
 			M mode = getMode( path );
-			if( mode != null ){
-				result.add( mode );
+			addMode( mode, result );
+			if( mode == lastMode ){
+				lastMode = null;
 			}
 		}
+		addMode( lastMode, result );
 		return result;
+	}
+	
+	private void addMode( M mode, List<M> result ){
+		if( mode != null ){
+			result.add( mode );
+		}
 	}
 	
 	/**

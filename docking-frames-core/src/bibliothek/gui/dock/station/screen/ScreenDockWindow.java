@@ -228,7 +228,7 @@ public interface ScreenDockWindow {
     public void validate();
     
     /**
-     * Gets the root {@link Component} fo this window.
+     * Gets the root {@link Component} of this window.
      * @return the root component
      */
     public Component getComponent();

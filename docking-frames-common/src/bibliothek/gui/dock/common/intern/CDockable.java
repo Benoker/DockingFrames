@@ -373,7 +373,7 @@ public interface CDockable {
 
 	/**
 	 * Sets the location of this {@link CDockable} aside <code>dockable</code> in all {@link ExtendedMode}s. If this
-	 * {@link Dockable} is visible, then it may change its location and {@link ExtendedMode}. Note that <code>dockable</code> and <code>this</code>
+	 * {@link Dockable} is visible, then it may or may not change its location and {@link ExtendedMode}. Note that <code>dockable</code> and <code>this</code>
 	 * must not be the same object, and that both {@link CDockable}s must be {@link CControl#addDockable(bibliothek.gui.dock.common.SingleCDockable) registered}
 	 * at a {@link CControl}. 
 	 * @param dockable the item whose locations should be copied
@@ -393,7 +393,9 @@ public interface CDockable {
 	
 	/**
 	 * Searches for the last focused {@link CDockable} with the same {@link #getWorkingArea() working area} as
-	 * <code>this</code>, and calls {@link #setLocationsAside(CDockable)} with it.
+	 * <code>this</code>, and calls {@link #setLocationsAside(CDockable)} with it.<br>
+	 * Note that if this <code>dockable</code> is visible, then it may or may not change its location. This method
+	 * should be called <i>before</i> making the <code>dockable</code> visible.
 	 * @return <code>true</code> if the last focused {@link CDockable} was found, <code>false</code> otherwise. If
 	 * <code>false</code> then no action was performed
 	 */
