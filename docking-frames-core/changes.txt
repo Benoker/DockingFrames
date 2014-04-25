@@ -1009,3 +1009,7 @@
  
 [v1.1.2p10g]
  - Bugfix: ModeManager.getModeHistory now always includes the current mode, even if the dockable was never moved around.
+ 
+[v1.1.2p11]
+ - Bugfix: Flat-theme did not properly support the annotation @TabDockAction
+ 

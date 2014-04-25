@@ -27,13 +27,14 @@ package bibliothek.extension.gui.dock.theme.flat;
 
 import javax.swing.border.Border;
 
-import bibliothek.extension.gui.dock.theme.BubbleTheme;
+import bibliothek.extension.gui.dock.theme.FlatTheme;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayer;
 import bibliothek.gui.dock.themes.basic.BasicDockableDisplayerDecorator;
+import bibliothek.gui.dock.themes.basic.TabDecorator;
 import bibliothek.gui.dock.title.DockTitle;
 
 /**
@@ -65,7 +66,12 @@ public class FlatDockableDisplayer extends BasicDockableDisplayer {
     }
     
     @Override
+    protected BasicDockableDisplayerDecorator createTabDecorator() {
+    	return new TabDecorator( getStation(), FlatTheme.ACTION_DISTRIBUTOR );
+    }
+    
+    @Override
     protected BasicDockableDisplayerDecorator createStackedDecorator(){
-    	return createStackedDecorator( BubbleTheme.ACTION_DISTRIBUTOR );
+    	return createStackedDecorator( FlatTheme.ACTION_DISTRIBUTOR );
     }
 }
