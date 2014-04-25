@@ -2689,6 +2689,16 @@ public class CControl {
         Set<String> settings = frontend.getSettings();
         return settings.toArray( new String[ settings.size() ] );
     }
+    
+    /**
+     * Gets the name of the current layout (the one with which {@link #save(String)} was called). The current
+     * layout may not have a name if it was never saved. The result of this method will be a {@link String} 
+     * that is part of {@link #layouts()}.
+     * @return the name of the current layout, or <code>null</code>
+     */
+    public String getLayout(){
+    	return frontend.getCurrentSetting();
+    }
 
     /**
      * A class giving access to the internal methods of the enclosing

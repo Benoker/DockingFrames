@@ -1012,4 +1012,5 @@
  
 [v1.1.2p11]
  - Bugfix: Flat-theme did not properly support the annotation @TabDockAction
+ - API: CControl now can tell the name of the layout that is currently applied
  
