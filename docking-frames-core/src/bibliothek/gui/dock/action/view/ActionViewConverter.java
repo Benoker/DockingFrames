@@ -161,7 +161,7 @@ public class ActionViewConverter {
                 BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
                 MiniButton<BasicButtonModel> button = new BasicMiniButton( handler, handler );
                 handler.setModel( button.getModel() );
-                return handler;                
+                return handler;
 			}
 		});
 		

@@ -60,7 +60,11 @@ public class DefaultActionPopupMenu implements ActionPopupMenu{
 	private boolean showing = false;
 	
 	public DefaultActionPopupMenu( Dockable dockable, DockActionSource actions ){
-		menu = new JPopupMenu();
+		this( dockable, actions, new JPopupMenu() );
+	}
+	
+	public DefaultActionPopupMenu( Dockable dockable, DockActionSource actions, JPopupMenu menu ){
+		this.menu = menu;
 		handler = new MenuMenuHandler( actions, dockable, menu );
 		menu.addPopupMenuListener( new PopupMenuListener(){
 			public void popupMenuWillBecomeInvisible( PopupMenuEvent e ){
@@ -78,7 +82,6 @@ public class DefaultActionPopupMenu implements ActionPopupMenu{
 			}
 			
 			public void popupMenuWillBecomeVisible( PopupMenuEvent e ){
-				
 			}
 			
 			public void popupMenuCanceled( PopupMenuEvent e ){
