@@ -35,6 +35,7 @@ import bibliothek.gui.dock.action.SelectableDockAction;
 import bibliothek.gui.dock.common.action.core.CommonSimpleRadioAction;
 import bibliothek.gui.dock.common.intern.action.CSelectableAction;
 import bibliothek.gui.dock.event.SelectableDockActionListener;
+import bibliothek.util.FrameworkOnly;
 
 /**
  * An action which behaves like a {@link JRadioButton}.<br>
@@ -52,12 +53,18 @@ public abstract class CRadioButton extends CSelectableAction<CommonSimpleRadioAc
     public CRadioButton() {
         super( null );
         init( new CommonSimpleRadioAction( this ));
-        intern().addSelectableListener( new SelectableDockActionListener(){
-            public void selectedChanged( SelectableDockAction action, Set<Dockable> dockables ) {
-                if( isSelected() && group != null )
-                    group.selected( CRadioButton.this );
-            }
-        });
+    }
+    
+    /**
+     * Creates a new radiobutton using <code>action</code> as internal representation
+     * @param action the internal representation, can be <code>null</code> in which case
+     * subclasses should call {@link #init(CommonSimpleRadioAction)}
+     */
+    protected CRadioButton( CommonSimpleRadioAction action ){
+    	super( null );
+    	if( action != null ){
+    		init( action );
+    	}
     }
     
     /**
@@ -71,10 +78,22 @@ public abstract class CRadioButton extends CSelectableAction<CommonSimpleRadioAc
         setIcon( icon );
     }
     
+    @Override
+    protected void init( CommonSimpleRadioAction action ) {
+    	super.init( action );
+    	action.addSelectableListener( new SelectableDockActionListener(){
+    		public void selectedChanged( SelectableDockAction action, Set<Dockable> dockables ) {
+    			if( isSelected() && group != null )
+    				group.selected( CRadioButton.this );
+    		}
+    	});
+    }
+    
     /**
      * Sets the group to which this button belongs.
      * @param group the group
      */
+    @FrameworkOnly
     void setGroup( CRadioGroup group ) {
         this.group = group;
     }
