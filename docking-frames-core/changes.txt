@@ -1013,4 +1013,8 @@
 [v1.1.2p11]
  - Bugfix: Flat-theme did not properly support the annotation @TabDockAction
  - API: CControl now can tell the name of the layout that is currently applied
- - API: Added new constructors for CCheckBox and CRadioButton such that clients can more easily exchange the internal representation of these actions 
+ - API: Added new constructors for CCheckBox and CRadioButton such that clients can more easily exchange the internal representation of these actions
+ - API: Allow clients to overridde the JPopupMenu of DefaultActionPopupMenu
+ 
+[v1.1.2p11a]
+ - Bugfix: when removing a CDockable from a SplitDockStation, and another CDockable has its size locked, then the other Dockable is less likely to be resized. 

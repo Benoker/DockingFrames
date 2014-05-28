@@ -123,7 +123,7 @@ public class CLockedResizeLayoutManager extends LockedResizeLayoutManager<Reques
         
         RequestDimension request = new RequestDimension();
         Rectangle bounds = leaf.getCurrentBounds();
-        
+
         if( lockedWidth ){
             double width = leaf.getWidth();
             if( width > 0 ){

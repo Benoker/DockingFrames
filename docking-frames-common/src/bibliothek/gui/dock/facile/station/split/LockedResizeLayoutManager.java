@@ -103,6 +103,9 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
         	}
         	updateBoundsLocked( root, x, y, factorW, factorH );
         }
+        else if( hasTreeChanged( root )){
+        	updateBoundsLocked( root, x, y, factorW, factorH );	
+        }
         else{ 
         	super.updateBounds( root, x, y, factorW, factorH );
         }
@@ -118,9 +121,19 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
     	Rectangle current = root.getCurrentBounds();
         Rectangle bounds = root.getBounds();
         
-        return !current.equals( bounds ); // || root.hasTreeChanged();
+        return !current.equals( bounds );
     }
 
+    /**
+     * Tells whether the current operation happens because the tree has changed (e.g. a leaf has been added or removed). 
+     * This method is only called if {@link #isResize(Root)} already returned <code>false</code>. 
+     * @param root the item that is going to be updated
+     * @return whether the tree has changed
+     */
+    protected boolean hasTreeChanged( Root root ){
+    	return root.hasTreeChanged();
+    }
+    
     /**
      * Updates the bounds of <code>root</code> and all its children and does
      * consider all {@link ResizeRequest}.
