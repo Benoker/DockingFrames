@@ -62,7 +62,24 @@ import bibliothek.util.xml.XException;
  * @author Benjamin Sigg
  */
 public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
+	private boolean updatingFullLayout = false;
+	
 	public boolean setLayout( DockFrontendInternals frontend, Setting setting, boolean entry ) throws IOException, XException{
+		try{
+			updatingFullLayout = true;
+			return updateLayout( frontend, setting, entry );
+		}
+		finally{
+			updatingFullLayout = false;
+		}
+	}
+	
+	@Override
+	public boolean shouldUpdateLayoutOnAdd( Dockable dockable ) {
+		return !updatingFullLayout;
+	}
+	
+	private boolean updateLayout( DockFrontendInternals frontend, Setting setting, boolean entry ) throws IOException, XException{
 		DockSituation situation = createSituation( frontend, entry, true );
         
         DockSituationIgnore ignore = situation.getIgnore();

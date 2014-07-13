@@ -55,6 +55,7 @@ public interface LayoutChangeStrategy {
 	 * The {@link DockRegister} is {@link DockRegister#isStalled() stalled} while this method runs.<br>
 	 * This method should use the {@link VetoManager} provided by <code>frontend</code> to ensure
 	 * that all operations are legal.
+	 * @see #shouldUpdateLayoutOnAdd(Dockable)
 	 * @param frontend internal information about a {@link DockFrontend}
 	 * @param setting the layout to read and apply
 	 * @param entry <code>true</code> if <code>setting</code> contains only little information about
@@ -113,4 +114,15 @@ public interface LayoutChangeStrategy {
      * @return the strategy, can be <code>null</code>
      */
 	public PlaceholderStrategy getPlaceholderStrategy( DockFrontendInternals frontend );
+
+	/**
+	 * Called when <code>dockable</code> is added to a {@link DockFrontend}, and the frontend already knows the layout which should be used
+	 * for <code>dockable</code>. If the result is <code>true</code>, then all children of <code>dockable</code> are removed, and reloaded to apply the layout
+	 * that is stored in the frontend.<br>
+	 * Subclasses may return <code>false</code> if {@link #setLayout(DockFrontendInternals, Setting, boolean)} is currently executed, preventing concurrent
+	 * modifications of the dock-tree.  
+	 * @param dockable the dockable that is added to a {@link DockFrontend}
+	 * @return <code>true</code> if the layout of <code>dockable</code> should be updated.
+	 */
+	public boolean shouldUpdateLayoutOnAdd( Dockable dockable );
 }

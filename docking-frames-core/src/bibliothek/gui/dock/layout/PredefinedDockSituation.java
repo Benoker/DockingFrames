@@ -684,7 +684,6 @@ public class PredefinedDockSituation extends DockSituation {
             return element;
         }
 
-        @SuppressWarnings("unchecked")
         public DockElement layout( PredefinedLayout layout, PlaceholderStrategy placeholders ) {
             DockLayoutInfo delegate = layout.getDelegate();
             

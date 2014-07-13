@@ -1017,4 +1017,7 @@
  - API: Allow clients to overridde the JPopupMenu of DefaultActionPopupMenu
  
 [v1.1.2p11a]
- - Bugfix: when removing a CDockable from a SplitDockStation, and another CDockable has its size locked, then the other Dockable is less likely to be resized. 
+ - Bugfix: when removing a CDockable from a SplitDockStation, and another CDockable has its size locked, then the other Dockable is less likely to be resized.
+ 
+[v1.1.2p12]
+ ! Bugfix: if a MultipleCDockable was stored as child of another MultipleCDockable, storing and loading the layout failed. The reason for that was a feature in DockFrontend.addDockable, where the layout of any new Dockable was updated if an old layout was stored in the frontend. In the case of a MultipleCDockable there is an old layout stored, because they are "missing" at the time when the layout-file is read. The solution is to be more careful about applying old layouts when loading a new layout at the same time.

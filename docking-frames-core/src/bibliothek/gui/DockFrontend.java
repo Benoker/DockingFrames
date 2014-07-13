@@ -104,6 +104,9 @@ import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.WindowProvider;
 import bibliothek.gui.dock.util.extension.ExtensionName;
 import bibliothek.util.Path;
+import bibliothek.util.Todo;
+import bibliothek.util.Todo.Compatibility;
+import bibliothek.util.Todo.Priority;
 import bibliothek.util.Version;
 import bibliothek.util.xml.XAttribute;
 import bibliothek.util.xml.XElement;
@@ -243,6 +246,17 @@ public class DockFrontend {
      * with the entry flag set to <code>true</code>. Can be <code>null</code>.
      */
     private Setting lastAppliedEntrySetting = null;
+    
+    /**
+     * Tells whether the layout of a {@link Dockable} that is being {@link #addDockable(String, Dockable) added} is
+     * currently read and applied to said {@link Dockable}. If so, no other layout will be applied automatically when
+     * loading a child of the new element.  
+     */
+    @Todo(compatibility=Compatibility.COMPATIBLE, priority=Priority.MINOR, target=Todo.Version.VERSION_1_1_3,
+    		description="This really is a workaround preventing loading a layout while loading another layout. The "
+    				+ "better solution would be to not apply layouts to children that already have a layout stored "
+    				+ "in the DockInfo-object")
+    private boolean readingOldLayoutInformation = false;
     
     /**
      * Constructs a new frontend, creates a new controller.
@@ -575,8 +589,10 @@ public class DockFrontend {
         }
         
         DockLayoutComposition layout = info.getLayout();
-        if( layout != null ){
+        if( layout != null && !readingOldLayoutInformation && layoutChangeStrategy.shouldUpdateLayoutOnAdd(dockable) ){
             try{
+            	readingOldLayoutInformation = true;
+            	
                 DockSituation situation = layoutChangeStrategy.createSituation( new Internals(), false );
                 layout = situation.fillMissing( layout );
                 situation.convert( layout );
@@ -584,6 +600,9 @@ public class DockFrontend {
             }
             catch( IOException ex ){
                 throw new IllegalArgumentException( "Cannot read old layout information", ex );
+            }
+            finally{
+            	readingOldLayoutInformation = false;
             }
         }
         
