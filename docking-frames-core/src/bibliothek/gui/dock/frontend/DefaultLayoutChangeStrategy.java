@@ -74,7 +74,6 @@ public class DefaultLayoutChangeStrategy implements LayoutChangeStrategy{
 		}
 	}
 	
-	@Override
 	public boolean shouldUpdateLayoutOnAdd( Dockable dockable ) {
 		return !updatingFullLayout;
 	}
