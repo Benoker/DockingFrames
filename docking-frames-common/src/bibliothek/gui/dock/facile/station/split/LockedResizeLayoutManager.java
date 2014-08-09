@@ -94,13 +94,6 @@ public abstract class LockedResizeLayoutManager<T> extends DelegatingSplitLayout
         }
         
         if( resize ){
-        	try{
-	        	root.setBaseBounds( current );
-	        	super.updateBounds( root, x, y, factorW, factorH );
-        	}
-        	finally{
-        		root.setBaseBounds( null );
-        	}
         	updateBoundsLocked( root, x, y, factorW, factorH );
         }
         else if( hasTreeChanged( root )){
