@@ -92,7 +92,7 @@ public class MediumBoundaryRestriction extends AbstractBoundaryRestriction{
 		
 		Rectangle result = new Rectangle( target );
 
-		Dimension minimum = window.getMinimumWindowSize();
+		Dimension minimum = getMinimumSize( window );
 		
 		result.width = Math.max( minimum.width, result.width );
 		result.height = Math.max( minimum.height, result.height );
@@ -105,6 +105,17 @@ public class MediumBoundaryRestriction extends AbstractBoundaryRestriction{
 
 		return result;
     }
+	
+	/**
+	 * Gets the minimum size of <code>window</code>, the default implementation just calls
+	 * {@link ScreenDockWindow#getMinimumWindowSize()}, but subclasses may override this method
+	 * to use another algorithm for finding the minimum window size.
+	 * @param window the window whose minimum size is required
+	 * @return the minimum size, must not be <code>null</code>
+	 */
+	protected Dimension getMinimumSize( ScreenDockWindow window ){
+		return window.getMinimumWindowSize();
+	}
 	
 	/**
 	 * Finds and returns the boundaries of the screen in which <code>x/y</code> are.
