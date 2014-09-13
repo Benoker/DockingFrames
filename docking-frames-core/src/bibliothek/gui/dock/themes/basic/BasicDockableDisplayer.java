@@ -623,8 +623,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	}
     	return getDockable();
     }
-    
-    @Override
+
     public Point getTitleCenter() {
     	DockElementRepresentative moveable = getMoveableElement();
     	if( moveable == null ){
