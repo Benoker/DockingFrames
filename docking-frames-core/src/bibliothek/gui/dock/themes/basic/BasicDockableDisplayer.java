@@ -306,11 +306,9 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     		this.decorator.removeDecoratorListener( decoratorListener );
     	}
     	this.decorator = decorator;
-    	if( this.decorator != null ){
-    		this.decorator.addDecoratorListener( decoratorListener );
-    	}
     	
-    	decorator.setController( controller );
+    	this.decorator.addDecoratorListener( decoratorListener );
+    	this.decorator.setController( controller );
     	
     	resetDecorator();
     	
@@ -630,7 +628,13 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     		return null;
     	}
     	Component component = moveable.getComponent();
+    	
+    	if( !SwingUtilities.isDescendingFrom( component, getComponent() )){
+    		return null;
+    	}
+    	
     	Point topLeft = new Point( 0, 0 );
+    	
     	topLeft = SwingUtilities.convertPoint( component, topLeft, getComponent() );
     	Dimension size = component.getSize();
     	

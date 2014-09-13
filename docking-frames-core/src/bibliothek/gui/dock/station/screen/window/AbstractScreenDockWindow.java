@@ -421,6 +421,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     	if( visible != isVisible() ){
 	        window.setVisible( visible );
 	        fireVisibilityChanged();
+	        checkWindowBoundsAsync();
     	}
     }
     
@@ -488,6 +489,21 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
         }
     }
 
+    /**
+     * Adds an event into the EDT that calls {@link #checkWindowBounds()} at a later time, 
+     * the boundaries will only be checked if this window is visible.
+     */
+    public void checkWindowBoundsAsync(){
+    	SwingUtilities.invokeLater( new Runnable() {
+			@Override
+			public void run() {
+				if( isVisible() ){
+					checkWindowBounds();
+				}
+			}
+		});
+    }
+    
     public void checkWindowBounds() {
         Rectangle valid = getStation().getBoundaryRestriction().check( this );
         if( valid != null ){
