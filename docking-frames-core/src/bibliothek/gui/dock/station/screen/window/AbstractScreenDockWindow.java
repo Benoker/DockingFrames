@@ -495,7 +495,6 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
      */
     public void checkWindowBoundsAsync(){
     	SwingUtilities.invokeLater( new Runnable() {
-			@Override
 			public void run() {
 				if( isVisible() ){
 					checkWindowBounds();
