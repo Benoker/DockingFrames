@@ -1026,4 +1026,7 @@
  - Bugfix: after resizing a SplitDockStation update the boundaries of its children respecting "locked children" directly, without first updating the boundaries ignoring the locks. The first update of the boundaries did delete information that was required in the second update.
 
 [v1.1.2p12b]
- - API: Added "getMinimumSize" to "MediumBoundaryRestriction", because some clients want to just modify the minimum size of externalized Dockables. 
+ - API: Added "getMinimumSize" to "MediumBoundaryRestriction", because some clients want to just modify the minimum size of externalized Dockables.
+ 
+[v1.1.2p12c]
+ ! Bugfix: DockableDisplayer can now calculate a point that must always be visible to the user. This point is used when showing an externalized Dockable to prevent it from leaving the screen. 

@@ -624,6 +624,20 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     	return getDockable();
     }
     
+    @Override
+    public Point getTitleCenter() {
+    	DockElementRepresentative moveable = getMoveableElement();
+    	if( moveable == null ){
+    		return null;
+    	}
+    	Component component = moveable.getComponent();
+    	Point topLeft = new Point( 0, 0 );
+    	topLeft = SwingUtilities.convertPoint( component, topLeft, getComponent() );
+    	Dimension size = component.getSize();
+    	
+    	return new Point( topLeft.x + size.width/2, topLeft.y + size.height/2 );
+    }
+    
     /**
      * Gets the Component which should be used to layout the current
      * Dockable.

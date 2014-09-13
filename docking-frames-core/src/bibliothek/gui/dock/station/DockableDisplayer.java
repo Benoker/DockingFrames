@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station;
 
 import java.awt.Component;
 import java.awt.Insets;
+import java.awt.Point;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -153,6 +154,14 @@ public interface DockableDisplayer extends DockComponentRoot{
      */
     public DockTitle getTitle();
 
+    /**
+     * Gets the center point of the {@link #getTitle() title} or any {@link Component} that
+     * behaves as if it would be the title. Some {@link DockStation}s may use this information
+     * to make sure, that the user can always grab and move around the {@link Dockable}.
+     * @return the center point, may be <code>null</code>
+     */
+    public Point getTitleCenter();
+    
     /**
      * Sets the title of this displayer. If the title is set to <code>null</code>,
      * no title is visible. The displayer will change the 

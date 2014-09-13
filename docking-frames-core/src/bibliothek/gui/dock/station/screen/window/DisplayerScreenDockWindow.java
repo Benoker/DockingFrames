@@ -395,8 +395,8 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
     		return null;
     	}
     	
-    	DockTitle title = displayer.getTitle();
-    	if( title == null ){
+    	Point center = displayer.getTitleCenter();
+    	if( center == null ){
     		return null;
     	}
     	
@@ -404,13 +404,7 @@ public abstract class DisplayerScreenDockWindow implements ScreenDockWindow {
         if( base == null )
             return null;
         
-        Component titleComponent = title.getComponent();
-        
-        Point result = new Point( 0, 0 );
-        result = SwingUtilities.convertPoint( titleComponent, result, base );
-        result.x += titleComponent.getWidth() / 2;
-        result.y += titleComponent.getHeight() / 2;
-        return result;
+        return SwingUtilities.convertPoint( displayer.getComponent(), center, base );
     }
     
     public Point getOffsetDrop() {
