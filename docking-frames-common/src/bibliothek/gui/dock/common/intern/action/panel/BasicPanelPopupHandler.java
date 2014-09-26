@@ -44,7 +44,7 @@ public class BasicPanelPopupHandler extends BasicHandler<CPanelPopup.PanelPopup>
 		@Override
 		public void mousePressed( BasicButtonModel model, boolean mousePressed ){
 			if( mousePressed ){
-				getAction().onMousePressed( getItem(), getModel().getOrientation() );
+				getAction().onMousePressed( getDockable(), getItem(), getModel().getOrientation() );
 			}
 		}
 	};
@@ -61,9 +61,9 @@ public class BasicPanelPopupHandler extends BasicHandler<CPanelPopup.PanelPopup>
 	@Override
 	public void triggered(){
 		if( getModel().isMousePressed() )
-			getAction().onMouseReleased( getItem(), getModel().getOrientation() );
+			getAction().onMouseReleased( getDockable(), getItem(), getModel().getOrientation() );
 		else
-			getAction().onTrigger( getItem(), getModel().getOrientation() );
+			getAction().onTrigger( getDockable(), getItem(), getModel().getOrientation() );
 	}
 	
 	@Override

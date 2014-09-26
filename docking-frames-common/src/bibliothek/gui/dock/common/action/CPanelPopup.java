@@ -34,6 +34,7 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionType;
 import bibliothek.gui.dock.action.view.ActionViewConverter;
@@ -237,48 +238,52 @@ public class CPanelPopup extends CDecorateableAction<CPanelPopup.PanelPopup>{
 	/**
 	 * Called if the mouse is pressed on the button <code>item</code> of
 	 * of a {@link DockTitle} which has orientation <code>orientation</code>.
+	 * @param dockable the element for which this panel is shown
 	 * @param item the pressed component
 	 * @param orientation the orientation of the title
 	 */
-	protected void onMousePressed( JComponent item, Orientation orientation ){
+	protected void onMousePressed( Dockable dockable, JComponent item, Orientation orientation ){
 		if( getButtonBehavior() == ButtonBehavior.OPEN_ON_PRESS ){
-			openDialog( item, orientation );
+			openDialog( dockable, item, orientation );
 		}
 	}
 
 	/**
 	 * Called if the mouse is released of the button <code>item</code> of
 	 * of a {@link DockTitle} which has orientation <code>orientation</code>.
+	 * @param dockable the element for which this panel is shown
 	 * @param item the released component
 	 * @param orientation the orientation of the title
 	 */
-	protected void onMouseReleased( JComponent item, Orientation orientation ){
+	protected void onMouseReleased( Dockable dockable, JComponent item, Orientation orientation ){
 		if( getButtonBehavior() == ButtonBehavior.OPEN_ON_CLICK ){
-			openDialog( item, orientation );
+			openDialog( dockable, item, orientation );
 		}
 	}
 
 	/**
 	 * Called if the button <code>item</code> of a {@link DockTitle} which has
 	 * orientation <code>orientation</code> was triggered.
+	 * @param dockable the element for which this panel is shown
 	 * @param item the triggered button
 	 * @param orientation the orientation of the title
 	 */
-	protected void onTrigger( JComponent item, Orientation orientation ){
-		openDialog( item, orientation );
+	protected void onTrigger( Dockable dockable, JComponent item, Orientation orientation ){
+		openDialog( dockable, item, orientation );
 	}	
 	
 	/**
 	 * Opens a new undecorated dialog below or aside of <code>item</code>. This method
 	 * does nothing if {@link #isOpen()} return <code>true</code>.
+	 * @param dockable the element for which this panel is shown
 	 * @param item the owner of the new dialog
 	 * @param orientation the orientation of the title which shows <code>item</code>
 	 */
-	protected void openDialog( JComponent item, Orientation orientation ){
+	protected void openDialog( Dockable dockable, final JComponent item, Orientation orientation ){
 		if( isOpen() || content == null )
 			return;
 		
-		Point location = new Point();
+		final Point location = new Point();
 		if( orientation.isHorizontal() ){
 			location.y = item.getHeight();
 		}
@@ -287,13 +292,17 @@ public class CPanelPopup extends CDecorateableAction<CPanelPopup.PanelPopup>{
 		}
 		
 		SwingUtilities.convertPointToScreen( location, item );
-		
-		DialogWindow window = createDialogWindow( item );
-		window.setUndecorated( true );
-		window.setContent( getContent() );
-		window.open( location.x, location.y );
-		
-		openPopup( window );
+
+		executeOneDockableHasFocus( dockable, new Runnable() {
+			public void run() {
+				DialogWindow window = createDialogWindow( item );
+				window.setUndecorated( true );
+				window.setContent( getContent() );
+				window.open( location.x, location.y );
+				
+				openPopup( window );				
+			}
+		});
 	}
 	
 	/**
@@ -301,18 +310,22 @@ public class CPanelPopup extends CDecorateableAction<CPanelPopup.PanelPopup>{
 	 * hit.
 	 * @param dockable the source of the event
 	 */
-	protected void onMenuItemTrigger( Dockable dockable ){
+	protected void onMenuItemTrigger( final Dockable dockable ){
 		if( content == null )
 			return;
 		
 		closePopup();
 		
-		DialogWindow window = createDialogWindow( dockable.getComponent() );
-		window.setUndecorated( getMenuBehavior() == MenuBehavior.UNDECORATED_DIALOG );
-		window.setContent( getContent() );
-		window.open( dockable.getComponent() );
-		
-		openPopup( window );
+		executeOneDockableHasFocus( dockable, new Runnable() {
+			public void run() {
+				DialogWindow window = createDialogWindow( dockable.getComponent() );
+				window.setUndecorated( getMenuBehavior() == MenuBehavior.UNDECORATED_DIALOG );
+				window.setContent( getContent() );
+				window.open( dockable.getComponent() );
+				
+				openPopup( window );
+			}
+		});
 	}
 	
 	/**
@@ -348,6 +361,22 @@ public class CPanelPopup extends CDecorateableAction<CPanelPopup.PanelPopup>{
 	}
 	
 	/**
+	 * Calls <code>run</code> once the owning {@link Dockable} of this action has the focus
+	 * @param dockable the element for which this panel is shown
+	 * @param run some piece of code to run, usually it will open the popup-dialog created by {@link #createDialogWindow(Component)}.
+	 * Should be called by the <code>EDT</code>.
+	 */
+	protected void executeOneDockableHasFocus( Dockable dockable, Runnable run ){
+		DockController controller = dockable.getController();
+		if( controller != null ){
+			controller.getFocusController().onFocusRequestCompletion( run );
+		}
+		else {
+			run.run();
+		}
+	}
+	
+	/**
 	 * A custom action shows some dialog or window when triggered
 	 * @author Benjamin Sigg
 	 *
@@ -379,31 +408,34 @@ public class CPanelPopup extends CDecorateableAction<CPanelPopup.PanelPopup>{
 		/**
 		 * Called if the mouse is pressed on the button <code>item</code> of
 		 * of a {@link DockTitle} which has orientation <code>orientation</code>.
+		 * @param dockable the element for which this panel is shown
 		 * @param item the pressed component
 		 * @param orientation the orientation of the title
 		 */
-		public void onMousePressed( JComponent item, Orientation orientation ){
-			CPanelPopup.this.onMousePressed( item, orientation );
+		public void onMousePressed( Dockable dockable, JComponent item, Orientation orientation ){
+			CPanelPopup.this.onMousePressed( dockable, item, orientation );
 		}
 
 		/**
 		 * Called if the mouse is released of the button <code>item</code> of
 		 * of a {@link DockTitle} which has orientation <code>orientation</code>.
+		 * @param dockable the element for which this panel is shown
 		 * @param item the released component
 		 * @param orientation the orientation of the title
 		 */
-		public void onMouseReleased( JComponent item, Orientation orientation ){
-			CPanelPopup.this.onMouseReleased( item, orientation );
+		public void onMouseReleased( Dockable dockable, JComponent item, Orientation orientation ){
+			CPanelPopup.this.onMouseReleased( dockable, item, orientation );
 		}
 
 		/**
 		 * Called if the button <code>item</code> of a {@link DockTitle} which has
 		 * orientation <code>orientation</code> was triggered.
+		 * @param dockable the element for which this panel is shown
 		 * @param item the triggered button
 		 * @param orientation the orientation of the title
 		 */
-		public void onTrigger( JComponent item, Orientation orientation ){
-			CPanelPopup.this.onTrigger( item, orientation );
+		public void onTrigger( Dockable dockable, JComponent item, Orientation orientation ){
+			CPanelPopup.this.onTrigger( dockable, item, orientation );
 		}
 		
 		/**

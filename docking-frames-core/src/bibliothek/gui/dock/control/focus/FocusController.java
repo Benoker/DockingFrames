@@ -81,7 +81,7 @@ public interface FocusController {
     public void freezeFocus();
     
     /**
-     * Re-enabls this {@link FocusController} after it was temporarility disabled.
+     * Re-enabls this {@link FocusController} after it was temporarily disabled.
      */
     public void meltFocus();
     
@@ -138,7 +138,7 @@ public interface FocusController {
      * as if it would be <code>null</code>.
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument
+     * optimizations are allowed. Clients normally can set this argument
      * to <code>false</code>.
      * @param ensureFocusSet if <code>true</code>, then this method should make sure that either <code>focusedDockable</code>
      * itself or one of its {@link DockElementRepresentative} is the focus owner 
@@ -158,4 +158,13 @@ public interface FocusController {
      * @param request information about the {@link Dockable} that should receive the focus, must not be <code>null</code> 
      */
     public void focus( FocusRequest request );
+    
+    /**
+     * After the currently executed {@link FocusRequest} is completed, or if there is currently no {@link FocusRequest} running,
+     * <code>run</code> is executed. If this controller is {@link #freezeFocus() frozen}, then <code>run</code> is executed
+     * Immediately.
+     * @param run some code to execute once a new {@link Dockable} has been focused
+     * @see #focus(FocusRequest)
+     */
+    public void onFocusRequestCompletion( Runnable run );
 }

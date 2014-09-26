@@ -1029,4 +1029,8 @@
  - API: Added "getMinimumSize" to "MediumBoundaryRestriction", because some clients want to just modify the minimum size of externalized Dockables.
  
 [v1.1.2p12c]
- ! Bugfix: DockableDisplayer can now calculate a point that must always be visible to the user. This point is used when showing an externalized Dockable to prevent it from leaving the screen. 
+ ! Bugfix: DockableDisplayer can now calculate a point that must always be visible to the user. This point is used when showing an externalized Dockable to prevent it from leaving the screen.
+ 
+[v1.1.2p12d]
+ ! API: The protected methods in CPanelPopup have an additional parameter, that tells them for which Dockable the popup-dialog is shown.
+ - Bugfix: A CPanelPopup will now wait with opening its popup-dialog until the focus has been transfered to the Dockable for which the dialog is shown. Otherwise the dialog would receive the focus, and then the focus would be stolen by the Dockable, and that event would close the popup.

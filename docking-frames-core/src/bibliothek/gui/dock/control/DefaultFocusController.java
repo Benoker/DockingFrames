@@ -29,7 +29,10 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Timer;
@@ -62,6 +65,9 @@ public class DefaultFocusController extends AbstractFocusController {
     
     /** all the requests waiting for their execution */
     private List<Request> pendingRequests = new ArrayList<Request>();
+    
+    /** {@link Runnable}s that will be executed once {@link #pendingRequests} is empty */
+    private List<Runnable> pendingCompletionRequests = new LinkedList<Runnable>();
     
     /**
      * Creates a new focus-controller
@@ -124,6 +130,52 @@ public class DefaultFocusController extends AbstractFocusController {
     public void focus( FocusRequest request ){
     	Request next = new Request( request, false );
     	next.enqueue();
+    }
+    
+    @Override
+    public void onFocusRequestCompletion( final Runnable run ) {
+    	if( EventQueue.isDispatchThread() ){
+    		synchronized( pendingRequests ) {
+    			if( pendingRequests.isEmpty() || isFrozen() ){
+    				run.run();
+    			}
+    			else{
+    				pendingCompletionRequests.add( run );
+    			}
+    		}
+    	}
+    	else{
+    		try {
+				EventQueue.invokeAndWait( new Runnable() {
+					@Override
+					public void run() {
+						onFocusRequestCompletion( run );
+					}
+				} );
+			} catch( InterruptedException e ) {
+				// there really is not much we can do here
+				e.printStackTrace();
+			} catch( InvocationTargetException e ) {
+				// there really is not much we can do here
+				e.printStackTrace();
+			}
+    	}
+    }
+    
+    private void checkCompletionRequests(){
+    	EventQueue.invokeLater( new Runnable() {
+			@Override
+			public void run() {
+				synchronized ( pendingRequests ) {
+					Iterator<Runnable> completion = pendingCompletionRequests.iterator();
+					while( pendingRequests.isEmpty() && completion.hasNext() ){
+						Runnable completionRequest = completion.next();
+						completion.remove();
+						completionRequest.run();
+					}
+				}
+			}
+		});
     }
     
     /**
@@ -196,7 +248,7 @@ public class DefaultFocusController extends AbstractFocusController {
      */
     protected void execute( final FocusRequest request, Dockable dockable, final Component component ){
     	// clean up
-    	synchronized(pendingRequests){
+    	synchronized( pendingRequests ){
 	    	for( Request pending : pendingRequests ){
 	    		pending.cancel();
 	    	}
@@ -222,6 +274,8 @@ public class DefaultFocusController extends AbstractFocusController {
     		focusedDockable = dockable;
     		fireDockableFocused( oldFocused, focusedDockable );
         }
+        
+        checkCompletionRequests();
     }
     
     private boolean grant( FocusRequest request, Component component ){
