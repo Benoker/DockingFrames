@@ -132,7 +132,6 @@ public class DefaultFocusController extends AbstractFocusController {
     	next.enqueue();
     }
     
-    @Override
     public void onFocusRequestCompletion( final Runnable run ) {
     	if( EventQueue.isDispatchThread() ){
     		synchronized( pendingRequests ) {
@@ -147,7 +146,6 @@ public class DefaultFocusController extends AbstractFocusController {
     	else{
     		try {
 				EventQueue.invokeAndWait( new Runnable() {
-					@Override
 					public void run() {
 						onFocusRequestCompletion( run );
 					}
@@ -164,7 +162,6 @@ public class DefaultFocusController extends AbstractFocusController {
     
     private void checkCompletionRequests(){
     	EventQueue.invokeLater( new Runnable() {
-			@Override
 			public void run() {
 				synchronized ( pendingRequests ) {
 					Iterator<Runnable> completion = pendingCompletionRequests.iterator();
