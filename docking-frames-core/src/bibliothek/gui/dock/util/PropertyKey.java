@@ -41,13 +41,13 @@ import bibliothek.gui.dock.util.property.PropertyFactory;
 public class PropertyKey<A> {
 	/**
 	 * The Icon used for a {@link Dockable} if it has no icon.<br>
-	 * This key should only be used for writing the icon, reading the icon should be done throught the {@link IconManager}
+	 * This key should only be used for writing the icon, reading the icon should be done through the {@link IconManager}
 	 * using the key "dockable.default".
 	 */
 	public static final PropertyKey<Icon> DOCKABLE_ICON = new PropertyKey<Icon>( "javax.swing.Icon_dockable_icon" );
 	/**
 	 * The Icon used for a {@link DockStation} if it has no icon.<br>
-	 * This key should only be used for writing the icon, reading the icon should be done throught the {@link IconManager}
+	 * This key should only be used for writing the icon, reading the icon should be done through the {@link IconManager}
 	 * using the key "dockStation.default".
 	 */
 	public static final PropertyKey<Icon> DOCK_STATION_ICON = new PropertyKey<Icon>( "javax.swing.Icon_dock_station_icon" );

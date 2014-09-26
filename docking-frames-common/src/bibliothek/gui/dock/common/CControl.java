@@ -820,7 +820,7 @@ public class CControl {
     }
     
     /**
-     * Sets up all the default icons used in the ralm of this {@link CControl}.
+     * Sets up all the default icons used in the realm of this {@link CControl}.
      */
     protected void initIcons(){
     	DefaultIconScheme scheme = new DefaultIconScheme( getController(),
