@@ -133,6 +133,7 @@ import bibliothek.gui.dock.control.DockRelocatorMode;
 import bibliothek.gui.dock.control.DockableSelector;
 import bibliothek.gui.dock.control.focus.DefaultFocusStrategy;
 import bibliothek.gui.dock.control.focus.FocusStrategyRequest;
+import bibliothek.gui.dock.control.relocator.DefaultDockRelocator;
 import bibliothek.gui.dock.disable.DisablingStrategy;
 import bibliothek.gui.dock.displayer.SingleTabDecider;
 import bibliothek.gui.dock.dockable.DockableMovingImageFactory;
@@ -1423,6 +1424,7 @@ public class CControl {
      * <table>
      * 	<tr><td>{@link BubbleTheme#ACTION_DISTRIBUTOR}</td><td>Default instance of a {@link DockActionDistributor}.</td></tr>
      *  <tr><td>{@link FlatTheme#ACTION_DISTRIBUTOR}</td><td>Default instance of a {@link DockActionDistributor}.</td></tr>
+     *  <tr><td>{@link DefaultDockRelocator#AUTO_DROP_ON_ANY_MOUSE_RELEASED_EVENT}</td><td>Stop drag-and-drop operations on any mouse-released event (a workaround necessary for some Linux and Mac systems).</td></tr>
      *  <tr><td>{@link DockTheme#BACKGROUND_PAINT} </td><td>The default value of the {@link BackgroundPaint}.</td></tr>
      * 	<tr><td>{@link BasicTheme#BASIC_COLOR_SCHEME}</td><td>The {@link ColorScheme} to use if the {@link BasicTheme} is installed.</td></tr>
      *  <tr><td>{@link DockTheme#BORDER_MODIFIER} </td><td>The default value of the {@link BorderModifier}.</td></tr>

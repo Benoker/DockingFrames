@@ -27,6 +27,7 @@ the GNU Lesser General Public
  */
 package bibliothek.gui.dock.control.relocator;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -36,6 +37,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,7 @@ import bibliothek.gui.dock.DockElementRepresentative;
 import bibliothek.gui.dock.accept.DockAcceptance;
 import bibliothek.gui.dock.control.ControllerSetupCollection;
 import bibliothek.gui.dock.control.DirectRemoteRelocator;
+import bibliothek.gui.dock.control.GlobalMouseDispatcher;
 import bibliothek.gui.dock.control.RemoteRelocator;
 import bibliothek.gui.dock.control.RemoteRelocator.Reaction;
 import bibliothek.gui.dock.disable.DisablingStrategy;
@@ -65,7 +68,10 @@ import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.OrderedLayerCollection;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
+import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.extension.ExtensionName;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.util.ClientOnly;
 import bibliothek.util.Path;
 import bibliothek.util.Workarounds;
@@ -76,6 +82,16 @@ import bibliothek.util.Workarounds;
  * @author Benjamin Sigg
  */
 public class DefaultDockRelocator extends AbstractDockRelocator{
+	/**
+	 * If <code>true</code>, then any mouse-released event may stop a drag-and-drop operation.<br> 
+	 * If <code>false</code>, then only mouse-released events that originate from the same {@link Component}
+	 * as the mouse-pressed event that started the operation may cancel it.<br>
+	 * The default value is <code>true</code>.
+	 */
+	public static final PropertyKey<Boolean> AUTO_DROP_ON_ANY_MOUSE_RELEASED_EVENT = 
+			new PropertyKey<Boolean>( "dock.default.relocator.autodrop", 
+					new ConstantPropertyFactory<Boolean>( true ), true );
+	
 	/** Path of an {@link ExtensionName} that adds new {@link Merger}s */
 	public static final Path MERGE_EXTENSION = new Path( "dock.merger" );
 	
@@ -108,6 +124,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     /** information about the last dragged dockable */
     private StationDropItem lastItem;
     
+    /** The {@link DockControllerRepresentativeListener} that creates all the {@link MouseListener}s */
+    private Listener listeners;
+    
 	/**
 	 * Creates a new manager.
 	 * @param controller the controller whose dockables are moved
@@ -123,9 +142,11 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 		
 		final MultiInserter inserter = new MultiInserter();
 		
+		listeners = new Listener();
+		
 		setup.add( new ControllerSetupListener(){
 		    public void done( DockController controller ) {
-		        controller.addRepresentativeListener( new Listener() );
+		        controller.addRepresentativeListener( listeners );
 		        
 		        List<Merger> mergers = controller.getExtensions().load( new ExtensionName<Merger>( MERGE_EXTENSION, Merger.class, EXTENSION_PARAM, DefaultDockRelocator.this ));
 				for( Merger next : mergers ){
@@ -136,6 +157,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 				for( Inserter next : inserters ){
 					inserter.add( next );
 				}
+				
+				GlobalMouseReleaseListener globalMouseReleaseListener = new GlobalMouseReleaseListener();
+				globalMouseReleaseListener.link();
 		    }
 		});
 		
@@ -1054,11 +1078,14 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         private Map<DockElementRepresentative, MouseRepresentativeListener> listeners =
             new HashMap<DockElementRepresentative, MouseRepresentativeListener>();
         
+        /** the last {@link MouseRepresentativeListener} that is registered in {@link #listeners}, and that has received a {@link MouseEvent} */
+        private MouseRepresentativeListener lastActiveListener = null;
+        
         public void representativeAdded( DockController controller,
                 DockElementRepresentative representative ) {
          
             if( representative.getElement().asDockable() != null ){
-                MouseRepresentativeListener listener = new MouseRepresentativeListener( representative );
+                MouseRepresentativeListener listener = new MouseRepresentativeListener( this, representative );
                 listeners.put( representative, listener );
                 representative.addMouseInputListener( listener );
             }
@@ -1070,6 +1097,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 MouseRepresentativeListener listener = listeners.remove( representative );
                 if( listener != null ){
                     representative.removeMouseInputListener( listener );
+                }
+                if( listener == lastActiveListener ){
+                	lastActiveListener = null;
                 }
             }
         }
@@ -1089,11 +1119,15 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         /** the current element that is observed */
         private DockElementRepresentative representative;
         
+        /** the {@link Listener} that created <code>this</code> object */
+        private Listener parent;
+        
         /**
          * Creates a new listener
          * @param representative the element which will be observed
          */
-        public MouseRepresentativeListener( DockElementRepresentative representative ){
+        public MouseRepresentativeListener( Listener parent, DockElementRepresentative representative ){
+        	this.parent = parent;
             this.representative = representative;
             
             if( representative instanceof DockTitle )
@@ -1108,6 +1142,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 return;
             if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
+            setLastActiveToThis();
             dragMousePressed( e, title, dockable );
         }
         @Override
@@ -1116,6 +1151,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 return;
             if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
+            setLastActiveToThis();
             dragMouseReleased( e, title, dockable );
         }
         @Override
@@ -1124,8 +1160,56 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 return;
             if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
+            setLastActiveToThis();
             dragMouseDragged( e, title, dockable );
         }
+        
+        private void setLastActiveToThis(){
+        	parent.lastActiveListener = this;
+        }
+    }
+    
+    /**
+     * A global {@link MouseListener} that forwards the {@link #mouseReleased(MouseEvent)} to the last
+     * active {@link MouseRepresentativeListener}, thus making sure that all drag and drop operations finish.
+     * @author Benjamin Sigg
+     */
+    private class GlobalMouseReleaseListener extends MouseInputAdapter{
+    	private boolean enabled = false;
+    	private PropertyValue<Boolean> autoCancel = new PropertyValue<Boolean>( AUTO_DROP_ON_ANY_MOUSE_RELEASED_EVENT ) {
+			@Override
+			protected void valueChanged( Boolean oldValue, Boolean newValue ) {
+				setEnabled( newValue );
+			}
+		};
+    	
+    	@Override
+    	public void mouseReleased( MouseEvent e ) {
+    		MouseRepresentativeListener lastActiveListener = listeners.lastActiveListener;
+    		
+    		if( isOnMove() && !isOnPut() && !e.isConsumed() && lastActiveListener != null ){
+    			lastActiveListener.mouseReleased( e );
+    		}
+    	}
+    	
+    	public void link(){
+    		autoCancel.setProperties( getController() );
+    		setEnabled( autoCancel.getValue() );
+    	}
+    	
+    	public void setEnabled( boolean enabled ){
+    		if( this.enabled != enabled ){
+    			this.enabled = enabled;
+
+    			GlobalMouseDispatcher mouseDispatcher = getController().getGlobalMouseDispatcher();
+    			if( enabled ){
+    				mouseDispatcher.addMouseListener( this );
+    			}
+    			else{
+    				mouseDispatcher.removeMouseListener( this );
+    			}
+    		}
+    	}
     }
     
     /**
