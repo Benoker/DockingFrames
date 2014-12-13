@@ -428,9 +428,11 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 					case BREAK:
 						mouseTarget = null;
 						break;
+					case CONTINUE:
 					case CONTINUE_CONSUMED:
+						// consume MouseEvent in all cases: there will never be any component below the tab that should start
+						// a drag and drop operation
 						e.consume();
-						break;
 				}
 			}
 			else{

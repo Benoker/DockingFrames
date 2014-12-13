@@ -473,7 +473,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * if <code>title</code> is not <code>null</code>
      */
     protected void dragMousePressed( MouseEvent e, DockTitle title, Dockable dockable ) {
-        if( dockable == null )
+    	if( dockable == null )
             dockable = title.getDockable();
         
         Point point = e.getPoint();
@@ -498,6 +498,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @return how this relocator reacts on the event
      */
     protected Reaction dragMousePressed( int x, int y, int dx, int dy, int modifiers, Dockable dockable, boolean forceDrag ){
+    	listeners.unsetLastActiveListener();
+    	
         if( !forceDrag && dockable.getDockParent() == null )
             return Reaction.BREAK;
         
@@ -585,6 +587,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @return how this relocator reacts on the event
      */
     protected Reaction dragMouseDragged( int x, int y, int modifiers, DockTitle title, Dockable dockable, boolean always, boolean forceDrag, boolean showMovingImage ){
+    	listeners.unsetLastActiveListener();
+    	
         if( pressPointScreen == null )
             return Reaction.BREAK;
         
@@ -782,6 +786,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      * @return how this relocator reacts on the event
      */
     protected Reaction dragMouseReleased( int x, int y, int modifiers, Dockable dockable ){
+    	listeners.unsetLastActiveListener();
+    	
         checkModes( modifiers );
         int offmask = InputEvent.BUTTON1_DOWN_MASK |
             InputEvent.BUTTON2_DOWN_MASK |
@@ -1103,6 +1109,10 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 }
             }
         }
+        
+        public void unsetLastActiveListener(){
+        	lastActiveListener = null;
+        }
     }
     
     /**
@@ -1142,8 +1152,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 return;
             if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
-            setLastActiveToThis();
             dragMousePressed( e, title, dockable );
+            setLastActiveToThis();
         }
         @Override
         public void mouseReleased( MouseEvent e ) {
@@ -1151,8 +1161,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 return;
             if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
-            setLastActiveToThis();
             dragMouseReleased( e, title, dockable );
+            setLastActiveToThis();
         }
         @Override
         public void mouseDragged( MouseEvent e ) {
@@ -1160,8 +1170,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 return;
             if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
                 return;
-            setLastActiveToThis();
             dragMouseDragged( e, title, dockable );
+            setLastActiveToThis();
         }
         
         private void setLastActiveToThis(){
