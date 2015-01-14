@@ -47,6 +47,7 @@ import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Path;
 
 /**
  * A {@link DockStation} that shows only {@link ChessFigure ChessFigures} as children.
@@ -180,6 +181,10 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 	
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		// ignore	
+	}
+	
+	public void addPlaceholder( Dockable dockable, Path placeholder ) {
+		// ignore
 	}
 	
 	public boolean accept( Dockable child ){

@@ -867,6 +867,23 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
     	return entry.item;
     }
 	
+    /**
+     * Adds <code>placeholder</code> at the location of <code>dockable</code>.
+     * @param dockable some dockable that is known to this list
+     * @param placeholder a placeholder that should be added to the {@link Item} that represents <code>dockable</code>
+     * @throws IllegalArgumentException if either argument is <code>null</code>, or if the location of <code>dockable</code> cannot be found
+     */
+    public void addPlaceholder( D dockable, Path placeholder ){
+    	if( dockable == null ){
+    		throw new IllegalArgumentException( "dockable must not be null" );
+    	}
+    	Item item = getItem( dockable );
+    	if( item == null ){
+    		throw new IllegalArgumentException( "unable to find item for dockable" );
+    	}
+    	item.add( placeholder );
+    }
+    
 	/**
 	 * Gets the number of entries in the level <code>level</code>.
 	 * @param level some level to count

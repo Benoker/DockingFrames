@@ -53,6 +53,7 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
+import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -246,6 +247,16 @@ public interface DockStation extends DockElement{
      * placeholders
      */
     public PlaceholderMap getPlaceholders();
+    
+    /**
+     * First searches the location of <code>dockable</code>, then adds <code>placeholder</code> to that 
+     * location. If another dockable is dropped on this station, and that item is associated with <code>placeholder</code>,
+     * then it will be put at the same position as <code>dockable</code>.
+     * @param dockable a child of this station, must not be <code>null</code>
+     * @param placeholder the placeholder to add, must not be <code>null</code>
+     * @throws IllegalArgumentException if <code>dockable</code> is not a child of this station, or if any argument is <code>null</code>
+     */
+    public void addPlaceholder( Dockable dockable, Path placeholder );
     
     /**
      * Sets an earlier snapshot of the placeholders of this station. This station can assume that

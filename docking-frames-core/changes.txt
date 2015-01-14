@@ -1042,3 +1042,6 @@
 [v1.1.2p13]
  - Bugfix: DefaultStackDockComponent will consume mouse-pressed MouseEvents that are triggered on its tabs. This means that MouseEvents no longer fall through the tab, making the framework believe the user wants to drag the StackDockStation when in fact the user wants to drag a child of the StackDockStation.
  - Bugfix: DefaultDockRelocator remembers the last active MouseListener and calls its "mouse released" event whenever a MouseEvent from another listener is detected. The last active MouseListener is now unset whenever an drag-operation is modified by an outside force not known to the DefaultDockRelocator, as for example by the MouseListener that is created by the DefaultStackDockComponent. This prevents cancellation of drag operations that were not initiated by the DefaultDockRelocator.
+ 
+[v1.1.2p14]
+ - API: DockStation got a new method called "addPlaceholder", which can be used to insert a "placeholder" at the location of any child dockable.

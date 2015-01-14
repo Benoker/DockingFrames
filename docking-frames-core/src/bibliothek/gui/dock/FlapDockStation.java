@@ -1247,6 +1247,10 @@ public class FlapDockStation extends AbstractDockableStation {
 	    return handles.toMap();
     }
     
+    public void addPlaceholder( Dockable dockable, Path placeholder ) {
+	    handles.addPlaceholder( dockable, placeholder );
+    }
+    
     public void setPlaceholders( PlaceholderMap placeholders ){
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "only allowed if there are not children present" );

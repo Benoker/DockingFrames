@@ -704,6 +704,10 @@ public class ScreenDockStation extends AbstractDockStation {
         return -1;
     }
     
+    public void addPlaceholder( Dockable dockable, Path placeholder ) {
+	    dockables.addPlaceholder( dockable, placeholder );
+    }
+    
     public PlaceholderMap getPlaceholders(){
     	return dockables.toMap();
     }

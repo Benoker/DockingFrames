@@ -816,6 +816,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	return dockables.toMap();
     }
     
+    public void addPlaceholder( Dockable dockable, Path placeholder ) {
+	    dockables.addPlaceholder( dockable, placeholder );
+    }
+    
     public void setPlaceholders( PlaceholderMap placeholders ){
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "there are children on this station" );

@@ -1624,6 +1624,20 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return true;
 	}
 
+	public void addPlaceholder( Dockable dockable, Path placeholder ) {
+		if( dockable == null )
+			throw new IllegalArgumentException( "dockable must not be null" );
+		
+		if( placeholder == null )
+			throw new IllegalArgumentException( "placeholder must not be null" );
+		
+		Leaf leaf = getRoot().getLeaf( dockable );
+		if( leaf == null ){
+			throw new IllegalArgumentException( "unable to find location of dockable" );
+		}
+		leaf.addPlaceholder( placeholder );
+	}
+
 	public PlaceholderMap getPlaceholders(){
 		return createPlaceholderConverter().getPlaceholders();
 	}
