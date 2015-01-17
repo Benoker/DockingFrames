@@ -2812,13 +2812,13 @@ public class CControl {
                 }
                 
                 if( location == null ){
-                    frontend.show( dockable.intern(), false );
+                	dockable.setExtendedMode( ExtendedMode.NORMALIZED );
                 }
                 else{
                     locationManager.setLocation( dockable.intern(), location );
-                    if( !frontend.isShown( dockable.intern() )){
-                    	frontend.show( dockable.intern(), false );
-                    }
+                }
+                if( !frontend.isShown( dockable.intern() )){
+                	frontend.show( dockable.intern(), false );
                 }
                 locationManager.ensureValidLocation( dockable );
             }

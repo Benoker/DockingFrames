@@ -55,10 +55,19 @@ public class GroupingDockLocationListener extends DockRegisterAdapter {
 	
 	public void dockableRegistered( DockController controller, Dockable dockable ) {
 		dockable.addDockHierarchyListener( listener );
+		update( dockable );
 	}
 	
 	public void dockableUnregistered( DockController controller, Dockable dockable ) {
 		dockable.removeDockHierarchyListener( listener );
+	}
+	
+	private void update( Dockable dockable ){
+		CGroupingBehavior groupingBehavior = control.getProperty( CControl.GROUPING_BEHAVIOR );
+		DockableGrouping grouping = groupingBehavior.getGrouping( dockable );
+		if( grouping != null ){
+			grouping.hierarchyChanged( dockable );
+		}		
 	}
 	
 	/**
@@ -67,11 +76,7 @@ public class GroupingDockLocationListener extends DockRegisterAdapter {
 	 */
 	private class Listener implements DockHierarchyListener{
 		public void hierarchyChanged( DockHierarchyEvent event ) {
-			CGroupingBehavior groupingBehavior = control.getProperty( CControl.GROUPING_BEHAVIOR );
-			DockableGrouping grouping = groupingBehavior.getGrouping( event.getDockable() );
-			if( grouping != null ){
-				grouping.hierarchyChanged( event.getDockable() );
-			}
+			update( event.getDockable() );
 		}
 
 		public void controllerChanged( DockHierarchyEvent event ) {

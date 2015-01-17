@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.facile.mode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -267,6 +268,10 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 		if( area == null )
 			return null;
 		return area.getStation();
+	}
+	
+	public Set<String> getRepresentationIds() {
+		return Collections.unmodifiableSet( areas.keySet() );
 	}
 	
 	/**

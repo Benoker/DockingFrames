@@ -25,6 +25,8 @@
  */
 package bibliothek.gui.dock.facile.mode;
 
+import java.util.Set;
+
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -95,6 +97,12 @@ public interface LocationMode extends Mode<Location>{
 	 * @return the station or <code>null</code>
 	 */
 	public DockStation getRepresentation( String uniqueId );
+	
+	/**
+	 * Gets all the unique identifiers that will yield a non-<code>null</code> result when calling {@link #getRepresentation(String)}. 
+	 * @return the ids of all the available {@link DockStation}s, the result may not be modifiable
+	 */
+	public Set<String> getRepresentationIds();
 	
 	/**
 	 * Adds a listener to this mode. The listener is to be called
