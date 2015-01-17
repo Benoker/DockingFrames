@@ -33,7 +33,7 @@ import bibliothek.gui.dock.facile.mode.LocationMode;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 
 /**
- * A {@link CGroupBehavior} allows to define groups of {@link CDockable}. Groups normaly
+ * A {@link CGroupBehavior} allows to define groups of {@link CDockable}. Groups normally
  * act together when changing the {@link LocationMode}: e.g. if one {@link CDockable} is minimized, all the other 
  * {@link CDockable}s follow.
  * @author Benjamin Sigg

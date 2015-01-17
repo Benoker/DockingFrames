@@ -28,7 +28,9 @@ package bibliothek.gui.dock.support.mode;
 import bibliothek.gui.Dockable;
 
 /**
- * A {@link HistoryRewriter} can be 
+ * A {@link HistoryRewriter} can rewrite the history information that is associated with a {@link Dockable} in a
+ * specific {@link Mode}. HistoryRewriters are applied at the moment when history information is read, and are 
+ * used by the {@link ModeManager}.
  * @author Benjamin Sigg
  * @param <M> the kind of {@link Mode} this rewriter accepts
  * @param <H> the kind of history this rewriter accepts
