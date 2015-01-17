@@ -91,6 +91,7 @@ import bibliothek.gui.dock.station.DockStationIcon;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
 import bibliothek.gui.dock.station.NoStationDropOperation;
+import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
@@ -116,6 +117,7 @@ import bibliothek.gui.dock.station.split.SplitDockCombinerSource;
 import bibliothek.gui.dock.station.split.SplitDockFullScreenProperty;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import bibliothek.gui.dock.station.split.SplitDockPathProperty;
+import bibliothek.gui.dock.station.split.SplitDockPlaceholderMapping;
 import bibliothek.gui.dock.station.split.SplitDockPlaceholderProperty;
 import bibliothek.gui.dock.station.split.SplitDockProperty;
 import bibliothek.gui.dock.station.split.SplitDockStationFactory;
@@ -1623,19 +1625,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	public boolean accept( Dockable child ){
 		return true;
 	}
-
-	public void addPlaceholder( Dockable dockable, Path placeholder ) {
-		if( dockable == null )
-			throw new IllegalArgumentException( "dockable must not be null" );
-		
-		if( placeholder == null )
-			throw new IllegalArgumentException( "placeholder must not be null" );
-		
-		Leaf leaf = getRoot().getLeaf( dockable );
-		if( leaf == null ){
-			throw new IllegalArgumentException( "unable to find location of dockable" );
-		}
-		leaf.addPlaceholder( placeholder );
+	
+	public PlaceholderMapping getPlaceholderMapping() {
+		return new SplitDockPlaceholderMapping( this );
 	}
 
 	public PlaceholderMap getPlaceholders(){

@@ -41,6 +41,7 @@ import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.layout.location.AsideRequest;
 import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -53,7 +54,6 @@ import bibliothek.gui.dock.title.DockTitleFactory;
 import bibliothek.gui.dock.title.DockTitleManager;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.util.Path;
 import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
@@ -238,25 +238,24 @@ public interface DockStation extends DockElement{
     public void setFrontDockable( Dockable dockable );
     
     /**
+     * Allows access to the placeholders that are stored on this station. Clients may use the {@link PlaceholderMapping} to add or remove
+     * placeholders from the station.<br>
+     * Not all stations support placeholders, and these station may return a mapping that performs no actions. 
+     * @return access to the placeholders
+     */
+    public PlaceholderMapping getPlaceholderMapping();
+    
+    /**
      * Gets a snapshot of all placeholders that are currently stored in this {@link DockStation}. 
      * A {@link DockStation} is free in the format it chooses to fill the map. The map is to be 
      * created with the assumptions that {@link #getDockableCount()} is <code>0</code>, meaning
      * any existing {@link Dockable} gets replaced by its placeholder. The current 
-     * {@link PlaceholderStrategy} should be used to convert {@link Dockable}s to placeholders.
+     * {@link PlaceholderStrategy} should be used to convert {@link Dockable}s to placeholders.<br>
+     * Clients interested in modifying the placeholders of this station should call {@link #getPlaceholderMapping()}.
      * @return the map of placeholders or <code>null</code> if this station does not support
      * placeholders
      */
     public PlaceholderMap getPlaceholders();
-    
-    /**
-     * First searches the location of <code>dockable</code>, then adds <code>placeholder</code> to that 
-     * location. If another dockable is dropped on this station, and that item is associated with <code>placeholder</code>,
-     * then it will be put at the same position as <code>dockable</code>.
-     * @param dockable a child of this station, must not be <code>null</code>
-     * @param placeholder the placeholder to add, must not be <code>null</code>
-     * @throws IllegalArgumentException if <code>dockable</code> is not a child of this station, or if any argument is <code>null</code>
-     */
-    public void addPlaceholder( Dockable dockable, Path placeholder );
     
     /**
      * Sets an earlier snapshot of the placeholders of this station. This station can assume that

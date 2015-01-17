@@ -69,6 +69,7 @@ import bibliothek.gui.dock.station.OrientingDockStation;
 import bibliothek.gui.dock.station.OrientingDockStationEvent;
 import bibliothek.gui.dock.station.OrientingDockStationListener;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
@@ -80,6 +81,7 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.PlaceholderListMapping;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.toolbar.DefaultToolbarContainerConverter;
@@ -316,6 +318,11 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 		return createConverter().getPlaceholders( this, children );
 	}
 
+	@Override
+	public PlaceholderMapping getPlaceholderMapping() {
+		return new PlaceholderListMapping( this, dockables );
+	}
+	
 	@Override
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		createConverter().setPlaceholders( this, placeholders );

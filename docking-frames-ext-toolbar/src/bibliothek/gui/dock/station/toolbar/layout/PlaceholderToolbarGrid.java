@@ -515,6 +515,16 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		purge();
 		return result;
 	}
+	
+	/**
+	 * Removes all occurences of <code>placeholder</code>.
+	 * @param placeholder the placeholder to remove
+	 */
+	public void removePlaceholder( Path placeholder ){
+		Set<Path> set = new HashSet<Path>();
+		set.add( placeholder );
+		ensureRemoved( null, set );
+	}
 
 	private void ensureRemoved( PlaceholderList<D, S, P> ignore, P item ){
 		final Set<Path> placeholders = getPlaceholders( item.asDockable() );

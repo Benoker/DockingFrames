@@ -68,6 +68,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
@@ -91,6 +92,7 @@ import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupDropInfo;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupExpander;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeader;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupHeaderFactory;
+import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupPlaceholderMapping;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.station.toolbar.layer.ToolbarGroupInnerLayer;
 import bibliothek.gui.dock.station.toolbar.layer.ToolbarGroupOuterLayer;
@@ -1432,6 +1434,11 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		return map;
 	}
 
+	@Override
+	public PlaceholderMapping getPlaceholderMapping() {
+		return new ToolbarGroupPlaceholderMapping( this, dockables );
+	}
+	
 	@Override
 	public void setPlaceholders( PlaceholderMap placeholders ){
 		dockables.fromMap( placeholders );

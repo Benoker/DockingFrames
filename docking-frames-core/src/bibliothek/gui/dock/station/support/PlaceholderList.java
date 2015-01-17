@@ -574,12 +574,18 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	 * @param placeholder the placeholder to remove
 	 */
 	public void removeAll( Path placeholder ){
+		ensureRemoved( null, placeholder );
+	}
+	
+	private void ensureRemoved( Item ignore, Path placeholder ){
 		Iterator<Item> iter = list().iterator();
 		while( iter.hasNext() ) {
 			Item item = iter.next();
-			item.remove( placeholder );
-			if( item.getPlaceholderSet() == null && item.isPlaceholder() ) {
-				iter.remove();
+			if( item != ignore ){
+				item.remove( placeholder );
+				if( item.getPlaceholderSet() == null && item.isPlaceholder() ) {
+					iter.remove();
+				}
 			}
 		}
 	}
@@ -868,7 +874,8 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
     }
 	
     /**
-     * Adds <code>placeholder</code> at the location of <code>dockable</code>.
+     * Adds <code>placeholder</code> at the location of <code>dockable</code>. This method will remove <code>placeholder</code> from all
+     * other locations.
      * @param dockable some dockable that is known to this list
      * @param placeholder a placeholder that should be added to the {@link Item} that represents <code>dockable</code>
      * @throws IllegalArgumentException if either argument is <code>null</code>, or if the location of <code>dockable</code> cannot be found
@@ -881,6 +888,8 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
     	if( item == null ){
     		throw new IllegalArgumentException( "unable to find item for dockable" );
     	}
+    	
+    	ensureRemoved( item, placeholder );
     	item.add( placeholder );
     }
     

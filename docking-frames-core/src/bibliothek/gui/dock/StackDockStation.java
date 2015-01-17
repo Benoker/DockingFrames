@@ -69,6 +69,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
@@ -98,6 +99,7 @@ import bibliothek.gui.dock.station.support.ComponentDragOperation;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
+import bibliothek.gui.dock.station.support.PlaceholderListMapping;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
@@ -816,8 +818,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	return dockables.toMap();
     }
     
-    public void addPlaceholder( Dockable dockable, Path placeholder ) {
-	    dockables.addPlaceholder( dockable, placeholder );
+    public PlaceholderMapping getPlaceholderMapping() {
+    	return new PlaceholderListMapping( this, dockables );
     }
     
     public void setPlaceholders( PlaceholderMap placeholders ){

@@ -35,6 +35,7 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.OverpaintablePanel;
+import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
@@ -47,7 +48,6 @@ import bibliothek.gui.dock.title.ActivityDockTitleEvent;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.title.DockTitleRequest;
 import bibliothek.gui.dock.title.DockTitleVersion;
-import bibliothek.util.Path;
 
 /**
  * A {@link DockStation} that shows only {@link ChessFigure ChessFigures} as children.
@@ -183,8 +183,8 @@ public class ChessBoard extends OverpaintablePanel implements DockStation, Chess
 		// ignore	
 	}
 	
-	public void addPlaceholder( Dockable dockable, Path placeholder ) {
-		// ignore
+	public PlaceholderMapping getPlaceholderMapping() {
+		throw new UnsupportedOperationException( "not supported" );
 	}
 	
 	public boolean accept( Dockable child ){

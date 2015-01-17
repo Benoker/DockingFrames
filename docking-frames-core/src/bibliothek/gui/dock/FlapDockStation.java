@@ -76,6 +76,7 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
+import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.gui.dock.station.StationBackgroundComponent;
 import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
@@ -113,6 +114,7 @@ import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
+import bibliothek.gui.dock.station.support.PlaceholderListMapping;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
@@ -1247,8 +1249,8 @@ public class FlapDockStation extends AbstractDockableStation {
 	    return handles.toMap();
     }
     
-    public void addPlaceholder( Dockable dockable, Path placeholder ) {
-	    handles.addPlaceholder( dockable, placeholder );
+    public PlaceholderMapping getPlaceholderMapping() {
+    	return new PlaceholderListMapping( this, handles );
     }
     
     public void setPlaceholders( PlaceholderMap placeholders ){

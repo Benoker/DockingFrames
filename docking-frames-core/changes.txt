@@ -1044,4 +1044,4 @@
  - Bugfix: DefaultDockRelocator remembers the last active MouseListener and calls its "mouse released" event whenever a MouseEvent from another listener is detected. The last active MouseListener is now unset whenever an drag-operation is modified by an outside force not known to the DefaultDockRelocator, as for example by the MouseListener that is created by the DefaultStackDockComponent. This prevents cancellation of drag operations that were not initiated by the DefaultDockRelocator.
  
 [v1.1.2p14]
- - API: DockStation got a new method called "addPlaceholder", which can be used to insert a "placeholder" at the location of any child dockable.
+ - API: DockStation got a new method called "getPlaceholderMapping" with which clients can access the placeholders that are stored on the station.
