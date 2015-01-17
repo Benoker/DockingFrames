@@ -320,7 +320,13 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 
 	@Override
 	public PlaceholderMapping getPlaceholderMapping() {
-		return new PlaceholderListMapping( this, dockables );
+		return new PlaceholderListMapping( this, dockables ){
+			@Override
+			public DockableProperty getLocationAt( Path placeholder ) {
+				int index = dockables.getDockableIndex( placeholder );
+				return new ToolbarContainerProperty( index, placeholder );
+			}
+		};
 	}
 	
 	@Override

@@ -1250,7 +1250,12 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     public PlaceholderMapping getPlaceholderMapping() {
-    	return new PlaceholderListMapping( this, handles );
+    	return new PlaceholderListMapping( this, handles ){
+    		public DockableProperty getLocationAt( Path placeholder ) {
+    			int index = handles.getDockableIndex( placeholder );
+    			return new FlapDockProperty( index, false, -1, placeholder );
+    		}
+    	};
     }
     
     public void setPlaceholders( PlaceholderMap placeholders ){

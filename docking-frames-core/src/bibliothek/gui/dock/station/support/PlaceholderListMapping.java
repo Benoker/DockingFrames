@@ -34,7 +34,7 @@ import bibliothek.util.Path;
  * A generic {@link PlaceholderMapping} that operates by accessing a {@link PlaceholderList}.
  * @author Benjamin Sigg
  */
-public class PlaceholderListMapping implements PlaceholderMapping{
+public abstract class PlaceholderListMapping implements PlaceholderMapping{
 	/** the owner and creator of this mapping */
 	private DockStation station;
 
@@ -62,5 +62,19 @@ public class PlaceholderListMapping implements PlaceholderMapping{
 
 	public void removePlaceholder( Path placeholder ) {
 		placeholders.removeAll( placeholder );
+	}
+	
+	public boolean hasPlaceholder( Path placeholder ) {
+		return placeholders.hasPlaceholder( placeholder );
+	}
+	
+	public Dockable getDockableAt( Path placeholder ) {
+		PlaceholderListItem<Dockable> item = placeholders.getDockableAt( placeholder );
+		if( item == null ){
+			return null;
+		}
+		else{
+			return item.asDockable();
+		}
 	}
 }

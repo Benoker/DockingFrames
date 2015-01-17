@@ -28,6 +28,7 @@ package bibliothek.gui.dock.station;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Path;
 
 /**
@@ -52,6 +53,31 @@ public interface PlaceholderMapping {
      * @throws IllegalArgumentException if <code>dockable</code> is not a child of this station, or if any argument is <code>null</code>
      */
     public void addPlaceholder( Dockable dockable, Path placeholder );
+    
+    /**
+     * Tells whether the {@link #getStation() station} has any reference to <code>placeholder</code>.
+     * @param placeholder the placeholder to search
+     * @return <code>true</code> if <code>placeholder</code> was found
+     */
+    public boolean hasPlaceholder( Path placeholder );
+    
+    /**
+     * Searches for the placeholder <code>placeholder</code> and gets the {@link Dockable} that is currently sitting
+     * at the location described by <code>placeholder</code>. 
+     * @param placeholder the placeholder to search
+     * @return the dockable at <code>placeholder</code>, or <code>null</code> either because <code>placeholder</code> 
+     * could not be found, or because <code>placeholder</code> describes a position that does currently not contain
+     * a {@link Dockable}
+     */
+    public Dockable getDockableAt( Path placeholder );
+    
+    /**
+     * Gets a {@link DockableProperty} that describes the location of <code>placeholder</code>. The result of this
+     * method is undefined if <code>placeholder</code> is not found.
+     * @param placeholder the placeholder whose location is searched
+     * @return the location, may be <code>null</code> if <code>placeholder</code> is not found   
+     */
+    public DockableProperty getLocationAt( Path placeholder );
     
     /**
      * Removes all occurrences of <code>placeholder</code> from this station.

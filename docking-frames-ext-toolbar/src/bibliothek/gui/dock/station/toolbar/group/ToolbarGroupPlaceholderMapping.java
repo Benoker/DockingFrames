@@ -27,7 +27,9 @@ package bibliothek.gui.dock.station.toolbar.group;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.ToolbarGroupDockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.PlaceholderMapping;
+import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.util.Path;
 
@@ -78,7 +80,38 @@ public class ToolbarGroupPlaceholderMapping implements PlaceholderMapping{
 	}
 	
 	@Override
+	public boolean hasPlaceholder( Path placeholder ) {
+		return grid.hasPlaceholder( placeholder );
+	}
+	
+	@Override
 	public void removePlaceholder( Path placeholder ) {
 		grid.removePlaceholder( placeholder );
+	}
+	
+	@Override
+	public Dockable getDockableAt( Path placeholder ) {
+		PlaceholderListItem<Dockable> item = grid.get( placeholder );
+		if( item == null ){
+			return null;
+		}
+		else{
+			return item.asDockable();
+		}
+	}
+	
+	@Override
+	public DockableProperty getLocationAt( Path placeholder ) {
+		int column = grid.getColumn( placeholder );
+		if( column == -1 ){
+			return null;
+		}
+		
+		int line = grid.getLine( placeholder );
+		if( line == -1 ){
+			return null;
+		}
+		
+		return new ToolbarGroupProperty( column, line, placeholder );
 	}
 }

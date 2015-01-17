@@ -30,6 +30,7 @@ import java.util.List;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.gui.dock.station.PlaceholderMapping;
 import bibliothek.util.Path;
 
@@ -69,7 +70,6 @@ public class SplitDockPlaceholderMapping implements PlaceholderMapping{
 		leaf.addPlaceholder( placeholder );
 	}
 	
-	@Override
 	public void removePlaceholder( Path placeholder ) {
 		removePlaceholder( null, placeholder );
 	}
@@ -77,12 +77,7 @@ public class SplitDockPlaceholderMapping implements PlaceholderMapping{
 	private void removePlaceholder( final Leaf ignore, final Path placeholder ) {
 		final List<Placeholder> nodesToRemove = new ArrayList<Placeholder>();
 		
-		station.getRoot().visit( new SplitNodeVisitor() {
-			@Override
-			public void handleRoot( Root root ) {
-				root.removePlaceholder( placeholder );
-			}
-			
+		station.getRoot().visit( new SplitNodeAdapter() {
 			@Override
 			public void handlePlaceholder( Placeholder node ) {
 				node.removePlaceholder( placeholder );
@@ -92,20 +87,72 @@ public class SplitDockPlaceholderMapping implements PlaceholderMapping{
 			}
 			
 			@Override
-			public void handleNode( Node node ) {
-				node.removePlaceholder( placeholder );
-			}
-			
-			@Override
-			public void handleLeaf( Leaf leaf ) {
-				if( leaf != ignore ){
-					leaf.removePlaceholder( placeholder );
+			protected void handle( SplitNode node ) {
+				if( node != ignore ){
+					node.removePlaceholder( placeholder );
 				}
 			}
 		});
 		
 		for( Placeholder node : nodesToRemove ){
 			node.delete( true );
+		}
+	}
+	
+	public Dockable getDockableAt( Path placeholder ) {
+		FindDockable finder = new FindDockable( placeholder );
+		station.getRoot().visit( finder );
+		return finder.getResult();
+	}
+	
+	private static class FindDockable extends SplitNodeAdapter{
+		private Path placeholder;
+		private Dockable result;
+		
+		public FindDockable( Path placeholder ){
+			this.placeholder = placeholder;
+		}
+		
+		@Override
+		public void handleLeaf( Leaf leaf ) {
+			if( leaf.hasPlaceholder( placeholder )){
+				result = leaf.getDockable();
+			}
+		}
+		
+		public Dockable getResult() {
+			return result;
+		}
+	}
+	
+	public DockableProperty getLocationAt( Path placeholder ) {
+		SplitDockPathProperty path = station.getDockablePathProperty( placeholder );
+		return new SplitDockPlaceholderProperty( placeholder, path );
+	}
+	
+	public boolean hasPlaceholder( Path placeholder ) {
+		HasPlaceholderFinder finder = new HasPlaceholderFinder( placeholder );
+		station.getRoot().visit( finder );
+		return finder.isFound();
+	}
+	
+	private static class HasPlaceholderFinder extends SplitNodeAdapter{
+		private Path placeholder;
+		private boolean found;
+		
+		public HasPlaceholderFinder( Path placeholder ){
+			this.placeholder = placeholder;
+		}
+		
+		@Override
+		protected void handle( SplitNode node ) {
+			if( node.hasPlaceholder( placeholder )){
+				found = true;
+			}
+		}
+		
+		public boolean isFound() {
+			return found;
 		}
 	}
 }

@@ -3,7 +3,7 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copyright (C) 2015 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,35 +23,30 @@
  * benjamin_sigg@gmx.ch
  * CH - Switzerland
  */
-
 package bibliothek.gui.dock.station.split;
 
 /**
- * A visitor for a tree of {@link SplitNode SplitNodes}.
+ * An implementation of {@link SplitNodeVisitor}, all methods call {@link #handle(SplitNode)}.
  * @author Benjamin Sigg
  */
-public interface SplitNodeVisitor {
-	/**
-	 * Invoked when visiting the root of the tree.
-	 * @param root the root
-	 */
-    public void handleRoot( Root root );
-    
-    /**
-     * Invoked when visiting a node of the tree.
-     * @param node a node
-     */
-    public void handleNode( Node node );
-    
-    /**
-     * Invoked when visiting a leaf of the tree.
-     * @param leaf the tree
-     */
-    public void handleLeaf( Leaf leaf );
-    
-    /**
-     * Invoked when visiting a leaf that is a placeholder.
-     * @param placeholder the placeholder
-     */
-    public void handlePlaceholder( Placeholder placeholder );
+public abstract class SplitNodeAdapter implements SplitNodeVisitor{
+	public void handleLeaf( Leaf leaf ) {
+		handle( leaf );
+	}
+	
+	public void handleNode( Node node ) {
+		handle( node );
+	}
+	
+	public void handlePlaceholder( Placeholder placeholder ) {
+		handle( placeholder );
+	}
+	
+	public void handleRoot( Root root ) {
+		handle( root );
+	}
+	
+	protected void handle( SplitNode node ){
+		// do nothing
+	}
 }

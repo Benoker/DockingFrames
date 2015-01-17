@@ -104,11 +104,11 @@ import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
 import bibliothek.gui.dock.station.support.Enforcement;
-import bibliothek.gui.dock.station.support.PlaceholderListMapping;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
+import bibliothek.gui.dock.station.support.PlaceholderListMapping;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMetaMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -707,7 +707,30 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     public PlaceholderMapping getPlaceholderMapping() {
-    	return new PlaceholderListMapping( this, dockables );
+    	return new PlaceholderListMapping( this, dockables ){
+    		public DockableProperty getLocationAt( Path placeholder ) {
+    			DockablePlaceholderList<ScreenDockWindowHandle>.Item item = dockables.getItem( placeholder );
+    			if( item == null ){
+    				return null;
+    			}
+    			
+    			ScreenDockWindowHandle handle = item.getDockable();
+    			if( handle != null ){
+    				Dockable dockable = handle.asDockable();
+    				ScreenDockProperty property = getLocation( dockable, dockable );
+    				property.setPlaceholder( placeholder );
+    				return property;
+    			}
+    			else{
+    				int x = item.getInt( "x" );
+    				int y = item.getInt( "y" );
+    				int width = item.getInt( "width" );
+    				int height = item.getInt( "height" );
+    				
+    				return new ScreenDockProperty( x, y, width, height, placeholder );
+    			}
+    		}
+    	};
     }
     
     public PlaceholderMap getPlaceholders(){

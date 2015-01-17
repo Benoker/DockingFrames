@@ -819,7 +819,12 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     }
     
     public PlaceholderMapping getPlaceholderMapping() {
-    	return new PlaceholderListMapping( this, dockables );
+    	return new PlaceholderListMapping( this, dockables ){
+    		public DockableProperty getLocationAt( Path placeholder ) {
+    			int index = dockables.getDockableIndex( placeholder );
+    			return new StackDockProperty( index, placeholder );
+    		}
+    	};
     }
     
     public void setPlaceholders( PlaceholderMap placeholders ){
