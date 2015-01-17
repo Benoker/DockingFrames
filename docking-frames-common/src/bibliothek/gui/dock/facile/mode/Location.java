@@ -26,6 +26,7 @@
 package bibliothek.gui.dock.facile.mode;
 
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.layout.DockableProperty;
 import bibliothek.util.Path;
 
@@ -40,6 +41,8 @@ public class Location {
 	private String root;
 	/** the location of the element */
 	private DockableProperty location;
+	/** whether this location was defined by the client application. */
+	private boolean applicationDefined;
 	
 	/**
 	 * Creates a new location.
@@ -48,6 +51,17 @@ public class Location {
 	 * @param location the location on the station, may be <code>null</code>
 	 */
 	public Location( Path mode, String root, DockableProperty location ){
+		this( mode, root, location, false );
+	}
+	
+	/**
+	 * Creates a new location.
+	 * @param mode the mode which is responsible for handling this location
+	 * @param root the identifier of the parent station, must not be <code>null</code>
+	 * @param location the location on the station, may be <code>null</code>
+	 * @param applicationDefined whether this location was defined by the client application
+	 */
+	public Location( Path mode, String root, DockableProperty location, boolean applicationDefined ){
 		if( mode == null )
 			throw new IllegalArgumentException( "mode must not be null" );
 		
@@ -57,6 +71,7 @@ public class Location {
 		this.mode = mode;
 		this.root = root;
 		this.location = location;
+		this.applicationDefined = applicationDefined;
 	}
 
 	/**
@@ -83,8 +98,27 @@ public class Location {
 		return location;
 	}
 	
+	/**
+	 * Tells whether this location was defined by the client application. A location is defined by the client
+	 * application if for example the method {@link CDockable#setLocation(bibliothek.gui.dock.common.CLocation)} is
+	 * used to set the location of a {@link CDockable}. If possible application defined locations should
+	 * not be automatically rewritten.<br>
+	 * The state "application defined" is lost as soon as the owning {@link Dockable} has been put at this location.
+	 * @return whether this location has been defined by a client application
+	 */
+	public boolean isApplicationDefined() {
+		return applicationDefined;
+	}
+	
+	/**
+	 * Sets the property {@link #isApplicationDefined()} to <code>false</code>.
+	 */
+	public void resetApplicationDefined() {
+		applicationDefined = false;
+	}
+	
 	@Override
 	public String toString(){
-		return getClass().getName() + "[mode=" + String.valueOf( mode ) + ", root=" + root + ", location=" + location + "]";
+		return getClass().getName() + "[mode=" + String.valueOf( mode ) + ", root=" + root + ", location=" + location + ", applicationDefined=" + applicationDefined + "]";
 	}
 }

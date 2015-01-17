@@ -254,7 +254,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	    	}
     		
         	// easy solution: set the location, then change the mode
-    	    setProperties( newMode, dockable, new Location( mode.getModeIdentifier(), root, location.findProperty() ) );
+    	    setProperties( newMode, dockable, new Location( mode.getModeIdentifier(), root, location.findProperty(), true ) );
     	    apply( dockable, newMode, true );
     	}
     	else{
@@ -303,7 +303,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
 	        if( !mode.getModeIdentifier().equals( locationMode.getModeIdentifier() ))
 	        	throw new IllegalArgumentException( "location and mode do not belong together, they do not have the same identifier" );
 	        
-	        setProperties( getMode( mode.getModeIdentifier() ), dockable, new Location( mode.getModeIdentifier(), root, property ) );
+	        setProperties( getMode( mode.getModeIdentifier() ), dockable, new Location( mode.getModeIdentifier(), root, property, true ) );
         }
         else{
         	setProperties( getMode( mode.getModeIdentifier() ), dockable, null );

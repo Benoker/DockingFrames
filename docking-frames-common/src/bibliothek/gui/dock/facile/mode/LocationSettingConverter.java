@@ -57,6 +57,14 @@ public class LocationSettingConverter implements ModeSettingsConverter<Location,
     }
     
     /**
+     * Creates a new converter.
+     * @param transformer transfomer used to read {@link DockableProperty}s.
+     */
+    public LocationSettingConverter( PropertyTransformer transformer ){
+    	this.transformer = transformer;
+    }
+    
+    /**
      * Adds an additional factory to this converter, needed to read and write
      * {@link DockableProperty}s.
      * @param factory the additional factory
@@ -73,26 +81,32 @@ public class LocationSettingConverter implements ModeSettingsConverter<Location,
     }
 
     public void writeProperty( Location element, DataOutputStream out ) throws IOException {
-        Version.write( out, Version.VERSION_1_0_8 );
+        Version.write( out, Version.VERSION_1_1_2 );
         out.writeUTF( element.getMode().toString() );
         out.writeUTF( element.getRoot() );
+        out.writeBoolean( element.isApplicationDefined() );
         transformer.write( element.getLocation(), out );
     }
 
     public Location readProperty( DataInputStream in ) throws IOException {
         Version version = Version.read( in );
         version.checkCurrent();
-        boolean version8 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
+        boolean version108 = Version.VERSION_1_0_8.compareTo( version ) <= 0;
+        boolean version112 = version.equals( Version.VERSION_1_1_2 );
         Path mode = null;
-        if( version8 ){
+        if( version108 ){
         	mode = new Path( in.readUTF() );
         }
         String root = in.readUTF();
+        boolean applicationDefined = false;
+        if( version112 ){
+        	applicationDefined = in.readBoolean();
+        }
         DockableProperty location = transformer.read( in );
-        if( !version8 ){
+        if( !version108 ){
         	mode = guessMode( location );
         }
-        return new Location( mode, root, location );
+        return new Location( mode, root, location, applicationDefined );
     }
     
     private Path guessMode( DockableProperty location ){
@@ -110,6 +124,7 @@ public class LocationSettingConverter implements ModeSettingsConverter<Location,
     public void writePropertyXML( Location b, XElement element ) {
     	element.addElement( "mode" ).setString( b.getMode().toString() );
         element.addElement( "root" ).setString( b.getRoot() );
+        element.addElement( "applicationDefined" ).setBoolean( b.isApplicationDefined() );
         transformer.writeXML( b.getLocation(), element.addElement( "location" ) );
     }
 
@@ -124,6 +139,13 @@ public class LocationSettingConverter implements ModeSettingsConverter<Location,
     	if( mode == null ){
     		mode = guessMode( location );
     	}
-        return new Location( mode, root, location );
+    	
+    	boolean applicationDefined = false;
+    	XElement xapplicationDefined = element.getElement( "applicationDefined" );
+    	if( xapplicationDefined != null ){
+    		applicationDefined = xapplicationDefined.getBoolean();
+    	}
+    	
+        return new Location( mode, root, location, applicationDefined );
     }
 }

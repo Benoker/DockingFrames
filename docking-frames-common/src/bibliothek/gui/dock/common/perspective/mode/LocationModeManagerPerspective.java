@@ -207,7 +207,7 @@ public class LocationModeManagerPerspective {
 		if( location == null ){
 			return null;
 		}
-		return new Location( mode.getModeIdentifier(), root.getUniqueId(), location );
+		return new Location( mode.getModeIdentifier(), root.getUniqueId(), location, false );
 	}
 	
 	/**

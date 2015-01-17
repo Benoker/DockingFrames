@@ -57,6 +57,10 @@ public class GroupingHistoryRewriter implements HistoryRewriter<Location, CLocat
 	}
 	
 	public Location rewrite( Dockable dockable, CLocationMode mode, Location history ) {
+		if( history != null && history.isApplicationDefined() ){
+			return validation.rewrite( dockable, mode, history );
+		}
+		
 		CGroupingBehavior groupingBehavior = control.getProperty( CControl.GROUPING_BEHAVIOR );
 		DockableGrouping grouping = groupingBehavior.getGrouping( dockable );
 		

@@ -49,7 +49,7 @@ public abstract class DefaultLocationMode<A extends StationModeArea> extends Abs
 		if( area == null )
 			return null;
 		DockableProperty location = area.getLocation( dockable );
-		return new Location( getUniqueIdentifier(), area.getUniqueId(), location );
+		return new Location( getUniqueIdentifier(), area.getUniqueId(), location, false );
 	}
 	
 	/**

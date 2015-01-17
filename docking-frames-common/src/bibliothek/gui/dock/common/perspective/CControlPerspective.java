@@ -285,6 +285,7 @@ public class CControlPerspective {
 	    		XElement xlocation = xdockable.addElement( "location" );
 	    		xlocation.addString( "root", location.getRoot() );
 	    		xlocation.addString( "mode", dockable.getLocationHistory().getLastMode().getModeIdentifier().toString() );
+	    		xlocation.addBoolean( "applicationDefined", location.isApplicationDefined() );
 	    		transformer.writeXML( location.getLocation(), xlocation );
     		}
     	}
@@ -317,7 +318,7 @@ public class CControlPerspective {
      */
     public void write( DataOutputStream out, CPerspective perspective, boolean includeWorkingAreas ) throws IOException{
     	perspective.storeLocations();
-    	Version.write( out, Version.VERSION_1_1_1a );
+    	Version.write( out, Version.VERSION_1_1_2 );
     	
     	DockFrontendPerspective frontend = conversion( perspective, includeWorkingAreas );
     	Perspective conversion = frontend.getPerspective();
@@ -353,6 +354,7 @@ public class CControlPerspective {
 	    		
 	    		out.writeUTF( location.getRoot() );
 	    		out.writeUTF( dockable.getLocationHistory().getLastMode().getModeIdentifier().toString() );
+	    		out.writeBoolean( location.isApplicationDefined() );
 	    		transformer.write( location.getLocation(), out );
     		}
     		else{
@@ -471,9 +473,14 @@ public class CControlPerspective {
     				DockableProperty location = transformer.readXML( xlocation );
     				Path mode = new Path( xlocation.getString( "mode" ));
     				
+    				boolean applicationDefined = false;
+    				if( xlocation.attributeExists( "applicationDefined" )){
+    					applicationDefined = xlocation.getBoolean( "applicationDefined" );
+    				}
+    				
     				ExtendedMode extendedMode = perspective.getLocationManager().getMode( mode );
     				if( extendedMode != null ){
-    					dockable.getLocationHistory().add( extendedMode, new Location( mode, locationRoot, location ) );
+    					dockable.getLocationHistory().add( extendedMode, new Location( mode, locationRoot, location, applicationDefined ) );
     				}
     			}
     		}
@@ -537,8 +544,9 @@ public class CControlPerspective {
     	
     	boolean version111 = version.equals( Version.VERSION_1_1_1 );
     	boolean version111a = version.equals( Version.VERSION_1_1_1a );
+    	boolean version112 = version.equals( Version.VERSION_1_1_2 );
     	
-    	if( !version111 && !version111a ){
+    	if( !version111 && !version111a && !version112 ){
     		throw new IOException( "unknown version: " + version );
     	}
     	
@@ -565,7 +573,7 @@ public class CControlPerspective {
     		}
     	}
     	
-    	if( version111a ){
+    	if( version111a || version112 ){
     		perspective.storeLocations();
     		PropertyTransformer transformer = frontend.getPropertyTransformer();
     		for( int i = 0, n = in.readInt(); i<n; i++ ){
@@ -589,6 +597,12 @@ public class CControlPerspective {
 	    			
 	    			String locationRoot = in.readUTF();
 	    			String modeId = in.readUTF();
+	    			
+	    			boolean applicationDefined = false;
+	    			if( version112 ){
+	    				applicationDefined = in.readBoolean();
+	    			}
+	    			
 	    			DockableProperty location = transformer.read( in );
 	    			
 	    			if( dockable != null ){
@@ -596,7 +610,7 @@ public class CControlPerspective {
 	    				
 	    				ExtendedMode extendedMode = perspective.getLocationManager().getMode( mode );
 	    				if( extendedMode != null ){
-	    					dockable.getLocationHistory().add( extendedMode, new Location( mode, locationRoot, location ) );
+	    					dockable.getLocationHistory().add( extendedMode, new Location( mode, locationRoot, location, applicationDefined ) );
 	    				}
 	    			}
 	    		}
@@ -693,7 +707,7 @@ public class CControlPerspective {
 			    		
 			    		ExtendedMode mode = cperspective.getLocationManager().getMode( root, location );
 			    		if( mode != null ){
-			    			dockable.getLocationHistory().add( mode, new Location( mode.getModeIdentifier(), root, location ) );
+			    			dockable.getLocationHistory().add( mode, new Location( mode.getModeIdentifier(), root, location, false ) );
 			    		}
 			    		
 			    		cperspective.putDockable( dockable );

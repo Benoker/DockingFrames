@@ -371,6 +371,14 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		// ignore
 	}
 	
+	@Override
+	public void apply( Dockable dockable, M mode, Location history, AffectedSet set ) {
+		super.apply( dockable, mode, history, set );
+		if( history != null ){
+			history.resetApplicationDefined();
+		}
+	}
+	
 	/**
 	 * Using the current {@link ExtendedModeEnablement} this method tells whether
 	 * mode <code>mode</code> can be applied to <code>dockable</code>.

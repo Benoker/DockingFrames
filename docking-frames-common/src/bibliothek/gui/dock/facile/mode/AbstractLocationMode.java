@@ -342,7 +342,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 			return null;
 		}
 		
-		return new Location( getUniqueIdentifier(), location.getRoot(), answer.getLocation() );
+		return new Location( getUniqueIdentifier(), location.getRoot(), answer.getLocation(), true );
 	}
 	
 	public DockActionSource getActionsFor( Dockable dockable, Mode<Location> mode ){

@@ -95,7 +95,7 @@ public class StackGroupMovement implements CGroupMovement{
 			currentDockable = children[i];
 			currentStation = dockable.getDockParent();
 			Location base = callback.getLocation( dockable );
-			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex + 1 - missing ) );
+			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex + 1 - missing ), true );
 			callback.setLocation( currentDockable, movingLocation );
 			if( currentDockable.getDockParent() != dockable.getDockParent() ){
 				missing++;
@@ -107,7 +107,7 @@ public class StackGroupMovement implements CGroupMovement{
 			currentDockable = children[i];
 			currentStation = dockable.getDockParent();
 			Location base = callback.getLocation( dockable );
-			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex - missing ) );
+			Location movingLocation = new Location( base.getMode(), base.getRoot(), copyAndSetStackLocation( base.getLocation(), i - baseIndex - missing ), true );
 			callback.setLocation( currentDockable, movingLocation );
 			if( currentDockable.getDockParent() != dockable.getDockParent() ){
 				missing++;

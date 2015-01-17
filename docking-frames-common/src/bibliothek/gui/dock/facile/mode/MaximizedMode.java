@@ -163,7 +163,7 @@ public class MaximizedMode<M extends MaximizedModeArea> extends AbstractLocation
 			return null;
 		
 		DockableProperty location = area.getLocation( dockable );
-		return new Location( getUniqueIdentifier(), area.getUniqueId(), location );
+		return new Location( getUniqueIdentifier(), area.getUniqueId(), location, false );
 	}
 
 	public boolean isCurrentMode( Dockable dockable ){

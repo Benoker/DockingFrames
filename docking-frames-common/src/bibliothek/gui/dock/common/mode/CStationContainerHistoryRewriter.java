@@ -240,10 +240,10 @@ public class CStationContainerHistoryRewriter implements HistoryRewriter<Locatio
 		}
 		else{
 			if( history == null ){
-				return new Location( mode.getUniqueIdentifier(), replacement.getUniqueId(), null );
+				return new Location( mode.getUniqueIdentifier(), replacement.getUniqueId(), null, false );
 			}
 			else{
-				return new Location( mode.getUniqueIdentifier(), replacement.getUniqueId(), history.getLocation() );
+				return new Location( mode.getUniqueIdentifier(), replacement.getUniqueId(), history.getLocation(), history.isApplicationDefined() );
 			}
 		}
 	}
