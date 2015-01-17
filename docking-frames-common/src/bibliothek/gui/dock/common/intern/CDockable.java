@@ -48,6 +48,7 @@ import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.event.CVetoClosingEvent;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
+import bibliothek.gui.dock.common.grouping.DockableGrouping;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.layout.RequestDimension;
 import bibliothek.gui.dock.common.mode.CLocationModeManager;
@@ -457,6 +458,14 @@ public interface CDockable {
      * is not part of an {@link CControl}. May be <code>null</code> if this dockable is not visible.
      */
     public ExtendedMode getExtendedMode();
+    
+    /**
+     * Gets an algorithm that tells how this {@link CDockable} attempts to group itself automatically with other {@link Dockable}s.
+     * The algorithm is able to rewrite the location of this {@link CDockable} everytime when it is moved to a new location, assuming
+     * that no stronger mechanism, or the user, already defined a location. 
+     * @return the grouping behavior, or <code>null</code>
+     */
+    public DockableGrouping getGrouping();
     
     /**
      * Sets the parent of this <code>CDockable</code>. This method can be called by the client

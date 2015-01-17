@@ -82,6 +82,10 @@ import bibliothek.gui.dock.common.event.CVetoClosingListener;
 import bibliothek.gui.dock.common.event.CVetoFocusListener;
 import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.group.CGroupBehavior;
+import bibliothek.gui.dock.common.grouping.CGroupingBehavior;
+import bibliothek.gui.dock.common.grouping.DefaultCGroupingBehavior;
+import bibliothek.gui.dock.common.grouping.GroupingDockLocationListener;
+import bibliothek.gui.dock.common.grouping.GroupingHistoryRewriter;
 import bibliothek.gui.dock.common.intern.CControlAccess;
 import bibliothek.gui.dock.common.intern.CControlFactory;
 import bibliothek.gui.dock.common.intern.CDockFrontend;
@@ -142,6 +146,7 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.gui.dock.event.DoubleClickListener;
 import bibliothek.gui.dock.event.KeyboardListener;
+import bibliothek.gui.dock.facile.mode.Location;
 import bibliothek.gui.dock.facile.mode.LocationModeManager;
 import bibliothek.gui.dock.facile.station.split.ConflictResolver;
 import bibliothek.gui.dock.facile.station.split.DefaultConflictResolver;
@@ -165,6 +170,7 @@ import bibliothek.gui.dock.station.stack.action.DockActionDistributor;
 import bibliothek.gui.dock.station.stack.menu.CombinedMenuContent;
 import bibliothek.gui.dock.station.stack.tab.TabPane;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.support.mode.HistoryRewriter;
 import bibliothek.gui.dock.support.util.ApplicationResource;
 import bibliothek.gui.dock.support.util.ApplicationResourceManager;
 import bibliothek.gui.dock.themes.BasicTheme;
@@ -288,6 +294,13 @@ public class CControl {
     public static final PropertyKey<CloseActionFactory> CLOSE_ACTION_FACTORY = 
     		new PropertyKey<CloseActionFactory>( "ccontrol.closeActionFactory",
     				new ConstantPropertyFactory<CloseActionFactory>( CloseActionFactory.DEFAULT ), true );
+    
+    /**
+     * The grouping behavior defines how {@link Dockable}s tend to automatically group together.
+     */
+    public static final PropertyKey<CGroupingBehavior> GROUPING_BEHAVIOR =
+    		new PropertyKey<CGroupingBehavior>( "ccontrol.groupingBehavior",
+    				new ConstantPropertyFactory<CGroupingBehavior>( new DefaultCGroupingBehavior() ), true );
     
     /** the unique id of the station that handles the externalized dockables */
     public static final String EXTERNALIZED_STATION_ID = "external";
@@ -756,7 +769,9 @@ public class CControl {
      */
     private void initExtendedModes(){
     	locationManager = new CLocationModeManager( access );
-    	locationManager.setHistoryRewriter( new CStationContainerHistoryRewriter( this ) );
+    	HistoryRewriter<Location, CLocationMode> validation = new CStationContainerHistoryRewriter( this );
+    	locationManager.setHistoryRewriter( new GroupingHistoryRewriter( this, validation ));
+    	getController().getRegister().addDockRegisterListener( new GroupingDockLocationListener( this ) );
     	initExternalizeArea();
     }
     

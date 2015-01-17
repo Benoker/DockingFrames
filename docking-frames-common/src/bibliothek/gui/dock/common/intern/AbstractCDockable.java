@@ -49,6 +49,7 @@ import bibliothek.gui.dock.common.event.CFocusListener;
 import bibliothek.gui.dock.common.event.CKeyboardListener;
 import bibliothek.gui.dock.common.event.CVetoClosingEvent;
 import bibliothek.gui.dock.common.event.CVetoClosingListener;
+import bibliothek.gui.dock.common.grouping.DockableGrouping;
 import bibliothek.gui.dock.common.intern.action.CloseActionSource;
 import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.common.layout.RequestDimension;
@@ -143,6 +144,9 @@ public abstract class AbstractCDockable implements CDockable {
     
     /** All the items that are enabled */
     private int enabled = EnableableItem.ALL.getFlag();
+    
+    /** Tells how this {@link CDockable} tries to automatically group itself with other dockables */
+    private DockableGrouping grouping;
     
     /**
      * Creates a new dockable
@@ -475,6 +479,20 @@ public abstract class AbstractCDockable implements CDockable {
             return null;
         
         return control.getLocationManager().getMode( intern() );
+    }
+    
+    /**
+     * Sets an algorithm that defines how this dockable attempts to automatically group itself with
+     * other dockables.
+     * @param grouping the grouping behavior, can be <code>null</code> in which case this dockable
+     * does not attempt to group itself. The default value of this property is <code>null</code>.
+     */
+    public void setGrouping( DockableGrouping grouping ) {
+		this.grouping = grouping;
+	}
+    
+    public DockableGrouping getGrouping() {
+    	return grouping;
     }
     
     public void setWorkingArea( CStation<?> area ) {
