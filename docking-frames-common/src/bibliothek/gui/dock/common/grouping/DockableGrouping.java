@@ -35,7 +35,11 @@ import bibliothek.gui.dock.facile.mode.Location;
  * allowing clients to group several dockables together.<br>
  * While the name of the interface implies that dockables should be grouped together, nothing
  * prevents a client from writing an implementation that does the opposite, e.g. tries to distribute
- * {@link Dockable}s. 
+ * {@link Dockable}s.<br>
+ * The two most common events that may be interesting for a {@link DockableGrouping}, when a 
+ * {@link #hierarchyChanged(Dockable) the path of a dockable changes}, and
+ * {@link #focusGained(Dockable) when a dockable gains focus}, are automatically forwarded to this interface.
+ * Strategies that require more events, have to add the observers they need themselves to the right objects.
  * @author Benjamin Sigg
  */
 public interface DockableGrouping {
@@ -72,4 +76,10 @@ public interface DockableGrouping {
 	 * @param dockable a {@link Dockable} that has a new place
 	 */
 	public void hierarchyChanged( Dockable dockable );
+
+	/**
+	 * Called after <code>dockable</code> has gained the focus.
+	 * @param dockable the element that just gained the focus
+	 */
+	public void focusGained( Dockable dockable );
 }

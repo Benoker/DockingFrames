@@ -771,7 +771,10 @@ public class CControl {
     	locationManager = new CLocationModeManager( access );
     	HistoryRewriter<Location, CLocationMode> validation = new CStationContainerHistoryRewriter( this );
     	locationManager.setHistoryRewriter( new GroupingHistoryRewriter( this, validation ));
-    	getController().getRegister().addDockRegisterListener( new GroupingDockLocationListener( this ) );
+    	
+    	GroupingDockLocationListener groupingListener = new GroupingDockLocationListener( this );
+    	getController().getRegister().addDockRegisterListener( groupingListener );
+    	getController().addDockableFocusListener( groupingListener );
     	initExternalizeArea();
     }
     

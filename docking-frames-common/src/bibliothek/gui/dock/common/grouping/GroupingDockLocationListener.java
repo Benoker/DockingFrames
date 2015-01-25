@@ -31,6 +31,8 @@ import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.event.DockHierarchyEvent;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.event.DockRegisterAdapter;
+import bibliothek.gui.dock.event.DockableFocusEvent;
+import bibliothek.gui.dock.event.DockableFocusListener;
 import bibliothek.util.FrameworkOnly;
 
 /**
@@ -38,7 +40,7 @@ import bibliothek.util.FrameworkOnly;
  * @author Benjamin Sigg
  */
 @FrameworkOnly
-public class GroupingDockLocationListener extends DockRegisterAdapter {
+public class GroupingDockLocationListener extends DockRegisterAdapter implements DockableFocusListener {
 	/** The control from which to read the current {@link CGroupingBehavior} */
 	private CControl control;
 	
@@ -70,11 +72,24 @@ public class GroupingDockLocationListener extends DockRegisterAdapter {
 		}		
 	}
 	
+
+	public void dockableFocused( DockableFocusEvent event ) {
+		Dockable dockable = event.getNewFocusOwner();
+		
+		if( dockable != null ){
+			CGroupingBehavior groupingBehavior = control.getProperty( CControl.GROUPING_BEHAVIOR );
+			DockableGrouping grouping = groupingBehavior.getGrouping( dockable );
+			if( grouping != null ){
+				grouping.focusGained( dockable );
+			}
+		}
+	}
+	
 	/**
 	 * A {@link DockHierarchyListener} that is added to all known {@link Dockable}s.
 	 * @author Benjamin Sigg
 	 */
-	private class Listener implements DockHierarchyListener{
+	private class Listener implements DockHierarchyListener {
 		public void hierarchyChanged( DockHierarchyEvent event ) {
 			update( event.getDockable() );
 		}
