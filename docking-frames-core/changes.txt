@@ -1049,3 +1049,4 @@
  - API: Added "applicationDefined" to the class "Location", this property informs the GroupingHistoryRewriter that a location of a Dockable was defined by the application and that location should not be rewritten.
  - API: CPlaceholderStrategy is less aggressiv with removing invalid placeholders. Placeholders that are not matching the default scheme of how placeholders created by the framework itself look like, are now kept instead of removed.
  - API: Added new methods to CGridPerspective, CMinimizePerspective and CExternalizePerspective that allows clients to insert placeholders into the layout.
+ - API: Added "PlaceholderGrouping" and an example application. "PlaceholderGrouping" allows clients to group CDockable.

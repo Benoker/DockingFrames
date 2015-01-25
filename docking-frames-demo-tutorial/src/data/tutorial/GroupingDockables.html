@@ -1,0 +1,15 @@
+<html><body>
+For some applications it may be nice if CDockables that share the same data/type/behavior/function/etc
+stick together.<br>
+Or perhaps another application adds custom placeholders (just a fancy name for "unique identifier") in 
+the layout, and needs the ability to place new CDockables at the location of said placeholders.<br>
+All of this can be achieved with a class called "PlaceholderGrouping":
+<ul>
+	<li>Use "CDockable.setGrouping" to define the group in which the element is. You may change the group any time.</li>
+	<li>Or use the key "CControl.GROUPING_BEHAVIOR" to define the grouping algorithm for any kind of Dockable.</li>
+	<li>The class "PlaceholderGrouping" identifies a group by using a unique identifier called a "placeholder".</li>
+	<li>Placeholders are part of the layout, they are persistently stored.</li>
+</ul>
+
+
+</body></html>
