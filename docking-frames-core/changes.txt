@@ -1046,4 +1046,6 @@
 [v1.1.2p14]
  ! API: DockStation got a new method called "getPlaceholderMapping" with which clients can access the placeholders that are stored on the station.
  ! API: CDockables without location do now always show up as "normalized" Dockables. This change allows the LocationModeManager to decide about the initial location of a Dockable, instead of the DockFrontend. The LocationModeManager will be able to apply additional settings, like for example the CGroupBehavior.
- - API: Added "applicationDefined" to the class "Location", this property informs the GroupingHistoryRewriter that a location of a Dockable was defined by the application and that location should not be rewritten. 
+ - API: Added "applicationDefined" to the class "Location", this property informs the GroupingHistoryRewriter that a location of a Dockable was defined by the application and that location should not be rewritten.
+ - API: CPlaceholderStrategy is less aggressiv with removing invalid placeholders. Placeholders that are not matching the default scheme of how placeholders created by the framework itself look like, are now kept instead of removed.
+ - API: Added new methods to CGridPerspective, CMinimizePerspective and CExternalizePerspective that allows clients to insert placeholders into the layout.

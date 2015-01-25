@@ -235,6 +235,35 @@ public class ScreenDockPerspective implements PerspectiveStation{
 	}
 	
 	/**
+	 * Adds <code>placeholder</code> to this station.
+	 * @param placeholder the placeholder to add
+	 * @param bounds the location and size of <code>placeholder</code>
+	 */
+	public void addPlaceholder( Path placeholder, Rectangle bounds ){
+		addPlaceholder( placeholder, bounds.x, bounds.y, bounds.width, bounds.height );
+	}
+	
+	/**
+	 * Adds <code>placeholder</code> to this station.
+	 * @param placeholder the placeholder to add
+	 * @param x the x-coordinate on the screen
+	 * @param y the y-coordinate on the screen
+	 * @param width the width of the window
+	 * @param height the height of the window
+	 */
+	public void addPlaceholder( Path placeholder, int x, int y, int width, int height ){
+		int index = dockables.list().size();
+		
+		dockables.list().insertPlaceholder( index, placeholder );
+		PlaceholderMetaMap map = dockables.list().getMetaMap( index );
+		
+		map.putInt( "x", x );
+		map.putInt( "y", y );
+		map.putInt( "width", width );
+		map.putInt( "height", height );
+	}
+	
+	/**
 	 * Gets the index of <code>dockable</code>.
 	 * @param dockable some child of this station
 	 * @return the index or -1 if <code>dockable</code> was not found

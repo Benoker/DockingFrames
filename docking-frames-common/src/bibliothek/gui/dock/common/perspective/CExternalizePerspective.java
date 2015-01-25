@@ -227,6 +227,27 @@ public class CExternalizePerspective implements CStationPerspective{
 	}
 	
 	/**
+	 * Adds <code>placeholder</code> to this area.
+	 * @param placeholder the placeholder to add, not <code>null</code>
+	 * @param bounds the location and size of <code>placeholder</code>
+	 */
+	public void addPlaceholder( Path placeholder, Rectangle bounds ){
+		delegate.addPlaceholder( placeholder, bounds );
+	}
+	
+	/**
+	 * Adds <code>placeholder</code> to this area.
+	 * @param placeholder the placeholder to add, not <code>null</code>
+	 * @param x the x-coordinate on the screen
+	 * @param y the y-coordinate on the screen
+	 * @param width the width of the window
+	 * @param height the height of the window
+	 */
+	public void addPlaceholder( Path placeholder, int x, int y, int width, int height ){
+		delegate.addPlaceholder( placeholder, x, y, width, height );
+	}
+	
+	/**
 	 * Gets an object that stores all the properties that are associated with <code>dockable</code>.
 	 * @param dockable the element whose window is searched
 	 * @return the window, <code>null</code> if <code>dockable</code> is not known to this area

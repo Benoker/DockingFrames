@@ -148,6 +148,14 @@ public class CMinimizePerspective implements CStationPerspective{
 	public void addPlaceholder( CDockablePerspective dockable ){
 		delegate.addPlaceholder( dockable.intern().asDockable() );
 	}
+
+	/**
+	 * Adds a placeholder at the end of the list of children of this area.
+	 * @param placeholder the new placeholder, not <code>null</code>
+	 */
+	public void addPlaceholder( Path placeholder ){
+		delegate.addPlaceholder( placeholder );
+	}
 	
 	/**
 	 * Inserts a placeholder for <code>dockable</code> at location <code>index</code> in the list of
@@ -157,6 +165,16 @@ public class CMinimizePerspective implements CStationPerspective{
 	 */
 	public void insertPlaceholder( int index, CDockablePerspective dockable ){
 		delegate.insertPlaceholder( index, dockable.intern().asDockable() );
+	}
+
+	/**
+	 * Inserts a placeholder at location <code>index</code> in the list of
+	 * children of this area.
+	 * @param index the location of the placeholder
+	 * @param placeholder the new placeholder, not <code>null</code>
+	 */
+	public void insertPlaceholder( int index, Path placeholder ){
+		delegate.insertPlaceholder( index, placeholder );
 	}
 	
 	/**

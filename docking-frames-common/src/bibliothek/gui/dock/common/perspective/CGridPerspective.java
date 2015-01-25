@@ -314,6 +314,26 @@ public class CGridPerspective extends SingleCDockablePerspective implements CSta
 		}
 		grid.addPlaceholders( x, y, width, height, placeholders );
 	}
+	
+	/**
+	 * Adds placeholders at location <code>x/y</code> with size <code>width/height</code> to 
+	 * an internal list of pending commands to execute. This method does not change the layout of this area, but a call
+	 * to {@link #gridDeploy()} will.<br>
+	 * Calling this method several times with the same location and size has the same effect as calling it once,
+	 * but with a bigger array that contains all the dockables that would otherwise be added through many calls.
+	 * @param x the x-coordinate of <code>dockables</code>, can be any number
+	 * @param y the y-coordinate of <code>dockables</code>, can be any number
+	 * @param width the width of <code>dockables</code>, can be any number greater than 0
+	 * @param height the height of <code>dockables</code>, can be any number greater than 0
+	 * @param placeholders the placeholders to add, should contain at least one element and no <code>null</code> elements
+	 * @see #gridClear()
+	 * @see #gridDeploy()
+	 * @throws IllegalArgumentException if not all dockables have a placeholder
+	 */
+	public void gridPlaceholder( double x, double y, double width, double height, Path... placeholders ){
+		gridChanges = true;
+		grid.addPlaceholders( x, y, width, height, placeholders );
+	}
 
 	/**
 	 * Using location <code>x/y</code> and size <code>width/height</code> as key, this method set the selection

@@ -175,12 +175,29 @@ public class FlapDockPerspective implements PerspectiveDockable, PerspectiveStat
 	}
 	
 	/**
+	 * Adds <code>placeholder</code> at location <code>index</code> in the list of items.
+	 * @param index the location of <code>placeholder</code>
+	 * @param placeholder the placeholder to add, not <code>null</code>
+	 */
+	public void insertPlaceholder( int index, Path placeholder ){
+		dockables.list().insertPlaceholder( index, placeholder );
+	}
+	
+	/**
 	 * Adds a placeholder for <code>dockable</code> and all its children to the end
 	 * of the list of dockables.
 	 * @param dockable the element which is stored as placeholder
 	 */
 	public void addPlaceholder( PerspectiveDockable dockable ){
 		insertPlaceholder( getDockableCount(), dockable );
+	}
+	
+	/**
+	 * Adds <code>placeholder</code> at the end of the list of items.
+	 * @param placeholder the placeholder to add, not <code>null</code>
+	 */
+	public void addPlaceholder( Path placeholder ){
+		insertPlaceholder( dockables.list().size(), placeholder );
 	}
 	
 	/**
