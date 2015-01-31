@@ -27,6 +27,7 @@ package bibliothek.gui.dock.common.grouping;
 
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.CLocationMode;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.event.DockHierarchyListener;
 import bibliothek.gui.dock.facile.mode.Location;
 
@@ -43,6 +44,13 @@ import bibliothek.gui.dock.facile.mode.Location;
  * @author Benjamin Sigg
  */
 public interface DockableGrouping {
+	/**
+	 * Tries to find out how to display <code>dockable</code> initially.
+	 * @param dockable an invisible dockable that is about to be made visible, and that does not have a location defined.
+	 * @return the initial mode of <code>dockable</code>, or <code>null</code>
+	 */
+	public ExtendedMode getInitialMode( Dockable dockable );
+	
 	/**
 	 * Called right after an old location of <code>dockable</code> for <code>mode</code> was read. The method
 	 * may change the location of <code>dockable</code> by returning a new {@link Location} object.<br>

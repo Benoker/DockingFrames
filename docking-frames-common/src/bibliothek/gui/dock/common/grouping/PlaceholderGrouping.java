@@ -85,6 +85,15 @@ public class PlaceholderGrouping implements DockableGrouping{
 		return placeholder;
 	}
 
+	/**
+	 * Placeholder that marks the last position where this {@link PlaceholderGrouping} did store something. The default implementation
+	 * always returns {@link #getPlaceholder() placeholder + "last"}, but subclasses may change the behavior.
+	 * @return the last location where something interesting happened
+	 */
+	protected Path getLastPlaceholder(){
+		return placeholder.append( "last" );
+	}
+	
 	public Location getStoredLocation( Dockable dockable, CLocationMode mode, Location history ) {
 		return history;
 	}
@@ -101,6 +110,40 @@ public class PlaceholderGrouping implements DockableGrouping{
 			result = validatedHistory;
 		}
 		return result;
+	}
+	
+	public ExtendedMode getInitialMode( Dockable dockable ) {
+		ExtendedMode mode = getInitialMode( dockable, true );
+		if( mode == null ){
+			mode = getInitialMode( dockable, false );
+		}
+		return mode;
+	}
+	
+	private ExtendedMode getInitialMode( Dockable dockable, boolean validateMode ){
+		Path lastPlaceholder = getLastPlaceholder();
+		
+		for( CLocationMode mode : control.getLocationManager().modes() ){
+			for( String id : mode.getRepresentationIds() ){
+				DockStation station = mode.getRepresentation( id );
+				if( station.getPlaceholderMapping().hasPlaceholder( lastPlaceholder )){
+					boolean valid = true;
+					
+					if( validateMode ){
+						Dockable child = station.getPlaceholderMapping().getDockableAt( lastPlaceholder );
+						if( child != null ){
+							valid = mode.isCurrentMode( child );
+						}
+					}
+					
+					if( valid ){
+						return mode.getExtendedMode();
+					}
+				}
+			}
+		}
+		
+		return null;
 	}
 
 	/**
@@ -204,11 +247,15 @@ public class PlaceholderGrouping implements DockableGrouping{
 	 * @param dockable defines the location to mark
 	 */
 	protected void markLocation( Dockable dockable ){
-		removePlaceholder( dockable );
+		removePlaceholderInMode( dockable );
+		removePlaceholderEverywhere();
 		
+		Path lastPlaceholder = getLastPlaceholder();
 		DockStation parent = dockable.getDockParent();
 		while( parent != null && dockable != null ){
-			parent.getPlaceholderMapping().addPlaceholder( dockable, placeholder );
+			PlaceholderMapping mapping = parent.getPlaceholderMapping();
+			mapping.addPlaceholder( dockable, placeholder );
+			mapping.addPlaceholder( dockable, lastPlaceholder );
 			dockable = parent.asDockable();
 			if( dockable != null ){
 				parent = dockable.getDockParent();
@@ -221,7 +268,7 @@ public class PlaceholderGrouping implements DockableGrouping{
 	 * but is associated with the current {@link ExtendedMode} of <code>dockable</code>.
 	 * @param dockable defines the mode to check, and defines that its parent stations are not to be touched
 	 */
-	private void removePlaceholder( Dockable dockable ){
+	private void removePlaceholderInMode( Dockable dockable ){
 		CLocationMode mode = control.getLocationManager().getCurrentMode( dockable );
 		if( mode == null ){
 			return;
@@ -230,6 +277,20 @@ public class PlaceholderGrouping implements DockableGrouping{
 			DockStation station = mode.getRepresentation( id );
 			if( !DockUtilities.isAncestor( station, dockable )){
 				station.getPlaceholderMapping().removePlaceholder( placeholder );
+			}
+		}
+	}
+	
+	/**
+	 * Removes the {@link #getLastPlaceholder() last placeholder} everywhere.
+	 */
+	public void removePlaceholderEverywhere(){
+		Path lastPlaceholder = getLastPlaceholder();
+		
+		for( CLocationMode mode : control.getLocationManager().modes() ){
+			for( String id : mode.getRepresentationIds() ){
+				DockStation station = mode.getRepresentation( id );
+				station.getPlaceholderMapping().removePlaceholder( lastPlaceholder );
 			}
 		}
 	}

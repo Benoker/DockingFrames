@@ -84,6 +84,7 @@ import bibliothek.gui.dock.common.event.ResizeRequestListener;
 import bibliothek.gui.dock.common.group.CGroupBehavior;
 import bibliothek.gui.dock.common.grouping.CGroupingBehavior;
 import bibliothek.gui.dock.common.grouping.DefaultCGroupingBehavior;
+import bibliothek.gui.dock.common.grouping.DockableGrouping;
 import bibliothek.gui.dock.common.grouping.GroupingDockLocationListener;
 import bibliothek.gui.dock.common.grouping.GroupingHistoryRewriter;
 import bibliothek.gui.dock.common.intern.CControlAccess;
@@ -2815,7 +2816,7 @@ public class CControl {
                 }
                 
                 if( location == null ){
-                	dockable.setExtendedMode( ExtendedMode.NORMALIZED );
+                	dockable.setExtendedMode( findInitialMode( dockable ) );
                 }
                 else{
                     locationManager.setLocation( dockable.intern(), location );
@@ -2828,6 +2829,19 @@ public class CControl {
             finally{
                 register.setStalled( false );
             }
+        }
+        
+        private ExtendedMode findInitialMode( CDockable dockable ){
+        	CGroupingBehavior groupingBehavior = getProperty( GROUPING_BEHAVIOR );
+        	DockableGrouping grouping = groupingBehavior.getGrouping( dockable.intern() );
+        	ExtendedMode mode = null;
+        	if( grouping != null ){
+        		mode = grouping.getInitialMode( dockable.intern() );
+        	}
+        	if( mode == null ){
+        		mode = ExtendedMode.NORMALIZED;
+        	}
+        	return mode;
         }
         
         public CLocation getAutoBaseLocation( CDockable dockable, boolean noBackwardsTransformation ){

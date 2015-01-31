@@ -1050,3 +1050,7 @@
  - API: CPlaceholderStrategy is less aggressiv with removing invalid placeholders. Placeholders that are not matching the default scheme of how placeholders created by the framework itself look like, are now kept instead of removed.
  - API: Added new methods to CGridPerspective, CMinimizePerspective and CExternalizePerspective that allows clients to insert placeholders into the layout.
  - API: Added "PlaceholderGrouping" and an example application. "PlaceholderGrouping" allows clients to group CDockable.
+ 
+[v1.1.2p14a]
+ - API: DockableGrouping can now define the initial ExtendedMode of an invisible CDockable
+ - API: PlaceholderGrouping stores a "last placeholder" at the location where a dockable that is associated with group was last seen
