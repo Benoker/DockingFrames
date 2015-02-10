@@ -721,13 +721,16 @@ public class ScreenDockStation extends AbstractDockStation {
     				property.setPlaceholder( placeholder );
     				return property;
     			}
-    			else{
+    			else if( item.contains( "x", "y", "width", "height" )){    				
     				int x = item.getInt( "x" );
     				int y = item.getInt( "y" );
     				int width = item.getInt( "width" );
     				int height = item.getInt( "height" );
     				
     				return new ScreenDockProperty( x, y, width, height, placeholder );
+    			}
+    			else{
+    				return null;
     			}
     		}
     	};
@@ -760,6 +763,8 @@ public class ScreenDockStation extends AbstractDockStation {
     			if( id == null ){
     				return null;
     			}
+    			
+    			saveLocation( index );
     			
     			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
     			Rectangle bounds = dockable.getBounds();
@@ -1887,19 +1892,6 @@ public class ScreenDockStation extends AbstractDockStation {
         
         int index = indexOf( window.getDockable() );
         
-        PlaceholderMetaMap map = dockables.dockables().getMetaMap( index );
-        Rectangle bounds = null;
-        if( window.isFullscreen() ){
-        	bounds = window.getNormalBounds();
-        }
-        if( bounds == null ){
-        	bounds = window.getWindowBounds();
-        }
-        map.putInt( "x", bounds.x );
-        map.putInt( "y", bounds.y );
-        map.putInt( "width", bounds.width );
-        map.putInt( "height", bounds.height );
-        
         dockables.remove( index );
         
         getRootHandler().removeRoot( window.getComponent() );
@@ -1913,6 +1905,23 @@ public class ScreenDockStation extends AbstractDockStation {
         }
         
         window.destroy();
+    }
+    
+    private void saveLocation( int index ){
+    	ScreenDockWindow window = dockables.dockables().get( index ).getWindow();
+    	
+    	PlaceholderMetaMap map = dockables.dockables().getMetaMap( index );
+        Rectangle bounds = null;
+        if( window.isFullscreen() ){
+        	bounds = window.getNormalBounds();
+        }
+        if( bounds == null ){
+        	bounds = window.getWindowBounds();
+        }
+        map.putInt( "x", bounds.x );
+        map.putInt( "y", bounds.y );
+        map.putInt( "width", bounds.width );
+        map.putInt( "height", bounds.height );
     }
     
     /**

@@ -1054,3 +1054,7 @@
 [v1.1.2p14a]
  - API: DockableGrouping can now define the initial ExtendedMode of an invisible CDockable
  - API: PlaceholderGrouping stores a "last placeholder" at the location where a dockable that is associated with group was last seen
+ 
+[v1.1.2p14b]
+- Bugfix: ScreenDockStation no longer tries to read data that does not exist in the layout-file
+- Bugfix: ScreenDockStation writes more data into the layout-file

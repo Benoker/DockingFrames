@@ -219,7 +219,7 @@ public class PlaceholderMetaMap {
 		}
 		return data.get( key );
 	}
-	
+
 	/**
 	 * Tells whether some data is stored for <code>key</code>.
 	 * @param key the key to search
@@ -227,5 +227,19 @@ public class PlaceholderMetaMap {
 	 */
 	public boolean contains( String key ){
 		return get( key ) != null;
+	}
+
+	/**
+	 * Tells whether some data is stored for <code>key</code>.
+	 * @param keys the keys to search
+	 * @return <code>true</code> if data exists for all the keys, <code>false</code> otherwise
+	 */
+	public boolean contains( String... keys ){
+		for( String key : keys ){
+			if( !contains( key )){
+				return false;
+			}
+		}
+		return true;
 	}
 }

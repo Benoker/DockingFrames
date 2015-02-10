@@ -1492,27 +1492,6 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			return placeholderMap;
 		}
 
-		//		@Override
-		//		public int hashCode(){
-		//			return value == null ? 0 : value.hashCode();
-		//		}
-		//		
-		//		@Override
-		//		public boolean equals( Object obj ){
-		//			if( obj == null ){
-		//				return false;
-		//			}
-		//			
-		//			if( obj == this )
-		//				return true;
-		//			
-		//			if( obj.getClass() == getClass() ){
-		//				return value == null ? ((Item)obj).value == null : value.equals( ((Item)obj).value );
-		//			}
-		//			
-		//			return false;
-		//		}
-
 		@Override
 		public String toString(){
 			StringBuilder builder = new StringBuilder();
