@@ -1891,6 +1891,7 @@ public class ScreenDockStation extends AbstractDockStation {
             frontWindow = null;
         
         int index = indexOf( window.getDockable() );
+        saveLocation( index );
         
         dockables.remove( index );
         
