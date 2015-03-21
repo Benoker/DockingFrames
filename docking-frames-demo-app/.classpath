@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DockingFrames"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]DemonstrationInterface"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Help"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Notes"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Chess"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Paint"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]SizeAndColor"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]CommonLayouts"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/[JavaForge]Glass"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
