@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="dock" default="default" basedir="../">
-	<target name="default" depends="text, source, bin, doc, webstartDemo, webstartTutorial">
+	<target name="default" depends="text, source, bin, doc, webstartDemo, webstartTutorial, update poms">
 		<delete>
 			<fileset dir="${temp}"/>
 		</delete>
@@ -36,6 +36,7 @@
 			<fileset dir="${base}">
 				<include name="*.pdf"/>
 				<include name="*.txt"/>
+				<include name="version"/>
 				<exclude name="faq*"/>
 			</fileset>
 		</copy>
@@ -174,6 +175,7 @@
 		<copy tofile="${base}/readme.txt" file="${location.core}/readme_full.txt"/>
 		<copy todir="${base}" file="${location.core}/tutorial.sh"/>
 		<copy todir="${base}" file="${location.core}/tutorial.bat"/>
+		<copy todir="${base}" file="${location.core}/version"/>
 	</target>
 
 	<target name="webstartDemo" depends="bin, paths">
@@ -545,6 +547,20 @@
 		</copy>
 	</target>
 
+	<!-- maven tasks -->
+	<target name="update poms" depends="clean, paths">
+	    <loadresource property="dock.version">
+	       <file file="${location.core}/version"/>
+	    </loadresource>
+		
+		<replaceregexp replace="&lt;version&gt;${dock.version}&lt;/version&gt;">
+			<fileset dir=".">
+    			<include name="**/pom.xml"/>
+			</fileset>
+			<regexp pattern="&lt;version&gt;(.*)&lt;/version&gt;"/>
+		</replaceregexp>
+	</target>
+	
 	<!-- paths source -->
 	<target name="source dir" depends="clean, paths">
 		<mkdir dir="${base}"/>
