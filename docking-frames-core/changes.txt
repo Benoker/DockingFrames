@@ -1058,3 +1058,6 @@
 [v1.1.2p14b]
 - Bugfix: ScreenDockStation no longer tries to read data that does not exist in the layout-file
 - Bugfix: ScreenDockStation writes more data into the layout-file
+
+[v1.1.2p14c]
+- Bugfix: Found by Ti: reading the "area" of a CommonSingleDockable from an xml file failed, because CommonSingleDockableFactory was reading the wrong tag.

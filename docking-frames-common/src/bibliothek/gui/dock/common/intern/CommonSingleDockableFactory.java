@@ -303,7 +303,7 @@ public class CommonSingleDockableFactory implements DockFactory<CommonDockable, 
     	
     	XElement xarea = element.getElement( "area" );
     	if( xarea != null ){
-    		String area = element.getString();
+    		String area = xarea.getString();
     		if( "".equals( area )){
     			layout.setArea( null );
     		}
