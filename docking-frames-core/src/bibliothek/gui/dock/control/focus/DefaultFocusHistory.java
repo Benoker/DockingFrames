@@ -50,6 +50,9 @@ public class DefaultFocusHistory implements FocusHistory{
 	/** the actual history */
 	private List<Dockable> history = new LinkedList<Dockable>();
 	
+	/** these Dockables did not yet have the focus */
+	private List<Dockable> unfocused = new LinkedList<Dockable>();
+	
 	/** the listeners that are added to {@link #controller} */
 	private Listener listener = new Listener();
 	
@@ -67,8 +70,15 @@ public class DefaultFocusHistory implements FocusHistory{
 	}
 	
 	public Dockable[] getHistory(){
-		Dockable[] result = new Dockable[ history.size() ];
-		int index = result.length-1;
+		Dockable[] result = new Dockable[ unfocused.size() + history.size() ];
+		
+		int index = 0;
+		for( Dockable dockable : unfocused ){
+			result[ index++ ] = dockable;
+		}
+		
+		
+		index = result.length-1;
 		for( Dockable item : history ){
 			result[ index-- ] = item;
 		}
@@ -103,11 +113,20 @@ public class DefaultFocusHistory implements FocusHistory{
 	private class Listener extends DockRegisterAdapter implements DockableFocusListener{
 		public void dockableUnregistered( DockController controller, Dockable dockable ){
 			history.remove( dockable );
+			unfocused.remove( dockable );
+		}
+		
+		@Override
+		public void dockableRegistered( DockController controller, Dockable dockable ) {
+			if( !unfocused.contains( dockable )){
+				unfocused.add( dockable );
+			}
 		}
 		
 		public void dockableFocused( DockableFocusEvent event ){
 			Dockable owner = event.getNewFocusOwner();
 			if( owner != null ){
+				unfocused.remove( owner );
 				history.remove( owner );
 				history.add( 0, owner );
 			}

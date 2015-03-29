@@ -35,9 +35,11 @@ import bibliothek.util.Filter;
  */
 public interface FocusHistory {
 	/**
-	 * Gets an array containing all known {@link Dockable}s which did have the focus. The first element in the array
-	 * is the did not have the focus for the longest time, while the last element in the array is the element that
-	 * may have the focus right now.
+	 * Gets an array containing all known {@link Dockable}s which may have had the focus. The first element in the array
+	 * did not have the focus for the longest time, while the last element in the array is the element that
+	 * may have the focus right now.<br>
+	 * The result may contain {@link Dockable}s that were never focused, these items will always be at the beginning of
+	 * the array.
 	 * @return a copy of the history
 	 */
 	public Dockable[] getHistory();
