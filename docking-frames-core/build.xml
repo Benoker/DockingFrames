@@ -557,7 +557,7 @@
 			<fileset dir=".">
     			<include name="**/pom.xml"/>
 			</fileset>
-			<regexp pattern="&lt;version&gt;(.*)&lt;/version&gt;"/>
+			<regexp pattern="&lt;version&gt;(1\.1\.2.*)&lt;/version&gt;"/>
 		</replaceregexp>
 	</target>
 	
