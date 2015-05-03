@@ -38,7 +38,6 @@ import java.util.Map;
 public class DefaultDockRenderingHints implements DockRenderingHints {
 	private Map<?, ?> desktopHints;
 
-	@Override
 	public void setupGraphics( Graphics g ) {
 		if( desktopHints == null ) {
 			Toolkit tk = Toolkit.getDefaultToolkit();
