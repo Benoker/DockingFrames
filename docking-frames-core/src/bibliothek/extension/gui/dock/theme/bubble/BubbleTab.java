@@ -75,6 +75,7 @@ import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.render.DockRenderingHints;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
 
 /**
@@ -450,6 +451,14 @@ public class BubbleTab extends ConfiguredBackgroundPanel implements CombinedTab,
 
 	public Dimension getMinimumSize( Tab[] tabs ){
 		return getMinimumSize();
+	}
+
+	@Override
+	protected void setupRenderingHints( Graphics g ) {
+		if( controller != null ){
+			DockRenderingHints renderingHints = controller.getProperties().get( DockRenderingHints.RENDERING_HINTS );
+			renderingHints.setupGraphics( g );
+		}
 	}
 	
 	@Override

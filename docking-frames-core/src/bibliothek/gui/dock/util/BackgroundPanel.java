@@ -100,6 +100,7 @@ public abstract class BackgroundPanel extends JPanel implements PaintableCompone
 	
 	@Override
 	public void paint( Graphics g ){
+		setupRenderingHints( g );
 		if( background == null || background.getPaint() == null ){
 			super.paint( g );
 			paintOverlay( g );
@@ -108,6 +109,13 @@ public abstract class BackgroundPanel extends JPanel implements PaintableCompone
 			background.paint( this, g );
 		}
 	}
+	
+	/**
+	 * Called before painting on this panel happens. Allows to apply rendering hints (or other settings) to
+	 * <code>g</code>.
+	 * @param g the painting context
+	 */
+	protected abstract void setupRenderingHints( Graphics g );
 
 	protected void paintComponent( Graphics g ){
 		paintBackground( g );

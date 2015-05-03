@@ -204,6 +204,10 @@ public class BackgroundExample {
 					// we ignore transparency settings. These settings are made by the client and since in this
 					// example we do not set transparency this method will never be called anyway
 				}
+    			@Override
+    			protected void setupRenderingHints( Graphics g ) {
+    				// we do not set any rendering hints (like antialising)
+    			}
 			};
 			panel.setBackground( color );
 			add( panel );

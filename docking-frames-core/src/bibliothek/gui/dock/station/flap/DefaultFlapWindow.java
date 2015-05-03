@@ -153,6 +153,10 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			protected void configure( Transparency transparency ){
 				// no support for transparency as this is a root component and can never be transparent
 			}
+			@Override
+			protected void setupRenderingHints( Graphics g ) {
+				// ignore
+			}
 		};
 		content.setBackground( background );
 		contentContainer.getBasePane().setLayout( new BorderLayout() );

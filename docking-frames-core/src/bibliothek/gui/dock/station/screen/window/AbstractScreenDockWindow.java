@@ -586,6 +586,10 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     			protected void configure( Transparency transparency ){
     				setTransparency( transparency );
     			}
+    			@Override
+    			protected void setupRenderingHints( Graphics g ) {
+    				// ignore
+    			}
     		};
     	}
     	else{
@@ -594,6 +598,10 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
 	    		protected void configure( Transparency transparency ){
 	    			// does not support transparency as this is a root component
 	    		}
+    			@Override
+    			protected void setupRenderingHints( Graphics g ) {
+    				// ignore
+    			}
 	    	};
     	}
     	contentBackground.setBackground( background );

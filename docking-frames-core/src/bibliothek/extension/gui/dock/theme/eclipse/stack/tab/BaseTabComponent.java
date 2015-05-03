@@ -28,6 +28,7 @@ package bibliothek.extension.gui.dock.theme.eclipse.stack.tab;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Window;
@@ -65,6 +66,7 @@ import bibliothek.gui.dock.util.Transparency;
 import bibliothek.gui.dock.util.color.ColorCodes;
 import bibliothek.gui.dock.util.font.DockFont;
 import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.render.DockRenderingHints;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
 
 /**
@@ -504,6 +506,15 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
     
     public DockStation getStation() {
         return pane.getStation();
+    }
+    
+    @Override
+    protected void setupRenderingHints( Graphics g ) {
+    	DockController controller = getController();
+    	if( controller != null ){
+    		DockRenderingHints renderingHints = controller.getProperties().get( DockRenderingHints.RENDERING_HINTS );
+    		renderingHints.setupGraphics( g );
+    	}
     }
     
     /**

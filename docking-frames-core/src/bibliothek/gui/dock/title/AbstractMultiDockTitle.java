@@ -70,6 +70,7 @@ import bibliothek.gui.dock.util.color.ColorManager;
 import bibliothek.gui.dock.util.font.AbstractDockFont;
 import bibliothek.gui.dock.util.font.FontManager;
 import bibliothek.gui.dock.util.font.FontModifier;
+import bibliothek.gui.dock.util.render.DockRenderingHints;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
 import bibliothek.util.Condition;
 import bibliothek.util.FrameworkOnly;
@@ -381,6 +382,18 @@ public abstract class AbstractMultiDockTitle extends ConfiguredBackgroundPanel i
      */
     protected boolean isDisabled(){
     	return disabled;
+    }
+    
+    @Override
+    protected void setupRenderingHints( Graphics g ) {
+    	Dockable dockable = getDockable();
+    	if( dockable != null ){
+    		DockController controller = dockable.getController();
+    		if( controller != null ){
+    			DockRenderingHints renderingHints = controller.getProperties().get( DockRenderingHints.RENDERING_HINTS );
+    			renderingHints.setupGraphics( g );
+    		}
+    	}
     }
     
     @Override

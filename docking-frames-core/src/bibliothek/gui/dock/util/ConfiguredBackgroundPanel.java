@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.util;
 
+import java.awt.Graphics;
 import java.awt.LayoutManager;
 
 
@@ -68,5 +69,10 @@ public class ConfiguredBackgroundPanel extends BackgroundPanel{
 				setTransparency( transparency );
 				break;
 		}
+	}
+	
+	@Override
+	protected void setupRenderingHints( Graphics g ) {
+		// ignore	
 	}
 }

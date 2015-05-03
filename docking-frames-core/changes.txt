@@ -1065,3 +1065,4 @@
 
 [v1.1.2p14d]
 - Bugfix: Glass-EclipseThemeExtension will no longer register a title as "set by the client", instead is register a title as "set by the theme". This will allow the framework to remove the title if the theme is switched.
+! API: Rendering-hints of the operating system will be better respected when painting titles and taps (see DockRenderingHints).
