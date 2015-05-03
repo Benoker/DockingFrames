@@ -1062,3 +1062,6 @@
 [v1.1.2p14c]
 - Bugfix: Found by Ti: reading the "area" of a CommonSingleDockable from an xml file failed, because CommonSingleDockableFactory was reading the wrong tag.
 - Bugfix: the FocusHistory now also returns those Dockables that never had the focus. These Dockable are ordered by their registration. This fixes an issue where CControl was unable to focus a dockable if the user did not yet interact with the application.
+
+[v1.1.2p14d]
+- Bugfix: Glass-EclipseThemeExtension will no longer register a title as "set by the client", instead is register a title as "set by the theme". This will allow the framework to remove the title if the theme is switched.
