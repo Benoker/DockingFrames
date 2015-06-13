@@ -1069,3 +1069,4 @@
 
 [v1.1.2p14e]
 - Bugfix: Externalizing some stacked CDockables that were part of a CWorkingArea did result in an exception, because the CExternalizedMode did enforce the working-area restriction as soon as there was a StackDockStation between CDockables and ScreenDockStation.
+- Bugfix: normalizing a stack of CDockables did not put the stack at its old location if the stack was a child of a CWorkingArea. This was caused by the class "Placeholder" being unable to handle anything put "placeholder-properties".

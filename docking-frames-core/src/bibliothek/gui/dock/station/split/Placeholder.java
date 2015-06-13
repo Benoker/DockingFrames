@@ -94,24 +94,49 @@ public class Placeholder extends SplitNode {
 	public boolean insert( SplitDockPlaceholderProperty property, Dockable dockable ){
 		Path placeholder = property.getPlaceholder();
 		if( hasPlaceholder( placeholder )){
-			// replace this placeholder with a leaf
-			Leaf leaf = create( dockable, getId() );
-			if( leaf == null )
-				return false;
-			getAccess().getPlaceholderSet().set( this, placeholder, this );
-			leaf.setPlaceholders( getPlaceholders() );
-			replace( leaf );
-			leaf.setPlaceholderMap( getPlaceholderMap() );
-			leaf.setDockable( dockable, null );
-			return true;	
+			return replace( placeholder, dockable );
 		}
 		return false;
 	}
 	
 	@Override
 	public boolean insert( SplitDockPathProperty property, int depth, Dockable dockable ){
-		// ignore
-		return false;
+		if( property.getLeafId() == getId() ){
+			return replace( null, dockable );
+		}
+		else if( depth < property.size() ){
+			Leaf leaf = create( dockable, property.getLeafId() );
+			if( leaf == null ){
+				return false;
+			}
+			split( property, depth, leaf );
+			leaf.setDockable( dockable, null );
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	private boolean replace( Path placeholder, Dockable dockable ){
+		// replace this placeholder with a leaf
+		Leaf leaf = create( dockable, getId() );
+		if( leaf == null )
+			return false;
+		ensureOnlyOnThisNode( placeholder );
+		ensureOnlyOnThisNode( getAccess().getOwner().getPlaceholderStrategy().getPlaceholderFor( dockable ) );
+		
+		leaf.setPlaceholders( getPlaceholders() );
+		replace( leaf );
+		leaf.setPlaceholderMap( getPlaceholderMap() );
+		leaf.setDockable( dockable, null );
+		return true;	
+	}
+	
+	private void ensureOnlyOnThisNode( Path placeholder ){
+		if( placeholder != null ){
+			getAccess().getPlaceholderSet().set( this, placeholder, this );
+		}
 	}
 
 	@Override
