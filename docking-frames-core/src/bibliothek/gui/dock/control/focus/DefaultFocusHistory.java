@@ -118,7 +118,7 @@ public class DefaultFocusHistory implements FocusHistory{
 		
 		@Override
 		public void dockableRegistered( DockController controller, Dockable dockable ) {
-			if( !unfocused.contains( dockable )){
+			if( !unfocused.contains( dockable ) && !history.contains( dockable ) ){
 				unfocused.add( dockable );
 			}
 		}
