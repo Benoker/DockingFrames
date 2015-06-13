@@ -104,8 +104,18 @@ public class DockableSelector {
      * {@link Dockable}s.
      */
     public void select(){
-        cancel();
-        open();
+    	if( !isOpen() ){
+	        cancel();
+	        open();
+    	}
+    }
+    
+    /**
+     * Tells whether the window is shown to the user right now.
+     * @return whether the window is visible
+     */
+    public boolean isOpen(){
+    	return selection != null && dialog != null && dialog.isVisible();
     }
     
     /**
