@@ -30,6 +30,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.action.predefined.CExternalizeAction;
 import bibliothek.gui.dock.common.action.predefined.CUnmaximizeExternalizedAction;
 import bibliothek.gui.dock.common.intern.CDockable;
@@ -46,6 +47,9 @@ import bibliothek.gui.dock.support.mode.Mode;
  * @author Benjamin Sigg
  */
 public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> implements CLocationMode {
+	/** The control in whose realm this externalized mode operates */
+	private CControl control;
+	
 	/** actions to externalize an element */
 	private LocationModeActionProvider externalize;
 	
@@ -57,6 +61,7 @@ public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> i
 	 * @param control the owner of this mode
 	 */
 	public CExternalizedMode( CControl control ){
+		this.control = control;
 		externalize = new KeyedLocationModeActionProvider( CDockable.ACTION_KEY_EXTERNALIZE, new CExternalizeAction( control ));
 		unmaximize = new KeyedLocationModeActionProvider( CDockable.ACTION_KEY_UNMAXIMIZE_EXTERNALIZED, new CUnmaximizeExternalizedAction( control ));
 		
@@ -94,8 +99,14 @@ public class CExternalizedMode extends ExternalizedMode<CExternalizedModeArea> i
 	
 	public boolean respectWorkingAreas( DockStation station ){
 		CModeArea area = get( station );
-		if( area == null || area.getStation() != station ){
+		if( area == null ){
 			return true;
+		}
+		if( area.getStation() != station ){
+			CStation<?> cstation = control.findStation( station );
+			if( cstation == null || cstation.getStation() != area.getStation() ){
+				return true;
+			}
 		}
 		return area.respectWorkingAreas();
 	}

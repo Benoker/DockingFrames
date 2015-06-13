@@ -1626,6 +1626,28 @@ public class CControl {
     }
     
     /**
+     * Searches along the path to the root {@link DockStation} the first {@link CStation} that matches
+     * the {@link DockStation}. If <code>intern</code> is a {@link CStation}, then this method behaves
+     * as if {@link #getStation(DockStation)} was called. If the parent of <code>intern</code> is a {@link CStation},
+     * then this method behaves as if <code>getStation( intern.getDockParent() )</code> was called.
+     * @param intern the starting point for the search of a {@link CStation}
+     * @return the next {@link CStation} on the path from <code>intern</code> (incl.) to the root station (incl.)
+     */
+    public CStation<?> findStation( DockStation intern ){
+    	CStation<?> result = null;
+    	while( result == null && intern != null ){
+    		result = getStation( intern );
+    		Dockable dockable = intern.asDockable();
+    		if( dockable == null ){
+    			intern = null;
+    		}else{
+    			intern = dockable.getDockParent();
+    		}
+    	}
+    	return result;
+    }
+    
+    /**
      * Searches the {@link CStation} with unique identifier <code>id</code>.
      * @param id the identifier
      * @return the station or <code>null</code>

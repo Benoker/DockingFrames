@@ -1066,3 +1066,6 @@
 [v1.1.2p14d]
 - Bugfix: Glass-EclipseThemeExtension will no longer register a title as "set by the client", instead is register a title as "set by the theme". This will allow the framework to remove the title if the theme is switched.
 ! API: Rendering-hints of the operating system will be better respected when painting titles and taps (see DockRenderingHints).
+
+[v1.1.2p14e]
+- Bugfix: Externalizing some stacked CDockables that were part of a CWorkingArea did result in an exception, because the CExternalizedMode did enforce the working-area restriction as soon as there was a StackDockStation between CDockables and ScreenDockStation.
