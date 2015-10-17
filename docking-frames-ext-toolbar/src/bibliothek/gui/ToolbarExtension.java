@@ -265,8 +265,6 @@ public class ToolbarExtension implements Extension {
 		controller.getProperties().get( ExpandableToolbarItemStrategy.STRATEGY ).install( controller );
 
 		controller.getThemeManager().put( Priority.THEME, ThemeManager.STATION_PAINT + ".toolbar", ThemeManager.STATION_PAINT_TYPE, new ToolbarStationPaint( new Color( 255, 0, 0, 125 ), new Color( 128, 128, 128, 125 ) ) );
-		controller.getThemeManager().put( Priority.THEME, ThemeManager.STATION_PAINT + ".toolbar", ThemeManager.STATION_PAINT_TYPE, new ToolbarStationPaint( new Color( 255, 0, 0, 125 ), new Color( 128, 128, 128, 125 ) ) );
-		controller.getThemeManager().put( Priority.THEME, ThemeManager.STATION_PAINT + ".toolbar", ThemeManager.STATION_PAINT_TYPE, new ToolbarStationPaint( new Color( 255, 0, 0, 125 ), new Color( 128, 128, 128, 125 ) ) );
 	}
 
 	private Icon loadIcon( String name ){
