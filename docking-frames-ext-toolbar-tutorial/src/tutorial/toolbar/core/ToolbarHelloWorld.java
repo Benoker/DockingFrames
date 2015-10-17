@@ -2,8 +2,6 @@ package tutorial.toolbar.core;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -15,7 +13,6 @@ import tutorial.support.Tutorial;
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.Orientation;
-import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
 import bibliothek.gui.dock.ToolbarDockStation;
@@ -133,23 +130,6 @@ public class ToolbarHelloWorld {
 		/* To convert the DockAction into a Dockable we create a new ToolbarActionDockable */
 		final ToolbarItemDockable dockable = new ToolbarItemDockable( action );
 		dockable.setTitleIcon(icon);
-		
-		action.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent e ) {
-				DockElement parent = dockable;
-				while(parent != null){
-					System.out.println(parent);
-					Dockable d = parent.asDockable();
-					if( d != null ){
-						parent = d.getDockParent();
-					}else{
-						parent = null;
-					}
-				}
-			}
-		});
-		
 		return dockable;
 	}
 }
