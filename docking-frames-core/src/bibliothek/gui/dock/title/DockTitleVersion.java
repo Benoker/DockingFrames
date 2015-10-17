@@ -145,6 +145,12 @@ public class DockTitleVersion implements DockTitleFactory{
      * @param request the request to answer
      */
     public void request( DockTitleRequest request ){
+    	DockTitleFactory client = getFactory( Priority.CLIENT );
+    	if( client != null ){
+    		client.request( request );
+    		return;
+    	}
+    	
     	if( extensionFactories != null ){
     		for( DockTitleFactory factory : extensionFactories ){
     			factory.request( request );
