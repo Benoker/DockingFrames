@@ -332,16 +332,16 @@ public abstract class AbstractToolbarDockStation extends
 			}
 			try{
 				final ExpandedState oldState = this.state;
+				this.state = state;
 
-				if (this.state != ExpandedState.SHRUNK){
-					shrink();
+				if (oldState != ExpandedState.SHRUNK){
+					shrink(oldState);
 				}
 				if (state == ExpandedState.EXPANDED){
 					expand();
 				} else if (state == ExpandedState.STRETCHED){
 					stretch();
 				}
-				this.state = state;
 
 				for (final ExpandableToolbarItemListener listener : expandableListeners){
 					listener.changed(this, oldState, state);
@@ -420,7 +420,7 @@ public abstract class AbstractToolbarDockStation extends
 		// state is "shrunk"
 	}
 
-	public void shrink(){
+	public void shrink(ExpandedState state){
 		if (state == ExpandedState.EXPANDED){
 			final DockController controller = getController();
 
