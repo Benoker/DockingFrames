@@ -50,6 +50,12 @@ public class ToolbarScreenDockStationExtension implements ScreenDockStationExten
 	public ToolbarScreenDockStationExtension( DockController controller ){
 		this.controller = controller;
 	}
+	
+	@Override
+	public boolean canReplace( ScreenDockStation station, Dockable old, Dockable next ) {
+		ToolbarStrategy strategy = controller.getProperties().get( ToolbarStrategy.STRATEGY );
+		return strategy.isToolbarGroupPartParent( station, next, true );
+	}
 
 	@Override
 	public void drop( ScreenDockStation station, DropArguments arguments ){

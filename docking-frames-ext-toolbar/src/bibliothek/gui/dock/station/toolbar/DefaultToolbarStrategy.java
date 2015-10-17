@@ -32,6 +32,7 @@ package bibliothek.gui.dock.station.toolbar;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.AbstractToolbarDockStation;
 import bibliothek.gui.dock.ScreenDockStation;
 import bibliothek.gui.dock.ToolbarContainerDockStation;
@@ -79,7 +80,9 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			if (dockable instanceof ToolbarDockStation){
 				return dockable;
 			} else{
-				return new ToolbarDockStation();
+				ToolbarDockStation replacement = new ToolbarDockStation();
+				replacement.setOrientation( getOrientation( dockable ) );
+				return replacement;
 			}
 		}
 
@@ -88,11 +91,31 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			if (dockable instanceof ToolbarGroupDockStation){
 				return dockable;
 			} else{
-				return new ToolbarGroupDockStation();
+				ToolbarGroupDockStation replacement = new ToolbarGroupDockStation();
+				replacement.setOrientation( getOrientation( dockable ) );
+				return replacement;
 			}
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Tells what orientation should be applied to the parent of <code>dockable</code>.
+	 * @param dockable some item that is dropped
+	 * @return the preferred orientation of the parent
+	 */
+	protected Orientation getOrientation( Dockable dockable ){
+		Orientation orientation = null;
+		if( dockable instanceof ToolbarItemDockable ){
+			orientation = ((ToolbarItemDockable)dockable).getOrientation();
+		} else if( dockable instanceof AbstractToolbarDockStation ){
+			orientation = ((AbstractToolbarDockStation)dockable).getOrientation();
+		}
+		if( orientation == null ){
+			orientation = Orientation.HORIZONTAL;
+		}
+		return orientation;
 	}
 
 	@Override
@@ -115,8 +138,7 @@ public class DefaultToolbarStrategy implements ToolbarStrategy{
 			return false;
 		} else{
 			// floating policy
-			if ((parent instanceof ScreenDockStation)
-					&& (child instanceof ToolbarGroupDockStation)){
+			if (parent instanceof ScreenDockStation){
 				return true;
 			}
 

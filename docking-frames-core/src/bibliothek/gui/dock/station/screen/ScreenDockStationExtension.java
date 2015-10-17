@@ -34,7 +34,15 @@ import bibliothek.gui.dock.ScreenDockStation;
  * @author Benjamin Sigg
  */
 public interface ScreenDockStationExtension {
-
+	/**
+	 * Tells whether replacing <code>old</code> with <code>next</code> is possible on <code>station</code>.
+	 * @param station the source of the call
+	 * @param old a child of <code>station</code>
+	 * @param next a possible replacement of <code>old</code>
+	 * @return whether replacing <code>old</code> with <code>next</code> is allowed
+	 */
+	public boolean canReplace( ScreenDockStation station, Dockable old, Dockable next );
+	
 	/**
 	 * Called by {@link ScreenDockStation#drop(Dockable, ScreenDockProperty, boolean)}. This method may modify
 	 * the arguments in any way it likes.

@@ -43,6 +43,7 @@ import javax.swing.event.MouseInputListener;
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.Orientation;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.component.DockComponentRootHandler;
 import bibliothek.gui.dock.dockable.AbstractDockable;
@@ -93,7 +94,7 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 	private final List<MouseInputListener> mouseListeners = new ArrayList<MouseInputListener>();
 
 	/** the current orientation of the toolbar */
-	private bibliothek.gui.Orientation orientation = bibliothek.gui.Orientation.HORIZONTAL;
+	private Orientation orientation = Orientation.HORIZONTAL;
 	
 	/** the background of this dockable */
 	private Background background = new Background();
@@ -281,7 +282,7 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 
 		new OrientationObserver( this ){
 			@Override
-			protected void orientationChanged( bibliothek.gui.Orientation current ){
+			protected void orientationChanged( Orientation current ){
 				orientation = current;
 				for( ToolbarItem item : items ){
 					if( item != null ){
@@ -589,6 +590,14 @@ public class ToolbarItemDockable extends AbstractDockable implements ExpandableT
 	@Override
 	public ExpandedState getExpandedState(){
 		return state;
+	}
+	
+	/**
+	 * Gets the latest known orientation of this dockable
+	 * @return the orientation, or <code>null</code> if unknown
+	 */
+	public Orientation getOrientation() {
+		return orientation;
 	}
 
 	@Override

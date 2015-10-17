@@ -1744,6 +1744,13 @@ public class ScreenDockStation extends AbstractDockStation {
     }    
     
     public boolean canReplace( Dockable old, Dockable next ) {
+    	if( extensions != null ){
+    		for( ScreenDockStationExtension extension : extensions ){
+    			if( !extension.canReplace( this, old, next )){
+    				return false;
+    			}
+    		}
+    	}
         return true;
     }
 
@@ -2400,8 +2407,8 @@ public class ScreenDockStation extends AbstractDockStation {
 	        }
 	        else{
 	            Dimension size = dropSizeStrategy.getValue().getDropSize( ScreenDockStation.this, dockable );
-	            Rectangle bounds = new Rectangle( titleX, titleY, size.width, size.height );
-	            addDockable( dockable, bounds, false );
+	            ScreenDockProperty property = new ScreenDockProperty( titleX, titleY, size.width, size.height );
+	            ScreenDockStation.this.drop( dockable, property, false );
 	        }
 	    }
     }
