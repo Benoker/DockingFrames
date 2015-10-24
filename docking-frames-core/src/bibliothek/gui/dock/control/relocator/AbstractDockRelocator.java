@@ -57,7 +57,7 @@ public abstract class AbstractDockRelocator implements DockRelocator{
     /** how many pixels the mouse must be moved until a title is dragged */
     private int dragDistance = 10;
     /** Whether a drag event can only be initialized by dragging a title or not */
-    private boolean dragOnlyTitel = false;
+    private boolean dragOnlyTitle = false;
 
     /** the list of all known modes */
     private List<DockRelocatorMode> modes = new ArrayList<DockRelocatorMode>();
@@ -200,12 +200,12 @@ public abstract class AbstractDockRelocator implements DockRelocator{
 		}
 	}
     
-    public boolean isDragOnlyTitel(){
-		return dragOnlyTitel;
+    public boolean isDragOnlyTitle(){
+		return dragOnlyTitle;
 	}
     
-    public void setDragOnlyTitel( boolean dragOnlyTitel ){
-		this.dragOnlyTitel = dragOnlyTitel;
+    public void setDragOnlyTitle( boolean dragOnlyTitle ){
+		this.dragOnlyTitle = dragOnlyTitle;
 	}
     
     public int getDragDistance(){

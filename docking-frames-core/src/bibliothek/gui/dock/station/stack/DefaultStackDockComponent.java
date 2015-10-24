@@ -379,7 +379,7 @@ public class DefaultStackDockComponent extends JTabbedPane implements StackDockC
 		 * not allowed to move a tab anyways
 		 */
 		private void updateRelocator( int x, int y, boolean searchDockable, boolean forceSearch ){
-		    boolean allowed = controller == null || !controller.getRelocator().isDragOnlyTitel();
+		    boolean allowed = controller == null || !controller.getRelocator().isDragOnlyTitle();
 		    
 			if( mouseTarget != null ){
 			    if( !allowed ){

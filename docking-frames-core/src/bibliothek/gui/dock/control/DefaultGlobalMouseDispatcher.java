@@ -196,7 +196,10 @@ public class DefaultGlobalMouseDispatcher implements GlobalMouseDispatcher {
 					listener = createListener();
 
 					try {
-						Toolkit.getDefaultToolkit().addAWTEventListener( listener, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_WHEEL_EVENT_MASK );
+						Toolkit.getDefaultToolkit().addAWTEventListener( listener,
+								AWTEvent.MOUSE_EVENT_MASK |
+								AWTEvent.MOUSE_MOTION_EVENT_MASK |
+								AWTEvent.MOUSE_WHEEL_EVENT_MASK );
 					}
 					catch( SecurityException ex ) {
 						System.err.println( "Can't register AWTEventListener, support for global MouseEvents disabled" );

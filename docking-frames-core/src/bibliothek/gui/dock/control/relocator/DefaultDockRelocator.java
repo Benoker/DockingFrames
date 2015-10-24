@@ -944,6 +944,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     private void cancel(Dockable dockable){
     	titleDragCancel();
+    	onMove = false;
     	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, new Dockable[]{}, null, null, false );
 		event.cancel();
 		fireCanceled( event );
@@ -1150,7 +1151,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         public void mousePressed( MouseEvent e ){
             if( e.isConsumed() )
                 return;
-            if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
+            if( !representative.isUsedAsTitle() && isDragOnlyTitle() )
                 return;
             dragMousePressed( e, title, dockable );
             setLastActiveToThis();
@@ -1159,7 +1160,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         public void mouseReleased( MouseEvent e ) {
             if( e.isConsumed() )
                 return;
-            if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
+            if( !representative.isUsedAsTitle() && isDragOnlyTitle() )
                 return;
             dragMouseReleased( e, title, dockable );
             setLastActiveToThis();
@@ -1168,7 +1169,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
         public void mouseDragged( MouseEvent e ) {
             if( e.isConsumed() )
                 return;
-            if( !representative.isUsedAsTitle() && isDragOnlyTitel() )
+            if( !representative.isUsedAsTitle() && isDragOnlyTitle() )
                 return;
             dragMouseDragged( e, title, dockable );
             setLastActiveToThis();

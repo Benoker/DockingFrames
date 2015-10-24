@@ -55,17 +55,17 @@ public interface DockRelocator {
      * @return <code>true</code> if a Dockable must be dragged through their
      * titles, <code>false</code> if every part of the dockable can be
      * grabbed by the mouse.
-     * @see #setDragOnlyTitel(boolean)
+     * @see #setDragOnlyTitle(boolean)
      */
-    public boolean isDragOnlyTitel();
+    public boolean isDragOnlyTitle();
     
     /**
      * Tells whether dockables can only be dragged through their title or not. 
-     * @param dragOnlyTitel <code>true</code> if a Dockable must be dragged through its
+     * @param dragOnlyTitle <code>true</code> if a Dockable must be dragged through its
      * title, <code>false</code> if every part of the dockable can be
      * grabbed by the mouse.
      */
-    public void setDragOnlyTitel( boolean dragOnlyTitel );
+    public void setDragOnlyTitle( boolean dragOnlyTitle );
     
     /**
      * Gets the distance the user must move the mouse in order to begin a 
