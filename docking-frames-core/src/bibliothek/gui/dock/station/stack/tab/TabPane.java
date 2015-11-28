@@ -34,6 +34,7 @@ import bibliothek.gui.dock.station.stack.StackDockComponent;
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
 import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
+import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
 
 /**
@@ -57,6 +58,15 @@ public interface TabPane {
 				return new RowLayout();
 			}
 		}, true );
+	
+	/**
+	 * When calculating the minimum size of a {@link TabPane}, then prefer using really small minimum sizes 
+	 * over showing the content correctly.
+	 */
+	public static final PropertyKey<Boolean> USE_SMALL_MINIMUM_SIZE = 
+			new PropertyKey<Boolean>( "dock.tabpane.layout_manager.small",
+					new ConstantPropertyFactory<Boolean>( true ), 
+					true);
 	
 	/**
 	 * Adds a listener to this pane, the listener has to be informed when

@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.dockingframes</groupId>
     <artifactId>docking-frames-base</artifactId>
-    <version>1.1.2-P15</version>
+    <version>1.1.2-P16</version>
   </parent>
 
   <artifactId>tutorial-toolbar</artifactId>

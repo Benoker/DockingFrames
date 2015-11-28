@@ -27,6 +27,7 @@ package bibliothek.gui.dock.station.stack.tab;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * Information about a {@link TabPane} that gets laid out by a {@link AbstractTabLayoutManager}.
@@ -37,6 +38,13 @@ import bibliothek.gui.Dockable;
 public class AbstractTabLayoutManagerPane implements TabPaneListener{
 	/** the panel that is layouted */
 	private TabPane pane;
+	
+	private PropertyValue<Boolean> useSmallMinimumSize = new PropertyValue<Boolean>( TabPane.USE_SMALL_MINIMUM_SIZE ) {
+		@Override
+		protected void valueChanged( Boolean oldValue, Boolean newValue ) {
+			// nothing
+		}
+	};
 	
 	/**
 	 * Creates a new info.
@@ -73,6 +81,10 @@ public class AbstractTabLayoutManagerPane implements TabPaneListener{
 	}
 	
 	public void controllerChanged( TabPane pane, DockController controller ){
-		// ignore
+		useSmallMinimumSize.setProperties( controller );
+	}
+	
+	protected boolean isUseSmallMinimumSize(){
+		return useSmallMinimumSize.getValue();
 	}
 }

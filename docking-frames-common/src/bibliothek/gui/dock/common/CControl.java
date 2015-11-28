@@ -1480,6 +1480,7 @@ public class CControl {
      *  <tr><td>{@link FlapDockStation#LAYOUT_MANAGER} </td><td>Tells the {@link FlapDockStation} the size and the hold property of its children.</td></tr>
      *  <tr><td>{@link SplitDockStation#LAYOUT_MANAGER} </td><td>Logic of all {@link SplitDockStation}s, used when dropping a {@link Dockable} or resizing the station.</td></tr>
      *  <tr><td>{@link TabPane#LAYOUT_MANAGER} </td><td>Defines the size and location of tabs of a stack.</td></tr>
+     *  <tr><td>{@link TabPane#USE_SMALL_MINIMUM_SIZE} </td><td>Use really small minimum sizes for calculating the minimum size of a tab-pane, instead of trying to make the content look good</td></tr>
      *  <tr><td>*&nbsp;{@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStroke} that maximizes a child of a {@link SplitDockStation}.</td></tr>
      *  <tr><td>{@link CombinedMenuContent#MENU_CONTENT} </td><td>The menu that shows overflowing {@link Dockable}s on a stack.</td></tr>
      *  <tr><td>{@link IconManager#MINIMUM_ICON_SIZE}</td><td>The expected minimal size of all icons. </td></tr>

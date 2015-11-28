@@ -1081,3 +1081,6 @@
 - Bugfix: cancelling a DockRelocatorEvent did not reset the "onMove" flag
 - Bugfix: the GlobalMouseDispatcher did not dispatch events to a MouseMotionListener
 ! API: renamed DockRelocator.setDragOnlyTitel to setDragOnlyTitle (which is the proper way to write the word 'title')
+
+[v1.1.2p16]
+- API: new property TabPane.USE_SMALL_MINIMUM_SIZE allows clients to use "really small" minimum sizes, or "good looking" minimum sizes (that are not very small at all)

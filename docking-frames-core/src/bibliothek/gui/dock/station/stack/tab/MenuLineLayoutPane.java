@@ -153,7 +153,12 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 					bestSize = size;
 				}
 			}
-			bestSize.width = Math.max( bestSize.width, dockableSize.width );
+			if(isUseSmallMinimumSize()){
+				bestSize.width = dockableSize.width;
+			}
+			else{
+				bestSize.width = Math.max( bestSize.width, dockableSize.width );
+			}
 			bestSize.height += dockableSize.height;
 		}
 		else{
@@ -164,7 +169,12 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 				}
 			}
 			bestSize.width += dockableSize.width;
-			bestSize.height = Math.max( bestSize.height, dockableSize.height );
+			if(isUseSmallMinimumSize()){
+				bestSize.height = dockableSize.height;
+			}
+			else{
+				bestSize.height = Math.max( bestSize.height, dockableSize.height );
+			}
 		}
 		
 		return bestSize;
