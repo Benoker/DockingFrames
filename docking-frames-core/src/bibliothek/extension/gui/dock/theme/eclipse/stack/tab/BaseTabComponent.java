@@ -942,43 +942,4 @@ public abstract class BaseTabComponent extends ConfiguredBackgroundPanel impleme
 			return BaseTabComponent.this.getComponent();
 		}
 	}
-    
-    // Thomas Hilbet: Moved to EclipseTabPane, perhaps this should remain here if there are other themes like eclipse (which don't use EclipseTabPane)
-//    /**
-//     * Listens to the window ancestor of this {@link TabComponent} and updates
-//     * color when the focus is lost.
-//     * @author Benjamin Sigg, Thomas Hilbert
-//     */
-//    private class WindowActiveObserver extends WindowAdapter implements HierarchyListener{
-//        private Window window;
-//        
-//        public void hierarchyChanged( HierarchyEvent e ){
-//        	Window newWindow = SwingUtilities.getWindowAncestor(getPane().getComponent());
-//
-//            long lFlags = e.getChangeFlags();
-//            // update current found window only if parent has changed
-//            if (window != newWindow && (lFlags & HierarchyEvent.PARENT_CHANGED) != 0) {
-//               if (window != null) {
-//                  window.removeWindowListener(this);
-//               }
-//               if (newWindow != null) {
-//                  newWindow.addWindowListener(this);
-//                  updateBorder();
-//               }
-//               window = newWindow;
-//            }
-//        }
-//        
-//        @Override
-//        public void windowActivated( WindowEvent e ){
-//            updateBorder();
-//            updateFocus();
-//        }
-//        
-//        @Override
-//        public void windowDeactivated( WindowEvent e ){
-//            updateBorder();
-//            updateFocus();
-//        }
-//    }
 }
