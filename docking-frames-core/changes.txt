@@ -1084,3 +1084,6 @@
 
 [v1.1.2p16]
 - API: new property TabPane.USE_SMALL_MINIMUM_SIZE allows clients to use "really small" minimum sizes, or "good looking" minimum sizes (that are not very small at all)
+
+[v1.1.2p16a]
+- Bugfix: dropping a prepopulated CWorkingArea on anything did throw an unnecessary SplitDropTreeException

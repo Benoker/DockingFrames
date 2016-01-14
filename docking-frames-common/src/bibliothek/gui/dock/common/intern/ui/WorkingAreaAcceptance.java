@@ -136,7 +136,11 @@ public class WorkingAreaAcceptance implements DockAcceptance {
      */
     private boolean match( CStation<?> area, Dockable dockable ){
         if( dockable instanceof CommonDockable ){
-            if( getWorkingArea( dockable ) != area )
+        	CStation<?> expectedWorkingArea = getWorkingArea( dockable );
+        	CDockable self = ((CommonDockable)dockable).getDockable();
+        	
+			if( expectedWorkingArea != area && expectedWorkingArea != self )
+				// if we are moving a CWorkingArea around, then 'exectedWorkingArea == self'
                 return false;
         }
         
