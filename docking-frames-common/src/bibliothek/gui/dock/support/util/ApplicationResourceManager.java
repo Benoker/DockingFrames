@@ -101,7 +101,7 @@ public class ApplicationResourceManager {
      */
     public void writeStream( DataOutputStream out ) throws IOException{
         // version
-        Version.write( out, Version.VERSION_1_0_4 );
+        Version.write( out, Version.CURRENT );
         
         // number of elements
         out.writeInt( resources.size() );
