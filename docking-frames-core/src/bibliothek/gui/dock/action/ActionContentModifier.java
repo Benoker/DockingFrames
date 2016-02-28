@@ -34,7 +34,7 @@ package bibliothek.gui.dock.action;
  */
 public class ActionContentModifier {
 	/** no modifier at all. The framework never uses this modifier directly, instead one of vertical or horizontal versions of this modifier is used. */
-	public static final ActionContentModifier NONE = new ActionContentModifier( "dock.none", true, null );
+	public static final ActionContentModifier NONE = new ActionContentModifier( "dock.none", true );
 	/** no modifier at all, the action is guaranteed to be shown vertically */
 	public static final ActionContentModifier NONE_VERTICAL = new ActionContentModifier( "dock.none.vertical", true, false, true, NONE );
 	/** no modifier at all, the action is guaranteed to be shown horizontally */
@@ -43,37 +43,37 @@ public class ActionContentModifier {
 	/** the mouse is somehow hovering over the action. The framework never uses this modifier directly, instead one of vertical or horizontal versions of this modifier is used. */
 	public static final ActionContentModifier NONE_HOVER = new ActionContentModifier( "dock.none.hover", true, NONE );
 	/** the mouse is somehow hovering over the action, the action is guaranteed to be shown vertically */
-	public static final ActionContentModifier NONE_HOVER_VERTICAL = new ActionContentModifier( "dock.none.hover.vertical", true, false, true, NONE_HOVER );
+	public static final ActionContentModifier NONE_HOVER_VERTICAL = new ActionContentModifier( "dock.none.hover.vertical", true, false, true, NONE_HOVER, NONE_VERTICAL );
 	/** the mouse is somehow hovering over the action, the action is guaranteed to be shown horizontally */
-	public static final ActionContentModifier NONE_HOVER_HORIZONTAL = new ActionContentModifier( "dock.none.hover.horizontal", true, true, false, NONE_HOVER );
+	public static final ActionContentModifier NONE_HOVER_HORIZONTAL = new ActionContentModifier( "dock.none.hover.horizontal", true, true, false, NONE_HOVER, NONE_HORIZONTAL );
 	
 	/** the mouse was pressed over the action. The framework never uses this modifier directly, instead one of vertical or horizontal versions of this modifier is used. */
 	public static final ActionContentModifier NONE_PRESSED = new ActionContentModifier( "dock.none.pressed", true, NONE_HOVER );
 	/** the mouse was pressed over the action, the action is guaranteed to be shown vertically */
-	public static final ActionContentModifier NONE_PRESSED_VERTICAL = new ActionContentModifier( "dock.none.pressed.vertical", true, false, true, NONE_PRESSED );
+	public static final ActionContentModifier NONE_PRESSED_VERTICAL = new ActionContentModifier( "dock.none.pressed.vertical", true, false, true, NONE_PRESSED, NONE_VERTICAL );
 	/** the mouse was pressed over the action, the action is guaranteed to be shown horizontally */
-	public static final ActionContentModifier NONE_PRESSED_HORIZONTAL = new ActionContentModifier( "dock.none.pressed.horizontal", true, true, false, NONE_PRESSED );
+	public static final ActionContentModifier NONE_PRESSED_HORIZONTAL = new ActionContentModifier( "dock.none.pressed.horizontal", true, true, false, NONE_PRESSED, NONE_HORIZONTAL );
 	
 	/** the action is disabled. The framework never uses this modifier directly, instead one of vertical or horizontal versions of this modifier is used. */
 	public static final ActionContentModifier DISABLED = new ActionContentModifier( "dock.disabled", false, NONE );
 	/** the action is disabled, the action is guaranteed to be shown vertically */
-	public static final ActionContentModifier DISABLED_VERTICAL = new ActionContentModifier( "dock.disabled.vertical", false, false, true, DISABLED );
+	public static final ActionContentModifier DISABLED_VERTICAL = new ActionContentModifier( "dock.disabled.vertical", false, false, true, DISABLED, NONE_VERTICAL );
 	/** the action is disabled, the action is guaranteed to be shown horizontally */
-	public static final ActionContentModifier DISABLED_HORIZONTAL = new ActionContentModifier( "dock.disabled.horizontal", false, true, false, DISABLED );
+	public static final ActionContentModifier DISABLED_HORIZONTAL = new ActionContentModifier( "dock.disabled.horizontal", false, true, false, DISABLED, NONE_HORIZONTAL );
 	
 	/** the action is disabled and the mouse is hovering over the action. The framework never uses this modifier directly, instead one of vertical or horizontal versions of this modifier is used. */
 	public static final ActionContentModifier DISABLED_HOVER = new ActionContentModifier( "dock.disabled.hover", false, DISABLED );
 	/** the action is disabled and the mouse is hovering over the action, the action is guaranteed to be shown vertically */
-	public static final ActionContentModifier DISABLED_HOVER_VERTICAL = new ActionContentModifier( "dock.disabled.hover.vertical", false, false, true, DISABLED_HOVER );
+	public static final ActionContentModifier DISABLED_HOVER_VERTICAL = new ActionContentModifier( "dock.disabled.hover.vertical", false, false, true, DISABLED_HOVER, DISABLED_VERTICAL );
 	/** the action is disabled and the mouse is hovering over the action, the action is guaranteed to be shown horizontally */
-	public static final ActionContentModifier DISABLED_HOVER_HORIZONTAL = new ActionContentModifier( "dock.disabled.hover.horizontal", false, true, false, DISABLED_HOVER );
+	public static final ActionContentModifier DISABLED_HOVER_HORIZONTAL = new ActionContentModifier( "dock.disabled.hover.horizontal", false, true, false, DISABLED_HOVER, DISABLED_HORIZONTAL );
 	
 	/** the action is disabled and the mouse is pressed over the action. The framework never uses this modifier directly, instead one of vertical or horizontal versions of this modifier is used. */
 	public static final ActionContentModifier DISABLED_PRESSED = new ActionContentModifier( "dock.disabled.pressed", false, DISABLED_HOVER );
 	/** the action is disabled and the mouse is pressed over the action, the action is guaranteed to be shown vertically */
-	public static final ActionContentModifier DISABLED_PRESSED_VERTICAL = new ActionContentModifier( "dock.disabled.pressed.vertical", false, false, true, DISABLED_PRESSED );
+	public static final ActionContentModifier DISABLED_PRESSED_VERTICAL = new ActionContentModifier( "dock.disabled.pressed.vertical", false, false, true, DISABLED_PRESSED, DISABLED_VERTICAL );
 	/** the action is disabled and the mouse is pressed over the action, the action is guaranteed to be shown horizontally */
-	public static final ActionContentModifier DISABLED_PRESSED_HORIZONTAL = new ActionContentModifier( "dock.disabled.pressed.horizontal", false, true, false, DISABLED_PRESSED );
+	public static final ActionContentModifier DISABLED_PRESSED_HORIZONTAL = new ActionContentModifier( "dock.disabled.pressed.horizontal", false, true, false, DISABLED_PRESSED, DISABLED_HORIZONTAL );
 	
 	/** unique identifier of this modifier */
 	private String id;
@@ -87,8 +87,8 @@ public class ActionContentModifier {
 	/** whether this modifier describres an action that is shown vertically */
 	private boolean vertical;
 	
-	/** backup modifier if <code>this</code> is not available */
-	private ActionContentModifier backup;
+	/** backup modifiers if <code>this</code> is not available */
+	private ActionContentModifier[] backup;
 	
 	/**
 	 * Creates a new modifier.
@@ -97,7 +97,7 @@ public class ActionContentModifier {
 	 * @param backup the modifier that applies if <code>this</code> is not defined. It is the callers
 	 * responsibility to ensure, that no cycle of modifiers is built. This argument can be <code>null</code>.
 	 */
-	public ActionContentModifier( String id, boolean enabled, ActionContentModifier backup ){
+	public ActionContentModifier( String id, boolean enabled, ActionContentModifier ... backup ){
 		this( id, enabled, false, false, backup );
 	}
 	
@@ -110,7 +110,7 @@ public class ActionContentModifier {
 	 * @param backup the modifier that applies if <code>this</code> is not defined. It is the callers
 	 * responsibility to ensure, that no cycle of modifiers is built. This argument can be <code>null</code>.
 	 */
-	public ActionContentModifier( String id, boolean enabled, boolean horizontal, boolean vertical, ActionContentModifier backup ){
+	public ActionContentModifier( String id, boolean enabled, boolean horizontal, boolean vertical, ActionContentModifier ... backup ){
 		if( id == null ){
 			throw new IllegalArgumentException( "id must not be null" );
 		}
@@ -125,10 +125,10 @@ public class ActionContentModifier {
 	}
 	
 	/**
-	 * Gets the modifier which should be used if <code>this</code> is not available.
-	 * @return the modifier, can be <code>null</code>
+	 * Gets the modifiers which should be used if <code>this</code> is not available.
+	 * @return the modifiers, must not be <code>null</code>
 	 */
-	public ActionContentModifier getBackup(){
+	public ActionContentModifier[] getBackup(){
 		return backup;
 	}
 	

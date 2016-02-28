@@ -26,6 +26,8 @@
 
 package bibliothek.gui.dock.themes.basic.action.menu;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -119,12 +121,18 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
     }
     
     private Icon getIcon( ActionContentModifier modifier ){
-    	while( modifier != null ){
+    	List<ActionContentModifier> modifiers = new LinkedList<ActionContentModifier>();
+    	modifiers.add( modifier );
+    	
+    	while( !modifiers.isEmpty() ){
+    		modifier = modifiers.remove( 0 );
     		Icon icon = action.getIcon( dockable, modifier );
     		if( icon != null ){
     			return icon;
     		}
-    		modifier = modifier.getBackup();
+    		for( ActionContentModifier backup : modifier.getBackup() ){
+    			modifiers.add( backup );
+    		}
     	}
     	return null;
     }

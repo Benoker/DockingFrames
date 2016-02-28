@@ -1089,4 +1089,5 @@
 - Bugfix: dropping a prepopulated CWorkingArea on anything did throw an unnecessary SplitDropTreeException
 
 [v1.1.2p17]
-- API: drag and drop operation can be cancelled by pressing CControl.KEY_CANCEL_OPERATION (default is ESCAPE) 
+- API: drag and drop operation can be cancelled by pressing CControl.KEY_CANCEL_OPERATION (default is ESCAPE)
+- API: refined behavior of ActionContentModifier, if a modifier represents many properties (e.g. disabled and vertical) then it can have many backup modifiers (e.g. just 'disabled' or just 'vertical')
