@@ -1087,3 +1087,6 @@
 
 [v1.1.2p16a]
 - Bugfix: dropping a prepopulated CWorkingArea on anything did throw an unnecessary SplitDropTreeException
+
+[v1.1.2p17]
+- API: drag and drop operation can be cancelled by pressing CControl.KEY_CANCEL_OPERATION (default is ESCAPE) 

@@ -52,6 +52,7 @@ public class CKeyStrokePreferenceModel extends DefaultPreferenceModel{
 	private KeyStrokeNormalizePreference normalize;
 	private KeyStrokeMinimizePreference minimize;
 	private KeyStrokeExternalizePreference externalize;
+	private KeyStrokeCancelOperation cancel;
 	
     /**
      * Creates a new model.
@@ -69,6 +70,7 @@ public class CKeyStrokePreferenceModel extends DefaultPreferenceModel{
         add( normalize = new KeyStrokeNormalizePreference( properties ));
         add( minimize = new KeyStrokeMinimizePreference( properties ));
         add( externalize = new KeyStrokeExternalizePreference( properties ));
+        add( cancel = new KeyStrokeCancelOperation( properties ));
     }
 
     /**
@@ -141,5 +143,14 @@ public class CKeyStrokePreferenceModel extends DefaultPreferenceModel{
      */
     public KeyStrokeExternalizePreference getExternalize(){
 		return externalize;
+	}
+    
+    /**
+     * Gets access to the preference that represents the {@link KeyStroke} which cancels
+     * the current drag and drop operation
+     * @return the preference, not <code>null</code>
+     */
+    public KeyStrokeCancelOperation getCancel() {
+		return cancel;
 	}
 }

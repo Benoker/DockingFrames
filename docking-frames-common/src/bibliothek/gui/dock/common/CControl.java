@@ -94,6 +94,7 @@ import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.CDockableAccess;
 import bibliothek.gui.dock.common.intern.CListenerCollection;
 import bibliothek.gui.dock.common.intern.CPlaceholderStrategy;
+import bibliothek.gui.dock.common.intern.CancelDragAndDropOperation;
 import bibliothek.gui.dock.common.intern.CommonDockable;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableFactory;
 import bibliothek.gui.dock.common.intern.CommonMultipleDockableLayout;
@@ -277,6 +278,12 @@ public class CControl {
     public static final PropertyKey<KeyStroke> KEY_CLOSE = 
         new PropertyKey<KeyStroke>( "ccontrol.close" );
 
+    /**
+     * {@link KeyStroke} that can be hit during a drag and drop operation, that will cancel the operation (default is ESCAPE).
+     */
+    public static final PropertyKey<KeyStroke> KEY_CANCEL_OPERATION =
+    		new PropertyKey<KeyStroke>( "ccontrol.cancel_dnd" );
+    
     /**
      * {@link ConflictResolver} used to determine what happens when there is
      * a conflict between two resize requests on a {@link SplitDockStation} like
@@ -763,6 +770,8 @@ public class CControl {
                 return null;
             }
         });
+        
+        addKeyboardListener( new CancelDragAndDropOperation( this ) );
     }
 
     /**
@@ -826,6 +835,7 @@ public class CControl {
         putProperty( KEY_GOTO_EXTERNALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_E, InputEvent.CTRL_MASK ) );
         putProperty( KEY_GOTO_NORMALIZED, KeyStroke.getKeyStroke( KeyEvent.VK_N, InputEvent.CTRL_MASK ) );
         putProperty( KEY_CLOSE, KeyStroke.getKeyStroke( KeyEvent.VK_F4, InputEvent.CTRL_MASK ) );
+        putProperty( KEY_CANCEL_OPERATION, KeyStroke.getKeyStroke( KeyEvent.VK_ESCAPE, 0 ) );
         putProperty( SplitDockStation.LAYOUT_MANAGER, new CLockedResizeLayoutManager( this ) );
         putProperty( FlapDockStation.LAYOUT_MANAGER, new CFlapLayoutManager() );
         putProperty( EclipseTheme.THEME_CONNECTOR, new CommonEclipseThemeConnector( this ) );
@@ -1477,6 +1487,7 @@ public class CControl {
      *  <tr><td>{@link CControl#KEY_GOTO_MINIMIZED} </td><td>The {@link KeyStroke} that minimizes a {@link CDockable}.</td></tr>
      *  <tr><td>{@link CControl#KEY_GOTO_NORMALIZED} </td><td>The {@link KeyStroke} that normalizes a {@link CDockable}.</td></tr>
      *  <tr><td>{@link CControl#KEY_MAXIMIZE_CHANGE} </td><td>The {@link KeyStroke} that either maximizes or normalizes a {@link CDockable}.</td></tr>
+     *  <tr><td>{@link CControl#KEY_CANCEL_OPERATION} </td><td> The {@link KeyStroke} that will cancel the current drag and drop operation. </td></tr>
      *  <tr><td>{@link FlapDockStation#LAYOUT_MANAGER} </td><td>Tells the {@link FlapDockStation} the size and the hold property of its children.</td></tr>
      *  <tr><td>{@link SplitDockStation#LAYOUT_MANAGER} </td><td>Logic of all {@link SplitDockStation}s, used when dropping a {@link Dockable} or resizing the station.</td></tr>
      *  <tr><td>{@link TabPane#LAYOUT_MANAGER} </td><td>Defines the size and location of tabs of a stack.</td></tr>
