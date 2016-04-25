@@ -255,7 +255,7 @@ Naturally a dockable has some location. This section deals with the various form
 \subsubsection{for a single Dockable}
 For one dockable alone, the location is represented through a \src{CLocation}. Calling \src{CDockable.getLocation()} gets the current location (if any) of a dockable, \src{CDockable.setLocation} immediatelly changes the location of a dockable.
 
-\src{CLocation}s should be created using some factory methods. The first \\\src{CLocation} is optained through the static methods of \src{CLocation}, for example \src{CLocation.base()}. Afterwards one can use the methods of the newly created object.
+\src{CLocation}s should be created using some factory methods. The first \\\src{CLocation} is obtained through the static methods of \src{CLocation}, for example \src{CLocation.base()}. Afterwards one can use the methods of the newly created object.
 \begin{lstlisting}
 CDockable dockable = ...
 CLocation location = CLocation.base().normalSouth( 0.5 ).east( 0.5 ).stack( 2 )
@@ -357,7 +357,7 @@ map.setColor( ColorMap.COLOR_KEY_TAB_BACKGROUND, Color.RED );
 \subsection{Preferences}
 The preference system, introduced in version 1.0.6, allows the user to change the settings of this framework. The preference system is normally disabled and has to be activated by the client.
 
-Common already has persistent storage for preferences. One can use \\\src{getPreferences} of \src{CControl} to optain a \src{PreferenceStorage}. This storage is hooked into the \src{ApplicationResourceManager}. Whenever the manager reads or writes its content, the storage will read or write as well.
+Common already has persistent storage for preferences. One can use \\\src{getPreferences} of \src{CControl} to obtain a \src{PreferenceStorage}. This storage is hooked into the \src{ApplicationResourceManager}. Whenever the manager reads or writes its content, the storage will read or write as well.
 
 Normally an application uses exactly one \src{PreferenceModel}. \src{CControl} provides the methods \src{setPreferenceModel} and \src{getPreferenceModel} to set and access that model. The default value of this property is \src{null}. If the client sets a model, then the models content will be loaded through the storage. Afterwards the content will be distributed into the system.
 

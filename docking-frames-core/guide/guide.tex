@@ -415,7 +415,7 @@ dockable.setActionOffers( source );
 In line \src{4} a new \src{DockActionSource} is created. The \src{LocationHint} in lines \src{5-7} tells everyone, that the origin of \src{source} is a \src{Dockable}, and that \src{source} should be on the right side if the content of many \src{DockActionSource}s are displayed in a row. The new \src{CloseAction} is inserted into \src{source} at line \src{8}. Then the list of actions of \src{dockable}s is changed to \src{source} in line \src{9}. Note that lines \src{8} and \src{9} could be exchanged without any effect to the rest of the program.
 
 \subsection{Sources of DockActions}
-So how exactly does a module find out, which \src{DockAction}s to show for a \src{Dockable}? The module uses the method \src{Dockable.getGlobalActionOffers} to optain a \src{DockActionSource}. The result of \src{getGlobalActionOffers} is a composite of \src{DockActionSource}s. The children of the result come from different sources:
+So how exactly does a module find out, which \src{DockAction}s to show for a \src{Dockable}? The module uses the method \src{Dockable.getGlobalActionOffers} to obtain a \src{DockActionSource}. The result of \src{getGlobalActionOffers} is a composite of \src{DockActionSource}s. The children of the result come from different sources:
 \begin{description}
  \item[Local DockActionSource] Every \src{Dockable} should have a local list of actions, this list can be accessed through \src{getLocalActionOffers}. Some implementations of \src{Dockable} have a method that allows clients to exchange that local list. For example \src{setActionOffers} in \src{DefaultDockable}.
  \item[Through the parents] Most \src{Dockable}s have one or more \src{DockStation}s as parents. Each \src{DockStation} can offer \src{direct} (if direct parent) or \\\src{indirect} (if grandparent) \src{DockActionSource}s for each child. Clients rarely interfere in that mechanism.
@@ -600,7 +600,7 @@ There is not much help to offer for developers which want to write a new kind of
 \end{description}
 
 \subsection{Lifecycle}
-If a module wants to show a \src{DockTitle} for a \src{Dockable}, what has it to do? First a module needs to define what kind of \src{DockTitle} it wants to show. For that it needs the \src{DockTitleManager} which is available through a \src{DockController}. The module then calls \src{getVersion(String,DockTitleFactory)} to optain a \src{DockTitleVersion}. A \src{DockTitleVersion} describes the kind of a \src{DockTitle}.
+If a module wants to show a \src{DockTitle} for a \src{Dockable}, what has it to do? First a module needs to define what kind of \src{DockTitle} it wants to show. For that it needs the \src{DockTitleManager} which is available through a \src{DockController}. The module then calls \src{getVersion(String,DockTitleFactory)} to obtain a \src{DockTitleVersion}. A \src{DockTitleVersion} describes the kind of a \src{DockTitle}.
 
 Later when the module gets a \src{Dockable}, it invokes \src{Dockable.getDockTitle} with its \src{DockTitleVersion}. A \src{Dockable} can decide on its own how to create the title, but most \src{Dockable}s will simply call \src{DockTitleVersion.createDockable}.
 
