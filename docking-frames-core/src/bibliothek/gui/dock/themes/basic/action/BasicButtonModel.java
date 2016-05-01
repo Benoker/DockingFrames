@@ -34,7 +34,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -620,11 +619,7 @@ public class BasicButtonModel {
     		}
     	}
     	
-    	List<ActionContentModifier> modifiers = new LinkedList<ActionContentModifier>();
-    	modifiers.add( modifier );
-    	
-    	while( !modifiers.isEmpty() ){
-    		modifier = modifiers.remove( 0 );
+    	while( modifier != null ){
     		Icon icon = icons.get( modifier );
     		if( icon != null ){
     			if( !enabled && modifier.isEnabled() ){
@@ -639,9 +634,7 @@ public class BasicButtonModel {
     			}
     			return icon;
     		}
-    		for( ActionContentModifier backup : modifier.getBackup() ){
-    			modifiers.add( backup );
-    		}
+    		modifier = modifier.getBackup();
     	}
     	        
         // no icon to show

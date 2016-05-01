@@ -25,7 +25,7 @@ While the internal implementations of \src{DockElementRepresentative} are handle
 \subsubsection{Remote control}
 Sometimes it is not possible to implement a \src{DockElementRepresentative}. Remote control of a relocator is an alternative for these cases. Remote control is realized by the \src{RemoteRelocator}.
 
-A \src{RemoteRelocator} can be obtained by calling \src{createRemote} of \linebreak \src{DockRelocator}. \src{RemoteRelocator} should be used in combination with a \linebreak \src{MouseListener} and a \src{MouseMotionListener}:
+A \src{RemoteRelocator} can be optained by calling \src{createRemote} of \linebreak \src{DockRelocator}. \src{RemoteRelocator} should be used in combination with a \linebreak \src{MouseListener} and a \src{MouseMotionListener}:
 \begin{itemize}
  \item \src{MouseListener.mousePressed} \textrightarrow \src{RemoteRelocator.init}
  \item \src{MouseMotionListener.mouseDragged} \textrightarrow \src{RemoteRelocator.drag}
@@ -39,7 +39,7 @@ The methods \src{init}, \src{drag} and \src{drop} return a \src{Reaction}. The r
  \item \src{BREAK\_CONSUMED}: the operation was canceled, the event was consumed. The caller should invoke \src{MouseEvent.consume}.
 \end{itemize}
 
-\classbox{There is a second interface called \src{DirectRemoteRelocator}. Instances can be obtained by calling \src{createDirectRemote} of \src{DockRelocator}. A \src{DirectRemoteRelocator} is basically the same as a \src{RemoteRelocator} but always assumes that the user pressed the correct button on the mouse. Its methods do not return a \src{Reaction} because the event would always be consumed anyway.}
+\classbox{There is a second interface called \src{DirectRemoteRelocator}. Instances can be optained by calling \src{createDirectRemote} of \src{DockRelocator}. A \src{DirectRemoteRelocator} is basically the same as a \src{RemoteRelocator} but always assumes that the user pressed the correct button on the mouse. Its methods do not return a \src{Reaction} because the event would always be consumed anyway.}
 
 \infobox{Clients can use several remote controls at the same time, they will cancel out each other if necessary. A \src{RemoteRelocator} can be used several times.}
 
