@@ -33,7 +33,6 @@ import bibliothek.gui.DockStation;
  * @author Benjamin Sigg
  */
 public class DefaultDockStationDropLayerFactory implements DockStationDropLayerFactory{
-	@Override
 	public DockStationDropLayer[] getLayers( DockStation station ) {
 		return station.getLayers();
 	}

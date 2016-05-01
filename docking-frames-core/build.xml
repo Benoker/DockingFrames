@@ -101,7 +101,7 @@
 	</target>
 
 	<target name="paths">
-		<property name="javac-1.5" value="/home/beni/jdk1.5.0_22/bin/javac"/>
+		<property name="javac-1.5" value="/home/beni/programming/java/jdk1.5.0_22/bin/javac"/>
 		
 		<property name="base" value="dock"/>
 		<property name="source" value="${base}/src"/>

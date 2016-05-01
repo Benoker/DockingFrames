@@ -1932,6 +1932,8 @@ public class CControl {
      * @param <M> the type of the new element
      * @param dockable the new element to show
      * @return <code>dockable</code>
+     * @throws IllegalArgumentException if either the {@link MultipleCDockable#getFactory() factory} of <code>dockable</code> is <code>null</code>,
+     * or is not registered (see {@link #addMultipleDockableFactory(String, MultipleCDockableFactory)}).
      */
     public <M extends MultipleCDockable> M addDockable( M dockable) {
         Set<String> ids = new HashSet<String>();

@@ -50,7 +50,7 @@
 	<!-- Compiling -->
 	<target name="bin.glass" depends="source, bin.dir">
 		<copy tofile="${glass.bin}/${glasslib}" file="${location.glass}/libs/glassLib/${glasslib}"/>
-		<javac srcdir="${glass.source}/${name.glass}" destdir="${glass.temp}/${name.glass}">
+		<javac srcdir="${glass.source}/${name.glass}" destdir="${glass.temp}/${name.glass}" source="1.6" target="1.6">
 			<classpath path="${bin}/${name.common}.jar"/>
 			<classpath path="${bin}/${name.core}.jar"/>
 			<classpath path="${glass.bin}/${glasslib}"/>

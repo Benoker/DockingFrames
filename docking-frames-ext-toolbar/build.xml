@@ -85,7 +85,7 @@
 
 	<!-- Compiling -->
 	<target name="bin.toolbar" depends="source, bin.dir">
-		<javac srcdir="${toolbar.source}/${name.toolbar}" destdir="${toolbar.temp}/${name.toolbar}">
+		<javac srcdir="${toolbar.source}/${name.toolbar}" destdir="${toolbar.temp}/${name.toolbar}" source="1.6" target="1.6">
 			<classpath path="${bin}/${name.core}.jar"/>
 		</javac>
 		<copy todir="${toolbar.temp}/${name.toolbar}">
@@ -96,7 +96,7 @@
 	</target>
 	
 	<target name="bin.toolbar.common" depends="source, bin.dir, bin.toolbar">
-		<javac srcdir="${toolbar.source}/${name.toolbar.common}" destdir="${toolbar.temp}/${name.toolbar.common}">
+		<javac srcdir="${toolbar.source}/${name.toolbar.common}" destdir="${toolbar.temp}/${name.toolbar.common}" source="1.6" target="1.6">
 			<classpath path="${bin}/${name.core}.jar"/>
 			<classpath path="${bin}/${name.common}.jar"/>
 			<classpath path="${toolbar.temp}/${name.toolbar}"/>
@@ -109,7 +109,7 @@
 	</target>
 	
 	<target name="bin.toolbar.tutorial" depends="source, bin.dir, bin.toolbar, bin.toolbar.common">
-		<javac srcdir="${toolbar.source}/${name.toolbar.tutorial}" destdir="${toolbar.temp}/${name.toolbar.tutorial}">
+		<javac srcdir="${toolbar.source}/${name.toolbar.tutorial}" destdir="${toolbar.temp}/${name.toolbar.tutorial}" source="1.6" target="1.6">
 			<classpath path="${bin}/${name.core}.jar"/>
 			<classpath path="${bin}/${name.common}.jar"/>
 			<classpath path="${bin}/${name.tutorial}.jar"/>
