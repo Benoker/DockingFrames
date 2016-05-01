@@ -52,6 +52,17 @@ public class OrderedLayerCollection {
 	/** all the currently known stations */
 	private Set<DockStation> stations = new HashSet<DockStation>();
 	
+	/** factory applied to all {@link DockStation}s to find their {@link DockStationDropLayer}s */
+	private DockStationDropLayerFactory factory;
+	
+	/**
+	 * Creates a new collection
+	 * @param factory applied to all {@link DockStation}s in order to find their {@link DockStationDropLayer}s.
+	 */
+	public OrderedLayerCollection( DockStationDropLayerFactory factory ){
+		this.factory = factory;
+	}
+	
 	/**
 	 * Adds an additional station which is to be ordered.
 	 * @param station the additional station
@@ -269,7 +280,7 @@ public class OrderedLayerCollection {
 			if( station.getDockableCount() > 0 ){
 				children = new ArrayList<Node>( station.getDockableCount() );
 			}
-			layers = station.getLayers();
+			layers = factory.getLayers( station );
 		}
 		
 		/**

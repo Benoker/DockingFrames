@@ -46,6 +46,7 @@ import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayerFactory;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
@@ -403,6 +404,7 @@ public interface DockStation extends DockElement{
      * @return all the layers of this station, must not be <code>null</code>, must not contain <code>null</code>,
      * must not contain the same entry twice. The array or the {@link DockStationDropLayer}s may be modified,
      * hence this method should always create new objects.
+     * @see DockStationDropLayerFactory
      */
     public DockStationDropLayer[] getLayers();
     

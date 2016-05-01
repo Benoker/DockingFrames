@@ -1093,3 +1093,4 @@
 - API: refined behavior of ActionContentModifier, if a modifier represents many properties (e.g. disabled and vertical) then it can have many backup modifiers (e.g. just 'disabled' or just 'vertical')
 - Bugfix: many small fixes by Karl-Philipp Richter
 - Bugfix: DockStations having width or height smaller or equal to 0 do no longer support drag and drop (because they are invisible to the user)
+- API: Added DockStationDropLayerFactory, a way for clients to define which areas of the screen can be targets for drag-and-drop operations

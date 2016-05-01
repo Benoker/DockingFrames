@@ -65,6 +65,7 @@ import bibliothek.gui.dock.event.DockControllerRepresentativeListener;
 import bibliothek.gui.dock.station.StationDragOperation;
 import bibliothek.gui.dock.station.StationDropItem;
 import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.layer.DockStationDropLayerFactory;
 import bibliothek.gui.dock.station.layer.OrderedLayerCollection;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
@@ -400,7 +401,9 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     protected List<DockStation> listStationsOrdered( int x, int y, Dockable moved ){
     	DockController controller = getController();
     	DisablingStrategy disabling = controller.getProperties().get( DisablingStrategy.STRATEGY );
-    	OrderedLayerCollection collection = new OrderedLayerCollection();
+    	DockStationDropLayerFactory dropLayerFactory = controller.getProperties().get( DockStationDropLayerFactory.DROP_LAYER_FACTORY );
+    	
+    	OrderedLayerCollection collection = new OrderedLayerCollection( dropLayerFactory );
     	
     	if( disabling == null || !disabling.isDisabled( moved )){
 	        DockStation movedStation = moved.asDockStation();

@@ -164,6 +164,8 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.FlapWindow;
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
+import bibliothek.gui.dock.station.layer.DockStationDropLayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
@@ -1465,6 +1467,7 @@ public class CControl {
      *  <tr><td>{@link DockTheme#COMBINER} </td><td>Default value of the {@link Combiner}.</td></tr>
      *  <tr><td>{@link StackDockStation#COMPONENT_FACTORY} </td><td>The factory creating the "tabbed panes" of the {@link StackDockStation}.</td></tr>
      *  <tr><td>{@link DockTheme#DISPLAYER_FACTORY} </td><td>Default value of the {@link DisplayerFactory}.</td></tr>
+     *  <tr><td>{@link DockStationDropLayerFactory#DROP_LAYER_FACTORY}</td><td>Factory that defines which parts of the screen are targets for a drag and drop operation/</td></tr>
      *  <tr><td>{@link PropertyKey#DOCK_STATION_ICON} </td><td>The default icon of {@link DockStation}s.</td></tr>
      *  <tr><td>{@link PropertyKey#DOCK_STATION_TITLE} </td><td>The default title of {@link DockStation}s.</td></tr>
      *  <tr><td>{@link PropertyKey#DOCK_STATION_TOOLTIP} </td><td>The default tooltip of {@link DockStation}s.</td></tr>
