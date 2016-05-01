@@ -9,3 +9,14 @@ logs/
 
 release.properties
 pom.xml.releaseBackup
+
+# TeX binaries and editor files
+docking-frames-common/guide/Guide.dvi
+docking-frames-common/guide2/guide2.dvi
+docking-frames-common/guide/Guide.tex.backup
+docking-frames-common/guide2/locations/chapter.tex
+docking-frames-common/guide2/locations/chapter.tex.backup
+docking-frames-core/guide/guide.dvi
+docking-frames-core/guide/guide.tex.backup
+docking-frames-core/guide2/dragNdrop/chapter.tex.backup
+docking-frames-core/guide2/guide2.dvi
