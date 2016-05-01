@@ -4,7 +4,7 @@ Location means position and size of a \src{dockable}. A location can be relative
 \subsection{For a single dockable: CLocation}
 The location of a single \src{dockable} is represented by a \src{CLocation}. The method \src{getBaseLocation} of \src{CDockable} gets the current location and the method \linebreak \src{setLocation} changes the current location.
 
-Most subclasses of \src{CLocation} offer one or more methods to optain new locations. An example: \src{CGridAreaLocation} offers the method \src{north}. While \src{CGridAreaLocation} represents just some \src{CGridArea}, the location optained through \src{north} represents the upper half of the grid-area. Clients can chain together method calls to create locations:
+Most subclasses of \src{CLocation} offer one or more methods to obtain new locations. An example: \src{CGridAreaLocation} offers the method \src{north}. While \src{CGridAreaLocation} represents just some \src{CGridArea}, the location obtained through \src{north} represents the upper half of the grid-area. Clients can chain together method calls to create locations:
 \begin{lstlisting}
 CGridAreaLocation root = ...
 CDockable dockable = ...
