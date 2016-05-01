@@ -1398,6 +1398,12 @@ public class FlapDockStation extends AbstractDockableStation {
     }
 
     public DockStationDropLayer[] getLayers(){
+    	// do not support drag and drop if the component is invisible 
+    	Component component = getComponent();
+    	if( component.getWidth() <= 0 || component.getHeight() <= 0 ){
+    		return new DockStationDropLayer[]{};
+    	}
+    	
     	if( getDockableCount() == 0 ){
 	    	return new DockStationDropLayer[]{
 	    			new DefaultDropLayer( this ),

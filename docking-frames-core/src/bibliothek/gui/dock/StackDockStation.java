@@ -1007,6 +1007,12 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 
     @Override
     public DockStationDropLayer[] getLayers(){
+    	// do not support drag and drop if the component is invisible 
+    	Component component = getComponent();
+    	if( component.getWidth() <= 0 || component.getHeight() <= 0 ){
+    		return new DockStationDropLayer[]{};
+    	}
+
 	    return new DockStationDropLayer[]{
 	    		new DefaultDropLayer( this ),
 	    		new TabDropLayer( this )
