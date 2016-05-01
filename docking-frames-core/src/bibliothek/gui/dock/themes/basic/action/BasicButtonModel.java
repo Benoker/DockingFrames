@@ -624,6 +624,7 @@ public class BasicButtonModel {
     	modifiers.add( modifier );
     	
     	while( !modifiers.isEmpty() ){
+    		modifier = modifiers.remove( 0 );
     		Icon icon = icons.get( modifier );
     		if( icon != null ){
     			if( !enabled && modifier.isEnabled() ){
