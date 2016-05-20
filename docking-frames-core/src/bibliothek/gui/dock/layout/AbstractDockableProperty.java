@@ -79,18 +79,24 @@ public abstract class AbstractDockableProperty implements DockableProperty {
 
 	@Override
 	public boolean equals( Object obj ){
-		if( this == obj )
+		if( this == obj ) {
 			return true;
-		if( obj == null )
+		}
+
+		if( obj == null ) {
 			return false;
-		if( !(obj instanceof AbstractDockableProperty) )
-			return false;
-		AbstractDockableProperty other = (AbstractDockableProperty)obj;
-		if( successor == null ){
-			if( other.successor != null )
+		}
+
+		if( this.getClass() == obj.getClass() ) {
+			AbstractDockableProperty other = (AbstractDockableProperty)obj;
+			if( successor == null ){
+				if( other.successor != null )
+					return false;
+			}else if( !successor.equals( other.successor ) )
 				return false;
-		}else if( !successor.equals( other.successor ) )
-			return false;
-		return true;
-	}   
+			return true;
+		}
+
+		return false;
+	}
 }

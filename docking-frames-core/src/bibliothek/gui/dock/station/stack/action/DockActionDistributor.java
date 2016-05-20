@@ -68,7 +68,19 @@ public interface DockActionDistributor {
 		
 		@Override
 		public boolean equals( Object obj ){
-			return obj instanceof Target && ((Target)obj).id.equals( id );
+			if (obj == this) {
+				return true;
+			}
+
+			if (obj == null) {
+				return false;
+			}
+
+			if (obj.getClass() == this.getClass()) {
+				return ((Target) obj).id.equals(id);
+			}
+
+			return false;
 		}
 	};
 

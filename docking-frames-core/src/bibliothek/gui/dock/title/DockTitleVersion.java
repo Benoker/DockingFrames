@@ -257,7 +257,19 @@ public class DockTitleVersion implements DockTitleFactory{
     
     @Override
     public boolean equals( Object obj ) {
-        return (obj instanceof DockTitleVersion) && ((DockTitleVersion)obj).id.equals( id );
+		if (obj == this) {
+			return true;
+		}
+
+		if (obj == null) {
+			return false;
+		}
+
+		if (obj.getClass() == this.getClass()) {
+			return (((DockTitleVersion)obj).id.equals( id ));
+		}
+
+		return false;
     }
     
     /**
