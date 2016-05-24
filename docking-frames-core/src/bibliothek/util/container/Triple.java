@@ -65,10 +65,19 @@ public class Triple<A, B, C> extends Tuple<A, B>{
     @SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object o ){
-		if( o instanceof Triple ){
+		if (o == this) {
+			return true;
+		}
+
+		if (o == null) {
+			return false;
+		}
+
+		if (o.getClass() == this.getClass()){
 			Triple s = (Triple)o;
 			return super.equals( o ) && ( (s.c == null && c == null) || (s.c != null && s.c.equals( c )));
 		}
+
 		return false;
 	}
 	

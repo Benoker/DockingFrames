@@ -360,19 +360,24 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
 
 	@Override
 	public boolean equals( Object obj ){
-		if( this == obj )
-			return true;
-		if( !super.equals( obj ) )
-			return false;
-		if( !(obj instanceof SplitDockPathProperty) )
-			return false;
-		SplitDockPathProperty other = (SplitDockPathProperty)obj;
-		if( nodes == null ){
-			if( other.nodes != null )
-				return false;
-		}else if( !nodes.equals( other.nodes ) )
-			return false;
-		return true;
+		if( this == obj ) {
+            return true;
+        }
+
+		if( !super.equals( obj ) ) {
+            return false;
+        }
+
+		if( obj.getClass() == this.getClass() ) {
+            SplitDockPathProperty other = (SplitDockPathProperty)obj;
+            if( nodes == null ){
+                if( other.nodes != null )
+                    return false;
+            }else if( !nodes.equals( other.nodes ) )
+                return false;
+            return true;
+        }
+        return false;
 	}
 
 
@@ -445,22 +450,27 @@ public class SplitDockPathProperty extends AbstractDockableProperty implements I
 
 		@Override
 		public boolean equals( Object obj ){
-			if( this == obj )
-				return true;
-			if( obj == null )
-				return false;
-			if( !(obj instanceof Node) )
-				return false;
-			Node other = (Node)obj;
-			if( location == null ){
-				if( other.location != null )
-					return false;
-			}else if( !location.equals( other.location ) )
-				return false;
-			if( Double.doubleToLongBits( size ) != Double
-					.doubleToLongBits( other.size ) )
-				return false;
-			return true;
+			if( this == obj ) {
+                return true;
+            }
+
+			if( obj == null ) {
+                return false;
+            }
+
+			if( this.getClass() == obj.getClass() ) {
+                Node other = (Node)obj;
+                if( location == null ){
+                    if( other.location != null )
+                        return false;
+                }else if( !location.equals( other.location ) )
+                    return false;
+                if( Double.doubleToLongBits( size ) != Double
+                        .doubleToLongBits( other.size ) )
+                    return false;
+                return true;
+            }
+            return false;
 		}
     }
 }

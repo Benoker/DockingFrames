@@ -171,20 +171,7 @@ public class LocationHint {
 		public Hint( String id ){
 			super( id );
 		}
-		
-		@Override
-		public boolean equals( Object obj ){
-			return (obj instanceof Hint) && super.equals( obj );
-		}
-		
-		/**
-		 * Compares this hint with <code>other</code>.
-		 * @param other the other hint
-		 * @return <code>true</code> if they have the same id.
-		 */
-		public boolean equals( Hint other ){
-			return other.getId().equals(  getId() );
-		}
+
 	}
 	
 	/**
@@ -199,20 +186,7 @@ public class LocationHint {
 		public Origin( String id ){
 			super( id );
 		}
-		
-		@Override
-		public boolean equals( Object obj ){
-			return (obj instanceof Origin) && super.equals( obj );
-		}
-		
-		/**
-		 * Compares this origin with another origin.
-		 * @param other the other origin
-		 * @return <code>true</code> if they have the same id
-		 */
-		public boolean equals( Origin other ){
-			return other.getId().equals(  getId() );
-		}
+
 	}
 	
 	/**

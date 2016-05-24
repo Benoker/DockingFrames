@@ -104,13 +104,19 @@ public class ActionType<D extends DockAction> {
 
 	@Override
 	public boolean equals( Object obj ){
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+
+		if (obj == null) {
 			return false;
-		if( !(obj instanceof ActionType))
-			return false;
+		}
+
+		if( this.getClass() == obj.getClass() ) {
+			return ((ActionType<?>)obj).id.equals( id );
+		}
+
+		return false;
 		
-		return ((ActionType<?>)obj).id.equals( id );
 	}
 }

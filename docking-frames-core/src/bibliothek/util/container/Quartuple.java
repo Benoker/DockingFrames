@@ -66,10 +66,19 @@ public class Quartuple<A,B,C,D> extends Triple<A,B,C>{
     @SuppressWarnings("unchecked")
 	@Override
 	public boolean equals( Object o ){
-		if( o instanceof Quartuple ){
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null) {
+			return false;
+		}
+
+		if (this.getClass() == o.getClass()) {
 			Quartuple s = (Quartuple)o;
 			return super.equals( o ) && ( (s.d == null && d == null) || (s.d != null && s.d.equals( d )));
 		}
+
 		return false;
 	}
 	

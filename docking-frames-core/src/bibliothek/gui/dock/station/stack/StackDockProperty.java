@@ -200,15 +200,24 @@ public class StackDockProperty extends AbstractDockableProperty {
 
 	@Override
 	public boolean equals( Object obj ){
-		if( this == obj )
-			return true;
-		if( !super.equals( obj ) )
-			return false;
-		if( !(obj instanceof StackDockProperty) )
-			return false;
-		StackDockProperty other = (StackDockProperty)obj;
-		if( index != other.index )
-			return false;
-		return true;
+        if( this == obj ) {
+            return true;
+        }
+
+        if( obj == null ) {
+            return false;
+        }
+
+        if( !super.equals( obj ) ) {
+            return false;
+        }
+
+		if( obj.getClass() == this.getClass() ) {
+            StackDockProperty other = (StackDockProperty)obj;
+            if( index != other.index )
+                return false;
+            return true;
+        }
+        return false;
 	}
 }

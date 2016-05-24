@@ -109,7 +109,15 @@ public class PreferenceOperation {
 
     @Override
     public boolean equals( Object obj ) {
-        if( obj instanceof PreferenceOperation ){
+		if (obj == this) {
+			return true;
+		}
+
+		if (obj == null) {
+			return false;
+		}
+
+        if( obj.getClass() == this.getClass() ){
             return key.equals( ((PreferenceOperation)obj).key );
         }
         
