@@ -378,12 +378,13 @@ public class CScreenDockStationHandle {
 					station.setFullscreen( dockable, false );
 				}
 				else{
-					Dockable child = DockUtilities.getDirectChild( station, dockable );
-					ScreenDockProperty location = station.getLocation( child, dockable );
-					
+
 					if( !parent.canDrag( dockable )){
 						throw new IllegalArgumentException( "cannot drag dockable from its current parent" );
 					}
+
+					Dockable child = DockUtilities.getDirectChild( station, dockable );
+					ScreenDockProperty location = station.getLocation( child, dockable );
 					location.setFullscreen( false );
 					if( !station.drop( dockable, location, true )){
 						throw new IllegalStateException( "could not drop dockable on this station" );

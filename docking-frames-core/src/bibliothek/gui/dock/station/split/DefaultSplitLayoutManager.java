@@ -177,7 +177,6 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
     }
     
     public void calculateDivider( SplitDockStation station, PutInfo putInfo, Leaf origin, StationDropItem item ){
-        final double MINIMUM_ORIGINAL_SIZE = 0.25;
         
         SplitNode other = putInfo.getNode();
         if( other == null ){
@@ -215,7 +214,8 @@ public class DefaultSplitLayoutManager implements SplitLayoutManager{
                 size = putInfo.getOldSize();
             }
         }
-        
+
+        final double MINIMUM_ORIGINAL_SIZE = 0.25;
         double divider = 0.5;
         int dividerSize = station.getDividerSize();
         

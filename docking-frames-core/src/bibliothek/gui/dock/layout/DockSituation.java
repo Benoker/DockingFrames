@@ -548,10 +548,6 @@ public class DockSituation {
 	    		entryPlaceholder = new Path( in.readUTF() );
 	   		}
     	}
-    	
-        byte[] entry = readBuffer( in );
-
-        DockLayoutInfo info = readEntry( entry, entryPlaceholder );
 
         List<DockLayout<?>> adjacentLayouts = null;
         if( Version.VERSION_1_0_7.compareTo( version ) <= 0 ){
@@ -606,6 +602,8 @@ public class DockSituation {
             children.add( readCompositionStream( in, version ) );
         }
 
+        byte[] entry = readBuffer( in );
+        DockLayoutInfo info = readEntry( entry, entryPlaceholder );
         // result
         return new DockLayoutComposition( info, adjacentLayouts, children, ignore );
     }

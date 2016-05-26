@@ -304,8 +304,6 @@ public abstract class ToolbarContainerDropInfo implements StationDropOperation{
 		final Point coordDockableDragged = getItem().getComponent()
 				.getLocation();
 		if (getDockableBeneathMouse() != null){
-			final Point coordDockableBeneathMouse = getDockableBeneathMouse()
-					.getComponent().getLocation();
 			// The dockable is now in the frame of reference of the dockable
 			// beneath mouse
 			SwingUtilities.convertPointFromScreen(coordDockableDragged,
@@ -316,6 +314,8 @@ public abstract class ToolbarContainerDropInfo implements StationDropOperation{
 			if (getItem() == getDockableBeneathMouse()){
 				return Position.CENTER;
 			} else{
+				final Point coordDockableBeneathMouse = getDockableBeneathMouse()
+						.getComponent().getLocation();
 				switch (stationHost.getOrientation()) {
 				case VERTICAL:
 					if (coordDockableDragged.getY() <= coordDockableBeneathMouse

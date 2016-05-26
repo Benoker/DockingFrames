@@ -821,8 +821,7 @@ public class PredefinedDockSituation extends DockSituation {
             version.checkCurrent();
 
             boolean version7 = Version.VERSION_1_0_7.compareTo( version ) <= 0;
-            
-            String preloaded = in.readUTF();
+
             boolean nullValue = false;
             if( version7 ){
                 nullValue = !in.readBoolean();
@@ -871,6 +870,7 @@ public class PredefinedDockSituation extends DockSituation {
             if( info == null )
                 return null;
 
+            String preloaded = in.readUTF();
             return new PredefinedLayout( preloaded, info );
         }
 

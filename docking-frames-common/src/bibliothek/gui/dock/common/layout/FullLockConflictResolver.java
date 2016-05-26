@@ -95,11 +95,11 @@ public class FullLockConflictResolver extends DefaultConflictResolver<RequestDim
             ResizeNode<RequestDimension> node = (ResizeNode<RequestDimension>)element;
 
             ResizeRequest leftRequest = node.getLeft().getRequest();
-            ResizeRequest rightRequest = node.getRight().getRequest();
 
             if( leftRequest == null || leftRequest.getFractionWidth() == -1 )
                 return false;
 
+            ResizeRequest rightRequest = node.getRight().getRequest();
             if( rightRequest == null || rightRequest.getFractionWidth() == -1 )
                 return false;
 
@@ -139,11 +139,11 @@ public class FullLockConflictResolver extends DefaultConflictResolver<RequestDim
             ResizeNode<RequestDimension> node = (ResizeNode<RequestDimension>)element;
 
             ResizeRequest leftRequest = node.getLeft().getRequest();
-            ResizeRequest rightRequest = node.getRight().getRequest();
 
             if( leftRequest == null || leftRequest.getFractionHeight() == -1 )
                 return false;
 
+            ResizeRequest rightRequest = node.getRight().getRequest();
             if( rightRequest == null || rightRequest.getFractionHeight() == -1 )
                 return false;
 

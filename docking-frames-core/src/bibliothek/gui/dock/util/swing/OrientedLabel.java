@@ -316,13 +316,13 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     
     @Override
     public Dimension getPreferredSize() {
-    	Dimension size = label.getPreferredSize();
     	String text = getText();
 
     	if( (text == null || text.length() == 0) && icon != null ){
     		return new Dimension( icon.getIconWidth() + 2*iconOffset, icon.getIconHeight()+2*iconOffset );	
     	}
-    	
+
+        Dimension size = label.getPreferredSize();
         if( isHorizontal() ){
         	if( icon == null )
         		return new Dimension( size.width+5, size.height );

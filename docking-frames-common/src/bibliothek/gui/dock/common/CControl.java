@@ -578,15 +578,15 @@ public class CControl {
         frontend.getController().getFocusController().addVetoListener( new ControlVetoFocusListener( this, listenerCollection.getVetoFocusListener() ) );
         frontend.getController().getFocusController().setStrategy( new DefaultFocusStrategy( frontend.getController() ){
         	public Component getFocusComponent( FocusStrategyRequest request ){
-        		Component mouseClicked = request.getMouseClicked();
-        		Dockable dockable = request.getDockable();
-        		
+
+                Component mouseClicked = request.getMouseClicked();
 				if( mouseClicked != null ){
 					if( (mouseClicked.isFocusable() && !excluded( mouseClicked, request )) || focusable( mouseClicked, request )){
 						return mouseClicked;
 					}
 				}
-				
+
+                Dockable dockable = request.getDockable();
 				if( dockable instanceof CommonDockable ){
 					Component result = ((CommonDockable)dockable).getDockable().getFocusComponent();
 					if( result != null ){
@@ -1936,20 +1936,18 @@ public class CControl {
      * or is not registered (see {@link #addMultipleDockableFactory(String, MultipleCDockableFactory)}).
      */
     public <M extends MultipleCDockable> M addDockable( M dockable) {
-        Set<String> ids = new HashSet<String>();
 
-        String factoryId;
         MultipleCDockableFactory<?, ?> factory = dockable.getFactory();
         if( factory == null ){
         	throw new IllegalArgumentException( "factory of dockable must not be null" );
         }
-        
-        factoryId = access.getFactoryId( dockable.getFactory() );
+
+        String factoryId = access.getFactoryId( dockable.getFactory() );
         if( factoryId == null ){
         	throw new IllegalStateException( "the factory for a MultipleCDockable is not registered: " + dockable.getFactory() );
-        }        	
-        
+        }
 
+        Set<String> ids = new HashSet<String>();
         for( MultipleCDockable multi : register.getMultipleDockables() ){
             if( factoryId.equals( access.getFactoryId( multi.getFactory() ))){
                 ids.add( accesses.get( multi ).getUniqueId() );
@@ -2840,8 +2838,7 @@ public class CControl {
             DockRegister register = frontend.getController().getRegister();
             register.setStalled( true );
             try{
-            	CLocation location = dockable.getAutoBaseLocation( true );
-            	
+
             	CDockableAccess access = access( dockable );
             	if( access != null ){
             		access.internalLocation( true );
@@ -2853,7 +2850,8 @@ public class CControl {
                         throw new IllegalStateException( "A dockable that wants to be on a CWorkingArea can't be made visible unless the CWorkingArea is visible." );
                     }
                 }
-                
+
+                CLocation location = dockable.getAutoBaseLocation( true );
                 if( location == null ){
                 	dockable.setExtendedMode( findInitialMode( dockable ) );
                 }

@@ -148,7 +148,6 @@ public class WizardSplitDockStationFactory extends SplitDockStationFactory{
 	
 	@Override
 	public SplitDockStationLayout read( DataInputStream in, PlaceholderStrategy placeholders ) throws IOException{
-		SplitDockStationLayout layout = super.read( in, placeholders );
 		Version version = Version.read( in );
 		if( !version.equals( Version.VERSION_1_1_1 )){
 			throw new IOException( "trying to read a format from the future: " + version );
@@ -166,6 +165,7 @@ public class WizardSplitDockStationFactory extends SplitDockStationFactory{
 			}
 			columns[i] = new Column( size, keys, sizes );
 		}
+		SplitDockStationLayout layout = super.read( in, placeholders );
 		((WizardSplitDockStationLayout)layout).setColumns( columns );
 		return layout;
 	}

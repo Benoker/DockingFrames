@@ -81,12 +81,12 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 			public ConvertedPlaceholderListItem convert( int index, StationChildHandle handle ){
 				final Dockable dockable = handle.getDockable();
 
-				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
 				final Integer id = children.get( dockable );
 				if( id == null ) {
 					return null;
 				}
 
+				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
 				item.putInt( "id", id );
 				item.putInt( "index", index );
 				if( strategy != null ) {
@@ -105,12 +105,12 @@ public class DefaultToolbarContainerConverter implements ToolbarContainerConvert
 		return list.toMap( new PlaceholderListItemAdapter<PerspectiveDockable, PerspectiveDockable>(){
 			@Override
 			public ConvertedPlaceholderListItem convert( int index, PerspectiveDockable dockable ){
-				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
 				final Integer id = children.get( dockable );
 				if( id == null ) {
 					return null;
 				}
 
+				final ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
 				item.putInt( "id", id );
 				item.putInt( "index", index );
 				Path placeholder = dockable.getPlaceholder();

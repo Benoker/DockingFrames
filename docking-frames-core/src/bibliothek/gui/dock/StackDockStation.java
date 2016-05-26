@@ -869,12 +869,12 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	return dockables.toMap( new PlaceholderListItemAdapter<Dockable, StationChildHandle>() {
     		@Override
     		public ConvertedPlaceholderListItem convert( int index, StationChildHandle dockable ){
-    			ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
     			Integer id = children.get( dockable.getDockable() );
     			if( id == null ){
     				return null;
     			}
-    			
+
+                ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
     			item.putInt( "id", id );
     			item.putInt( "index", index );
     			if( strategy != null ){
@@ -1410,7 +1410,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             panel.add( displayer.getComponent() );
         }
         else{
-        	int selectionIndex = index;
         	int oldSelectionIndex = 0;
         	
             if( size == 1 && !singleTabStackDockComponent() ){
@@ -1437,6 +1436,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
             
             DockableDisplayer displayer = handle.getDisplayer();
+            int selectionIndex = index;
             insertTab( displayer, index );
             
             if( isImmutableSelectedIndex() ){

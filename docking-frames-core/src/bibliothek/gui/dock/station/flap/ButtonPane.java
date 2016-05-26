@@ -279,11 +279,11 @@ public class ButtonPane extends SecureContainer{
                 DockTitle title = station.getButton( i );
                 if( title != null ){
                     int tx = title.getComponent().getX();
-                    int tw = title.getComponent().getWidth();
-                    
+
                     if( x <= tx )
                         return i;
-                    
+
+                    int tw = title.getComponent().getWidth();
                     if( x <= tx + tw ){
                         if( x < tx + tw/2 )
                             return i;
@@ -298,11 +298,11 @@ public class ButtonPane extends SecureContainer{
                 DockTitle title = station.getButton( i );
                 if( title != null ){
                     int ty = title.getComponent().getY();
-                    int th = title.getComponent().getHeight();
                     
                     if( y <= ty )
                         return i;
-                    
+
+                    int th = title.getComponent().getHeight();
                     if( y <= ty + th ){
                         if( y < ty + th/2 )
                             return i;

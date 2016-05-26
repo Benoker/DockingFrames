@@ -293,15 +293,15 @@ public class MenuLineLayoutPane extends AbstractTabLayoutManagerPane{
 	
 	private void listLayouts( List<MenuLineLayoutPossibility> list, Size infoSize, Size menuSize, Size tabSize ){
 		boolean tabMustBeMinimum = (infoSize != null && infoSize.isMinimum()) || (menuSize != null);
-		boolean tabMustBeSingle = menuSize != null && menuSize.isMinimum();
-		boolean infoMustBeMinimum = menuSize != null && menuSize.isMinimum();
-		
+
 		if( tabMustBeMinimum && !tabSize.isMinimum() )
 			return;
-		
+
+		boolean tabMustBeSingle = menuSize != null && menuSize.isMinimum();
 		if( tabMustBeSingle && tabs.getTabsCount( tabSize ) > 1 )
 			return;
-		
+
+		boolean infoMustBeMinimum = menuSize != null && menuSize.isMinimum();
 		if( infoMustBeMinimum && (infoSize != null && !infoSize.isMinimum()))
 			return;
 		

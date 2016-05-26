@@ -615,13 +615,13 @@ public abstract class WizardNodeMap {
 		 * @return the new column, can be <code>null</code>
 		 */
 		public PersistentColumn toPersistentColumn(){
-			int size;
-			int preferred;
 			Map<Dockable, PersistentCell> leafs = getLeafs();
 			if( leafs.size() == 0 ){
 				return null;
 			}
-			
+
+			int size;
+			int preferred;
 			if( side().getHeaderOrientation() == Orientation.HORIZONTAL ){
 				size = root.getSize().width;
 				preferred = getPreferredSize().width;

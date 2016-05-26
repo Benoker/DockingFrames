@@ -642,7 +642,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	@Override
 	public StationDropOperation prepareDrop( StationDropItem item ){
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
-		final DockController controller = getController();
 
 		if( getExpandedState() == ExpandedState.EXPANDED ) {
 			return null;
@@ -650,6 +649,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 		Dockable dockable = item.getDockable();
 
+		final DockController controller = getController();
 		// check if the dockable and the station accept each other
 		if( this.accept( dockable ) && dockable.accept( this ) ) {
 			// check if controller exists and if the controller accepts that

@@ -385,13 +385,14 @@ public class WizardColumnModel {
 		}
 		else if( node instanceof Node ){
 			Node n = (Node)node;
-			
-			int left = applyPersistentSizes( n.getLeft(), column, map );
+
 			int right = applyPersistentSizes( n.getRight(), column, map );
 			
 			if( n.getLeft() == null || !n.getLeft().isVisible() ){
 				return right;
 			}
+
+			int left = applyPersistentSizes( n.getLeft(), column, map );
 			if( n.getRight() == null || !n.getRight().isVisible() ){
 				return left;
 			}

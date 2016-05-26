@@ -694,12 +694,12 @@ public class Node extends VisibleSplitNode implements Divideable{
     			if( needToExpand( node ) ){
     				// split up this node
     				long leafId = getLeafId( property );
-    				long splitId = getSplitId( property, depth );
-    				
+
     				Leaf leaf = create( dockable, leafId );
     				if( leaf == null )
     					return false;
 
+					long splitId = getSplitId( property, depth );
     				split( property, depth, leaf, splitId );
     				leaf.setDockable( dockable, null );
     				return true;

@@ -1684,14 +1684,14 @@ public class ScreenDockStation extends AbstractDockStation {
     private void combine( CombinerSource source, CombinerTarget target, DockableProperty property ){
     	DockUtilities.checkLayoutLocked();
     	Dockable lower = source.getOld();
-    	Dockable upper = source.getNew();
-    	
+
     	int index = indexOf( lower );
     	if( index < 0 ){
     		throw new IllegalArgumentException( "old is not child of this station" );
     	}
     	
         ScreenDockWindowHandle window = getWindowHandle( index );
+		Dockable upper = source.getNew();
         removeDockable( upper );
         
         index = indexOf( lower );

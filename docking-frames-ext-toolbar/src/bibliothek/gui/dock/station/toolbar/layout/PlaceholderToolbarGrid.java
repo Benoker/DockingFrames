@@ -305,7 +305,6 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	public void move( int sourceColumn, int sourceLine, int destinationColumn, int destinationLine, Level destinationLevel ){
 		PlaceholderList<D, S, P> source = columns.dockables().get( sourceColumn ).getList();
 		final Filter<P> sourceList = source.dockables();
-		int destinationColumnIndex = -1;
 		
 		if( destinationColumn == columns.size( destinationLevel ) ) {
 			destinationColumn = columns.size( Level.BASE );
@@ -322,8 +321,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			throw new IllegalArgumentException( "destinationColumn out of bounds: " + destinationColumn );
 		}
 
-		final P value = sourceList.get( sourceLine );
-
+		int destinationColumnIndex = -1;
 		PlaceholderList<D, S, P> list;
 		if( (destinationColumn == -1) || (destinationColumn == columns.list().size()) ) {
 			list = createColumn();
@@ -362,7 +360,8 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		}
 
 		P moved = sourceList.get( sourceLine );
-		
+
+		final P value = sourceList.get( sourceLine );
 		list.dockables().move( sourceList, sourceLine, destinationLine );
 		ensureRemoved( list, value );
 		
@@ -1200,12 +1199,12 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 			columns.read( map, new PlaceholderListItemAdapter<GridPlaceholderList.ColumnItem<D, S, P>, GridPlaceholderList.Column<D, S, P>>(){
 				@Override
 				public GridPlaceholderList.Column<D, S, P> convert( ConvertedPlaceholderListItem item ){
-					final PlaceholderList<D, S, P> list = createColumn();
 					final PlaceholderMap map = item.getPlaceholderMap();
 					if( map == null ) {
 						return null;
 					}
 
+					final PlaceholderList<D, S, P> list = createColumn();
 					list.read( map, columns.getConverter() );
 					return columns.createColumn( list );
 				}
