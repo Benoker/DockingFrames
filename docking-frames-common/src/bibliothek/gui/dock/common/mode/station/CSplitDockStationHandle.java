@@ -258,9 +258,15 @@ public class CSplitDockStationHandle{
 		
 		@Override
 		public boolean equals( Object obj ){
-			if( obj == this )
+			if( obj == this ) {
 				return true;
-			if( obj instanceof ModeAreaListenerWrapper ){
+			}
+
+			if (obj == null) {
+				return false;
+			}
+
+			if( this.getClass() == obj.getClass() ){
 				ModeAreaListenerWrapper other = (ModeAreaListenerWrapper)obj;
 				return other.area.equals( area ) && other.listener.equals( listener );
 			}
