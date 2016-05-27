@@ -1094,3 +1094,6 @@
 - Bugfix: many small fixes by Karl-Philipp Richter
 - Bugfix: DockStations having width or height smaller or equal to 0 do no longer support drag and drop (because they are invisible to the user)
 - API: Added DockStationDropLayerFactory, a way for clients to define which areas of the screen can be targets for drag-and-drop operations
+
+[v1.1.2p17a]
+- Bugfix: when moving around a working-area, the are could not be stacked with normal dockables because the WorkingAreaAcceptance believed that the working-area can only be combined with itself 

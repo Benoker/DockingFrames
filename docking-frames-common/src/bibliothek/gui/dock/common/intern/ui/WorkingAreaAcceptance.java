@@ -66,7 +66,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
 
     public boolean accept( DockStation parent, Dockable child, Dockable next ) {
     	if( accept( parent, next ) ){
-    		return getWorkingArea( child ) == getWorkingArea( next );
+    		return getWorkingArea( child, true ) == getWorkingArea( next, true );
     	}
     	else {
     		return false;
@@ -136,7 +136,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
      */
     private boolean match( CStation<?> area, Dockable dockable ){
         if( dockable instanceof CommonDockable ){
-        	CStation<?> expectedWorkingArea = getWorkingArea( dockable );
+        	CStation<?> expectedWorkingArea = getWorkingArea( dockable, false );
         	CDockable self = ((CommonDockable)dockable).getDockable();
         	
 			if( expectedWorkingArea != area && expectedWorkingArea != self )
@@ -159,7 +159,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
             return true;
     }
     
-    private CStation<?> getWorkingArea( Dockable dockable ){
+    private CStation<?> getWorkingArea( Dockable dockable, boolean excludeSelf ){
     	final Set<CStation<?>> workingAreas = new HashSet<CStation<?>>();
     	
     	DockUtilities.visit( dockable, new DockVisitor() {
@@ -174,6 +174,14 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     	    	}
     		}
 		});
+    	
+    	if( dockable instanceof CommonDockable ){
+    		CStation<?> station = ((CommonDockable) dockable).getDockable().asStation();
+    		if( station != null && station.isWorkingArea() ){
+    			workingAreas.remove( station );
+    		}
+    	}
+    	
     	if( workingAreas.size() == 1 ){
     		return workingAreas.iterator().next();
     	}
