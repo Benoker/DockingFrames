@@ -34,6 +34,7 @@ import bibliothek.gui.dock.perspective.PerspectiveDockable;
 import bibliothek.gui.dock.perspective.PerspectiveStation;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PerspectivePlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
@@ -105,6 +106,15 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 		if( children != null ){
 			selection = children.get( selected );
 		}
+	}
+	
+	/**
+	 * Tells whether <code>placeholders</code> has the right format for this perspective to read it.
+	 * @param placeholders the map whose format needs checking
+	 * @return <code>true</code> if a call to {@link #setPlaceholders(PlaceholderMap)} will not result in an exception
+	 */
+	public boolean canRead( PlaceholderMap placeholders ){
+		return PlaceholderList.PLACEHOLDER_MAP_FORMAT.equals( placeholders.getFormat() );
 	}
 	
 	public void setPlaceholders( PlaceholderMap placeholders ){

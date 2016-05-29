@@ -103,7 +103,7 @@ public class BasicCombiner implements Combiner {
 	public void aside( final AsideRequest request ){
 		PlaceholderMap placeholders = request.getLayout();
 		StackDockPerspective stack = new StackDockPerspective();
-		if( placeholders != null ){
+		if( placeholders != null && stack.canRead( placeholders ) ){
 			stack.setPlaceholders( placeholders );
 		}
 		if( stack.getItemCount() == 0 ){

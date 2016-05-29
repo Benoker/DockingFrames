@@ -49,6 +49,11 @@ import bibliothek.util.Path;
  * @param <P> the type of item which represents a {@link Dockable}
  */
 public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
+	/**
+	 * The {@link PlaceholderMap#getFormat() format} of the {@link PlaceholderMap}s that are created by this class.
+	 */
+	public static final Path PLACEHOLDER_MAP_FORMAT = new Path("dock.PlaceholderList");
+
 	/** the current set of valid placeholders */
 	private PlaceholderStrategy strategy;
 
@@ -261,7 +266,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			throw new IllegalArgumentException( "converter must not be null" );
 		}
 
-		if( !map.getFormat().equals( new Path( "dock.PlaceholderList" ) ) ) {
+		if( !map.getFormat().equals( PLACEHOLDER_MAP_FORMAT ) ) {
 			throw new IllegalArgumentException( "unknown format: " + map.getFormat() );
 		}
 		if( map.getVersion() != 0 ) {
@@ -346,7 +351,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 			throw new IllegalArgumentException( "converter must not be null" );
 		}
 
-		PlaceholderMap map = new PlaceholderMap( new Path( "dock.PlaceholderList" ), 0 );
+		PlaceholderMap map = new PlaceholderMap( PLACEHOLDER_MAP_FORMAT, 0 );
 		int dockableIndex = 0;
 
 		for( Item entry : list() ) {
