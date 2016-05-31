@@ -164,7 +164,6 @@ import bibliothek.gui.dock.station.Combiner;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.StationPaint;
 import bibliothek.gui.dock.station.flap.FlapWindow;
-import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayerFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockWindow;
 import bibliothek.gui.dock.station.stack.StackDockPerspective;
@@ -2850,7 +2849,7 @@ public class CControl {
             	CStation<?> area = dockable.getWorkingArea();
                 if( area != null && area.asDockable() != null ){
                     if( !area.asDockable().isVisible() ){
-                        throw new IllegalStateException( "A dockable that wants to be on a CWorkingArea can't be made visible unless the CWorkingArea is visible." );
+                        throw new IllegalStateException( "A dockable that wants to be on a working-area can't be made visible unless the working-area is visible." );
                     }
                 }
                 

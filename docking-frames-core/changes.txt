@@ -1097,4 +1097,7 @@
 
 [v1.1.2p17a]
 - Bugfix: when moving around a working-area, the are could not be stacked with normal dockables because the WorkingAreaAcceptance believed that the working-area can only be combined with itself
-- Bugfix: when calling CDockable.setLocationAside an exception could be thrown if a PlaceholderMap with the wrong format was stored in the layout. Maps with the wrong format are now silently ignored 
+- Bugfix: when calling CDockable.setLocationAside an exception could be thrown if a PlaceholderMap with the wrong format was stored in the layout. Maps with the wrong format are now silently ignored
+
+[v1.1.2p17b]
+- Bugfix: changed how CDockables behave when setting or reading their location. A CDockable that is a "hidden root station" (a DockStation that is registered as root but without parent DockStation) is treated as it was invisible. As a result, calling "setLocation" will store the location instead of directly trying to apply it (which would fail because a root item cannot be moved) 

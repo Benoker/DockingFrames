@@ -369,8 +369,8 @@ public abstract class AbstractCDockable implements CDockable {
         this.location = location;
         
         if( location != null ){
-            if( control != null && isVisible() ){
-                control.getLocationManager().setLocation( intern(), location );
+            if( control != null && control.hasParent( this ) ){
+            	control.getLocationManager().setLocation( intern(), location );
                 this.location = null;
             }
         }
@@ -439,7 +439,7 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     public CLocation getAutoBaseLocation( boolean noBackwardsTransformation ){
-        if( control == null || isVisible() ){
+        if( control == null || control.hasParent( this ) ){
 	    	return null;
 	    }
 	    
