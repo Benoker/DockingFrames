@@ -80,28 +80,28 @@ public class CDisablingStrategy implements DisablingStrategy{
 
 	public boolean isDisabled( DockElement item ){
 		Dockable dockable = item.asDockable();
-		if( dockable != null && dockable instanceof CommonDockable ){
+		if( dockable instanceof CommonDockable ){
 			return !((CommonDockable)dockable).getDockable().isEnabled( EnableableItem.SELF );
 		}
 		return false;
 	}
 
 	public boolean isDisabled( Dockable dockable, DockAction item ){
-		if( dockable != null && dockable instanceof CommonDockable ){
+		if( dockable instanceof CommonDockable ){
 			return !((CommonDockable)dockable).getDockable().isEnabled( EnableableItem.ACTIONS );
 		}
 		return false;
 	}
 
 	public boolean isDisabled( Dockable dockable, DockTitle item ){
-		if( dockable != null && dockable instanceof CommonDockable ){
+		if( dockable instanceof CommonDockable ){
 			return !((CommonDockable)dockable).getDockable().isEnabled( EnableableItem.TITLES );
 		}
 		return false;
 	}
 
 	public boolean isTabDisabled( Dockable dockable ){
-		if( dockable != null && dockable instanceof CommonDockable ){
+		if( dockable instanceof CommonDockable ){
 			return !((CommonDockable)dockable).getDockable().isEnabled( EnableableItem.TABS );
 		}
 		return false;

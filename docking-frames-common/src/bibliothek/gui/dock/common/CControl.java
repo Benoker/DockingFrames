@@ -655,7 +655,7 @@ public class CControl {
                 Dockable oldFocused = event.getOldFocusOwner();
                 Dockable newFocused = event.getNewFocusOwner();
 
-                if( oldFocused != null && oldFocused instanceof CommonDockable ){
+                if( oldFocused instanceof CommonDockable ){
                     CDockable oldC = ((CommonDockable)oldFocused).getDockable();
                     CDockableAccess access = accesses.get( oldC );
                     if( access != null ){
@@ -664,7 +664,7 @@ public class CControl {
 
                     listenerCollection.getFocusListener().focusLost( oldC );
                 }
-                if( newFocused != null && newFocused instanceof CommonDockable ){
+                if( newFocused instanceof CommonDockable ){
                     CDockable newC = ((CommonDockable)newFocused).getDockable();
                     CDockableAccess access = accesses.get( newC );
                     if( access != null ){

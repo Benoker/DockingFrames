@@ -194,7 +194,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 							}
 							if( parent != null ){
 								parent = parent.getParent();
-								if( parent != null && parent instanceof JComponent ){
+								if( parent instanceof JComponent ){
 									((JComponent)parent).revalidate();
 								}
 							}
