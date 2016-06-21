@@ -89,7 +89,7 @@ public class PreferenceTreeModel extends AbstractPreferenceModel implements Tree
 
     @Override
     protected boolean hasListeners(){
-    	return super.hasListeners() || treeListeners.size() > 0;
+    	return super.hasListeners() || !treeListeners.isEmpty();
     }
     
     public void addTreeModelListener( TreeModelListener l ) {

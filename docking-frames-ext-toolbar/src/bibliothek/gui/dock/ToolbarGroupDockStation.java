@@ -1066,7 +1066,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			}
 		}
 
-		if( list.size() > 0 ) {
+		if( !list.isEmpty() ) {
 			listeners.fireDockablesRepositioned( list.toArray( new Dockable[list.size()] ) );
 		}
 	}

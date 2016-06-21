@@ -70,7 +70,7 @@ public abstract class AbstractWindowProvider implements WindowProvider{
     protected void updateVisibility(){
     	Window current = searchWindow();
     	if( window != current ){
-    		if( listeners.size() > 0 ){
+    		if( !listeners.isEmpty() ){
 	    		if( window != null )
 	    			window.removeComponentListener( windowListener );
 	    		if( current != null )
@@ -121,14 +121,14 @@ public abstract class AbstractWindowProvider implements WindowProvider{
      * @return whether this provider is monitored
      */
     protected boolean hasListeners(){
-    	return listeners.size() > 0;
+    	return !listeners.isEmpty();
     }
     
     public void addWindowProviderListener( WindowProviderListener listener ) {
         if( listener == null )
             throw new IllegalArgumentException( "null is not allowed as listener" );
         
-        if( listeners.size() == 0 ){
+        if( listeners.isEmpty() ){
         	updateVisibility();
         	if( window != null ){
         		window.addComponentListener( windowListener );
@@ -142,7 +142,7 @@ public abstract class AbstractWindowProvider implements WindowProvider{
     public void removeWindowProviderListener( WindowProviderListener listener ) {
         listeners.remove( listener );
         
-        if( listeners.size() == 0 ){
+        if( listeners.isEmpty() ){
         	if( window != null ){
         		window.removeComponentListener( windowListener );
         	}

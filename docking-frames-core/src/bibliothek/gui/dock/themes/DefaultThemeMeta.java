@@ -88,7 +88,7 @@ public class DefaultThemeMeta implements ThemeMeta {
 	 * @return <code>true</code> if there is at least one listener
 	 */
 	protected boolean hasListeners(){
-		return listeners.size() > 0;
+		return !listeners.isEmpty();
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class DefaultThemeMeta implements ThemeMeta {
 		if( listener == null ){
 			throw new IllegalArgumentException( "listener must not be null" );
 		}
-		if( listeners.size() == 0 ){
+		if( listeners.isEmpty() ){
 			name.setController( controller );
 			description.setController( controller );
 		}
@@ -150,7 +150,7 @@ public class DefaultThemeMeta implements ThemeMeta {
 
 	public void removeListener( ThemeMetaListener listener ){
 		listeners.remove( listener );
-		if( listeners.size() == 0 ){
+		if( listeners.isEmpty() ){
 			name.setController( null );
 			description.setController( null );
 		}
@@ -166,14 +166,14 @@ public class DefaultThemeMeta implements ThemeMeta {
 	}
 
 	public String getDescription(){
-		if( listeners.size() == 0 ){
+		if( listeners.isEmpty() ){
 			description.update( controller.getTexts() );
 		}
 		return description.value();
 	}
 
 	public String getName(){
-		if( listeners.size() == 0 ){
+		if( listeners.isEmpty() ){
 			name.update( controller.getTexts() );
 		}
 		return name.value();

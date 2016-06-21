@@ -336,7 +336,7 @@ public class DefaultChoice<V> implements Choice {
 			if( isNullEntryAllowed() )
 				return null;
 			
-			if( list.size() > 0 )
+			if( !list.isEmpty() )
 				return list.get( 0 ).getEntryId();
 			
 			return null;

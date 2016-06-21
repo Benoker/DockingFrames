@@ -1495,7 +1495,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		if( isFullScreen() )
 			return getFullScreen();
 
-		if( frontDockable == null && dockables.size() > 0 )
+		if( frontDockable == null && !dockables.isEmpty() )
 			frontDockable = dockables.get(0).getDockable();
 
 		return frontDockable;
@@ -1610,7 +1610,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * fullscreen (if it is not already fullscreen).
 	 */
 	public void setNextFullScreen(){
-		if( dockables.size() > 0 ) {
+		if( !dockables.isEmpty() ) {
 			if( fullScreenDockable == null )
 				setFullScreen(getDockable(0));
 			else {
@@ -3465,7 +3465,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 				}
 				repositioned.clear();
 				
-				if( dockables.size() > 0 ){
+				if( !dockables.isEmpty() ){
 					dockStationListeners.fireDockablesRepositioned( dockables.toArray( new Dockable[ dockables.size() ] ) );
 				}
 				

@@ -106,7 +106,7 @@ public abstract class AbstractColorScheme implements ColorScheme{
      * @return <code>true</code> if there is at least one listener attached
      */
     protected boolean hasListeners(){
-    	return listeners.size() > 0;
+    	return !listeners.isEmpty();
     }
     
     /**
@@ -145,7 +145,7 @@ public abstract class AbstractColorScheme implements ColorScheme{
     }
     
     private boolean shouldListenUI(){
-    	return managers.size() > 0 || listeners.size() > 0;
+    	return !managers.isEmpty() || !listeners.isEmpty();
     }
     
     /**

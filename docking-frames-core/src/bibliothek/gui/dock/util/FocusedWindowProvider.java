@@ -80,7 +80,7 @@ public class FocusedWindowProvider extends AbstractWindowProvider{
 		window.removeWindowFocusListener( listener );
 		if( current == window ){
 			current = null;
-			if( history.size() > 0 ){
+			if( !history.isEmpty() ){
 				current = history.get( history.size()-1 );
 			}
 			fireWindowChanged( current );

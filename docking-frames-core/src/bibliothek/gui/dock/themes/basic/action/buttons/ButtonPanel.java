@@ -206,7 +206,7 @@ public class ButtonPanel extends JPanel{
      * @return whether at least one action is present
      */
     public boolean hasActions(){
-    	return actions.size() > 0;
+    	return !actions.isEmpty();
     }
     
     /**

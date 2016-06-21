@@ -280,7 +280,7 @@ public class CListenerCollection {
      * @return <code>true</code> if there is at least one listener
      */
     public boolean hasCDockableLocationListeners(){
-    	return locationListeners.size() > 0;
+    	return !locationListeners.isEmpty();
     }
     
     /**
