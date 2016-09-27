@@ -43,12 +43,12 @@
 	<description>${project.name}</description>
 
 	<!-- TODO is this correct? -->
-	<url>http://dock.javaforge.com//</url>
+	<url>http://www.docking-frames.org//</url>
 
 	<!-- TODO is this correct? -->
 	<organization>
 		<name>Docking Frames</name>
-		<url>http://www.dockingframes.org</url>
+		<url>http://www.docking-frames.org</url>
 	</organization>
 
 	<scm>

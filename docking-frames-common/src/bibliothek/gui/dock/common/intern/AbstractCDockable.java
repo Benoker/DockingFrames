@@ -30,6 +30,8 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.CControl;
@@ -361,6 +363,20 @@ public abstract class AbstractCDockable implements CDockable {
     public void toFront(){
         if( isVisible() ){
         	FocusRequest request = new DefaultFocusRequest( intern(), null, false, true, false, true );
+            control.getOwner().intern().getController().setFocusedDockable( request );
+        }
+    }
+    
+    /**
+     * Tries to focus this dockable, and then ensures that the {@link Component} <code>focus</code> actually gets the focus.<br>
+     * The behavior of this method is not defined for the case where <code>focus</code> is not a child of <code>this</code>.<br>
+     * There is no guarantee of success, this methods fails silently if the focus cannot be gained.
+     * @param focus a child of this dockable, not <code>null</code>
+     * @see #toFront()
+     */
+    public void toFront( Component focus ){
+        if( isVisible() ){
+        	FocusRequest request = new DefaultFocusRequest( intern(), focus, true, true, true, true );
             control.getOwner().intern().getController().setFocusedDockable( request );
         }
     }

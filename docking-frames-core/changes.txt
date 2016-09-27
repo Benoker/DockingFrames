@@ -1100,4 +1100,7 @@
 - Bugfix: when calling CDockable.setLocationAside an exception could be thrown if a PlaceholderMap with the wrong format was stored in the layout. Maps with the wrong format are now silently ignored
 
 [v1.1.2p17b]
-- Bugfix: changed how CDockables behave when setting or reading their location. A CDockable that is a "hidden root station" (a DockStation that is registered as root but without parent DockStation) is treated as it was invisible. As a result, calling "setLocation" will store the location instead of directly trying to apply it (which would fail because a root item cannot be moved) 
+- Bugfix: changed how CDockables behave when setting or reading their location. A CDockable that is a "hidden root station" (a DockStation that is registered as root but without parent DockStation) is treated as it was invisible. As a result, calling "setLocation" will store the location instead of directly trying to apply it (which would fail because a root item cannot be moved)
+
+[v1.1.2p18]
+- API: New method AbstractCDockable.toFront allows clients to focus a Dockable, and a child Component of that Dockable with only one method call 
