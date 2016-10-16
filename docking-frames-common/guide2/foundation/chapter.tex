@@ -67,7 +67,7 @@ Visibility has two meanings, ``logical visibility`` and ``true visibility``. If 
 \paragraph{Logical visibility}
 A \src{dockable} is (logical) visible if it is either a child of a visible root-station or a registered root-station. With other words, logical visibility means that the \src{dockable} is somehow accessible to the user, it does not even imply that the user actually can see the \src{dockable} on the screen. Visibility can change through a set of events:
 \begin{itemize}
- \item Obviosly, calling \src{setVisible} of \src{CDockable} will change the visibility. If possible, the location of a \src{CDockable} will remembered and reused.
+ \item Obviously, calling \src{setVisible} of \src{CDockable} will change the visibility. If possible, the location of a \src{CDockable} will remembered and reused.
  \item Adding a \src{CDockable} to a station makes the \src{CDockable} visible. This may happen for example if using a \src{CGrid} (see chapter \ref{sec:location}).
  \item The user may close a dockable by clicking onto a special close-button. Clients may call \src{setCloseable} to allow or deny a user closing the dockable.
 \end{itemize}
