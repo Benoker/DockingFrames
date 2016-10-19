@@ -290,7 +290,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /** tells how much two windows must overlap in order for them to be merged */
     private double dropOverRatio = 0.75;
     
-    /** controlls attraction between {@link ScreenDockWindow}s */
+    /** controls attraction between {@link ScreenDockWindow}s */
     private MagnetController magnet;
     
     /** the restrictions of the boundaries of this window*/
@@ -1805,7 +1805,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Removes the <code>dockable</code> from this station.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s.
      * @param dockable the {@link Dockable} to remove
      */
@@ -1820,7 +1820,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Removes the <code>index</code>'th {@link Dockable} of this station.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s.
      * @param index the index of the {@link Dockable} to remove
      */
@@ -2234,7 +2234,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Gets the {@link MagnetController} of this station. The {@link MagnetController} controlls the
+     * Gets the {@link MagnetController} of this station. The {@link MagnetController} controls the
      * attraction between {@link ScreenDockWindow}s.
      * @return the controller, never <code>null</code>
      */

@@ -77,7 +77,7 @@ public class PreferenceTable extends JPanel{
     /** the visible rows */
     private List<Row<?>> rows = new ArrayList<Row<?>>();
     
-    /** the panel showing the contens of this table */
+    /** the panel showing the contents of this table */
     private JPanel panel;
     
     /** the layout used on this panel */

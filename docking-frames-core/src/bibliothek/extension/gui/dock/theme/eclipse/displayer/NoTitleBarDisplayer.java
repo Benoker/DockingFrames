@@ -56,7 +56,7 @@ import bibliothek.gui.dock.util.Transparency;
 /**
  * A {@link DockableDisplayer} which is used in situations when usually no {@link DockTitle} nor any tab is shown. This
  * displayer makes use of an {@link InvisibleTab} to change its border. The invisible tab is accessed through the
- * global {@link TabPainter} which in respect is made avilable by the {@link DockProperties} and the key {@link EclipseTheme#TAB_PAINTER}.
+ * global {@link TabPainter} which in respect is made available by the {@link DockProperties} and the key {@link EclipseTheme#TAB_PAINTER}.
  * @author Janni Kovacs
  * @author Benjamin Sigg
  */

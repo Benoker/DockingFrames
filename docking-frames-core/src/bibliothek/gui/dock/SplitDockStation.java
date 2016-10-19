@@ -690,7 +690,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	}
 
 	/**
-	 * Tells whether the user can drag dividiers and resize dockables in this way.
+	 * Tells whether the user can drag dividers and resize dockables in this way.
 	 * @return <code>true</code> if resizing is allowed
 	 */
 	public boolean isResizingEnabled(){
@@ -2968,7 +2968,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/**
 	 * Removes all children from this station.<br>
 	 * Note: clients may need to invoke {@link DockController#freezeLayout()}
-	 * and {@link DockController#meltLayout()} to ensure noone else adds or
+	 * and {@link DockController#meltLayout()} to ensure no-one else adds or
 	 * removes <code>Dockable</code>s.
 	 */
 	public void removeAllDockables(){
@@ -2996,7 +2996,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	 * Removes <code>dockable</code> from this station. If 
 	 * <code>dockable</code> is not a child of this station, nothing happens.<br>
 	 * Note: clients may need to invoke {@link DockController#freezeLayout()}
-	 * and {@link DockController#meltLayout()} to ensure noone else adds or
+	 * and {@link DockController#meltLayout()} to ensure no-one else adds or
 	 * removes <code>Dockable</code>s.
 	 * @param dockable the child to remove
 	 */

@@ -79,7 +79,7 @@ import bibliothek.util.Todo.Version;
  *  {@link DockTitleRequest} for each required {@link DockTitle} can be created.</li>
  *  <li>One child can be focused. If this station changes the focus it should use {@link DockController#setAtLeastFocusedDockable(Dockable, Component)}.</li>
  *  <li>This station should support placeholders. The current {@link PlaceholderStrategy} can be used to convert {@link Dockable}s to placeholders. 
- *  A {@link PlaceholderList} is a good datastructure to store {@link Dockable}s and placeholders at the same time.</li>
+ *  A {@link PlaceholderList} is a good data structure to store {@link Dockable}s and placeholders at the same time.</li>
  *  <li>Additional points where the user can start drag and drop operations can be installed by implementing a {@link DockElementRepresentative}. It
  *  has to be installed using {@link DockController#addRepresentative(DockElementRepresentative)}. </li>
  *  <li>And a new {@link DockFactory} will be required to persistently store the layout of this station.</li>
@@ -423,7 +423,7 @@ public interface DockStation extends DockElement{
      * Removes a child from this station. This method may be called even
      * if {@link #canDrag(Dockable)} returned <code>false</code>.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s. 
      * @param dockable the child to remove
      */

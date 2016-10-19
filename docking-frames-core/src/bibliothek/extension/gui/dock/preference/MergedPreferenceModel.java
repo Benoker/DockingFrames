@@ -399,7 +399,7 @@ public class MergedPreferenceModel extends AbstractPreferenceModel{
     }
     
     /**
-     * Describes an index in one of the childen of a {@link MergedPreferenceModel}.
+     * Describes an index in one of the children of a {@link MergedPreferenceModel}.
      * @author Benjamin Sigg
      */
     protected static class Index{

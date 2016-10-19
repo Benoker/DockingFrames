@@ -43,7 +43,7 @@ import bibliothek.util.container.Tuple;
  * {@link TransferHandler} added to a {@link StackDockComponent}, will be informed if the mouse hovers over a tab, and
  * forwards that information to the client.<br>
  * This class extends {@link TransferHandler}, but it will always return <code>false</code> when
- * calling  {@link TransferHandler#canImport(TransferSupport))}.
+ * calling  {@link TransferHandler#canImport(TransferSupport)}.
  * @author Benjamin Sigg
  */
 @FrameworkOnly

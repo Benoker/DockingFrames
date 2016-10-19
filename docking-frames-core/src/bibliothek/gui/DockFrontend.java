@@ -407,7 +407,7 @@ public class DockFrontend {
     }
     
     /**
-     * Adds a listener to this frontend. The listener will recieve notifications
+     * Adds a listener to this frontend. The listener will receive notifications
      * if anything changes on this frontend. 
      * @param listener the observer
      */
@@ -970,7 +970,7 @@ public class DockFrontend {
     
     /**
      * Tells whether this {@link DockFrontend} stores location information for a {@link Dockable} with
-     * id <code>id</code>. This method does not check whether there actuall is a visible dockable with the
+     * id <code>id</code>. This method does not check whether there actually is a visible dockable with the
      * given id.
      * @param id the id of some entry
      * @return <code>true</code> if there is an entry for <code>id</code> and this entry has a location attached
@@ -2132,7 +2132,7 @@ public class DockFrontend {
     }
     
     /**
-     * Reads the contents of <code>element</code> using all the facotries installed on this
+     * Reads the contents of <code>element</code> using all the factories installed on this
      * {@link DockFrontend}, without actually changing any property of this frontend.
      * @param element the element to read
      * @return all the layouts stored in <code>element</code>

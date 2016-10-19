@@ -37,7 +37,7 @@ public abstract class ChoiceText extends TextValue{
 	/** the kind of this {@link UIValue} */
 	public static final Path KIND_CHOICE = KIND_TEXT.append( "choice" );
 	
-	/** the coice using this text */
+	/** the choice using this text */
 	private Choice choice;
 
 	/**

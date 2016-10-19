@@ -57,7 +57,7 @@ import bibliothek.util.Path;
  * This implementation has several <b>drawbacks</b>: 
  * <ul>
  * 	<li>All {@link PerspectiveElement} that were ever created are stored in a cache. Clients should make sure to 
- *  use a new cache everytime the access a {@link Perspective}, this way the old cache can be cleaned up by the
+ *  use a new cache every time the access a {@link Perspective}, this way the old cache can be cleaned up by the
  *  garbage collector.</li>
  *  <li>The unique identifier of {@link Dockable}s is read from the {@link DockFrontend}, this cache has no way
  *  to know the identifiers of unregistered elements. These elements will be ignored and thrown away when reading the layout.</li>

@@ -221,7 +221,7 @@ public class DockController {
     /** behavior which dockable can be dropped over which station */
     private MultiDockAcceptance acceptance = new MultiDockAcceptance();
     
-    /** controlls the popup menus */
+    /** controls the popup menus */
     private PopupController popupController;
    
     /** remover of stations with none or one child */
@@ -484,7 +484,7 @@ public class DockController {
     }
     
     /**
-     * Gets the manager which is responsible for transfering focus between {@link Dockable}s.
+     * Gets the manager which is responsible for transferring focus between {@link Dockable}s.
      * @return the manager, not <code>null</code>
      */
     public FocusController getFocusController(){
@@ -924,7 +924,7 @@ public class DockController {
      * drag and drop children from and to <code>station</code>. If
      * the children of <code>station</code> are stations itself, then
      * they will be added automatically. The station will be treated as root-station, meaning
-     * that <code>station</code> remains registered until it is explicitely removed from the 
+     * that <code>station</code> remains registered until it is explicitly removed from the
      * {@link DockRegister}. On the other hand child stations may be removed automatically at any time.<br>
      * Even if <code>station</code> is already known to this controller or a child of a root-station, then
      * <code>station</code> is promoted to root-station.
@@ -963,7 +963,7 @@ public class DockController {
                 
     /**
      * Tells whether one of the methods which change the focus is currently
-     * running, or not. If the result is <code>true</code>, noone should
+     * running, or not. If the result is <code>true</code>, no-one should
      * change the focus.
      * @return <code>true</code> if the focus is currently changing
      */

@@ -29,11 +29,11 @@ import bibliothek.extension.gui.dock.theme.eclipse.stack.tab.TabComponent;
 
 /**
  * A {@link TabComponentCondition} is a layer around a {@link TabComponent} that offers access to an
- * implicitely defined condition, e.g. whether the mouse is over the {@link TabComponent}.
+ * implicitly defined condition, e.g. whether the mouse is over the {@link TabComponent}.
  * @author Benjamin Sigg
  */
 public abstract class TabComponentCondition {
-	/** the observered component */
+	/** the observed component */
 	private TabComponent component;
 	
 	/** the current state of the condition */
@@ -64,7 +64,7 @@ public abstract class TabComponentCondition {
 	/**
 	 * Reads the condition. This method is only called if {@link #invalidate()} was called. Otherwise the previously
 	 * stored value is returned.
-	 * @return <code>true</code> if the condition is fullfilled, <code>false</code> otherwise
+	 * @return <code>true</code> if the condition is fulfilled, <code>false</code> otherwise
 	 */
 	protected abstract boolean checkCondition();
 	
@@ -88,7 +88,7 @@ public abstract class TabComponentCondition {
 	}
 	
 	/**
-	 * Tells whether the condition is fullfilled or not.
+	 * Tells whether the condition is fulfilled or not.
 	 * @return the state of this condition
 	 */
 	public boolean getCondition(){

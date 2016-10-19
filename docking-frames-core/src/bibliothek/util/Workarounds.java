@@ -86,7 +86,7 @@ public class Workarounds {
 	}
 	
 	/**
-	 * Seets the {@link Workarounds} that should be used. This method will never be called from
+	 * Sets the {@link Workarounds} that should be used. This method will never be called from
 	 * the framework itself. Calling this method has no effect on workarounds that are already 
 	 * applied.<br>
 	 * Please note that this method is not thread safe!<br>

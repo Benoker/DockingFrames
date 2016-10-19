@@ -224,7 +224,7 @@ public class DockUI {
     }
     
     /**
-     * Registeres a new {@link LookAndFeelColors}. The <code>lookAndFeelClassNameRegex</code>
+     * Registers a new {@link LookAndFeelColors}. The <code>lookAndFeelClassNameRegex</code>
      * is a regular expression. If a {@link LookAndFeel} is active whose class name
      * {@link String#matches(String) matches} <code>lookAndFeelClassNameRegex</code>,
      * then <code>colors</code> becomes the selected source for colors. If more
@@ -249,7 +249,7 @@ public class DockUI {
      * Adds a listener which gets informed when a color of the current
      * {@link LookAndFeelColors} changes. This listener gets not informed
      * about any changes when the {@link LookAndFeel} itself gets replaced.
-     * This listener will automatically be transfered when another 
+     * This listener will automatically be transferred when another
      * {@link LookAndFeelColors} gets selected.
      * @param listener the new listener, not <code>null</code>
      */

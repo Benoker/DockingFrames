@@ -84,7 +84,7 @@ public class ActionContentModifier {
 	/** whether this modifier describes an action that is shown horizontally */
 	private boolean horizontal;
 	
-	/** whether this modifier describres an action that is shown vertically */
+	/** whether this modifier describes an action that is shown vertically */
 	private boolean vertical;
 	
 	/** backup modifiers if <code>this</code> is not available */

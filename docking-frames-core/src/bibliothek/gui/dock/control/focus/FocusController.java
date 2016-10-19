@@ -105,7 +105,7 @@ public interface FocusController {
     
     /**
      * Tells whether one of the methods which change the focus is currently
-     * running, or not. If the result is <code>true</code>, noone should
+     * running, or not. If the result is <code>true</code>, no-one should
      * change the focus.
      * @return <code>true</code> if the focus is currently changing
      */
