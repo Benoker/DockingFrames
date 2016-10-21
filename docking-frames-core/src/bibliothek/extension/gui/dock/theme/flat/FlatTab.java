@@ -331,6 +331,14 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
         }
     }
     
+    @Override
+    public void setForeground( Color fg ) {
+    	super.setForeground( fg );
+    	if( label != null ){
+    		label.setForeground( fg );
+    	}
+    }
+    
     public void updateFonts(){
         if( focused ){
             setFontModifier( fontFocused.font() );

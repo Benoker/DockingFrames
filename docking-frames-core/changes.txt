@@ -1103,4 +1103,8 @@
 - Bugfix: changed how CDockables behave when setting or reading their location. A CDockable that is a "hidden root station" (a DockStation that is registered as root but without parent DockStation) is treated as it was invisible. As a result, calling "setLocation" will store the location instead of directly trying to apply it (which would fail because a root item cannot be moved)
 
 [v1.1.2p18]
-- API: New method AbstractCDockable.toFront allows clients to focus a Dockable, and a child Component of that Dockable with only one method call 
+- API: New method AbstractCDockable.toFront allows clients to focus a Dockable, and a child Component of that Dockable with only one method call
+
+[v1.1.2p18a]
+- Bugfix: Tabs of the Flat-theme did not respect the foreground color that was set by the client.
+ 
