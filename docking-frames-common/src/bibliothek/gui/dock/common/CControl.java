@@ -1380,7 +1380,7 @@ public class CControl {
     }
 
     /**
-     * Gets the set of dockables, stations and other elemnts that are used
+     * Gets the set of dockables, stations and other elements that are used
      * by this control.
      * @return the set of elements, never <code>null</code>
      */
