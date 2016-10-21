@@ -227,7 +227,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
     
     /**
-     * Initialises all properties of this DockableDisplayer. This method should
+     * Initializes all properties of this DockableDisplayer. This method should
      * only be called once, by a constructor of a subclass which invoked
      * <code>{@link #BasicDockableDisplayer(DockStation, boolean) DockableDisplayer( false )}</code>.
      * @param station the station for which this displayer is needed 
@@ -393,11 +393,12 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     /**
      * Creates a new decorator that will be shown in this displayer if the displayer is
-     * shown alongside a tab (@see {@link #setStacked(boolean)}). The default implementation
+     * shown alongside a tab {@link #setStacked(boolean)}. The default implementation
      * return {@link #createMinimalDecorator()}. Subclasses may call {@link #createStackedDecorator(PropertyKey)}
      * to easily create a fitting decorator.
      * @return the new decorator
      * @see #createStackedDecorator(PropertyKey)
+     * @see #setStacked(boolean)
      */
     protected BasicDockableDisplayerDecorator createStackedDecorator(){
     	return createMinimalDecorator();

@@ -34,7 +34,7 @@ import java.util.Map;
 import javax.swing.UIManager;
 
 /**
- * The set of colors used when no specialiced set has been specified.
+ * The set of colors used when no specialized set has been specified.
  * @author Benjamin Sigg
  */
 public class DefaultLookAndFeelColors extends AbstractLookAndFeelColors {

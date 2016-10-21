@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.UIProperties;
 import bibliothek.gui.dock.util.UIScheme;
 
 /**
- * This abstract implementation of an {@link UIScheme} offers support for transfering values
+ * This abstract implementation of an {@link UIScheme} offers support for transferring values
  * from the {@link DockProperties} to the {@link IconManager}.
  * @author Benjamin Sigg
  */

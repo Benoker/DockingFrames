@@ -173,7 +173,7 @@ public class SplitSpanStrategy {
 	}
 	
 	/**
-	 * Immediatelly resets all {@link Span}s to have a size of <code>0</code>.
+	 * Immediately resets all {@link Span}s to have a size of <code>0</code>.
 	 */
 	public void unsetPut(){
 		if( lastPut != null ){

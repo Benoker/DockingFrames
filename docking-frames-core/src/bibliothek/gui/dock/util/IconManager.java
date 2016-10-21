@@ -60,7 +60,7 @@ public class IconManager extends UIProperties<Icon, DockIcon, DockIconBridge>{
 	/**
 	 * What size the framework should expect the smallest icon to be. This number is used to calculate the
 	 * minimum and the preferred size of various {@link Component}s. This is not a hard boundary, just expect any
-	 * icon smaller than this constant to be surrounded by some addional empty space. The default size
+	 * icon smaller than this constant to be surrounded by some additional empty space. The default size
 	 * is 16x16 pixels.
 	 */
 	public static final PropertyKey<Dimension> MINIMUM_ICON_SIZE = new PropertyKey<Dimension>( "dock.icon.minimumSize", 

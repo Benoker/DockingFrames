@@ -147,7 +147,7 @@ public class DockableStateEvent {
 
 	/**
 	 * Tells whether the visibility of the {@link #getDockable() dockable} changed (whether the user
-	 * can now see the docable or not).
+	 * can now see the dockable or not).
 	 * @return whether the visibility changed
 	 * @see Dockable#isDockableShowing()
 	 */

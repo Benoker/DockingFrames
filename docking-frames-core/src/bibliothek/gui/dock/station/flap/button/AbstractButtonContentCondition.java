@@ -81,7 +81,7 @@ public abstract class AbstractButtonContentCondition implements ButtonContentCon
 	}
 
 	/**
-	 * Called when <code>dockable</code> has to be observered.
+	 * Called when <code>dockable</code> has to be observed.
 	 * @param dockable the element to observe
 	 */
 	protected void install( Dockable dockable ){
@@ -90,7 +90,7 @@ public abstract class AbstractButtonContentCondition implements ButtonContentCon
 	
 	/**
 	 * Called when <code>dockable</code> no longer has to be observed.
-	 * @param dockable the element that no longer needs to be osbserved
+	 * @param dockable the element that no longer needs to be observed
 	 */
 	protected void uninstall( Dockable dockable ){
 		dockable.removeDockableListener( this );

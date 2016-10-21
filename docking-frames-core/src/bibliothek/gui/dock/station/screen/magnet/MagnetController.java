@@ -214,13 +214,13 @@ public class MagnetController {
 	/**
 	 * Calculates the distance between <code>sideA</code> of <code>windowA</code> to <code>sideB</code> of <code>windowB</code>.
 	 * If either window is the {@link #getCurrent() current} window, then its {@link MagnetRequest#getBounds() base boundaries}
-	 * are used instead of its current boundaires.
+	 * are used instead of its current boundaries.
 	 * @param windowA the first window
 	 * @param sideA the side of the window to check
 	 * @param windowB the second window
 	 * @param sideB the side of the second window to check
 	 * @param initialBoundaries if <code>true</code>, then the initial boundaries of <code>window</code> is used
-	 * @return the horizontall or vertical distance between the two sides, always a number greater or equal to 0
+	 * @return the horizontal or vertical distance between the two sides, always a number greater or equal to 0
 	 * @throws IllegalArgumentException if <code>sideA</code> and <code>sideB</code> are neither equal nor opposite
 	 */
 	public int distance( ScreenDockWindow windowA, MagnetRequest.Side sideA, ScreenDockWindow windowB, MagnetRequest.Side sideB, boolean initialBoundaries ){

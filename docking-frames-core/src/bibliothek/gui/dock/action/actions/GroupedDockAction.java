@@ -116,7 +116,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     /**
      * Sets whether empty groups should be removed automatically.<br>
      * A group is a set of {@link Dockable Dockables}. A group can become
-     * empty if all it's <code>Dockables</code> are {@link #setGroup(Object, Dockable) transfered}
+     * empty if all it's <code>Dockables</code> are {@link #setGroup(Object, Dockable) transferred}
      * to another group, or removed through an {@link #unbound(Dockable) unbound}.
      * @param removeEmptyGroups <code>true</code> if empty groups should
      * be deleted, <code>false</code> if the should remain in memory and 
@@ -503,7 +503,7 @@ public abstract class GroupedDockAction<K, D extends SimpleDockAction> extends A
     }
     
     /**
-     * Assigns the <code>dockable/code> to the group with the given <code>key</code>.
+     * Assigns the <code>dockable</code> to the group with the given <code>key</code>.
      * @param key The name of the new group
      * @param dockable The {@link Dockable} whose membership will be changed.
      * The dockable must already be in a group of this action.

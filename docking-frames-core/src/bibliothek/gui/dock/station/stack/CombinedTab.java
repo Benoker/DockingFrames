@@ -64,7 +64,7 @@ public interface CombinedTab extends DockElementRepresentative, Tab{
 	public void setTooltip( String tooltip );
 	
 	/**
-	 * Enables or disables this tab. A disabled shoutl not react to any mouse input, and it
+	 * Enables or disables this tab. A disabled should not react to any mouse input, and it
 	 * should be visually distinct from enabled tabs.
 	 * @param enabled whether to enable or disable this tab
 	 */

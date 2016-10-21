@@ -36,7 +36,7 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindow;
  * @author Benjamin Sigg
  */
 public abstract class AbstractScreenWindowShape implements ScreenWindowShape{
-	/** information about the window which is shapped */
+	/** information about the window which is shaped */
 	private ScreenWindowShapeCallback callback;
 	
 	public void setCallback( ScreenWindowShapeCallback callback ){

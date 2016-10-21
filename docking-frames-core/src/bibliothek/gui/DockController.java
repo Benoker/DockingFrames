@@ -141,7 +141,7 @@ import bibliothek.util.Workarounds;
  *  that are within a realm (like drag and drop).</li>
  *  <li>Normally clients do not work with the trees of stations and <code>Dockable</code>s.
  *  If they need to work directly in the tree they should call {@link #freezeLayout()}
- *  and later {@link #meltLayout()} to temporarely disable automatic actions (like
+ *  and later {@link #meltLayout()} to temporarily disable automatic actions (like
  *  the fact that a <code>DockStation</code> with only one child gets removed).</li>
  *  <li>If a <code>DockController</code> is no longer needed then the method
  *  {@link #kill()} should be called. This method will ensure that the

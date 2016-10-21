@@ -30,8 +30,8 @@ import java.awt.Rectangle;
 import bibliothek.gui.dock.SplitDockStation.Orientation;
 
 /**
- * A {@link Divideable} offers the information needed to represent a dividier between two
- * {@link SplitNode}s. The {@link Divideable} may itself be a {@link SplitNode}. The location of a dividier
+ * A {@link Divideable} offers the information needed to represent a divider between two
+ * {@link SplitNode}s. The {@link Divideable} may itself be a {@link SplitNode}. The location of a divider
  * is encoded by a <code>double</code>, where <code>0</code> means top/left, and <code>1.0</code> means bottom/right. 
  * @author Benjamin Sigg
  */

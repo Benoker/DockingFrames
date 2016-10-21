@@ -36,7 +36,7 @@ import bibliothek.gui.dock.util.PropertyValue;
  * @author Benjamin Sigg
  */
 public class AbstractTabLayoutManagerPane implements TabPaneListener{
-	/** the panel that is layouted */
+	/** the panel that is laid out */
 	private TabPane pane;
 	
 	private PropertyValue<Boolean> useSmallMinimumSize = new PropertyValue<Boolean>( TabPane.USE_SMALL_MINIMUM_SIZE ) {

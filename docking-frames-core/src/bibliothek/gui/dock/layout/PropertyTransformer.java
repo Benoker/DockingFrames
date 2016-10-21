@@ -50,7 +50,7 @@ import bibliothek.util.Version;
 import bibliothek.util.xml.XElement;
 
 /**
- * A PropertTransformer can read and write instances of {@link DockableProperty}
+ * A PropertyTransformer can read and write instances of {@link DockableProperty}
  * , assuming that a factory is installed for the property.
  * 
  * @author Benjamin Sigg

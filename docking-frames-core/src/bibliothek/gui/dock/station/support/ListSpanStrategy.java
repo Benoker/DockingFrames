@@ -39,7 +39,7 @@ import bibliothek.gui.dock.station.span.SpanUsage;
 import bibliothek.gui.dock.themes.StationSpanFactoryValue;
 
 /**
- * Manages the {@link Span}s of a {@link DockStation} that orderes its {@link Dockable}s like a list.
+ * Manages the {@link Span}s of a {@link DockStation} that orders its {@link Dockable}s like a list.
  * @author Benjamin Sigg
  */
 public abstract class ListSpanStrategy {

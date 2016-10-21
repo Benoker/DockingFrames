@@ -48,7 +48,7 @@ public class DefaultFocusRequest implements FocusRequest {
 	private Component component;
 	/** whether to force focus transfer always */
 	private boolean force;
-	/** whether to ensure that the focus really was transfered */
+	/** whether to ensure that the focus really was transferred */
 	private boolean ensureFocusSet;
 	/** like {@link #ensureFocusSet}, but also ensuring that a child of the focused {@link Dockable} gained the focus */
 	private boolean ensureDockableFocused;
@@ -75,7 +75,7 @@ public class DefaultFocusRequest implements FocusRequest {
      * Creates a new request for setting the focused {@link Dockable}.
      * @param source the item to focus, may be <code>null</code>
      * @param component the {@link Component} which triggered this request for example because the user clicked with the mouse on it. 
-     * This request can assume that the focus will automatically be transfered to <code>component</code> by the Swing framework itself.
+     * This request can assume that the focus will automatically be transferred to <code>component</code> by the Swing framework itself.
      * Can be <code>null</code>, in which case this request decides on its own which {@link Component} to focus. This request may or may
      * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
      * as if it would be <code>null</code>.
@@ -90,7 +90,7 @@ public class DefaultFocusRequest implements FocusRequest {
      * Creates a new request for setting the focused {@link Dockable}.
      * @param source the item to focus, may be <code>null</code>
      * @param component the {@link Component} which triggered this request for example because the user clicked with the mouse on it. 
-     * This request can assume that the focus will automatically be transfered to <code>component</code> by the Swing framework itself.
+     * This request can assume that the focus will automatically be transferred to <code>component</code> by the Swing framework itself.
      * Can be <code>null</code>, in which case this request decides on its own which {@link Component} to focus. This request may or may
      * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
      * as if it would be <code>null</code>.
@@ -109,7 +109,7 @@ public class DefaultFocusRequest implements FocusRequest {
      * Creates a new request for setting the focused {@link Dockable}.
      * @param source the item to focus, may be <code>null</code>
      * @param component the {@link Component} which triggered this request for example because the user clicked with the mouse on it. 
-     * This request can assume that the focus will automatically be transfered to <code>component</code> by the Swing framework itself.
+     * This request can assume that the focus will automatically be transferred to <code>component</code> by the Swing framework itself.
      * Can be <code>null</code>, in which case this request decides on its own which {@link Component} to focus. This request may or may
      * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
      * as if it would be <code>null</code>.

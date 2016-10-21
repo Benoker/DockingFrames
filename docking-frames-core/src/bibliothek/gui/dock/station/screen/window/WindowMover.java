@@ -170,7 +170,7 @@ public class WindowMover {
 	}
 	
 	/**
-	 * Converst the point <code>point</code> on <code>component</code> to screen coordinates.
+	 * Converts the point <code>point</code> on <code>component</code> to screen coordinates.
 	 * @param point the point to convert
 	 * @param component the current coordinate system of the point
 	 */

@@ -122,10 +122,10 @@ public class DefaultColorScheme extends AbstractColorScheme{
     }
     
     /**
-     * Sets the value of some color explicitely to <code>null</code>, this is not the same as calling 
+     * Sets the value of some color explicitly to <code>null</code>, this is not the same as calling
      * {@link #setColor(String, Color)}: <code>setColor</code> removes the entry, this method keeps the entry
      * but sets it to <code>null</code>.
-     * @param id the identifier of the color to set explicitely to <code>null</code>
+     * @param id the identifier of the color to set explicitly to <code>null</code>
      */
     public void setNullColor( String id ){
     	synchronized( colors ){

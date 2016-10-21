@@ -50,7 +50,7 @@ public abstract class ResourceRequest<T> {
 	
 	/**
 	 * Asks for a new resource and may trigger {@link #answer(Object, Object)}. This method
-	 * is made protected, subclasses can expose it, or write another method requiering additional
+	 * is made protected, subclasses can expose it, or write another method requiring additional
 	 * parameters, that calls this method.
 	 */
 	protected void request(){

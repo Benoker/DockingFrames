@@ -42,7 +42,7 @@ import bibliothek.gui.dock.event.DockRegisterListener;
  * of the entire application, {@link DockRegisterListener} and {@link DockHierarchyListener}s are much better fit for 
  * that job.
  * <br>
- * A successfull drag and drop operation of a {@link Dockable} will cause these events:
+ * A successful drag and drop operation of a {@link Dockable} will cause these events:
  * <ol>
  * 	<li> {@link #grabbing(DockRelocatorEvent)} right before the operation starts.</li>
  *  <li> {@link #grabbed(DockRelocatorEvent)} once the operation started.</li>

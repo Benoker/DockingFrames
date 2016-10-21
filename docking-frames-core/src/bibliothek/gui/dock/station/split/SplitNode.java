@@ -427,7 +427,7 @@ public abstract class SplitNode{
     
     /**
      * Schedules a call to {@link #ensureIdUnique()} of the {@link Root} node. If this method is not called within the EDT,
-     * then the id is checked immediatelly. Several calls to this method may be merged into one invocation of
+     * then the id is checked immediately. Several calls to this method may be merged into one invocation of
      * {@link #ensureIdUnique()} for optimization. If there is no {@link Root} available, nothing happens.
      */
     protected void ensureIdUniqueAsync(){
@@ -498,7 +498,7 @@ public abstract class SplitNode{
     
     /**
      * Counts the total number of children of this node, the total number of children is the total
-     * number of nodes and leafes in the tree below this node, excluding this node.
+     * number of nodes and leafs in the tree below this node, excluding this node.
      * @return the total number of children, can be 0
      */
     public int getTotalChildrenCount(){

@@ -39,7 +39,7 @@ import bibliothek.util.Todo.Version;
 
 
 /**
- * The {@link FocusController} is responsible for transfering focus between {@link Dockable}s.
+ * The {@link FocusController} is responsible for transferring focus between {@link Dockable}s.
  * @author Benjamin Sigg
  */
 public interface FocusController {
@@ -81,7 +81,7 @@ public interface FocusController {
     public void freezeFocus();
     
     /**
-     * Re-enabls this {@link FocusController} after it was temporarily disabled.
+     * Re-enables this {@link FocusController} after it was temporarily disabled.
      */
     public void meltFocus();
     
@@ -114,7 +114,7 @@ public interface FocusController {
     /**
      * Checks whether <code>source</code> can be used to select the next focused {@link Dockable}.
      * @param source the element which may be focused
-     * @return whether the focus can be transfered, a value of <code>null</code> indicates that 
+     * @return whether the focus can be transferred, a value of <code>null</code> indicates that
      * <code>source</code> does not represent a {@link Dockable}
      */
     public FocusVeto checkFocusedDockable( DockElementRepresentative source );
@@ -132,7 +132,7 @@ public interface FocusController {
      * Sets the {@link Dockable} which should have the focus.
      * @param source the item to focus, may be <code>null</code>
      * @param component the {@link Component} which triggered this call for example because the user clicked with the mouse on it. 
-     * This method can assume that the focus will automatically be transfered to <code>component</code> by the Swing framework itself.
+     * This method can assume that the focus will automatically be transferred to <code>component</code> by the Swing framework itself.
      * Can be <code>null</code>, in which case this method decides on its own which {@link Component} to focus. This method may or may
      * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
      * as if it would be <code>null</code>.
@@ -144,7 +144,7 @@ public interface FocusController {
      * itself or one of its {@link DockElementRepresentative} is the focus owner 
      * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>focusedDockable</code>
      * is the focus owner. This parameter is stronger that <code>ensureFocusSet</code>
-     * @return whether focus could be transfered, a value of <code>null</code> indicates that {@link #isOnFocusing()} returned
+     * @return whether focus could be transferred, a value of <code>null</code> indicates that {@link #isOnFocusing()} returned
      * <code>true</code> and the call was ignored
      * @deprecated this method will be replaced by {@link #focus(FocusRequest)}
      */

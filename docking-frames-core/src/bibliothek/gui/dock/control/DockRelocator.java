@@ -142,7 +142,7 @@ public interface DockRelocator {
 
     /**
      * Cancels the current drag and drop operation (if there is any). All evidence of a DnD operation is
-     * to be removed immediatelly. Listeners will receive a canceled-event.
+     * to be removed immediately. Listeners will receive a canceled-event.
      */
     public void cancel();
     

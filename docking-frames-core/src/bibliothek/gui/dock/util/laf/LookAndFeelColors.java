@@ -84,7 +84,7 @@ public interface LookAndFeelColors {
     public static final String CONTROL_SHADOW = "dock.control.shadow";
     
     /**
-     * The color for borderes around internal windows.
+     * The color for borders around internal windows.
      */
     public static final String WINDOW_BORDER = "dock.window.border";
     

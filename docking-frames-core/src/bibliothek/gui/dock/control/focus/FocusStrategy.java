@@ -56,7 +56,7 @@ public interface FocusStrategy {
 	 * <ul>
 	 * 	<li><code>null</code> indicates that this strategy cannot decide what to do. In this case a default component will receive the focus.</li>
 	 *  <li><code>{@link FocusStrategyRequest#getMouseClicked() mouseClicked}</code> forces focus onto <code>mouseClicked</code>, even if that <code>Component</code> is not focusable.</li>
-	 *  <li>any other <code>Component</code> will receive focus if focusable, or focus will be transfered to the next focusable <code>Component</code>
+	 *  <li>any other <code>Component</code> will receive focus if focusable, or focus will be transferred to the next focusable <code>Component</code>
 	 *  starting the search at the returned value.</li>
 	 * </ul> 
 	 */
@@ -66,7 +66,7 @@ public interface FocusStrategy {
 	 * Called after <code>dockable</code> was dropped on a new parent due to a relocation operation (an operation
 	 * that was visible to the user or that was performed by the user).
 	 * @param dockable the element that changed its position
-	 * @return <code>true</code> if focus should be (again) transfered to <code>dockable</code>, <code>false</code> if
+	 * @return <code>true</code> if focus should be (again) transferred to <code>dockable</code>, <code>false</code> if
 	 * the focus should remain where it is (this may mean, that <code>dockable</code> loses the focus)
 	 */
 	public boolean shouldFocusAfterDrop( Dockable dockable );

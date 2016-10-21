@@ -36,7 +36,7 @@ import bibliothek.gui.dock.util.PropertyValue;
 
 /**
  * A wrapper around an exchangeable {@link ButtonContent} that implements {@link ButtonContentListener} to listen
- * to the current {@link ButtonContent}. This class offers methods to montior the properties of one {@link Dockable}, 
+ * to the current {@link ButtonContent}. This class offers methods to monitor the properties of one {@link Dockable},
  * the class keeps track of old properties and calls the method {@link #propertyChanged()} whenever at least one property
  * truly did change.
  * @author Benjamin Sigg

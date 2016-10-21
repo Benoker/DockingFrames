@@ -59,7 +59,7 @@ public interface GlobalMouseDispatcher {
 	public void addMouseListener( MouseListener listener );
 	
 	/**
-	 * Removes the observer <code>listener</code> from this dispacher.
+	 * Removes the observer <code>listener</code> from this dispatcher.
 	 * @param listener the listener to remove
 	 */
 	public void removeMouseListener( MouseListener listener );
@@ -71,7 +71,7 @@ public interface GlobalMouseDispatcher {
 	public void addMouseMotionListener( MouseMotionListener listener );
 
 	/**
-	 * Removes the observer <code>listener</code> from this dispacher.
+	 * Removes the observer <code>listener</code> from this dispatcher.
 	 * @param listener the listener to remove
 	 */
 	public void removeMouseMotionListener( MouseMotionListener listener );
@@ -83,7 +83,7 @@ public interface GlobalMouseDispatcher {
 	public void addMouseWheelListener( MouseWheelListener listener );
 	
 	/**
-	 * Removes the observer <code>listener</code> from this dispacher.
+	 * Removes the observer <code>listener</code> from this dispatcher.
 	 * @param listener the listener to remove
 	 */
 	public void removeMouseWheelListener( MouseWheelListener listener );

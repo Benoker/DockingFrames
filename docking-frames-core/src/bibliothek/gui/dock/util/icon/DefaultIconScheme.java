@@ -193,7 +193,7 @@ public class DefaultIconScheme extends AbstractIconScheme {
 	/**
 	 * Changes the icon with name <code>name</code> to <code>icon</code>. Please note that if
 	 * <code>name</code> was {@link #link(bibliothek.gui.dock.util.PropertyKey, String) linked}, the newly
-	 * set value may be overriden again.
+	 * set value may be overridden again.
 	 * @param name the unique key of the icon
 	 * @param icon the new icon, can be <code>null</code>
 	 */

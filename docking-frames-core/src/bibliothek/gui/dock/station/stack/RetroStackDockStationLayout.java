@@ -34,7 +34,7 @@ import bibliothek.gui.dock.StackDockStation;
  * @author Benjamin Sigg
  */
 public class RetroStackDockStationLayout extends StackDockStationLayout {
-    /** the order of the chilren */
+    /** the order of the children */
     private int[] children;
     
     /**

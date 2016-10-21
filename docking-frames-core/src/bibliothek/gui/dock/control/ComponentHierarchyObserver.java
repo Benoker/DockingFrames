@@ -145,7 +145,7 @@ public class ComponentHierarchyObserver {
     /**
      * Adds <code>component</code> and all children of it to the set of
      * known {@link Component}s. This will add <code>component</code> as a
-     * root, which prevents <code>component</code> from beeing removed
+     * root, which prevents <code>component</code> from being removed
      * implicitly because its parent gets removed.
      * @param component the new component
      * @param list a list to be filled with the affected {@link Component}s,

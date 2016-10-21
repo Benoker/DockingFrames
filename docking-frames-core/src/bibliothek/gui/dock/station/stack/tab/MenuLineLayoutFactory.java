@@ -32,7 +32,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.TabsLayoutBlock;
 
 /**
  * A factory creating various {@link LayoutBlock}s that are required by the {@link MenuLineLayout}. These objects
- * are responsible for layouting a subset of components, clients may replace this factory and return blocks that 
+ * are responsible for laying out a subset of components, clients may replace this factory and return blocks that
  * behave different that the original blocks.
  * @author Benjamin Sigg
  */
@@ -57,7 +57,7 @@ public interface MenuLineLayoutFactory {
 	
 	/**
 	 * Creates the {@link LayoutBlock} for the info component of <code>pane</code>. This method
-	 * should just call {@link TabPane#getInfoComponent()} adnd {@link LonelyTabPaneComponent#toLayoutBlock()}. 
+	 * should just call {@link TabPane#getInfoComponent()} and {@link LonelyTabPaneComponent#toLayoutBlock()}.
 	 * @param layout the layout requesting the block
 	 * @param pane the panel on which the component will be shown
 	 * @return the info block or <code>null</code>

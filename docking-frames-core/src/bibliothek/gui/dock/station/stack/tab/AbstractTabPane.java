@@ -675,7 +675,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 * Associates <code>tab</code> with <code>dockable</code>. this method
 	 * modifies the internal data structure in order to store the change.<br>
 	 * Subclasses may override this method to be informed about the exact time when 
-	 * a tab changes, but the overriden method must call the original method.
+	 * a tab changes, but the overridden method must call the original method.
 	 * @param dockable the key for the tab-map
 	 * @param tab the value for the tab-map
 	 * @return the old tab at <code>dockable</code>
@@ -688,7 +688,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	 * Removes the tab of <code>dockable</code> from the internal data structure.
 	 * @param dockable the key of the element to be removed from the tab-map<br>
 	 * Subclasses may override this method to be informed about the exact time when 
-	 * a tab changes, but the overriden method must call the original method.
+	 * a tab changes, but the overridden method must call the original method.
 	 * @return the removed element
 	 */
 	protected T removeTab( Dockable dockable ){
@@ -698,7 +698,7 @@ public abstract class AbstractTabPane<T extends Tab, M extends TabMenu, I extend
 	/**
 	 * Removes all tabs from the internal data structure.<br>
 	 * Subclasses may override this method to be informed about the exact time when 
-	 * a tab changes, but the overriden method must call the original method.
+	 * a tab changes, but the overridden method must call the original method.
 	 */
 	protected void clearTabs(){
 		tabs.clear();

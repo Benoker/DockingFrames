@@ -35,7 +35,7 @@ import bibliothek.gui.dock.control.PopupController;
 
 /**
  * This interface is used by the {@link PopupController} to create new popup menus
- * when the user right clickes on some {@link Component}. 
+ * when the user right clicks on some {@link Component}.
  * @author Benjamin Sigg
  */
 public interface ActionPopupMenuFactory {

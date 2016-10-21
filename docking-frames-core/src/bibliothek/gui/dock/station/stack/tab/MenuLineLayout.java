@@ -42,7 +42,7 @@ public class MenuLineLayout extends AbstractTabLayoutManager<MenuLineLayoutPane>
 	/** this factory creates various items that are required by this {@link MenuLineLayout} */
 	private MenuLineLayoutFactory factory = new DefaultMenuLineLayoutFactory();
 	
-	/** customizeable algorithms  */
+	/** customizable algorithms  */
 	private MenuLineLayoutStrategy strategy = new DefaultMenuLineLayoutStrategy();
 	
 	/**

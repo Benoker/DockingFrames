@@ -30,7 +30,7 @@ import bibliothek.gui.DockStation;
 /**
  * A {@link Span} is an empty space that show up on a {@link DockStation} mostly during drag and drop operations. Every
  * {@link DockStation} can contain multiple spans which can change their size at any time.<br>
- * {@link Span}s are created by the customizeable {@link SpanFactory}, and interact with their {@link DockStation} using
+ * {@link Span}s are created by the customizable {@link SpanFactory}, and interact with their {@link DockStation} using
  * a {@link SpanCallback}.
  * @author Benjamin Sigg
  */
@@ -38,7 +38,7 @@ public interface Span {
 	/**
 	 * Tells this {@link Span} to mutate its size according to the settings made for <code>mode</code>. If
 	 * there are no settings for <code>mode</code>, then the default values from <code>mode</code> itself should
-	 * be utilizied. Whether the {@link Span} changes its size instantly, or uses some kind of animation, is up to
+	 * be utilized. Whether the {@link Span} changes its size instantly, or uses some kind of animation, is up to
 	 * the span. In any case the mutation should not take any longer than 1 second.
 	 * @param mode the mode into which this {@link Span} should go
 	 */

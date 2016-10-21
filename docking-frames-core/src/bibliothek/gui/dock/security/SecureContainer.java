@@ -117,7 +117,7 @@ public class SecureContainer extends OverpaintablePanel {
 	}
 
 	/**
-	 * Wrapps the current {@link #getContentPane() content pane} into <code>pane</code> 
+	 * Wraps the current {@link #getContentPane() content pane} into <code>pane</code>
 	 * and sets <code>pane</code> as base panel.
 	 * @param pane the new base panel
 	 */

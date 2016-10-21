@@ -107,7 +107,7 @@ public class PopupController implements DockControllerRepresentativeListener{
 	}
     
     /**
-     * Sets the factoy which creates new menus that pop up.
+     * Sets the factory which creates new menus that pop up.
      * @param factory the factory creating menus, not <code>null</code>
      */
     public void setPopupMenuFactory( ActionPopupMenuFactory factory ){

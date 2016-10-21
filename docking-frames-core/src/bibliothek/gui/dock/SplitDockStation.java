@@ -414,13 +414,13 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 	/** Whether nodes can automatically be removed from the tree or not */
 	private int treeLock = 0;
 
-	/** Information about the {@link Dockable} which is currently draged onto this station. */
+	/** Information about the {@link Dockable} which is currently dragged onto this station. */
 	private PutInfo putInfo;
 	
 	/** Information about the current {@link Span}s */
 	private SplitSpanStrategy spanStrategy;
 	
-	/** Information aboud the {@link Dockable} that is currently removed from this station */
+	/** Information about the {@link Dockable} that is currently removed from this station */
 	private ComponentDragOperation dragInfo;
 
 	/** A {@link StationPaint} to draw some markings onto this station */

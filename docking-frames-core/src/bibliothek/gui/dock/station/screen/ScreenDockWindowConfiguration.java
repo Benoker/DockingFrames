@@ -39,7 +39,7 @@ public interface ScreenDockWindowConfiguration {
 	 * Creates a new configuration for a {@link ScreenDockWindow} that is going to show
 	 * <code>dockable</code>. This configuration is only used to set up the new {@link ScreenDockWindow},
 	 * any further modifications will not affect the window. A {@link ScreenDockWindowFactory} or a 
-	 * {@link ScreenDockWindow} might ignore some parts or the entire configuration, altough the default
+	 * {@link ScreenDockWindow} might ignore some parts or the entire configuration, although the default
 	 * implementations all try to follow the configuration.
 	 * @param station the future or current parent of <code>dockable</code>
 	 * @param dockable the element which is going to be shown

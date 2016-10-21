@@ -143,7 +143,7 @@ public class ThemeManager extends TypedUIProperties{
     }
     
     /**
-     * Initializes this managere, must be called exactly once.
+     * Initializes this manager, must be called exactly once.
      */
     public void init(){
     	registerTypes();

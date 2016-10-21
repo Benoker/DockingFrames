@@ -252,7 +252,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	}
 
 	/**
-	 * Reads the contenst of <code>map</code>. This method can either add the contents at
+	 * Reads the contents of <code>map</code>. This method can either add the contents at
 	 * the end of this list, or just simulate a read. If a read is simulated, then the methods
 	 * of <code>converter</code> are called just as if this would be an actual read, but
 	 * in reality no data is changed in this list.
@@ -660,7 +660,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	 * Searches for the first occurrence of <code>placeholder</code> and replaces
 	 * it with <code>dockable</code>. If there is already another dockable stored at that
 	 * location, then the other dockable is replaced silently. If <code>dockable</code> is a 
-	 * {@link DockStation} and a {@link PlaceholderMap} is set, then this map is transfered to 
+	 * {@link DockStation} and a {@link PlaceholderMap} is set, then this map is transferred to
 	 * <code>dockable</code> and removed from this list, but only if the {@link DockStation} does not
 	 * already have children.<br>
 	 * This method also removes all occurrences of <code>placeholder</code> and the placeholder that is assigned
@@ -721,7 +721,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 	}
 
 	/**
-	 * Searches the first occurance of <code>placeholder</code> in a placeholder-set and returns
+	 * Searches the first occurrence of <code>placeholder</code> in a placeholder-set and returns
 	 * the index of that entry on the {@link Level#BASE BASE level}.
 	 * @param placeholder the placeholder to search
 	 * @return its location or -1 if not found

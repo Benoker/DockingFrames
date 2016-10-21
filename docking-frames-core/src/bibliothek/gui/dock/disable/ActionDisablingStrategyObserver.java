@@ -195,7 +195,7 @@ public abstract class ActionDisablingStrategyObserver {
 	
 	/**
 	 * Observers a {@link DockController} to find its current {@link DisablingStrategy} and uses
-	 * the strategy to get the state of serveral {@link Dockable}s.
+	 * the strategy to get the state of several {@link Dockable}s.
 	 * @author Benjamin Sigg
 	 */
 	private class ControllerObserver extends PropertyValue<DisablingStrategy> implements DisablingStrategyListener{

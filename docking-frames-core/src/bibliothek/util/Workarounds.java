@@ -137,7 +137,7 @@ public class Workarounds {
 	}
 	
 	/**
-	 * Tells whether there is at least one {@link Workaround} that supports perpixel transparency. Transparency
+	 * Tells whether there is at least one {@link Workaround} that supports per-pixel transparency. Transparency
 	 * means that some pixels are visible, while others are not.
 	 * @param window the window to test
 	 * @return whether transparency is supported
@@ -168,7 +168,7 @@ public class Workarounds {
 	}
 	
 	/**
-	 * Tells whether there is a least one {@link Workaround} that supports perpixel translucency. Translucency
+	 * Tells whether there is a least one {@link Workaround} that supports per-pixel translucency. Translucency
 	 * means that some pixels may have another alpha value than others.
 	 * @param window the window to test
 	 * @return whether translucency is supported

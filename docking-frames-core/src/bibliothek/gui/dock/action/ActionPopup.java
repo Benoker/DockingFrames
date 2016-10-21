@@ -40,7 +40,7 @@ import bibliothek.gui.dock.control.PopupController;
 
 /**
  * A mouse-listener that may be added to any component. When
- * the popup-trigger is pressed, a popupmenu will appear. This menu
+ * the popup-trigger is pressed, a popup menu will appear. This menu
  * shows a list of {@link DockAction DockActions}.
  * @author Benjamin Sigg
  */

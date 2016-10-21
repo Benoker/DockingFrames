@@ -1263,7 +1263,7 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /**
      * Tells this station what to do on a double click on a child. If set
-     * to <code>true</code>, then the childs fullscreen mode gets changed.
+     * to <code>true</code>, then the child's fullscreen mode gets changed.
      * @param expand whether to react on double clicks
      */
     public void setExpandOnDoubleClick( boolean expand ){

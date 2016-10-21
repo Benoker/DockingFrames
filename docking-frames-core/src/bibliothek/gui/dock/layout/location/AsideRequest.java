@@ -102,7 +102,7 @@ public interface AsideRequest {
 	 * already has a successor, then the successor of the last {@link DockableProperty} in the chain
 	 * may be modified by this method.<br>
 	 * By not calling this method at all, clients can tell the action that no "neighbor" location was found, in
-	 * this case the request will be cancled. Note how "not calling" and "calling with <code>null</code>" are
+	 * this case the request will be canceled. Note how "not calling" and "calling with <code>null</code>" are
 	 * two different things.
 	 * @param location the location describing the "neighbor" of {@link DockableProperty}, a value
 	 * of <code>null</code> indicates that the parent and child request should be merged directly 

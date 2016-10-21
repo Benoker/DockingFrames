@@ -33,7 +33,7 @@ import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
 
 /**
  * Called by some {@link Component}s before painting, this interface is intended to setup application wide
- * rendering hints, like for example whether to use antialising.
+ * rendering hints, like for example whether to use anti-aliasing.
  * @author Benjamin Sigg
  */
 public interface DockRenderingHints {

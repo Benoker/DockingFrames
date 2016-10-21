@@ -31,7 +31,7 @@ import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
 
 /**
- * An {@link UIValue} that is used to retreive a {@link SpanFactory} from a {@link ThemeManager}. 
+ * An {@link UIValue} that is used to retrieve a {@link SpanFactory} from a {@link ThemeManager}.
  * @author Benjamin Sigg
  */
 public interface SpanFactoryValue extends UIValue<SpanFactory>{

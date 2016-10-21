@@ -398,7 +398,7 @@ public interface DockStation extends DockElement{
     
     /**
      * Gets a description of all the areas of the screen where this {@link DockStation} can handle a drop event.<br>
-     * Everytime the mouse is moved or released during a drag &amp; drop operation, this method is called for
+     * Every time the mouse is moved or released during a drag &amp; drop operation, this method is called for
      * all {@link DockStation}s. The returned {@link DockStationDropLayer}s are then filtered and ordered, the resulting
      * order defines the order in which the method {@link #prepareDrop(StationDropItem)} is called.
      * @return all the layers of this station, must not be <code>null</code>, must not contain <code>null</code>,

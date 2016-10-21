@@ -66,7 +66,7 @@ public interface StandardDockAction extends DockAction {
     public ActionContentModifier[] getIconContexts( Dockable dockable );
 
     /**
-     * Gets the text of this DockActon, when this DockAction is
+     * Gets the text of this DockAction, when this DockAction is
      * shown together with <code>dockable</code>.
      * @param dockable The {@link Dockable} for which the action-text 
      * should be chosen.
@@ -76,7 +76,7 @@ public interface StandardDockAction extends DockAction {
     public String getText( Dockable dockable );
 
     /**
-     * Gets a tooltip for this DockActon, when this DockAction is
+     * Gets a tooltip for this DockAction, when this DockAction is
      * shown together with <code>dockable</code>.
      * @param dockable The {@link Dockable} for which the action-tooltip 
      * should be chosen.

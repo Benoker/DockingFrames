@@ -61,7 +61,7 @@ public class PlaceholderMap {
 	/** all the data that is stored in this map */
 	private Map<Key, Map<String, Object>> data = new LinkedHashMap<Key, Map<String,Object>>();
 	
-	/** strategy observed for automatically removeal of invalid placeholders */
+	/** strategy observed for automatically removal of invalid placeholders */
 	private PlaceholderStrategy strategy;
 	
 	/** listener to {@link #strategy} */
@@ -477,7 +477,7 @@ public class PlaceholderMap {
 		
 	/**
 	 * Sets the strategy that is used to automatically remove invalid placeholders. This
-	 * strategy is recursivelly applied to all other {@link PlaceholderMap}s that are
+	 * strategy is recursively applied to all other {@link PlaceholderMap}s that are
 	 * stored within this map.
 	 * @param strategy the new strategy, can be <code>null</code>
 	 */

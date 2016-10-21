@@ -46,7 +46,7 @@ public class DefaultDockActionSource extends AbstractDockActionSource {
     
 
     /**
-     * Defaultconstructor, fills the list with some initial actions.
+     * Default constructor, fills the list with some initial actions.
      * @param actions The actions to add
      */
     public DefaultDockActionSource( DockAction...actions ){
@@ -54,7 +54,7 @@ public class DefaultDockActionSource extends AbstractDockActionSource {
     }
     
     /**
-     * Defaultconstructor, fills the list with some initial actions.
+     * Default constructor, fills the list with some initial actions.
      * @param hint the preferred location of this source
      * @param actions The actions to add
      */
