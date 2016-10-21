@@ -35,11 +35,11 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindow;
  * @author Benjamin Sigg
  */
 public class DefaultMagnetStrategy implements MagnetStrategy{
-	/** how many pixels two sides can be appart and still attract each other */
+	/** how many pixels two sides can be apart and still attract each other */
 	private int threshold = 10;
 	
 	/**
-	 * Sets how many pixels two sides can be appart and still attract each other.
+	 * Sets how many pixels two sides can be apart and still attract each other.
 	 * @param threshold the maximal distance, at least 1
 	 */
 	public void setThreshold( int threshold ){
@@ -50,7 +50,7 @@ public class DefaultMagnetStrategy implements MagnetStrategy{
 	}
 	
 	/**
-	 * Tells how many pixels two sides can be appart and still attract each other.
+	 * Tells how many pixels two sides can be apart and still attract each other.
 	 * @return the maximal distance, at least 1
 	 */
 	public int getThreshold(){

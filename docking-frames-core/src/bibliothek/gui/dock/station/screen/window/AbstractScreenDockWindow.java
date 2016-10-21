@@ -432,7 +432,7 @@ public abstract class AbstractScreenDockWindow extends DisplayerScreenDockWindow
     /**
      * Sets the boundaries of this window. If the boundaries are not valid, then this method tries to ensure that
      * the edge or side <i>opposite</i> to <code>position</code> gets at the intended position. This is a convenient
-     * method for resizing the window when the mouse is draggint the edge or side at <code>position</code>.
+     * method for resizing the window when the mouse is dragging the edge or side at <code>position</code>.
      * @param bounds the new bounds
      * @param position the <i>opposite</i> of the edge or side that is fixed
      */

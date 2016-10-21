@@ -40,7 +40,7 @@ public interface SelectableDockAction extends StandardDockAction, StandardDropDo
      * to the given <code>dockable</code>).
      * @param dockable The {@link Dockable} for which this action may be selected
      * or not selected
-     * @return <code>true</code> if this DockAction is selcted, <code>false</code>
+     * @return <code>true</code> if this DockAction is selected, <code>false</code>
      * otherwise
      */
     public boolean isSelected( Dockable dockable );

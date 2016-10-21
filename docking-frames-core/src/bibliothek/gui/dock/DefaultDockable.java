@@ -291,7 +291,7 @@ public class DefaultDockable extends AbstractDockable {
     }
     
     /**
-     * Sets the layout of the content pane. The layout is normaly a
+     * Sets the layout of the content pane. The layout is normally a
      * {@link FlowLayout}, except the constructor has added a component to the
      * layout. In that case, the layout is a {@link GridLayout}.
      * @param layout the new layout of the content pane

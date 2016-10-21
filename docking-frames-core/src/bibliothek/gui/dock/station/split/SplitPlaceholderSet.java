@@ -60,7 +60,7 @@ public class SplitPlaceholderSet {
 	/**
 	 * Ensures that <code>node</code> is associated with the placeholder for <code>dockable</code>.
 	 * @param node the owner of <code>dockable</code>, can be <code>null</code> to indicate
-	 * that noone must use the placeholder of <code>dockable</code>
+	 * that no-one must use the placeholder of <code>dockable</code>
 	 * @param dockable the item whose placeholder is updated
 	 * @param protectedNodes nodes that will not be removed even if they are no longer {@link SplitNode#isOfUse() useful}
 	 */
@@ -78,7 +78,7 @@ public class SplitPlaceholderSet {
      * Ensures that <code>node</code> is associated with <code>placeholder</code> 
      * but no other node has <code>placeholder</code>.
      * @param node the node which must have <code>placeholder</code>, <code>null</code> to
-     * indicate that noone must use <code>placeholder</code>
+     * indicate that no-one must use <code>placeholder</code>
      * @param placeholder the placeholder to set or to move
      * @param protectedNodes nodes that will not be removed even if they are no longer {@link SplitNode#isOfUse() useful}
      */

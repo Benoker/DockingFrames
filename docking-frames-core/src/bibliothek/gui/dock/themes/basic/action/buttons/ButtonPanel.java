@@ -130,7 +130,7 @@ public class ButtonPanel extends JPanel{
     /**
      * Creates a new item for <code>action</code> which will be shown on this panel. The default
      * implementation will use the {@link ActionViewConverter} of <code>dockable</code> to create the
-     * view. The {@link ViewTarget} is set to {@link ViewTarget#TITLE}. Subclasses may overridde this 
+     * view. The {@link ViewTarget} is set to {@link ViewTarget#TITLE}. Subclasses may override this
      * method to create custom views or use other settings.
      * @param action The action which will be triggered by the button
      * @param dockable The {@link Dockable} which will be affected by the action
@@ -240,7 +240,7 @@ public class ButtonPanel extends JPanel{
      * Changes the content which is shown.
      * @param dockable the Dockable for which the actions are shown, can be <code>null</code>
      * @param source the list of actions, can be <code>null</code>
-     * @param force if <code>true</code>, then no optimations are allowed
+     * @param force if <code>true</code>, then no optimizations are allowed
      * @throws IllegalArgumentException if <code>dockable</code> or <code>source</code>
      * is <code>null</code> while the other is not <code>null</code>.
      */

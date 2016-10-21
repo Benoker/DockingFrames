@@ -184,7 +184,7 @@ public class TypedUIProperties {
 	 * @param <V> the <code>type</code>
 	 * @param priority the importance of <code>bridge</code>
 	 * @param kind the kind of {@link UIValue}s <code>bridge</code> has to handle
-	 * @param type The type of objects hanlded by <code>bridge</code>
+	 * @param type The type of objects handled by <code>bridge</code>
 	 * @param bridge the new bridge
 	 */
 	@SuppressWarnings("unchecked")

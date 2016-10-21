@@ -143,7 +143,7 @@ public class ThemeManager extends TypedUIProperties{
     }
     
     /**
-     * Initializes this managere, must be called exactly once.
+     * Initializes this manager, must be called exactly once.
      */
     public void init(){
     	registerTypes();
@@ -305,7 +305,7 @@ public class ThemeManager extends TypedUIProperties{
      * 	<li>{@value #STATION_PAINT}.split</li>
      * 	<li>{@value #STATION_PAINT}.stack</li>
      * </ul>
-     * @param id the identifier of the stations that should use <code>vallue</code>
+     * @param id the identifier of the stations that should use <code>value</code>
      * @param value the new algorithm or <code>null</code>
      */
     public void setStationPaint( String id, StationPaint value ){

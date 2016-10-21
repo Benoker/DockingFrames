@@ -96,7 +96,7 @@ public class ScreenWindowShapeAdapter {
 	}
 	
 	/**
-	 * Disables this adapater, the {@link ScreenWindowShape} is set to <code>null</code> by this method.
+	 * Disables this adapter, the {@link ScreenWindowShape} is set to <code>null</code> by this method.
 	 */
 	public void disable(){
 		enabled = false;

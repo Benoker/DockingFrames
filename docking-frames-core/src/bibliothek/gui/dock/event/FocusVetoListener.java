@@ -46,7 +46,7 @@ public interface FocusVetoListener {
 	 * @author Benjamin Sigg
 	 */
 	public static enum FocusVeto{
-		/** No veto, allows the focus to be transfered to a new element */
+		/** No veto, allows the focus to be transferred to a new element */
 		NONE,
 		
 		/** 

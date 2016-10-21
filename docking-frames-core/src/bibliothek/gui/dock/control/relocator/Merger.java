@@ -59,7 +59,7 @@ public interface Merger {
 	 * from its parent. Otherwise the child remains, allowing this {@link Merger} to reuse it.
 	 * @param operation the operation that would be executed, can be <code>null</code>
 	 * @param parent the new parent of the children
-	 * @param child the station to disolve
+	 * @param child the station to dissolve
 	 */
 	public void merge( StationDropOperation operation, DockStation parent, DockStation child );
 }

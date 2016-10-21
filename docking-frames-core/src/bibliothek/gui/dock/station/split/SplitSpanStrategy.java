@@ -135,7 +135,7 @@ public class SplitSpanStrategy {
 	 * Tells the index of the {@link Span} at side <code>put</code>.
 	 * @param put one of the non-combining puts
 	 * @return the index of the span
-	 * @throws IllegalArgumentException if <code>put</code> does not desribe one
+	 * @throws IllegalArgumentException if <code>put</code> does not describe one
 	 * of the sides of a {@link SplitNode}
 	 */
 	public int putToPosition( Put put ){
@@ -173,7 +173,7 @@ public class SplitSpanStrategy {
 	}
 	
 	/**
-	 * Immediatelly resets all {@link Span}s to have a size of <code>0</code>.
+	 * Immediately resets all {@link Span}s to have a size of <code>0</code>.
 	 */
 	public void unsetPut(){
 		if( lastPut != null ){

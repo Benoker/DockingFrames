@@ -213,7 +213,7 @@ public class RoundButton extends JComponent implements RoundButtonConnectable{
 	/**
 	 * Access to the {@link BubbleColorAnimation} which is responsible for repainting this button. Subclasses
 	 * may use this method to insert or modify custom colors.
-	 * @return the animtation
+	 * @return the animation
 	 */
 	protected BubbleColorAnimation getAnimation(){
 		return animation;

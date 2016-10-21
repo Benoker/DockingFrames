@@ -227,7 +227,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     }
     
     /**
-     * Initialises all properties of this DockableDisplayer. This method should
+     * Initializes all properties of this DockableDisplayer. This method should
      * only be called once, by a constructor of a subclass which invoked
      * <code>{@link #BasicDockableDisplayer(DockStation, boolean) DockableDisplayer( false )}</code>.
      * @param station the station for which this displayer is needed 
@@ -365,7 +365,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     /**
      * Tells this displayer that it is used inside a tabbed environment. This displayer will call
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
-     * @param stacked whether this displayer is part of a stack of displayerss
+     * @param stacked whether this displayer is part of a stack of displayers
      */
     public void setStacked( boolean stacked ){
     	if( this.stacked != stacked ){
@@ -377,7 +377,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     /**
      * Tells this displayer that it is used inside a tabbed environment. This displayer will call
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
-     * @return whether this displayer is part of a stack of displayerss
+     * @return whether this displayer is part of a stack of displayers
      */
     public boolean isStacked(){
 		return stacked;
@@ -393,11 +393,12 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     /**
      * Creates a new decorator that will be shown in this displayer if the displayer is
-     * shown alongside a tab (@see {@link #setStacked(boolean)}). The default implementation
+     * shown alongside a tab {@link #setStacked(boolean)}. The default implementation
      * return {@link #createMinimalDecorator()}. Subclasses may call {@link #createStackedDecorator(PropertyKey)}
      * to easily create a fitting decorator.
      * @return the new decorator
      * @see #createStackedDecorator(PropertyKey)
+     * @see #setStacked(boolean)
      */
     protected BasicDockableDisplayerDecorator createStackedDecorator(){
     	return createMinimalDecorator();

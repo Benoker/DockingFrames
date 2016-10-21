@@ -39,7 +39,7 @@ public interface SplitDockListener {
 	/**
 	 * Invoked when a new {@link Dockable} was made fullscreen, or 
 	 * no {@link Dockable} at all is fullscreen.
-	 * @param station the station on which the event happend
+	 * @param station the station on which the event happened
 	 * @param oldFullScreen the {@link Dockable} that was fullscreen, may be <code>null</code>
 	 * @param newFullScreen the {@link Dockable} which is now fullscreen, may be <code>null</code>
 	 * @see SplitDockStation#setFullScreen(Dockable)

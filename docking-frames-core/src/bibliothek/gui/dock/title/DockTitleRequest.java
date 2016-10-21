@@ -73,7 +73,7 @@ public abstract class DockTitleRequest extends ResourceRequest<DockTitle>{
 	
 	/**
 	 * Makes this request active. After installation the method {@link ResourceRequest#answer(Object,Object)} may
-	 * be called anytimes. Please note that installing does not automatically trigger a call
+	 * be called at any time. Please note that installing does not automatically trigger a call
 	 * to {@link #request()}.
 	 */
 	public void install(){

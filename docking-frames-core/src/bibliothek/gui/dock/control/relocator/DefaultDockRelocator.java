@@ -346,7 +346,7 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     /**
      * Checks whether the current {@link #getMerger() Merger} can merge <code>parent</code>
      * with <code>child</code>.
-     * @param operation the operation that would be exected
+     * @param operation the operation that would be expected
      * @param parent the new parent for the children of <code>child</code>
      * @param selection the element whose children are to be removed
      * @return <code>true</code> if a merge is possible

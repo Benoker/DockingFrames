@@ -318,7 +318,7 @@ public class FlapDockStation extends AbstractDockableStation {
     
     /** The popup-window */
     private FlapWindow window;
-    /** The size of the border, which can be grabbed by ther user, of the popup-window */
+    /** The size of the border, which can be grabbed by the user, of the popup-window */
     private int windowBorder = 3;
     /** The minimal size of the popup-window */
     private int windowMinSize = 25;
@@ -328,7 +328,7 @@ public class FlapDockStation extends AbstractDockableStation {
     /** 
      * This variable is set when the front-dockable is removed, because
      * the {@link DockController} is removed. If the controller is added
-     * again, then the frond-dockable can be restored with the value of
+     * again, then the front-dockable can be restored with the value of
      * this variable.
      */
     private Dockable oldFrontDockable;
@@ -391,11 +391,11 @@ public class FlapDockStation extends AbstractDockableStation {
     /** the background algorithm of this component */
     private Background background = new Background();
     
-    /** tells how far the {@link FlapSideDropLayer} streches */
+    /** tells how far the {@link FlapSideDropLayer} stretches */
     private int borderSideSnapSize = 15;
     
     /**
-     * Defaultconstructor of a {@link FlapDockStation}
+     * Default constructor of a {@link FlapDockStation}
      */
     public FlapDockStation(){
     	init();
@@ -1432,7 +1432,7 @@ public class FlapDockStation extends AbstractDockableStation {
 	}
     
     /**
-     * Tells how far the layer outside the station streches.
+     * Tells how far the layer outside the station stretches.
      * @return the size of the outside layer
      * @see #setBorderSideSnapSize(int)
      */
@@ -1843,7 +1843,7 @@ public class FlapDockStation extends AbstractDockableStation {
     /**
      * Removes <code>dockable</code> from this station.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s.
      * @param dockable the child to remove
      */
@@ -1856,7 +1856,7 @@ public class FlapDockStation extends AbstractDockableStation {
     /**
      * Removes the child with the given <code>index</code> from this station.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s.
      * @param index the index of the child that will be removed
      */

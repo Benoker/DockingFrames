@@ -37,7 +37,7 @@ import bibliothek.gui.dock.station.layer.DockStationDropLayer;
  * {@link StationDropOperation}s independent from the involved {@link DockStation}s and {@link Dockable}s. The
  * {@link Inserter} is a very powerful interface, as it can completely override any decision
  * that was made by a {@link DockStation}.<br>
- * An {@link Inserter} does not have access to the internas of a {@link DockStation}, nor does any {@link DockStation}
+ * An {@link Inserter} does not have access to the internals of a {@link DockStation}, nor does any {@link DockStation}
  * know of the existence of the {@link Inserter}. Some station may however offer special methods to create
  * fitting {@link StationDropOperation}s.
  * 

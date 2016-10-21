@@ -33,7 +33,7 @@ import bibliothek.gui.dock.station.StationDragOperation;
 /**
  * This implementation of {@link StationDragOperation} will call
  * {@link Component#repaint()} on creation and when either the
- * operation succeeeds or was canceled.
+ * operation succeeds or was canceled.
  * @author Benjamin Sigg
  */
 public abstract class ComponentDragOperation implements StationDragOperation{

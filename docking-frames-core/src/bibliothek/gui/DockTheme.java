@@ -80,7 +80,7 @@ public interface DockTheme {
 	 */
 	public static final PropertyKey<BorderModifier> BORDER_MODIFIER = new PropertyKey<BorderModifier>( "dock.borderModifier" );
 	
-	/** The factory creating {@link Span}s and ultimatively deciding how the animation looks like when dropping a {@link Dockable} */
+	/** The factory creating {@link Span}s and ultimately deciding how the animation looks like when dropping a {@link Dockable} */
 	public static final PropertyKey<SpanFactory> SPAN_FACTORY = new PropertyKey<SpanFactory>( "span factory", new ConstantPropertyFactory<SpanFactory>( new DefaultSpanFactory() ), true );
 	
 	/**

@@ -43,7 +43,7 @@ import bibliothek.gui.dock.station.stack.tab.layouting.Size.Type;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 
 /**
- * An {@link AbstractTabPaneComponent} that was specifically desinged for showing a set of {@link DockAction}s.
+ * An {@link AbstractTabPaneComponent} that was specifically designed for showing a set of {@link DockAction}s.
  * @author Benjamin Sigg
  */
 public abstract class DockActionCombinedInfoComponent extends AbstractTabPaneComponent implements CombinedInfoComponent, LayoutBlock{

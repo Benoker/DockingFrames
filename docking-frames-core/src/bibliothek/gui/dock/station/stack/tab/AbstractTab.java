@@ -34,7 +34,7 @@ import bibliothek.gui.dock.event.DockableFocusEvent;
 import bibliothek.gui.dock.event.DockableFocusListener;
 
 /**
- * Abstract implemention of {@link Tab} based on a real {@link Component}. Clients
+ * Abstract implementation of {@link Tab} based on a real {@link Component}. Clients
  * should call {@link #bind()}, {@link #unbind()} and {@link #setController(DockController)} to
  * fully utilize this class.
  * @author Benjamin Sigg

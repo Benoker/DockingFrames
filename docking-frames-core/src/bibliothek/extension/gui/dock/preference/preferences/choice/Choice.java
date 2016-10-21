@@ -61,7 +61,7 @@ public interface Choice {
 	public int size();
 	
 	/**
-	 * Gets a name for the <code>index'</code>th choice.
+	 * Gets a name for the <code>index</code>'th choice.
 	 * @param index the index of the choice
 	 * @return the name of that choice, should be human readable
 	 */

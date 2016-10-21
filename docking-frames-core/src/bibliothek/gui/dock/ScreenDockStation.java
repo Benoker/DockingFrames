@@ -290,7 +290,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /** tells how much two windows must overlap in order for them to be merged */
     private double dropOverRatio = 0.75;
     
-    /** controlls attraction between {@link ScreenDockWindow}s */
+    /** controls attraction between {@link ScreenDockWindow}s */
     private MagnetController magnet;
     
     /** the restrictions of the boundaries of this window*/
@@ -1092,7 +1092,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Gets the location of <code>dockable</code> and its current state.
      * @param dockable some child of this station
-     * @param target the final element for which the location is needd
+     * @param target the final element for which the location is needed
      * @return the location, not <code>null</code>
      */
     public ScreenDockProperty getLocation( Dockable dockable, Dockable target ){
@@ -1263,7 +1263,7 @@ public class ScreenDockStation extends AbstractDockStation {
     
     /**
      * Tells this station what to do on a double click on a child. If set
-     * to <code>true</code>, then the childs fullscreen mode gets changed.
+     * to <code>true</code>, then the child's fullscreen mode gets changed.
      * @param expand whether to react on double clicks
      */
     public void setExpandOnDoubleClick( boolean expand ){
@@ -1805,7 +1805,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Removes the <code>dockable</code> from this station.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s.
      * @param dockable the {@link Dockable} to remove
      */
@@ -1820,7 +1820,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Removes the <code>index</code>'th {@link Dockable} of this station.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s.
      * @param index the index of the {@link Dockable} to remove
      */
@@ -1936,7 +1936,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * Gets the {@link WindowConfiguration} which should be used to create a new {@link ScreenDockWindow}
      * for <code>dockable</code>.
      * @param dockable the element that is going to be shown
-     * @return its confugration, not <code>null</code>
+     * @return its configuration, not <code>null</code>
      */
     protected WindowConfiguration getConfiguration( Dockable dockable ){
     	WindowConfiguration result =  windowConfiguration.getValue().getConfiguration( this, dockable );
@@ -2234,7 +2234,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     /**
-     * Gets the {@link MagnetController} of this station. The {@link MagnetController} controlls the
+     * Gets the {@link MagnetController} of this station. The {@link MagnetController} controls the
      * attraction between {@link ScreenDockWindow}s.
      * @return the controller, never <code>null</code>
      */

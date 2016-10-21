@@ -29,8 +29,8 @@ import bibliothek.gui.DockFrontend;
 import bibliothek.gui.Dockable;
 
 /**
- * An class implementing all methods of {@link DockFrontendListener}, but
- * not doing anything inside these methodes.
+ * A class implementing all methods of {@link DockFrontendListener}, but
+ * not doing anything inside these methods.
  * @author Benjamin Sigg
  *
  */

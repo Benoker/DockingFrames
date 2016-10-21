@@ -404,7 +404,7 @@ public class Leaf extends SpanSplitNode{
 
     /**
      * Tells whether the position of the mouse <code>x/y</code> would result in a drag and drop operation where
-     * {@link Put#CENTER} is apropriate.
+     * {@link Put#CENTER} is appropriate.
      * @param bounds the boundaries of the {@link Dockable}, this {@link Leaf} or any other representation of
      * the {@link Dockable}
      * @param x the x-coordinate of the mouse
@@ -422,7 +422,7 @@ public class Leaf extends SpanSplitNode{
     
     /**
      * Tells whether the position of the mouse <code>x/y</code> would result in a drag and drop operation where
-     * {@link Put#TITLE} is apropriate.
+     * {@link Put#TITLE} is appropriate.
      * @param bounds the boundaries of the {@link Dockable}, this {@link Leaf} or any other representation of
      * the {@link Dockable}
      * @param x the x-coordinate of the mouse

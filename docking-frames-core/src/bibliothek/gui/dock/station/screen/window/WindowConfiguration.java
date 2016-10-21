@@ -43,7 +43,7 @@ public class WindowConfiguration {
 	/** whether the window should move if the title is grabbed */
 	private boolean moveOnTitleGrab = false;
 	
-	/** whether moving is possible by grabing the border */
+	/** whether moving is possible by grabbing the border */
 	private boolean moveOnBorder = true;
 	
 	/** only required if {@link #moveOnTitleGrab}, starts a drag and drop operation if the mouse is over an area where dropping is possible */

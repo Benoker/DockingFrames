@@ -40,7 +40,7 @@ public class DefaultSpanFactory implements SpanFactory {
 
 	/**
 	 * This most simple {@link Span} does not use any kind of animation
-	 * @author Bejamin Sigg
+	 * @author Benjamin Sigg
 	 */
 	private static class DefaultSpan implements Span{
 		private SpanCallback callback;

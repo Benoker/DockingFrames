@@ -30,7 +30,7 @@ import bibliothek.gui.dock.station.screen.magnet.MagnetRequest.Side;
 
 /**
  * A constraint tells how much a side of a {@link ScreenDockWindow} has to move. Constraints
- * are used by the {@link StickMagnetGraph} during calucaltions.
+ * are used by the {@link StickMagnetGraph} during calculations.
  * @author Benjamin Sigg
  */
 public class StickMagnetGraphConstraint {

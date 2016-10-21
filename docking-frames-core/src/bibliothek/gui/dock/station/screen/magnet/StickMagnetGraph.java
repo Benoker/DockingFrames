@@ -50,7 +50,7 @@ public class StickMagnetGraph {
 	/** information about all the {@link ScreenDockWindow}s */
 	private MagnetController controller;
 
-	/** information abou the event */
+	/** information about the event */
 	private MagnetRequest request;
 
 	/** the node that represents the {@link ScreenDockWindow} of {@link #request} */
@@ -280,7 +280,7 @@ public class StickMagnetGraph {
 	/**
 	 * Compares the initial location and side of the root {@link ScreenDockWindow} with
 	 * its current shape and reshapes all neighbors such that with the resulting boundaries
-	 * the same graph as <code>this</code> would be created. In general this method preferres
+	 * the same graph as <code>this</code> would be created. In general this method prefers
 	 * to change only the position of {@link ScreenDockWindow}s, the method is however free
 	 * to change the size as well if it looks like a good choice.
 	 */
@@ -446,7 +446,7 @@ public class StickMagnetGraph {
 	 * Tries to ensure that the modifications described in {@link Node#getConstraints()} can be achieved. For example
 	 * a constraint resulting in a negative width or height of a {@link ScreenDockWindow} can never be achieved.<br>
 	 * The default implementation tries to smooth out resizes by distributing the changes to many windows. Note that
-	 * truelly invalid boundaries will be catched and processed by the {@link BoundaryRestriction}, which cannot be
+	 * truly invalid boundaries will be caught and processed by the {@link BoundaryRestriction}, which cannot be
 	 * influenced by the {@link StickMagnetGraph}.<br>
 	 * Implementations should also pay attention to {@link StickMagnetGraphConstraint#isHard(MagnetRequest.Side)} and not modify
 	 * hard sides.<br>
@@ -740,7 +740,7 @@ public class StickMagnetGraph {
 		 * @param node the node that is visited
 		 * @param revisit whether this node has already been visited 
 		 * @return <code>true</code> if the node should be visited, <code>false</code> if not. In the
-		 * later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediatelly
+		 * later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediately
 		 */
 		public boolean beginVisit( Node node, boolean revisit );
 		
@@ -755,7 +755,7 @@ public class StickMagnetGraph {
 		 * {@link Edge#getSource() source} to {@link Edge#getTarget() target}.
 		 * @param edge the edge that is going to be visited
 		 * @return <code>true</code> if the visitor should follow the edge, <code>false</code> if not.
-		 * In the later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediatelly
+		 * In the later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediately
 		 */
 		public boolean beginVisit( Edge edge );
 		

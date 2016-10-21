@@ -348,7 +348,7 @@ public abstract class AbstractDockableSelection extends JPanel implements Dockab
     }
     
     /**
-     * Cancles this selection
+     * Cancels this selection
      */
     protected void cancel(){
         for( DockableSelectionListener listener : listeners.toArray( new DockableSelectionListener[ listeners.size() ] ))

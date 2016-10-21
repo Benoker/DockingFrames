@@ -316,14 +316,14 @@ public class BasicTheme implements DockTheme{
      * Sets the factory which will be used to create new {@link Span}s. Note that this property
      * has to be set before the theme is installed. Otherwise it will take no effect.
      * @param factory the factory or <code>null</code>
-     * @param priority the imprtance of the new setting (whether it should override existing settings or not).
+     * @param priority the importance of the new setting (whether it should override existing settings or not).
      */
     public void setSpanFactory( SpanFactory factory, Priority priority ){
     	this.spanFactory.set( priority, factory );
     }
 
     /**
-     * Sets the movingImage-property. The movignImage is needed to show an
+     * Sets the movingImage-property. The movingImage is needed to show an
      * image when the user grabs a {@link Dockable}
      * @param movingImage the new factory
      */
@@ -332,7 +332,7 @@ public class BasicTheme implements DockTheme{
     }
     
     /**
-     * Sets the movingImage-property. The movignImage is needed to show an
+     * Sets the movingImage-property. The movingImage is needed to show an
      * image when the user grabs a {@link Dockable}
      * @param movingImage the new factory
      * @param priority the importance of the new setting (whether it should override existing settings or not).

@@ -110,7 +110,7 @@ public abstract class TabDisablingStrategyObserver {
 	
 	/**
 	 * Called if <code>dockable</code> was enabled or disabled.
-	 * @param dockable the elemnt whose state changed
+	 * @param dockable the element whose state changed
 	 * @param disabled the new state
 	 */
 	public abstract void setDisabled( Dockable dockable, boolean disabled );

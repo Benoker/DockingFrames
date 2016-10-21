@@ -1511,7 +1511,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     /**
      * Removes the child of location <code>index</code>.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s.
      * @param index the location of the child which will be removed
      */

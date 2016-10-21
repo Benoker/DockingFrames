@@ -238,7 +238,7 @@ public class StationChildrenActionSource extends AbstractDockActionSource{
 	 * Puts an order in the dockables, telling which items to show when. The default behavior
 	 * is to keep the current order (which is the order given by the tree of {@link DockStation}s
 	 * and {@link Dockable}s). Subclasses may also modify the list by adding or removing items, 
-	 * altough a filter is better implemented by overriding {@link #shouldShow(Dockable)}
+	 * although a filter is better implemented by overriding {@link #shouldShow(Dockable)}
 	 * @param dockables the array to order
 	 */
 	protected void sort( List<Dockable> dockables ){

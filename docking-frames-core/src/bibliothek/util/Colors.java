@@ -139,11 +139,11 @@ public final class Colors {
 	 * Creates a color that "lies between" the colors <code>a</code>, <code>b</code> and
 	 * <code>c</code>. Each color has a weight, and as higher the weight as more of that color
 	 * is inside the created color.
-	 * @param a the first color to incooperate
+	 * @param a the first color to incorporate
 	 * @param weightA how much of <code>a</code> goes into the resulting color
-	 * @param b the second color to incooperate
+	 * @param b the second color to incorporate
 	 * @param weightB how much of <code>b</code> goes into the resulting color
-	 * @param c the third color to incooperate
+	 * @param c the third color to incorporate
 	 * @param weightC how much of <code>c</code> goes into the resulting color
 	 * @return <code>(a * weightA + b * weightB + c * weightC) / (weightA + weightB + weightC)</code> 
 	 */

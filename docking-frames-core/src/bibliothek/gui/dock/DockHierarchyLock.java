@@ -37,7 +37,7 @@ import bibliothek.gui.Dockable;
 
 /**
  * The {@link DockHierarchyLock} allows {@link DockStation}s to defend
- * themselfs against concurrent modifications of the hierarchy. At any time only
+ * themselves against concurrent modifications of the hierarchy. At any time only
  * one {@link DockStation} or a class working with {@link DockStation}s in the realm 
  * of a {@link DockController} can acquire the lock.
  * @author Benjamin Sigg
@@ -106,13 +106,13 @@ public class DockHierarchyLock {
 	 *  <li>There is a queue of {@link Runnable}s, <code>run</code> will be added to the end of that queue. The queue
 	 *  will be executed from the beginning to the end, this order cannot be changed.</li>
 	 *  <li>If this is a recursive call, then <code>run</code> will never be executed directly.</li>
-	 *  <li>If currently no {@link Token} is acquired, then <code>run</code> is executed immediatelly.</li>
+	 *  <li>If currently no {@link Token} is acquired, then <code>run</code> is executed immediately.</li>
 	 *  <li><code>run</code> is always executed in the EDT, other {@link Thread}s may be blocked until <code>run</code>
 	 *  is completed</li>
 	 * </ul>
 	 * @param run the {@link Runnable} to executed, not <code>null</code>
 	 * @throws IllegalArgumentException if <code>run</code> is <code>null</code>
-	 * @throws IllegalStateException if an {@link InterruptedException} is caought
+	 * @throws IllegalStateException if an {@link InterruptedException} is caught
 	 */
 	public void onRelease( Runnable run ){
 		if( run == null ){
@@ -400,9 +400,9 @@ public class DockHierarchyLock {
 		/**
 		 * Releases the lock.
 		 * @throws IllegalStateException if the state is not as suggested by the
-		 * acquierer when acquiering the lock
+		 * acquirer when acquiring the lock
 		 * @throws IllegalStateException if blocking access to the EDT was required and an {@link InterruptedException}
-		 * occured
+		 * occurred
 		 */
 		public void release(){
 			synchronized( this ){

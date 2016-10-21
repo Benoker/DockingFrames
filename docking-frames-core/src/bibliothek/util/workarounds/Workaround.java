@@ -40,7 +40,7 @@ import bibliothek.util.Workarounds;
 public interface Workaround {
 	/**
 	 * Called whenever a new {@link DockController} is created, the {@link Workaround} may modify the controller in 
-	 * any way it likes (e.g. install specialied factories).
+	 * any way it likes (e.g. install specialized factories).
 	 * @param controller the {@link DockController} which was just created and initialized
 	 */
 	public void setup( DockController controller );
@@ -52,7 +52,7 @@ public interface Workaround {
 	public void markAsGlassPane( Component component );
 	
 	/**
-	 * Tells whether this {@link Workaround} has the abbility to make <code>window</code> translucent.
+	 * Tells whether this {@link Workaround} has the ability to make <code>window</code> translucent.
 	 * Translucent means that each pixel of the <code>window</code> can have its own alpha value.
 	 * @param window the window to test
 	 * @return whether translucency is an option
@@ -68,9 +68,9 @@ public interface Workaround {
 	public boolean setTranslucent( Window window );
 	
 	/**
-	 * Tells whether this {@link Workaround} has the abbility to make <code>window</code> transparent.
+	 * Tells whether this {@link Workaround} has the ability to make <code>window</code> transparent.
 	 * Transparent means that some pixels of the <code>window</code> cannot be seen.
-	 * @param window the widnow to test
+	 * @param window the window to test
 	 * @return whether transparency is an option
 	 */
 	public boolean supportsPerpixelTransparency( Window window );

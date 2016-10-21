@@ -83,7 +83,7 @@ public class InternalDockDialog extends AbstractScreenDockWindow{
 	}
 	
 	/**
-	 * Gets the layer at which this dialog appers in its parent {@link JDesktopPane}.
+	 * Gets the layer at which this dialog appears in its parent {@link JDesktopPane}.
 	 * @return the layer
 	 */
 	public int getLayer(){

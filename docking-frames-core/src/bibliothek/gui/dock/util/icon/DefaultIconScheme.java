@@ -139,7 +139,7 @@ public class DefaultIconScheme extends AbstractIconScheme {
 	 * Creates a new scheme loading icons from all the specified resources.
 	 * @param controller the {@link DockController} in whose realm this scheme will be used
 	 * @param resources a list of files with "key=path" lines telling key and path of the icons to load. If a key
-	 * appears more than once, then the last occurance of the key wins
+	 * appears more than once, then the last occurrence of the key wins
 	 */
 	public DefaultIconScheme( DockController controller, IconResource... resources ){
 		super( controller );
@@ -193,7 +193,7 @@ public class DefaultIconScheme extends AbstractIconScheme {
 	/**
 	 * Changes the icon with name <code>name</code> to <code>icon</code>. Please note that if
 	 * <code>name</code> was {@link #link(bibliothek.gui.dock.util.PropertyKey, String) linked}, the newly
-	 * set value may be overriden again.
+	 * set value may be overridden again.
 	 * @param name the unique key of the icon
 	 * @param icon the new icon, can be <code>null</code>
 	 */

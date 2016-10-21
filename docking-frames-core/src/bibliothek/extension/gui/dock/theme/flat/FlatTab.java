@@ -354,7 +354,7 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     /**
      * Sets the modifier which modifies the font of this tab, this modifier
      * may be replaced any time.
-     * @param modifier the modifer
+     * @param modifier the modifier
      */
     public void setFontModifier( FontModifier modifier ){
     	label.setFontModifier( modifier );
@@ -385,7 +385,7 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     }
     
     /**
-     * Gets the text shwon on this tab.
+     * Gets the text shown on this tab.
      * @return the text
      */
     public String getText(){
@@ -393,7 +393,7 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     }
     
     /**
-     * Connets this tab with <code>controller</code>.
+     * Connects this tab with <code>controller</code>.
      * @param controller the controller in whose realm this tab is used,
      * can be <code>null</code>
      */

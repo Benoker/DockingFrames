@@ -63,14 +63,14 @@ public interface AttractorStrategy {
 		NEUTRAL(4), 
 		
 		/**
-		 * The {@link Dockable}s do not interact with each other. In fact they preferre not
+		 * The {@link Dockable}s do not interact with each other. In fact they prefer not
 		 * to be placed near each other. Most {@link MagnetStrategy}s will interpret this
 		 * as "they do not interact". This value overrides {@link #NEUTRAL}.
 		 */
 		REPELLED(3),
 		
 		/**
-		 * The {@link Dockable}s do not interact with each other. In fact they preferre not
+		 * The {@link Dockable}s do not interact with each other. In fact they prefer not
 		 * to be placed near each other. Most {@link MagnetStrategy}s will interpret this
 		 * as "they do not interact". This value is never used by the framework, only by
 		 * clients. It overrides any other value expect {@link #STRONGLY_ATTRACTED}.

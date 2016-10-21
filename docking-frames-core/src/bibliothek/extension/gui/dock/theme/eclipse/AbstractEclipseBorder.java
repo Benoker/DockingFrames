@@ -31,7 +31,7 @@ import bibliothek.extension.gui.dock.theme.EclipseTheme;
 import bibliothek.gui.DockController;
 
 /**
- * Abstract {@link Border} managing basic properties that are required by varios
+ * Abstract {@link Border} managing basic properties that are required by various
  * {@link Border}s related to the {@link EclipseTheme}.
  * @author Benjamin Sigg
  */

@@ -34,13 +34,13 @@ import bibliothek.gui.DockStation;
 public interface StationDragOperation {
 	/**
 	 * Called if the drag and drop operation has been canceled. This {@link StationDragOperation}
-	 * implicitely is invalid after a call to this method.
+	 * implicitly is invalid after a call to this method.
 	 */
 	public void canceled();
 	
 	/**
 	 * Called if the drag and drop operation successfully finished. This {@link StationDragOperation}
-	 * implicitely is invalid after a call to this method.
+	 * implicitly is invalid after a call to this method.
 	 */
 	public void succeeded();
 }

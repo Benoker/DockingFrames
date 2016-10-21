@@ -51,7 +51,7 @@ public @interface Todo {
 	
 	/** Tells whether a {@link Todo} is backwards compatible */
 	public static enum Compatibility{
-		/** The modification affects only a method or class, noone will notice the change */
+		/** The modification affects only a method or class, no-one will notice the change */
 		COMPATIBLE, 
 		/** Some internal classes are affected, clients should not notice the change */
 		BREAK_MINOR, 

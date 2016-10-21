@@ -64,7 +64,7 @@ public interface SharingStandardDockAction extends StandardDockAction{
     public void setTooltip( String tooltip );
     
     /**
-     * Gets the first part of the toopltip-text that is shown for this action.
+     * Gets the first part of the tooltip-text that is shown for this action.
      * @return The client defined part of the tooltip
      * @see #setTooltip(String)
      */

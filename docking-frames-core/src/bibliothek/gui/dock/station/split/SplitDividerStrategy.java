@@ -51,7 +51,7 @@ import bibliothek.gui.dock.SplitDockStation;
  * Implementations should (but are not enforced to) respect some properties:
  * <ul> 
  * 	<li>{@link SplitDockStation#isResizingEnabled()}: whether the user is allowed to resize the children.</li>
- * 	<li>{@link SplitDockStation#isContinousDisplay()}: whether resizing should happen immediatelly.</li>
+ * 	<li>{@link SplitDockStation#isContinousDisplay()}: whether resizing should happen immediately.</li>
  * </ul>
  * <br>
  * Clients usually do not need to implement this interface, and the framework offers only one default
@@ -68,7 +68,7 @@ public interface SplitDividerStrategy {
 	public void install( SplitDockStation station, Component container );
 
 	/**
-	 * Informs this strategy that it will no lonver be used by <code>station</code>.
+	 * Informs this strategy that it will no longer be used by <code>station</code>.
 	 * @param station the station that is no longer using <code>this</code>
 	 */
 	public void uninstall( SplitDockStation station );

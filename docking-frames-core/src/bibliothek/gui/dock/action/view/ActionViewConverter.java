@@ -83,7 +83,7 @@ import bibliothek.util.container.Tuple;
  * <br>
  * <b>Note:</b> if a client creates new <code>ActionType</code>s or new <code>ViewTarget</code>s, he has
  * to provide the <code>ViewGenerator</code>s for all new possible pairs. That includes pairs
- * where one partner is a predefined <code>ActionType</code> or <cod>ViewTarget</code>.
+ * where one partner is a predefined <code>ActionType</code> or <code>ViewTarget</code>.
  * @author Benjamin Sigg
  */
 public class ActionViewConverter {

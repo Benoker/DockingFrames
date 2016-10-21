@@ -122,7 +122,7 @@ public class AbstractBasicHandler<D extends DockAction, M extends BasicButtonMod
     
     /**
      * Sets the model to which all properties of the {@link #getAction() action}
-     * are transfered.
+     * are transferred.
      * @param model the model
      */
     public void setModel( M model ) {

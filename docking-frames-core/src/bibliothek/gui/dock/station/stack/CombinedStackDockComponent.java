@@ -73,7 +73,7 @@ import bibliothek.util.FrameworkOnly;
  *
  * @param <T> the type of the tabs
  * @param <M> the type of the menus
- * @param <I> the type of the additinal info panel
+ * @param <I> the type of the additional info panel
  */
 public abstract class CombinedStackDockComponent<T extends CombinedTab, M extends CombinedMenu, I extends CombinedInfoComponent> extends AbstractTabPane<T, M, I> implements StackDockComponent {
 	/** The panel which shows the children */

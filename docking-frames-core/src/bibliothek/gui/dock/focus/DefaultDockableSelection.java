@@ -40,7 +40,7 @@ import bibliothek.gui.Dockable;
 
 /**
  * A {@link DockableSelection} that uses a {@link JList} to display all the
- * available {@link Dockable}s. Subclasses can rearange the layout of this
+ * available {@link Dockable}s. Subclasses can rearrange the layout of this
  * selection using {@link Container#removeAll()} and later {@link #getList()}
  * to get access to the component which represents the list.
  * @author Benjamin Sigg

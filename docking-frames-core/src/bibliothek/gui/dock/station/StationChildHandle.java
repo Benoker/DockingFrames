@@ -72,7 +72,7 @@ public class StationChildHandle implements PlaceholderListItem<Dockable>{
 	
 	/**
 	 * Creates a new handle, initializes a {@link DockTitleRequest} but no {@link DockableDisplayer} nor a {@link DockTitle}. This
-	 * constructor also adds a {@link DockableListener} to <code>dockable</code> to update the title whenever <code>docakble</code>
+	 * constructor also adds a {@link DockableListener} to <code>dockable</code> to update the title whenever <code>dockable</code>
 	 * requests it.<br>
 	 * Clients should call {@link #updateDisplayer()} to initialize the remaining fields of this handler.
 	 * @param station the owner of this handle, the parent of <code>dockable</code>

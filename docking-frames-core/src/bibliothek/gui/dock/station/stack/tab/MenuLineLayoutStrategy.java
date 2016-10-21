@@ -28,7 +28,7 @@ package bibliothek.gui.dock.station.stack.tab;
 import bibliothek.gui.dock.station.stack.tab.layouting.Size;
 
 /**
- * Provides customizeable algorithms used by the {@link MenuLineLayout}, these algorithms 
+ * Provides customizable algorithms used by the {@link MenuLineLayout}, these algorithms
  * tell how exactly to lay out the items of a {@link TabPane}.
  * @author Benjamin Sigg
  */

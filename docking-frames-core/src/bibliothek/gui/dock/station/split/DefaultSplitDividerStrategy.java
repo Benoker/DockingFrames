@@ -275,7 +275,7 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		}
 		
 		/**
-		 * Gets the node whose dividier contains <code>x, y</code>.
+		 * Gets the node whose divider contains <code>x, y</code>.
 		 * @param x the x coordinate
 		 * @param y the y coordinate
 		 * @return the node containing <code>x, y</code>
@@ -374,12 +374,12 @@ public class DefaultSplitDividerStrategy implements SplitDividerStrategy {
 		}
 		
 		/**
-		 * Called if the dividier of <code>node</code> needs to be changed.
+		 * Called if the divider of <code>node</code> needs to be changed.
 		 * @param node the node whose divider changes
-		 * @param dividier the new divider
+		 * @param divider the new divider
 		 */
-		protected void setDivider( Divideable node, double dividier ){
-			node.setDivider( dividier );
+		protected void setDivider( Divideable node, double divider ){
+			node.setDivider( divider );
 		}
 
 		public void mouseMoved( MouseEvent e ){

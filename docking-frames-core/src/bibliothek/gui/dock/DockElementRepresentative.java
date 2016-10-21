@@ -46,7 +46,7 @@ import bibliothek.gui.dock.title.DockTitle;
  * to a {@link DockController} then it may gain new abilities. Clicking on the
  * representative might open the {@link Dockable}s popup menu, dragging it will
  * drag the {@link Dockable}. However, events on the representative are
- * not automatically transfered to its <code>DockElement</code>, that step
+ * not automatically transferred to its <code>DockElement</code>, that step
  * is always performed by the module that observes the representative.
  * 
  * @author Benjamin Sigg

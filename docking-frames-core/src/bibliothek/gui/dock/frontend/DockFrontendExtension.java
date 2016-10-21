@@ -40,7 +40,7 @@ public interface DockFrontendExtension {
 	
 	/**
 	 * Called upon destruction of <code>frontend</code>.
-	 * @param frontend the frontend which was destroied
+	 * @param frontend the frontend which was destroyed
 	 */
 	public void uninstall( DockFrontend frontend );
 }

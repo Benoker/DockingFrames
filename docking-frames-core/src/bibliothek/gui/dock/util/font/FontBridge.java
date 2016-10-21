@@ -29,7 +29,7 @@ import bibliothek.gui.dock.util.UIBridge;
 
 /**
  * A font bridge is a layer between a {@link DockFont} and the {@link FontManager},
- * it can modify the {@link FontModifier} that is transfered from manager
+ * it can modify the {@link FontModifier} that is transferred from manager
  * to <code>DockFont</code>.
  * @author Benjamin Sigg
  */

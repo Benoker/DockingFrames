@@ -79,7 +79,7 @@ import bibliothek.util.Todo.Version;
  *  {@link DockTitleRequest} for each required {@link DockTitle} can be created.</li>
  *  <li>One child can be focused. If this station changes the focus it should use {@link DockController#setAtLeastFocusedDockable(Dockable, Component)}.</li>
  *  <li>This station should support placeholders. The current {@link PlaceholderStrategy} can be used to convert {@link Dockable}s to placeholders. 
- *  A {@link PlaceholderList} is a good datastructure to store {@link Dockable}s and placeholders at the same time.</li>
+ *  A {@link PlaceholderList} is a good data structure to store {@link Dockable}s and placeholders at the same time.</li>
  *  <li>Additional points where the user can start drag and drop operations can be installed by implementing a {@link DockElementRepresentative}. It
  *  has to be installed using {@link DockController#addRepresentative(DockElementRepresentative)}. </li>
  *  <li>And a new {@link DockFactory} will be required to persistently store the layout of this station.</li>
@@ -311,7 +311,7 @@ public interface DockStation extends DockElement{
      * Gets precise information about the location of a child of this station.
      * The result of this method could later be used to invoke
      * {@link #drop(Dockable, DockableProperty)}.
-     * @param child a child of this station, this childs location is asked
+     * @param child a child of this station, this child's location is asked
      * @param target an optional hint telling for which dockable the location information
      * will be used, can be <code>null</code>. This hint can be used to find a placeholder
      * that should be part of the result.
@@ -358,7 +358,7 @@ public interface DockStation extends DockElement{
      * Informs this station that a drag and drop operation is in progress and that <code>dockable</code> might
      * be removed from this station.
      * @param dockable the child that might be removed in the near future
-     * @return a callback that will be informed when the dockable was removed or the operation canceleled, can be <code>null</code>
+     * @return a callback that will be informed when the dockable was removed or the operation canceled, can be <code>null</code>
      */
     public StationDragOperation prepareDrag( Dockable dockable );
     
@@ -398,7 +398,7 @@ public interface DockStation extends DockElement{
     
     /**
      * Gets a description of all the areas of the screen where this {@link DockStation} can handle a drop event.<br>
-     * Everytime the mouse is moved or released during a drag &amp; drop operation, this method is called for
+     * Every time the mouse is moved or released during a drag &amp; drop operation, this method is called for
      * all {@link DockStation}s. The returned {@link DockStationDropLayer}s are then filtered and ordered, the resulting
      * order defines the order in which the method {@link #prepareDrop(StationDropItem)} is called.
      * @return all the layers of this station, must not be <code>null</code>, must not contain <code>null</code>,
@@ -423,7 +423,7 @@ public interface DockStation extends DockElement{
      * Removes a child from this station. This method may be called even
      * if {@link #canDrag(Dockable)} returned <code>false</code>.<br>
      * Note: clients may need to invoke {@link DockController#freezeLayout()}
-     * and {@link DockController#meltLayout()} to ensure noone else adds or
+     * and {@link DockController#meltLayout()} to ensure no-one else adds or
      * removes <code>Dockable</code>s. 
      * @param dockable the child to remove
      */

@@ -61,7 +61,7 @@ public class PlaceholderMap {
 	/** all the data that is stored in this map */
 	private Map<Key, Map<String, Object>> data = new LinkedHashMap<Key, Map<String,Object>>();
 	
-	/** strategy observed for automatically removeal of invalid placeholders */
+	/** strategy observed for automatically removal of invalid placeholders */
 	private PlaceholderStrategy strategy;
 	
 	/** listener to {@link #strategy} */
@@ -477,7 +477,7 @@ public class PlaceholderMap {
 		
 	/**
 	 * Sets the strategy that is used to automatically remove invalid placeholders. This
-	 * strategy is recursivelly applied to all other {@link PlaceholderMap}s that are
+	 * strategy is recursively applied to all other {@link PlaceholderMap}s that are
 	 * stored within this map.
 	 * @param strategy the new strategy, can be <code>null</code>
 	 */
@@ -562,7 +562,7 @@ public class PlaceholderMap {
 	/**
 	 * Removes all occurrences of <code>placeholders</code>.
 	 * @param placeholder the placeholder to remove
-	 * @param recursive if <code>true</code>, this method is called recusively on
+	 * @param recursive if <code>true</code>, this method is called recursively on
 	 * every sub-map in this map
 	 */
 	public void removeAll( Path placeholder, boolean recursive ){
@@ -574,7 +574,7 @@ public class PlaceholderMap {
 	/**
 	 * Removes all occurrences of all elements of <code>placeholders</code>.
 	 * @param placeholders the placeholders to remove
-	 * @param recursive if <code>true</code>, this method is called recusively on
+	 * @param recursive if <code>true</code>, this method is called recursively on
 	 * every sub-map in this map
 	 */
 	public void removeAll( Set<Path> placeholders, boolean recursive ){

@@ -60,7 +60,7 @@ public class DefaultTabContentFilter extends AbstractTabContentFilter {
 	/** how to paint a deselected item */
 	private Behavior deselected;
 	
-	/** hwo to paint a selected item */
+	/** how to paint a selected item */
 	private Behavior selected;
 	
 	/**

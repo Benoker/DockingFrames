@@ -86,7 +86,7 @@ public class Workarounds {
 	}
 	
 	/**
-	 * Seets the {@link Workarounds} that should be used. This method will never be called from
+	 * Sets the {@link Workarounds} that should be used. This method will never be called from
 	 * the framework itself. Calling this method has no effect on workarounds that are already 
 	 * applied.<br>
 	 * Please note that this method is not thread safe!<br>
@@ -137,7 +137,7 @@ public class Workarounds {
 	}
 	
 	/**
-	 * Tells whether there is at least one {@link Workaround} that supports perpixel transparency. Transparency
+	 * Tells whether there is at least one {@link Workaround} that supports per-pixel transparency. Transparency
 	 * means that some pixels are visible, while others are not.
 	 * @param window the window to test
 	 * @return whether transparency is supported
@@ -168,7 +168,7 @@ public class Workarounds {
 	}
 	
 	/**
-	 * Tells whether there is a least one {@link Workaround} that supports perpixel translucency. Translucency
+	 * Tells whether there is a least one {@link Workaround} that supports per-pixel translucency. Translucency
 	 * means that some pixels may have another alpha value than others.
 	 * @param window the window to test
 	 * @return whether translucency is supported
@@ -186,7 +186,7 @@ public class Workarounds {
 	 * Makes <code>window</code> translucent, meaning that the opacity of each pixel is defined by the
 	 * alpha value or the {@link Color} that was used to paint over that pixel.
 	 * @param window the window that should be translucent
-	 * @return <code>true</code> if the winodw is now translucent
+	 * @return <code>true</code> if the window is now translucent
 	 */
 	public boolean setTranslucent( Window window ){
 		boolean result = false;

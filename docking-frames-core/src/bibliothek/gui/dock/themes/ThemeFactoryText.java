@@ -42,7 +42,7 @@ public abstract class ThemeFactoryText extends TextValue{
 	/**
 	 * Creates a new {@link TextValue}.
 	 * @param id the unique identifier of the text to read
-	 * @param factory the factory which is reqding the text
+	 * @param factory the factory which is reading the text
 	 */
 	public ThemeFactoryText( String id, ThemeFactory factory ){
 		super( id, KIND_THEME_FACTORY );

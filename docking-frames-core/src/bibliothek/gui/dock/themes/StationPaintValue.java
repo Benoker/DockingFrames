@@ -31,7 +31,7 @@ import bibliothek.gui.dock.util.UIValue;
 import bibliothek.util.Path;
 
 /**
- * An {@link UIValue} that is used to retreive a {@link StationPaint} from a 
+ * An {@link UIValue} that is used to retrieve a {@link StationPaint} from a
  * {@link ThemeManager}.
  * @author Benjamin Sigg
  */

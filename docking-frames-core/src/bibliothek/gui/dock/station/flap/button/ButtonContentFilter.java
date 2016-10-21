@@ -41,7 +41,7 @@ public interface ButtonContentFilter {
 	 * Tells whether <code>action</code> is an important {@link DockAction} and should if the client told the
 	 * component to filter actions.
 	 * @param action the action to filter
-	 * @return <code>true</code> if <code>action</code> should be visisble
+	 * @return <code>true</code> if <code>action</code> should be visible
 	 */
 	public boolean isButtonAction( DockAction action );
 }

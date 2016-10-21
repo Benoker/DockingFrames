@@ -47,7 +47,7 @@ public class DockStationDelegate {
      * {@link DockStation#aside(AsideRequest)} of the {@link Dockable} represented by
      * <code>item</code>, and if that fails it tries to call {@link Combiner#aside(AsideRequest)}.
      * @param item the item which should contain the new location
-     * @param combainer the {@link Combiner} to ask if there is no {@link DockStation} to ask, not <code>null</code>
+     * @param combiner the {@link Combiner} to ask if there is no {@link DockStation} to ask, not <code>null</code>
      * @param request information about the location to create
      */
     public <T extends PlaceholderListItem<Dockable>> void combine( DockablePlaceholderList<T>.Item item, Combiner combiner, AsideRequest request ){

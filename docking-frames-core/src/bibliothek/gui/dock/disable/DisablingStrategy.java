@@ -34,12 +34,12 @@ import bibliothek.gui.dock.util.DockProperties;
 import bibliothek.gui.dock.util.PropertyKey;
 
 /**
- * An {@link DisablingStrategy} can be used to globaly disable {@link DockElement}s and parts of
+ * An {@link DisablingStrategy} can be used to globally disable {@link DockElement}s and parts of
  * {@link DockElement}s like their {@link DockAction}s or their {@link DockTitle}s.<br>
  * Implementation wise an {@link DisablingStrategy} only offers a hint, each item has to decide on its own
  * whether it should heed the hint. All the default items of the framework do however heed the hint.<br>
  * This interface was added due to popular request. Developers should be aware that many use cases involving disabling
- * items are rather dubios. Used in the wrong way, the {@link DisablingStrategy} can break a lot functionality of
+ * items are rather dubious. Used in the wrong way, the {@link DisablingStrategy} can break a lot functionality of
  * the framework. E.g. it can prevent the user from closing a {@link Dockable} he just does not need right now.  
  * @author Benjamin Sigg
  */
