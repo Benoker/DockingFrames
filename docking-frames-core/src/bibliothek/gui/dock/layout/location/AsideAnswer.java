@@ -50,7 +50,7 @@ public interface AsideAnswer {
 	/**
 	 * Gets the layout of a non-existent child station. A value of <code>null</code> either indicates that
 	 * the child station exists, or that it does not (no longer) have a layout worth saving.
-	 * @return the layour of the non-existent child, can be <code>null</code>
+	 * @return the layout of the non-existent child, can be <code>null</code>
 	 */
 	public PlaceholderMap getLayout();
 }

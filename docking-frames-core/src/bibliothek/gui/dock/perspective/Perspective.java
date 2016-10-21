@@ -106,7 +106,7 @@ public abstract class Perspective {
 	 * Reads the contents of <code>in</code> and returns them in a map.
 	 * @param in the stream to read from
 	 * @return the content of <code>in</code>
-	 * @throws IOException if an I/O-error ocurrs
+	 * @throws IOException if an I/O-error occurs
 	 */
 	public Map<String, PerspectiveStation> read( DataInputStream in ) throws IOException {
 		Map<String, DockLayoutComposition> map = situation.readCompositions( in );

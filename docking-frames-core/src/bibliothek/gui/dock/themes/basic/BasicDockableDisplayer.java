@@ -365,7 +365,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     /**
      * Tells this displayer that it is used inside a tabbed environment. This displayer will call
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
-     * @param stacked whether this displayer is part of a stack of displayerss
+     * @param stacked whether this displayer is part of a stack of displayers
      */
     public void setStacked( boolean stacked ){
     	if( this.stacked != stacked ){
@@ -377,7 +377,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     /**
      * Tells this displayer that it is used inside a tabbed environment. This displayer will call
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
-     * @return whether this displayer is part of a stack of displayerss
+     * @return whether this displayer is part of a stack of displayers
      */
     public boolean isStacked(){
 		return stacked;

@@ -1301,7 +1301,7 @@ public abstract class PlaceholderList<D, S, P extends PlaceholderListItem<D>> {
 		 * Creates a new item.
 		 * @param dockable the value of this item, not <code>null</code>
 		 * @param placeholderSet the placeholders of this item, can be <code>null</code>
-		 * @param placeholderMap the childrens placeholder info, can be <code>null</code>
+		 * @param placeholderMap the children's placeholder info, can be <code>null</code>
 		 */
 		public Item( P dockable, Set<Path> placeholderSet, PlaceholderMap placeholderMap ){
 			if( dockable == null )

@@ -996,7 +996,7 @@ public class DockController {
      * @param focusedDockable the element with the focus or <code>null</code>
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument
+     * optimizations are allowed. Clients normally can set this argument
      * to <code>false</code>.
      */
     public void setFocusedDockable( Dockable focusedDockable, boolean force ) {
@@ -1010,7 +1010,7 @@ public class DockController {
      * See {@link FocusController#setFocusedDockable(DockElementRepresentative, Component, boolean, boolean, boolean)}.
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument
+     * optimizations are allowed. Clients normally can set this argument
      * to <code>false</code>.
      * @deprecated clients should use {@link #setFocusedDockable(FocusRequest)} instead
      */
@@ -1028,7 +1028,7 @@ public class DockController {
      * See {@link FocusController#setFocusedDockable(DockElementRepresentative, Component, boolean, boolean, boolean)}.
      * @param force <code>true</code> if this controller must ensure
      * that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument
+     * optimizations are allowed. Clients normally can set this argument
      * to <code>false</code>.
      * @param ensureFocusSet if <code>true</code>, then this method should make sure that either <code>focusedDockable</code>
      * itself or one of its {@link DockElementRepresentative} is the focus owner 

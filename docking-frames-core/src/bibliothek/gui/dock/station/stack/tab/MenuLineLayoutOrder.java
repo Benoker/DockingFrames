@@ -176,7 +176,7 @@ public class MenuLineLayoutOrder implements Iterable<MenuLineLayoutOrder.Item>{
 	/**
 	 * Sets the weight of <code>item</code>. The weight tells how free space should be distributed, as larger the number
 	 * as more space is assigned to <code>item</code>.
-	 * @param item the item whose wheight is set, not <code>null</code>
+	 * @param item the item whose weight is set, not <code>null</code>
 	 * @param weight the new weight, at least 0
 	 */
 	public void setWeight( Item item, float weight ){

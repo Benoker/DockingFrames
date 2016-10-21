@@ -562,7 +562,7 @@ public class PlaceholderMap {
 	/**
 	 * Removes all occurrences of <code>placeholders</code>.
 	 * @param placeholder the placeholder to remove
-	 * @param recursive if <code>true</code>, this method is called recusively on
+	 * @param recursive if <code>true</code>, this method is called recursively on
 	 * every sub-map in this map
 	 */
 	public void removeAll( Path placeholder, boolean recursive ){
@@ -574,7 +574,7 @@ public class PlaceholderMap {
 	/**
 	 * Removes all occurrences of all elements of <code>placeholders</code>.
 	 * @param placeholders the placeholders to remove
-	 * @param recursive if <code>true</code>, this method is called recusively on
+	 * @param recursive if <code>true</code>, this method is called recursively on
 	 * every sub-map in this map
 	 */
 	public void removeAll( Set<Path> placeholders, boolean recursive ){

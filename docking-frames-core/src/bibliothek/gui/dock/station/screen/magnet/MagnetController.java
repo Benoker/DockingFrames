@@ -328,7 +328,7 @@ public class MagnetController {
 	
 	/**
 	 * Sets the {@link MagnetStrategy} that is to be used by this controller.
-	 * @param strategy the strategy, a value of <code>null</code> reinstalles the default strategy
+	 * @param strategy the strategy, a value of <code>null</code> reinstalls the default strategy
 	 */
 	public void setStrategy( MagnetStrategy strategy ){
 		this.strategy.setValue( strategy );
@@ -344,7 +344,7 @@ public class MagnetController {
 	
 	/**
 	 * Sets the {@link AttractorStrategy} to use.
-	 * @param strategy the strategy, a value of <code>null</code> reinstalles the default strategy
+	 * @param strategy the strategy, a value of <code>null</code> reinstalls the default strategy
 	 */
 	public void setAttractorStrategy( AttractorStrategy strategy ){
 		this.attraction.setValue( strategy );

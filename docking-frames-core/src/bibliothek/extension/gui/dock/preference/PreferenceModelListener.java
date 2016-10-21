@@ -51,7 +51,7 @@ public interface PreferenceModelListener {
      * the value of a preference, the text or description, but also the enabled {@link PreferenceOperation}s.
      * @param model the source of the event
      * @param beginIndex the index of the first preference that changed
-     * @param endIndex the index of the last preference that changeds
+     * @param endIndex the index of the last preference that changed
      */
     public void preferenceChanged( PreferenceModel model, int beginIndex, int endIndex );
 }

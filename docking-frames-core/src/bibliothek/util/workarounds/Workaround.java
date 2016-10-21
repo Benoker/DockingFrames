@@ -70,7 +70,7 @@ public interface Workaround {
 	/**
 	 * Tells whether this {@link Workaround} has the ability to make <code>window</code> transparent.
 	 * Transparent means that some pixels of the <code>window</code> cannot be seen.
-	 * @param window the widnow to test
+	 * @param window the window to test
 	 * @return whether transparency is an option
 	 */
 	public boolean supportsPerpixelTransparency( Window window );

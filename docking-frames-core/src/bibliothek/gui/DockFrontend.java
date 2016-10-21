@@ -1515,7 +1515,7 @@ public class DockFrontend {
     /**
      * Saves the current layout with the specified name.
      * @param name the name for the setting
-     * @param entry whether only the normal "entry" inforation should be saved, or all the information. The default
+     * @param entry whether only the normal "entry" information should be saved, or all the information. The default
      * value should be <code>true</code>
      * @see #getPerspective(boolean) 
      */
@@ -1978,7 +1978,7 @@ public class DockFrontend {
      * Calls {@link Setting#write(DockSituation, PropertyTransformer, boolean, DataOutputStream)}
      * @param setting the setting which will be written
      * @param entry whether <code>setting</code> is an ordinary entry, or
-     * the finall setting that contains more data. 
+     * the final setting that contains more data.
      * @param out the stream to write into
      * @throws IOException if an I/O-error occurs
      */
@@ -2017,7 +2017,7 @@ public class DockFrontend {
      * on this {@link DockFrontend}, this method does not change any properties of the frontend.
      * @param in the stream to read from
      * @return the {@link Setting}s that were read
-     * @throws IOException if <code>in</code> cannot be read properbly
+     * @throws IOException if <code>in</code> cannot be read properly
      */
     public SettingsBlop readBlop( DataInputStream in ) throws IOException{
     	SettingsBlop blop = new SettingsBlop();
@@ -2045,7 +2045,7 @@ public class DockFrontend {
      * Calls first {@link #createSetting()} and then
      * {@link Setting#read(DockSituation, PropertyTransformer, boolean, DataInputStream)}.
      * @param entry whether the set of properties is used as ordinary entry,
-     * or contains more data than usuall.
+     * or contains more data than usual.
      * @param in the stream to read from
      * @return the new setting
      * @throws IOException if an I/O-error occurs
@@ -2101,7 +2101,7 @@ public class DockFrontend {
      * Calls {@link Setting#writeXML(DockSituation, PropertyTransformer, boolean, XElement)}.
      * @param setting the setting to write
      * @param entry whether <code>setting</code> is an ordinary entry, or
-     * the finall setting that contains more data.
+     * the final setting that contains more data.
      * @param element the xml element to write into, this method does not
      * change the attributes of the entry
      */
@@ -2166,8 +2166,8 @@ public class DockFrontend {
      * Calls {@link #createSetting()} and then
      * {@link Setting#readXML(DockSituation, PropertyTransformer, boolean, XElement)}.
      * @param entry whether the set of properties is used as ordinary entry,
-     * or contains more data than usuall.
-     * @param element the xml element containg the data for the new setting
+     * or contains more data than usual.
+     * @param element the xml element containing the data for the new setting
      * @return the new setting
      * @see #createSetting()
      */

@@ -311,7 +311,7 @@ public interface DockStation extends DockElement{
      * Gets precise information about the location of a child of this station.
      * The result of this method could later be used to invoke
      * {@link #drop(Dockable, DockableProperty)}.
-     * @param child a child of this station, this childs location is asked
+     * @param child a child of this station, this child's location is asked
      * @param target an optional hint telling for which dockable the location information
      * will be used, can be <code>null</code>. This hint can be used to find a placeholder
      * that should be part of the result.
@@ -358,7 +358,7 @@ public interface DockStation extends DockElement{
      * Informs this station that a drag and drop operation is in progress and that <code>dockable</code> might
      * be removed from this station.
      * @param dockable the child that might be removed in the near future
-     * @return a callback that will be informed when the dockable was removed or the operation canceleled, can be <code>null</code>
+     * @return a callback that will be informed when the dockable was removed or the operation canceled, can be <code>null</code>
      */
     public StationDragOperation prepareDrag( Dockable dockable );
     

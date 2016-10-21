@@ -143,7 +143,7 @@ public class ActionContentModifier {
 	
 	/**
 	 * Tells whether this modifier represents an action that is guaranteed to be shown horizontally.
-	 * @return <code>true</code> if the action is hown horizontally, <code>false</code> if the orientation is now known
+	 * @return <code>true</code> if the action is shown horizontally, <code>false</code> if the orientation is not known
 	 * or not horizontal
 	 */
 	public boolean isHorizontal(){
@@ -152,7 +152,7 @@ public class ActionContentModifier {
 
 	/**
 	 * Tells whether this modifier represents an action that is guaranteed to be shown vertically.
-	 * @return <code>true</code> if the action is hown vertically, <code>false</code> if the orientation is now known
+	 * @return <code>true</code> if the action is shown vertically, <code>false</code> if the orientation is not known
 	 * or not vertical
 	 */
 	public boolean isVertical(){

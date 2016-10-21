@@ -56,9 +56,9 @@ public interface ScreenDockStationExtension {
 	 * ended.
 	 * @param station the source of the event
 	 * @param arguments the arguments that were used by the method, should not be modified
-	 * @param successfull whether the call was successfull
+	 * @param successful whether the call was successful
 	 */
-	public void dropped( ScreenDockStation station, DropArguments arguments, boolean successfull );
+	public void dropped( ScreenDockStation station, DropArguments arguments, boolean successful );
 
 	/**
 	 * A class offering all the arguments of the method {@link ScreenDockStation#drop(Dockable, ScreenDockProperty, boolean)}

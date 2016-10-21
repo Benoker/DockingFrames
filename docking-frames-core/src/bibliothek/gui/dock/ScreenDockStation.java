@@ -1092,7 +1092,7 @@ public class ScreenDockStation extends AbstractDockStation {
     /**
      * Gets the location of <code>dockable</code> and its current state.
      * @param dockable some child of this station
-     * @param target the final element for which the location is needd
+     * @param target the final element for which the location is needed
      * @return the location, not <code>null</code>
      */
     public ScreenDockProperty getLocation( Dockable dockable, Dockable target ){
@@ -1936,7 +1936,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * Gets the {@link WindowConfiguration} which should be used to create a new {@link ScreenDockWindow}
      * for <code>dockable</code>.
      * @param dockable the element that is going to be shown
-     * @return its confugration, not <code>null</code>
+     * @return its configuration, not <code>null</code>
      */
     protected WindowConfiguration getConfiguration( Dockable dockable ){
     	WindowConfiguration result =  windowConfiguration.getValue().getConfiguration( this, dockable );

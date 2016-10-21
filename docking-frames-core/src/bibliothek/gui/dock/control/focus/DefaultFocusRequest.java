@@ -65,7 +65,7 @@ public class DefaultFocusRequest implements FocusRequest {
      * Creates a new request for setting the focused {@link Dockable}.
      * @param source the item to focus, may be <code>null</code>
      * @param force <code>true</code> if this request must ensure that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument to <code>false</code>.
+     * optimizations are allowed. Clients normally can set this argument to <code>false</code>.
      */
 	public DefaultFocusRequest( DockElementRepresentative source, boolean force ){
 		this( source, null, force );
@@ -80,7 +80,7 @@ public class DefaultFocusRequest implements FocusRequest {
      * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
      * as if it would be <code>null</code>.
      * @param force <code>true</code> if this request must ensure that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument to <code>false</code>.
+     * optimizations are allowed. Clients normally can set this argument to <code>false</code>.
      */
 	public DefaultFocusRequest( DockElementRepresentative source, Component component, boolean force ){
 		this( source, component, force, true, false );
@@ -95,7 +95,7 @@ public class DefaultFocusRequest implements FocusRequest {
      * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
      * as if it would be <code>null</code>.
      * @param force <code>true</code> if this request must ensure that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument to <code>false</code>.
+     * optimizations are allowed. Clients normally can set this argument to <code>false</code>.
      * @param ensureFocusSet if <code>true</code>, then this request should make sure that either <code>source</code>
      * itself or one of its {@link DockElementRepresentative} is the focus owner 
      * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>source</code>
@@ -114,7 +114,7 @@ public class DefaultFocusRequest implements FocusRequest {
      * not do sanity checks concerning <code>component</code>. An invalid argument will silently be ignored and treated 
      * as if it would be <code>null</code>.
      * @param force <code>true</code> if this request must ensure that all properties are correct, <code>false</code> if some
-     * optimations are allowed. Clients normally can set this argument to <code>false</code>.
+     * optimizations are allowed. Clients normally can set this argument to <code>false</code>.
      * @param ensureFocusSet if <code>true</code>, then this request should make sure that either <code>source</code>
      * itself or one of its {@link DockElementRepresentative} is the focus owner 
      * @param ensureDockableFocused  if <code>true</code>, then this method should make sure that <code>source</code>

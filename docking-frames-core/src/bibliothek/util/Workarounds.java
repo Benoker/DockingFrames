@@ -186,7 +186,7 @@ public class Workarounds {
 	 * Makes <code>window</code> translucent, meaning that the opacity of each pixel is defined by the
 	 * alpha value or the {@link Color} that was used to paint over that pixel.
 	 * @param window the window that should be translucent
-	 * @return <code>true</code> if the winodw is now translucent
+	 * @return <code>true</code> if the window is now translucent
 	 */
 	public boolean setTranslucent( Window window ){
 		boolean result = false;

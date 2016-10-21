@@ -740,7 +740,7 @@ public class StickMagnetGraph {
 		 * @param node the node that is visited
 		 * @param revisit whether this node has already been visited 
 		 * @return <code>true</code> if the node should be visited, <code>false</code> if not. In the
-		 * later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediatelly
+		 * later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediately
 		 */
 		public boolean beginVisit( Node node, boolean revisit );
 		
@@ -755,7 +755,7 @@ public class StickMagnetGraph {
 		 * {@link Edge#getSource() source} to {@link Edge#getTarget() target}.
 		 * @param edge the edge that is going to be visited
 		 * @return <code>true</code> if the visitor should follow the edge, <code>false</code> if not.
-		 * In the later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediatelly
+		 * In the later case {@link #endVisit(StickMagnetGraph.Edge)} is called immediately
 		 */
 		public boolean beginVisit( Edge edge );
 		

@@ -109,7 +109,7 @@ public class PropertyKey<A> {
      * in the properties
 	 * @param nullValueReplacedByDefault if set, then the <code>null</code> value
 	 * in {@link DockProperties} gets replaced by the default value of this key even if
-	 * the <code>null</code> value was set explicitely.
+	 * the <code>null</code> value was set explicitly.
 	 */
 	public PropertyKey( String id, PropertyFactory<A> value, boolean nullValueReplacedByDefault ){
 		if( id == null )

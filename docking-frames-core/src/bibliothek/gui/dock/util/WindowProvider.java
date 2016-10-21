@@ -53,7 +53,7 @@ public interface WindowProvider {
     /**
      * Tells whether this {@link WindowProvider} represents a window that is visible. Under
      * normal circumstances this method would return:<br>
-     * <code>Window window = sarchWindow();<br>
+     * <code>Window window = searchWindow();<br>
      * return window == null ? false : window.isShowing();</code><br>
      * This method is explicitly allowed to return any value it likes. The result
      * of this method does not have to correspond with reality.

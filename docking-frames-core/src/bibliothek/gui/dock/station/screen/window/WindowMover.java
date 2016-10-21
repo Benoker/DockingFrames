@@ -154,7 +154,7 @@ public class WindowMover {
 	}
 	
 	/**
-	 * Sets whether the window jumps back to its starting position if a dropable stop is found.
+	 * Sets whether the window jumps back to its starting position if a droppable stop is found.
 	 * @param resetOnDropable whether the window can jump back to its starting position
 	 */
 	public void setResetOnDropable( boolean resetOnDropable ){
@@ -162,7 +162,7 @@ public class WindowMover {
 	}
 	
 	/**
-	 * Tells whether the window jumps back to its starting position if a dropable stop is found.
+	 * Tells whether the window jumps back to its starting position if a droppable stop is found.
 	 * @return whether the window can jump back
 	 */
 	public boolean isResetOnDropable(){

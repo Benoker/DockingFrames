@@ -240,7 +240,7 @@ public class ButtonPanel extends JPanel{
      * Changes the content which is shown.
      * @param dockable the Dockable for which the actions are shown, can be <code>null</code>
      * @param source the list of actions, can be <code>null</code>
-     * @param force if <code>true</code>, then no optimations are allowed
+     * @param force if <code>true</code>, then no optimizations are allowed
      * @throws IllegalArgumentException if <code>dockable</code> or <code>source</code>
      * is <code>null</code> while the other is not <code>null</code>.
      */

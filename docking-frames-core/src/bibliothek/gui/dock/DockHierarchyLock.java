@@ -112,7 +112,7 @@ public class DockHierarchyLock {
 	 * </ul>
 	 * @param run the {@link Runnable} to executed, not <code>null</code>
 	 * @throws IllegalArgumentException if <code>run</code> is <code>null</code>
-	 * @throws IllegalStateException if an {@link InterruptedException} is caought
+	 * @throws IllegalStateException if an {@link InterruptedException} is caught
 	 */
 	public void onRelease( Runnable run ){
 		if( run == null ){
@@ -400,9 +400,9 @@ public class DockHierarchyLock {
 		/**
 		 * Releases the lock.
 		 * @throws IllegalStateException if the state is not as suggested by the
-		 * acquierer when acquiering the lock
+		 * acquirer when acquiring the lock
 		 * @throws IllegalStateException if blocking access to the EDT was required and an {@link InterruptedException}
-		 * occured
+		 * occurred
 		 */
 		public void release(){
 			synchronized( this ){

@@ -450,7 +450,7 @@ public abstract class AbstractDockable implements Dockable {
      * icon if <code>null</code> or simply not shown.<br>
      * Calling this method does not have any effect, rather the behavior of {@link #setTitleIcon(Icon)}
      * is changed.
-     * @param titleIconHandling the new bheavior, not <code>null</code>
+     * @param titleIconHandling the new behavior, not <code>null</code>
      */
     public void setTitleIconHandling( IconHandling titleIconHandling ){
     	if( titleIconHandling == null ){

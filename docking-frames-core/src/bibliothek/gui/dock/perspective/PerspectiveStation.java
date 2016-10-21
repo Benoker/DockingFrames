@@ -49,7 +49,7 @@ public interface PerspectiveStation extends PerspectiveElement{
 	
     /**
      * Gets precise information about the location of a child of this station.
-     * @param child a child of this station, this childs location is asked
+     * @param child a child of this station, this child's location is asked
      * @param target an optional hint telling for which dockable the location information
      * will be used, can be <code>null</code>. This hint can be used to find a placeholder
      * that should be part of the result.

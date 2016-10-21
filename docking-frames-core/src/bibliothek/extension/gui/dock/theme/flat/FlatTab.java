@@ -346,7 +346,7 @@ public class FlatTab extends ConfiguredBackgroundPanel implements CombinedTab, D
     /**
      * Sets the modifier which modifies the font of this tab, this modifier
      * may be replaced any time.
-     * @param modifier the modifer
+     * @param modifier the modifier
      */
     public void setFontModifier( FontModifier modifier ){
     	label.setFontModifier( modifier );

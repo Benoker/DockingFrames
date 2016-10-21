@@ -40,7 +40,7 @@ public interface DockableBackgroundComponent extends BackgroundComponent{
 	
 	/**
 	 * Gets the {@link Dockable} which is represented by this component.
-	 * @return the docakble, not <code>null</code>
+	 * @return the dockable, not <code>null</code>
 	 */
 	public Dockable getDockable();
 }

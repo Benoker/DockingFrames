@@ -81,7 +81,7 @@ public interface Divideable {
     /**
      * Sets the location of the divider. The area of the left child is the area
      * of the whole node multiplied with <code>divider</code>. 
-     * @param divider the dividier
+     * @param divider the divider
      */
 	public void setDivider( double divider );
 	

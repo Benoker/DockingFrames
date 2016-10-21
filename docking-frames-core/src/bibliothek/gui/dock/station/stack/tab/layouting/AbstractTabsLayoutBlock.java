@@ -139,7 +139,7 @@ public abstract class AbstractTabsLayoutBlock implements TabsLayoutBlock{
 	
 	/**
 	 * Returns the number of tabs currently on this block.
-	 * @return the nubmer of {@link Tab}s
+	 * @return the number of {@link Tab}s
 	 */
 	public int getTabsCount(){
 		return tabs.size();
