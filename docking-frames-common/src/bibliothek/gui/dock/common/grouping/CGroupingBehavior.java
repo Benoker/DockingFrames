@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.mode.ExtendedMode;
  * in groups. A {@link CGroupingBehavior} is able to rewrite the location of {@link Dockable}s,
  * hence every time the user changes the {@link ExtendedMode} of a {@link Dockable} the 
  * grouping behavior can put the {@link Dockable} at a new location.<br>
- * There is a distrinction between {@link CGroupingBehavior} and {@link CGroupBehavior}: this class
+ * There is a distinction between {@link CGroupingBehavior} and {@link CGroupBehavior}: this class
  * is all about bringing groups together, while {@link CGroupBehavior} defines how groups of
  * {@link Dockable}s move around together.
  * @author Benjamin Sigg

@@ -36,7 +36,7 @@ public interface CFocusHistory {
 	/**
 	 * Gets the entire history of focused {@link CDockable}s, the most recent focused dockable
 	 * is at the beginning of the array.
-	 * @return the history starting with the most resently focused {@link CDockable}
+	 * @return the history starting with the most recently focused {@link CDockable}
 	 */
 	public CDockable[] getHistory();
 	

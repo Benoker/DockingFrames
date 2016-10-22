@@ -216,7 +216,7 @@ public class ExternalizingCGridArea extends CGridArea {
 	/**
 	 * A listener that is added to the {@link DockStation} that is used as delegate by this {@link CStation}. If the
 	 * last child of the station is removed, then {@link ExternalizingCGridArea#tryAutoRemove()} is called.
-	 * @author Benjamnin Sigg
+	 * @author Benjamin Sigg
 	 */
 	private class AutoRemover extends DockStationAdapter{
 		@Override

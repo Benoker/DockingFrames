@@ -379,7 +379,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	 * Registers a new {@link Dockable} at this manager. This method works
 	 * like {@link #add(String, Dockable)} but does not throw an exception
 	 * if another {@link Dockable} is already registered with <code>key</code>.
-	 * Instead the other <code>Dockable</code> is unregistered and <code>docakble</code>
+	 * Instead the other <code>Dockable</code> is unregistered and <code>dockable</code>
 	 * inherits its mode-information.
 	 * @param key the unique identifier of <code>dockable</code>
 	 * @param dockable some new element
@@ -1137,7 +1137,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	
 	/**
 	 * Gets a list of actions that should be shown on <code>station</code> depending on the
-	 * current children of <code>station</code>. This method is called everytime when either
+	 * current children of <code>station</code>. This method is called every time when either
 	 * a child is added, removed or selected on <code>station</code>.
 	 * @param station the station whose actions are asked
 	 * @return the actions, can be <code>null</code>
@@ -1153,7 +1153,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	 * this {@link ModeManager} to persistent storage or the other way. The new setting
 	 * contains all the {@link ModeSettingFactory}s which are currently known to this manager.
 	 * @param <B> the intermediate format
-	 * @param converter conversion tool from this managers meta-data format to the intermediate
+	 * @param converter conversion tool from this manager's meta-data format to the intermediate
 	 * format.
 	 * @return the new empty settings
 	 */
@@ -1178,7 +1178,7 @@ public abstract class ModeManager<H, M extends Mode<H>> {
 	 * may override this method to use another set of settings. This method does
 	 * not need to call {@link ModeSettings#addFactory(ModeSettingFactory)}.
 	 * @param <B> the intermediate format
-	 * @param converter converstion tool from this managers meta-data format to the
+	 * @param converter conversion tool from this manager's meta-data format to the
 	 * intermediate format.
 	 * @return the new empty settings
 	 */

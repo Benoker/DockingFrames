@@ -1441,7 +1441,7 @@ public class CControl {
      * of the common-project.<br>
      * Clients can add their own {@link ApplicationResource}s to this manager,
      * however clients are strongly discouraged from removing {@link ApplicationResource}
-     * which they did not add by themself.
+     * which they did not add themselves.
      * @return the persistent storage
      */
     public ApplicationResourceManager getResources() {
@@ -1497,7 +1497,7 @@ public class CControl {
      *  <tr><td>*&nbsp;{@link SplitDockStation#MAXIMIZE_ACCELERATOR} </td><td>The {@link KeyStroke} that maximizes a child of a {@link SplitDockStation}.</td></tr>
      *  <tr><td>{@link CombinedMenuContent#MENU_CONTENT} </td><td>The menu that shows overflowing {@link Dockable}s on a stack.</td></tr>
      *  <tr><td>{@link IconManager#MINIMUM_ICON_SIZE}</td><td>The expected minimal size of all icons. </td></tr>
-     *  <tr><td>{@link FlapDockStation#MINIMUM_SIZE} </td><td>The mimimum size of the {@link Component} that represents the {@link FlapDockStation}.</td></tr>
+     *  <tr><td>{@link FlapDockStation#MINIMUM_SIZE} </td><td>The minimum size of the {@link Component} that represents the {@link FlapDockStation}.</td></tr>
      *  <tr><td>*&nbsp;{@link LocationModeManager#MODE_ENABLEMENT} </td><td>Tells which {@link CDockable} is allowed to have which {@link ExtendedMode}.</td></tr>
      *  <tr><td>{@link DockRelocatorMode#NO_COMBINATION_MASK} </td><td>What keys the user has to press during a drag and drop operation to prevent the framework from combining {@link Dockable}s.</td></tr>
      *  <tr><td>{@link DockTitle#ORIENTATION_STRATEGY} </td><td>Tells how to rotate text on a {@link DockTitle}.</td></tr>
@@ -2566,9 +2566,9 @@ public class CControl {
     }
     
     /**
-     * If a {@link CDockable} is minimized, the focus can be automatically transfered to another {@link CDockable}. This
+     * If a {@link CDockable} is minimized, the focus can be automatically transferred to another {@link CDockable}. This
      * feature is implemented by the method {@link #initTransferFocusOnMinimize(DockController)}, which may be
-     * overriden by subclasses.
+     * overridden by subclasses.
      * @param transferFocusOnMinimize whether to enable the feature or not (default is <code>true</code>)
      */
     public void setTransferFocusOnMinimize( boolean transferFocusOnMinimize ){
@@ -2576,8 +2576,8 @@ public class CControl {
 	}
     
     /**
-     * If a {@link CDockable} is minimized, the focus can be automatically transfered to another {@link Dockable}.
-     * @return whether the focus will be transfered
+     * If a {@link CDockable} is minimized, the focus can be automatically transferred to another {@link Dockable}.
+     * @return whether the focus will be transferred
      * @see #setTransferFocusOnMinimize(boolean)
      */
     public boolean isTransferFocusOnMinimize(){

@@ -83,7 +83,7 @@ public abstract class AbstractLocationMode<A extends ModeArea> implements Iterab
 	/** provides actions for the {@link Dockable}s known to this mode */
 	private LocationModeActionProvider actionProvider = new DefaultLocationModeActionProvider();
 	
-	/** whether focus should be automatically transfered */
+	/** whether focus should be automatically transferred */
 	private boolean autoFocus = true;
 	
 	/**

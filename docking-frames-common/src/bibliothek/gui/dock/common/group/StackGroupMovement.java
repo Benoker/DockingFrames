@@ -49,7 +49,7 @@ public class StackGroupMovement implements CGroupMovement{
 	 * Creates a new movement object.
 	 * @param dockParent the station that should be moved
 	 * @param dockable the dockable that indicates the target location
-	 * @param target the mode that <code>dockable</code> should have after the movemenet
+	 * @param target the mode that <code>dockable</code> should have after the movement
 	 */
 	public StackGroupMovement( StackDockStation dockParent, Dockable dockable, ExtendedMode target ){
 		this.dockParent = dockParent;

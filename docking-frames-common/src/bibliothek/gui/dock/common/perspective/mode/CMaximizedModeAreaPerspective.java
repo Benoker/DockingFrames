@@ -44,13 +44,13 @@ public interface CMaximizedModeAreaPerspective extends CModeAreaPerspective{
 	
 	/**
 	 * Gets the mode the currently maximized item should use when unmaximized.
-	 * @return the unmaimize mode, can be <code>null</code>
+	 * @return the unmaximize mode, can be <code>null</code>
 	 */
 	public Path getUnmaximizeMode();
 	
 	/**
 	 * Gets the location the currently maximized item should use when unmaximized.
-	 * @return the unmaimize location, can be <code>null</code>
+	 * @return the unmaximize location, can be <code>null</code>
 	 */
 	public Location getUnmaximizeLocation();
 }

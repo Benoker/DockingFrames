@@ -56,9 +56,9 @@ import bibliothek.util.ClientOnly;
 
 /**
  * This {@link DockAction} can change the {@link Dockable#getTitleText() title-text}
- * of a {@link Dockable}. When this action is triggered, a popupmenu will appear,
+ * of a {@link Dockable}. When this action is triggered, a popup menu will appear,
  * where the user can enter the new title of the {@link Dockable}.<br>
- * RenameActions can be easely created by a {@link RenameActionFactory}
+ * RenameActions can be easily created by a {@link RenameActionFactory}
  * @author Benjamin Sigg
  */
 @ClientOnly

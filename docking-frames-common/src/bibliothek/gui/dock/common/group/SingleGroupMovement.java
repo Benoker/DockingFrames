@@ -30,7 +30,7 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 
 /**
- * This {@link CGroupMovement} is the most basic movemenet as it represents the movement of one
+ * This {@link CGroupMovement} is the most basic movement as it represents the movement of one
  * lonely {@link Dockable}.
  * @author Benjamin Sigg
  */

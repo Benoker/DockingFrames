@@ -40,7 +40,7 @@ import bibliothek.gui.dock.common.intern.CDockable;
  */
 public interface CVetoFocusListener {
 	/**
-	 * Called before focus is transfered to <code>dockable</code>.
+	 * Called before focus is transferred to <code>dockable</code>.
 	 * @param dockable the dockable that gets the focus
 	 * @return <code>true</code> if this listener approves the action,
 	 * <code>false</code> to speak out a veto
@@ -48,7 +48,7 @@ public interface CVetoFocusListener {
 	public boolean willGainFocus( CDockable dockable );
 	
 	/**
-	 * Called before focus is transfered from <code>dockable</code>.
+	 * Called before focus is transferred from <code>dockable</code>.
 	 * @param dockable the dockable that looses the focus
 	 * @return <code>true</code> if this listener approves the action,
 	 * <code>false</code> to speak out a veto

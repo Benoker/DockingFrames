@@ -23,7 +23,7 @@ import bibliothek.util.Path;
  */
 public class DefaultExpandStrategy implements CLocationExpandStrategy{
 	/**
-	 * Unique id of an extension of {@link CLocationExpandStrategy}s that are utilizied before this strategy
+	 * Unique id of an extension of {@link CLocationExpandStrategy}s that are utilized before this strategy
 	 * is used.
 	 */
 	public static final Path STRATEGY_EXTENSION = new Path( "dock.expandStrategy" );

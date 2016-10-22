@@ -52,7 +52,7 @@ public class ExternalizedMode<M extends ExternalizedModeArea> extends DefaultLoc
     /** the key used for the {@link IconManager} to read the {@link javax.swing.Icon} for the "externalize"-action */
     public static final String ICON_IDENTIFIER = CLocationModeManager.ICON_MANAGER_KEY_EXTERNALIZE;
 	
-    /** customizeable algorithms */
+    /** customizable algorithms */
     private ExternalizedModeBehavior behavior = new DefaultExternalizedModeBehavior();
     
     /**

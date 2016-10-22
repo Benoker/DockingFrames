@@ -58,7 +58,7 @@ public class LocationSettingConverter implements ModeSettingsConverter<Location,
     
     /**
      * Creates a new converter.
-     * @param transformer transfomer used to read {@link DockableProperty}s.
+     * @param transformer transformer used to read {@link DockableProperty}s.
      */
     public LocationSettingConverter( PropertyTransformer transformer ){
     	this.transformer = transformer;

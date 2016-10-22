@@ -287,7 +287,7 @@ public class CPerspective {
 	}
 	
 	/**
-	 * Searches all occurances of a {@link ShrinkablePerspectiveStation} and calls
+	 * Searches all occurrences of a {@link ShrinkablePerspectiveStation} and calls
 	 * {@link ShrinkablePerspectiveStation#shrink() shrink} on them.
 	 */
 	public void shrink(){

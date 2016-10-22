@@ -197,7 +197,7 @@ public class CGrid {
     }
     
     /**
-     * Marks <code>dockable</code> as beeing selected in the stack that
+     * Marks <code>dockable</code> as being selected in the stack that
      * has the boundaries of <code>x, y, width, height</code>.
      * @param x the x coordinate of the stack
      * @param y the y coordinate of the stack

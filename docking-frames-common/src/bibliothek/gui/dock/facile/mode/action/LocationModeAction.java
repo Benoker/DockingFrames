@@ -50,7 +50,7 @@ public class LocationModeAction extends SimpleButtonAction{
 	/** the mode this action applies */
 	private LocationMode mode;
 	
-    /** how often this action is binded */
+    /** how often this action is bound */
     private int count = 0;
     
     /** a listener to the IconManager, may change the icon of this action */

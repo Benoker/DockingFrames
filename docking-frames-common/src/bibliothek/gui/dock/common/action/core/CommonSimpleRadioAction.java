@@ -38,7 +38,7 @@ public class CommonSimpleRadioAction extends SimpleSelectableAction.Radio implem
 	
 	/**
 	 * Creates a new action.
-	 * @param action the {@link CAction} that wrapps around this {@link DockAction}
+	 * @param action the {@link CAction} that wraps around this {@link DockAction}
 	 */
 	public CommonSimpleRadioAction( CAction action ){
 		this.action = action;

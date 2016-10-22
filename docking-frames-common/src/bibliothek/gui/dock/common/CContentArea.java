@@ -181,7 +181,7 @@ public class CContentArea extends JPanel implements CStationContainer{
 	}
 
 	/**
-	 * Gets an independant array of all stations that are used on this
+	 * Gets an independent array of all stations that are used on this
 	 * {@link CContentArea}.
 	 * @return the list of stations
 	 */

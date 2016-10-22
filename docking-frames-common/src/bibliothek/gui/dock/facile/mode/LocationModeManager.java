@@ -514,7 +514,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
      * {@link Dockable}. That does not mean that <code>dockable</code> becomes
      * visible, just that it is easier reachable without the need to change
      * modes of any <code>Dockable</code>s.<br>
-     * This method returns immediatelly if in {@link #isLayouting() layouting mode}
+     * This method returns immediately if in {@link #isLayouting() layouting mode}
      * @param dockable the element which should not be hidden
      */
     public void ensureNotHidden( final Dockable dockable ){
