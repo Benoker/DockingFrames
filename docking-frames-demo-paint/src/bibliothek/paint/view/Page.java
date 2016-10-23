@@ -134,7 +134,7 @@ public class Page extends JPanel implements PictureListener {
     /**
      * Divides each coordinate of <code>point</code> with the zoomfactor
      * of this <code>Page</code>.
-     * @param point the point whose coordinates will be divied
+     * @param point the point whose coordinates will be divided
      * @return a point with the divided coordinates
      */
     private Point unstretch( Point point ){

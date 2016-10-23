@@ -114,7 +114,7 @@ public final class Figure {
 	 * @param row the initial position (row-coordinate)
 	 * @param column the initial position (column-coordinate)
 	 * @param icons whether the figure should create icons or not. Not creating
-	 * icons is faster, however the figure can't be displayed withour icons.
+	 * icons is faster, however the figure can't be displayed without icons.
 	 */
 	private Figure( Board board, Player player, Type type, int row, int column, boolean icons ){
 		this.board = board;

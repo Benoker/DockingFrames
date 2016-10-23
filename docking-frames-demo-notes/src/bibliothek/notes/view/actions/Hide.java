@@ -31,7 +31,7 @@ public class Hide extends SimpleButtonAction implements ActionGuard{
 	
 	/**
 	 * Creates a new action and {@link ActionGuard}
-	 * @param frontend the frontend used to retreive icons
+	 * @param frontend the frontend used to retrieve icons
 	 * @param manager the manager of the graphical representations of the Notes,
 	 * used to hide a {@link NoteView}
 	 */

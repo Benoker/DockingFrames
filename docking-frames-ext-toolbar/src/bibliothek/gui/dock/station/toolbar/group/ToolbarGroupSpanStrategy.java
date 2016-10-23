@@ -211,7 +211,7 @@ public abstract class ToolbarGroupSpanStrategy<P extends PlaceholderListItem<Doc
 	}
 	
 	/**
-	 * Mutates the {@link Span}s to present an insertation into <code>column</code> at <code>line</code>.
+	 * Mutates the {@link Span}s to present an insertion into <code>column</code> at <code>line</code>.
 	 * @param column the column where the insertion is happening 
 	 * @param line the line into which an item is inserted
 	 */

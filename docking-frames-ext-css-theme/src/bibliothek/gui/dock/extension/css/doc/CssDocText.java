@@ -33,7 +33,7 @@ import java.lang.annotation.RetentionPolicy;
  * A text describing some element. A {@link CssDocText} can be converted into a {@link String} by using
  * this policy:<br>
  * <ul>
- * <li> If {@link #id()} is not <code>null</code>, then try to load a "format" from a tranlated text source.</li>
+ * <li> If {@link #id()} is not <code>null</code>, then try to load a "format" from a translated text source.</li>
  * <li> Else if {@link #format()} is not <code>null</code>, load it as "format".</li>
  * <li> If "format" is loaded, use {@link #arguments()} and {@link String#format(String, Object...)} to convert it into
  * a human readable text.</li>
@@ -66,7 +66,7 @@ public @interface CssDocText {
 	
 	/**
 	 * Fallback text, to be used if the other fields cannot be used to get a {@link String}. Will be shown
-	 * unformated.
+	 * unformatted.
 	 * @return the fallback text, can be <code>"null"</code>
 	 */
 	public String text() default "";

@@ -58,7 +58,7 @@ public @interface CssDocPathNode {
 	public CssDocKey[] classes() default @CssDocKey();
 	
 	/**
-	 * All the pseudo classes of this node (as requried for a css selector)
+	 * All the pseudo classes of this node (as required for a css selector)
 	 * @return the pseudo classes
 	 */
 	public CssDocKey[] pseudoClasses() default @CssDocKey();

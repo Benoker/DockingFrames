@@ -39,10 +39,10 @@ import bibliothek.util.Filter;
  * The lifecycle of any {@link CssTransition} looks always like this:
  * <ol>
  * 	<li>Upon applying a new {@link CssRule} the {@link CssTransition} is created from a factory.</li>
- *  <li>Immediatelly afterwards {@link #init(CssRule, CssTransitionCallback) init} is called, the transition is now
+ *  <li>Immediately afterwards {@link #init(CssRule, CssTransitionCallback) init} is called, the transition is now
  *  allowed to change properties whenever it wants.</li>
  *  <li>If another {@link CssRule} is applied, {@link #transition(CssRule) transition} is called. The transition should
- *  now slowy apply the new rule. As there may already be an transition active on the new rule, this transition
+ *  now slowly apply the new rule. As there may already be an transition active on the new rule, this transition
  *  may actually gain access to a wrapper which behaves like an animated {@link CssRule}.</li>
  *  <li>At the end of its lifetime the transition should call {@link CssTransitionCallback#destroyed()} to inform
  *  the framework that this transition will never be used again.</li>

@@ -37,7 +37,7 @@ import bibliothek.util.FrameworkOnly;
 
 /**
  * The {@link ToolbarColumnModel} provides a clearly defined way to access and monitor the columns of a 
- * {@link ToolbarGroupDockStation}. The model acts as facade for the real datastructures inside
+ * {@link ToolbarGroupDockStation}. The model acts as facade for the real data structures inside
  * {@link ToolbarGroupDockStation}, which are usually not accessible.<br>
  * The model does not offer any information that could not be retrieved through the methods of {@link DockablePlaceholderToolbarGrid},
  * but it offers an API to register observers and be notified about changes within the columns.<br>

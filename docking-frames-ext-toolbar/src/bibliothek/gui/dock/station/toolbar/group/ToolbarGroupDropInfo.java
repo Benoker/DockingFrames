@@ -50,7 +50,7 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	/** The {@link Dockable} which is inserted */
 	private final Dockable dragDockable;
 	/**
-	 * The {@link Dockable} which received the dockbale (WARNING: this can be
+	 * The {@link Dockable} which received the dockable (WARNING: this can be
 	 * different to his original dock parent!)
 	 */
 	private final ToolbarGroupDockStation stationHost;
@@ -70,7 +70,7 @@ public abstract class ToolbarGroupDropInfo implements StationDropOperation{
 	 * @param station the station onto which <code>dockable</code> is dropped
 	 * @param column the column into which <code>dockable</code> is dropped, this may be an existing
 	 * column or a new column
-	 * @param line the row in which <code>dockable</code> will appear, a value of -1 indiciates that
+	 * @param line the row in which <code>dockable</code> will appear, a value of -1 indicates that
 	 * the item will appear in a new column
 	 * @param effect whether the operation has any effect
 	 */

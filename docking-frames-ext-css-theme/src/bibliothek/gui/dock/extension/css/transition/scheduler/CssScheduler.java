@@ -27,7 +27,7 @@ package bibliothek.gui.dock.extension.css.transition.scheduler;
 
 /**
  * The {@link CssScheduler} is responsible for repeatedly invoking animation
- * code. The {@link CssScheduler} may perform optimations, like coalescing calls.<br>
+ * code. The {@link CssScheduler} may perform optimizations, like coalescing calls.<br>
  * Usually a scheduler should call the animations in the EDT (EventDispatcherThread).
  * @author Benjamin Sigg
  */

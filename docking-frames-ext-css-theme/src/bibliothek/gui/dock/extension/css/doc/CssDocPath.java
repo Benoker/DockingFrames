@@ -50,7 +50,7 @@ public @interface CssDocPath {
 	 * Unique identifier of the parent {@link CssDocPath}. If {@link #parentClass()} is defined, then
 	 * this identifier must point to a path from that other class, otherwise it must point to a path
 	 * that is defined in the same class as this annotation.<br>
-	 * Note that ciclic dependencies are not allowed.
+	 * Note that cyclic dependencies are not allowed.
 	 * @return the identifier of the parent path, can be <code>"null"</code>
 	 */
 	public String parentId() default "";

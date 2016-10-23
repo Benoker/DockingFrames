@@ -66,7 +66,7 @@ public class DisplayerExample {
 			private DisplayerFactory red = new CustomDisplayerFactory( Color.RED );
 			private DisplayerFactory blue = new CustomDisplayerFactory( Color.BLUE );
 			
-			/* this method is called when a property has to be transfered. Normally a bridge calls "uiValue.set( value )", but
+			/* this method is called when a property has to be transferred. Normally a bridge calls "uiValue.set( value )", but
 			 * we are free to forward our own objects */
 			public void set( String id, DisplayerFactory value, UIValue<DisplayerFactory> uiValue ){
 				/* the identifier of any property used by a SplitDockStation ends with ".split" */

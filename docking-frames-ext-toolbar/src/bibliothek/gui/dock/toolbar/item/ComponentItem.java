@@ -41,7 +41,7 @@ import bibliothek.gui.dock.ToolbarItemDockable;
 
 /**
  * A {@link ComponentItem} is the most simple implementation of {@link ToolbarItem}, it
- * just wrapps around a single {@link Component}.
+ * just wraps around a single {@link Component}.
  * @author Benjamin Sigg
  */
 public class ComponentItem implements ToolbarItem{

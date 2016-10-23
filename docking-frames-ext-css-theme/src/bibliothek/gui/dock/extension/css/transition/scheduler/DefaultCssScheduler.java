@@ -34,7 +34,7 @@ import java.util.PriorityQueue;
 import javax.swing.Timer;
 
 /**
- * This {@link CssScheduler} ignores multible calls to its <code>step</code> methods,
+ * This {@link CssScheduler} ignores multiple calls to its <code>step</code> methods,
  * and executes all <code>steps</code> in the <code>EventDispatcherThread</code>. 
  * @author Benjamin Sigg
  */

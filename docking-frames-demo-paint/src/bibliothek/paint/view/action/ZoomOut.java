@@ -40,12 +40,12 @@ import bibliothek.paint.view.Page;
  *
  */
 public class ZoomOut extends CButton {
-	/** the page whose zoomfactor will be changed */
+	/** the page whose zoom-factor will be changed */
 	private Page page;
 	
 	/**
 	 * Creates a new button
-	 * @param page the page whose zoomfactor will be changed
+	 * @param page the page whose zoom-factor will be changed
 	 */
 	public ZoomOut( Page page ){
 		this.page = page;

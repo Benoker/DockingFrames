@@ -30,7 +30,7 @@ import bibliothek.help.view.text.HelpLinker;
 public class SelectingView extends DefaultDockable implements HyperlinkListener, Linking, Undoable{
     /** the component showing the text of this view */
     private JTextPane pane;
-    /** the types of <code>Entry</code>s shown by thiw view */
+    /** the types of <code>Entry</code>s shown by this view */
     private Set<String> types = new HashSet<String>();
     /** the set of all <code>Entry</code>s */
     private LinkManager manager;

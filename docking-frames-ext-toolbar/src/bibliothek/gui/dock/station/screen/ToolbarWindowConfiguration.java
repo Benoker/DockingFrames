@@ -37,7 +37,7 @@ import bibliothek.gui.dock.station.screen.window.WindowConfiguration;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 
 /**
- * This class will configure {@link ScreenDockWindow}s such that grabing the
+ * This class will configure {@link ScreenDockWindow}s such that grabbing the
  * title of a toolbar does not start a drag and drop operation directly, but
  * first allows the user to move around the entire window.
  * 

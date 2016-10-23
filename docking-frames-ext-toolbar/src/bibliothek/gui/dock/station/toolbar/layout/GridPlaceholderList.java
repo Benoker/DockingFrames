@@ -83,7 +83,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 
 	/**
 	 * Sets the {@link PlaceholderListItemConverter} which should be used to
-	 * convert the interal lists of this grid.
+	 * convert the internal lists of this grid.
 	 * 
 	 * @param converter
 	 *            the converter to use, can be <code>null</code>
@@ -113,7 +113,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	/**
 	 * Gets the converter that is used to read and write {@link Column}s.
 	 * 
-	 * @return the converer, never <code>null</code>
+	 * @return the converter, never <code>null</code>
 	 */
 	public PlaceholderListItemConverter<D, P> getConverter(){
 		return converter;
@@ -202,7 +202,7 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	 */
 	public interface ColumnItem<D, S, P extends PlaceholderListItem<D>> {
 		/**
-		 * Converst this item into an item that represents a {@link DockStation}
+		 * Converts this item into an item that represents a {@link DockStation}
 		 * 
 		 * @return the station, can be <code>null</code>
 		 */

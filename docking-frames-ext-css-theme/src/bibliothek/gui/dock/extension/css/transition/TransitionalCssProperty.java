@@ -35,7 +35,7 @@ import bibliothek.gui.dock.extension.css.CssRule;
  * <ul>
  * 	<li>To fully support the sub-properties of <code>T</code>, the clients needs to access the property with 
  * a {@link CssContainerTransitionProperty}.</li>
- *  <li>Values that are calculated should not show up as {@link CssProperty}, otherwise they will be overriden
+ *  <li>Values that are calculated should not show up as {@link CssProperty}, otherwise they will be overridden
  *  by the values defined in the current, leading {@link CssRule} (negating the effects of the transition).</li> 
  * </ul>
  * @author Benjamin Sigg

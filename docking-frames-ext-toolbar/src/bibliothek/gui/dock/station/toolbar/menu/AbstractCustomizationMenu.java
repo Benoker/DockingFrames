@@ -102,7 +102,7 @@ public abstract class AbstractCustomizationMenu implements CustomizationMenu{
 	}
 	
 	/**
-	 * Gets the callback for retreiving more information about the station that opened this menu.
+	 * Gets the callback for retrieving more information about the station that opened this menu.
 	 * @return the callback, will be <code>null</code> if this menu is {@link #isOpen() not open}.
 	 */
 	public CustomizationMenuCallback getCallback(){

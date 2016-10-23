@@ -52,7 +52,7 @@ import bibliothek.gui.dock.support.lookandfeel.LookAndFeelList;
 
 /**
  * The core is used to startup the application. The core contains some 
- * of the global available resouces like the applications icon.
+ * of the global available resources like the applications icon.
  * @author Benjamin Sigg
  */
 public class Core implements Demonstration{

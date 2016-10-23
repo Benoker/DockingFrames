@@ -83,7 +83,7 @@ public class ToolbarMovingImageFactory implements DockableMovingImageFactory{
 	}
 
 	/**
-	 * Wrapps around a {@link MovingImage} and changes the offset of the image.
+	 * Wraps around a {@link MovingImage} and changes the offset of the image.
 	 * @author Benjamin Sigg
 	 */
 	private class OffsetWrapper implements MovingImage{

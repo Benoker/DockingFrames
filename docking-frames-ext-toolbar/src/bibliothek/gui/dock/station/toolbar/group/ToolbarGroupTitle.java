@@ -84,7 +84,7 @@ public class ToolbarGroupTitle extends ColumnDockTitle {
 	
 	/**
 	 * Creates a new title.
-	 * @param dockable the element, preferrably a {@link ToolbarGroupDockStation}, which is represented
+	 * @param dockable the element, preferably a {@link ToolbarGroupDockStation}, which is represented
 	 * by this title.
 	 * @param origin how to create this title
 	 */

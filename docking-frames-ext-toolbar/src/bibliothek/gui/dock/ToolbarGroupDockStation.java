@@ -164,7 +164,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 	};
 
-	/** factory creating the current dividier strategy */
+	/** factory creating the current divider strategy */
 	private PropertyValue<ToolbarGroupDividerStrategyFactory> dividerStrategyFactory = new PropertyValue<ToolbarGroupDividerStrategyFactory>( DIVIDER_STRATEGY_FACTORY ){
 		@Override
 		protected void valueChanged( ToolbarGroupDividerStrategyFactory oldValue, ToolbarGroupDividerStrategyFactory newValue ){
@@ -393,7 +393,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	}
 
 	/**
-	 * Gets the {@link StationChildHandle} which displayes <code>dockable</code>.
+	 * Gets the {@link StationChildHandle} which displays <code>dockable</code>.
 	 * @param dockable the item to search
 	 * @return the handle showing <code>dockable</code> or <code>null</code> if not found
 	 */
@@ -853,7 +853,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	}
 
 	/**
-	 * Creates a new {@link StationChildHandle} that wrapps around
+	 * Creates a new {@link StationChildHandle} that wraps around
 	 * <code>dockable</code>. This method does not add the handle to any list or
 	 * fire any events, that is the callers responsibility. Callers should also
 	 * call {@link #addComponent(StationChildHandle)} with the new handle.
@@ -1608,7 +1608,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 *            the element to drop
 	 * @param property
 	 *            the location of <code>dockable</code>
-	 * @return <code>true</code> if dropping was successfull, <code>false</code>
+	 * @return <code>true</code> if dropping was successful, <code>false</code>
 	 *         otherwise
 	 */
 	public boolean drop( Dockable dockable, ToolbarGroupProperty property ){

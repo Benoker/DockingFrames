@@ -42,7 +42,7 @@ import bibliothek.gui.dock.station.layer.LayerPriority;
 
 /**
  * This layer slim the drop area of {@link ToolbarGroupDockStation}, as it take
- * into account means an area where no dockable can be droped into the station.
+ * into account means an area where no dockable can be dropped into the station.
  * 
  * @author Herve Guillaume
  */

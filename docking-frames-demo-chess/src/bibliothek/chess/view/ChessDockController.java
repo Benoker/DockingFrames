@@ -33,7 +33,7 @@ public class ChessDockController extends DockController {
     /**
      * Creates the relocator that should be used by this controller.
      * @param controller <code>this</code>
-     * @param setup a collection for listeners that get informed when the setup is complet
+     * @param setup a collection for listeners that get informed when the setup is complete
      * @return the new relocator
      */
     private DockRelocator createChessRelocator( DockController controller, ControllerSetupCollection setup ) {

@@ -470,11 +470,11 @@ public abstract class WizardNodeMap {
 	protected abstract void handlePersistentColumnsAdapted( PersistentColumn[] persistentColumns );
 
 	/**
-	 * Tries to remap the size information from <code>oldColumns</code> to <code>newColumns</code>. The size
+	 * Tries to re-map the size information from <code>oldColumns</code> to <code>newColumns</code>. The size
 	 * of unmapped columns will be -1.
 	 * @param oldColumns an old set of columns, may be modified
 	 * @param newColumns the new set of columns, may be modified
-	 * @return the remaped columns, may be one of the input arrays
+	 * @return the re-mapped columns, may be one of the input arrays
 	 */
 	private PersistentColumn[] adapt( PersistentColumn[] oldColumns, PersistentColumn[] newColumns ){
 		for( PersistentColumn column : newColumns ){

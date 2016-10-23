@@ -39,7 +39,7 @@ import bibliothek.gui.dock.themes.icon.*;
 public class CTabMenuOverflowIconBridge extends TabMenuOverflowIconBridge {
    /**
     * Returns an icon that represents <code>menu</code> in its current state. This method is called
-    * everytime when the number of children of <code>menu</code> changes.
+    * every time when the number of children of <code>menu</code> changes.
     * @param menu the menu for which an icon is required
     * @return the icon, can (but should not) be <code>null</code>
     */

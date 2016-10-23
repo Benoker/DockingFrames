@@ -467,11 +467,11 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 	 * Layouts <code>components</code> such that they fit into
 	 * <code>available</code>.
 	 * 
-	 * @param parent the {@link Container} whose layout is upated
+	 * @param parent the {@link Container} whose layout is updated
 	 * @param components the components to layout
 	 * @param required the size required for the optimal layout
 	 * @param available the size that is actually available
-	 * @param size which {@link Dimension} to get for layouting the components
+	 * @param size which {@link Dimension} to get for laying out the components
 	 */
 	protected void layout( Container parent, Wrapper[][] components, Dimension required, Dimension available, Size size ){
 		if( components.length == 0 || available.width < 1 || available.height < 1 ) {
