@@ -44,7 +44,7 @@ public interface MaximizedModeArea extends ModeArea{
 	 * is executed of a {@link LocationMode} that is not the owner of this area. The element 
 	 * <code>event.getDockable()</code> may or may not be a child of this station. This method is called
 	 * before {@link #onApply(LocationModeEvent, Dockable)} is called.
-	 * @param event detailed informaion about the event
+	 * @param event detailed information about the event
 	 * @return a piece of code executed once <code>apply</code> has finished its job 
 	 */
 	public Runnable onApply( LocationModeEvent event );

@@ -395,7 +395,7 @@ public class ModeSettings<A,B> {
     
     /**
      * Writes the contents of this setting in xml format.
-     * @param element the elemnt to write into, the attributes of
+     * @param element the element to write into, the attributes of
      * element will not be changed.
      * @see #readXML(XElement)
      */

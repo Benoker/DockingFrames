@@ -45,7 +45,7 @@ public class CToolbarGroupLocation extends CLocation{
 	
 	/**
 	 * Creates a new location.
-	 * @param parent the location definied the root station, must not be <code>null</code>
+	 * @param parent the location defined by the root station, must not be <code>null</code>
 	 * @param group the index of the group, at least 0
 	 */
 	public CToolbarGroupLocation( CLocation parent, int group ){

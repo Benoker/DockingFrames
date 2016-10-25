@@ -403,7 +403,7 @@ public class CLocationModeManager extends LocationModeManager<CLocationMode>{
      * is put into another mode (usually the {@link #getNormalMode() normal mode}).<br>
      * This method also checks the working area, provided that the current mode respects
      * the working-area settings.<br>
-     * This method returns immediatelly if in {@link #isLayouting() layouting mode}
+     * This method returns immediately if in {@link #isLayouting() layouting mode}
      * @param dockable the element whose mode is to be checked
      */
 	public void ensureValidLocation( CDockable dockable ){

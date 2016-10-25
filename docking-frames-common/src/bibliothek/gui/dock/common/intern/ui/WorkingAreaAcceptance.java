@@ -103,7 +103,7 @@ public class WorkingAreaAcceptance implements DockAcceptance {
     }
     
     /**
-     * Searches the first {@link CStation} with the woking-area property set to <code>true</code> in the path to the root.
+     * Searches the first {@link CStation} with the working-area property set to <code>true</code> in the path to the root.
      * @param element some element
      * @return the first {@link CStation} that occurs on the path from
      * <code>element</code> to the root and which is a working area

@@ -38,7 +38,7 @@ import bibliothek.util.FrameworkOnly;
 /**
  * Helps {@link CDockable}s to keep track of their location and can automatically
  * fire events to a {@link CDockableLocationListener}.<br>
- * Clients should not instanciate this class directly, they should add a 
+ * Clients should not instantiate this class directly, they should add a
  * {@link CDockableLocationListener} to a {@link CDockable} instead.
  * @author Benjamin Sigg
  */

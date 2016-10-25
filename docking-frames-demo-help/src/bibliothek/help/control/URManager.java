@@ -89,7 +89,7 @@ public class URManager {
      * changed. This manager will add a new {@link Step} to the {@link #stack()},
      * and might delete some <code>Step</code>s when necessary.
      * <br>Clients should not call this method unless they created
-     * the {@link URManager} for themself.
+     * the {@link URManager} for themselves.
      * @param entry the new selection
      */
     public void selected( Entry entry ) {

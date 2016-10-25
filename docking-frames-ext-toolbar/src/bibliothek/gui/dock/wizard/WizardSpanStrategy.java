@@ -270,7 +270,7 @@ public class WizardSpanStrategy {
 	}
 	
 	/**
-	 * Immediatelly resets all {@link Span}s to have a size of <code>0</code>.
+	 * Immediately resets all {@link Span}s to have a size of <code>0</code>.
 	 */
 	public void unsetPut(){
 		selectedColumn = -1;
@@ -343,7 +343,7 @@ public class WizardSpanStrategy {
 	}
 	
 	/**
-	 * Gets the current size of <code>span</code>. May be overriden by subclasses to influence the
+	 * Gets the current size of <code>span</code>. May be overridden by subclasses to influence the
 	 * size of a span.
 	 * @param span the size of <code>span</code>
 	 * @return the size of the span

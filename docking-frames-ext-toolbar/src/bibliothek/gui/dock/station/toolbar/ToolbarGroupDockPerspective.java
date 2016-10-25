@@ -144,7 +144,7 @@ public class ToolbarGroupDockPerspective implements PerspectiveStation, Perspect
 	}
 	
 	/**
-	 * Sets the orientation of this station. Please note that the orientation can be overriden
+	 * Sets the orientation of this station. Please note that the orientation can be overridden
 	 * by the parent {@link DockStation}.
 	 * @param orientation the orientation, must not be <code>null</code>
 	 */

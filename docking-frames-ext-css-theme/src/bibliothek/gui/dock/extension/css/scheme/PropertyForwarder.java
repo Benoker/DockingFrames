@@ -63,7 +63,7 @@ public class PropertyForwarder {
 	 * Creates a new forwarder.
 	 * @param source the source of all values
 	 * @param target the target for all values
-	 * @param scheme convertion information for values
+	 * @param scheme conversion information for values
 	 */
 	public PropertyForwarder( CssRuleContent source, CssPropertyContainer target, CssScheme scheme ){
 		this.source = source;

@@ -70,7 +70,7 @@ public abstract class OrientationObserver implements OrientingDockStationListene
 	}
 	
 	/**
-	 * Destroyes this observer, all resources are prepared for garbage collection.
+	 * Destroys this observer, all resources are prepared for garbage collection.
 	 */
 	public void destroy(){
 		dockable.removeDockHierarchyListener( listener );

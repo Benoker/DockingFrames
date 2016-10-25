@@ -336,7 +336,7 @@ public interface CDockable {
 	/**
 	 * Tells whether this <code>CDockable</code> is currently visible to the user. A <code>CDockable</code>
 	 * which is not {@link #isVisible() visible}, is not <code>dockable visible</code> either. The method
-	 * does not take into account that a frame may be positioned such that it is not entierly visible on the
+	 * does not take into account that a frame may be positioned such that it is not entirely visible on the
 	 * screen. Neither does the method take into account, that a frame may be minimized.
 	 * @return <code>true</code> if the user should be able to see this item
 	 * @deprecated this method gets replaced by {@link #isShowing()}, which offers the exact same information. This method
@@ -349,7 +349,7 @@ public interface CDockable {
 	/**
 	 * Tells whether this <code>CDockable</code> is currently visible to the user. A <code>CDockable</code>
 	 * which is not {@link #isVisible() visible}, is not <code>showing</code> either. The method
-	 * does not take into account that a frame may be positioned such that it is not entierly visible on the
+	 * does not take into account that a frame may be positioned such that it is not entirely visible on the
 	 * screen. The method may or may not take into account, that a frame may be minimized.<br>
 	 * Clients interested in monitoring this property can add a {@link CDockableLocationListener} to this dockable.
 	 * @return <code>true</code> if the user should be able to see this item
@@ -461,7 +461,7 @@ public interface CDockable {
     
     /**
      * Gets an algorithm that tells how this {@link CDockable} attempts to group itself automatically with other {@link Dockable}s.
-     * The algorithm is able to rewrite the location of this {@link CDockable} everytime when it is moved to a new location, assuming
+     * The algorithm is able to rewrite the location of this {@link CDockable} every time when it is moved to a new location, assuming
      * that no stronger mechanism, or the user, already defined a location. 
      * @return the grouping behavior, or <code>null</code>
      */
@@ -489,7 +489,7 @@ public interface CDockable {
     public void setMinimizedSize( Dimension size );
     
     /**
-     * Gets the size which is used when this <code>CDockable</code> is minimzed and
+     * Gets the size which is used when this <code>CDockable</code> is minimized and
      * on a popup window. If a value below 0 is set, then the default size
      * is used.
      * @return the size

@@ -51,7 +51,7 @@ public interface CssTransitionCallback {
 	public void step( int delay );
 	
 	/**
-	 * Called by a {@link CssTransition} if it is no longer in use, immediatelly releases all resources
+	 * Called by a {@link CssTransition} if it is no longer in use, immediately releases all resources
 	 * that were ever used by the transition.
 	 */
 	public void destroyed();
@@ -100,7 +100,7 @@ public interface CssTransitionCallback {
 	public void addSourceDependency( String key, CssProperty<?> property );
 	
 	/**
-	 * Removes the source depdendency <code>key</code>.
+	 * Removes the source dependency <code>key</code>.
 	 * @param key the name of the property to remove
 	 */
 	public void removeSourceDependency( String key );
@@ -116,7 +116,7 @@ public interface CssTransitionCallback {
 	public void addTargetDependency( String key, CssProperty<?> property );
 	
 	/**
-	 * Removes the target depdendency <code>key</code>.
+	 * Removes the target dependency <code>key</code>.
 	 * @param key the name of the property to remove
 	 */
 	public void removeTargetDependency( String key );

@@ -37,7 +37,7 @@ import bibliothek.gui.dock.util.font.FontModifier;
  */
 public interface CssFontModifier extends CssPropertyContainer{
 	/**
-	 * Gets the actual modifier. The object returned by this method is imutable.
+	 * Gets the actual modifier. The object returned by this method is immutable.
 	 * @return the actual modifier
 	 */
 	public FontModifier getModifier();

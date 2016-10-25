@@ -823,7 +823,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 * @param dockable
 	 *            a new child
 	 * @param index the group of the child  
-	 * @return <code>true</code> if dropping was successfull
+	 * @return <code>true</code> if dropping was successful
 	 */
 	private boolean drop( Dockable dockable, int index ){
 		// System.out.println(this.toString()
@@ -1040,7 +1040,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	/**
 	 * Removes the child with the given <code>index</code> from this station.<br>
 	 * Note: clients may need to invoke {@link DockController#freezeLayout()}
-	 * and {@link DockController#meltLayout()} to ensure noone else adds or
+	 * and {@link DockController#meltLayout()} to ensure no-one else adds or
 	 * removes <code>Dockable</code>s.
 	 * 
 	 * @param index
@@ -1082,7 +1082,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 *            Dockable to add
 	 * @param index
 	 *            Index where add dockable
-	 * @return <code>true</code> if dropping was successfull
+	 * @return <code>true</code> if dropping was successful
 	 */
 	protected boolean add( Dockable dockable, int index ){
 		return add( dockable, index, null );

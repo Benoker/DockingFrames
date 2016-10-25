@@ -40,7 +40,7 @@ import bibliothek.gui.dock.util.DockUtilities;
  * parent belong to the same group. This behavior also assumes that all {@link Combiner}s will create new 
  * {@link StackDockStation}s and that {@link StackDockStation}s cannot be put into each other. All these assumptions
  * hold true with the default settings of a {@link CControl}.<br>
- * This behavior does not move around entire {@link StackDockStation}s, it moves around each {@link Dockable} indiviually.
+ * This behavior does not move around entire {@link StackDockStation}s, it moves around each {@link Dockable} individually.
  * This has the benefit that {@link StackDockStation}s cannot accidentally be put into each other.
  * @author Benjamin Sigg
  */

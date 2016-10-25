@@ -42,13 +42,13 @@ import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
 
 /**
  * A wrapper around a {@link ToolbarGroupDockPerspective}, offers features that are
- * usefull in the Common project only.<br>
+ * useful in the Common project only.<br>
  * A group of toolbars is organized similar to a table: there are columns of toolbars, and each
  * column has its own size.<br>
  * <b>Important note:</b> "columns" is an abstract idea, they do not exist as {@link DockStation}s. The {@link CToolbarGroupPerspective}
  * tries to keep its abstract representation of columns valid, if however two {@link CToolbarGroupPerspective}s point
  * to the same {@link ToolbarGroupDockPerspective} one perspective can modify the underlying data structure without
- * the other perspectice noticing the changes immediatelly.
+ * the other perspective noticing the changes immediately.
  * @author Benjamin Sigg
  */
 public class CToolbarGroupPerspective {

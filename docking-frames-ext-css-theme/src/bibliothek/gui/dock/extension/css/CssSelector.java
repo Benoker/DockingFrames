@@ -39,7 +39,7 @@ public interface CssSelector {
 	public boolean matches( CssPath path );
 	
 	/**
-	 * Tells how specifictive this selector is.
+	 * Tells how specific this selector is.
 	 * @return the priority of this selector
 	 */
 	public CssSpecificity getSpecificity();

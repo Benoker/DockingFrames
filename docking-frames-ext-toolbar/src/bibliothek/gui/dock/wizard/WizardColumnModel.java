@@ -227,9 +227,9 @@ public class WizardColumnModel {
 	}
 	
 	/**
-	 * Called if the user changed the position of a dividier.
-	 * @param node the node whose dividier changed
-	 * @param divider the new dividier
+	 * Called if the user changed the position of a divider.
+	 * @param node the node whose divider changed
+	 * @param divider the new divider
 	 */
 	public void setDivider( Divideable divideable, double divider ){
 		WizardNodeMap map = getMap();
@@ -539,7 +539,7 @@ public class WizardColumnModel {
 	}
 	
 	/**
-	 * Updates the boundaries of <code>node</code> and all its children. This method recursively visites all
+	 * Updates the boundaries of <code>node</code> and all its children. This method recursively visits all
 	 * children of <code>node</code> and forwards the call to {@link #updateBounds(SplitNode, double, double, double, double, WizardNodeMap)}
 	 * if a {@link Root} or a {@link Node} is found.
 	 * @param node the node whose boundaries are to be update

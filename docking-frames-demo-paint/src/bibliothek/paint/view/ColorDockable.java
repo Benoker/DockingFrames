@@ -141,7 +141,7 @@ public class ColorDockable extends DefaultSingleCDockable{
 	}
 	
 	/**
-	 * Transmitts a new color to {@link #manager} and to all other parties
+	 * Transmits a new color to {@link #manager} and to all other parties
 	 * that need to be informed.
 	 * @param color the new color
 	 */

@@ -240,7 +240,7 @@ public class WizardSplitDockStation extends SplitDockStation implements Scrollab
 	/**
 	 * If a {@link Dockable} is removed from this {@link WizardSplitDockStation}, then the column of the
 	 * {@link Dockable} is resized such that it has again its preferred size.
-	 * @param resizeOnRemove whether to automatically resize the columnss
+	 * @param resizeOnRemove whether to automatically resize the columns
 	 */
 	public void setResizeOnRemove( boolean resizeOnRemove ){
 		this.resizeOnRemove = resizeOnRemove;

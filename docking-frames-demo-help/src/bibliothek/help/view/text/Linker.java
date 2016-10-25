@@ -49,7 +49,7 @@ public abstract class Linker {
     /**
      * Searches an element that contains <code>point</code>.
      * @param point a location on the textpane
-     * @return the elemnt or <code>null</code> if there is nothing
+     * @return the element or <code>null</code> if there is nothing
      * at <code>point</code>.
      */
     protected Element elementAt( Point point ){

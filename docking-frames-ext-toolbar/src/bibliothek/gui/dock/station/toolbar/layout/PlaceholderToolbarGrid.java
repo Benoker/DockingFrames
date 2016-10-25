@@ -375,7 +375,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	/**
 	 * Tries to put <code>item</code> into this list at location
 	 * <code>placeholder</code>. If there is already an element at
-	 * <code>placeholder</code>, then the old item is silenlty removed and the
+	 * <code>placeholder</code>, then the old item is silently removed and the
 	 * new item inserted. This method may create a new non-empty column if
 	 * necessary.
 	 * 
@@ -637,7 +637,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	}
 
 	/**
-	 * Tells at which line <code>placeholder</code> apperas in the first column
+	 * Tells at which line <code>placeholder</code> appears in the first column
 	 * that contains <code>placeholder</code>. This includes empty columns.
 	 * 
 	 * @param placeholder

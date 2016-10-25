@@ -33,7 +33,7 @@ package bibliothek.gui.dock.extension.css;
  * In nested properties, if the parent property has the key "x" and the child property has the
  * key "y", then inside the css file a property called "x-y" is searched.
  * 
- * @author Benajmin Sigg
+ * @author Benjamin Sigg
  *
  * @param <T> the type of this property
  */

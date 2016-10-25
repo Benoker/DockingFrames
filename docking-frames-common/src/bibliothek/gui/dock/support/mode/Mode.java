@@ -67,7 +67,7 @@ public interface Mode<H> {
 	 * if this mode was never applied or returns <code>null</code> on {@link #current(Dockable)}.
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
-	 * @return <code>true</code> if <code>dockable</code> was succesfully moved on its parent or to a new parent, 
+	 * @return <code>true</code> if <code>dockable</code> was successfully moved on its parent or to a new parent,
 	 * or <code>false</code> if <code>dockable</code> did not change its location
 	 */
 	public boolean apply( Dockable dockable, H history, AffectedSet set );
@@ -82,7 +82,7 @@ public interface Mode<H> {
 	
 	/**
 	 * Checks whether this mode is a default mode of <code>dockable</code>. A 
-	 * default mode is a mode that is choosen per default, if no other mode
+	 * default mode is a mode that is chosen per default, if no other mode
 	 * is selected. There should be only one default-mode per {@link Dockable}.
 	 * @param dockable some dockable, not <code>null</code>
 	 * @return whether this is a default mode

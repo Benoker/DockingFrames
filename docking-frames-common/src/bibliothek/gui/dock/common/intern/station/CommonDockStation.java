@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.intern.CommonElement;
  * An interface that can be implemented by classes that extend a {@link DockStation} and
  * that represent a {@link CStation}.
  * @author Benjamin Sigg
- * @param <S> the kind of station this wrapps
+ * @param <S> the kind of station this wraps
  * @param <C> the kind of {@link CommonDockStation} this is
  */
 public interface CommonDockStation<S extends DockStation, C extends CommonDockStation<S,C>> extends CommonElement, DockStation{

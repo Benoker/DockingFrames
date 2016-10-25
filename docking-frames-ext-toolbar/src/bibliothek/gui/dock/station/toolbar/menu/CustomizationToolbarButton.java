@@ -190,7 +190,7 @@ public abstract class CustomizationToolbarButton implements
 	 * this button.
 	 * 
 	 * @return the current location
-	 * @throws IllegalStateExceptione
+	 * @throws IllegalStateException
 	 *             if {@link #bind(CustomizationMenuCallback)} was not called
 	 */
 	protected ItemLocation getItemLocation(){

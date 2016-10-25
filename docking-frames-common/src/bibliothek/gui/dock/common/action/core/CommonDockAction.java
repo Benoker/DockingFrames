@@ -34,7 +34,7 @@ import bibliothek.gui.dock.common.action.CAction;
  */
 public interface CommonDockAction extends DockAction{
 	/**
-	 * Gets the {@link CAction} which wrapps this {@link DockAction}.
+	 * Gets the {@link CAction} which wraps this {@link DockAction}.
 	 * @return the wrapping action, not <code>null</code>
 	 */
 	public CAction getAction();

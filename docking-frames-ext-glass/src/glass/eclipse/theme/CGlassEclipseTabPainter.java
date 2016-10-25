@@ -181,7 +181,7 @@ public class CGlassEclipseTabPainter extends BaseTabComponent {
    }
 
    /**
-    * Inits additional colors for painting the glass effect.
+    * Initializes additional colors for painting the glass effect.
     */
    protected void initAdditionalColors () {
       colGlassCenterSelected = new CGlassColor("glass.selected.center", getStation(), getDockable(), new Color(222, 222, 222));

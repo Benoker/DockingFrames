@@ -72,7 +72,7 @@ public interface TransitionalCssRuleContent extends CssRuleContent{
 	 * {@link CssProperty}s matching this method are not removed when the {@link CssRule} changes, instead they
 	 * continue to be used until the transitions end.
 	 * @param property the name of a property
-	 * @return whehter <code>property</code> declares an input value
+	 * @return whether <code>property</code> declares an input value
 	 */
 	public boolean isInput( CssPropertyKey property );
 	

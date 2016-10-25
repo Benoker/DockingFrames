@@ -41,7 +41,7 @@ import bibliothek.gui.dock.toolbar.CToolbarContentArea;
  */
 public class CToolbarContentPerspective extends CContentPerspective{
 	/**
-	 * Wrapps around <code>perspective</code> and represents the {@link CToolbarContentArea}
+	 * Wraps around <code>perspective</code> and represents the {@link CToolbarContentArea}
 	 * with unique identifier <code>id</code>.
 	 * @param perspective the source of all {@link CStationPerspective}s
 	 * @param id the unique identifier of the {@link CToolbarContentArea}

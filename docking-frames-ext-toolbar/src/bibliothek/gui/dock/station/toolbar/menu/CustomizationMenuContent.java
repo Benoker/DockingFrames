@@ -62,7 +62,7 @@ public interface CustomizationMenuContent {
 	public void bind( CustomizationMenuCallback callback );
 	
 	/**
-	 * Informs this item that it is no longer used. This method must not be called twive in a row, it
+	 * Informs this item that it is no longer used. This method must not be called twice in a row, it
 	 * must be called after a call to {@link #bind()}.
 	 */
 	public void unbind();

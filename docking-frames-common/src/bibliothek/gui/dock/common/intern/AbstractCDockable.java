@@ -634,10 +634,10 @@ public abstract class AbstractCDockable implements CDockable {
     }
     
     /**
-     * Enables or disables a part of this dockable. Some effects are visible immediatelly, others
+     * Enables or disables a part of this dockable. Some effects are visible immediately, others
      * will need some time to show up. Usually disabling a part means that said part is shown in
      * some gray colors and won't react to any user input (e.g. to the mouse).<br>
-     * Developers which need more accuraccy in disabling items, should have a look at the
+     * Developers which need more accuracy in disabling items, should have a look at the
      * {@link DisablingStrategy}.
      * @param item what part of this {@link CDockable} should be enabled or disabled 
      * @param enabled whether the part should be enabled
@@ -928,7 +928,7 @@ public abstract class AbstractCDockable implements CDockable {
     
     /**
      * Sets the {@link Component} which should receive the focus when this <code>CDockable</code> is focused. Please note
-     * that the focus will be transfered to this component every time the dockable lost the focus and gained the focus again. The
+     * that the focus will be transferred to this component every time the dockable lost the focus and gained the focus again. The
      * default behavior of re-focusing the last focus owner should be sufficient for most applications.
      * @param component the component to focus, can be <code>null</code>, should be a child of this <code>CDockable</code>
      */

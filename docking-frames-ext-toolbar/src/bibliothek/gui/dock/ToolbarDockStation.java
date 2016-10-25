@@ -464,7 +464,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	 *            the element to add
 	 * @param index
 	 *            the location of <code>dockable</code>
-	 * @return whether the operation was succesfull or not
+	 * @return whether the operation was successful or not
 	 */
 	public boolean drop( Dockable dockable, int index ){
 		return drop( dockable, index, false );
@@ -641,7 +641,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	/**
 	 * Removes the child with the given <code>index</code> from this station.<br>
 	 * Note: clients may need to invoke {@link DockController#freezeLayout()}
-	 * and {@link DockController#meltLayout()} to ensure noone else adds or
+	 * and {@link DockController#meltLayout()} to ensure no-one else adds or
 	 * removes <code>Dockable</code>s.
 	 * 
 	 * @param index
@@ -990,7 +990,7 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	 * 
 	 * @param property
 	 *            the property to check
-	 * @return <code>true</code> if this sublcass knows how to handle the type
+	 * @return <code>true</code> if this subclass knows how to handle the type
 	 *         of <code>property</code>
 	 */
 	protected boolean isValidProperty( DockableProperty property ){

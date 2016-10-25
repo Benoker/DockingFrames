@@ -47,11 +47,11 @@ import bibliothek.gui.dock.station.toolbar.title.ColumnDockActionSourceListener;
 
 /**
  * A class that can create one {@link DockActionSource} for each {@link ToolbarColumn} a {@link ToolbarGroupDockStation} 
- * has. This class is built such that sublcasses can easily access or modify the {@link DockActionSource}s. 
+ * has. This class is built such that subclasses can easily access or modify the {@link DockActionSource}s.
  * 
  * @author Benjamin Sigg
  * @param <P> the type of object that represents a {@link Dockable}
- * @param <C> the type of this sublcass
+ * @param <C> the type of this subclass
  */
 public abstract class AbstractToolbarGroupActions<P, C extends AbstractToolbarGroupActions<P, C>.Column> implements ColumnDockActionSource {
 	/**

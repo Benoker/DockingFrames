@@ -27,7 +27,7 @@ package bibliothek.gui.dock.extension.css.doc;
 
 /**
  * This most simple formatter just prints out the entire documentation tree onto the console.
- * @author Benjamin Siggs
+ * @author Benjamin Sigg
  */
 public class TextFormatter implements DocFormatter{
 	private StringBuilder builder;

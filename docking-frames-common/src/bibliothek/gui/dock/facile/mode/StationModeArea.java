@@ -48,7 +48,7 @@ public interface StationModeArea extends ModeArea{
 	
 	/**
 	 * Sets the location of <code>dockable</code> to <code>location</code>
-	 * and tries to ensure that <code>dockable</code> is a child of this station.</br>
+	 * and tries to ensure that <code>dockable</code> is a child of this station.<br>
 	 * This method may completely fail to change the location of <code>dockable</code>, for example because
 	 * a {@link DockAcceptance} does not allow the dockable to be moved. In such cases <code>false</code> is 
 	 * returned. 
@@ -56,7 +56,7 @@ public interface StationModeArea extends ModeArea{
 	 * @param location the new location, may be <code>null</code>
 	 * @param set this method has to store all {@link Dockable}s which might have changed their
 	 * mode in the set.
-	 * @return <code>true</code> if <code>docakble</code> is now a child of this {@link StationModeArea}, <code>false</code> if not
+	 * @return <code>true</code> if <code>dockable</code> is now a child of this {@link StationModeArea}, <code>false</code> if not
 	 */
 	public boolean setLocation( Dockable dockable, DockableProperty location, AffectedSet set );
 }

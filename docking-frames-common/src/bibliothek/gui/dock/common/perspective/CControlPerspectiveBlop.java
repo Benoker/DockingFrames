@@ -39,7 +39,7 @@ import bibliothek.util.xml.XElement;
 import bibliothek.util.xml.XException;
 
 /**
- * A {@link CControlPerspectiveBlop} stores all the data a file contains that was writting
+ * A {@link CControlPerspectiveBlop} stores all the data a file contains that was written
  * with {@link CControl#write(java.io.DataOutputStream)} or {@link CControl#writeXML(java.io.File)}. This
  * class allows clients to read and modify the layout files without actually loading any {@link DockElement}s.
  * @author Benjamin Sigg

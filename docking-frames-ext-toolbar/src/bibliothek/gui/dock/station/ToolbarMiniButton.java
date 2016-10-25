@@ -44,7 +44,7 @@ import bibliothek.gui.dock.themes.basic.action.buttons.MiniButtonContent;
 import bibliothek.gui.dock.themes.border.BorderModifier;
 
 /**
- * A {@link BasicMiniButton} with custom borders, to be shown on the titlbar of
+ * A {@link BasicMiniButton} with custom borders, to be shown on the titlebar of
  * a toolbar.
  * 
  * @author Benjamin Sigg

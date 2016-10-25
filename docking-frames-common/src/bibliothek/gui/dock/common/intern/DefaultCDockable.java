@@ -56,7 +56,7 @@ public class DefaultCDockable extends AbstractCDockable{
      *  <li>MIN: whether the dockable can be minimized</li>
      *  <li>MAX: whether the dockable can be maximized</li>
      *  <li>EXT: whether the dockable can be externalized</li>
-     *  <li>STACK: whether the docakble can be combined with other dockables, this
+     *  <li>STACK: whether the dockable can be combined with other dockables, this
      *  feature normally should be allowed.</li>
      *  <li>CLOSE: whether the dockable can be closed by the user through an action 
      *  (normally a "x" in the right corner of the title)</li>

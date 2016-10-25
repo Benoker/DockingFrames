@@ -35,7 +35,7 @@ import bibliothek.gui.dock.common.intern.station.CommonDockStation;
 import bibliothek.gui.dock.util.DockUtilities;
 
 /**
- * A set of utility methods usefull in the Common project
+ * A set of utility methods useful in the Common project
  * @author Benjamin Sigg
  * @see DockUtilities
  */

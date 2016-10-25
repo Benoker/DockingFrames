@@ -39,7 +39,7 @@ public interface ModeAreaListener {
 	/**
 	 * To be called if a set of {@link Dockable}s, which are children of the
 	 * {@link ModeArea} <code>source</code>, changed their location such that
-	 * their {@link Mode} might change.</br>
+	 * their {@link Mode} might change.<br>
 	 * <b>Note:</b> this method gets only called if {@link Dockable#getDockParent()}
 	 * did not change. Only {@link ModeArea}s which represent more than one
 	 * {@link Mode} are required to call this listener.

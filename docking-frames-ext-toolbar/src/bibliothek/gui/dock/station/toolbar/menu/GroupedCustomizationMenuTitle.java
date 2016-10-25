@@ -45,7 +45,7 @@ import bibliothek.gui.DockController;
 
 /**
  * This is the default component to be used by a {@link GroupedCustomizationMenuContent} as title for one group.
- * @author Benjmain Sigg
+ * @author Benjamin Sigg
  */
 public class GroupedCustomizationMenuTitle implements CustomizationMenuContent{
 	private JPanel titlePanel;

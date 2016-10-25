@@ -205,7 +205,7 @@ public class CControlPerspective {
     
     /**
      * Renames the perspective <code>source</code> to <code>destination</code>. If there is already a 
-     * layout with name <code>destination</code> it will be overriden. This operation works directly on the
+     * layout with name <code>destination</code> it will be overridden. This operation works directly on the
      * {@link CControl}, already existing {@link CPerspective}s will not be affected by invoking this method.
      * @param source the name of the source
      * @param destination the name of the destination

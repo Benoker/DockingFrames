@@ -74,7 +74,7 @@ public class CLocationModeSettings<B> extends ModeSettings<Location,B>{
 	
 	/**
 	 * If there were settings rescued from an older version, then
-	 * these settings are transfered to <code>maximizedMode</code>.
+	 * these settings are transferred to <code>maximizedMode</code>.
 	 * @param maximizedMode the mode to store settings in
 	 */
 	public void rescue( CMaximizedMode maximizedMode ){
