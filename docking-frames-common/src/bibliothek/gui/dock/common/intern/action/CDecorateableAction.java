@@ -283,6 +283,25 @@ public class CDecorateableAction<A extends CommonDecoratableDockAction> extends 
         return action.getAccelerator();
     }
     
+    /**
+     * Tells this action that the {@link #setAccelerator(KeyStroke) accelerator} is global.
+     * A global action is executed whenever the accelerator keys are typed anywhere in the scope of
+     * DockingFrames (if for example the keys are typed on some random dialog, DockingFrames will not be 
+     * informed about the event).
+     * @param global should this action be listening to global key events
+     */
+    public void setAcceleratorIsGlobal( boolean global ){
+    	action.setAcceleratorIsGlobal( global );
+    }
+    
+    /**
+     * Whether this action is listening to global key events.
+     * @return <code>true</code> if global key events are supported
+     */
+    public boolean isAcceleratorGlobal(){
+    	return action.isAcceleratorGlobal();
+    }
+    
     @Override
     public A intern(){
     	return action;

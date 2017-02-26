@@ -66,6 +66,9 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
     /** allows to invoke this event by the keyboard, might be <code>null</code> */
     private KeyStroke accelerator;
     
+    /** whether to globally listen for all key events */
+    private boolean globalAccelerator = false;
+    
     /** the {@link Dockable} which is represented by this action and for which drag and drop support may be enabled */
     private Dockable representative;
     
@@ -219,6 +222,16 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
 		fireActionTooltipTextChanged( getBoundDockables() );
 	}
     
+    @Override
+    public void setAcceleratorIsGlobal( boolean global ) {
+    	this.globalAccelerator = global;
+    }
+    
+    @Override
+    public boolean isAcceleratorGlobal() {
+    	return globalAccelerator;
+    }
+    
     /**
      * Called when the user hit the {@link #setAccelerator(KeyStroke) accelerator}.
      * This method directly calls <code>trigger( dockable )</code>, subclasses
@@ -320,7 +333,12 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
 		}
 
 		public DockElement getTreeLocation(){
-			return dockable;
+			if( isAcceleratorGlobal() ){
+				return null;
+			}
+			else{
+				return dockable;
+			}
 		}
 		
 		@Override

@@ -1109,4 +1109,5 @@
 - Bugfix: Tabs of the Flat-theme did not respect the foreground color that was set by the client.
 
 [v1.1.2p19]
-- Bugfix: An exception was thrown when a CDockable was externalized, the eclipse-theme was selected, and someone was calling CControl.destroy 
+- Bugfix: An exception was thrown when a CDockable was externalized, the eclipse-theme was selected, and someone was calling CControl.destroy
+- API: added "setAcceleratorIsGlobal" to CDecoratableAction, allowing actions to monitor all key events of the application. 
