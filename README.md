@@ -1,6 +1,6 @@
 # Readme
 
-This project can be found on: http://dock.javaforge.com
+The newest versions of this project are published on http://docking-frames.org
 
 To learn how the framework works:
 
@@ -119,7 +119,7 @@ be sure to use latest &lt;version>-SNAPSHOT
 
 ## Maven Release Repository
 
-you can get latest release from maven central:
+you can get latest stable release from maven central:
 http://search.maven.org/#artifactdetails|org.dockingframes|docking-frames-common|1.1.1|jar
 
 just add to your pom.xml:

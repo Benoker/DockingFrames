@@ -1,6 +1,6 @@
 Readme
 
-This project can be found on: dock.javaforge.com
+The newest versions of this project are published on http://docking-frames.org
 
 To learn how the framework works:
  - read the guides
