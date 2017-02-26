@@ -222,12 +222,10 @@ public abstract class SimpleDockAction extends AbstractStandardDockAction implem
 		fireActionTooltipTextChanged( getBoundDockables() );
 	}
     
-    @Override
     public void setAcceleratorIsGlobal( boolean global ) {
     	this.globalAccelerator = global;
     }
     
-    @Override
     public boolean isAcceleratorGlobal() {
     	return globalAccelerator;
     }

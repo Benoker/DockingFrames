@@ -1,15 +1,15 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.4.24)  18 AUG 2012 11:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.26)  26 FEB 2017 10:07
 entering extended mode
+ restricted \write18 enabled.
  %&-line parsing enabled.
 **guide2.tex
 (./guide2.tex
-LaTeX2e <2009/09/24>
-Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, loaded.
-(/usr/share/texmf-texlive/tex/latex/base/article.cls
-Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/share/texmf-texlive/tex/latex/base/size10.clo
-File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+LaTeX2e <2016/02/01>
+Babel <3.9q> and hyphenation patterns for 3 language(s) loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@section=\count80
@@ -23,9 +23,9 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(/usr/share/texmf-texlive/tex/latex/listings/listings.sty
-(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
-Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
 \lst@mode=\count87
@@ -41,47 +41,54 @@ Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \lst@lineno=\count92
 \lst@maxwidth=\dimen106
 
-(/usr/share/texmf-texlive/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
 \c@lstnumber=\count93
 \lst@skipnumbers=\count94
 \lst@framebox=\box27
 )
-(/usr/share/texmf-texlive/tex/latex/listings/listings.cfg
-File: listings.cfg 2007/02/22 1.4 listings configuration
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2015/06/04 1.6 listings configuration
 ))
-Package: listings 2007/02/22 1.4 (Carsten Heinz)
+Package: listings 2015/06/04 1.6 (Carsten Heinz)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/color.sty
-Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2016/01/03 v1.1b Standard LaTeX Color (DPC)
 
-(/etc/texmf/tex/latex/config/color.cfg
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
-Package color Info: Driver file: pdftex.def on input line 130.
+Package color Info: Driver file: pdftex.def on input line 143.
 
-(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
+(/usr/share/texlive/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
 \Gread@gobject=\count95
 ))
-(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
-Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
-Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2016/01/03 v1.0q Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
-Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-(/etc/texmf/tex/latex/config/graphics.cfg
-File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
-Package graphics Info: Driver file: pdftex.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 95.
 )
 \Gin@req@height=\dimen107
 \Gin@req@width=\dimen108
 )
-(/usr/share/texmf-texlive/tex/latex/base/textcomp.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
 Package textcomp Info: Sub-encoding information:
 (textcomp)               5 = only ISO-Adobe without \textcurrency
@@ -94,62 +101,77 @@ Package textcomp Info: Sub-encoding information:
 (textcomp)             only a restricted character set as indicated.
 (textcomp)             Family '?' is the default used for unknown fonts.
 (textcomp)             See the documentation for details.
-Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 71.
+Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 79.
 
-(/usr/share/texmf-texlive/tex/latex/base/ts1enc.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1enc.def
 File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
 )
-LaTeX Info: Redefining \oldstylenums on input line 266.
-Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 281.
-Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 282.
-Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 283.
-Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 284.
-Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 285.
-Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 286.
-Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 287.
-Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 288.
-Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 289.
-Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 290.
-Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 291.
-Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 292.
-Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 293.
-Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 294.
-Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 295.
-Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 296.
-Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 297.
-Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 298.
-Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 299.
-Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 300.
-Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 301.
-Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 302.
-Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 303.
-Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 304.
+LaTeX Info: Redefining \oldstylenums on input line 334.
+Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 349.
+Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 350.
+Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 351.
+Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 352.
+Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 353.
+Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 354.
+Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 355.
+Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 356.
+Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 357.
+Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 358.
+Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 359.
+Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 360.
+Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 361.
+Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 362.
+Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 363.
+Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 364.
+Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 365.
+Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 366.
+Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 367.
+Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 368.
+Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 369.
+Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 370.
+Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 371.
+Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 372.
 
-Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 305.
-Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 306.
-Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 307.
-Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 308.
-Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 309.
-Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 310.
-Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 311.
-Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 312.
-Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 313.
-Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 314.
-Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 315.
-Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 316.
-Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 317.
-Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 318.
-Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 319.
-Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 320.
-Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 321.
-Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 322.
-Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 323.
-Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 324.
-Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 325.
-Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 326.
+Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 373.
+Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 374.
+Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 375.
+Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 376.
+Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 377.
+Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 378.
+Package textcomp Info: Setting lmr sub-encoding to TS1/0 on input line 379.
+Package textcomp Info: Setting lmdh sub-encoding to TS1/0 on input line 380.
+Package textcomp Info: Setting lmss sub-encoding to TS1/0 on input line 381.
+Package textcomp Info: Setting lmssq sub-encoding to TS1/0 on input line 382.
+Package textcomp Info: Setting lmvtt sub-encoding to TS1/0 on input line 383.
+Package textcomp Info: Setting lmtt sub-encoding to TS1/0 on input line 384.
+Package textcomp Info: Setting qhv sub-encoding to TS1/0 on input line 385.
+Package textcomp Info: Setting qag sub-encoding to TS1/0 on input line 386.
+Package textcomp Info: Setting qbk sub-encoding to TS1/0 on input line 387.
+Package textcomp Info: Setting qcr sub-encoding to TS1/0 on input line 388.
+Package textcomp Info: Setting qcs sub-encoding to TS1/0 on input line 389.
+Package textcomp Info: Setting qpl sub-encoding to TS1/0 on input line 390.
+Package textcomp Info: Setting qtm sub-encoding to TS1/0 on input line 391.
+Package textcomp Info: Setting qzc sub-encoding to TS1/0 on input line 392.
+Package textcomp Info: Setting qhvc sub-encoding to TS1/0 on input line 393.
+Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 394.
+Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 395.
+Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 396.
+Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 397.
+Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 398.
+Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 399.
+Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 400.
+Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 401.
+Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 402.
+Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 403.
+Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 404.
+Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 405.
+Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 406.
+Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 407.
+Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 408.
+Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 409.
 )
-(/usr/share/texmf-texlive/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2004/09/05 1.3 listings language file
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2015/06/04 1.6 listings language file
 )
 \contentbox=\box28
 \bkgdbox=\box29
@@ -175,13 +197,13 @@ LaTeX Font Info:    ... okay on input line 80.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 80.
 LaTeX Font Info:    Try loading font information for TS1+cmr on input line 80.
 
-(/usr/share/texmf-texlive/tex/latex/base/ts1cmr.fd
-File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 80.
 \c@lstlisting=\count96
 
-(/usr/share/texmf/tex/context/base/supp-pdf.mkii
+(/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count97
 \scratchdimen=\dimen109
@@ -192,15 +214,64 @@ LaTeX Font Info:    ... okay on input line 80.
 \MPscratchCnt=\count100
 \MPscratchDim=\dimen110
 \MPnumerator=\count101
+\makeMPintoPDFobject=\count102
 \everyMPtoPDFconversion=\toks17
+) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
 )
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 82.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 82.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 82.
- [1
+
+[1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./guide2.toc
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -215,10 +286,13 @@ LaTeX Font Info:    External font `cmex10' loaded for size
  [4]
 \openout2 = `introduction/chapter.aux'.
 
- (./introduction/chapter.tex <info.png, id=19, 102.784pt x 102.784pt>
+ (./introduction/chapter.tex <info.png, id=20, 102.784pt x 102.784pt>
 File: info.png Graphic file (type png)
 
 <use info.png>
+Package pdftex.def Info: info.png used on input line 21.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1939) in paragraph at lines 21--21
 []\OT1/cmr/m/n/10 Clients should make use of the \OT1/cmtt/m/n/10 Common \OT1/c
 mr/m/n/10 project. In or-
@@ -234,75 +308,125 @@ e.jar \OT1/cmr/m/n/10 and
 
 
 
-pdfTeX warning: /usr/bin/pdflatex: pop empty color page stack 0
+pdfTeX warning: pdflatex: pop empty color page stack 0
 
 
-pdfTeX warning: /usr/bin/pdflatex: pop empty color page stack 0
+pdfTeX warning: pdflatex: pop empty color page stack 0
  <./info.png>]
 File: info.png Graphic file (type png)
- <use info.png> <stop.png, id=28, 102.784pt x 102.784pt>
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 50.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ <stop.png, id=29, 102.784pt x 102.784pt>
 File: stop.png Graphic file (type png)
 
-<use stop.png> [6] <class.png, id=32, 102.784pt x 102.784pt>
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 52.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [6] <class.png, id=33, 102.784pt x 102.784pt>
 File: class.png Graphic file (type png)
  <use class.png>
-<design.png, id=33, 102.784pt x 102.784pt>
+Package pdftex.def Info: class.png used on input line 54.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+<design.png, id=34, 102.784pt x 102.784pt>
 File: design.png Graphic file (type png)
  <use design.png>
-<code.png, id=34, 102.784pt x 102.784pt>
+Package pdftex.def Info: design.png used on input line 56.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+<code.png, id=35, 102.784pt x 102.784pt>
 File: code.png Graphic file (type png)
- <use code.png> [7 <./stop.png> <./class.png> <./design.png> <./code.png>]
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 58.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [7 <./stop.png> <./class.png> <./design.png> <./code.png>]
 File: info.png Graphic file (type png)
- <use info.png>) [8]
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 90.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [8]
 \openout2 = `basics/chapter.aux'.
 
  (./basics/chapter.tex
 File: class.png Graphic file (type png)
 
 <use class.png>
+Package pdftex.def Info: class.png used on input line 4.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 16.
- (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
-File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+ (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <7> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 16.
 
-<basics/HelloWorld.png, id=46, 332.27586pt x 159.34229pt>
+<basics/HelloWorld.png, id=47, 332.27586pt x 159.34229pt>
 File: basics/HelloWorld.png Graphic file (type png)
 
-<use basics/HelloWorld.png> [9
+<use basics/HelloWorld.png>
+Package pdftex.def Info: basics/HelloWorld.png used on input line 41.
+(pdftex.def)             Requested size: 172.5pt x 82.7223pt.
+ [9
 
 
  <./basics/HelloWorld.png>]
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 52.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: code.png Graphic file (type png)
 
 <use code.png>
+Package pdftex.def Info: code.png used on input line 54.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 70.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
- <use design.png> [10]
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 76.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [10]
 File: stop.png Graphic file (type png)
  <use stop.png>
-<basics/StackDockStation.png, id=57, 338.92139pt x 185.46397pt>
+Package pdftex.def Info: stop.png used on input line 94.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+<basics/StackDockStation.png, id=58, 338.92139pt x 185.46397pt>
 File: basics/StackDockStation.png Graphic file (type png)
 
-<use basics/StackDockStation.png> [11]
+<use basics/StackDockStation.png>
+Package pdftex.def Info: basics/StackDockStation.png used on input line 103.
+(pdftex.def)             Requested size: 172.5pt x 94.39859pt.
+ [11]
 File: class.png Graphic file (type png)
  <use class.png>
-<basics/stack.png, id=61, 287.474pt x 154.979pt>
+Package pdftex.def Info: class.png used on input line 111.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
+<basics/stack.png, id=62, 287.474pt x 154.979pt>
 File: basics/stack.png Graphic file (type png)
  <use basics/stack.png>
-<basics/SplitDockStation.png, id=62, 288.24931pt x 242.93169pt>
+Package pdftex.def Info: basics/stack.png used on input line 111.
+(pdftex.def)             Requested size: 213.28125pt x 114.98299pt.
+
+<basics/SplitDockStation.png, id=63, 288.24931pt x 242.93169pt>
 File: basics/SplitDockStation.png Graphic file (type png)
 
 <use basics/SplitDockStation.png>
+Package pdftex.def Info: basics/SplitDockStation.png used on input line 118.
+(pdftex.def)             Requested size: 172.5pt x 145.38573pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 126.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 2772) in paragraph at lines 126--126
 []\OT1/cmr/m/n/10 Like the \OT1/cmtt/m/n/10 StackDockStation\OT1/cmr/m/n/10 , t
 his sta-tion con-sists of four
@@ -319,40 +443,66 @@ Underfull \hbox (badness 2181) in paragraph at lines 126--126
  back-ground panel (1),
  []
 
-<basics/split.png, id=63, 395.879pt x 220.825pt>
+<basics/split.png, id=64, 395.879pt x 220.825pt>
 File: basics/split.png Graphic file (type png)
  <use basics/split.png>
+Package pdftex.def Info: basics/split.png used on input line 126.
+(pdftex.def)             Requested size: 213.28125pt x 118.97078pt.
+
 [12 <./basics/StackDockStation.png> <./basics/stack.png>]
-<basics/FlapDockStation.png, id=69, 288.24931pt x 242.93169pt>
+<basics/FlapDockStation.png, id=70, 288.24931pt x 242.93169pt>
 File: basics/FlapDockStation.png Graphic file (type png)
 
 <use basics/FlapDockStation.png>
+Package pdftex.def Info: basics/FlapDockStation.png used on input line 133.
+(pdftex.def)             Requested size: 172.5pt x 145.38573pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 File: class.png Graphic file (type png)
-<use class.png> <basics/flap.png, id=70, 404.712pt x 248.127pt>
+<use class.png>
+Package pdftex.def Info: class.png used on input line 141.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ <basics/flap.png, id=71, 404.712pt x 248.127pt>
 File: basics/flap.png Graphic file (type png)
 
-<use basics/flap.png> [13 <./basics/SplitDockStation.png> <./basics/split.png>]
-<basics/ScreenDockStation.png, id=77, 327.29172pt x 292.5629pt>
+<use basics/flap.png>
+Package pdftex.def Info: basics/flap.png used on input line 141.
+(pdftex.def)             Requested size: 213.28125pt x 130.7608pt.
+ [13 <./basics/SplitDockStation.png> <./basics/split.png>] <basics/ScreenDockSt
+ation.png, id=78, 327.29172pt x 292.5629pt>
 File: basics/ScreenDockStation.png Graphic file (type png)
 
 <use basics/ScreenDockStation.png>
+Package pdftex.def Info: basics/ScreenDockStation.png used on input line 148.
+(pdftex.def)             Requested size: 172.5pt x 154.20047pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 File: class.png Graphic file (type png)
-<use class.png> <basics/screen.png, id=78, 281.853pt x 246.521pt>
+<use class.png>
+Package pdftex.def Info: class.png used on input line 156.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ <basics/screen.png, id=79, 281.853pt x 246.521pt>
 File: basics/screen.png Graphic file (type png)
 
-<use basics/screen.png> [14 <./basics/FlapDockStation.png> <./basics/flap.png>]
-[15 <./basics/ScreenDockStation.png (PNG copy)> <./basics/screen.png>]
+<use basics/screen.png>
+Package pdftex.def Info: basics/screen.png used on input line 156.
+(pdftex.def)             Requested size: 213.28125pt x 186.54915pt.
+ [14 <./basics/FlapDockStation.png> <./basics/flap.png>] [15 <./basics/ScreenDo
+ckStation.png (PNG copy)> <./basics/screen.png>]
 File: class.png Graphic file (type png)
 
 <use class.png>
+Package pdftex.def Info: class.png used on input line 173.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 175.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 4543) in paragraph at lines 175--175
 []\OT1/cmr/m/n/10 Never for-get to reg-is-ter the root-\OT1/cmtt/m/n/10 DockSta
 tion\OT1/cmr/m/n/10 (s) at the
@@ -360,15 +510,27 @@ tion\OT1/cmr/m/n/10 (s) at the
 
 File: design.png Graphic file (type png)
 <use design.png>
+Package pdftex.def Info: design.png used on input line 177.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 184.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
- <use design.png> [16]
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 186.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [16]
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 188.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
 
-<use design.png>) [17]
+<use design.png>
+Package pdftex.def Info: design.png used on input line 197.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [17]
 \openout2 = `layouts/chapter.aux'.
 
  (./layouts/chapter.tex
@@ -391,15 +553,25 @@ Underfull \hbox (badness 1484) in paragraph at lines 7--8
 
 File: info.png Graphic file (type png)
 <use info.png>
+Package pdftex.def Info: info.png used on input line 12.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: code.png Graphic file (type png)
  <use code.png>
+Package pdftex.def Info: code.png used on input line 19.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
- <use design.png> [18
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 21.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [18
 
 
 ]
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 23.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 10000) in paragraph at lines 23--23
 []\OT1/cmr/m/n/10 Most \OT1/cmtt/m/n/10 DockStation\OT1/cmr/m/n/10 s use the \O
 T1/cmtt/m/n/10 PlaceholderList \OT1/cmr/m/n/10 and the
@@ -413,22 +585,38 @@ Underfull \hbox (badness 1924) in paragraph at lines 23--23
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 50.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 2980) in paragraph at lines 50--50
 []\OT1/cmr/m/n/10 also for \OT1/cmtt/m/n/10 SplitDockStation\OT1/cmr/m/n/10 .
  []
 
 [19]
 File: stop.png Graphic file (type png)
- <use stop.png> [20]
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 67.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [20]
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 72.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: code.png Graphic file (type png)
  <use code.png>
+Package pdftex.def Info: code.png used on input line 77.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
- <use stop.png> [21]
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 90.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [21]
 File: class.png Graphic file (type png)
 
 <use class.png>
+Package pdftex.def Info: class.png used on input line 103.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1552) in paragraph at lines 103--103
 \OT1/cmr/m/n/10 Each \OT1/cmtt/m/n/10 DockLayout \OT1/cmr/m/n/10 con-tains a un
 ique iden-ti-fier for the fac-
@@ -440,9 +628,15 @@ Underfull \hbox (badness 2126) in paragraph at lines 103--103
  []
 
 File: info.png Graphic file (type png)
-<use info.png> [22]
+<use info.png>
+Package pdftex.def Info: info.png used on input line 105.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [22]
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 112.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 10000) in paragraph at lines 112--112
 []\OT1/cmr/m/n/10 Default fac-to-ries are in-stalled for \OT1/cmtt/m/n/10 Defau
 ltDockable\OT1/cmr/m/n/10 ,
@@ -450,14 +644,17 @@ ltDockable\OT1/cmr/m/n/10 ,
 
 File: stop.png Graphic file (type png)
 <use stop.png>
+Package pdftex.def Info: stop.png used on input line 114.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 LaTeX Font Info:    Try loading font information for OML+cmr on input line 128.
 
- (/usr/share/texmf-texlive/tex/latex/base/omlcmr.fd
-File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+ (/usr/share/texlive/texmf-dist/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <7> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 128.
- [23]
+
+[23]
 Overfull \hbox (0.55472pt too wide) in paragraph at lines 172--173
 []\OT1/cmr/m/n/10 The ex-tended al-go-rithm uses a spe-cial \OT1/cmtt/m/n/10 Do
 ckFactory\OT1/cmr/m/n/10 , called \OT1/cmtt/m/n/10 PreloadFactory\OT1/cmr/m/n/1
@@ -465,18 +662,31 @@ ckFactory\OT1/cmr/m/n/10 , called \OT1/cmtt/m/n/10 PreloadFactory\OT1/cmr/m/n/1
  []
 
 File: class.png Graphic file (type png)
-<use class.png> [24]
+<use class.png>
+Package pdftex.def Info: class.png used on input line 176.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [24]
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 180.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
  <use design.png>
+Package pdftex.def Info: design.png used on input line 182.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <7> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 194.
 File: info.png Graphic file (type png)
- <use info.png> [25]
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 204.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [25]
 File: info.png Graphic file (type png)
 
 <use info.png>
+Package pdftex.def Info: info.png used on input line 233.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 3029) in paragraph at lines 233--233
 []\OT1/cmr/m/n/10 A \OT1/cmtt/m/n/10 DockFrontend \OT1/cmr/m/n/10 will es-ti-ma
 te lo-ca-tions of those miss-ing
@@ -484,6 +694,9 @@ te lo-ca-tions of those miss-ing
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 235.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 10000) in paragraph at lines 235--235
 []\OT1/cmr/m/n/10 If us-ing a \OT1/cmtt/m/n/10 PredefinedDockSituation\OT1/cmr/
 m/n/10 , the method
@@ -492,47 +705,82 @@ m/n/10 , the method
 [26]
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 247.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Overfull \hbox (0.85176pt too wide) in paragraph at lines 249--250
 \OT1/cmr/m/n/10 write the xml, bi-nary or the in-ter-me-di-ate for-mat. Clients
  us-ing a \OT1/cmtt/m/n/10 DockSituation
  []
 
 File: code.png Graphic file (type png)
-<use code.png> [27]
+<use code.png>
+Package pdftex.def Info: code.png used on input line 253.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [27]
 File: info.png Graphic file (type png)
  <use info.png>
-File: info.png Graphic file (type png)
- <use info.png> [28]
+Package pdftex.def Info: info.png used on input line 280.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 284.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [28]
+File: info.png Graphic file (type png)
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 292.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
 
 <use stop.png>
+Package pdftex.def Info: stop.png used on input line 294.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
- <use class.png>) [29]
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 296.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [29]
 \openout2 = `actions/chapter.aux'.
 
  (./actions/chapter.tex
-<actions/actions.png, id=134, 234.476pt x 220.825pt>
+<actions/actions.png, id=135, 234.476pt x 220.825pt>
 File: actions/actions.png Graphic file (type png)
  <use actions/actions.png>
+Package pdftex.def Info: actions/actions.png used on input line 6.
+(pdftex.def)             Requested size: 117.2377pt x 110.41222pt.
 File: code.png Graphic file (type png)
 
 <use code.png>
+Package pdftex.def Info: code.png used on input line 11.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 17.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
- <use design.png> [30
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 19.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [30
 
 
  <./actions/actions.png>]
 File: class.png Graphic file (type png)
 
-<use class.png> [31]
+<use class.png>
+Package pdftex.def Info: class.png used on input line 29.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [31]
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 50.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 52.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1796) in paragraph at lines 52--52
 []\OT1/cmr/m/n/10 It is gen-er-ally a bad idea to write \OT1/cmtt/m/n/10 DockAc
 tionOffer\OT1/cmr/m/n/10 s or
@@ -540,13 +788,23 @@ tionOffer\OT1/cmr/m/n/10 s or
 
 [32] [33]
 File: code.png Graphic file (type png)
- <use code.png> [34]
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 136.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [34]
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 142.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
  <use design.png>
+Package pdftex.def Info: design.png used on input line 144.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 152.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 2626) in paragraph at lines 158--159
 \OT1/cmr/m/n/10 can use an \OT1/cmtt/m/n/10 ActionType \OT1/cmr/m/n/10 as key f
 or a fac-tory that is stored in the
@@ -559,13 +817,19 @@ tup, be-fore the first
  []
 
 File: stop.png Graphic file (type png)
-<use stop.png>) [37]
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 248.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [37]
 \openout2 = `titles/chapter.aux'.
 
  (./titles/chapter.tex
-<titles/titles.png, id=162, 224.037pt x 223.43475pt>
+<titles/titles.png, id=163, 224.037pt x 223.43475pt>
 File: titles/titles.png Graphic file (type png)
  <use titles/titles.png>
+Package pdftex.def Info: titles/titles.png used on input line 6.
+(pdftex.def)             Requested size: 112.01822pt x 111.7171pt.
+
 Underfull \hbox (badness 3078) in paragraph at lines 14--15
 []\OT1/cmr/m/n/10 The \OT1/cmr/m/it/10 kind \OT1/cmr/m/n/10 of a ti-tle is spec
 -i-fied by a \OT1/cmtt/m/n/10 DockTitleVersion\OT1/cmr/m/n/10 . New
@@ -573,8 +837,13 @@ Underfull \hbox (badness 3078) in paragraph at lines 14--15
 
 File: stop.png Graphic file (type png)
 <use stop.png>
+Package pdftex.def Info: stop.png used on input line 20.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 26.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 2310) in paragraph at lines 26--26
 []\OT1/cmr/m/n/10 The method \OT1/cmtt/m/n/10 listBoundTitles \OT1/cmr/m/n/10 r
 e-turns an list of all
@@ -591,10 +860,18 @@ Underfull \hbox (badness 2111) in paragraph at lines 34--35
 
 File: design.png Graphic file (type png)
 <use design.png>
+Package pdftex.def Info: design.png used on input line 36.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
- <use class.png> [39]
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 45.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [39]
 File: code.png Graphic file (type png)
  <use code.png>
+Package pdftex.def Info: code.png used on input line 47.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1424) in paragraph at lines 56--57
 []\OT1/cmr/m/n/10 The \OT1/cmtt/m/n/10 DockTheme \OT1/cmr/m/n/10 can be used as
  well. Ei-ther over-ride the method
@@ -610,42 +887,65 @@ Underfull \hbox (badness 1460) in paragraph at lines 58--59
 \openout2 = `themes/chapter.aux'.
 
  (./themes/chapter.tex
-<themes/theme_default.png, id=174, 609.27625pt x 436.63126pt>
+<themes/theme_default.png, id=175, 609.27625pt x 436.63126pt>
 File: themes/theme_default.png Graphic file (type png)
 
-<use themes/theme_default.png> [41
+<use themes/theme_default.png>
+Package pdftex.def Info: themes/theme_default.png used on input line 26.
+(pdftex.def)             Requested size: 172.5pt x 123.62172pt.
+ [41
 
 
- <./themes/theme_default.png (PNG copy)>]
-<themes/theme_flat.png, id=178, 456.95718pt x 327.47343pt>
+ <./themes/theme_default.png>]
+<themes/theme_flat.png, id=179, 456.95718pt x 327.47343pt>
 File: themes/theme_flat.png Graphic file (type png)
 
 <use themes/theme_flat.png>
-<themes/theme_bubble.png, id=179, 456.95718pt x 327.47343pt>
+Package pdftex.def Info: themes/theme_flat.png used on input line 39.
+(pdftex.def)             Requested size: 172.5pt x 123.61671pt.
+
+<themes/theme_bubble.png, id=180, 456.95718pt x 327.47343pt>
 File: themes/theme_bubble.png Graphic file (type png)
 
-<use themes/theme_bubble.png> [42 <./themes/theme_flat.png (PNG copy)> <./theme
-s/theme_bubble.png (PNG copy)>]
-<themes/theme_eclipse.png, id=183, 456.95718pt x 327.47343pt>
+<use themes/theme_bubble.png>
+Package pdftex.def Info: themes/theme_bubble.png used on input line 49.
+(pdftex.def)             Requested size: 172.5pt x 123.61671pt.
+ [42 <./themes/theme_flat.png> <./themes/theme_bubble.png>] <themes/theme_eclip
+se.png, id=184, 456.95718pt x 327.47343pt>
 File: themes/theme_eclipse.png Graphic file (type png)
 
 <use themes/theme_eclipse.png>
+Package pdftex.def Info: themes/theme_eclipse.png used on input line 59.
+(pdftex.def)             Requested size: 172.5pt x 123.61671pt.
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 71.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 73.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1642) in paragraph at lines 73--73
 []\OT1/cmr/m/n/10 The set-tings for ti-tles and bor-ders that are given by an
  []
 
-[43 <./themes/theme_eclipse.png (PNG copy)>]
+[43 <./themes/theme_eclipse.png>]
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 83.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: info.png Graphic file (type png)
  <use info.png>
-[44]
+Package pdftex.def Info: info.png used on input line 88.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [44]
 File: design.png Graphic file (type png)
- <use design.png> [45]
+
+<use design.png>
+Package pdftex.def Info: design.png used on input line 113.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [45]
 Underfull \hbox (badness 2828) in paragraph at lines 127--128
 \OT1/cmtt/m/n/10 ColorManager \OT1/cmr/m/n/10 is an \OT1/cmtt/m/n/10 UIProperti
 es \OT1/cmr/m/n/10 and can be ac-cessed through the
@@ -653,8 +953,13 @@ es \OT1/cmr/m/n/10 and can be ac-cessed through the
 
 File: code.png Graphic file (type png)
 <use code.png>
+Package pdftex.def Info: code.png used on input line 159.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 161.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1137) in paragraph at lines 161--161
 []\OT1/cmr/m/n/10 There is no global list of keys and ev-ery \OT1/cmtt/m/n/10 D
 ockTheme \OT1/cmr/m/n/10 uses
@@ -663,6 +968,9 @@ ockTheme \OT1/cmr/m/n/10 uses
 [46]
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 163.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1590) in paragraph at lines 163--163
 []\OT1/cmr/m/n/10 All the stan-dard themes use a \OT1/cmtt/m/n/10 ColorScheme \
 OT1/cmr/m/n/10 as their ini-
@@ -676,6 +984,9 @@ ere are sev-eral sub-classes of
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 176.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 2521) in paragraph at lines 179--180
 \OT1/cmr/m/n/10 cessed through the method \OT1/cmtt/m/n/10 getIcons \OT1/cmr/m/
 n/10 of \OT1/cmtt/m/n/10 DockController\OT1/cmr/m/n/10 . It is an
@@ -704,15 +1015,25 @@ key
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 18.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: info.png Graphic file (type png)
- <use info.png> [50
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 21.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [50
 
 
 ]
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 36.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 48.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Overfull \hbox (4.86406pt too wide) in paragraph at lines 51--52
 \OT1/cmr/m/n/10 can be done us-ing the prop-erty key \OT1/cmtt/m/n/10 ScreenDoc
 kStation.FULL[]SCREEN[]STRATEGY\OT1/cmr/m/n/10 . 
@@ -720,6 +1041,9 @@ kStation.FULL[]SCREEN[]STRATEGY\OT1/cmr/m/n/10 .
 
 File: design.png Graphic file (type png)
 <use design.png>
+Package pdftex.def Info: design.png used on input line 53.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 2393) in paragraph at lines 53--53
 \OT1/cmr/m/n/10 But be-cause the frame-work does nowhere en-force that a
  []
@@ -731,11 +1055,20 @@ ing the prop-erty key
  []
 
 File: stop.png Graphic file (type png)
-<use stop.png> [52]
+<use stop.png>
+Package pdftex.def Info: stop.png used on input line 77.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [52]
 File: info.png Graphic file (type png)
- <use info.png> [53]
+ <use info.png>
+Package pdftex.def Info: info.png used on input line 87.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [53]
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 98.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 3375) in paragraph at lines 98--98
 []\OT1/cmr/m/n/10 Much of what is writ-ten in this chap-ter does not ap-
  []
@@ -753,29 +1086,44 @@ Underfull \hbox (badness 1178) in paragraph at lines 98--98
  []
 
 File: design.png Graphic file (type png)
-<use design.png> <stations/tabsOverview.png, id=219, 435.226pt x 233.673pt>
+<use design.png>
+Package pdftex.def Info: design.png used on input line 103.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ <stations/tabsOverview.png, id=221, 435.226pt x 233.673pt>
 File: stations/tabsOverview.png Graphic file (type png)
 
 <use stations/tabsOverview.png>
+Package pdftex.def Info: stations/tabsOverview.png used on input line 111.
+(pdftex.def)             Requested size: 172.5pt x 92.61537pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<stations/smallTabs.png, id=220, 418.363pt x 258.566pt>
+<stations/smallTabs.png, id=222, 418.363pt x 258.566pt>
 File: stations/smallTabs.png Graphic file (type png)
 
 <use stations/smallTabs.png>
+Package pdftex.def Info: stations/smallTabs.png used on input line 120.
+(pdftex.def)             Requested size: 172.5pt x 106.61243pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<stations/tab.png, id=221, 226.446pt x 126.874pt>
+<stations/tab.png, id=223, 226.446pt x 126.874pt>
 File: stations/tab.png Graphic file (type png)
  <use stations/tab.png>
+Package pdftex.def Info: stations/tab.png used on input line 129.
+(pdftex.def)             Requested size: 86.25pt x 48.32295pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 File: class.png Graphic file (type png)
-<use class.png> [54] [55 <./stations/tabsOverview.png> <./stations/smallTabs.pn
-g> <./stations/tab.png>]
+<use class.png>
+Package pdftex.def Info: class.png used on input line 136.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [54] [55 <./stations/tabsOverview.png> <./stations/smallTabs.png> <./stations/
+tab.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 144--145
 []\OT1/cmr/m/n/10 Clients can change the con-fig-u-ra-tion us-ing the prop-erty
  key
@@ -783,6 +1131,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 144--145
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 149.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 10000) in paragraph at lines 149--149
 []\OT1/cmr/m/n/10 The de-fault im-ple-men-ta-tion of \OT1/cmtt/m/n/10 TabLayout
 Manager \OT1/cmr/m/n/10 is
@@ -794,16 +1145,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 149--149
 led
  []
 
-<stations/flap.png, id=232, 331.639pt x 158.994pt>
+<stations/flap.png, id=234, 331.639pt x 158.994pt>
 File: stations/flap.png Graphic file (type png)
  <use stations/flap.png>
+Package pdftex.def Info: stations/flap.png used on input line 166.
+(pdftex.def)             Requested size: 172.5pt x 82.70161pt.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 File: info.png Graphic file (type png)
-<use info.png> [56]
+<use info.png>
+Package pdftex.def Info: info.png used on input line 173.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [56]
 File: class.png Graphic file (type png)
- <use class.png>)
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 175.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+)
 Underfull \hbox (badness 6094) in paragraph at lines 178--100
 \OT1/cmr/m/n/10 fault be-hav-ior is to show only ac-tions which are an-no-tated
  with
@@ -826,14 +1186,22 @@ DockRelocator \OT1/cmr/m/n/10 it-self ex-tends from
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 9.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 2334) in paragraph at lines 9--9
 \OT1/cmr/m/n/10 in or-der to in-stall their cus-tomized class. The method
  []
 
 File: info.png Graphic file (type png)
 <use info.png>
+Package pdftex.def Info: info.png used on input line 21.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 23.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 4608) in paragraph at lines 23--23
 []\OT1/cmr/m/n/10 The be-hav-ior for rep-re-sen-ta-tions of \OT1/cmtt/m/n/10 Do
 ckable\OT1/cmr/m/n/10 s that are
@@ -849,23 +1217,34 @@ Underfull \hbox (badness 2376) in paragraph at lines 23--23
 
 ]
 Underfull \hbox (badness 3386) in paragraph at lines 28--29
-[]\OT1/cmr/m/n/10 A \OT1/cmtt/m/n/10 RemoteRelocator \OT1/cmr/m/n/10 can be op-
+[]\OT1/cmr/m/n/10 A \OT1/cmtt/m/n/10 RemoteRelocator \OT1/cmr/m/n/10 can be ob-
 tained by call-ing \OT1/cmtt/m/n/10 createRemote \OT1/cmr/m/n/10 of
  []
 
 File: class.png Graphic file (type png)
 <use class.png>
+Package pdftex.def Info: class.png used on input line 42.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 1005) in paragraph at lines 42--42
-\OT1/cmr/m/n/10 stances can be op-tained by call-ing \OT1/cmtt/m/n/10 createDir
+\OT1/cmr/m/n/10 stances can be ob-tained by call-ing \OT1/cmtt/m/n/10 createDir
 ectRemote \OT1/cmr/m/n/10 of
  []
 
 File: info.png Graphic file (type png)
-<use info.png> [59]
+<use info.png>
+Package pdftex.def Info: info.png used on input line 44.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [59]
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 57.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 66.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 4429) in paragraph at lines 66--66
 []\OT1/cmtt/m/n/10 DockController.getAcceptance \OT1/cmr/m/n/10 al-lows ac-cess
  to the
@@ -880,6 +1259,9 @@ i-tional re-stric-tion that
 [60]
 File: stop.png Graphic file (type png)
  <use stop.png>
+Package pdftex.def Info: stop.png used on input line 77.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Overfull \hbox (0.3329pt too wide) in paragraph at lines 80--81
 \OT1/cmr/m/n/10 Not ev-ery pos-si-ble \OT1/cmtt/m/n/10 DockStation \OT1/cmr/m/n
 /10 is a good or valid tar-get for a dragged \OT1/cmtt/m/n/10 Dockable\OT1/cmr/
@@ -888,10 +1270,18 @@ m/n/10 .
 
 File: stop.png Graphic file (type png)
 <use stop.png>
+Package pdftex.def Info: stop.png used on input line 94.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: design.png Graphic file (type png)
- <use design.png> [61]
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 98.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [61]
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 109.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 6428) in paragraph at lines 109--109
 \OT1/cmr/m/n/10 or \OT1/cmtt/m/n/10 NO[]COMBINATION \OT1/cmr/m/n/10 are the pro
 p-er-ties \OT1/cmtt/m/n/10 SCREEN[]MASK \OT1/cmr/m/n/10 and
@@ -900,35 +1290,57 @@ p-er-ties \OT1/cmtt/m/n/10 SCREEN[]MASK \OT1/cmr/m/n/10 and
 [62]
 File: info.png Graphic file (type png)
  <use info.png>
+Package pdftex.def Info: info.png used on input line 118.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 126.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: stop.png Graphic file (type png)
- <use stop.png>) [63]
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 127.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [63]
 \openout2 = `preferences/chapter.aux'.
 
 
 (./preferences/chapter.tex
-<preferences/preferences.png, id=259, 466.74374pt x 204.765pt>
+<preferences/preferences.png, id=261, 466.74374pt x 204.765pt>
 File: preferences/preferences.png Graphic file (type png)
 
 <use preferences/preferences.png>
+Package pdftex.def Info: preferences/preferences.png used on input line 6.
+(pdftex.def)             Requested size: 172.5pt x 75.67749pt.
 File: design.png Graphic file (type png)
- <use design.png> [64
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 27.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [64
 
 
- <./preferences/preferences.png (PNG copy)>]
+ <./preferences/preferences.png>]
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 29.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
  <use class.png>
+Package pdftex.def Info: class.png used on input line 36.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Underfull \hbox (badness 10000) in paragraph at lines 36--36
 []\OT1/cmr/m/n/10 Several mod-els can be com-bined us-ing a
  []
 
 File: info.png Graphic file (type png)
 <use info.png>
+Package pdftex.def Info: info.png used on input line 40.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 File: class.png Graphic file (type png)
- <use class.png> [65]
+ <use class.png>
+Package pdftex.def Info: class.png used on input line 45.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [65]
 Underfull \hbox (badness 3803) in paragraph at lines 66--67
 []\OT1/cmr/m/n/10 Preferences can have op-er-a-tions as well. The method
  []
@@ -946,15 +1358,23 @@ Underfull \hbox (badness 5050) in paragraph at lines 66--67
  []
 
 File: info.png Graphic file (type png)
-<use info.png> [66]
+<use info.png>
+Package pdftex.def Info: info.png used on input line 70.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [66]
 File: design.png Graphic file (type png)
- <use design.png> [67]) [68]
+ <use design.png>
+Package pdftex.def Info: design.png used on input line 107.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [67]) [68]
 \openout2 = `extensions/chapter.aux'.
 
  (./extensions/chapter.tex
 File: design.png Graphic file (type png)
 
 <use design.png>
+Package pdftex.def Info: design.png used on input line 8.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
 (Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 15.
 
@@ -1022,6 +1442,9 @@ t the li-braries
 
 File: stop.png Graphic file (type png)
 <use stop.png>
+Package pdftex.def Info: stop.png used on input line 35.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+
 Overfull \hbox (0.22173pt too wide) in paragraph at lines 38--39
 \OT1/cmr/m/n/10 The Toolbar-extension adds tool-bars, a set of new \OT1/cmtt/m/
 n/10 DockStation\OT1/cmr/m/n/10 s and \OT1/cmtt/m/n/10 Dockable\OT1/cmr/m/n/10 
@@ -1041,12 +1464,18 @@ class-path, the
 
 [70]
 File: code.png Graphic file (type png)
- <use code.png>) [71]
+ <use code.png>
+Package pdftex.def Info: code.png used on input line 40.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+) [71]
 \openout2 = `properties/chapter.aux'.
 
  (./properties/chapter.tex
 File: stop.png Graphic file (type png)
- <use stop.png> [72
+ <use stop.png>
+Package pdftex.def Info: stop.png used on input line 8.
+(pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
+ [72
 
 
 ]
@@ -1133,30 +1562,32 @@ lling how much space should
 (./preferences/chapter.aux) (./extensions/chapter.aux)
 (./properties/chapter.aux)) ) 
 Here is how much of TeX's memory you used:
- 3178 strings out of 495061
- 46060 string characters out of 1182621
- 181590 words of memory out of 3000000
- 6258 multiletter control sequences out of 15000+50000
- 9571 words of font info for 34 fonts, out of 3000000 for 9000
- 28 hyphenation exceptions out of 8191
- 30i,12n,40p,985b,1466s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 3773 strings out of 494953
+ 56294 string characters out of 6180977
+ 187109 words of memory out of 5000000
+ 6923 multiletter control sequences out of 15000+600000
+ 9571 words of font info for 34 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 37i,12n,40p,985b,1466s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/beni/.texmf-var/fonts/pk/ljfour/jknappen/e
-c/tcrm1000.600pk></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx1
-0.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr
-/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texmf
--texlive/fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/share/texmf-texlive/f
-onts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/
-public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
-nts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12
-.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/s
-hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-te
-xlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/
-type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/publi
-c/amsfonts/cm/cmti7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
-m/cmtt10.pfb>
-Output written on guide2.pdf (78 pages, 960705 bytes).
+c/tcrm1000.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmti7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.
+pfb>
+Output written on guide2.pdf (78 pages, 995372 bytes).
 PDF statistics:
- 360 PDF objects out of 1000 (max. 8388607)
+ 364 PDF objects out of 1000 (max. 8388607)
+ 221 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
  126 words of extra memory for PDF output out of 10000 (max. 10000000)
 
