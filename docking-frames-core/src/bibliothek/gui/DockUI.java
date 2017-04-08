@@ -163,11 +163,12 @@ public class DockUI {
     private void registerColors(){
         registerColors( ".+", new DefaultLookAndFeelColors() );
         
-        String version = System.getProperty( "java.version" );
-        int begin = version.indexOf( '.' ) + 1;
-        int end = version.indexOf( '.', begin );
-        int major = Integer.parseInt( version.substring( begin, end ));
-
+        String jvmVersionString = System.getProperty("java.specification.version");
+        int verIndex = jvmVersionString.indexOf("1.");
+        if (verIndex >= 0) { // handle Java 9
+            jvmVersionString = jvmVersionString.substring(verIndex + 2);
+        }
+        int major = Integer.parseInt(jvmVersionString);
         if( major >= 7 ){
         	registerColors( "javax\\.swing\\.plaf\\.nimbus\\.NimbusLookAndFeel", new Nimbus6u10() );
         }
