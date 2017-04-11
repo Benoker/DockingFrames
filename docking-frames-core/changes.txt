@@ -1110,4 +1110,7 @@
 
 [v1.1.2p19]
 - Bugfix: An exception was thrown when a CDockable was externalized, the eclipse-theme was selected, and someone was calling CControl.destroy
-- API: added "setAcceleratorIsGlobal" to CDecoratableAction, allowing actions to monitor all key events of the application. 
+- API: added "setAcceleratorIsGlobal" to CDecoratableAction, allowing actions to monitor all key events of the application.
+
+[v1.1.2p19a]
+- Bugfix: when adding an action to an existing dropdown-menu, then the action was always added at the end of the menu

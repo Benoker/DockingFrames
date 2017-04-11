@@ -251,7 +251,7 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
      */
     private void add( int index, DockAction action ){
     	Dockable dockable = getDockable();
-    	actions.add( action );
+    	actions.add( index, action );
         DropDownViewItem item = action.createView( ViewTarget.DROP_DOWN, dockable.getController().getActionViewConverter(), dockable );
         if( item != null ){
             DropDownItemHandle entry = new DropDownItemHandle( action, item, dockable, getAction() );
