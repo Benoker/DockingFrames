@@ -693,8 +693,6 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
                 mouse.x, mouse.y,
                 mouse.x - pressPointLocal.x, mouse.y - pressPointLocal.y,
                 dockable );
-        
-        boolean drop = false;
 
         Dockable[] implicit = next == null ? new Dockable[]{} : next.getImplicit( dockable );
         boolean move = next != null && next.getOperation().isMove();
@@ -710,7 +708,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
     	else if( event.isIgnored() ){
     		return Reaction.CONTINUE;
     	}
-        
+
+		boolean drop = false;
         if( next != null ){
             drop = next != null && event.isDropping();
         }

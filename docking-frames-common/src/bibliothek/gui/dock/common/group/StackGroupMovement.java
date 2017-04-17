@@ -58,8 +58,6 @@ public class StackGroupMovement implements CGroupMovement{
 	}
 	
 	public void apply( CGroupBehaviorCallback callback ){
-		// find location of dockable in respect to the other items
-		int baseIndex = dockParent.indexOf( dockable );
 		Dockable[] children = new Dockable[ dockParent.getDockableCount() ];
 		for( int i = 0; i < children.length; i++ ){
 			children[i] = dockParent.getDockable( i );
@@ -87,7 +85,9 @@ public class StackGroupMovement implements CGroupMovement{
 		if( !oneMissing ){
 			return;
 		}
-		
+
+		// find location of dockable in respect to the other items
+		int baseIndex = dockParent.indexOf( dockable );
 		int missing = 0;
 		
 		// move all the items that were before dockable

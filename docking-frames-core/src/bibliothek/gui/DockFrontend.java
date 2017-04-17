@@ -1423,7 +1423,6 @@ public class DockFrontend {
                     }
                     else{
                         String root = info.getRoot();
-                        DockableProperty location = info.getLocation();
 
                         DockStation station;
                         if( root == null )
@@ -1437,6 +1436,7 @@ public class DockFrontend {
                                 throw new IllegalStateException( "Can't find the default station" );
                         }
 
+                        DockableProperty location = info.getLocation();
                         if( location == null )
                             getDefaultStation().drop( dockable );
                         else{

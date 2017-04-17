@@ -90,12 +90,12 @@ public class DisplayerFocusTraversalPolicy implements SimplifiedFocusTraversalPo
     }
 
     public Component getFirst( Container container ) {
-        DockTitle title = displayer.getTitle();
         Dockable dockable = displayer.getDockable();
         
         if( dockable != null )
             return dockable.getComponent();
-        
+
+        DockTitle title = displayer.getTitle();
         if( title != null )
             return title.getComponent();
         
@@ -104,11 +104,11 @@ public class DisplayerFocusTraversalPolicy implements SimplifiedFocusTraversalPo
 
     public Component getLast( Container container ) {
         DockTitle title = displayer.getTitle();
-        Dockable dockable = displayer.getDockable();
-        
+
         if( title != null )
             return title.getComponent();
-        
+
+        Dockable dockable = displayer.getDockable();
         if( dockable != null )
             return dockable.getComponent();
         

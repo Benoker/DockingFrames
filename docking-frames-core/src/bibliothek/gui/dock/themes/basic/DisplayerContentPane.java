@@ -188,16 +188,15 @@ public class DisplayerContentPane extends ConfiguredBackgroundPanel{
         Insets insets = getInsets();
         if( insets == null )
             insets = new Insets( 0,0,0,0 );
-        
-        int x = insets.left;
-        int y = insets.top;
-        int width = getWidth() - insets.left - insets.right;
-        int height = getHeight() - insets.top - insets.bottom;
-        
+
         if( title == null && dockable == null )
             return;
-        
-        width = Math.max( 0, width );
+
+		int x = insets.left;
+		int y = insets.top;
+		int width = getWidth() - insets.left - insets.right;
+		int height = getHeight() - insets.top - insets.bottom;
+		width = Math.max( 0, width );
         height = Math.max( 0, height );
         
         if( title == null )

@@ -383,12 +383,12 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	@Override
 	public StationDropOperation prepareDrop( StationDropItem item ){
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
-		final DockController controller = getController();
 
 		if( getExpandedState() == ExpandedState.EXPANDED ) {
 			return null;
 		}
 
+		final DockController controller = getController();
 		Dockable dockable = item.getDockable();
 		// check if the dockable and the station accept each other
 		if( this.accept( dockable ) && dockable.accept( this ) ) {
@@ -1220,7 +1220,6 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 	}
 	
 	public void aside( AsideRequest request ){
-		int index = -1;
 		int resultIndex = -1;
 		
 		if( getExpandedState() == ExpandedState.EXPANDED && getDockableCount() == 1 ){
@@ -1234,7 +1233,8 @@ public class ToolbarDockStation extends AbstractToolbarDockStation {
 				resultIndex = ((StackDockProperty) answerLocation).getIndex();
 			}
 		}
-		
+
+		int index = -1;
 		DockableProperty location = request.getLocation();
 		Path newPlaceholder = request.getPlaceholder();
 		if( location instanceof ToolbarProperty ){

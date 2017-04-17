@@ -100,14 +100,14 @@ public class DefaultFocusStrategy implements FocusStrategy{
 	
 	public Component getFocusComponent( FocusStrategyRequest request ){
 		Component mouseClicked = request.getMouseClicked();
-		Dockable dockable = request.getDockable();
-		
+
 		if( mouseClicked != null ){
 			if( (mouseClicked.isFocusable() && !excluded( mouseClicked, request )) || focusable( mouseClicked, request )){
 				return mouseClicked;
 			}
 		}
-		
+
+		Dockable dockable = request.getDockable();
 		Tracker tracker = trackers.get( dockable.getComponent() );
 		if( tracker == null ){
 			return null;

@@ -322,13 +322,12 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 			id = xid.getString();
 		}
 		
-		boolean root = element.getElement( "root" ).getBoolean();
-		
 		XElement xcontent = element.getElement( "content" );
 		if( xcontent == null ){
 			throw new XException( "missing content element" );
 		}
-		
+
+		boolean root = element.getElement( "root" ).getBoolean();
 		String factoryId = xcontent.getString( "delegate" );
 		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
 		if( factory == null ){
@@ -393,11 +392,7 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 		else{
 			id = null;
 		}
-		
-		boolean root = in.readBoolean();
-		
-		String factoryId = in.readUTF();
-		
+
 		int length = in.readInt();
 		byte[] content = new byte[length];
 		int offset = 0;
@@ -408,7 +403,9 @@ public class CommonDockStationFactory implements DockFactory<CommonDockStation<?
 			}
 			offset += delta;
 		}
-		
+
+		boolean root = in.readBoolean();
+		String factoryId = in.readUTF();
 		DockFactory<DockElement, ?, Object> factory = (DockFactory<DockElement, ?, Object>)control.intern().getDockFactory( factoryId );
 		if( factory == null ){
 			return new CommonDockStationLayout( id, root, factoryId, content );

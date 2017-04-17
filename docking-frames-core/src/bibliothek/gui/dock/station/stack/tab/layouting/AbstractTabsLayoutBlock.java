@@ -164,7 +164,6 @@ public abstract class AbstractTabsLayoutBlock implements TabsLayoutBlock{
 	 * is not a child of this blocks {@link TabPane} 
 	 */
 	public void insertTab( Tab tab ){
-		int[] locations = getOriginalTabLocations();
 		TabPane pane = getPane();
 		
 		Dockable[] dockables = pane.getDockables();
@@ -185,7 +184,8 @@ public abstract class AbstractTabsLayoutBlock implements TabsLayoutBlock{
 		int wrongSmaller = 0;
 		// number of indices to the left that are bigger
 		int wrongBigger = 0;
-		
+
+		int[] locations = getOriginalTabLocations();
 		for( int i = 0; i < locations.length; i++ ){
 			if( locations[i] < index ){
 				wrongSmaller++;

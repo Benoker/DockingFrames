@@ -158,8 +158,6 @@ public class PropertyTransformer {
 			if (factory == null)
 				throw new IOException( "Unknown factory-id: " + id );
 
-			DockableProperty temp = factory.createProperty();
-
 			int length = in.readInt();
 			byte[] data = new byte[length];
 			int index = 0;
@@ -171,6 +169,7 @@ public class PropertyTransformer {
 				index += read;
 			}
 
+			DockableProperty temp = factory.createProperty();
 			DataInputStream datas = new DataInputStream(
 					new ByteArrayInputStream( data ) );
 			temp.load( datas );

@@ -2284,8 +2284,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		try{
 			access.arm();
 			DockUtilities.checkLayoutLocked();
-	
-			DockableProperty successor = property.getSuccessor();
+
 			if( dockable.getDockParent() == this ) {
 				setFullScreen(dockable);
 				return true;
@@ -2297,6 +2296,7 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			}
 			
 			DockStation currentFullScreenStation = currentFullScreen.asDockStation();
+			DockableProperty successor = property.getSuccessor();
 			if( currentFullScreenStation != null ){
 				if( successor != null ){
 					if( currentFullScreenStation.drop( dockable, successor )){

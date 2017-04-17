@@ -847,12 +847,12 @@ public abstract class SplitNode{
      */
     protected Leaf create( Dockable dockable, long id ){
         SplitDockStation split = access.getOwner();
-        DockController controller = split.getController();
-        DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
-        
+
         if( !dockable.accept( split ) || !split.accept( dockable ))
             return null;
-        
+
+		DockController controller = split.getController();
+		DockAcceptance acceptance = controller == null ? null : controller.getAcceptance();
         if( acceptance != null ){
             if( !acceptance.accept( split, dockable ))
                 return null;
@@ -1039,12 +1039,12 @@ public abstract class SplitNode{
      * otherwise
      */
     public static boolean above( double x1, double y1, double x2, double y2, double x, double y ){
-        double a = y1 - y2;
         double b = x2 - x1;
         
         if( b == 0 )
             return false;
-        
+
+		double a = y1 - y2;
         double c = a*x1 + b*y1;
         double sy = (c - a*x) / b;
         

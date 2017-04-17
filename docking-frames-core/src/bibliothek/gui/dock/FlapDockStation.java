@@ -1462,22 +1462,18 @@ public class FlapDockStation extends AbstractDockableStation {
     }
     
     public StationDropOperation prepareDrop( StationDropItem item ){
-    	int mouseX = item.getMouseX();
-    	int mouseY = item.getMouseY();
     	Dockable dockable = item.getDockable();
-    	
-    	boolean move = dockable.getDockParent() == this;
-    	
+
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
     		return null;
     	}
-        
+
+        int mouseX = item.getMouseX();
+        int mouseY = item.getMouseY();
         Point mouse = new Point( mouseX, mouseY );
         SwingUtilities.convertPointFromScreen( mouse, buttonPane );
         FlapDropInfo dropInfo = null;
-        
-        DockAcceptance acceptance = getController().getAcceptance();
-        
+
         // if mouse over window title: force combination
         if( window != null && window.isWindowVisible() ){
             DockTitle title = window.getDockTitle();
@@ -1510,7 +1506,8 @@ public class FlapDockStation extends AbstractDockableStation {
         
         if( dropInfo != null && dockable == getFrontDockable() )
             return null;
-        
+
+        DockAcceptance acceptance = getController().getAcceptance();
         if( dropInfo == null ){
             if( dockable.accept( this ) &&
                 accept( dockable ) &&
@@ -1548,7 +1545,8 @@ public class FlapDockStation extends AbstractDockableStation {
         if( dropInfo == null ){
         	return null;
         }
-        
+
+        boolean move = dockable.getDockParent() == this;
         return new FlapDropOperation( dropInfo, move );
         
     }
@@ -2052,9 +2050,7 @@ public class FlapDockStation extends AbstractDockableStation {
 	        
 	        if( append.getDockParent() != null )
 	            append.getDockParent().drag( append );
-	        
-	        boolean hold = isHold( child );
-	        
+
 	        int listIndex = handles.levelToBase( index, Level.DOCKABLE );
 	        DockablePlaceholderList<DockableHandle>.Item oldItem = handles.list().get( listIndex );
 	        final PlaceholderMap placeholders = oldItem.getPlaceholderMap();
@@ -2089,7 +2085,8 @@ public class FlapDockStation extends AbstractDockableStation {
 	        listIndex = handles.levelToBase( index, Level.DOCKABLE );
 	        DockablePlaceholderList<DockableHandle>.Item newItem = handles.list().get( listIndex );
 	        newItem.setPlaceholderSet( newItem.getPlaceholderSet() );
-	        
+
+            boolean hold = isHold( child );
 	        setHold( combination, hold );
 	        return true;
     	}
@@ -2443,11 +2440,10 @@ public class FlapDockStation extends AbstractDockableStation {
                     return;
                 
                 DockController controller = event.getController();
-                Dockable dockable = event.getNewFocusOwner();
-                
                 if( controller.isFocused( FlapDockStation.this ))
                     return;
-                
+
+                Dockable dockable = event.getNewFocusOwner();
                 if( dockable == null || !DockUtilities.isAncestor( FlapDockStation.this, dockable ) ){
                 	setFrontDockable( null );
                 }

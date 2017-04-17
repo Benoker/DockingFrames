@@ -448,9 +448,7 @@ public class DockUtilities {
         
         if( newChild == null )
             throw new NullPointerException( "child must not be null" );
-        
-        DockStation oldParent = newChild.getDockParent();
-            
+
         // check no self reference
         if( newChild == newParent )
             throw new IllegalArgumentException( "child and parent are the same" );
@@ -459,7 +457,8 @@ public class DockUtilities {
         if( isAncestor( newChild, newParent )){
             throw new IllegalArgumentException( "can't create a cycle" );
         }
-        
+
+        DockStation oldParent = newChild.getDockParent();
         // remove old parent
         if( oldParent != null ){
             if( oldParent != newParent && !oldParent.canDrag( newChild ))
@@ -485,9 +484,7 @@ public class DockUtilities {
         
         if( newChild == null )
             throw new NullPointerException( "child must not be null" );
-        
-        PerspectiveStation oldParent = newChild.getParent();
-            
+
         // check no self reference
         if( newChild == newParent )
             throw new IllegalArgumentException( "child and parent are the same" );
@@ -496,7 +493,8 @@ public class DockUtilities {
         if( isAncestor( newChild, newParent )){
             throw new IllegalArgumentException( "can't create a cycle" );
         }
-        
+
+        PerspectiveStation oldParent = newChild.getParent();
         // remove old parent
         if( oldParent != null && oldParent != newParent ){
         	oldParent.remove( newChild );

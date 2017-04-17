@@ -87,7 +87,6 @@ public class MergeOperation implements RelocateOperation{
 	}
 	
 	public boolean execute( Dockable selection, VetoableDockRelocatorListener listener ){
-		DockStation child = selection.asDockStation();
 		DockStation parent = selection.getDockParent();
 
 		Dockable[] children = getImplicit( selection );
@@ -100,7 +99,8 @@ public class MergeOperation implements RelocateOperation{
 				return false;
 			}
 		}
-		
+
+		DockStation child = selection.asDockStation();
 		merger.merge( operation, station, child );
 		
 		parent = selection.getDockParent();

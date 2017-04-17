@@ -139,18 +139,18 @@ public class SplitCombiner extends BasicCombiner{
 
 	public Dockable combine( CombinerSource source, CombinerTarget target ){
 		if( target instanceof Target ){
-			DockStation parent = source.getParent();
-			PlaceholderMap placeholders = source.getPlaceholders();
-			
+
 			SplitDockStation split = new SplitDockStation(){
 				@Override
 				protected ListeningDockAction createFullScreenAction(){
 					return null;
 				}
 			};
+			DockStation parent = source.getParent();
 			split.setController( parent.getController() );
 			split.updateTheme();
-			
+
+			PlaceholderMap placeholders = source.getPlaceholders();
 	        if( placeholders != null ){
 	        	split.setPlaceholders( placeholders );
 	        }

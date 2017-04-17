@@ -187,7 +187,6 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 		 * @param action how to modify the state
 		 */
 		public void performAction( Action action ){
-			boolean[] canPerform = getEnabledStates();
 			ExpandedState current = getState();
 			ExpandedState next;
 			
@@ -207,7 +206,8 @@ public abstract class ExpandToolbarGroupActions<P> extends AbstractToolbarGroupA
 				default:
 					throw new IllegalStateException( "never happens" );
 			}
-			
+
+			boolean[] canPerform = getEnabledStates();
 			int attempts = canPerform.length;
 			while( attempts > 0 && current != next && !canPerform[ next.ordinal() ]){
 				attempts--;
