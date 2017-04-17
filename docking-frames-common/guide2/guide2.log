@@ -1,14 +1,20 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.26)  26 FEB 2017 10:06
-entering extended mode
- restricted \write18 enabled.
- %&-line parsing enabled.
-**guide2.tex
-(./guide2.tex
-LaTeX2e <2016/02/01>
-Babel <3.9q> and hyphenation patterns for 3 language(s) loaded.
-(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
-Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+This is TeX, Version 3.14159265 (TeX Live 2015/Debian) (preloaded format=tex 2017.2.26)  26 FEB 2017 10:06
+**/home/beni/programming/git/DockingFrames/docking-frames-common/guide2/guide2.
+tex
+
+(/home/beni/programming/git/DockingFrames/docking-frames-common/guide2/guide2.t
+ex
+! Undefined control sequence.
+l.1 \documentclass
+                  [a4paper,10pt]{article}
+? 
+! Emergency stop.
+l.1 \documentclass
+                  [a4paper,10pt]{article}
+End of file on the terminal!
+
+No pages of output.
+0.clo
 File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79

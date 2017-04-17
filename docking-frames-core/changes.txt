@@ -1114,3 +1114,5 @@
 
 [v1.1.2p19a]
 - Bugfix: when adding an action to an existing dropdown-menu, then the action was always added at the end of the menu
+- Bugfix (provided by Nicolas Roduit): properly read java version specification number of Java 9 (see "DockUI.registerColors")
+- Feature (provided by Nicolas Roduit): new and better translations for various languages

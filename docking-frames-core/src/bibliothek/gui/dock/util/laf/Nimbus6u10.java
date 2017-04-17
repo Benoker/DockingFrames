@@ -115,8 +115,8 @@ public class Nimbus6u10 extends AbstractLookAndFeelColors{
             for( Map.Entry<String, String> entry : translations.entrySet() ){
                 if( entry.getValue().equals( name )){
                     // there are derived colors which might change as well...
-                    // no point in searching which these are exactly, and 
-                    // we have to wait until Nimbus finishes the quest.
+                    // just fire an event that "colors changed", no details required. But
+                	// we have to wait until Nimbus finished the update.
                     EventQueue.invokeLater( new Runnable(){
                         public void run() {
                             fireColorsChanged();     
