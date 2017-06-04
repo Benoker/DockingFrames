@@ -53,6 +53,7 @@ public abstract class AbstractTabLayoutManager<I extends AbstractTabLayoutManage
 				iterator.remove();
 				pane.removeTabPaneListener( next );
 				destroy( next );
+				next.uninstalled();
 			}
 		}
 	}

@@ -79,6 +79,13 @@ public class AbstractTabLayoutManagerPane implements TabPaneListener{
 	public void selectionChanged( TabPane pane ){
 		// ignore
 	}
+
+	/**
+	 * Called by the {@link AbstractTabLayoutManager} once this pane is no longer in use.
+	 */
+	public void uninstalled(){
+		useSmallMinimumSize.setProperties( (DockController)null );
+	}
 	
 	public void controllerChanged( TabPane pane, DockController controller ){
 		useSmallMinimumSize.setProperties( controller );
