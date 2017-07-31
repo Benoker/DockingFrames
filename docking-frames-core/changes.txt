@@ -1118,4 +1118,9 @@
 - Feature (provided by Nicolas Roduit): new and better translations for various languages
 
 [v1.1.2p19b]
-- Bugfix: memory leak fixed, that was caused by a listener created by the "AbstractTabLayoutManagerPane". The listener was never removed properly. Thanks mattbru2 for finding the bug! 
+- Bugfix: memory leak fixed, that was caused by a listener created by the "AbstractTabLayoutManagerPane". The listener was never removed properly. Thanks mattbru2 for finding the bug!
+
+[v1.1.2p19c]
+- Bugfix: disabled icon of DockActions was converted to gray twice, making them hard to read and also overriding the (not gray) icon that might be set by the client. Thanks Thomas for finding this bug.
+- Bugfix: disabled icon of DockActions was not painted in drop-down-menus
+

@@ -39,6 +39,7 @@ import bibliothek.gui.dock.action.ActionContentModifier;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.StandardDockAction;
 import bibliothek.gui.dock.event.StandardDockActionListener;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * A handler that connects a {@link JMenuItem} with a {@link DockAction}.
@@ -110,7 +111,7 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
                 if( item != null ){
                 	item.setEnabled( action.isEnabled( dockable ));
                     item.setIcon( getIcon( ActionContentModifier.NONE_HORIZONTAL ) );
-                    item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+                    updateDisabledIcon();
                     item.setText( action.getText( dockable ));
                     item.setToolTipText( action.getTooltipText( dockable ));
                 }
@@ -120,21 +121,42 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
         }
     }
     
-    private Icon getIcon( ActionContentModifier modifier ){
+    private void updateDisabledIcon(){
+    	Icon icon = getIcon( ActionContentModifier.DISABLED_HORIZONTAL, ActionContentModifier.NONE_HORIZONTAL, ActionContentModifier.NONE );
+    	if( icon == null ){
+    		icon = getIcon( ActionContentModifier.NONE_HORIZONTAL );
+    		icon = DockUtilities.disabledIcon( getItem(), icon );
+    	}
+    	
+    	item.setDisabledIcon( icon );
+    }
+    
+    private Icon getIcon( ActionContentModifier modifier, ActionContentModifier... limits ){
     	List<ActionContentModifier> modifiers = new LinkedList<ActionContentModifier>();
     	modifiers.add( modifier );
     	
     	while( !modifiers.isEmpty() ){
     		modifier = modifiers.remove( 0 );
-    		Icon icon = action.getIcon( dockable, modifier );
-    		if( icon != null ){
-    			return icon;
-    		}
-    		for( ActionContentModifier backup : modifier.getBackup() ){
-    			modifiers.add( backup );
+    		if( !isLimited( modifier, limits )){
+	    		Icon icon = action.getIcon( dockable, modifier );
+	    		if( icon != null ){
+	    			return icon;
+	    		}
+	    		for( ActionContentModifier backup : modifier.getBackup() ){
+	    			modifiers.add( backup );
+	    		}
     		}
     	}
     	return null;
+    }
+    
+    private boolean isLimited( ActionContentModifier modifier, ActionContentModifier... limits ){
+    	for( ActionContentModifier limit : limits ){
+    		if( limit.equals( modifier )){
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     /**
@@ -172,8 +194,8 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
 	        	else if( modifier == null || modifier == ActionContentModifier.NONE ){
 	        		item.setIcon( getIcon( ActionContentModifier.NONE_HORIZONTAL ) );
 	        	}
-	        	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
-	        		item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+	        	if( modifier == null || modifier == ActionContentModifier.DISABLED || modifier == ActionContentModifier.DISABLED_HORIZONTAL ){
+	        		updateDisabledIcon();
 	        	}
         	}
         }

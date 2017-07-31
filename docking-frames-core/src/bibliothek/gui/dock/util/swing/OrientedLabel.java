@@ -32,6 +32,9 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
     /** icon painted when this label is disabled */
     private Icon disabledIcon;
     
+    /** whether to paint a special disabled version of {@link #icon} if disabled */
+    private boolean paintDisabledIcon = true;
+    
     /** distance between icon and border */
     private int iconOffset = 2;
     
@@ -77,6 +80,23 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
      */
     public Icon getIcon(){
 		return icon;
+	}
+    
+    /**
+     * Whether to build and paint a special disabled version of {@link #getIcon()} if this label is disabled.
+     * @param paintDisabledIcon whether to paint the special icon
+     */
+    public void setPaintDisabledIcon( boolean paintDisabledIcon ) {
+		this.paintDisabledIcon = paintDisabledIcon;
+		revalidate();
+		repaint();
+	}
+    /**
+     * Whether a special disabled version of {@link #getIcon()} is painted if this label is disabled.
+     * @return <code>true</code> if an artificial icon is created
+     */
+    public boolean isPaintDisabledIcon() {
+		return paintDisabledIcon;
 	}
     
     /**
@@ -350,7 +370,7 @@ public class OrientedLabel extends ConfiguredBackgroundPanel{
         	}
         	else{
         		Icon icon = this.icon;
-        		if( !isEnabled() ){
+        		if( !isEnabled() && paintDisabledIcon ){
         			if( disabledIcon == null ){
         				disabledIcon = DockUtilities.disabledIcon( this, icon );
         			}

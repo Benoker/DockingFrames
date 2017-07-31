@@ -149,6 +149,9 @@ public class MiniButtonContent extends JComponent {
 		
 		label.setIconOffset( 0 );
 		label.setIconTextDistance( 2 );
+		
+		// we already build our own disabled version of the icon
+		label.setPaintDisabledIcon( false );
 	}
 	
 	/**
