@@ -203,7 +203,7 @@ public class CControlPerspectiveBlop {
      * Performs the same actions as {@link CControl#read(DataInputStream)}, this method extracts all layouts of
      * a byte file.
      * @param in the stream to read from
-     * @throws if the stream cannot be read
+     * @throws IOException if the stream cannot be read
      */    
     public void read( DataInputStream in ) throws IOException{
     	resourceManager.readStream( in );

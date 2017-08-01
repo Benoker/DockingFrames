@@ -1452,6 +1452,7 @@ public class CControl {
      * Changes the value of a property. The incomplete list of properties, in alphabetical order, includes:
      * (properties marked with '*' should not be changed by clients if using the Common project).
      * <table>
+     *  <caption>Properties</caption>
      * 	<tr><td>{@link BubbleTheme#ACTION_DISTRIBUTOR}</td><td>Default instance of a {@link DockActionDistributor}.</td></tr>
      *  <tr><td>{@link FlatTheme#ACTION_DISTRIBUTOR}</td><td>Default instance of a {@link DockActionDistributor}.</td></tr>
      *  <tr><td>{@link DefaultDockRelocator#AUTO_DROP_ON_ANY_MOUSE_RELEASED_EVENT}</td><td>Stop drag-and-drop operations on any mouse-released event (a workaround necessary for some Linux and Mac systems).</td></tr>
@@ -1759,7 +1760,6 @@ public class CControl {
 
     /**
      * Removes the {@link SingleCDockable} with the identifier <code>id</code>.
-     * This has the same effect as calling {@link #remove(SingleCDockable)}.
      * @param id the id of the element to remove
      * @return <code>true</code> if the element was removed, <code>false</code>
      * otherwise
