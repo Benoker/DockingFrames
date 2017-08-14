@@ -77,7 +77,7 @@ public interface CDockablePropertyListener {
     public void resizeLockedChanged( CDockable dockable );
     
     /**
-     * Called when the {@link CDockable#isMinimizedHold()}-property has changed.
+     * Called when the {@link CDockable#isSticky()}-property has changed.
      * @param dockable the source of the event
      */
     public void stickyChanged( CDockable dockable );
@@ -90,7 +90,7 @@ public interface CDockablePropertyListener {
     public void minimizeSizeChanged( CDockable dockable );
     
     /**
-     * Called when the property {@link CDockable#isMinimizedHoldSwitchable()} has changed.
+     * Called when the property {@link CDockable#isStickySwitchable()} has changed.
      * @param dockable the source of the event
      */
     public void stickySwitchableChanged( CDockable dockable );

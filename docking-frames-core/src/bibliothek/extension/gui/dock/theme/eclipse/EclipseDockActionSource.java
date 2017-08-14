@@ -33,7 +33,7 @@ import bibliothek.gui.dock.action.FilteredDockActionSource;
 
 /**
  * A list of {@link DockAction DockActions} filtered by the 
- * {@link EclipseThemeConnector}, using {@link EclipseThemeConnector#isTabAction(Dockable, DockAction)}.
+ * {@link EclipseThemeConnector}, using {@link EclipseThemeConnector#shouldShowOnTab(DockAction, EclipseTabStateInfo)}.
  * @author Benjamin Sigg
  *
  */

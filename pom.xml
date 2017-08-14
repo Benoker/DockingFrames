@@ -353,6 +353,8 @@
 						<link>http://java.sun.com/javase/1.6.0/docs/api</link>
 						<show>public</show>
 					</links>
+					<excludePackageNames>bibliothek.gui.dock.station.split.layout</excludePackageNames>
+					<failOnError>false</failOnError>
 				</configuration>
 				<reportSets>
 					<reportSet>

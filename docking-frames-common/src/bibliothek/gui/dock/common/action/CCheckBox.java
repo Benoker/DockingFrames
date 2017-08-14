@@ -48,7 +48,7 @@ public abstract class CCheckBox extends CSelectableAction<CommonSimpleCheckActio
     /**
      * Creates a new checkbox using <code>action</code> as internal representation.
      * @param action the internal representation, can be <code>null</code> in which case
-     * a subclass should call {@link #init(CommonSimpleCheckAction)}
+     * a subclass should call {@code CSelectableAction<>.init(CommonSimpleCheckAction)}
      */
     protected CCheckBox( CommonSimpleCheckAction action ){
     	super( null );

@@ -199,7 +199,7 @@ public interface DockControllerFactory {
 
 	/**
 	 * Creates a new {@link DockComponentManager}.
-	 * @param controller the controller which will use the new manager
+	 * @param dockController the controller which will use the new manager
 	 * @param setup an observable where new objects can add {@link ControllerSetupListener}
      * to be informed when the setup of <code>controller</code> is finished. 
 	 * @return the new manager, not <code>null</code>

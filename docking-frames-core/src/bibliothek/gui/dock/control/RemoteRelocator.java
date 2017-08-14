@@ -34,11 +34,12 @@ import java.awt.event.MouseMotionListener;
 import bibliothek.gui.Dockable;
 
 /**
- * A remote relocator can be used to perform a drag & drop operation of a
+ * A remote relocator can be used to perform a {@literal drag & drop} operation of a
  * {@link Dockable} without the need to know more than the <code>Dockable</code>.<br>
  * The methods of this interface correspond to methods which are used in 
  * <code>MouseListener</code> and <code>MouseMotionListener</code>:
  * <table>
+ *  <caption>Corresponding listener methods</caption>
  *  <tr>
  *   <td>{@link #init(int, int, int, int, int)}</td>
  *   <td>{@link MouseListener#mousePressed(MouseEvent)}</td>
@@ -55,7 +56,7 @@ import bibliothek.gui.Dockable;
  * The names of these three methods correspond to their normal reaction, when
  * only the left mouse button is pressed (or released). When other buttons
  * are pressed, then the behavior of this relocator may change heavily. The
- * relocator might even cancel a drag & drop operation.
+ * relocator might even cancel a {@literal drag & drop} operation.
  * <br><br>
  * The described three methods return a {@link Reaction}. A result that is 
  * {@link Reaction#CONTINUE CONTINUE} or 
@@ -94,7 +95,7 @@ import bibliothek.gui.Dockable;
  * Mixing events with different sources or using different, not substitutable 
  * relocators while one relocator is interested in the events, will lead to 
  * unspecified behavior.<br>
- * A drag & drop operation can be canceled in any state by calling {@link #cancel()}.
+ * A {@literal drag & drop} operation can be canceled in any state by calling {@link #cancel()}.
  * Afterwards no events have to be sent to the relocator any more (it is not forbidden to
  * send more events).<br><br>
  * New <code>RemoveRelocators</code> can be delivered by 
@@ -105,7 +106,7 @@ import bibliothek.gui.Dockable;
 public interface RemoteRelocator extends BasicRemoteRelocator{
     /**
      * Tells a caller of a method whether the {@link RemoteRelocator} has
-     * finished the drag & drop operation or not.
+     * finished the {@literal drag & drop} operation or not.
      * @author Benjamin Sigg
      */
     public enum Reaction{
@@ -122,7 +123,7 @@ public interface RemoteRelocator extends BasicRemoteRelocator{
 
     
     /**
-     * This method starts or cancels a drag & drop operation. This method simulates
+     * This method starts or cancels a {@literal drag & drop} operation. This method simulates
      * a mouse-pressed event.
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
@@ -134,7 +135,7 @@ public interface RemoteRelocator extends BasicRemoteRelocator{
     public Reaction init( int x, int y, int dx, int dy, int modifiers );
     
     /**
-     * This method works on the drag-part of a drag & drop operation.
+     * This method works on the drag-part of a {@literal drag & drop} operation.
      * This method simulates a mouse-dragged event.
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
@@ -144,9 +145,9 @@ public interface RemoteRelocator extends BasicRemoteRelocator{
     public Reaction drag( int x, int y, int modifiers );
     
     /**
-     * This method works on the drop-part of a drag & drop operation.
+     * This method works on the drop-part of a {@literal drag & drop} operation.
      * This method simulates a mouse-released event.<br>
-     * The drag & drop operation may not be finished after an invocation of this
+     * The {@literal drag & drop} operation may not be finished after an invocation of this
      * method, clients should carefully analyze the resulting {@link Reaction} 
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
@@ -156,7 +157,7 @@ public interface RemoteRelocator extends BasicRemoteRelocator{
     public Reaction drop( int x, int y, int modifiers );
     
     /**
-     * Cancels the current drag & drop operation. No events have to be delivered
+     * Cancels the current {@literal drag & drop} operation. No events have to be delivered
      * any more to this relocator.
      */
     public void cancel();

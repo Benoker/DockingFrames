@@ -79,7 +79,7 @@ public abstract class AbstractAcceptance implements DockAcceptance {
     
     /**
      * Combines this acceptance with the <code>other</code> acceptance
-     * in a logical "<->" operation.
+     * in a logical {@literal "<->"} operation.
      * @param other The other acceptance 
      * @return An acceptance that returns <code>true</code> if
      * this and the <code>other</code> acceptance returned the

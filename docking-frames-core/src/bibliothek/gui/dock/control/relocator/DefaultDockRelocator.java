@@ -78,7 +78,7 @@ import bibliothek.util.Path;
 import bibliothek.util.Workarounds;
 
 /**
- * Default implementation of a handler that performs the drag & drop operations
+ * Default implementation of a handler that performs the {@literal drag & drop} operations
  * for a {@link DockController}.
  * @author Benjamin Sigg
  */

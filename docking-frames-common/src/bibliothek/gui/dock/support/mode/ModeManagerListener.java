@@ -36,7 +36,7 @@ import bibliothek.gui.Dockable;
  */
 public interface ModeManagerListener<A, M extends Mode<A>> {
 	/**
-	 * Called when a {@link Dockable} is added or replaced in <code>manager</code>.
+	 * Called when a {@link Dockable} is added or replaced in {@code manager}.
 	 * If it was replaced, then {@link #dockableRemoved(ModeManager, Dockable)} is
 	 * called first.
 	 * @param manager the source of the event 
@@ -45,7 +45,7 @@ public interface ModeManagerListener<A, M extends Mode<A>> {
 	public void dockableAdded( ModeManager<? extends A, ? extends M> manager, Dockable dockable );
 	
 	/**
-	 * Called when a {@link Dockable} is removed or replaced from <code>manager</code>.
+	 * Called when a {@link Dockable} is removed or replaced from {@code manager}.
 	 * If it was replaced, then {@link #dockableAdded(ModeManager, Dockable)} is
 	 * called afterwards.
 	 * @param manager the source of the event
@@ -54,26 +54,26 @@ public interface ModeManagerListener<A, M extends Mode<A>> {
 	public void dockableRemoved( ModeManager<? extends A, ? extends M> manager, Dockable dockable );
 	
 	/**
-	 * Called if the mode of <code>dockable</code> changed. Note: this method may be
+	 * Called if the mode of {@code dockable} changed. Note: this method may be
 	 * called in rapid succession. Some mode-changes may not be reported, for
-	 * example if a {@link Dockable} changes <code>a -> b -> c</code> then the
-	 * event can be <code>a -> c</code>.
+	 * example if a {@link Dockable} changes {@code a -> b -> c} then the
+	 * event can be {@code a -> c}.
 	 * @param manager the source of the event
 	 * @param dockable the affected element
-	 * @param oldMode the old mode, may be <code>null</code>
-	 * @param newMode the new mode, may be <code>null</code>
+	 * @param oldMode the old mode, may be {@code null}
+	 * @param newMode the new mode, may be {@code null}
 	 */
 	public void modeChanged( ModeManager<? extends A, ? extends M> manager, Dockable dockable, M oldMode, M newMode );
 	
 	/**
-	 * Called when a new mode has been added to <code>manager</code>.
+	 * Called when a new mode has been added to {@code manager}.
 	 * @param manager the source of the event
 	 * @param mode the new mode
 	 */
 	public void modeAdded( ModeManager<? extends A, ? extends M> manager, M mode );
 	
 	/**
-	 * Called when a mode has been removed from <code>manager</code>.
+	 * Called when a mode has been removed from {@code manager}.
 	 * @param manager the source of the event
 	 * @param mode the removed mode
 	 */
