@@ -30,18 +30,18 @@ import bibliothek.gui.Dockable;
 /**
  * A simplified version of {@link RemoteRelocator}. This direct remote relocator
  * assumes that the correct mouse buttons are always pressed. A client
- * can initiate a drag & drop operation by calling {@link #init(int, int, int, int) init}.
+ * can initiate a {@literal drag & drop} operation by calling {@link #init(int, int, int, int) init}.
  * Then the client has to call at least one time {@link #drag(int, int, boolean) drag}, before
  * he can invoke {@link #drop(int, int) drop} to let the dragged {@link Dockable}
  * fall down. A client can {@link #cancel() cancel} the operation at any time.<br>
  * Note that only one operation is supported at once. Note also that there is 
- * no guarantee, that a drag & drop operation is executed successfully.
+ * no guarantee, that a {@literal drag & drop} operation is executed successfully.
  * @author Benjamin Sigg
  *
  */
 public interface DirectRemoteRelocator extends BasicRemoteRelocator{
     /**
-     * This method starts a drag & drop operation. This method simulates
+     * This method starts a {@literal drag & drop} operation. This method simulates
      * a mouse-pressed event.
      * @param x the x-coordinate on the screen, where the (simulated) event occurred
      * @param y the y-coordinate on the screen, where the (simulated) event occurred
@@ -73,7 +73,7 @@ public interface DirectRemoteRelocator extends BasicRemoteRelocator{
     public void drop( int x, int y );
     
     /**
-     * Cancels the current drag & drop operation.
+     * Cancels the current {@literal drag & drop} operation.
      */
     public void cancel();
 }

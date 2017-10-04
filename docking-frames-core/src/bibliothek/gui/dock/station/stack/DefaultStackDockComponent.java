@@ -64,7 +64,7 @@ import bibliothek.gui.dock.util.SimpleDockElementRepresentative;
  * @see JTabbedPane
  */
 public class DefaultStackDockComponent extends JTabbedPane implements StackDockComponent {
-	/** The Dockables shown on this component and their RemoteRelocators to control drag&drop operations */
+	/** The Dockables shown on this component and their RemoteRelocators to control {@literal drag & drop} operations */
 	private List<Tab> dockables = new ArrayList<Tab>();
 	
 	/** The controller for which this component is shown */

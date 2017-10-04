@@ -106,7 +106,7 @@ public interface EclipseThemeConnector {
 	/**
 	 * Tells whether <code>action</code> should be shown on the right side of the
 	 * tab of <code>dockable</code>.<br>
-	 * Note that {@link #shouldShowOnSide(DockAction, Dockable)} and {@link #shouldShowOnTab(DockAction, EclipseTabStateInfo)}
+	 * Note that {@link #shouldShowOnSide(DockAction, EclipseTabStateInfo)} and {@link #shouldShowOnTab(DockAction, EclipseTabStateInfo)}
 	 * are independent of each other.
 	 * @param action the action to show
 	 * @param tab information about the tab that shows the {@link Dockable}
@@ -117,7 +117,7 @@ public interface EclipseThemeConnector {
 
 	/**
 	 * Tells whether <code>action</code> should be shown on the tab of <code>dockable</code>.<br>
-	 * Note that {@link #shouldShowOnSide(DockAction, Dockable)} and {@link #shouldShowOnTab(DockAction, EclipseTabStateInfo)}
+	 * Note that {@link #shouldShowOnSide(DockAction, EclipseTabStateInfo)} and {@link #shouldShowOnTab(DockAction, EclipseTabStateInfo)}
 	 * are independent of each other.
 	 * @param action the action to show
 	 * @param tab information about the tab that shows the {@link Dockable}

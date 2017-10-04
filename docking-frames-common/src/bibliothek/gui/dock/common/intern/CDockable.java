@@ -122,7 +122,8 @@ public interface CDockable {
 	
 	/**
 	 * Key for an action of {@link #getAction(String)}. The action behind
-	 * this key should toggle {@link CDockable#setMinimizedHold(boolean)}.
+	 * this key should toggle CDockable.setMinimizedHold(boolean).
+     * TODO: setMinimizedHold no longer exists; update
      */
 	public static final String ACTION_KEY_MINIMIZE_HOLD = "cdockable.hold";
 	

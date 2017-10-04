@@ -60,7 +60,7 @@ import bibliothek.util.Todo.Priority;
  * When using a {@link CPerspective} clients have to be aware of:
  * <ul>
  * 	<li>Neither single- nor multiple-dockables need to be registered.</li>
- *  <li>Any root-{@link CStation} used by a {@link CControl} needs to be registered using {@link #addRoot(CStationPerspective)}</li> 
+ *  <li>Any root-{@link CStation} used by a {@link CControl} needs to be registered using {@link #addStation(CStationPerspective)}</li>
  * </ul> 
  * @author Benjamin Sigg
  */

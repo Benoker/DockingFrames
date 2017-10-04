@@ -30,7 +30,7 @@ import java.awt.Component;
 import java.awt.Point;
 
 /**
- * Moving images are used when a drag&drop operation is in progress, and
+ * Moving images are used when a {@literal drag&drop} operation is in progress, and
  * an object has to be shown somehow on the screen.
  * @author Benjamin Sigg
  *
