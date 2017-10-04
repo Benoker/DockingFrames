@@ -1124,3 +1124,5 @@
 - Bugfix: disabled icon of DockActions was converted to gray twice, making them hard to read and also overriding the (not gray) icon that might be set by the client. Thanks Thomas for finding this bug.
 - Bugfix: disabled icon of DockActions was not painted in drop-down-menus
 
+[v1.1.2p19d]
+! Bugfix: CControlPerspectiveBlop writeXML/write was not symmetrical with readXML/read

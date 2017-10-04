@@ -214,7 +214,7 @@ public class CControlPerspectiveBlop {
      * @param root the xml element to write into
      */
     public void writeXML( XElement root ){
-    	resource.writeXML( root );
+    	resourceManager.writeXML( root );
     }
     
     /**
@@ -223,6 +223,6 @@ public class CControlPerspectiveBlop {
      * @throws IOException if the stream is not writeable
      */
     public void write( DataOutputStream out ) throws IOException{
-    	resource.write( out );
+    	resourceManager.writeStream( out );
     }
 }
