@@ -119,6 +119,17 @@ public class ApplicationResourceManager {
             out.writeInt( array.size() );
             array.writeTo( out );
         }
+        
+        for( Map.Entry<String, Object> unknownResource : buffer.entrySet() ){
+        	Object value = unknownResource.getValue();
+        	if( value instanceof byte[] ){
+        		byte[] array = (byte[])value;
+        		
+        		out.writeUTF( unknownResource.getKey() );
+        		out.writeInt( array.length );
+        		out.write( array );
+        	}
+        }
     }
     
     /**
@@ -159,6 +170,14 @@ public class ApplicationResourceManager {
             XElement xresource = element.addElement( "resource" );
             xresource.addString( "name", resource.getKey() );
             resource.getValue().writeXML( xresource );
+        }
+        
+        for( Map.Entry<String, Object> unknownResource : buffer.entrySet() ){
+        	Object value = unknownResource.getValue();
+        	if( value instanceof XElement ){
+        		XElement xvalue = (XElement)value;
+        		element.addElement( xvalue );
+        	}
         }
     }
     
