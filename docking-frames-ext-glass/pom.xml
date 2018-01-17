@@ -15,8 +15,14 @@
 	<name>${project.artifactId}</name>
 	<description>${project.name} is a "glass" theme extension</description>
 
-	<dependencies>
+	<repositories>
+		<repository>
+			<id>local-maven-repo</id>
+			<url>file:///${project.basedir}/repo</url>
+		</repository>
+	</repositories>
 
+	<dependencies>
 		<dependency>
 			<groupId>org.dockingframes</groupId>
 			<artifactId>docking-frames-common</artifactId>
@@ -24,10 +30,22 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar
-			on maven -->
-
+		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar on maven -->
+		<dependency>
+			<groupId>kux</groupId>
+			<artifactId>glasslib</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
+	<build>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<includes>
+					<include>glass/eclipse/theme/images/*.*</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
 </project>

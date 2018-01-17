@@ -20,22 +20,25 @@
 		<module>docking-frames-common</module>
 		<module>docking-frames-ext-toolbar</module>
 		<module>docking-frames-ext-toolbar-common</module>
+		<module>docking-frames-ext-css-theme</module>
 
-		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar on
-			maven -->
-		<!-- <module>docking-frames-ext-glass</module> -->
+		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar 
+			on maven -->
+		<module>docking-frames-ext-glass</module>
 
 		<!-- TODO activate this later -->
 
-		<!-- <module>docking-frames-demo-app</module> -->
-		<!-- <module>docking-frames-demo-app-ice</module> -->
-		<!-- <module>docking-frames-demo-chess</module> -->
-		<!-- <module>docking-frames-demo-help</module> -->
-		<!-- <module>docking-frames-demo-layouts</module> -->
-		<!-- <module>docking-frames-demo-notes</module> -->
-		<!-- <module>docking-frames-demo-paint</module> -->
-		<!-- <module>docking-frames-demo-size-and-color</module> -->
-		<!-- <module>docking-frames-demo-tutorial</module> -->
+		<module>docking-frames-demo-app-ice</module>
+		<module>docking-frames-demo-chess</module>
+		<module>docking-frames-demo-help</module>
+		<module>docking-frames-demo-layouts</module>
+		<module>docking-frames-demo-notes</module>
+		<module>docking-frames-demo-paint</module>
+		<module>docking-frames-demo-size-and-color</module>
+		<module>docking-frames-demo-tutorial</module>
+		<module>docking-frames-demo-app</module>
+
+		<module>docking-frames-ext-toolbar-tutorial</module>
 
 	</modules>
 
@@ -164,8 +167,8 @@
 				<role>contributor</role>
 			</roles>
 		</developer>
-                <developer>
-     			<id>krijnschaap@gmail.com</id>
+		<developer>
+			<id>krijnschaap@gmail.com</id>
 			<email>krijnschaap@gmail.com</email>
 			<name>Krijn Schaap</name>
 			<properties>
@@ -178,8 +181,8 @@
 	</developers>
 
 	<properties>
-		<javaVersion>1.6</javaVersion>
-                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<javaVersion>1.7</javaVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<build>
@@ -190,12 +193,14 @@
 		<!-- TODO change to maven convention src/main/resources; then remove this -->
 		<resources>
 			<resource>
-				<directory>src/data</directory>
+				<directory>src</directory>
 				<includes>
-					<include>**/*.*</include>
+					<include>data/**/*.*</include>
 				</includes>
 			</resource>
 		</resources>
+
+		<testSourceDirectory>testing</testSourceDirectory>
 
 		<pluginManagement>
 
@@ -272,6 +277,7 @@
 				<configuration>
 					<archive>
 						<manifest>
+							<addClasspath>true</addClasspath>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
@@ -297,6 +303,15 @@
 		</plugins>
 
 	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<profiles>
 
