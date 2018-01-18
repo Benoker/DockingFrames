@@ -16,11 +16,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.dockingframes</groupId>
-      <artifactId>docking-frames-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>docking-frames-ext-toolbar</artifactId>
       <version>${project.version}</version>
