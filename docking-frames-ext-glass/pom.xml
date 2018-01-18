@@ -34,7 +34,7 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.dockingframes</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>docking-frames-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -46,6 +46,7 @@
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
+	
 	<profiles>
 		<profile>
 			<id>skipGlass</id>
@@ -74,6 +75,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 		<profile>
 			<id>deployGlasslib</id>
 			<activation>

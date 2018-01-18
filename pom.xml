@@ -182,6 +182,8 @@
 
 	<properties>
 		<javaVersion>1.7</javaVersion>
+		<maven.compiler.source>${javaVersion}</maven.compiler.source>
+		<maven.compiler.target>${javaVersion}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 	</properties>
@@ -260,17 +262,6 @@
 		</pluginManagement>
 
 		<plugins>
-
-			<plugin>
-				<!-- enforce java version -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${javaVersion}</source>
-					<target>${javaVersion}</target>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -295,11 +286,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-
-
-	</profiles>
 
 	<reporting>
 

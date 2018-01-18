@@ -17,11 +17,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.dockingframes</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>docking-frames-core</artifactId>
-			<type>jar</type>
 			<version>${project.version}</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
