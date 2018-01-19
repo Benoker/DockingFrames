@@ -40,6 +40,8 @@
 		<module>docking-frames-demo-tutorial</module>
 		<module>docking-frames-ext-toolbar-tutorial</module>
 
+		<module>docking-frames-dist</module>
+		<module>docking-frames-glass-dist</module>
 	</modules>
 
 	<name>${project.artifactId}</name>
@@ -189,6 +191,8 @@
 	</properties>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
+
 
 		<!-- TODO change to maven convention src/main/java; then remove this -->
 		<sourceDirectory>src</sourceDirectory>
@@ -269,6 +273,8 @@
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifest>
+							<classpathLayoutType>custom</classpathLayoutType>
+							<customClasspathLayout>$${artifact.artifactId}.$${artifact.extension}</customClasspathLayout>
 							<addClasspath>true</addClasspath>
 						</manifest>
 					</archive>

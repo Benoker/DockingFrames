@@ -98,7 +98,6 @@
 								<configuration>
 									<url>${glasslibURL}</url>
 									<file>${project.basedir}/libs/glassLib/glasslib.jar</file>
-									<generatePom>true</generatePom>
 									<groupId>kux</groupId>
 									<artifactId>glasslib</artifactId>
 									<version>1.0</version>
