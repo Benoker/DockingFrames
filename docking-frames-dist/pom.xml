@@ -16,19 +16,6 @@
 	<name>${project.artifactId}</name>
 	<url></url>
 
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>docking-frames-ext-toolbar-tutorial</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>docking-frames-demo-app</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
-
 	<properties>
 		<maven.install.skip>true</maven.install.skip>
 		<maven.deploy.skip>true</maven.deploy.skip>
@@ -39,7 +26,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.0.2</version>
 				<executions>
 					<execution>
 						<id>copy</id>
@@ -280,7 +266,6 @@
 			<plugin>
 				<groupId>com.coderplus.maven.plugins</groupId>
 				<artifactId>copy-rename-maven-plugin</artifactId>
-				<version>1.0</version>
 				<executions>
 					<execution>
 						<id>copy-changes.txt</id>
@@ -373,8 +358,8 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.0</version>
 				<configuration>
 					<descriptors>
 						<descriptor>zip.xml</descriptor>
