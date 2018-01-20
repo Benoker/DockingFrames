@@ -97,7 +97,9 @@ public class StackDockPerspective implements PerspectiveDockable, PerspectiveSta
 				}
 				int id = item.getInt( "id" );
 				PerspectiveDockable dockable = children.get( id );
-				dockable.setParent( StackDockPerspective.this );
+				if( dockable != null ){
+					dockable.setParent( StackDockPerspective.this );
+				}
 				return dockable;
 			}
 		});
