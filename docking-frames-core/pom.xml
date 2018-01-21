@@ -14,33 +14,6 @@
 	<name>${project.artifactId}</name>
 	<description>${project.name} is a core library</description>
 
-        <build>
-            <sourceDirectory>
-                src/
-            </sourceDirectory>
-            <resources>
-                <resource>
-                    <directory>
-                        src/
-                    </directory>
-                    <includes>
-                        <include>
-                            data/**/*.properties
-                        </include>
-                        <include>
-                            data/**/*.png
-                        </include>
-                        <include>
-                            data/**/*.ini
-                        </include>
-                        <include>
-                            data/**/*.svg
-                        </include>
-                    </includes>
-                </resource>
-            </resources>
-        </build>
-
     <profiles>
         <profile>
             <activation>

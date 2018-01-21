@@ -15,19 +15,98 @@
 	<name>${project.artifactId}</name>
 	<description>${project.name} is a "glass" theme extension</description>
 
+	<repositories>
+		<repository>
+			<id>local-maven-repo</id>
+			<url>file:///${project.basedir}/repo</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<includes>
+					<include>glass/eclipse/theme/images/*.*</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
 	<dependencies>
-
 		<dependency>
-			<groupId>org.dockingframes</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>docking-frames-common</artifactId>
-			<type>jar</type>
 			<version>${project.version}</version>
-			<scope>compile</scope>
 		</dependency>
-
-		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar
+		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar 
 			on maven -->
-
+		<dependency>
+			<groupId>kux</groupId>
+			<artifactId>glasslib</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
-
+	
+	<profiles>
+		<profile>
+			<id>skipGlass</id>
+			<activation>
+				<property>
+					<name>skipGlass</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.resources.skip>true</maven.resources.skip>
+				<maven.main.skip>true</maven.main.skip>
+				<maven.test.skip>true</maven.test.skip>
+				<maven.install.skip>true</maven.install.skip>
+				<maven.deploy.skip>true</maven.deploy.skip>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<skipIfEmpty>true</skipIfEmpty>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>deployGlasslib</id>
+			<activation>
+				<property>
+					<name>glasslibURL</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy glasslib</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>deploy-file</goal>
+								</goals>
+								<configuration>
+									<url>${glasslibURL}</url>
+									<file>${project.basedir}/libs/glassLib/glasslib.jar</file>
+									<groupId>kux</groupId>
+									<artifactId>glasslib</artifactId>
+									<version>1.0</version>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

@@ -110,7 +110,7 @@ public class ThemeMenu extends JMenu{
 	
 	/**
      * Writes which theme is currently selected.
-     * @params element the xml-element to write into
+     * @param element the xml-element to write into
      */
     public void writeXML( XElement element ){
         int index = -1;
