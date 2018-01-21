@@ -20,23 +20,28 @@
 		<module>docking-frames-common</module>
 		<module>docking-frames-ext-toolbar</module>
 		<module>docking-frames-ext-toolbar-common</module>
+		<module>docking-frames-ext-css-theme</module>
 
-		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar on
-			maven -->
-		<!-- <module>docking-frames-ext-glass</module> -->
+		<!-- TODO ask Steffen Kux, software@kuxfamily.de to publish glasslib.jar 
+			on maven -->
+		<module>docking-frames-ext-glass</module>
 
 		<!-- TODO activate this later -->
 
-		<!-- <module>docking-frames-demo-app</module> -->
-		<!-- <module>docking-frames-demo-app-ice</module> -->
-		<!-- <module>docking-frames-demo-chess</module> -->
-		<!-- <module>docking-frames-demo-help</module> -->
-		<!-- <module>docking-frames-demo-layouts</module> -->
-		<!-- <module>docking-frames-demo-notes</module> -->
-		<!-- <module>docking-frames-demo-paint</module> -->
-		<!-- <module>docking-frames-demo-size-and-color</module> -->
-		<!-- <module>docking-frames-demo-tutorial</module> -->
+		<module>docking-frames-demo-app-ice</module>
+		<module>docking-frames-demo-chess</module>
+		<module>docking-frames-demo-help</module>
+		<module>docking-frames-demo-layouts</module>
+		<module>docking-frames-demo-notes</module>
+		<module>docking-frames-demo-paint</module>
+		<module>docking-frames-demo-size-and-color</module>
+		<module>docking-frames-demo-app</module>
 
+		<module>docking-frames-demo-tutorial</module>
+		<module>docking-frames-ext-toolbar-tutorial</module>
+
+		<module>docking-frames-dist</module>
+		<module>docking-frames-glass-dist</module>
 	</modules>
 
 	<name>${project.artifactId}</name>
@@ -164,8 +169,8 @@
 				<role>contributor</role>
 			</roles>
 		</developer>
-                <developer>
-     			<id>krijnschaap@gmail.com</id>
+		<developer>
+			<id>krijnschaap@gmail.com</id>
 			<email>krijnschaap@gmail.com</email>
 			<name>Krijn Schaap</name>
 			<properties>
@@ -179,10 +184,16 @@
 
 	<properties>
 		<javaVersion>1.6</javaVersion>
-                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>${javaVersion}</maven.compiler.source>
+		<maven.compiler.target>${javaVersion}</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+		<toolsJar>${java.home}/../lib/tools.jar</toolsJar>
 	</properties>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
+
 
 		<!-- TODO change to maven convention src/main/java; then remove this -->
 		<sourceDirectory>src</sourceDirectory>
@@ -190,12 +201,14 @@
 		<!-- TODO change to maven convention src/main/resources; then remove this -->
 		<resources>
 			<resource>
-				<directory>src/data</directory>
+				<directory>src</directory>
 				<includes>
-					<include>**/*.*</include>
+					<include>data/**/*.*</include>
 				</includes>
 			</resource>
 		</resources>
+
+		<testSourceDirectory>testing</testSourceDirectory>
 
 		<pluginManagement>
 
@@ -210,19 +223,19 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-scm-plugin</artifactId>
-					<version>1.5</version>
+					<version>1.9.5</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>3.7.0</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.5</version>
+					<version>3.0.2</version>
 				</plugin>
 
 				<plugin>
@@ -238,15 +251,33 @@
 				</plugin>
 
 				<plugin>
-					<groupId>org.apache.maven.scm</groupId>
-					<artifactId>maven-scm-provider-svnexe</artifactId>
-					<version>1.4</version>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.0.2</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.3.1</version>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.0.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>com.coderplus.maven.plugins</groupId>
+					<artifactId>copy-rename-maven-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.1.0</version>
 				</plugin>
 
 			</plugins>
@@ -254,54 +285,32 @@
 		</pluginManagement>
 
 		<plugins>
-
 			<plugin>
-				<!-- enforce java version -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${javaVersion}</source>
-					<target>${javaVersion}</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<!-- include extra manifest entries -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<classpathLayoutType>custom</classpathLayoutType>
+							<customClasspathLayout>$${artifact.artifactId}.$${artifact.extension}</customClasspathLayout>
+							<addClasspath>true</addClasspath>
 						</manifest>
-						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.3.7</version>
-				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<id>bundle-manifest</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>manifest</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 
 	</build>
 
-	<profiles>
-
-
-	</profiles>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<reporting>
 
@@ -312,7 +321,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.9</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -345,7 +354,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
+				<version>3.0</version>
 				<configuration>
 					<quiet>true</quiet>
 					<verbose>false</verbose>

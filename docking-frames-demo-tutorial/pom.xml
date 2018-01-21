@@ -8,62 +8,49 @@
     <version>1.1.2-P19d</version>
   </parent>
 
-  <artifactId>tutorial</artifactId>
+  <artifactId>docking-frames-demo-tutorial</artifactId>
   <packaging>jar</packaging>
 
-  <name>docking-frames-demo-tutorial</name>
+  <name>${project.artifactId}</name>
   <url></url>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <exec.mainClass>tutorial.TutorialMain</exec.mainClass>
+    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
   <build>
-      <sourceDirectory>
-          src/
-      </sourceDirectory>
     <resources>
-        <resource>
-            <directory>
-                src
-            </directory>
-            <includes>
-                <include>
-                    data/**/*.*
-                </include>
-            </includes>
-        </resource>
+      <resource>
+        <directory>src</directory>
+        <includes>
+          <include>tutorial/support/sets/CommonSet.java</include>
+          <include>tutorial/support/sets/CoreSet.java</include>
+          <include>tutorial/common/**/*.java</include>
+          <include>tutorial/core/**/*.java</include>
+          <include>tutorial/dockFrontend/**/*.java</include>
+          <include>data/**/*.*</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <configuration>
-          <mainClass>tutorial.TutorialMain</mainClass>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.4</version>
+        <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <skip>true</skip>
+          <archive>
+            <manifest>
+              <mainClass>${exec.mainClass}</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
   </build>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.dockingframes</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>docking-frames-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-
   </dependencies>
 </project>

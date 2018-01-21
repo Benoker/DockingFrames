@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.dockingframes</groupId>
 		<artifactId>docking-frames-base</artifactId>
-        <version>1.1.2-P19d</version>
+		<version>1.1.2-P19d</version>
 	</parent>
 
 	<artifactId>docking-frames-common</artifactId>
@@ -16,34 +17,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.dockingframes</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>docking-frames-core</artifactId>
-			<type>jar</type>
 			<version>${project.version}</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-        <build>
-            <resources>
-                <resource>
-                    <directory>
-                        src/
-                    </directory>
-                    <includes>
-                        <include>
-                            **/*.properties
-                        </include>
-                        <include>
-                            **/*.png
-                        </include>
-                        <include>
-                            **/*.ini
-                        </include>
-                        <include>
-                            **/*.svg
-                        </include>
-                    </includes>
-                </resource>
-            </resources>
-        </build>
 </project>
