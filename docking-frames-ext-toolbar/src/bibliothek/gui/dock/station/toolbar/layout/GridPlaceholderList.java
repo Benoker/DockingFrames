@@ -32,14 +32,13 @@ package bibliothek.gui.dock.station.toolbar.layout;
 
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
-import bibliothek.gui.dock.DockElement;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList;
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
-import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList.Column;
-import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList.ColumnItem;
+import bibliothek.gui.dock.station.toolbar.layout.grid.Column;
+import bibliothek.gui.dock.station.toolbar.layout.grid.ColumnItem;
 import bibliothek.util.Path;
 
 /**
@@ -196,49 +195,6 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 	protected abstract void setItemPlaceholders( S station, PlaceholderMap map );
 
 	/**
-	 * An class representing either a {@link Column} or a {@link DockElement}.
-	 * 
-	 * @author Benjamin Sigg
-	 */
-	public interface ColumnItem<D, S, P extends PlaceholderListItem<D>> {
-		/**
-		 * Converts this item into an item that represents a {@link DockStation}
-		 * 
-		 * @return the station, can be <code>null</code>
-		 */
-		public ColumnItem<D, S, P> asStation();
-
-		/**
-		 * Gets a placeholder for this item.
-		 * 
-		 * @return the placeholder or <code>null</code>
-		 */
-		public Path getPlaceholder();
-
-		/**
-		 * Gets the children of this station
-		 * 
-		 * @return the children
-		 */
-		public ColumnItem<D, S, P>[] getChildren();
-
-		/**
-		 * Gets all the placeholders of this item.
-		 * 
-		 * @return all the placeholders, can be <code>null</code>
-		 */
-		public PlaceholderMap getPlaceholders();
-
-		/**
-		 * Sets all the placeholders of this station.
-		 * 
-		 * @param map
-		 *            the new placeholders
-		 */
-		public void setPlaceholders( PlaceholderMap map );
-	}
-
-	/**
 	 * Represents some kind of {@link Dockable}.
 	 * 
 	 * @author Benjamin Sigg
@@ -332,29 +288,6 @@ public abstract class GridPlaceholderList<D, S, P extends PlaceholderListItem<D>
 		public void setPlaceholders( PlaceholderMap map ){
 			setItemPlaceholders( item, map );
 		}
-	}
-
-	/**
-	 * Represents one list of {@link Dockable}s.
-	 * 
-	 * @author Benjamin Sigg
-	 * 
-	 * @param <D>
-	 *            the kind of object that should be treated as {@link Dockable}
-	 * @param <S>
-	 *            the kind of object that should be treated as
-	 *            {@link DockStation}
-	 * @param <P>
-	 *            the type of item which represents a {@link Dockable}
-	 */
-
-	public interface Column<D, S, P extends PlaceholderListItem<D>> extends ColumnItem<D, S, P>, PlaceholderListItem<ColumnItem<D, S, P>> {
-		/**
-		 * Gets the list of dockables.
-		 * 
-		 * @return the list that is represented by this column
-		 */
-		public PlaceholderList<D, S, P> getList();
 	}
 
 	private class ColumnList implements Column<D, S, P> {

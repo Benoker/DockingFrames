@@ -47,8 +47,8 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderMap.Key;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.station.support.PlaceholderStrategyListener;
-import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList.Column;
-import bibliothek.gui.dock.station.toolbar.layout.GridPlaceholderList.ColumnItem;
+import bibliothek.gui.dock.station.toolbar.layout.grid.Column;
+import bibliothek.gui.dock.station.toolbar.layout.grid.ColumnItem;
 import bibliothek.util.Path;
 
 /**
@@ -802,7 +802,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 */
 	protected Iterator<PlaceholderList<D, S, P>> allColumns(){
 		return new Iterator<PlaceholderList<D, S, P>>(){
-			private final Iterator<GridPlaceholderList.Column<D, S, P>> items = columns.dockables().iterator();
+			private final Iterator<Column<D, S, P>> items = columns.dockables().iterator();
 			private PlaceholderList<D, S, P> current;
 			private int currentIndex = -1;
 			
@@ -834,7 +834,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 	 */
 	protected Iterator<PlaceholderList<D, S, P>> columns(){
 		return new Iterator<PlaceholderList<D, S, P>>(){
-			private final Iterator<GridPlaceholderList.Column<D, S, P>> items = columns.dockables().iterator();
+			private final Iterator<Column<D, S, P>> items = columns.dockables().iterator();
 			private PlaceholderList<D, S, P> next;
 
 			private void forward(){
@@ -1197,9 +1197,9 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 		} );
 
 		try {
-			columns.read( map, new PlaceholderListItemAdapter<GridPlaceholderList.ColumnItem<D, S, P>, GridPlaceholderList.Column<D, S, P>>(){
+			columns.read( map, new PlaceholderListItemAdapter<ColumnItem<D, S, P>, Column<D, S, P>>(){
 				@Override
-				public GridPlaceholderList.Column<D, S, P> convert( ConvertedPlaceholderListItem item ){
+				public Column<D, S, P> convert( ConvertedPlaceholderListItem item ){
 					final PlaceholderList<D, S, P> list = createColumn();
 					final PlaceholderMap map = item.getPlaceholderMap();
 					if( map == null ) {
@@ -1211,7 +1211,7 @@ public abstract class PlaceholderToolbarGrid<D, S, P extends PlaceholderListItem
 				}
 
 				@Override
-				public void added( GridPlaceholderList.Column<D, S, P> dockable ){
+				public void added( Column<D, S, P> dockable ){
 					for( final P item : dockable.getList().dockables() ) {
 						converter.added( item );
 					}

@@ -1127,4 +1127,6 @@
 [v1.1.2p19d]
 ! Bugfix: CControlPerspectiveBlop writeXML/write was not symmetrical with readXML/read
 - Bugfix: An ApplicationResourceManager that read some unknown resources from a file may write them back in any file that is created
- 
+
+[v1.1.2p19e]
+! API: converted some inner interfaces to outer classes to work around https://bugs.eclipse.org/bugs/show_bug.cgi?id=527731  
