@@ -57,12 +57,17 @@ public class Workarounds {
 	
 	static{
 		String version = System.getProperty( "java.version" );
-		if( version.startsWith( "1.6" )){
+		if( version.startsWith( "1.5" )) {
+			// no workarounds available, translucency is not supported
+		}
+		else if( version.startsWith( "1.6" )){
 			tryAddWorkaround( "bibliothek.util.workarounds.Java6Workaround" );
 		}
-		else if( !version.startsWith( "1.5" )){
-			// will also work with Java 8...
+		else if( version.startsWith( "1.7" ) || version.startsWith( "1.8" )) {
 			tryAddWorkaround( "bibliothek.util.workarounds.Java7Workaround" );
+		}
+		else {
+			tryAddWorkaround( "bibliothek.util.workarounds.Java9Workaround" );
 		}
 	}
 	
