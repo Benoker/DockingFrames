@@ -6,13 +6,12 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Window;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.station.stack.DnDAutoSelectSupport;
-
-import com.sun.awt.AWTUtilities;
-import com.sun.awt.AWTUtilities.Translucency;
 
 /**
  * Workarounds necessary for Java 1.6.
@@ -48,15 +47,22 @@ public class Java6Workaround implements Workaround{
 		controller.getProperties().set( StackDockStation.DND_AUTO_SELECT_SUPPORT, new DnDAutoSelectSupport() );
 	}
 	
+	private Class<?> getAWTUtilitiesClass() throws ClassNotFoundException{
+		return Class.forName( "com.sun.awt.AWTUtilities" );
+	}
+	
+	private Class<?> getTranslucencyClass() throws ClassNotFoundException{
+		return Class.forName( "com.sun.awt.AWTUtilities$Translucency" );	
+	}
+	
+	private Object getTranslucency( String translucency ) throws Exception {
+		return getTranslucencyClass().getField( translucency ).get( null );
+	}
+	
 	public void markAsGlassPane( Component component ){
 		try{
-			AWTUtilities.setComponentMixingCutoutShape( component, new Rectangle() );
-		}
-		catch( NoClassDefFoundError ex ){
-			// ignore
-		}
-		catch( NoSuchMethodError ex ){
-			// ignore
+			Method componentMixingCutoutShape = getAWTUtilitiesClass().getMethod( "setComponentMixingCutoutShape", Component.class, Shape.class );
+			componentMixingCutoutShape.invoke( null, component, new Rectangle() );
 		}
 		catch( SecurityException ex ){
 			// ignore
@@ -64,13 +70,28 @@ public class Java6Workaround implements Workaround{
 		catch( IllegalArgumentException e ){
 			// ignore
 		}
+		catch( NoSuchMethodException e ) {
+			// ignore
+		}
+		catch( ClassNotFoundException e ) {
+			// ignore
+		}
+		catch( IllegalAccessException e ) {
+			// ignore
+		}
+		catch( InvocationTargetException e ) {
+			// ignore
+		}
 	}
 	
-	private boolean supports( Translucency translucency ){
+	private boolean supports( String translucency ){
 		// AWTUtilities.isTranslucencySupported(Translucency)
 		
 		try{
-			return AWTUtilities.isTranslucencySupported( translucency );
+			Class<?> translucencyClass = getTranslucencyClass();
+			Method isTranslucencySupported = getAWTUtilitiesClass().getMethod( "isTranslucencySupported", translucencyClass );
+			
+			return (Boolean)isTranslucencySupported.invoke( null, getTranslucency( translucency ) );
 		}
 		catch( SecurityException ex ){
 			// ignore
@@ -92,7 +113,7 @@ public class Java6Workaround implements Workaround{
 	
 	public boolean supportsPerpixelTranslucency( Window window ){
 		try{
-			return supports( Translucency.PERPIXEL_TRANSLUCENT );
+			return supports( "PERPIXEL_TRANSLUCENT" );
 		}
 		catch( NoClassDefFoundError ex ){
 			// ignore
@@ -112,7 +133,7 @@ public class Java6Workaround implements Workaround{
 		}
 		
 		try{
-			return supports( Translucency.PERPIXEL_TRANSPARENT );
+			return supports( "PERPIXEL_TRANSPARENT" );
 		}
 		catch( NoClassDefFoundError ex ){
 			// ignore
@@ -129,7 +150,9 @@ public class Java6Workaround implements Workaround{
 		}
 		
 		try{
-			AWTUtilities.setWindowOpaque( window, false );
+			Method setWindowsOpaque = getAWTUtilitiesClass().getMethod( "setWindowOpaque", Window.class, boolean.class );
+			setWindowsOpaque.invoke( null, window, false );
+
 			return true;
 		}
 		catch( NoClassDefFoundError ex ){
@@ -156,7 +179,9 @@ public class Java6Workaround implements Workaround{
 		}
 		
 		try{
-			AWTUtilities.setWindowShape( window, shape );
+			Method setWindowShape = getAWTUtilitiesClass().getMethod( "setWindowShape", Window.class, Shape.class );
+			setWindowShape.invoke( null, window, shape );
+
 			return true;
 		}
 		catch( NoClassDefFoundError ex ){
