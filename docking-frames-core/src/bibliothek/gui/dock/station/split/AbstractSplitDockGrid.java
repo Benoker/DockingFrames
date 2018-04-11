@@ -275,7 +275,7 @@ public abstract class AbstractSplitDockGrid<D> {
         	Path[] oldPlaceholders = node.placeholders;
             insert = oldPlaceholders.length;
             node.placeholders = new Path[ oldPlaceholders.length + placeholders.length ];
-            System.arraycopy( oldPlaceholders, 0, node.placeholders, 0, placeholders.length ); 
+            System.arraycopy( oldPlaceholders, 0, node.placeholders, 0, oldPlaceholders.length ); 
         }
         
         System.arraycopy( placeholders, 0, node.placeholders, insert, placeholders.length );
