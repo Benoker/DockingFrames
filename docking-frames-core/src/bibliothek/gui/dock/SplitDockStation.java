@@ -2366,6 +2366,10 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		}
 		
 		try{
+			if( controller != null ) {
+				controller.freezeLayout();
+			}
+			
 			access.arm();
 			DockUtilities.checkLayoutLocked();
 			DockUtilities.ensureTreeValidity(this, dockable);
@@ -2417,6 +2421,9 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 			return true;
 		}
 		finally{
+			if( controller != null ) {
+				controller.meltLayout();
+			}
 			access.fire();
 		}
 	}

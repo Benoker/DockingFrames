@@ -203,28 +203,24 @@ public class SplitPlaceholderSet {
 		final Single<Boolean> result = new Single<Boolean>( false );
 
 		root.visit( new SplitNodeVisitor() {
-			@Override
 			public void handleRoot( Root root ) {
 				if( root.hasPlaceholder( placeholder ) ) {
 					result.setA( true );
 				}
 			}
 
-			@Override
 			public void handlePlaceholder( Placeholder node ) {
 				if( node.hasPlaceholder( placeholder ) ) {
 					result.setA( true );
 				}
 			}
 
-			@Override
 			public void handleNode( Node node ) {
 				if( node.hasPlaceholder( placeholder ) ) {
 					result.setA( true );
 				}
 			}
 
-			@Override
 			public void handleLeaf( Leaf leaf ) {
 				if( leaf.hasPlaceholder( placeholder ) ) {
 					result.setA( true );
