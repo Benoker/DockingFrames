@@ -37,6 +37,7 @@ import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.util.FrameworkOnly;
 import bibliothek.util.Path;
+import bibliothek.util.container.Single;
 
 /**
  * Keeps track of the various placeholders and {@link Dockable}s of a {@link SplitDockStation}
@@ -188,5 +189,49 @@ public class SplitPlaceholderSet {
 		});
 		
 		map.removeAll( placeholdersToRemove, true );
+	}
+
+	/**
+	 * Visits all nodes of the tree, searching for <code>placeholder</code>
+	 * @param placeholder the placeholder so search
+	 * @return <code>true</code> if a node was found containing <code>placeholder</code>
+	 * @see SplitNode#hasPlaceholder(Path)
+	 */
+	public boolean contains( final Path placeholder ) {
+		Root root = access.getOwner().getRoot();
+
+		final Single<Boolean> result = new Single<Boolean>( false );
+
+		root.visit( new SplitNodeVisitor() {
+			@Override
+			public void handleRoot( Root root ) {
+				if( root.hasPlaceholder( placeholder ) ) {
+					result.setA( true );
+				}
+			}
+
+			@Override
+			public void handlePlaceholder( Placeholder node ) {
+				if( node.hasPlaceholder( placeholder ) ) {
+					result.setA( true );
+				}
+			}
+
+			@Override
+			public void handleNode( Node node ) {
+				if( node.hasPlaceholder( placeholder ) ) {
+					result.setA( true );
+				}
+			}
+
+			@Override
+			public void handleLeaf( Leaf leaf ) {
+				if( leaf.hasPlaceholder( placeholder ) ) {
+					result.setA( true );
+				}
+			}
+		} );
+
+		return result.getA();
 	}
 }

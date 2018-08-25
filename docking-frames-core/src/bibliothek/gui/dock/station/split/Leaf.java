@@ -47,6 +47,7 @@ import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.span.Span;
 import bibliothek.gui.dock.station.split.PutInfo.Put;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+import bibliothek.gui.dock.station.support.PlaceholderMap.Key;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.util.Path;
@@ -175,7 +176,20 @@ public class Leaf extends SpanSplitNode{
     			if( station == null ){
     				throw new IllegalStateException( "no station as child but storePlaceholderMap is set" );
     			}
-    			setPlaceholderMap( station.getPlaceholders() );
+    			
+				PlaceholderMap placeholderMap = station.getPlaceholders();
+				setPlaceholderMap( placeholderMap );
+
+				// copy placeholders of children station to this leaf, if no other node handles the placeholders already
+				if( placeholderMap != null ) {
+					for( Key key : placeholderMap.getPlaceholders() ) {
+						for( Path placeholder : key.getPlaceholders() ) {
+							if( !getAccess().getPlaceholderSet().contains( placeholder ) ) {
+								addPlaceholder( placeholder );
+							}
+						}
+					}
+				}
     		}
     		
     		getAccess().removeHandle( handle, token );

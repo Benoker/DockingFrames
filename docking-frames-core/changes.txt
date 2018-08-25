@@ -1137,3 +1137,6 @@
 
 [v1.1.2p20b]
 - Bugfix: fixed by peterk: AbstractSplitDockGrid.addPlaceholders did not copy an array correctly, leading to null stored in the array.
+
+[v1.1.2p20c]
+- Bugfix: When removing a DockStation from a SplitDockStation, its PlaceholderMap was lost if the Leaf-Object (part of the SplitDockStation) did not have placeholders of its own. Now the Leaf copies the placeholders of the removed station - if they are not already stored elsewhere in the SplitDockStation.
