@@ -1141,3 +1141,6 @@
 [v1.1.2p20c]
 - Bugfix: When removing a DockStation from a SplitDockStation, its PlaceholderMap was lost if the Leaf-Object (part of the SplitDockStation) did not have placeholders of its own. Now the Leaf copies the placeholders of the removed station - if they are not already stored elsewhere in the SplitDockStation.
 - Bugfix: Freeze layout while combining Dockables on a SplitDockStation - this prevents unwanted registration events
+
+[v1.1.2p20d]
+- Bugfix: TabComponentLayoutManager.setActionInsets did check a field for null that could never be null

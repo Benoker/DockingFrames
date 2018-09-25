@@ -211,7 +211,7 @@ public class TabComponentLayoutManager implements LayoutManager{
 	 * @param actionInsets the empty space, not <code>null</code>
 	 */
 	public void setActionInsets( Insets actionInsets ){
-		if( labelInsets == null ){
+		if( actionInsets == null ){
 			throw new IllegalArgumentException( "insets must not be null" );
 		}
 		this.actionInsets = new Insets( actionInsets.top, actionInsets.left, actionInsets.bottom, actionInsets.right );
