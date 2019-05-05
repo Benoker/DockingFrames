@@ -1148,4 +1148,7 @@
 [v.1.1.2]
  No changes were made for release 1.1.2
  
+[v.1.1.3p1]
+ - The project is now developed and compiled with Java 1.8.
+ 
  

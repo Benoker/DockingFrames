@@ -32,7 +32,7 @@
 			<classpath path="${bin}/${name.common}.jar"/>
 			<classpath path="${bin}/${name.core}.jar"/>
 			<classpath path="${glass.bin}/${glasslib}"/>
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+			<link href="${build.java.doc}"/>
 			<link href="${doc}/${name.common}"/>
 		</javadoc>
 	</target>
@@ -50,7 +50,7 @@
 	<!-- Compiling -->
 	<target name="bin.glass" depends="source, bin.dir">
 		<copy tofile="${glass.bin}/${glasslib}" file="${location.glass}/libs/glassLib/${glasslib}"/>
-		<javac srcdir="${glass.source}/${name.glass}" destdir="${glass.temp}/${name.glass}" source="1.6" target="1.6">
+		<javac fork="yes" executable="${build.java.compiler}" srcdir="${glass.source}/${name.glass}" destdir="${glass.temp}/${name.glass}" source="${build.java.version}" target="${build.java.version}">
 			<classpath path="${bin}/${name.common}.jar"/>
 			<classpath path="${bin}/${name.core}.jar"/>
 			<classpath path="${glass.bin}/${glasslib}"/>

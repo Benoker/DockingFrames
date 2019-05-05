@@ -2,91 +2,91 @@
 
 
 <project name="toolbar" default="default" basedir="../">
-	<import file="../docking-frames-core/build.xml"/>
-	
+	<import file="../docking-frames-core/build.xml" />
+
 	<target name="default" depends="source, bin, doc, copy">
 		<delete>
-			<fileset dir="${toolbar.temp}"/>
+			<fileset dir="${toolbar.temp}" />
 		</delete>
 	</target>
-	
+
 	<target name="copy" depends="source, bin, doc">
 		<copy todir="${doc}">
-			<fileset dir="${toolbar.doc}"/>
+			<fileset dir="${toolbar.doc}" />
 		</copy>
-		
+
 		<copy todir="${source}">
-			<fileset dir="${toolbar.source}"/>
+			<fileset dir="${toolbar.source}" />
 		</copy>
-		
+
 		<copy todir="${bin}">
-			<fileset file="${toolbar.bin}/${name.toolbar}.jar"/>
-			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar"/>
-			<fileset file="${toolbar.bin}/${name.toolbar.tutorial}.jar"/>
+			<fileset file="${toolbar.bin}/${name.toolbar}.jar" />
+			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar" />
+			<fileset file="${toolbar.bin}/${name.toolbar.tutorial}.jar" />
 		</copy>
-		
+
 		<copy todir="${web.tutorial}/lib">
-			<fileset file="${toolbar.bin}/${name.toolbar.tutorial}.jar"/>
-			<fileset file="${toolbar.bin}/${name.toolbar}.jar"/>
-			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar"/>
+			<fileset file="${toolbar.bin}/${name.toolbar.tutorial}.jar" />
+			<fileset file="${toolbar.bin}/${name.toolbar}.jar" />
+			<fileset file="${toolbar.bin}/${name.toolbar.common}.jar" />
 		</copy>
 	</target>
 
 	<target name="paths" depends="dock.paths">
-		<property name="toolbar.base" value="toolbar"/>
-		<property name="toolbar.source" value="${toolbar.base}/src"/>
-		<property name="toolbar.bin" value="${toolbar.base}/bin"/>
-		<property name="toolbar.temp" value="${toolbar.base}/temp"/>
-		<property name="toolbar.doc" value="${toolbar.base}/doc"/>
-		
-		<property name="location.toolbar" value="docking-frames-ext-toolbar"/>
-		<property name="location.toolbar.common" value="docking-frames-ext-toolbar-common"/>
-		<property name="location.toolbar.tutorial" value="docking-frames-ext-toolbar-tutorial"/>
+		<property name="toolbar.base" value="toolbar" />
+		<property name="toolbar.source" value="${toolbar.base}/src" />
+		<property name="toolbar.bin" value="${toolbar.base}/bin" />
+		<property name="toolbar.temp" value="${toolbar.base}/temp" />
+		<property name="toolbar.doc" value="${toolbar.base}/doc" />
+
+		<property name="location.toolbar" value="docking-frames-ext-toolbar" />
+		<property name="location.toolbar.common" value="docking-frames-ext-toolbar-common" />
+		<property name="location.toolbar.tutorial" value="docking-frames-ext-toolbar-tutorial" />
 	</target>
-	
+
 	<target name="doc" depends="source, paths, dock.paths">
-		<mkdir dir="${toolbar.doc}/${name.toolbar.common}"/>
+		<mkdir dir="${toolbar.doc}/${name.toolbar.common}" />
 		<javadoc destdir="${toolbar.doc}/${name.toolbar.common}" use="true" splitindex="true" useexternalfile="true">
 			<fileset dir="${toolbar.source}/${name.toolbar}">
-				<include name="**/*.java"/>
+				<include name="**/*.java" />
 			</fileset>
 			<fileset dir="${toolbar.source}/${name.toolbar.common}">
-				<include name="**/*.java"/>
+				<include name="**/*.java" />
 			</fileset>
-			<classpath path="${bin}/${name.common}.jar"/>
-			<classpath path="${bin}/${name.core}.jar"/>
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-			<link href="${doc}/${name.common}"/>
+			<classpath path="${bin}/${name.common}.jar" />
+			<classpath path="${bin}/${name.core}.jar" />
+			<link href="${build.java.doc}" />
+			<link href="${doc}/${name.common}" />
 		</javadoc>
 	</target>
-	
+
 	<target name="bin" depends="source, bin.dir, bin.toolbar, bin.toolbar.common, bin.toolbar.tutorial, paths">
 		<jar destfile="${toolbar.bin}/${name.toolbar}.jar">
-			<fileset dir="${toolbar.temp}/${name.toolbar}"/>
+			<fileset dir="${toolbar.temp}/${name.toolbar}" />
 			<manifest>
-				<attribute name="Class-Path" value="${name.core}.jar"/>
+				<attribute name="Class-Path" value="${name.core}.jar" />
 			</manifest>
 		</jar>
-		
+
 		<jar destfile="${toolbar.bin}/${name.toolbar.common}.jar">
-			<fileset dir="${toolbar.temp}/${name.toolbar.common}"/>
+			<fileset dir="${toolbar.temp}/${name.toolbar.common}" />
 			<manifest>
-				<attribute name="Class-Path" value="${name.core}.jar ${name.common}.jar ${name.toolbar}.jar"/>
+				<attribute name="Class-Path" value="${name.core}.jar ${name.common}.jar ${name.toolbar}.jar" />
 			</manifest>
 		</jar>
-		
+
 		<jar destfile="${toolbar.bin}/${name.toolbar.tutorial}.jar">
-			<fileset dir="${toolbar.temp}/${name.toolbar.tutorial}"/>
+			<fileset dir="${toolbar.temp}/${name.toolbar.tutorial}" />
 			<fileset dir="${toolbar.source}/${name.toolbar.tutorial}">
-				<include name="**/*java"/>
+				<include name="**/*java" />
 			</fileset>
 		</jar>
 	</target>
 
 	<!-- Compiling -->
 	<target name="bin.toolbar" depends="source, bin.dir">
-		<javac srcdir="${toolbar.source}/${name.toolbar}" destdir="${toolbar.temp}/${name.toolbar}" source="1.6" target="1.6">
-			<classpath path="${bin}/${name.core}.jar"/>
+		<javac fork="yes" executable="${build.java.compiler}" srcdir="${toolbar.source}/${name.toolbar}" destdir="${toolbar.temp}/${name.toolbar}" source="${build.java.version}" target="${build.java.version}">
+			<classpath path="${bin}/${name.core}.jar" />
 		</javac>
 		<copy todir="${toolbar.temp}/${name.toolbar}">
 			<fileset dir="${toolbar.source}/${name.toolbar}">
@@ -94,12 +94,12 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="bin.toolbar.common" depends="source, bin.dir, bin.toolbar">
-		<javac srcdir="${toolbar.source}/${name.toolbar.common}" destdir="${toolbar.temp}/${name.toolbar.common}" source="1.6" target="1.6">
-			<classpath path="${bin}/${name.core}.jar"/>
-			<classpath path="${bin}/${name.common}.jar"/>
-			<classpath path="${toolbar.temp}/${name.toolbar}"/>
+		<javac fork="yes" executable="${build.java.compiler}" srcdir="${toolbar.source}/${name.toolbar.common}" destdir="${toolbar.temp}/${name.toolbar.common}" source="${build.java.version}" target="${build.java.version}">
+			<classpath path="${bin}/${name.core}.jar" />
+			<classpath path="${bin}/${name.common}.jar" />
+			<classpath path="${toolbar.temp}/${name.toolbar}" />
 		</javac>
 		<copy todir="${toolbar.temp}/${name.toolbar.common}">
 			<fileset dir="${toolbar.source}/${name.toolbar.common}">
@@ -107,14 +107,14 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="bin.toolbar.tutorial" depends="source, bin.dir, bin.toolbar, bin.toolbar.common">
-		<javac srcdir="${toolbar.source}/${name.toolbar.tutorial}" destdir="${toolbar.temp}/${name.toolbar.tutorial}" source="1.6" target="1.6">
-			<classpath path="${bin}/${name.core}.jar"/>
-			<classpath path="${bin}/${name.common}.jar"/>
-			<classpath path="${bin}/${name.tutorial}.jar"/>
-			<classpath path="${toolbar.temp}/${name.toolbar}"/>
-			<classpath path="${toolbar.temp}/${name.toolbar.common}"/>
+		<javac fork="yes" executable="${build.java.compiler}" srcdir="${toolbar.source}/${name.toolbar.tutorial}" destdir="${toolbar.temp}/${name.toolbar.tutorial}" source="${build.java.version}" target="${build.java.version}">
+			<classpath path="${bin}/${name.core}.jar" />
+			<classpath path="${bin}/${name.common}.jar" />
+			<classpath path="${bin}/${name.tutorial}.jar" />
+			<classpath path="${toolbar.temp}/${name.toolbar}" />
+			<classpath path="${toolbar.temp}/${name.toolbar.common}" />
 		</javac>
 		<copy todir="${toolbar.temp}/${name.toolbar.tutorial}">
 			<fileset dir="${toolbar.source}/${name.toolbar.tutorial}">
@@ -122,47 +122,47 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<!-- Paths -->
 	<target name="bin.dir" depends="clean, paths">
-		<mkdir dir="${toolbar.base}"/>
-		<mkdir dir="${toolbar.bin}"/>
-		<mkdir dir="${toolbar.temp}"/>
-		<mkdir dir="${toolbar.temp}/${name.toolbar}"/>
-		<mkdir dir="${toolbar.temp}/${name.toolbar.common}"/>
-		<mkdir dir="${toolbar.temp}/${name.toolbar.tutorial}"/>
+		<mkdir dir="${toolbar.base}" />
+		<mkdir dir="${toolbar.bin}" />
+		<mkdir dir="${toolbar.temp}" />
+		<mkdir dir="${toolbar.temp}/${name.toolbar}" />
+		<mkdir dir="${toolbar.temp}/${name.toolbar.common}" />
+		<mkdir dir="${toolbar.temp}/${name.toolbar.tutorial}" />
 	</target>
 
 	<!-- copy source -->
 	<target name="source" depends="source dir, clean, paths">
 		<copy todir="${toolbar.source}/${name.toolbar}">
 			<fileset dir="${location.toolbar}/src">
-				<exclude name="*.svn/*"/>
+				<exclude name="*.svn/*" />
 			</fileset>
 		</copy>
 		<copy todir="${toolbar.source}/${name.toolbar.common}">
 			<fileset dir="${location.toolbar.common}/src">
-				<exclude name="*.svn/*"/>
+				<exclude name="*.svn/*" />
 			</fileset>
 		</copy>
 		<copy todir="${toolbar.source}/${name.toolbar.tutorial}">
 			<fileset dir="${location.toolbar.tutorial}/src">
-				<exclude name="*.svn/*"/>
+				<exclude name="*.svn/*" />
 			</fileset>
 		</copy>
 	</target>
 
 	<!-- paths source -->
 	<target name="source dir" depends="clean, paths">
-		<mkdir dir="${toolbar.base}"/>
-		<mkdir dir="${toolbar.source}"/>
-		<mkdir dir="${toolbar.source}/${name.toolbar}"/>
-		<mkdir dir="${toolbar.source}/${name.toolbar.common}"/>
-		<mkdir dir="${toolbar.source}/${name.toolbar.tutorial}"/>
+		<mkdir dir="${toolbar.base}" />
+		<mkdir dir="${toolbar.source}" />
+		<mkdir dir="${toolbar.source}/${name.toolbar}" />
+		<mkdir dir="${toolbar.source}/${name.toolbar.common}" />
+		<mkdir dir="${toolbar.source}/${name.toolbar.tutorial}" />
 	</target>
 
 
 	<target name="clean" depends="paths">
-		<delete dir="${toolbar.base}"/>
+		<delete dir="${toolbar.base}" />
 	</target>
 </project>
