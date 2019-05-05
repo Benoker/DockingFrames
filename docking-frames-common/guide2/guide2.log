@@ -1,20 +1,14 @@
-This is TeX, Version 3.14159265 (TeX Live 2015/Debian) (preloaded format=tex 2017.2.26)  26 FEB 2017 10:06
-**/home/beni/programming/git/DockingFrames/docking-frames-common/guide2/guide2.
-tex
-
-(/home/beni/programming/git/DockingFrames/docking-frames-common/guide2/guide2.t
-ex
-! Undefined control sequence.
-l.1 \documentclass
-                  [a4paper,10pt]{article}
-? 
-! Emergency stop.
-l.1 \documentclass
-                  [a4paper,10pt]{article}
-End of file on the terminal!
-
-No pages of output.
-0.clo
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.28)  5 MAY 2019 10:45
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**guide2.tex
+(./guide2.tex
+LaTeX2e <2017-04-15>
+Babel <3.18> and hyphenation patterns for 3 language(s) loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -59,43 +53,35 @@ File: listings.cfg 2015/06/04 1.6 listings configuration
 Package: listings 2015/06/04 1.6 (Carsten Heinz)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
-Package: color 2016/01/03 v1.1b Standard LaTeX Color (DPC)
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
 
-(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
-File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package color Info: Driver file: pdftex.def on input line 143.
+Package color Info: Driver file: pdftex.def on input line 147.
 
-(/usr/share/texlive/texmf-dist/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
-Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
-)
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
-Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
-)
-\Gread@gobject=\count95
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
-Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
-Package: graphics 2016/01/03 v1.0q Standard LaTeX Graphics (DPC,SPQR)
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
-File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 95.
+Package graphics Info: Driver file: pdftex.def on input line 99.
 )
 \Gin@req@height=\dimen107
 \Gin@req@width=\dimen108
 )
 (/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
-Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
+Package: textcomp 2017/04/05 v2.0i Standard LaTeX package
 Package textcomp Info: Sub-encoding information:
 (textcomp)               5 = only ISO-Adobe without \textcurrency
 (textcomp)               4 = 5 + \texteuro
@@ -206,64 +192,72 @@ LaTeX Font Info:    Try loading font information for TS1+cmr on input line 81.
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 81.
-\c@lstlisting=\count96
+\c@lstlisting=\count95
 
-(/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count97
+\scratchcounter=\count96
 \scratchdimen=\dimen109
 \scratchbox=\box28
-\nofMPsegments=\count98
-\nofMParguments=\count99
+\nofMPsegments=\count97
+\nofMParguments=\count98
 \everyMPshowfont=\toks16
-\MPscratchCnt=\count100
+\MPscratchCnt=\count99
 \MPscratchDim=\dimen110
-\MPnumerator=\count101
-\makeMPintoPDFobject=\count102
+\MPnumerator=\count100
+\makeMPintoPDFobject=\count101
 \everyMPtoPDFconversion=\toks17
-) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
-Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
 )
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
 
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifluatex.sty
-Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
 Package ifluatex Info: LuaTeX not detected.
 )
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2018/01/21 v0.26 Utility functions of pdfTeX for LuaTeX (HO
+)
+
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
-Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in PDF mode is detected.
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
 )
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
 )
-(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
-Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
-
-(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
-Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
-Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
-))
-(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
-Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
-Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/etexcmds.sty
-Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
-Package etexcmds Info: Could not find \expanded.
-(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
-(etexcmds)             that some package has redefined \expanded.
-(etexcmds)             In the latter case, load this package earlier.
-)))
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
 Package grfext Info: Graphics extension search list:
-(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
 G,.JBIG2,.JB2,.eps]
-(grfext)             \AppendGraphicsExtensions on input line 452.
+(grfext)             \AppendGraphicsExtensions on input line 456.
 
 (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
@@ -305,42 +299,38 @@ ws (\OT1/cmtt/m/n/10 ScreenDockStation\OT1/cmr/m/n/10 )
  (./notation/chapter.tex
 \contentbox=\box29
 \bkgdbox=\box30
- <info.png, id=28, 102.784pt x 102.784pt>
+<info.png, id=28, 102.784pt x 102.784pt>
 File: info.png Graphic file (type png)
-
 <use info.png>
-Package pdftex.def Info: info.png used on input line 6.
+Package pdftex.def Info: info.png  used on input line 6.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box31
 \bkgdbox=\box32
- <stop.png, id=30, 102.784pt x 102.784pt>
+<stop.png, id=30, 102.784pt x 102.784pt>
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 8.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 8.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box33
 \bkgdbox=\box34
-
 <class.png, id=31, 102.784pt x 102.784pt>
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 10.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 10.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box35
 \bkgdbox=\box36
-
 <design.png, id=32, 102.784pt x 102.784pt>
 File: design.png Graphic file (type png)
- <use design.png>
-Package pdftex.def Info: design.png used on input line 12.
+<use design.png>
+Package pdftex.def Info: design.png  used on input line 12.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box37
 \bkgdbox=\box38
-
 <code.png, id=33, 102.784pt x 102.784pt>
 File: code.png Graphic file (type png)
- <use code.png>
-Package pdftex.def Info: code.png used on input line 14.
+<use code.png>
+Package pdftex.def Info: code.png  used on input line 14.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 ) [6
 
@@ -358,18 +348,15 @@ pdfTeX warning: pdflatex: pop empty color page stack 0
 (./basics/chapter.tex
 <basics/app_without.png, id=43, 198.14024pt x 159.59625pt>
 File: basics/app_without.png Graphic file (type png)
-
 <use basics/app_without.png>
-Package pdftex.def Info: basics/app_without.png used on input line 13.
+Package pdftex.def Info: basics/app_without.png  used on input line 13.
 (pdftex.def)             Requested size: 198.13974pt x 159.59584pt.
-
 <basics/app_with.png, id=44, 210.7875pt x 168.63pt>
 File: basics/app_with.png Graphic file (type png)
- <use basics/app_with.png>
-Package pdftex.def Info: basics/app_with.png used on input line 20.
+<use basics/app_with.png>
+Package pdftex.def Info: basics/app_with.png  used on input line 20.
 (pdftex.def)             Requested size: 210.78699pt x 168.62958pt.
-
-[7
+ [7
 
 
  <./basics/app_without.png>]
@@ -383,16 +370,15 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <7> not available
 \contentbox=\box39
 \bkgdbox=\box40
 File: code.png Graphic file (type png)
- <use code.png>
-Package pdftex.def Info: code.png used on input line 43.
+<use code.png>
+Package pdftex.def Info: code.png  used on input line 43.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
-
-[8 <./basics/app_with.png>]
+ [8 <./basics/app_with.png>]
 \contentbox=\box41
 \bkgdbox=\box42
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 66.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 66.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 71--72
@@ -404,9 +390,9 @@ m/n/10 s ex-ist ex-actly once, while
 \bkgdbox=\box44
 File: info.png Graphic file (type png)
 <use info.png>
-Package pdftex.def Info: info.png used on input line 75.
+Package pdftex.def Info: info.png  used on input line 75.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [9]) [10]
+[9]) [10]
 \openout2 = `foundation/chapter.aux'.
 
  (./foundation/chapter.tex
@@ -419,7 +405,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 7--8
 \bkgdbox=\box46
 File: design.png Graphic file (type png)
 <use design.png>
-Package pdftex.def Info: design.png used on input line 15.
+Package pdftex.def Info: design.png  used on input line 15.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 1902) in paragraph at lines 15--15
@@ -431,7 +417,7 @@ ion.
 \bkgdbox=\box48
 File: info.png Graphic file (type png)
 <use info.png>
-Package pdftex.def Info: info.png used on input line 17.
+Package pdftex.def Info: info.png  used on input line 17.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 3049) in paragraph at lines 17--17
@@ -452,18 +438,17 @@ Underfull \hbox (badness 3209) in paragraph at lines 26--27
 \bkgdbox=\box50
 File: stop.png Graphic file (type png)
 <use stop.png>
-Package pdftex.def Info: stop.png used on input line 38.
+Package pdftex.def Info: stop.png  used on input line 38.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [12]
+[12]
 \contentbox=\box51
 \bkgdbox=\box52
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 40.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 40.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 LaTeX Font Info:    Try loading font information for OML+cmr on input line 46.
-
-(/usr/share/texlive/texmf-dist/tex/latex/base/omlcmr.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <7> not available
@@ -471,15 +456,14 @@ LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <7> not available
 \contentbox=\box53
 \bkgdbox=\box54
 File: code.png Graphic file (type png)
- <use code.png>
-Package pdftex.def Info: code.png used on input line 54.
+<use code.png>
+Package pdftex.def Info: code.png  used on input line 54.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box55
 \bkgdbox=\box56
 File: design.png Graphic file (type png)
-
 <use design.png>
-Package pdftex.def Info: design.png used on input line 62.
+Package pdftex.def Info: design.png  used on input line 62.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [13]
 Underfull \hbox (badness 1231) in paragraph at lines 77--78
@@ -497,7 +481,7 @@ tener\OT1/cmr/m/n/10 . It re-ceives a
 \bkgdbox=\box58
 File: stop.png Graphic file (type png)
 <use stop.png>
-Package pdftex.def Info: stop.png used on input line 81.
+Package pdftex.def Info: stop.png  used on input line 81.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 81--81
@@ -520,13 +504,13 @@ ce the
 \bkgdbox=\box60
 File: class.png Graphic file (type png)
 <use class.png>
-Package pdftex.def Info: class.png used on input line 83.
+Package pdftex.def Info: class.png  used on input line 83.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box61
 \bkgdbox=\box62
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 85.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 85.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 88--89
@@ -538,8 +522,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 88--89
 \contentbox=\box63
 \bkgdbox=\box64
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 92.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 92.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 105--106
@@ -558,7 +542,7 @@ efaultCDockable
 \bkgdbox=\box66
 File: info.png Graphic file (type png)
 <use info.png>
-Package pdftex.def Info: info.png used on input line 123.
+Package pdftex.def Info: info.png  used on input line 123.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 1496) in paragraph at lines 123--123
@@ -574,8 +558,8 @@ Underfull \hbox (badness 1024) in paragraph at lines 123--123
 \contentbox=\box67
 \bkgdbox=\box68
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 125.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 125.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 6396) in paragraph at lines 139--140
@@ -586,44 +570,43 @@ Underfull \hbox (badness 6396) in paragraph at lines 139--140
 \bkgdbox=\box70
 File: info.png Graphic file (type png)
 <use info.png>
-Package pdftex.def Info: info.png used on input line 141.
+Package pdftex.def Info: info.png  used on input line 141.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [16]
+[16]
 \contentbox=\box71
 \bkgdbox=\box72
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 143.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 143.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box73
 \bkgdbox=\box74
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 169.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 169.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [17]
 \contentbox=\box75
 \bkgdbox=\box76
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 187.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 187.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
-)
-[18]
+) [18]
 \openout2 = `locations/chapter.aux'.
 
  (./locations/chapter.tex
 \contentbox=\box77
 \bkgdbox=\box78
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 33.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 33.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box79
 \bkgdbox=\box80
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 35.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 35.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [19
 
@@ -632,42 +615,40 @@ Package pdftex.def Info: stop.png used on input line 35.
 \contentbox=\box81
 \bkgdbox=\box82
 File: stop.png Graphic file (type png)
-
 <use stop.png>
-Package pdftex.def Info: stop.png used on input line 61.
+Package pdftex.def Info: stop.png  used on input line 61.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box83
 \bkgdbox=\box84
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 63.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 63.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [20]
 \contentbox=\box85
 \bkgdbox=\box86
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 65.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 65.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box87
 \bkgdbox=\box88
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 78.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 78.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box89
 \bkgdbox=\box90
 File: design.png Graphic file (type png)
-
 <use design.png>
-Package pdftex.def Info: design.png used on input line 82.
+Package pdftex.def Info: design.png  used on input line 82.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [21]
 \contentbox=\box91
 \bkgdbox=\box92
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 84.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 84.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 4886) in paragraph at lines 84--84
@@ -678,14 +659,14 @@ Underfull \hbox (badness 4886) in paragraph at lines 84--84
 \bkgdbox=\box94
 File: info.png Graphic file (type png)
 <use info.png>
-Package pdftex.def Info: info.png used on input line 103.
+Package pdftex.def Info: info.png  used on input line 103.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [22]
+[22]
 \contentbox=\box95
 \bkgdbox=\box96
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 105.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 105.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 2384) in paragraph at lines 108--109
@@ -697,9 +678,9 @@ Underfull \hbox (badness 2384) in paragraph at lines 108--109
 \bkgdbox=\box98
 File: code.png Graphic file (type png)
 <use code.png>
-Package pdftex.def Info: code.png used on input line 135.
+Package pdftex.def Info: code.png  used on input line 135.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [23]
+[23]
 Underfull \hbox (badness 1199) in paragraph at lines 140--141
 \OT1/cmtt/m/n/10 CLocationMode \OT1/cmr/m/n/10 pro-vides the code for han-dling
  one extended-mode (like
@@ -715,8 +696,8 @@ ion \OT1/cmr/m/n/10 (or \OT1/cmtt/m/n/10 CGridArea\OT1/cmr/m/n/10 ,
 \contentbox=\box99
 \bkgdbox=\box100
 File: design.png Graphic file (type png)
- <use design.png>
-Package pdftex.def Info: design.png used on input line 153.
+<use design.png>
+Package pdftex.def Info: design.png  used on input line 153.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 ) [25]
 \openout2 = `actions/chapter.aux'.
@@ -724,9 +705,8 @@ Package pdftex.def Info: design.png used on input line 153.
  (./actions/chapter.tex
 <actions/actions.png, id=112, 255.354pt x 124.0635pt>
 File: actions/actions.png Graphic file (type png)
-
 <use actions/actions.png>
-Package pdftex.def Info: actions/actions.png used on input line 5.
+Package pdftex.def Info: actions/actions.png  used on input line 5.
 (pdftex.def)             Requested size: 191.51503pt x 93.04738pt.
  [26
 
@@ -734,22 +714,20 @@ Package pdftex.def Info: actions/actions.png used on input line 5.
  <./actions/actions.png>]
 <actions/cmenu.png, id=117, 323.40825pt x 228.855pt>
 File: actions/cmenu.png Graphic file (type png)
- <use actions/cmenu.png>
-Package pdftex.def Info: actions/cmenu.png used on input line 56.
+<use actions/cmenu.png>
+Package pdftex.def Info: actions/cmenu.png  used on input line 56.
 (pdftex.def)             Requested size: 242.55557pt x 171.64082pt.
-
 <actions/cdropdown.png, id=118, 278.84175pt x 129.48375pt>
 File: actions/cdropdown.png Graphic file (type png)
-
 <use actions/cdropdown.png>
-Package pdftex.def Info: actions/cdropdown.png used on input line 66.
+Package pdftex.def Info: actions/cdropdown.png  used on input line 66.
 (pdftex.def)             Requested size: 209.13078pt x 97.11255pt.
  [27 <./actions/cmenu.png>]
 \contentbox=\box101
 \bkgdbox=\box102
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 95.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 95.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [28 <./actions/cdropdown.png>]) [29]
 \openout2 = `effects/chapter.aux'.
@@ -758,8 +736,8 @@ Package pdftex.def Info: class.png used on input line 95.
 \contentbox=\box103
 \bkgdbox=\box104
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 12.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 12.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 1137) in paragraph at lines 12--12
@@ -777,15 +755,15 @@ Underfull \hbox (badness 1194) in paragraph at lines 12--12
 \bkgdbox=\box106
 File: stop.png Graphic file (type png)
 <use stop.png>
-Package pdftex.def Info: stop.png used on input line 16.
+Package pdftex.def Info: stop.png  used on input line 16.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box107
 \bkgdbox=\box108
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 30.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 30.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [30
+[30
 
 
 ]
@@ -797,7 +775,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 36--37
 \bkgdbox=\box110
 File: stop.png Graphic file (type png)
 <use stop.png>
-Package pdftex.def Info: stop.png used on input line 38.
+Package pdftex.def Info: stop.png  used on input line 38.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 7631) in paragraph at lines 41--42
@@ -809,20 +787,20 @@ Underfull \hbox (badness 7631) in paragraph at lines 41--42
 \bkgdbox=\box112
 File: design.png Graphic file (type png)
 <use design.png>
-Package pdftex.def Info: design.png used on input line 56.
+Package pdftex.def Info: design.png  used on input line 56.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box113
 \bkgdbox=\box114
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 58.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 58.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [31]
+[31]
 \contentbox=\box115
 \bkgdbox=\box116
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 72.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 72.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 2781) in paragraph at lines 72--72
@@ -834,8 +812,8 @@ has been re-placed by the
 \contentbox=\box117
 \bkgdbox=\box118
 File: class.png Graphic file (type png)
- <use class.png>
-Package pdftex.def Info: class.png used on input line 108.
+<use class.png>
+Package pdftex.def Info: class.png  used on input line 108.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 4156) in paragraph at lines 108--108
@@ -853,55 +831,53 @@ ct-ing the
 \bkgdbox=\box120
 File: info.png Graphic file (type png)
 <use info.png>
-Package pdftex.def Info: info.png used on input line 110.
+Package pdftex.def Info: info.png  used on input line 110.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box121
 \bkgdbox=\box122
 File: design.png Graphic file (type png)
- <use design.png>
-Package pdftex.def Info: design.png used on input line 130.
+<use design.png>
+Package pdftex.def Info: design.png  used on input line 130.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
- [33]
+[33]
 \contentbox=\box123
 \bkgdbox=\box124
 File: info.png Graphic file (type png)
- <use info.png>
-Package pdftex.def Info: info.png used on input line 153.
+<use info.png>
+Package pdftex.def Info: info.png  used on input line 153.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [34]
 <effects/menus.png, id=147, 228.15819pt x 154.176pt>
 File: effects/menus.png Graphic file (type png)
- <use effects/menus.png>
-Package pdftex.def Info: effects/menus.png used on input line 162.
+<use effects/menus.png>
+Package pdftex.def Info: effects/menus.png  used on input line 162.
 (pdftex.def)             Requested size: 228.15762pt x 154.1756pt.
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
 (Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 171.
 \contentbox=\box125
 \bkgdbox=\box126
 File: class.png Graphic file (type png)
-
 <use class.png>
-Package pdftex.def Info: class.png used on input line 182.
+Package pdftex.def Info: class.png  used on input line 182.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
  [35 <./effects/menus.png>]
 \contentbox=\box127
 \bkgdbox=\box128
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 191.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 191.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box129
 \bkgdbox=\box130
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 196.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 196.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 \contentbox=\box131
 \bkgdbox=\box132
 File: info.png Graphic file (type png)
-
 <use info.png>
-Package pdftex.def Info: info.png used on input line 198.
+Package pdftex.def Info: info.png  used on input line 198.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 
 Underfull \hbox (badness 1552) in paragraph at lines 198--198
@@ -919,8 +895,8 @@ n chap-ter 7.5[]. The class
 \contentbox=\box133
 \bkgdbox=\box134
 File: stop.png Graphic file (type png)
- <use stop.png>
-Package pdftex.def Info: stop.png used on input line 220.
+<use stop.png>
+Package pdftex.def Info: stop.png  used on input line 220.
 (pdftex.def)             Requested size: 32.50198pt x 32.50258pt.
 ) [37]
 \openout2 = `suggestions/chapter.aux'.
@@ -963,30 +939,31 @@ rat-egy tells what extended-
 (./actions/chapter.aux) (./effects/chapter.aux) (./suggestions/chapter.aux)
 (./properties/chapter.aux)) ) 
 Here is how much of TeX's memory you used:
- 3734 strings out of 494953
- 54647 string characters out of 6180977
- 211214 words of memory out of 5000000
- 6906 multiletter control sequences out of 15000+600000
+ 3687 strings out of 494923
+ 54066 string characters out of 6180741
+ 206281 words of memory out of 5000000
+ 6889 multiletter control sequences out of 15000+600000
  9739 words of font info for 35 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 37i,8n,40p,764b,1464s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/beni/.texmf-var/fonts/pk/ljfour/jknappen/e
-c/tcrm1000.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/t
-exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-ti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on guide2.pdf (45 pages, 486558 bytes).
+ 41i,8n,40p,764b,1464s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/beni/.texlive2017/texmf-var/fonts/pk/ljfou
+r/jknappen/ec/tcrm1000.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmti7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmt
+t10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb
+>
+Output written on guide2.pdf (45 pages, 468414 bytes).
 PDF statistics:
  243 PDF objects out of 1000 (max. 8388607)
  155 compressed objects within 2 object streams
