@@ -41,6 +41,7 @@ import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
+import java.awt.DisplayMode;
 
 /**
  * This default implementation of a {@link ScreenDockFullscreenStrategy} just works with
@@ -146,7 +147,7 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		for( GraphicsDevice device : devices ){
 			Rectangle bounds = device.getDefaultConfiguration().getBounds();
 			if( bounds.contains( current )){
-				return getAvailableBounds( device.getDefaultConfiguration() );
+                                return getAvailableBounds(device);
 			}
 		}
 		
@@ -157,7 +158,10 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		
 		for( GraphicsDevice device : devices ){
 			Rectangle bounds = device.getDefaultConfiguration().getBounds();
-			
+
+                        bounds.width = device.getDisplayMode().getWidth();
+                        bounds.height = device.getDisplayMode().getHeight();
+
 			int dist = dist( bounds.x, bounds.width, center.x ) + dist( bounds.y, bounds.height, center.y );
 			if( best == null || dist < bestDist ){
 				best = device;
@@ -166,10 +170,34 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		}
 		
 		if( best != null ){
-			return getAvailableBounds( best.getDefaultConfiguration() );
+                        return getAvailableBounds(best);
 		}
 		return null;
-	}
+        }
+
+        /**
+         * Gets the boundaries of a {@link GraphicsDevice} that can actually be used.
+         *
+         * @param device Device to get bounds from.
+         * @return the boundaries that can be used
+         */
+        protected Rectangle getAvailableBounds(GraphicsDevice device) {
+                GraphicsConfiguration configuration = device.getDefaultConfiguration();
+
+                DisplayMode mode = device.getDisplayMode();
+
+                Rectangle bounds = configuration.getBounds();
+                Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(configuration);
+                bounds.x += insets.left;
+                bounds.y += insets.top;
+
+                bounds.width = mode.getWidth();
+                bounds.height = mode.getHeight();
+
+                bounds.width -= insets.left + insets.right;
+                bounds.height -= insets.top + insets.bottom;
+                return bounds;
+        }
 	
 	/**
 	 * Gets the boundaries of a {@link GraphicsDevice} that can actually be used.
