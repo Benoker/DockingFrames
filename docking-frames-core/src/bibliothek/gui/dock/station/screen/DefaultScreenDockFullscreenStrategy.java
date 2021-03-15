@@ -42,6 +42,7 @@ import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
 import java.awt.DisplayMode;
+import java.awt.Dimension;
 
 /**
  * This default implementation of a {@link ScreenDockFullscreenStrategy} just works with
@@ -100,10 +101,13 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	}
 	
 	public void setFullscreen( ScreenDockWindow window, boolean fullscreen ) {
-		if( window instanceof ScreenDockDialog ){
+            if (window instanceof ScreenDockDialog) {
+                // aqui para maximizar
+                System.out.println("ScreenDockDialog");
 			setFullscreen( window, ((ScreenDockDialog)window).getDialog(), fullscreen );
 		}
-		if( window instanceof ScreenDockFrame ){
+            if (window instanceof ScreenDockFrame) {
+                System.out.println("ScreenDockFrame");
 			setFullscreen( window, ((ScreenDockFrame)window).getFrame(), fullscreen );
 		}
 	}
@@ -117,10 +121,18 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	public void setFullscreen( ScreenDockWindow wrapper, Window window, boolean fullscreen ){
 		if( isFullscreen( wrapper, window ) != fullscreen ){
 			if( fullscreen ){
-				Rectangle bounds = findBestFullscreenBounds( window );
+                            Rectangle bounds = findBestFullscreenBounds(window);
+                            System.out.println("best full screen bounds: " + bounds);
 				if( bounds != null ){
 					wrapper.setNormalBounds( wrapper.getWindowBounds() );
-					window.setBounds( bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2 );
+                                        
+                                        // aqui esta a solução
+                                        System.out.println("3 metodos");
+                                        window.setLocation(bounds.x-1, bounds.y-1);
+                                        window.setSize(new Dimension(bounds.width+2, bounds.height+2));
+                                        window.repaint();
+                                        
+//					window.setBounds( bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2 );
 				}
 			}
 			else{
@@ -147,7 +159,9 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		for( GraphicsDevice device : devices ){
 			Rectangle bounds = device.getDefaultConfiguration().getBounds();
 			if( bounds.contains( current )){
-                                return getAvailableBounds(device);
+//                                return getAvailableBounds(device);
+                                System.out.println("easy hit! both in same display");
+				return getAvailableBounds( device.getDefaultConfiguration() );
 			}
 		}
 		
@@ -170,7 +184,13 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		}
 		
 		if( best != null ){
-                        return getAvailableBounds(best);
+//                        return getAvailableBounds(best);
+
+                        System.out.println("using best device");
+                        Rectangle availableBounds = getAvailableBounds( best.getDefaultConfiguration() );
+                        
+                        System.out.println("returning " + availableBounds);
+                        return availableBounds;
 		}
 		return null;
         }

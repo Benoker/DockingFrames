@@ -57,12 +57,16 @@ public class Tuple<A, B> extends Single<A>{
 	public B getB(){
 		return b;
 	}
-	
-    @SuppressWarnings("unchecked")
+
     @Override
-	public Tuple<A, B> clone(){
-        return (Tuple<A,B>)super.clone();
-	}
+    public Single<A> clone() {
+        Tuple<A, B> tuple = new Tuple<A, B>();
+        tuple.setA(getA());
+        tuple.setB(b);
+
+        return tuple;
+    }
+
 	
 	@Override
 	public boolean equals( Object o ){
