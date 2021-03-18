@@ -41,8 +41,6 @@ import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
-import java.awt.DisplayMode;
-import java.awt.Dimension;
 
 /**
  * This default implementation of a {@link ScreenDockFullscreenStrategy} just works with
@@ -119,23 +117,20 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	 * @param fullscreen the new state
 	 */
 	public void setFullscreen( ScreenDockWindow wrapper, Window window, boolean fullscreen ){
-		if( isFullscreen( wrapper, window ) != fullscreen ){
+            System.out.println("settttFullscreen");
+            if (isFullscreen(wrapper, window) != fullscreen) {
 			if( fullscreen ){
                             Rectangle bounds = findBestFullscreenBounds(window);
                             System.out.println("best full screen bounds: " + bounds);
-				if( bounds != null ){
-					wrapper.setNormalBounds( wrapper.getWindowBounds() );
-                                        
-                                        // aqui esta a solução
-                                        System.out.println("3 metodos");
-                                        window.setLocation(bounds.x-1, bounds.y-1);
-                                        window.setSize(new Dimension(bounds.width+2, bounds.height+2));
-                                        window.repaint();
-                                        
-//					window.setBounds( bounds.x-1, bounds.y-1, bounds.width+2, bounds.height+2 );
+                            if (bounds != null) {
+                                wrapper.setWindowBounds(getNormalBounds(window)); //  AQUIIIII !!!!!
+
+                                wrapper.setNormalBounds(wrapper.getWindowBounds());
+                                window.setBounds(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2);
 				}
 			}
-			else{
+                        else {
+                            System.out.println("normal bounds");
 				Rectangle bounds = wrapper.getNormalBounds();
 				if( bounds != null ){
 					window.setBounds( bounds );
@@ -143,7 +138,31 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 				}
 			}
 		}
-	}
+    }
+
+    protected Rectangle getNormalBounds(final Window window) {
+        System.out.println("getNormalBounds");
+        Rectangle current = window.getBounds();
+        GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+
+        // try easy hit
+        for (GraphicsDevice device : devices) {
+            Rectangle bounds = device.getDefaultConfiguration().getBounds();
+
+            if (current.x >= bounds.x) {
+                System.out.println("okay, esta no monitor: " + device + " bounds: " + bounds);
+                return bounds;
+            }
+
+            if (bounds.contains(current)) {
+                System.out.println("easy hittt! both in same display");
+//                        return getAvailableBounds(device);
+                return getAvailableBounds(device.getDefaultConfiguration());
+            }
+        }
+        return null;
+    }
+
 	
 	/**
 	 * Tries to find the boundaries that match the fullscreen-criterium and that match the current
@@ -151,17 +170,31 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 	 * @param window some window which is not yet in fullscreen mode
 	 * @return boundaries for fullscreen mode or <code>null</code> if not boundaries could be found
 	 */
-	protected Rectangle findBestFullscreenBounds( Window window ){
+    protected Rectangle findBestFullscreenBounds(Window window) {
+        System.out.println("findBestFullscreenBounds!!!!");
 		Rectangle current = window.getBounds();
 		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		
 		// try easy hit
 		for( GraphicsDevice device : devices ){
 			Rectangle bounds = device.getDefaultConfiguration().getBounds();
-			if( bounds.contains( current )){
-//                                return getAvailableBounds(device);
-                                System.out.println("easy hit! both in same display");
-				return getAvailableBounds( device.getDefaultConfiguration() );
+
+                    if (current.x >= bounds.x) {
+                        System.out.println("okay, esta no monitor: " + device + " bounds: " + bounds);
+                        Rectangle b = getAvailableBounds(device.getDefaultConfiguration());
+
+                        System.out.println("recebido: " + b);
+//                b.width = (int) b.getWidth();
+//                b.height = (int) b.getHeight();
+
+                        System.out.println("retorna: " + b);
+                        return b;
+                    }
+
+                    if (bounds.contains(current)) {
+                        System.out.println("easy hittt! both in same display");
+//                        return getAvailableBounds(device);
+                        return getAvailableBounds(device.getDefaultConfiguration());
 			}
 		}
 		
@@ -173,8 +206,8 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 		for( GraphicsDevice device : devices ){
 			Rectangle bounds = device.getDefaultConfiguration().getBounds();
 
-                        bounds.width = device.getDisplayMode().getWidth();
-                        bounds.height = device.getDisplayMode().getHeight();
+//                        bounds.width = device.getDisplayMode().getWidth();
+//                        bounds.height = device.getDisplayMode().getHeight();
 
 			int dist = dist( bounds.x, bounds.width, center.x ) + dist( bounds.y, bounds.height, center.y );
 			if( best == null || dist < bestDist ){
@@ -183,14 +216,10 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
 			}
 		}
 		
-		if( best != null ){
-//                        return getAvailableBounds(best);
-
-                        System.out.println("using best device");
-                        Rectangle availableBounds = getAvailableBounds( best.getDefaultConfiguration() );
-                        
-                        System.out.println("returning " + availableBounds);
-                        return availableBounds;
+            if (best != null) {
+                System.out.println("using best device");
+                return getAvailableBounds(best);
+//                return getAvailableBounds(best.getDefaultConfiguration());
 		}
 		return null;
         }
@@ -201,22 +230,19 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
          * @param device Device to get bounds from.
          * @return the boundaries that can be used
          */
-        protected Rectangle getAvailableBounds(GraphicsDevice device) {
-                GraphicsConfiguration configuration = device.getDefaultConfiguration();
+    protected Rectangle getAvailableBounds(GraphicsDevice device) {
+        GraphicsConfiguration configuration = device.getDefaultConfiguration();
+        Rectangle bounds = configuration.getBounds();
+        Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(configuration);
+        bounds.x += insets.left;
+        bounds.y += insets.top;
 
-                DisplayMode mode = device.getDisplayMode();
+        System.out.println("tira da w: " + (insets.left + insets.right));
+        System.out.println("tira da h: " + (insets.top + insets.bottom));
 
-                Rectangle bounds = configuration.getBounds();
-                Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(configuration);
-                bounds.x += insets.left;
-                bounds.y += insets.top;
-
-                bounds.width = mode.getWidth();
-                bounds.height = mode.getHeight();
-
-                bounds.width -= insets.left + insets.right;
-                bounds.height -= insets.top + insets.bottom;
-                return bounds;
+//        bounds.width -= insets.left + insets.right;
+//        bounds.height -= insets.top + insets.bottom;
+        return bounds;
         }
 	
 	/**

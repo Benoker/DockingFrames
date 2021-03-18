@@ -137,11 +137,6 @@ import bibliothek.util.Todo;
 import bibliothek.util.Todo.Compatibility;
 import bibliothek.util.Todo.Priority;
 import bibliothek.util.Todo.Version;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
-import javax.swing.JDialog;
 
 /**
  * A {@link DockStation} which is the whole screen. Every child of this
@@ -1225,88 +1220,6 @@ public class ScreenDockStation extends AbstractDockStation {
     	}
     	return window.isFullscreen();
     }
-
-    /**
-     * Gets the boundaries of a {@link GraphicsDevice} that can actually be used.
-     *
-     * @param device some device
-     * @return the boundaries that can be used
-     */
-    protected Rectangle getAvailableBounds(GraphicsDevice device) {
-        GraphicsConfiguration configuration = device.getDefaultConfiguration();
-        Rectangle bounds = configuration.getBounds();
-        Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(configuration);
-        bounds.x += insets.left;
-        bounds.y += insets.top;
-
-        System.out.println("tira da w: " + (insets.left + insets.right));
-        System.out.println("tira da h: " + (insets.top + insets.bottom));
-
-//        bounds.width -= insets.left + insets.right;
-//        bounds.height -= insets.top + insets.bottom;
-        return bounds;
-    }
-
-    protected Rectangle findBestFullscreenBounds(Window window) {
-        Rectangle current = window.getBounds();
-        GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-
-        // try easy hit
-        for (GraphicsDevice device : devices) {
-            Rectangle bounds = device.getDefaultConfiguration().getBounds();
-
-            if (current.x >= bounds.x) {
-                System.out.println("okkk, esta no monitor: " + device + " bounds: " + bounds);
-                Rectangle b = getAvailableBounds(device);
-
-                System.out.println("recebido: " + b);
-//                b.width = (int) b.getWidth();
-//                b.height = (int) b.getHeight();
-
-                System.out.println("retorna: " + b);
-                return b;
-            }
-
-            if (bounds.contains(current)) {
-                System.out.println("easy hit! both in same display");
-                return getAvailableBounds(device);
-            }
-        }
-
-        // check center of window
-        Point center = new Point(current.x + current.width / 2, current.y + current.height / 2);
-        GraphicsDevice best = null;
-        int bestDist = 0;
-
-        for (GraphicsDevice device : devices) {
-            Rectangle bounds = device.getDefaultConfiguration().getBounds();
-
-            int dist = dist(bounds.x, bounds.width, center.x) + dist(bounds.y, bounds.height, center.y);
-            if (best == null || dist < bestDist) {
-                best = device;
-                bestDist = dist;
-            }
-        }
-
-        if (best != null) {
-            System.out.println("using best device");
-            Rectangle availableBounds = getAvailableBounds(best);
-
-            System.out.println("returning " + availableBounds);
-            return availableBounds;
-        }
-        return null;
-    }
-
-    private int dist(int x, int width, int pos) {
-        if (pos < x) {
-            return x - pos;
-        }
-        if (pos > x + width) {
-            return pos - x - width;
-        }
-        return 0;
-    }
     
     /**
      * Changes the fullscreen mode of <code>dockable</code>.
@@ -1314,31 +1227,11 @@ public class ScreenDockStation extends AbstractDockStation {
      * @param fullscreen the new mode
      * @throws IllegalArgumentException if <code>dockable</code> is not known to this station
      */
-    public void setFullscreen(Dockable dockable, boolean fullscreen) {
-        System.out.println("ScreenDockSation setFullscreen");
+    public void setFullscreen( Dockable dockable, boolean fullscreen ){
     	ScreenDockWindow window = getWindow( dockable );
     	if( window == null ){
     		throw new IllegalArgumentException( "dockable is not known to this station" );
-        }
-// TODO: aqui, descomentar esse bloco e comentar o window.setFullscreen( fullscreen );
-
-// esse codigo eh importante, é o que ta fazendo funcionar
-        System.out.println("executa meu codigo");
-        if (1 > 0) {
-            
-        System.out.println("component:? " + window.getComponent());
-
-        if (window.getComponent() instanceof JDialog) {
-            System.out.println("seta fullscreen");
-            JDialog dialog = (JDialog) window.getComponent();
-            Rectangle b = findBestFullscreenBounds(dialog);
-
-            dialog.setLocation(b.x, b.y);
-            dialog.setSize(new Dimension(b.width, b.height));
-            dialog.repaint();
-        }
-        }
-
+    	}
     	window.setFullscreen( fullscreen );
     }
     
@@ -2526,11 +2419,7 @@ public class ScreenDockStation extends AbstractDockStation {
      * @author Benjamin Sigg
      */
     private class ScreenWindowListener implements ScreenDockStationListener, ScreenDockWindowListener{
-        public void fullscreenChanged(ScreenDockStation station, Dockable dockable) {
-            System.out.println("ScreenWindowListener fullscreenChanged");
-//            if (1 > 0) {
-//                return;
-//            }
+		public void fullscreenChanged( ScreenDockStation station, Dockable dockable ) {
 			listeners.fireDockablesRepositioned( dockable );
 		}
 
@@ -2542,11 +2431,7 @@ public class ScreenDockStation extends AbstractDockStation {
 			window.addScreenDockWindowListener( this );
 		}
 
-        public void fullscreenStateChanged(ScreenDockWindow window) {
-            System.out.println("ScreenWindowListener fullscreenStateChanged");
-//            if (1 > 0) {
-//                return;
-//            }
+		public void fullscreenStateChanged( ScreenDockWindow window ) {
 			Dockable dockable = window.getDockable();
 			
 			if( dockable != null ){
