@@ -117,13 +117,12 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
      * @param fullscreen the new state
      */
     public void setFullscreen(ScreenDockWindow wrapper, Window window, boolean fullscreen) {
-        System.out.println("novo setFullscreen");
         if (isFullscreen(wrapper, window) != fullscreen) {
             if (fullscreen) {
                 Rectangle bounds = findBestFullscreenBounds(window);
                 if (bounds != null) {
-                    wrapper.setWindowBounds(getNormalBounds(window)); //  AQUIIIII !!!!!
                     wrapper.setNormalBounds(wrapper.getWindowBounds());
+                    wrapper.setWindowBounds(getNormalBounds(window)); // solves ANIWS-229
                     window.setBounds(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2);
                 }
             } else {
@@ -137,7 +136,6 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
     }
 
     private Rectangle getNormalBounds(final Window window) {
-        System.out.println("getNormalBounds");
         Rectangle current = window.getBounds();
         GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 
@@ -145,15 +143,8 @@ public class DefaultScreenDockFullscreenStrategy implements ScreenDockFullscreen
         for (GraphicsDevice device : devices) {
             Rectangle bounds = device.getDefaultConfiguration().getBounds();
 
-            if (current.x >= bounds.x) {
-                System.out.println("okay, esta no monitor: " + device + " bounds: " + bounds);
-                return bounds;
-            }
-
             if (bounds.contains(current)) {
-                System.out.println("easy hittt! both in same display");
-//                        return getAvailableBounds(device);
-                return getAvailableBounds(device.getDefaultConfiguration());
+                return bounds;
             }
         }
         return null;
