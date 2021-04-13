@@ -134,3 +134,26 @@ just add to your pom.xml:
 
 be sure to use latest &lt;version>
 
+## Build and Deploy Artifact as a Bundle
+
+1. Edit the root `pom.xml` to set the property `toolsJar` to point to a JDK 1.8 tools.jar inside lib folder, 
+   if needed.
+
+2. Set desired version at the root of the project with:
+    ```
+    mvn -DnewVersion=YOUR_VERSION versions:set
+    ```
+
+3. Edit the file `build-package/build.sh` and set the variable `JAVA_HOME` accordingly.
+
+4. Go to the folder `build-package`, using a command prompt, and type `./build.sh`. The final bundle will be
+   generated at `build-package/target`.
+
+5. Edit the file `build-package/deploy.sh` to set:
+
+   a. `JAVA_HOME` accordingly. 
+   b. `repositoryId` to `main` for a final release, or `main-dev` for a SNAPSHOT. 
+   c. `url` to the Archiva repository URL.
+
+6. In the same folder run `./deploy.sh` to send final bundle to Archiva.
+
