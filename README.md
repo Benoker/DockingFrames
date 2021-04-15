@@ -82,8 +82,11 @@ The projects have these dependencies:
     + docking-frames-core
     + docking-frames-common
 
+## Maven
 
-## Maven Snapshot Repository
+Please note: the library is no longer updated in maven. Services will not resume in the near future. Please download directly from https://docking-frames.org .
+
+### Maven Snapshot Repository (outdated version)
 
 you can get current project snapshot here:
 https://oss.sonatype.org/content/repositories/snapshots/org/dockingframes/
@@ -117,7 +120,7 @@ or add to your pom.xml:
 be sure to use latest &lt;version>-SNAPSHOT
 
 
-## Maven Release Repository
+### Maven Release Repository (outdated version)
 
 you can get latest stable release from maven central:
 http://search.maven.org/#artifactdetails|org.dockingframes|docking-frames-common|1.1.1|jar
