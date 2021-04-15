@@ -88,7 +88,7 @@ Please note: the library is no longer updated in maven. Services will not resume
 
 ### Maven Snapshot Repository (outdated version)
 
-you can get current project snapshot here:
+you can get an outdated project snapshot here:
 https://oss.sonatype.org/content/repositories/snapshots/org/dockingframes/
 
 or add to your pom.xml:
@@ -122,7 +122,7 @@ be sure to use latest &lt;version>-SNAPSHOT
 
 ### Maven Release Repository (outdated version)
 
-you can get latest stable release from maven central:
+you can an outdated stable release from maven central:
 http://search.maven.org/#artifactdetails|org.dockingframes|docking-frames-common|1.1.1|jar
 
 just add to your pom.xml:
