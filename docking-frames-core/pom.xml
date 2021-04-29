@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.dockingframes</groupId>
 		<artifactId>docking-frames-base</artifactId>
-        <version>1.1.3p1</version>
+        <version>1.1.3p1-an1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>docking-frames-core</artifactId>
@@ -13,36 +13,9 @@
 	
 	<name>${project.artifactId}</name>
 	<description>${project.name} is a core library</description>
-
-    <profiles>
-        <profile>
-            <activation>
-                <!-- This profile is activated when jdk >= 1.6 -->
-                <jdk>[1.6,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <id>add-source</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>add-source</goal>
-                                </goals>
-                                <configuration>
-                                    <sources>
-                                        <source>src-j6</source>
-                                    </sources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                   </plugin>
-               </plugins>
-            </build>
-        </profile>
-    </profiles>
+    
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 </project>

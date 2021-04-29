@@ -1,6 +1,6 @@
 .svn
 .project
-.classpath
+.classpath/
 .settings/
 
 bin/
@@ -9,6 +9,7 @@ logs/
 
 release.properties
 pom.xml.releaseBackup
+pom.xml.versionsBackup
 
 # TeX binaries and editor files
 docking-frames-common/guide/Guide.dvi
