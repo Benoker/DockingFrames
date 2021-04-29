@@ -55,7 +55,7 @@ public abstract class AbstractPreference<V> implements Preference<V>{
      * @return <code>true</code> if there are any listeners
      */
     protected boolean hasListeners(){
-    	return listeners.size() > 0;
+    	return !listeners.isEmpty();
     }
     
     /**

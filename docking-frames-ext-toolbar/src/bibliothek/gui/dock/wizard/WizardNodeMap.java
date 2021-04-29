@@ -506,7 +506,7 @@ public abstract class WizardNodeMap {
 					column.setSize( Math.max( source.getSize(), column.getPreferredSize() ));
 				}
 			}
-			else if( sources.size() > 0 ){
+			else if( !sources.isEmpty() ){
 				int max = 0;
 				for( PersistentColumn source : sources ){
 					max = Math.max( max, source.getSize() );

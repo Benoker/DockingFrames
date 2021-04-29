@@ -55,7 +55,7 @@ public abstract class AbstractDockActionSource implements DockActionSource {
      * @return whether at least one listener is registered
      */
     public boolean hasListeners(){
-    	return listeners.size() > 0;
+    	return !listeners.isEmpty();
     }
     
     /**

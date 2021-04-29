@@ -198,7 +198,7 @@ public class DockableStateListenerManager {
 	 * @return whether there is at least one listener
 	 */
 	protected boolean hasListeners(){
-		return listeners.size() > 0;
+		return !listeners.isEmpty();
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class DockableStateListenerManager {
 	 */
 	private void fireNow(){
 		if( current != 0 ) {
-			if( listeners.size() > 0 ) {
+			if( !listeners.isEmpty() ) {
 				DockableStateEvent event = new DockableStateEvent( dockable, current );
 				current = 0;
 				for( DockableStateListener listener : listeners.toArray( new DockableStateListener[listeners.size()] ) ) {

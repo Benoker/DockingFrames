@@ -1188,7 +1188,7 @@ public class DockSituation {
     	DockLayoutComposition composition = map.getRoot();
 
     	List<DockLayoutComposition> children = composition.getChildren();
-    	if( children == null || children.size() == 0 ){
+    	if( children == null || children.isEmpty() ){
     		return;
     	}
 

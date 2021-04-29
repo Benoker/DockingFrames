@@ -352,7 +352,7 @@ public class CPerspective {
 		}
 		
 		public PerspectiveElement next(){
-			while( stack.size() > 0 ){
+			while( !stack.isEmpty() ){
 				ElementFrame top = stack.peek();
 				if( top.offset < top.items.length ){
 					PerspectiveElement result = top.items[top.offset++];

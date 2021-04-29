@@ -180,7 +180,7 @@ public class VetoManager {
      * if not.
      */
     protected boolean fireAllHiding( Dockable dockable, final boolean cancelable ){
-        if( vetoableListeners.size() == 0 )
+        if( vetoableListeners.isEmpty() )
             return false;
         
         List<Dockable> list = DockUtilities.listDockables( dockable, true );
@@ -197,7 +197,7 @@ public class VetoManager {
      * if not.
      */
     protected boolean fireAllHiding( Collection<Dockable> dockables, final boolean cancelable ){
-        if( vetoableListeners.size() == 0 )
+        if( vetoableListeners.isEmpty() )
             return false;
         
         if( dockables.isEmpty() )
@@ -261,7 +261,7 @@ public class VetoManager {
      * if the operation can continue
      */
     protected boolean fireAllShowing( Dockable dockable, final boolean cancelable ){
-        if( vetoableListeners.size() == 0 )
+        if( vetoableListeners.isEmpty() )
             return false;
         
         return fireAllShowing( DockUtilities.listDockables( dockable, true ), cancelable );
@@ -277,7 +277,7 @@ public class VetoManager {
      * if the operation can continue
      */
     protected boolean fireAllShowing( Collection<Dockable> dockables, final boolean cancelable ){
-        if( vetoableListeners.size() == 0 )
+        if( vetoableListeners.isEmpty() )
             return false;
 
         if( dockables.isEmpty() )
@@ -299,7 +299,7 @@ public class VetoManager {
      * @param expected whether the event is expected or not
      */
     protected void fireAllShown( Dockable dockable, final boolean expected ){
-        if( vetoableListeners.size() == 0 )
+        if( vetoableListeners.isEmpty() )
             return;
 
         List<Dockable> list = DockUtilities.listDockables( dockable, true );
@@ -313,7 +313,7 @@ public class VetoManager {
      * @param expected whether the event is expected or not
      */
     protected void fireAllShown( Collection<Dockable> dockables, final boolean expected ){
-        if( vetoableListeners.size() == 0 )
+        if( vetoableListeners.isEmpty() )
             return;
 
         if( !dockables.isEmpty() ){

@@ -55,14 +55,14 @@ public class WindowProviderWrapper implements WindowProvider{
     public void addWindowProviderListener( WindowProviderListener listener ) {
         int previous = listeners.size();
         listeners.add( listener );
-        if( previous == 0 && listeners.size() > 0 && delegate != null )
+        if( previous == 0 && !listeners.isEmpty() && delegate != null )
             delegate.addWindowProviderListener( this.listener );
     }
     
     public void removeWindowProviderListener( WindowProviderListener listener ) {
         int previous = listeners.size();
         listeners.remove( listener );
-        if( previous > 0 && listeners.size() == 0 && delegate != null )
+        if( previous > 0 && listeners.isEmpty() && delegate != null )
             delegate.removeWindowProviderListener( this.listener );
     }
     
@@ -99,7 +99,7 @@ public class WindowProviderWrapper implements WindowProvider{
      * @param delegate the new provider, can be <code>null</code>
      */
     public void setDelegate( WindowProvider delegate ) {
-        if( listeners.size() == 0 ){
+        if( listeners.isEmpty() ){
             this.delegate = delegate;
         }
         else{

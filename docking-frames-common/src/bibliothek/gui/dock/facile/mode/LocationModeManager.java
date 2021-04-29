@@ -696,7 +696,7 @@ public class LocationModeManager<M extends LocationMode> extends ModeManager<Loc
 		
 		@Override
 		public void registerUnstalled( DockController controller ){
-			while( pendingRefreshs.size() > 0 && !controller.getRegister().isStalled() ){
+			while( !pendingRefreshs.isEmpty() && !controller.getRegister().isStalled() ){
 				Iterator<Dockable> iter = pendingRefreshs.iterator();
 				Dockable next = iter.next();
 				iter.remove();
