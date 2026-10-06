@@ -25,6 +25,7 @@
  */
 package bibliothek.gui.dock.station.screen.window;
 
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -94,8 +95,10 @@ public class ScreenDockFrame extends AbstractScreenDockWindow {
     }
     
     public void destroy() {
-    	super.destroy();
+        frame.setVisible(false);
+        super.destroy();
         frame.dispose();
+        Toolkit.getDefaultToolkit().sync();
     }
 
     public void toFront() {

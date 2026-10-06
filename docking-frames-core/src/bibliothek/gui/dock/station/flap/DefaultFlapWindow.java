@@ -256,6 +256,10 @@ public class DefaultFlapWindow implements FlapWindow, MouseListener, MouseMotion
 			updateBounds();
 		}
 		window.setVisible( flag );
+		if( !flag && window instanceof DialogParent ) {
+			// Recreate the native peer on the next show to avoid stale X11 state.
+			window.destroy();
+		}
 	}
 	
 	public boolean isWindowVisible(){

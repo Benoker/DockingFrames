@@ -1903,6 +1903,7 @@ public class ScreenDockStation extends AbstractDockStation {
         dockables.remove( index );
         
         getRootHandler().removeRoot( window.getComponent() );
+        window.setVisible( false );
         window.setDockable( null );
         window.setPaintCombining( null );
         window.setController( null );
